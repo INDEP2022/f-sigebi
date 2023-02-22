@@ -12,6 +12,4 @@ export const ERROR_MESSAGES: any = {
   max: (meta: any) => `El valor maximo es ${meta.max}`,
   minDate: (meta: any) => `La fecha mínima es ${format(meta.min, DATE_FORMAT)}`,
   maxDate: (meta: any) => `La fecha máxima es ${format(meta.max, DATE_FORMAT)}`,
-  numeric: (meta: any) => 'El campo debe ser númerico',
-  nonExist: (meta: any) => 'El registro no existe',
 };

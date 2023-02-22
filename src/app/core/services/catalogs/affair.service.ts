@@ -32,8 +32,4 @@ export class AffairService implements ICrudMethods<IAffair> {
   remove(id: string | number): Observable<Object> {
     return this.affairRepository.remove(this.route, id);
   }
-
-  getDelegations(params: ListParams) {
-    return this.affairRepository.getAllPaginated(this.route, params);
-  }
 }

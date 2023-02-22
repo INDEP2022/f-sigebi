@@ -24,11 +24,6 @@ export class RegionalDelegationService
     );
   }
 
-  search(params?: ListParams): Observable<IListResponse<IRegionalDelegation>> {
-    const route = 'catalog/regional-delegation/search';
-    return this.regionalDelegationRepository.getAllPaginated(route, params);
-  }
-
   getById(id: string | number): Observable<IRegionalDelegation> {
     return this.regionalDelegationRepository.getById(this.route, id);
   }

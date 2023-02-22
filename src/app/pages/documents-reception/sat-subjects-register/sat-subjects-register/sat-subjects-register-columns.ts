@@ -1,78 +1,78 @@
 const SAT_PAPERWORK_MAILBOX_COLUMNS = {
-  processNumber: {
-    title: 'No. Tramite',
+  noBien: {
+    title: 'SAT Cve Única',
     type: 'number',
     sort: false,
   },
-  processStatus: {
+  description: {
     title: 'Estatus tramite',
     type: 'string',
     sort: false,
   },
-  processEntryDate: {
-    title: 'Fecha Ingreso Trámite',
+  cantidad: {
+    title: 'Fecha ingreso tramite',
     type: 'string',
     sort: false,
   },
-  wheelNumber: {
-    title: 'No. Volante',
-    type: 'number',
+  ident: {
+    title: 'No Volante',
+    type: 'string',
     sort: false,
   },
-  proceedingsNumber: {
-    title: 'No. Expediente',
-    type: 'number',
+  est: {
+    title: 'No expediente',
+    type: 'string',
     sort: false,
   },
-  issue: {
+  proceso: {
     title: 'Asunto',
     type: 'string',
     sort: false,
   },
-  officeNumber: {
+  oficio: {
     title: 'Oficio SAT',
     type: 'string',
     sort: false,
   },
-  delegationNumber: {
-    title: 'No. Delegación',
-    type: 'number',
+  delegacion: {
+    title: 'No Delegación',
+    type: 'string',
     sort: false,
   },
-  turnadoiUser: {
-    title: 'Usuario Turnado',
+  usuario: {
+    title: 'Usuario turnado',
     type: 'string',
     sort: false,
   },
 };
 
 const SAT_TRANSFER_COLUMNS = {
-  satOnlyKey: {
+  noBien: {
     title: 'SAT Cve Única',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
-  job: {
+  description: {
     title: 'Oficio',
     type: 'string',
     sort: false,
   },
-  satProceedings: {
+  cantidad: {
     title: 'SAT Expediente',
     type: 'string',
     sort: false,
   },
-  satDescription: {
+  ident: {
     title: 'SAT Descripción',
     type: 'string',
     sort: false,
   },
-  satHouseGuide: {
+  est: {
     title: 'SAT Guiahouse',
     type: 'string',
     sort: false,
   },
-  satMasterGuide: {
+  proceso: {
     title: 'SAT Guiamaster',
     type: 'string',
     sort: false,

@@ -3,7 +3,6 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IBank } from '../../../../core/models/catalogs/bank.model';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
 import { BanksDetailComponent } from '../banks-detail/banks-detail.component';
@@ -15,7 +14,7 @@ import { BANKS_COLUMNS } from './banks-columns';
   styles: [],
 })
 export class BanksListComponent extends BasePage implements OnInit {
-  bank: IBank[] = [];
+  lawyers: IBank[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -24,16 +23,8 @@ export class BanksListComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        position: 'right',
-      },
-      columns: { ...BANKS_COLUMNS },
-    };
+    this.settings.columns = BANKS_COLUMNS;
+    this.settings.actions = true;
   }
 
   ngOnInit(): void {
@@ -46,7 +37,7 @@ export class BanksListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.bankService.getAll(this.params.getValue()).subscribe(
       response => {
-        this.bank = response.data;
+        this.lawyers = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -73,22 +64,15 @@ export class BanksListComponent extends BasePage implements OnInit {
     this.openModal({ edit: true, bank });
   }
 
-  showDeleteAlert(bank: IBank) {
+  delete(bank: IBank) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(bank.bankCode);
-        Swal.fire('Borrado', '', 'success');
+        //Ejecutar el servicio
       }
-    });
-  }
-
-  delete(id: string) {
-    this.bankService.remove(id).subscribe({
-      next: () => this.getBanks(),
     });
   }
 }

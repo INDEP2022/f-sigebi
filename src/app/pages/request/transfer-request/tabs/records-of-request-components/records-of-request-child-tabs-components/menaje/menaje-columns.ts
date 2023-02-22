@@ -1,16 +1,11 @@
 export const MENAJE_COLUMN = {
-  id: {
+  noManagement: {
     title: 'No. Gestion',
     type: 'string',
     sort: false,
   },
-  description: {
-    title: 'Descripción del Bien Transferente',
-    type: 'string',
-    sort: false,
-  },
-  requestId: {
-    title: 'No. Solicitud',
+  descripAssets: {
+    title: 'Descripción del Bien',
     type: 'string',
     sort: false,
   },

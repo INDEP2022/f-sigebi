@@ -1,17 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ICourt } from 'src/app/core/models/catalogs/court.model';
-import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  NUMBERS_PATTERN,
-  PHONE_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
-import { CourtListComponent } from 'src/app/pages/parameterization/court-maintenance/court-list/court-list.component';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -24,14 +17,8 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   form: FormGroup = new FormGroup({});
-  edit: boolean = false;
-  isPresent: boolean = false;
 
-  constructor(
-    private modalService: BsModalService,
-    private fb: FormBuilder,
-    private courtServ: CourtService
-  ) {
+  constructor(private modalService: BsModalService, private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
@@ -47,71 +34,52 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getPagination();
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      circuitCVE: [null, Validators.maxLength(15)],
-      description: [
+      circuit: [null, [Validators.required]],
+      descriptionStatus: [null, [Validators.required]],
+      targetIndicator: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(100),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      manager: [
+      targetIndicatorDesc: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      street: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
-      numExterior: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
-      ],
-      numInside: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
-      ],
-      cologne: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
-      zipCode: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
-      ],
-      delegationMun: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
-      numPhone: [
-        null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(20)],
-      ],
-      numRegister: [{ value: null, disabled: true }],
-      id: [{ value: null, disabled: true }],
+      delegation: [null, [Validators.required]],
     });
   }
-
-  openModal() {
-    let config: ModalOptions = {
-      initialState: {
-        callback: (next: boolean, data: ICourt) => {
-          if (next) {
-            this.form.patchValue(data);
-            this.edit = true;
-          }
-        },
-      },
+  openModal(context?: any /* Partial<> */) {
+    /*     const modalRef = this.modalService.show(ModalGoodForDonationComponent, {
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    };
-    this.modalService.show(CourtListComponent, config);
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    }); */
   }
+
+  openForm(allotment?: any) {
+    this.openModal({ allotment });
+  }
+
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
+  }
+
+  data = [{}];
 
   delete(event: any) {
     this.alertQuestion(
@@ -124,33 +92,5 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         this.onLoadToast('success', 'Eliminado correctamente', '');
       }
     });
-  }
-
-  confirm() {
-    this.form.get('id').enable();
-    if (this.form.value) {
-      if (this.edit) {
-        this.courtServ.updateCourt(this.form.value).subscribe({
-          next: () => (
-            this.onLoadToast('success', 'Juzgado', 'Se ha actualizado'),
-            this.clean()
-          ),
-          error: err => this.onLoadToast('error', err.error.message, ''),
-        });
-      } else {
-        this.courtServ.create(this.form.value).subscribe({
-          next: () => (
-            this.onLoadToast('success', 'Juzgado', 'Se ha guardado'),
-            this.clean()
-          ),
-          error: err => this.onLoadToast('error', err.error.message, ''),
-        });
-      }
-    }
-  }
-
-  clean() {
-    this.form.reset();
-    this.edit = false;
   }
 }

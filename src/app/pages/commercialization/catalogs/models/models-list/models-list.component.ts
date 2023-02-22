@@ -6,7 +6,6 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ModelsService } from '../models.service';
 import { COLUMNS } from './columns';
 //Components
 //Provisional Data
@@ -29,11 +28,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService,
-    private modelServices: ModelsService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -65,47 +60,8 @@ export class ModelsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data.load(this.dataBrands);
     this.prepareForm();
-    this.searchParams();
-  }
-
-  searchParams() {
-    this.params.subscribe({
-      next: resp => {
-        this.dataBrands = [];
-        if (resp.text !== '') {
-          this.modelServices.getModelForId(resp.text).subscribe({
-            next: (searchModel: any) => {
-              if (searchModel) {
-                this.dataBrands.push({
-                  model: searchModel.id,
-                });
-              }
-              this.data.load(this.dataBrands);
-            },
-          });
-        } else {
-          this.getModels();
-        }
-      },
-    });
-  }
-
-  getModels() {
-    this.dataBrands = [];
-    this.modelServices.getModels().subscribe({
-      next: (resp: any) => {
-        if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.dataBrands.push({
-              model: item.id,
-            });
-          });
-        }
-
-        this.data.load(this.dataBrands);
-      },
-    });
   }
 
   private prepareForm(): void {
@@ -116,36 +72,19 @@ export class ModelsListComponent extends BasePage implements OnInit {
   }
 
   onSaveConfirm(event: any) {
-    const body = {
-      id: event.newData.model,
-      modelComment: '',
-    };
-    this.modelServices.PutModel(event.data.model, body).subscribe({
-      next: (resp: any) => {
-        if (resp.statusCode === 200) {
-          event.confirm.resolve();
-          this.onLoadToast('success', 'Elemento Actualizado', '');
-        }
-      },
-    });
-  }
-
-  onAddConfirm(event: any) {
-    const body = {
-      id: event.newData.model,
-      modelComment: '',
-    };
-    this.modelServices.postModel(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          event.confirm.resolve();
-          this.onLoadToast('success', 'Elemento Creado', '');
-        }
-      },
-    });
+    event.confirm.resolve();
     /**
      * CALL SERVICE
      * */
+    this.onLoadToast('success', 'Elemento Actualizado', '');
+  }
+
+  onAddConfirm(event: any) {
+    event.confirm.resolve();
+    /**
+     * CALL SERVICE
+     * */
+    this.onLoadToast('success', 'Elemento Creado', '');
   }
 
   onDeleteConfirm(event: any) {
@@ -155,12 +94,11 @@ export class ModelsListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.modelServices.deleteModelForId(event.data.model).subscribe({
-          next: (resp: any) => {
-            event.confirm.resolve();
-            this.onLoadToast('success', 'Elemento Eliminado', '');
-          },
-        });
+        event.confirm.resolve();
+        /**
+         * CALL SERVICE
+         * */
+        this.onLoadToast('success', 'Elemento Eliminado', '');
       }
     });
   }

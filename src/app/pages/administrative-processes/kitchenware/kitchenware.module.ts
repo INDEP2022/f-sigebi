@@ -11,7 +11,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
-import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-shared.component';
+import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { KitchenwareRoutingModule } from './kitchenware-routing.module';
 import { PropertyRegistrationComponent } from './property-registration/property-registration.component';
 
@@ -29,7 +29,7 @@ import { PropertyRegistrationComponent } from './property-registration/property-
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsSharedComponent,
+    GoodsTypesSharedComponent,
   ],
 })
 export class KitchenwareModule {}

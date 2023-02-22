@@ -1,21 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Documentos por expediente</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
-          Nuevo
-        </button>
-      </div>
-    </div>
   </div>
   <div body>
     <form [formGroup]="dateDocumentsForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
-            label="Expediente"
+            label="Nombre"
             [control]="dateDocumentsForm.get('proceedings')">
             <input
               class="form-control"
@@ -24,12 +16,7 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <button
-            class="btn btn-primary btn-sm active"
-            (click)="search()"
-            [disabled]="!dateDocumentsForm.valid">
-            Buscar
-          </button>
+          <button class="btn btn-primary btn-sm active">Buscar</button>
         </div>
       </div>
     </form>
@@ -39,8 +26,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dateDocuments"
-            (edit)="openForm($event.data)">
+            [source]="data1">
           </ng2-smart-table>
         </div>
       </div>

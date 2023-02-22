@@ -1,91 +1,75 @@
 <form [formGroup]="form" class="form-material" (submit)="search()">
   <div class="row">
     <form-field
-      [control]="form.get('receptionForm')"
+      [control]="form.get('fechaFrom')"
       label="Fecha de Recepci&oacute;n de"
       class="col-md-3">
       <input
         type="text"
-        formControlName="receptionForm"
+        formControlName="fechaFrom"
         class="form-control"
         bsDatepicker />
     </form-field>
 
-    <form-field [control]="form.get('receptionTo')" label="A" class="col-md-3">
+    <form-field [control]="form.get('fechaTo')" label="A" class="col-md-3">
       <input
         type="text"
-        formControlName="receptionTo"
+        formControlName="fechaTo"
         class="form-control"
         bsDatepicker />
+    </form-field>
+
+    <form-field [control]="form.get('acta')" label="Acta" class="col-md-3">
+      <input type="text" formControlName="acta" class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('certificate')"
-      label="Acta"
+      [control]="form.get('estatus')"
+      label="Estatus"
       class="col-md-3">
-      <input type="text" formControlName="certificate" class="form-control" />
-    </form-field>
-
-    <form-field [control]="form.get('receptionStatus')" class="col-md-3">
-      <ngx-select
-        [form]="form"
-        (change)="statusChange()"
-        [multiple]="true"
-        [searchOnInit]="true"
-        control="receptionStatus"
-        [data]="goodStatuses"
-        value="status"
-        bindLabel="description"
-        (fetchItems)="getGoodStatuses($event)"
-        label="Estatus"></ngx-select>
+      <input type="text" formControlName="estatus" class="form-control" />
     </form-field>
   </div>
 
   <div class="row pt-3">
-    <!-- <form-field
-      [control]="form.get('statusChangeFrom')"
+    <form-field
+      [control]="form.get('cambioFrom')"
       label="Fecha de Cambio de Estatus de"
       class="col-md-3">
       <input
         type="text"
-        formControlName="statusChangeFrom"
+        formControlName="cambioFrom"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+
+    <form-field [control]="form.get('cambioTo')" label="A" class="col-md-3">
+      <input
+        type="text"
+        formControlName="cambioTo"
         class="form-control"
         bsDatepicker />
     </form-field>
 
     <form-field
-      [control]="form.get('statusChaangeTo')"
-      label="A"
-      class="col-md-3">
-      <input
-        type="text"
-        formControlName="statusChaangeTo"
-        class="form-control"
-        bsDatepicker />
-    </form-field> -->
-
-    <form-field
-      [control]="form.get('eventNum')"
+      [control]="form.get('noEvento')"
       label="No&#46; Evento de Comercializaci&oacute;n"
       class="col-md-3">
-      <input type="text" formControlName="eventNum" class="form-control" />
+      <input type="text" formControlName="noEvento" class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('historicalProcess')"
+      [control]="form.get('proceso')"
       label="Historia de Proceso del bien"
       class="col-md-3">
-      <input
-        type="text"
-        formControlName="historicalProcess"
-        class="form-control" />
+      <input type="text" formControlName="proceso" class="form-control" />
     </form-field>
   </div>
 
   <div class="row">
-    <!-- <form-check label="En Proceso de Venta" for="inSaleProcess">
+    <form-check label="En Proceso de Venta" for="inSaleProcess">
       <input type="checkbox" formControlName="enProceso" id="inSaleProcess" />
-    </form-check> -->
+    </form-check>
   </div>
 
   <div class="row">

@@ -7,5 +7,5 @@ export interface IRAsuntDic {
   g_of: string | null;
   i: string | null;
   e: string | null;
-  registryNumber?: number;
+  registryNumber: number;
 }

@@ -10,7 +10,6 @@ import { CAT_DOC_REQUIRE_COLUMNS } from './cat-doc-require-columns';
 import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
 //services
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-doc-require',
@@ -32,7 +31,7 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...CAT_DOC_REQUIRE_COLUMNS },
@@ -75,13 +74,12 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(documentsForDictum.id);
-        Swal.fire('Borrado', '', 'success');
+        this.delete(documentsForDictum.cve);
       }
     });
   }
 
-  delete(id: string) {
+  delete(id: number) {
     this.documentsForDictumService.remove(id).subscribe({
       next: () => this.getDocumentsForDictum(),
     });

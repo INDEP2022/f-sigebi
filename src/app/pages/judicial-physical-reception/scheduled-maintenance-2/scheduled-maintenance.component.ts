@@ -1,15 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { TypeEvents } from '../scheduled-maintenance/interfaces/typeEvents';
 
 @Component({
   selector: 'app-scheduled-maintenance',
@@ -52,19 +48,8 @@ export class ScheduledMaintenanceComponent implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-  statusList = [
-    { id: 'ABIERTA', description: 'Abierto' },
-    { id: 'CERRADA', description: 'Cerrado' },
-    { id: 'TODAS', description: 'Todos' },
-  ];
-  data: any[] = [];
-  totalItems: number = 0;
-  paramsTypes: ListParams = new ListParams();
-  paramsStatus: ListParams = new ListParams();
-  paramsDelegations: ListParams = new ListParams();
-  tiposEvento = TypeEvents;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  selecteds: IProceedingDeliveryReception[];
+
+  data = EXAMPLE_DATA;
 
   constructor(private fb: FormBuilder) {}
 

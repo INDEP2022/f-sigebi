@@ -5,24 +5,19 @@
   <div body>
     <form [formGroup]="valuesForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-2">
-          <form-field label="Clave" [control]="valuesForm.get('otKey')">
-            <input class="form-control" formControlName="otKey" type="text" />
+        <div class="col-md-5">
+          <form-field label="Nombre" [control]="valuesForm.get('name')">
+            <input class="form-control" formControlName="name" type="text" />
           </form-field>
         </div>
-        <div class="col-md-5">
-          <form-field [control]="valuesForm.get('value')" label="Atributo">
-            <input class="form-control" formControlName="value" type="text" />
-          </form-field>
-        </div>
-        <div class="col-md-5">
+        <div class="col-md-7">
           <form-field
-            [control]="valuesForm.get('abbreviation')"
-            label="Abreviatura">
-            <input
+            [control]="valuesForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
               class="form-control"
-              formControlName="abbreviation"
-              type="text" />
+              formControlName="description"
+              placeholder="Descripción"></textarea>
           </form-field>
         </div>
       </div>
@@ -34,8 +29,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!valuesForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
+          (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

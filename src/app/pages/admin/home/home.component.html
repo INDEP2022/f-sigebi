@@ -9,57 +9,6 @@
   </div>
   <div body>
     <div class="row">
-      <h5>Ejemplo de formulario tipado</h5>
-      <form [formGroup]="userExample" class="form-material">
-        <form-field
-          [control]="userExample.get('username')"
-          label="Input Usuario">
-          <input type="text" class="form-control" formControlName="username" />
-        </form-field>
-        <ng-container formGroupName="person">
-          <form-field
-            [control]="personForm.get('name')"
-            label="Input Nombre Persona">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <form-field
-            [control]="personForm.get('birthdate')"
-            label="Input Fecha Persona">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="birthdate"
-              bsDatepicker />
-          </form-field>
-        </ng-container>
-        <div>
-          <button class="btn btn-primary" (click)="addRole()">
-            Agregar Rol
-          </button>
-        </div>
-        <ng-container
-          formArrayName="roles"
-          *ngFor="let role of roles.controls; index as i">
-          <br />
-          <div class="d-flex" [formGroupName]="i">
-            <form-field [control]="role.get('role')" label="Input Role">
-              <input type="text" class="form-control" formControlName="role" />
-            </form-field>
-            <div>
-              <button class="btn btn-danger" (click)="removeRole(i)">
-                Eliminar Role
-              </button>
-            </div>
-          </div>
-        </ng-container>
-      </form>
-      <button class="btn btn-success" (click)="saveRole()">Ver Data</button>
-      <div>
-        {{ user | json }}
-      </div>
-    </div>
-    <br />
-    <div class="row">
       <h5>Carga masiva de archivos</h5>
       <div class="col-md-12">
         <file-upload

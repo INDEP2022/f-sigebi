@@ -67,7 +67,7 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.identifierService.remove(identifier.id).subscribe({
+        this.identifierService.remove(identifier.code).subscribe({
           next: data => this.getIdentifiers(),
           error: error => (this.loading = false),
         });

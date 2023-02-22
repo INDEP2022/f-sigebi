@@ -3,21 +3,11 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { FlyerSubjectCatalogModelComponent } from './flyer-subject-catalog-model/flyer-subject-catalog-model.component';
 import { FlyerSubjectCatalogRoutingModule } from './flyer-subject-catalog-routing.module';
 import { FlyerSubjectCatalogComponent } from './flyer-subject-catalog/flyer-subject-catalog.component';
 
 @NgModule({
-  declarations: [
-    FlyerSubjectCatalogComponent,
-    FlyerSubjectCatalogModelComponent,
-  ],
-  imports: [
-    CommonModule,
-    FlyerSubjectCatalogRoutingModule,
-    SharedModule,
-    ModalModule.forChild(),
-  ],
+  declarations: [FlyerSubjectCatalogComponent],
+  imports: [CommonModule, FlyerSubjectCatalogRoutingModule, SharedModule],
 })
 export class FlyerSubjectCatalogModule {}

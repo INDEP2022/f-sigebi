@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { userData } from '../../perform-programming/perform-programming-form/data-perfom-programming';
 import { SearchUserFormComponent } from '../search-user-form/search-user-form.component';
 
 @Component({
@@ -17,59 +15,38 @@ import { SearchUserFormComponent } from '../search-user-form/search-user-form.co
 export class ScheduleReceptionFormComponent implements OnInit {
   scheduleForm: FormGroup = new FormGroup({});
   loading: boolean = false;
-  users = new DefaultSelect(userData);
+  users = new DefaultSelect<IUser>();
   date = new Date();
-  nameUser: string = '';
-  typeUser: string = 'T.E';
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService,
-    private programmingRequestService: ProgrammingRequestService,
-    private router: Router
-  ) {}
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {}
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.getUserInfo();
-    this.getUserSelect(new ListParams());
+    this.schedule();
   }
 
-  getUserInfo() {
-    this.programmingRequestService.getUserInfo().subscribe((data: any) => {
-      this.nameUser = data.name;
-    });
-  }
-
-  prepareForm() {
+  schedule() {
     this.scheduleForm = this.fb.group({
-      typeUser: ['T.E'],
-      creationUser: [null, [Validators.required]],
+      radio: ['T.E'],
+      userId: [null, [Validators.required]],
+      check: [false],
     });
   }
 
-  selectTypeUser(event: Event) {
-    this.typeUser = (event.target as HTMLInputElement).value;
+  typeUser(event: Event): string {
+    return (event.target as HTMLInputElement).value;
   }
 
   confirm() {
-    this.loading = true;
-    console.log('Enviar', this.scheduleForm.value);
-    this.loading = false;
+    alert('Please enter');
   }
 
   getUserSelect(user: ListParams) {}
 
   searchUser() {
-    const typeUser = this.typeUser;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
-      typeUser,
       callback: (data: any) => {
         if (data) {
-          data.map((item: any) => {
-            this.scheduleForm.get('creationUser').setValue(item.user);
-          });
         }
       },
     };

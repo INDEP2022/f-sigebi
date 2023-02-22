@@ -10,26 +10,7 @@ import { REQUEST_LIST_COLUMNS } from './request-list-columns';
 
 var usuario: IRequestList[] = [
   {
-    id: 43437,
-    title: 'Registro de solicitud (Captura de Solicitud) con folio 43437',
-    noRequest: 45009,
-    numTask: 260301,
-    noInstance: 820169,
-    created: 'tester_nsbxt',
-    process: 'SolicitudeTransferencia',
-  },
-  {
-    id: 43437,
-    title: 'Verificacion de solicitud (Captura de Solicitud) con folio 43437',
-    noRequest: 45009,
-    numTask: 260301,
-    noInstance: 820169,
-    created: 'tester_nsbxt',
-    process: 'VerificarCumplimiento',
-  },
-  {
-    id: 43437,
-    title: 'Registro de solicitud (Captura de Solicitud) con folio 43437',
+    title: 'Registro de solicitud (Captura de Solicitud) con folio 45009',
     noRequest: 45009,
     numTask: 260301,
     noInstance: 820169,
@@ -233,7 +214,6 @@ var usuario: IRequestList[] = [
     process: 'Notification_Taxpayer',
   },
 ];
-
 //AP_Amparo
 @Component({
   selector: 'app-request-list',
@@ -249,6 +229,13 @@ export class RequestListComponent extends BasePage implements OnInit {
     super();
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
     this.settings.columns = REQUEST_LIST_COLUMNS;
+    /* this.settings.actions = {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: false,
+      delete: false,
+    }; */
   }
 
   ngOnInit(): void {
@@ -264,7 +251,6 @@ export class RequestListComponent extends BasePage implements OnInit {
   }
 
   editRequest(event: any) {
-    const request = event.data;
     switch (event.data.process) {
       case 'SolicitudProgramacion':
         // en el caso de que sea una solicitud de programacion
@@ -369,14 +355,7 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea una solicitud de programacion de resarcimiento economico
         this.router.navigate([
           'pages/request/transfer-request/registration-request',
-          event.data.id,
-        ]);
-        break;
-      case 'VerificarCumplimiento':
-        // en el caso de que sea una solicitud de programacion
-        this.router.navigate([
-          'pages/request/transfer-request/verify-compliance',
-          event.data.noRequest,
+          1,
         ]);
         break;
 

@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ status }} ACLARACI&oacute;N</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="clarificationForm">
+    <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="clarificationForm.get('id')" label="Id">
+          <form-field [control]="form.get('id')" label="Id">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
@@ -15,7 +15,7 @@
       <div class="row mt-4">
         <div class="col-md-12">
           <form-field
-            [control]="clarificationForm.get('clarification')"
+            [control]="form.get('clarification')"
             label="Aclaraci&oacute;n">
             <input
               type="text"
@@ -27,15 +27,13 @@
       <div class="row mt-4">
         <div class="col-md-4">
           <form-field
-            [control]="clarificationForm.get('type')"
+            [control]="form.get('type')"
             label="Tipo de Aclaraci&oacute;n">
             <input type="number" class="form-control" formControlName="type" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="clarificationForm.get('active')"
-            label="Activo">
+          <form-field [control]="form.get('active')" label="Activo">
             <input
               type="number"
               class="form-control"
@@ -43,9 +41,7 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="clarificationForm.get('version')"
-            label="Versi&oacute;n">
+          <form-field [control]="form.get('version')" label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
@@ -60,8 +56,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
-          [disabled]="!clarificationForm.valid"
+          [disabled]="!form.valid"
+          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

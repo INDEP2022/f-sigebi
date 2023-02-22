@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
-import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RegistrationOfInterestModalComponent } from './registration-of-interest-modal/registration-of-interest-modal.component';
+
 @Component({
   selector: 'app-registration-of-interest',
   templateUrl: './registration-of-interest.component.html',
@@ -17,12 +14,6 @@ export class RegistrationOfInterestComponent
   extends BasePage
   implements OnInit
 {
-  tiies: ITiieV1;
-  cats: ITiieV1[] = [];
-  tiiesList: any[];
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-
   settings1 = {
     ...TABLE_SETTINGS,
     actions: {
@@ -32,75 +23,47 @@ export class RegistrationOfInterestComponent
       position: 'right',
     },
     columns: {
-      id: {
-        title: 'Id',
-        type: 'number',
-        sort: false,
-      },
-      tiieDays: {
-        title: 'Tiie Days',
-        type: 'number',
-        sort: false,
-      },
-      tiieAverage: {
-        title: 'Tiie Average',
-        type: 'number',
-        sort: false,
-      },
-      tiieMonth: {
-        title: 'Tiie Month',
-        type: 'number',
-        sort: false,
-      },
-      tiieYear: {
-        title: 'Tiie Year',
-        type: 'number',
-        sort: false,
-      },
-      registryDate: {
-        title: 'Registry Date',
+      tipo: {
+        title: 'Tipo',
         type: 'string',
         sort: false,
       },
-      user: {
-        title: 'User',
+      tille: {
+        title: 'TILLE',
         type: 'string',
+        sort: false,
+      },
+      mes: {
+        title: 'Mes',
+        type: 'string',
+        sort: false,
+      },
+      anio: {
+        title: 'Año TILLE',
+        type: 'string',
+        sort: false,
+      },
+      usuario: {
+        title: 'Usuario',
+        type: 'string',
+        sort: false,
+      },
+      fechaRegristro: {
+        title: 'Fecha Registro',
+        type: Date,
         sort: false,
       },
     },
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data = this.parameterTiieService.getTiie();
+  data = EXAMPLE_DATA;
   form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService,
-    private parameterTiieService: ParameterTiieService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
   }
-  ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getTiie());
-    this.settings1.actions.delete = true;
-  }
-
-  getTiie() {
-    this.loading = true;
-    this.parameterTiieService.getAll(this.params.getValue()).subscribe({
-      next: data => {
-        this.tiiesList = data.data;
-        console.log(this.tiiesList);
-        // this.cats = data;
-        this.totalItems = data.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
+  ngOnInit(): void {}
 
   openForm(provider?: any) {
     this.openModal({ provider });
@@ -116,26 +79,71 @@ export class RegistrationOfInterestComponent
       }
     );
   }
-
-  showDeleteAlert(tiie: ITiieV1) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.parameterTiieService.remove(tiie.id).subscribe({
-          next: data => {
-            this.loading = false;
-            this.onLoadToast('success', 'Registro eliminado', '');
-            this.getTiie();
-          },
-          error: error => {
-            this.onLoadToast('error', 'No se puede eliminar registro', '');
-            this.loading = false;
-          },
-        });
-      }
-    });
-  }
 }
+
+const EXAMPLE_DATA = [
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+  {
+    tipo: 'ejemplo',
+    tille: 'ejemplo',
+    mes: '11',
+    anio: '2022',
+    usuario: 'ejemplo',
+    fechaRegristro: new Date(),
+  },
+];

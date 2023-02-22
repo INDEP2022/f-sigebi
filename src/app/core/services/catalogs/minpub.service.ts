@@ -7,7 +7,6 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IMinpub } from '../../models/catalogs/minpub.model';
-import { Minpub } from '../../models/parameterization/parametrization.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -27,7 +26,7 @@ export class MinPubService implements ICrudMethods<IMinpub> {
     return this.minPubRepository.getById(this.route, id);
   }
 
-  create(model: IMinpub | Minpub): Observable<IMinpub> {
+  create(model: IMinpub): Observable<IMinpub> {
     return this.minPubRepository.create(this.route, model);
   }
 

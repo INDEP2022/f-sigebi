@@ -1,16 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import {
-  ICategorizationAutomNumerary,
-  INumeraryParameterization,
-} from 'src/app/core/models/catalogs/numerary-categories-model';
-import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ModalNumeraryParameterizationComponent } from '../modal-numerary-parameterization/modal-numerary-parameterization.component';
-import { NUMERARY_PARAMETERIZATION_COLUMNS } from './numerary-parameterization-columns';
 
 @Component({
   selector: 'app-numerary-parameterization',
@@ -21,14 +14,11 @@ export class NumeraryParameterizationComponent
   extends BasePage
   implements OnInit
 {
-  numeraryParameterization: INumeraryParameterization[] = [];
+  columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(
-    private modalService: BsModalService,
-    private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -38,65 +28,95 @@ export class NumeraryParameterizationComponent
         delete: true,
         position: 'right',
       },
-      columns: NUMERARY_PARAMETERIZATION_COLUMNS,
+      columns: {
+        typeAct: {
+          title: 'Tipo de Acta o Pantalla',
+          sort: false,
+        },
+        initialCategory: {
+          title: 'Categoria Inicial',
+          sort: false,
+        },
+        initialCategoryDescription: {
+          title: 'Descripción',
+          sort: false,
+        },
+        finalCategory: {
+          title: 'Categoria Final',
+          sort: false,
+        },
+        finalCategoryDescription: {
+          title: 'Descripción',
+          sort: false,
+        },
+      },
     };
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getValuesAll());
+    this.getPagination();
   }
-  getValuesAll() {
+
+  openModal(context?: Partial<ModalNumeraryParameterizationComponent>) {
+    const modalRef = this.modalService.show(
+      ModalNumeraryParameterizationComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.getData();
+        this.onLoadToast('success', 'Guardado Correctamente', '');
+      }
+    });
+  }
+
+  openForm(allotment?: any) {
+    this.openModal({ allotment });
+  }
+
+  getData() {
     this.loading = true;
-    this.numeraryParameterizationAutomService
-      .getAll(this.params.getValue())
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.numeraryParameterization = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
   }
-  openForm(allotment?: ICategorizationAutomNumerary) {
-    console.log(allotment);
-    let config: ModalOptions = {
-      initialState: {
-        allotment,
-        callback: (next: boolean) => {
-          if (next) this.getValuesAll();
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ModalNumeraryParameterizationComponent, config);
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
-  showDeleteAlert(event: ICategorizationAutomNumerary) {
+
+  data = [
+    {
+      typeAct: 'Acta No 1',
+      initialCategory: 'Categoria Inicial 1',
+      initialCategoryDescription: 'Descripción de la categoria Inicial',
+      finalCategory: 'Categoria Final 1',
+      finalCategoryDescription: 'Descripción de la categoria Final',
+    },
+    {
+      typeAct: 'Acta No 2',
+      initialCategory: 'Categoria Inicial 2',
+      initialCategoryDescription: 'Descripción de la categoria Inicial',
+      finalCategory: 'Categoria Final 2',
+      finalCategoryDescription: 'Descripción de la categoria Final',
+    },
+  ];
+
+  delete(event: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        if (question.isConfirmed) {
-          this.delete(event);
-          Swal.fire('Borrado', '', 'success');
-        }
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Eliminado correctamente', '');
       }
     });
-  }
-  delete(event: ICategorizationAutomNumerary) {
-    this.numeraryParameterizationAutomService
-      .remove3(JSON.stringify(event))
-      .subscribe({
-        next: () => this.getValuesAll(),
-      });
   }
 }

@@ -9,15 +9,3 @@ export interface IMenuItem {
   parentId?: number;
   isLayout?: boolean;
 }
-
-/*export interface ISubItems {
-  id?: number;
-  label?: string;
-  icon?: string;
-  link?: string;
-  subItems?: IMenuItem[];
-  isTitle?: boolean;
-  badge?: any;
-  parentId?: number;
-  isLayout?: boolean;
-}*/

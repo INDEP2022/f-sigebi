@@ -9,11 +9,7 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
-import { SearchBarFilter } from '../../../common/repository/interfaces/search-bar-filters';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Component({
   selector: 'search-bar',
@@ -34,10 +30,8 @@ import { SearchBarFilter } from '../../../common/repository/interfaces/search-ba
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() params: BehaviorSubject<ListParams>;
-  @Input() filterParams: BehaviorSubject<FilterParams>;
   @Input() placeholder?: string = 'Buscar...';
   @Input() label?: string = 'Buscar:';
-  @Input() filterField?: SearchBarFilter | null = null;
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 
@@ -47,7 +41,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.search.valueChanges
       .pipe(
         distinctUntilChanged(),
-        debounceTime(1000),
+        debounceTime(400),
         takeUntil(this.ngUnsubscribe),
         switchMap((term: string) => {
           this.emitEvent(term);
@@ -58,23 +52,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   emitEvent(text: string) {
-    if (this.filterField === null) {
-      const params = this.params.getValue();
-      params.page = 1;
-      this.params.next({ ...params, text });
-    } else {
-      const filterParams = this.filterParams.getValue();
-      filterParams.removeAllFilters();
-      filterParams.page = 1;
-      if (text != '') {
-        filterParams.addFilter(
-          this.filterField.field,
-          text,
-          this.filterField.operator
-        );
-      }
-      this.filterParams.next(filterParams);
-    }
+    const params = this.params.getValue();
+    params.page = 1;
+    this.params.next({ ...params, text });
   }
 
   ngOnDestroy(): void {

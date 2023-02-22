@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { TypesOfClaimsService } from '../types-of-claims.service';
 
 @Component({
   selector: 'app-modal-type-of-claims',
@@ -13,14 +12,9 @@ export class ModalTypeOfClaimsComponent implements OnInit {
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
-  lengthData = 0;
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef,
-    private claimService: TypesOfClaimsService
-  ) {}
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -36,40 +30,6 @@ export class ModalTypeOfClaimsComponent implements OnInit {
       console.log(this.allotment);
       this.form.patchValue(this.allotment);
     }
-  }
-
-  PutClaim() {
-    const body = {
-      id: this.allotment.id,
-      description: this.form.get('description').value,
-      flag: this.form.get('keyClaims').value,
-    };
-
-    this.claimService.PutClaim(this.allotment.id, body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.refresh.emit(true);
-          this.close();
-        }
-      },
-    });
-  }
-
-  postClaim() {
-    const body = {
-      id: String(this.lengthData),
-      description: this.form.get('description').value,
-      flag: this.form.get('keyClaims').value,
-    };
-
-    this.claimService.postClaims(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.refresh.emit(true);
-          this.close();
-        }
-      },
-    });
   }
 
   close() {

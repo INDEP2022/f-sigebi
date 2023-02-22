@@ -1,13 +1,13 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ status }} CIUDAD</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="cityForm">
+    <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
           <form-field
-            [control]="cityForm.get('noRegister')"
+            [control]="form.get('noRegister')"
             label="N&uacute;mero de Registro">
             <input
               type="number"
@@ -16,7 +16,7 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="cityForm.get('idCity')" label="Id de Ciudad">
+          <form-field [control]="form.get('idCity')" label="Id de Ciudad">
             <input
               type="number"
               class="form-control"
@@ -27,7 +27,7 @@
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field
-            [control]="cityForm.get('nameCity')"
+            [control]="form.get('nameCity')"
             label="Nombre de la Ciudad">
             <input
               type="text"
@@ -36,15 +36,18 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="cityForm.get('state')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="state" />
+          <form-field [control]="form.get('cveState')" label="Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveState" />
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-4">
           <form-field
-            [control]="cityForm.get('noDelegation')"
+            [control]="form.get('noDelegation')"
             label="Delegací&oacute;n">
             <input
               type="number"
@@ -54,7 +57,7 @@
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="cityForm.get('noSubDelegation')"
+            [control]="form.get('noSubDelegation')"
             label="Subdelegaci&oacute;n">
             <input
               type="number"
@@ -63,7 +66,7 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="cityForm.get('legendOffice')" label="Oficina">
+          <form-field [control]="form.get('legendOffice')" label="Oficina">
             <input
               type="text"
               class="form-control"
@@ -78,7 +81,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!cityForm.valid"
+          [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

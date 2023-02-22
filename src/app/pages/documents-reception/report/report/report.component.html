@@ -1,4 +1,4 @@
-<app-card [header]="true" [footer]="true">
+<app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Reporte de recepci&oacute;n documental</h5>
   </div>
@@ -6,50 +6,54 @@
   <div body>
     <form [formGroup]="reportForm" class="form-material">
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-4">
           <app-delegation-shared [form]="reportForm"></app-delegation-shared>
         </div>
 
-        <div class="col-md-5">
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('PF_MES')" label="Desde: ">
-              <input
-                formControlName="PF_MES"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
+        <div class="col-md-4">
+          <div class="row pt-4">
+            <div class="d-flex">
+              <form-radio *ngFor="let range of ranges" [label]="range.name">
+                <input
+                  type="radio"
+                  formControlName="range"
+                  [value]="range.code"
+                  (change)="rangeChange()" />
+              </form-radio>
+            </div>
           </div>
-
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('PF_ANIO')" label="Hasta:">
+          <div class="row">
+            <form-field
+              [class]="range.value == 'daily' ? '' : 'col-md-6'"
+              [control]="reportForm.get('from')"
+              [label]="range.value == 'yearly' ? 'Del año' : 'Del mes'">
               <input
-                formControlName="PF_ANIO"
                 class="form-control"
-                bsDatepicker />
+                formControlName="from"
+                bsDatepicker
+                [bsConfig]="datePickerConfig" />
+            </form-field>
+
+            <form-field
+              *ngIf="range.value != 'daily'"
+              class="col-md-6"
+              [control]="reportForm.get('to')"
+              [label]="range.value == 'yearly' ? 'Al año' : 'Al mes'">
+              <input
+                class="form-control"
+                formControlName="to"
+                bsDatepicker
+                [bsConfig]="datePickerConfig" />
             </form-field>
           </div>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary active">Imprimir</button>
+        </div>
+      </div>
     </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          text="Imprimir"
-          [disabled]="reportForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
-      </div>
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active"
-          (click)="cleanForm()">
-          Limpiar
-        </button>
-      </div>
-    </div>
   </div>
 </app-card>

@@ -1,15 +1,6 @@
 export const BATTERY_COLUMNS = {
-  storeCode: {
-    title: 'Cve. Guardavalor',
-    sort: false,
-    filter: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
-    },
-    width: '25px',
-  },
-  idBattery: {
-    title: 'No. Bateria',
+  no: {
+    title: 'No.',
     sort: false,
     filter: false,
   },
@@ -20,11 +11,6 @@ export const BATTERY_COLUMNS = {
   },
   status: {
     title: 'Estado',
-    sort: false,
-    filter: false,
-  },
-  registerNumber: {
-    title: 'No. Registrado',
     sort: false,
     filter: false,
   },

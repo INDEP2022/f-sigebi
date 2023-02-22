@@ -13,8 +13,6 @@ export class DocumentsForDictumService
   implements ICrudMethods<IDocumentsForDictum>
 {
   private readonly route: string = ENDPOINT_LINKS.DocumentsForDictum;
-  private readonly route1: string = ENDPOINT_LINKS.DocumentsForDictumType;
-
   constructor(
     private documentsForDictumRepository: Repository<IDocumentsForDictum>
   ) {}
@@ -30,14 +28,6 @@ export class DocumentsForDictumService
     return this.documentsForDictumRepository.getById(this.route, id);
   }
 
-  getById3(
-    id: string | number
-  ): Observable<IListResponse<IDocumentsForDictum>> {
-    return this.documentsForDictumRepository.getById3(
-      `${this.route1}/typeDictum`,
-      id
-    );
-  }
   create(model: IDocumentsForDictum): Observable<IDocumentsForDictum> {
     return this.documentsForDictumRepository.create(this.route, model);
   }

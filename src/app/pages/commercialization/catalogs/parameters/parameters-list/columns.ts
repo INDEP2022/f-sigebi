@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  idParam: {
+  parameter: {
     title: 'Parámetro',
     sort: false,
   },
@@ -7,15 +7,15 @@ export const COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  idValue: {
+  value: {
     title: 'Valor',
     sort: false,
   },
-  idDirection: {
+  direction: {
     title: 'Dirección',
     sort: false,
   },
-  eventTypeId: {
+  eventType: {
     title: 'Tipo de Evento',
     sort: false,
   },

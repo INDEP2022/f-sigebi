@@ -4,12 +4,12 @@ export const EVENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  processKey: {
+  event: {
     title: 'Cve. Proceso',
     type: 'number',
     sort: false,
   },
-  observations: {
+  description: {
     title: 'Observaciones',
     type: 'string',
     sort: false,

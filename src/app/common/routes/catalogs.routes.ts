@@ -1,6 +1,6 @@
 export const CATALOGS_ROUTES = [
   {
-    label: 'Catálogos',
+    label: 'Catalogos',
     icon: 'bx-folder',
     subItems: [
       {
@@ -56,7 +56,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/clarifications',
       },
       {
-        label: 'Almacenes',
+        label: 'Bodegas',
         link: '/pages/catalogs/warehouses',
       },
       {
@@ -120,7 +120,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/expert',
       },
       {
-        label: 'Mantto. a administrador, depositario e interventor',
+        label: 'Personas',
         link: '/pages/catalogs/person',
       },
       {

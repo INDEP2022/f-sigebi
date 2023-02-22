@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IValidatorsProceedings } from 'src/app/core/models/catalogs/validators-proceedings-model';
-import { ValidatorsProceedingsService } from 'src/app/core/services/catalogs/validators-proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { MaintenanceDocumentValidatorsModalComponent } from '../maintenance-document-validators-model/maintenance-document-validators-model.component';
-import { MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS } from './maintenance-document-validators-columns';
+import { MAINTANANCEDOCUMENTVALIDATORS_COLUMNS } from './maintenance-document-validators-columns';
 
 @Component({
   selector: 'app-maintenance-document-validators',
@@ -19,55 +15,25 @@ export class MaintenanceDocumentValidatorsComponent
   implements OnInit
 {
   maintenanceDocumentForm: FormGroup;
-  validatorsProceedings: IValidatorsProceedings[] = [];
+  data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-  constructor(
-    private fb: FormBuilder,
-    private validatorsProceedingsService: ValidatorsProceedingsService,
-    private modalService: BsModalService
-  ) {
+  constructor(private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
-        position: 'right',
-      },
-      columns: MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS,
+      actions: false,
+      columns: MAINTANANCEDOCUMENTVALIDATORS_COLUMNS,
     };
   }
+
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getMaximumTimeAll());
+    this.prepareForm();
   }
-  getMaximumTimeAll() {
-    this.loading = true;
-    this.validatorsProceedingsService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response.data);
-        this.validatorsProceedings = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
+  private prepareForm() {
+    this.maintenanceDocumentForm = this.fb.group({
+      typeRecord: [null, [Validators.required]],
     });
-  }
-  openForm(validatorsProceedings?: IValidatorsProceedings) {
-    let config: ModalOptions = {
-      initialState: {
-        validatorsProceedings,
-        callback: (next: boolean) => {
-          if (next) this.getMaximumTimeAll();
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(MaintenanceDocumentValidatorsModalComponent, config);
   }
 }

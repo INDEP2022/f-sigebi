@@ -7,7 +7,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DepartmentFormComponent } from '../department-form/department-form.component';
 import { DEPARTMENT_COLUMNS } from './department-columns';
 
@@ -33,10 +32,10 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDepartments());
+      .subscribe(() => this.getDeductives());
   }
 
-  getDepartments() {
+  getDeductives() {
     this.loading = true;
     this.departmentService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -53,7 +52,7 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       department,
       callback: (next: boolean) => {
-        if (next) this.getDepartments();
+        if (next) this.getDeductives();
       },
     };
     this.modalService.show(DepartmentFormComponent, modalConfig);
@@ -67,14 +66,13 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(department.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.departmentService.remove(id).subscribe({
-      next: () => this.getDepartments(),
+      next: () => this.getDeductives(),
     });
   }
 }

@@ -97,9 +97,9 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       this.subTypes = new DefaultSelect([goodSubtype], 1);
       this.ssubTypes = new DefaultSelect([goodSsubtype], 1);
     } else {
-      this.getTypes({ inicio: 1, text: '' });
-      //this.getSubtypes({ inicio: 1, text: '' });
-      //this.getSsubtypes({ inicio: 1, text: '' });
+      this.getTypes({ page: 1, text: '' });
+      this.getSubtypes({ page: 1, text: '' });
+      this.getSsubtypes({ page: 1, text: '' });
     }
   }
 
@@ -109,19 +109,13 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
     });
   }
   getSubtypes(params: ListParams) {
-    console.log(this.goodSssubtypeForm.controls.numType);
-    this.goodSubtypeService
-      .getAll({
-        ...params,
-        type: this.goodSssubtypeForm.controls.numType.value as any,
-      })
-      .subscribe(data => {
-        this.subTypes = new DefaultSelect(data.data, data.count);
-      });
+    this.goodSubtypeService.getAll(params).subscribe(data => {
+      this.subTypes = new DefaultSelect(data.data, data.count);
+    });
   }
   getSsubtypes(params: ListParams) {
     this.goodSsubtypeService.getAll(params).subscribe(data => {
-      this.ssubTypes = new DefaultSelect(data.data, data.count);
+      this.subTypes = new DefaultSelect(data.data, data.count);
     });
   }
   close() {
@@ -142,15 +136,8 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    const ids = {
-      id: this.goodSssubtype.id,
-      numSsubType: (this.goodSssubtype.numSsubType as IGoodSsubType).id,
-      numSubType: (this.goodSssubtype.numSubType as IGoodSubType).id,
-      numType: (this.goodSssubtype.numType as IGoodType).id,
-    };
-
     this.goodSssubtypeService
-      .updateByIds(ids, this.goodSssubtypeForm.value)
+      .update(this.goodSssubtype.id, this.goodSssubtypeForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

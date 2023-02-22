@@ -5,66 +5,46 @@
   <div body>
     <form class="form-material" [formGroup]="providerForm">
       <div class="row">
-        <div class="form-group">
-          <div class="col-sm-4">
-            <form-field
-              [control]="providerForm.get('user')"
-              label="Selecciona usuario&#58;">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="user"
-                placeholder="Ingrese el usuario" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <button
-              (click)="searchUser()"
-              class="btn btn-primary btn-sm active">
-              Buscar usuario
-            </button>
-          </div>
-        </div>
-
         <div class="col-md-4">
-          <form-field
-            [control]="providerForm.get('tiieDays')"
-            label="Días TIIE">
+          <form-field [control]="providerForm.get('tille')" label="TILLE">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="tiieDays" />
+              formControlName="tille"
+              placeholder="TILLE" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="providerForm.get('tiieAverage')"
-            label="Promedio TIIE">
+            [control]="providerForm.get('mesTille')"
+            label="Mes TILLE">
             <input
               type="number"
               class="form-control"
-              formControlName="tiieAverage" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="providerForm.get('tiieMonth')"
-            label="Mes TIIE">
-            <input
-              type="number"
-              class="form-control"
-              max="99"
-              formControlName="tiieMonth" />
+              formControlName="mesTille"
+              placeholder="Mes TILLE" />
           </form-field>
         </div>
       </div>
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="providerForm.get('tiieYear')" label="Año TIIE">
+          <form-field [control]="providerForm.get('mes')" label="Mes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="mes"
+              placeholder="Mes" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('anioTille')"
+            label="Año TILLE">
             <input
               type="number"
               class="form-control"
-              formControlName="tiieYear" />
+              formControlName="anioTille"
+              placeholder="Año TILLE" />
           </form-field>
         </div>
       </div>

@@ -229,9 +229,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/request-numbering-change',
       },
       {
-        label: 'Cambio de indicadores de destino de bienes',
-        link: '/pages/administrative-processes/change-destination-goods-indicators',
+        label: 'Cambio de Estatus',
+        link: '/pages/administrative-processes/change-of-status',
       },
+
       {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',
@@ -241,11 +242,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/massive-change-status',
       },
       {
-        label: 'Cambio de status',
+        label: 'Cambio de estatus',
         link: '/pages/administrative-processes/change-of-status',
       },
       {
-        label: 'Cambio de status STI',
+        label: 'Cambio de estatus STI',
         link: '/pages/administrative-processes/change-status-sti',
       },
       {
@@ -610,30 +611,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Relación de decomiso',
             link: '/pages/administrative-processes/confiscation-ratio',
-          },
-          {
-            label: 'Registro de Estados de cuenta',
-            link: '/pages/administrative-processes/record-account-statements',
-          },
-          {
-            label: 'Estado de cuenta (Deposito)',
-            link: '/pages/administrative-processes/deposit-account-statement',
-          },
-          {
-            label: 'Tasas para interes',
-            link: '/pages/administrative-processes/rate-catalog',
-          },
-          {
-            label: 'Cambio a numerario',
-            link: '/pages/commercialization/numeraire-exchange',
-          },
-          {
-            label: 'Cambio a numerario masivo',
-            link: '/pages/administrative-processes/massive-numerary-change',
-          },
-          {
-            label: 'Cierre historico de numerario',
-            link: '/pages/administrative-processes/numerary-historical-closing',
           },
         ],
       },

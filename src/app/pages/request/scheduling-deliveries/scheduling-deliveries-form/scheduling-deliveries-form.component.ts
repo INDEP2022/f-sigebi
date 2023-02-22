@@ -4,17 +4,13 @@ import { addDays } from 'date-fns';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { minDate } from 'src/app/common/validations/date.validators';
-import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
-import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   SCHEDULING_DELIVERIES_COLUMNS,
   SCHEDULING_DELIVERIES_SALES_COLUMNS,
   SEARCH_SALES_TABLE,
 } from './scheduling-deliveries-columns';
-import { TypeEvent } from './type-events';
 
 @Component({
   selector: 'app-scheduling-deliveries-form',
@@ -29,8 +25,6 @@ export class SchedulingDeliveriesFormComponent
   schedulingDeliverieForm: FormGroup = new FormGroup({});
   showFileSaleForm: boolean = false;
   filterSales: boolean = false;
-  TypeEventOptions = new DefaultSelect(TypeEvent);
-  warehouse = new DefaultSelect<IWarehouse>();
   showSearchForm: boolean = true;
   searchForm: FormGroup = new FormGroup({});
   goodsToProgram: any[] = [];
@@ -49,10 +43,7 @@ export class SchedulingDeliveriesFormComponent
       deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
     },
   };
-  constructor(
-    private fb: FormBuilder,
-    private warehouseService: WarehouseService
-  ) {
+  constructor(private fb: FormBuilder) {
     super();
 
     this.settings = {
@@ -93,7 +84,6 @@ export class SchedulingDeliveriesFormComponent
   ngOnInit(): void {
     this.prepareForm();
     this.prepareSearchForm();
-    this.getWarehouseSelect(new ListParams());
   }
 
   prepareForm() {
@@ -125,20 +115,6 @@ export class SchedulingDeliveriesFormComponent
       gestionNumber: [null],
       numberIventory: [null],
     });
-  }
-
-  getWarehouseSelect(params: ListParams) {
-    if (params.text) {
-      this.warehouseService.search(params).subscribe(data => {
-        console.log('almacenes', data);
-        this.warehouse = new DefaultSelect(data.data, data.count);
-      });
-    } else {
-      this.warehouseService.getAll(params).subscribe(data => {
-        console.log('almacenes', data);
-        this.warehouse = new DefaultSelect(data.data, data.count);
-      });
-    }
   }
 
   selectEvent(event: Event) {

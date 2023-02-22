@@ -7,7 +7,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { OpinionFormComponent } from '../opinion-form/opinion-form.component';
 import { OPINION_COLUMNS } from './opinion-columns';
 
@@ -67,7 +66,6 @@ export class OpinionsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(opinion.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }

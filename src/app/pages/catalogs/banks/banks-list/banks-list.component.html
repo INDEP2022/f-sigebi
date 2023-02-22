@@ -23,9 +23,9 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="bank"
+            [source]="lawyers"
             (edit)="edit($event.data)"
-            (delete)="showDeleteAlert($event.data)">
+            (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
       </div>

@@ -1,7 +1,5 @@
 export interface IGoodType {
   id?: number;
-  total?: number;
-  total2?: number;
   nameGoodType: string;
   maxAsseguranceTime: number;
   maxFractionTime: number;

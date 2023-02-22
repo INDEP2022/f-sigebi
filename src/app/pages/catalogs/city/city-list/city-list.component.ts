@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ICity } from '../../../../core/models/catalogs/city.model';
 import { CityService } from '../../../../core/services/catalogs/city.service';
 import { CityDetailComponent } from '../city-detail/city-detail.component';
@@ -17,7 +15,7 @@ import { CITY_COLUMNS } from './city-columns';
   styles: [],
 })
 export class CityListComponent extends BasePage implements OnInit {
-  city: ICity[] = [];
+  cities: ICity[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
@@ -37,43 +35,44 @@ export class CityListComponent extends BasePage implements OnInit {
 
   getCities() {
     this.loading = true;
-    this.cityService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.city = response.data;
+    this.cityService.getAll(this.params.getValue()).subscribe(
+      response => {
+        this.cities = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error => (this.loading = false)
+    );
+  }
+
+  add() {
+    this.openModal();
+  }
+
+  openModal(context?: Partial<CityDetailComponent>) {
+    const modalRef = this.modalService.show(CityDetailComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getCities();
     });
   }
 
-  openForm(city?: ICity) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      city,
-      callback: (next: boolean) => {
-        if (next) this.getCities();
-      },
-    };
-    this.modalService.show(CityDetailComponent, modalConfig);
+  edit(city: ICity) {
+    this.openModal({ edit: true, city });
   }
 
-  showDeleteAlert(cities: ICity) {
+  delete(vault: ICity) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(cities.idCity);
-        Swal.fire('Borrado', '', 'success');
+        //Ejecutar el servicio
       }
-    });
-  }
-
-  delete(id: number) {
-    this.cityService.remove(id).subscribe({
-      next: () => this.getCities(),
     });
   }
 }

@@ -1,18 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
 import { EventProcessFormComponent } from '../event-process-form/event-process-form.component';
-//Services
-import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
-//Models
-import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+//Provisional Data
+import { DATA } from './data';
 
 @Component({
   selector: 'app-event-process-list',
@@ -21,16 +19,17 @@ import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 })
 export class EventProcessListComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  comerEvent: IComerEvent[] = [];
+
+  data: LocalDataSource = new LocalDataSource();
+  dataBrands = DATA;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService,
-    private comerEventosService: ComerEventosService
-  ) {
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -45,6 +44,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data.load(this.dataBrands);
     this.prepareForm();
   }
 
@@ -54,35 +54,34 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     });
   }
 
-  getEvents() {
-    let tpeventoId = this.form.controls['goodType'].value;
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getEventsByType(tpeventoId));
+  openModal(context?: Partial<EventProcessFormComponent>) {
+    const modalRef = this.modalService.show(EventProcessFormComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next); //this.getCities();
+    });
   }
 
-  getEventsByType(id: string | number): void {
-    this.loading = true;
-    this.comerEventosService
-      .getEventsByType(id, this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.comerEvent = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
+  add() {
+    this.openModal();
   }
 
-  openForm(comerEvent?: IComerEvent) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      comerEvent,
-      callback: (next: boolean) => {
-        if (next) this.getEvents();
-      },
-    };
-    this.modalService.show(EventProcessFormComponent, modalConfig);
+  openForm(eventProcess: any) {
+    this.openModal({ edit: true, eventProcess });
+  }
+
+  delete(eventProcess: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+      }
+    });
   }
 }

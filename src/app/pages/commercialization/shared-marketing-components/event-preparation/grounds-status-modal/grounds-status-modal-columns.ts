@@ -1,17 +1,17 @@
 export const GROUNDSSTATUSMODAL_COLUMNS = {
-  id: {
+  idmot: {
     title: 'id Mot',
-    width: '2px',
+    width: '5px',
     sort: false,
   },
-  descriptionReason: {
+  reasons: {
     title: 'Motivos',
     width: '15px',
     sort: false,
   },
-  // selected: {
-  //   title: 'Seleccionar',
-  //   width: '5px',
-  //   sort: false,
-  // },
+  selected: {
+    title: 'Seleccionar',
+    width: '5px',
+    sort: false,
+  },
 };

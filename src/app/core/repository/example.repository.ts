@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Repository } from 'src/app/common/repository/repository';
-import { Example } from '../models/catalogs/example';
+import { Example } from '../models/example';
 
 @Injectable({
   providedIn: 'root',

@@ -51,11 +51,9 @@ export class BanksDetailComponent implements OnInit {
       ],
       registerNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
       ],
       ifdsc: [null, [Validators.required, Validators.maxLength(60)]],
       dateType: [null, [Validators.required]],

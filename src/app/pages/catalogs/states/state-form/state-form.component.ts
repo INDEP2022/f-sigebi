@@ -31,30 +31,21 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stateForm = this.fb.group({
-      id: [null, [Validators.required]],
       cveState: [null, [Validators.required]],
-      descCondition: [
+      descState: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      codeCondition: [null, [Validators.required]],
-      registrationNumber: [null],
-      nmtable: [null],
-      abbreviation: [null],
-      risk: [null],
+      codeState: [null, [Validators.required]],
       version: [null, [Validators.required]],
-      zoneHourlyStd: [
+      timeZonaStd: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      zoneHourlyVer: [
+      timeZonaView: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      userCreation: [null],
-      creationDate: [null],
-      userModification: [null],
-      modificationDate: [null],
     });
     if (this.state != null) {
       this.edit = true;
@@ -79,10 +70,12 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.stateService.update(this.state.id, this.stateForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.stateService
+      .update(this.state.cveState, this.stateForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -29,8 +29,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
-  @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
-  @Output() emitDelegation = new EventEmitter<IDelegation>();
+
   params = new BehaviorSubject<ListParams>(new ListParams());
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
@@ -91,7 +90,6 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   onDelegationsChange(type: any) {
     this.resetFields([this.subdelegation]);
     this.subdelegations = new DefaultSelect();
-    this.emitDelegation.emit(type);
   }
 
   onSubDelegationsChange(subdelegation: any) {
@@ -99,7 +97,6 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
     this.delegations = new DefaultSelect();
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
-    this.emitSubdelegation.emit(subdelegation);
   }
 
   resetFields(fields: AbstractControl[]) {

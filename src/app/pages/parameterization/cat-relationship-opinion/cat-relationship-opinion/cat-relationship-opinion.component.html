@@ -4,98 +4,50 @@
       <h5 class="title">
         Cat&aacute;logo de relaci&oacute;n y de asunto dictamen
       </h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="affairForm">
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="affair"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
-          <form-field label="ID" [control]="affairForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
         <div class="col-md-4">
-          <form-field
-            label="Descripción"
-            [control]="affairForm.get('description')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
+          <h5 class="font-size-14 d-inline">Seleccione el Asunto</h5>
+          <ngx-select
+            [form]="form"
+            [data]="affairItems"
+            value="id"
+            bindLabel="id"
+            (fetchItems)="getAffair($event)"
+            (change)="selectAffair($event)"
+            control="id">
+          </ngx-select>
         </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!affairForm.valid"
-            (click)="getAffairById()">
-            Buscar
-          </button>
+        <div class="col-md-2" *ngIf="selectedAffair != null">
+          <h5 class="font-size-14 d-inline">Tipo de volante</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedAffair.type }}</p>
         </div>
       </div>
-    </form>
-    <div class="row">
-      <div class="ch-content">
-        <h5 class="title">Tipo de asuntos</h5>
-        <div class="row justify-content-end mr-1">
-          <div class="col-12">
-            <app-columns-select
-              [(settings)]="settings"
-              class="row justify-content-end">
-            </app-columns-select>
-          </div>
+      <div class="row pt-5" *ngIf="selectedAffair != null">
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data2"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
         </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data">
-            </ng2-smart-table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="ch-content">
-        <h5 class="title">Dictamen</h5>
-        <div class="row justify-content-end mr-1">
-          <div class="col-12">
-            <app-columns-select
-              [(settings)]="settings2"
-              class="row justify-content-end">
-            </app-columns-select>
-          </div>
-        </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings2"
-              [source]="rAsuntDicList"
-              (edit)="openForm($event.data)">
-            </ng2-smart-table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-5 d-flex justify-content-center">
-      <div class="col-md-3">
-        <button
-          class="btn btn-sm btn-secondary btn-block active"
-          (click)="openDictum()">
-          Catálogo de dictamen
-        </button>
-      </div>
-      <div class="col-md-3">
-        <button class="btn btn-sm btn-secondary btn-block active">
-          impresión
-        </button>
-      </div>
-    </div>
+    </form> -->
   </div>
 </app-card>

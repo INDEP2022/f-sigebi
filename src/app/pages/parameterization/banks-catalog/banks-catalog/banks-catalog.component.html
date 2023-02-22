@@ -1,41 +1,22 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">CAT&Aacute;LOGO DE BANCOS</h5>
-    <div class="buttons">
-      <button class="btn btn-primary active btn-sm ml-3" (click)="openModal()">
-        CUENTAS BANCOS
-      </button>
-    </div>
   </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <app-banks-shared
-            [form]="form"
-            [bankField]="'cveBank'"
-            (nameBank)="
-              form.get('nameBank').patchValue($event)
-            "></app-banks-shared>
-        </div>
-        <div class="col-md-9 col-sm-12 col-xs-12 pt-3">
-          <form-field [control]="form.get('nameBank')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameBank" />
-          </form-field>
+        <div class="d-flex justify-content-center">
+          <div class="col-md-6 col-sm-12 col-xs-12">
+            <app-banks-shared [form]="form"></app-banks-shared>
+          </div>
         </div>
       </div>
       <hr />
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('accountNumber')" label="Cuenta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="accountNumber" />
+          <form-field [control]="form.get('account')" label="Cuenta">
+            <input type="text" class="form-control" formControlName="account" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -51,11 +32,11 @@
       </div>
       <div class="row mt-2">
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('cveCurrency')" label="Moneda">
+          <form-field [control]="form.get('currency')" label="Moneda">
             <input
               type="text"
               class="form-control"
-              formControlName="cveCurrency" />
+              formControlName="currency" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -64,9 +45,9 @@
             label="Tipo de cuenta">
             <select class="form-control" formControlName="accountType">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
-              <option [value]="'ACEGURADA'">ACEGURADA</option>
-              <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
+              <option [value]="1">CONCENTRADORA</option>
+              <option [value]="2">ACEGURADA</option>
+              <option [value]="3">DEVOLUCIONES</option>
             </select>
           </form-field>
         </div>
@@ -77,30 +58,22 @@
         </div>
       </div>
       <hr />
-      <div class="row mb-3">
-        <strong
-          >Si hay traspasos entre cuentas ind&iacute;quelo
-          aqu&iacute;&#58;</strong
-        >
+      <div class="row pl-4 mb-3">
+        Si hay traspasos entre cuentas ind&iacute;quelo aqu&iacute;&#58;
       </div>
       <div class="row mt-2">
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field
-            [control]="form.get('accountNumberTransfer')"
+            [control]="form.get('accountTransferred')"
             label="Cuenta a traspasar">
             <input
               type="text"
               class="form-control"
-              formControlName="accountNumberTransfer" />
+              formControlName="accountTransferred" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('square_I')" label="Banco">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="square_I" />
-          </form-field>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <app-banks-shared [form]="form"></app-banks-shared>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="form.get('square_I')" label="Plaza">
@@ -114,10 +87,7 @@
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('branch_I')" label="Sucursal">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="branch_I" />
+            <input type="text" class="form-control" formControlName="branch" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -125,14 +95,14 @@
             <input
               type="text"
               class="form-control"
-              formControlName="currency_I" />
+              formControlName="currency" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('accountType_I')"
             label="Tipo de cuenta">
-            <select class="form-control" formControlName="accountType_I">
+            <select class="form-control" formControlName="accountType">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="1">CONCENTRADORA</option>
               <option [value]="2">ACEGURADA</option>

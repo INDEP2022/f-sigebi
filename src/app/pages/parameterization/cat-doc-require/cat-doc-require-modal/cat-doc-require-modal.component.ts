@@ -37,7 +37,7 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.documentsForDictumForm = this.fb.group({
-      id: [
+      cve: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
@@ -74,7 +74,7 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.documentsForDictumService
-      .update(this.documentsForDictum.id, this.documentsForDictumForm.value)
+      .update(this.documentsForDictum.cve, this.documentsForDictumForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

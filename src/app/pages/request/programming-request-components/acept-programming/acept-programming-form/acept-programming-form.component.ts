@@ -1,25 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Iprogramming } from 'src/app/core/models/good-programming/programming';
-import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
-import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
-import { StationService } from 'src/app/core/services/catalogs/station.service';
-import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
-import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
-import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
-import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
 import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
 import { ShowProgrammingComponent } from '../../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
-import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
 import { ESTATE_COLUMNS } from '../columns/estate-columns';
-import { USER_COLUMNS } from '../columns/users-columns';
+import { IUser, USER_COLUMNS } from '../columns/users-columns';
 
 @Component({
   selector: 'app-acept-programming-form',
@@ -35,139 +25,18 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  idTransferent: any;
-  idStation: any;
-  programming: Iprogramming;
-  usersData: any[] = [];
+
+  usersData: IUser[] = [];
   estateData: any[] = [];
-  programmingId: number = 0;
-  constructor(
-    private modalService: BsModalService,
-    private activatedRoute: ActivatedRoute,
-    private programmingService: ProgrammingRequestService,
-    private regionalDelegationService: RegionalDelegationService,
-    private transferentService: TransferenteService,
-    private stationService: StationService,
-    private authorityService: AuthorityService,
-    private typeRelevantService: TypeRelevantService,
-    private warehouseService: WarehouseService
-  ) {
+
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = { ...this.settings, actions: false, columns: USER_COLUMNS };
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
   }
 
-  ngOnInit(): void {
-    this.getProgrammingId();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getUsersProgramming());
-  }
-
-  getProgrammingId() {
-    return this.programmingService
-      .getProgrammingId(this.programmingId)
-      .subscribe(data => {
-        this.programming = data;
-        this.idTransferent = data.tranferId;
-        this.idStation = data.stationId;
-        this.getRegionalDelegation();
-        this.gettransferent();
-        this.getStation();
-        this.getAuthority();
-        this.getTypeRelevant();
-        this.getwarehouse();
-        this.statusProgramming();
-      });
-  }
-
-  getRegionalDelegation() {
-    this.regionalDelegationService
-      .getById(this.programming.regionalDelegationNumber)
-      .subscribe(data => {
-        this.programming.regionalDelegationNumber = data.description;
-      });
-  }
-
-  gettransferent() {
-    return this.transferentService
-      .getById(this.programming.tranferId)
-      .subscribe(data => {
-        this.programming.tranferId = data.nameTransferent;
-      });
-  }
-
-  getStation() {
-    return this.stationService
-      .getById(this.programming.stationId)
-      .subscribe(data => {
-        this.programming.stationId = data.stationName;
-      });
-  }
-
-  getAuthority() {
-    const filterColumns = {
-      idAuthority: Number(this.programming.autorityId),
-      idTransferer: Number(this.idTransferent),
-      idStation: Number(this.idStation),
-    };
-    return this.authorityService.postByIds(filterColumns).subscribe(data => {
-      this.programming.autorityId = data['authorityName'];
-    });
-  }
-
-  getTypeRelevant() {
-    return this.typeRelevantService
-      .getById(this.programming.typeRelevantId)
-      .subscribe(data => {
-        this.programming.typeRelevantId = data.description;
-      });
-  }
-
-  getwarehouse() {
-    return this.warehouseService
-      .getById(this.programming.storeId)
-      .subscribe(data => {
-        this.programming.storeId = data.description;
-      });
-  }
-
-  getUsersProgramming() {
-    this.loading = true;
-    const ids = {
-      programmingId: this.programmingId,
-    };
-    this.programmingService
-      .getUsersProgramming(this.params.getValue(), ids)
-      .subscribe({
-        next: response => {
-          this.usersData = [response];
-          this.totalItems = this.usersData.length;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
-  }
-
-  statusProgramming() {
-    //console.log('Status programación', this.programming.status);
-  }
+  ngOnInit(): void {}
 
   confirm() {}
-
-  rejectProgramming() {
-    const config = MODAL_CONFIG;
-    config.initialState = {
-      callback: (next: boolean) => {
-        if (next) {
-        }
-      },
-    };
-
-    this.modalService.show(RejectProgrammingFormComponent, config);
-  }
 
   signOffice() {
     const config = MODAL_CONFIG;

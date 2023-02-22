@@ -5,7 +5,6 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ReportRoutingModule } from './report-routing.module';
 import { ReportComponent } from './report/report.component';
-import { PreviewDocumentsComponent } from "../../../@standalone/preview-documents/preview-documents.component";
 
 @NgModule({
   declarations: [ReportComponent],
@@ -14,7 +13,6 @@ import { PreviewDocumentsComponent } from "../../../@standalone/preview-document
     ReportRoutingModule,
     SharedModule,
     DelegationSharedComponent,
-    PreviewDocumentsComponent
-  ]
+  ],
 })
-export class ReportModule { }
+export class ReportModule {}

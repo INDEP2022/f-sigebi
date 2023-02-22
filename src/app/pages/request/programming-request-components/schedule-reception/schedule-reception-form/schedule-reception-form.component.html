@@ -3,11 +3,6 @@
     <h5 class="title">Programar Recepci&oacute;n</h5>
   </div>
   <div body>
-    <div class="row">
-      <div class="d-flex justify-content-end pt-3">
-        <label class="title">Usuario&#58; {{ nameUser }}</label>
-      </div>
-    </div>
     <form [formGroup]="scheduleForm" class="form-horizontal form-material">
       <div class="form-group">
         <label class="control-label col-sm-2">Tipo de usuario&#58;</label>
@@ -16,16 +11,16 @@
           <form-radio label="T.E" class="radio-inline">
             <input
               type="radio"
-              formControlName="typeUser"
+              formControlName="radio"
               value="T.E"
-              (change)="selectTypeUser($event)" />
+              (change)="typeUser($event)" />
           </form-radio>
           <form-radio label="SAE" class="radio-inline">
             <input
               type="radio"
-              formControlName="typeUser"
-              value="indep"
-              (change)="selectTypeUser($event)" />
+              formControlName="radio"
+              value="SAE"
+              (change)="typeUser($event)" />
           </form-radio>
         </div>
       </div>
@@ -34,11 +29,14 @@
         <label class="control-label col-sm-2">Selecciona usuario&#58;</label>
 
         <div class="col-sm-7">
-          <form-field [control]="scheduleForm.get('creationUser')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="creationUser" />
+          <form-field [control]="scheduleForm.get('userId')">
+            <ngx-select
+              [form]="scheduleForm"
+              control="userId"
+              [data]="users"
+              value="id"
+              bindLabel="id"
+              (fetchItems)="getUserSelect($event)"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-3">
@@ -64,20 +62,15 @@
         </div>
       </div>
     </form>
-
     <div class="d-flex justify-content-center">
-      <div class="m-2">
-        <confirm-button
-          [disabled]="!scheduleForm.valid"
-          [loading]="loading"
-          [text]="'Turnar'"
-          [loadingText]="'Turnando'"
-          [btnSmall]="true"
-          (confirm)="confirm()"></confirm-button>
+      <div class="m-3">
+        <button
+          [routerLink]="['/pages/request/perform-programming/1']"
+          class="btn btn-primary btn-sm active">
+          Turnar
+        </button>
       </div>
-      <div class="m-2">
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
-      </div>
+      <div class="m-3"></div>
     </div>
   </div>
 </app-card>

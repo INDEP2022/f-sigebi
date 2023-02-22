@@ -84,16 +84,6 @@ const routes: Routes = [
         data: { title: 'Solicitud de cambio a numeracion' },
       },
       {
-        path: 'change-destination-goods-indicators',
-        loadChildren: async () =>
-          (
-            await import(
-              './change-destination-goods-indicators/pa-m-change-destination-goods-indicators.module'
-            )
-          ).PaMChangeDestinationGoodsIndicatorsModule,
-        data: { title: 'Cambio de indicadores de destino de bienes' },
-      },
-      {
         path: 'massive-reclassification-goods',
         loadChildren: async () =>
           (
@@ -108,7 +98,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./change-of-status/change-of-status.module'))
             .ChangeOfStatusModule,
-        data: { title: 'Cambio de estatus ', screen: 'CAMMUEESTATUS' },
+        data: { title: 'Cambio de estatus' },
       },
       {
         path: 'massive-change-status',

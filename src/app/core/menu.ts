@@ -7,9 +7,7 @@ import { COMMERCIALIZATION_ROUTES } from '../common/routes/commercialization.rou
 import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
-import { FINAL_DESTINATION_PROCESS_ROUTES } from '../common/routes/final-destination-process.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
-import { JUDICIAL_PHYSICAL_RECEPTION_ROUTES } from '../common/routes/judicial-physical-reception.routes';
 import { MASTER_FILES } from '../common/routes/master-file.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
@@ -24,120 +22,7 @@ import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
-  /*SIAB ROUTES*/
   {
-    label: 'SIAB',
-    icon: 'bx-folder',
-    subItems: [
-      // * CATALOGOS
-      ...CATALOGS_ROUTES,
-      //Administración
-      ...ADMINISTRATIVE_PROCESSES_ROUTES,
-      //Archivo General
-      ...MASTER_FILES,
-      //Documentación complementaria
-      ...DOCUMENTATION_COMPLEMENTARY,
-      //Programar entregas
-      ...SCHEDULING_DELIVERIES,
-      //Proceso Destino final
-      ...FINAL_DESTINATION_PROCESS_ROUTES,
-      //Recepcion documental
-      ...DOCUMENTS_RECEPTION_ROUTES,
-      //Procesos generales
-      ...GENERAL_PROCESSES_ROUTES,
-      //Procesos ejecutivos
-      ...EXECUTIVE_PROCESSES_ROUTES,
-      //Comercialización
-      ...COMMERCIALIZATION_ROUTES,
-      // PROCESOS JURIDICOS
-      ...MENU_OPTIONS_JURIDICAL_PROCESSES,
-      // SEGURIDAD
-      ...MENU_OPTIONS_SECURITY,
-      // Recepcion Fisica Judicial
-      ...JUDICIAL_PHYSICAL_RECEPTION_ROUTES,
-      //Parametrización
-      ...PARAMETERIZATION_ROUTES,
-    ],
-  },
-  /*SIAB-WEB ROUTES*/
-  {
-    label: 'SIAB-WEB',
-    icon: 'bx-folder',
-    subItems: [
-      ...COMMERCIALIZATION_SW_ROUTES,
-      ...SAMI_ROUTES,
-      ...APPRAISALS_ROUTES,
-      ...INDICATORS_ROUTES,
-      ...PARAMETRIZATION_ROUTES,
-      ...CONSULTATION_ROUTES,
-      ...CLAIMS_CONTROL_ROUTES,
-      ...MAINTENANCE_ROUTES,
-    ],
-  },
-  /*SAMI ROUTES*/
-  {
-    label: 'SAMI',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Applicaciones',
-        subItems: [
-          {
-            label: 'Solicitud de transferencia',
-            link: '/pages/request/list/new-transfer-request',
-          },
-          {
-            label: 'Muestreo Bienes',
-            link: '/pages/request/sampling-assets',
-          },
-          {
-            label: 'Genera Consultas',
-            link: '/pages/request/generate-sampling-service-orders/generate-query',
-          },
-          {
-            label: 'Solicitud de Documentación Complementaria',
-            link: '/pages/request/request-comp-doc',
-          },
-        ],
-      },
-      // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
-      { ...MENU_OPTIONS_REQUEST_MANAGE_RETURN },
-      {
-        label: 'Turnado Masivo Solicitudes',
-        link: '/pages/request/request-in-turn',
-      },
-      {
-        label: 'Lista de Solicitudes',
-        link: '/pages/request/list',
-      },
-      {
-        label: 'Gestionar Bienes Similares',
-        subItems: [
-          {
-            label: 'Documentación Complementaria',
-            link: '/pages/request/manage-similar-goods/register-additional-documentation',
-          },
-        ],
-      },
-      {
-        label: 'Solicitud de Información de Destino',
-        subItems: [
-          {
-            label: 'Listado de Solicitudes',
-            link: '/pages/request/destination-information-request/list',
-          },
-        ],
-      },
-    ],
-    /*subItems: [
-      {
-        label: 'Transferencia de Bienes',
-        icon: 'bx-folder',
-        ,
-      },
-    ]*/
-  },
-  /*{
     label: 'Menu',
     isTitle: true,
   },
@@ -145,7 +30,7 @@ export const MENU: IMenuItem[] = [
     label: 'page',
     icon: 'bx-home-circle',
     link: '/pages/home',
-  },*/
+  },
   // {
   //     isLayout: true
   // },
@@ -153,7 +38,7 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
-  /*{
+  {
     label: 'Documentation',
     icon: 'bx-home-circle',
     link: '/pages/documentation',
@@ -162,17 +47,13 @@ export const MENU: IMenuItem[] = [
     label: 'Ejemplo',
     icon: 'bx-calendar',
     link: '/pages/example',
-  },*/
-  /*LISTO*/
+  },
   // * CATALOGOS
-  /*...CATALOGS_ROUTES,
+  ...CATALOGS_ROUTES,
   //Administración
   ...ADMINISTRATIVE_PROCESSES_ROUTES,
-  //Archivo General
-  ...MASTER_FILES,*/
-
-  /**LISTO SAMI*/
-  /*{
+  ...MASTER_FILES,
+  {
     label: 'Transferencia de Bienes',
     icon: 'bx-folder',
     subItems: [
@@ -226,18 +107,16 @@ export const MENU: IMenuItem[] = [
         ],
       },
     ],
-  },*/
+  },
 
-  /*LISTO*/
-  /*
   //Documentación complementaria//
   ...DOCUMENTATION_COMPLEMENTARY,
 
   //Programar entregas//
-  ...SCHEDULING_DELIVERIES,*/
-  /*LISTO*/
+  ...SCHEDULING_DELIVERIES,
+
   //Proceso Destino final
-  /*{
+  {
     label: 'Proceso Destino final',
     icon: 'bx-share-alt',
     subItems: [
@@ -376,9 +255,7 @@ export const MENU: IMenuItem[] = [
         link: '/pages/final-destination-process/check-destination-requirements',
       },
     ],
-  },*/
-  /*LISTO*/
-  /*
+  },
   ...DOCUMENTS_RECEPTION_ROUTES,
   ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
@@ -388,10 +265,9 @@ export const MENU: IMenuItem[] = [
   // PROCESOS JURIDICOS
   ...MENU_OPTIONS_JURIDICAL_PROCESSES,
   // SEGURIDAD
-  ...MENU_OPTIONS_SECURITY,*/
-  /*LISTO*/
+  ...MENU_OPTIONS_SECURITY,
   // Recepcion Fisica Judicial
-  /*{
+  {
     label: 'Recepcion Fisica Judicial',
     icon: 'bx-folder',
     subItems: [
@@ -445,12 +321,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/judicial-physical-reception/maintenance-records',
       },
     ],
-  },*/
-
-  //Bienes Para estudio
+  },
   {
-    label: 'BIENES PARA ESTUDIO',
-    icon: 'bx-folder',
+    label: 'Estudio de bienes',
+    icon: 'bx-share-alt',
     subItems: [
       {
         label: 'Lista de Asignaciones',
@@ -473,12 +347,10 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
-  /*LISTO*/
-  /*//Parametrización
-  ...PARAMETERIZATION_ROUTES,*/
 
-  /*LISTO SIAB WEB*/
-  /*
+  //Parametrización
+  ...PARAMETERIZATION_ROUTES,
+
   {
     label: 'Siab Web',
     icon: 'bx-folder',
@@ -492,5 +364,5 @@ export const MENU: IMenuItem[] = [
       ...CLAIMS_CONTROL_ROUTES,
       ...MAINTENANCE_ROUTES,
     ],
-  },*/
+  },
 ];

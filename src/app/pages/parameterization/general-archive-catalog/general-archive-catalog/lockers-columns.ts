@@ -1,22 +1,6 @@
 export const LOCKERS_COLUMNS = {
-  saveValueKey: {
-    title: 'Cve. Guardavalor',
-    sort: false,
-    filter: false,
-    width: '25px',
-  },
-  numBattery: {
-    title: 'No. Bateria',
-    sort: false,
-    filter: false,
-  },
-  numShelf: {
-    title: 'No. Estante',
-    sort: false,
-    filter: false,
-  },
-  id: {
-    title: 'No. Casillero',
+  no: {
+    title: 'No.',
     sort: false,
     filter: false,
   },
@@ -30,14 +14,4 @@ export const LOCKERS_COLUMNS = {
     sort: false,
     filter: false,
   },
-  numRegister: {
-    title: 'No. Registro',
-    sort: false,
-    filter: false,
-  },
-  // shelf: {
-  //   title: 'Shelf',
-  //   sort: false,
-  //   filter: false
-  // }
 };

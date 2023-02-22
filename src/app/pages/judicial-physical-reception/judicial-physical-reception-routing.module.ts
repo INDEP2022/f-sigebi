@@ -66,13 +66,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'scheduled-maintenance',
-    loadChildren: () =>
-      import('./scheduled-maintenance/scheduled-maintenance.module').then(
-        m => m.ScheduledMaintenanceModule
-      ),
-  },
-  {
     path: 'scheduled-maintenance-1',
     loadChildren: () =>
       import('./scheduled-maintenance-1/scheduled-maintenance.module').then(

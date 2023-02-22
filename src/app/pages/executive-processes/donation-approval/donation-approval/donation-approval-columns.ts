@@ -1,5 +1,5 @@
 export const DONATION_APPROVAL_COLUMNS = {
-  id: {
+  noBien: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
@@ -9,7 +9,7 @@ export const DONATION_APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  ubicationType: {
+  ubiExact: {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
@@ -24,16 +24,15 @@ export const DONATION_APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  extDomProcess: {
+  extraDom: {
     title: 'Ext. Dom',
     type: 'string',
     sort: false,
   },
-  // },
-  // availability: {
-  //   title: 'Disponibilidad',
-  //   type: 'boolean',
-  //   sort: false,
-  //   hide: true,
-  // },
+  availability: {
+    title: 'Disponibilidad',
+    type: 'boolean',
+    sort: false,
+    hide: true,
+  },
 };

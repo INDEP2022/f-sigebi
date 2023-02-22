@@ -1,25 +1,23 @@
 const SHIPPING_DOCUMENTS_COLUMNS = {
-  wheelNumber: {
+  noVolante: {
     title: 'No. Volante',
     sort: false,
   },
-  affair: {
+  asunto: {
     title: 'Asunto',
     sort: false,
-    valuePrepareFunction: (affair: any) => affair?.description,
   },
-  preliminaryInquiry: {
+  aver: {
     title: 'Averiguación Previa',
     sort: false,
   },
-  criminalCase: {
+  causa: {
     title: 'Causa Penal',
     sort: false,
   },
-  departament: {
+  department: {
     title: 'Departamento',
     sort: false,
-    valuePrepareFunction: (departament: any) => departament?.description,
   },
 };
 

@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Regularizacion juridica</h5>
   </div>
@@ -36,17 +36,16 @@
       <div class="row mt-5">
         <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field label="Justificación" [control]="form.get('justifier')">
-            <textarea
+            <input
               type="text"
               class="form-control"
-              formControlName="justifier"></textarea>
+              formControlName="justifier" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
-                [disabled]="form.invalid"
                 type="button"
                 class="btn btn-success btn-sm active"
                 (click)="updateStatus()">
@@ -58,11 +57,8 @@
       </div>
     </form>
     <hr />
-    <div>
-      <app-scanning-foil
-        [good]="good"
-        [numberFoli]=""
-        (folioUniversal)="changeFoli($event)"></app-scanning-foil>
+    <div class="row mt-5">
+      <app-scanning-foil></app-scanning-foil>
     </div>
   </div>
 </app-card>

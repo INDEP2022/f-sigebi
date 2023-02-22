@@ -16,15 +16,12 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <confirm-button
-            text="Imprimir"
-            [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
+          <button
+            class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Imprimir
+          </button>
         </div>
       </div>
-      <br /><br />
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('claveOficio')" label="Clave Oficio">
@@ -58,7 +55,6 @@
       </div>
 
       <div class="row">
-        <br /><br />
         <div class="col">
           <form-field [control]="form.get('texto1')" label="Texto 1">
             <textarea
@@ -99,7 +95,6 @@
           [settings]="settings4"
           [source]="data4"></ng2-smart-table>
       </div>
-      <br /><br />
 
       <div class="row">
         <div class="col">

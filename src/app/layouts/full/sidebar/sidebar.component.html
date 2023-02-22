@@ -62,44 +62,13 @@
                 class="sub-menu mm-collapse"
                 aria-expanded="false">
                 <li *ngFor="let subSubitem of subitem.subItems">
-                  <!--<a
+                  <a
                     [attr.data-parent]="subSubitem.parentId"
                     [routerLink]="subSubitem.link"
                     routerLinkActive="active"
                     class="side-nav-link-ref">
-                    SUB-{{ subSubitem.label }}
-                  </a>-->
-                  <a
-                    [routerLink]="subSubitem.link"
-                    *ngIf="!hasItems(subSubitem)"
-                    class="side-nav-link-ref"
-                    [attr.data-parent]="subSubitem.parentId"
-                    routerLinkActive="active">
                     {{ subSubitem.label }}
                   </a>
-                  <a
-                    *ngIf="hasItems(subSubitem)"
-                    class="side-nav-link-a-ref has-arrow"
-                    href="javascript:void(0);"
-                    [attr.data-parent]="subSubitem.parentId">
-                    {{ subSubitem.label }}
-                  </a>
-                  <!--Level Menu 3-->
-                  <ul
-                    *ngIf="hasItems(subSubitem)"
-                    class="sub-menu mm-collapse"
-                    aria-expanded="false">
-                    <li *ngFor="let subSubSubitem of subSubitem.subItems">
-                      <a
-                        [attr.data-parent]="subSubSubitem.parentId"
-                        [routerLink]="subSubSubitem.link"
-                        routerLinkActive="active"
-                        class="side-nav-link-ref">
-                        {{ subSubSubitem.label }}
-                      </a>
-                    </li>
-                  </ul>
-                  <!--Level Menu 3-->
                 </li>
               </ul>
             </li>

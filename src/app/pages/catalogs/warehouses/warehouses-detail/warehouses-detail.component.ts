@@ -1,14 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
@@ -18,11 +15,12 @@ import { WarehouseService } from '../../../../core/services/catalogs/warehouse.s
   templateUrl: './warehouses-detail.component.html',
   styles: [],
 })
-export class WarehousesDetailComponent extends BasePage implements OnInit {
-  warehouseForm: ModelForm<IWarehouse>;
-  warehouse: IWarehouse;
-  title: string = 'Categoria para almacenes';
+export class WarehousesDetailComponent implements OnInit {
+  loading: boolean = false;
+  status: string = 'Nueva';
   edit: boolean = false;
+  form: FormGroup = new FormGroup({});
+  warehouse: any;
 
   public states = new DefaultSelect();
   public cities = new DefaultSelect();
@@ -30,7 +28,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   public localities = new DefaultSelect();
 
   public get idWarehouse() {
-    return this.warehouseForm.get('idWarehouse');
+    return this.form.get('idWarehouse');
   }
 
   @Output() refresh = new EventEmitter<true>();
@@ -43,16 +41,14 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     private cityService: CityService,
     private municipalityService: MunicipalityService,
     private localityService: LocalityService
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
   prepareForm() {
-    this.warehouseForm = this.fb.group({
+    this.form = this.fb.group({
       idWarehouse: [null],
       description: [
         '',
@@ -91,7 +87,10 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      localityCode: [null, Validators.compose([Validators.pattern('')])],
+      localityCode: [
+        null,
+        Validators.compose([Validators.pattern(''), Validators.required]),
+      ],
       indActive: [
         null,
         Validators.compose([
@@ -114,19 +113,17 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
         ]),
       ],
     });
-    if (this.warehouse != null) {
-      this.edit = true;
+    if (this.edit) {
+      this.status = 'Actualizar';
       console.log(this.warehouse);
-      this.warehouseForm.patchValue(this.warehouse);
-      // console.log(this.warehouse);
-      // const { descCondition, nameCity, description, localityName } =
-      //   this.warehouse;
-      // this.warehouseForm.patchValue(this.warehouse);
-      // this.idWarehouse.disable();
-      // //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
-      // this.states = new DefaultSelect([descCondition], 1);
+      const { descState, nameCity, municipalityName, localityName } =
+        this.warehouse;
+      this.form.patchValue(this.warehouse);
+      this.idWarehouse.disable();
+      //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
+      // this.states = new DefaultSelect([descState], 1);
       // this.cities = new DefaultSelect([nameCity], 1);
-      // this.municipalities = new DefaultSelect([description], 1);
+      // this.municipalities = new DefaultSelect([municipalityName], 1);
       // this.localities = new DefaultSelect([localityName], 1);
     }
   }
@@ -141,28 +138,41 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.warehouseService.create(this.warehouseForm.value).subscribe(
+    this.warehouseService.create(this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
   }
 
-  update() {
-    this.loading = true;
-    this.warehouseService
-      .update(this.warehouse.idWarehouse, this.warehouseForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+  handleSuccess() {
+    this.loading = false;
+    this.refresh.emit(true);
+    this.modalRef.hide();
   }
 
-  handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+  update() {
+    this.loading = true;
+    const dataToUpdate = {
+      cityCode: parseInt(this.warehouse.cityCode),
+      description: this.warehouse.description,
+      idWarehouse: this.warehouse.idWarehouse,
+      indActive: this.warehouse.indActive,
+      localityCode: parseInt(this.warehouse.localityCode),
+      manager: this.warehouse.manager,
+      municipalityCode: parseInt(this.warehouse.municipalityCode),
+      registerNumber: parseInt(this.warehouse.registerNumber),
+      responsibleDelegation: parseInt(this.warehouse.responsibleDelegation),
+      stateCode: parseInt(this.warehouse.stateCode),
+      type: this.warehouse.type,
+      ubication: this.warehouse.ubication,
+    };
+
+    this.warehouseService
+      .update(dataToUpdate.idWarehouse, dataToUpdate)
+      .subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
   }
 
   getStates(params: ListParams) {

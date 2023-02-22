@@ -1,4 +1,4 @@
-<app-card [header]="true" [footer]="true">
+<app-card [header]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">Documentaci&oacute;n recibida en SERA</h5>
@@ -8,37 +8,16 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('delegation')"> 
-                <ngx-select
-                  [searchOnInit]="true"
-                  [form]="form"
-                  (fetchItems)="getDelegations($event)"
-                  [data]="delegations"
-                  value="id"
-                  bindLabel="description"
-                  label="Delegaci&oacute;n"
-                  [control]="'delegation'"
-                  (change)="onDelegationsChange($event)">
-                </ngx-select>
-              </form-field>
+          <app-delegation-shared [form]="form" [showSubdelegation]="false">
+          </app-delegation-shared>
         </div>
         <div class="col-md-3">
-         <form-field [control]="form.get('subdelegation')">
-            <ngx-select
-                  [form]="form"
-                  (fetchItems)="getSubDelegations($event)"
-                  [data]="subdelegations"
-                  value="id"
-                  bindLabel="description"
-                  label="Sub Delegaci&oacute;n"
-                  [control]="'subdelegation'"
-                  (change)="onSubDelegationsChange($event)">
-                </ngx-select>
-          </form-field>
+          <app-delegation-shared [form]="form" [showDelegation]="false">
+          </app-delegation-shared>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-3">
           <form-field
-            [control]="form.get('rangeDate')" 
+            [control]="form.get('rangeDate')"
             label="Fechas de recepci&oacute;n">
             <input
               class="form-control"
@@ -52,22 +31,18 @@
               }" />
           </form-field>
         </div>
-        
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active"
+              [disabled]="!form.valid"
+              (click)="openPrevPdf()">
+              Imprimir
+            </button>
+          </div>
+        </div>
       </div>
     </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button type="submit" class="btn btn-primary active" [disabled]="!form.valid" (click)="confirm()">
-          Imprimir
-        </button>
-      </div>
-      <div class="m-3">
-        <button (click)="cleanForm()" type="button" class="btn btn-danger active">
-          Limpiar
-        </button>
-      </div>
-    </div>
   </div>
 </app-card>

@@ -49,7 +49,7 @@ const routes: Routes = [
     path: 'summary',
     data: {
       screen: 'FGEROFPRESUMENDIAA',
-      title: 'Resumen Diario de Recepción Documental',
+      title: 'Resumen de Recepción Documental',
     },
     loadChildren: async () =>
       (await import('./summary/summary.module')).SummaryModule,
@@ -74,13 +74,13 @@ const routes: Routes = [
       (await import('./goods-bulk-load/goods-bulk-load.module'))
         .GoodsBulkLoadModule,
   },
-  // { #### NO SE MIGRA ####
-  //   path: 'sat-sae-goods-load',
-  //   data: { screen: 'FMASINSBIENES_SATSAE', title: 'Carga de Bienes SAT SAE' },
-  //   loadChildren: async () =>
-  //     (await import('./sat-sae-goods-load/sat-sae-goods-load.module'))
-  //       .SatSaeGoodsLoadModule,
-  // },
+  {
+    path: 'sat-sae-goods-load',
+    data: { screen: 'FMASINSBIENES_SATSAE', title: 'Carga de Bienes SAT SAE' },
+    loadChildren: async () =>
+      (await import('./sat-sae-goods-load/sat-sae-goods-load.module'))
+        .SatSaeGoodsLoadModule,
+  },
   {
     path: 'sat-subjects-register',
     data: {
@@ -101,8 +101,7 @@ const routes: Routes = [
       (await import('./subjects-register/subjects-register.module'))
         .SubjectsRegisterModule,
   },
-  /*#### NO SE MIGRA ####*/
-  /*{
+  {
     path: 'documents-requirements-verification',
     data: {
       screen: 'FACTJURDICTAMPROC',
@@ -114,7 +113,7 @@ const routes: Routes = [
           './documents-requirements-verification/documents-requirements-verification.module'
         )
       ).DocumentsRequirementsVerificationModule,
-  },*/
+  },
   {
     path: 'closing-of-confiscation-and-return-records',
     data: { screen: 'FACTREFACTACIEDEV', title: 'Cierre de Actas de Decomiso' },
@@ -125,13 +124,13 @@ const routes: Routes = [
         )
       ).ClosingConfiscationAndReturnRecordsModule,
   },
-  /*{
+  {
     path: 'records-inventory',
     data: { screen: 'FACTREFINVXEXPEDI', title: 'Inventario por Expediente' },
     loadChildren: async () =>
       (await import('./records-inventory/records-inventory.module'))
         .RecordsInventoryModule,
-  },*/
+  },
   {
     path: 'goods-forecast',
     data: { screen: 'FACTREFPREVISBIEN', title: 'Previsión de Bienes' },
@@ -140,7 +139,7 @@ const routes: Routes = [
         .GoodsForecastModule,
   },
   {
-    path: 'records-validation/:proceedingsNumb/:proceedingsCve',
+    path: 'records-validation',
     data: { screen: 'FVERIFACTA', title: 'Validación de Actas' },
     loadChildren: async () =>
       (await import('./records-validation/records-validation.module'))

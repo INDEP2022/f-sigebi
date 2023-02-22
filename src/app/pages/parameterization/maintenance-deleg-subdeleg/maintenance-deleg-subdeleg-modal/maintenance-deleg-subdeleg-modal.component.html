@@ -3,92 +3,43 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="subDelegationForm">
+    <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-5" *ngIf="edit == false">
-          <form-field [control]="subDelegationForm.get('delegationNumber')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="subDelegationForm"
-              control="delegationNumber"
-              [data]="delegations"
-              value="id"
-              bindLabel="description"
-              label="No&#46; Delegaci&oacute;n"
-              (fetchItems)="getDelegations($event)"
-              (change)="onValuesChange($event)"
-              [readonly]="true">
-            </ngx-select>
-            <!-- <input type="number" class="form-control" formControlName="delegationNumber" /> -->
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('idDeleg')"
+            label="No&#46; Delegaci&oacute;n">
+            <input type="text" class="form-control" formControlName="idDeleg" />
           </form-field>
         </div>
-        <div class="col-md-3" *ngIf="edit == false">
+        <div class="col-md-3">
           <form-field
-            [control]="subDelegationForm.get('id')"
-            label="No&#46; SubDelegaci&oacute;n">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="subDelegationForm.get('description')"
+            [control]="form.get('descriptionDeleg')"
             label="Descripci&oacute;n Delegaci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field
-            [control]="subDelegationForm.get('dailyConNumber')"
-            label="No. Consecutivo diario">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="dailyConNumber" />
+              formControlName="descriptionDeleg" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="subDelegationForm.get('dateDailyCon')"
-            label="Fecha consecutiva diaria">
+            [control]="form.get('idSubDeleg')"
+            label="No&#46; SubDelegaci&oacute;n">
             <input
-              type="textr"
+              type="text"
               class="form-control"
-              formControlName="dateDailyCon" />
-          </form-field>
-        </div>
-        <div class="col-md-3" *ngIf="edit == false">
-          <form-field
-            [control]="subDelegationForm.get('phaseEdo')"
-            label="Etapa Edo">
-            <!-- <ngx-select 
-                [form]="subDelegationForm" 
-                control="phaseEdo" 
-                [data]="delegations" 
-                value="etapaEdo"
-                bindLabel="etapaEdo" 
-                label="Etapa Edo" 
-                (fetchItems)="getPhaseEdo($event)">
-              </ngx-select> -->
-            <input
-              type="number"
-              class="form-control"
-              formControlName="phaseEdo"
-              readonly />
+              formControlName="idSubDeleg" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="subDelegationForm.get('registerNumber')"
-            label="No. Registro">
+            [control]="form.get('descriptionSubDeleg')"
+            label="Descripci&oacute;n SubDelegaci&oacute;n">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="registerNumber" />
+              formControlName="descriptionSubDeleg" />
           </form-field>
         </div>
       </div>
@@ -99,8 +50,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="subDelegationForm.invalid"
-          (confirm)="confirm()"></confirm-button>
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

@@ -1,5 +1,5 @@
 export const IDENTIFIER_COLUMNS = {
-  id: {
+  code: {
     title: 'Código',
     type: 'string',
     sort: false,

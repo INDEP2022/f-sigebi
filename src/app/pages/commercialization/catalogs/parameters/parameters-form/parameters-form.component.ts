@@ -1,8 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
-import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -12,19 +10,15 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ParametersFormComponent extends BasePage implements OnInit {
-  title: string = 'PARÁMETRO COMERCIALIZACIÓN';
+  status: string = 'Nuevo';
   edit: boolean = false;
 
   form: FormGroup = new FormGroup({});
-  parameter: IParameter;
+  parameter: any;
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef,
-    private parameterModService: ParameterModService
-  ) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -34,7 +28,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      idParam: [
+      parameter: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -42,17 +36,15 @@ export class ParametersFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      idValue: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      idDirection: [null, [Validators.required]],
-      eventTypeId: [null, [Validators.required]],
+      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      direction: [null, [Validators.required]],
+      eventType: [null, [Validators.required]],
+      eventDescription: [null],
     });
 
-    if (this.parameter) {
+    if (this.edit) {
       //console.log(this.brand)
-      this.edit = true;
+      this.status = 'Actualizar';
       this.form.patchValue(this.parameter);
     }
   }
@@ -68,25 +60,24 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.handleSuccess();
-    this.parameterModService.create(this.form.value).subscribe(
+    /*this.bankService.create(this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
-    );
+    );*/
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.refresh.emit(true);
     this.modalRef.hide();
   }
 
   update() {
     this.loading = true;
-    this.parameterModService.update(this.form.value).subscribe(
+    this.handleSuccess();
+    /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
-    );
+    );*/
   }
 }

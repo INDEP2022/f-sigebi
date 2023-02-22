@@ -1,7 +1,7 @@
 export interface IAffairType {
   code: number;
-  relationPropertyKey: string;
+  relationPropertyKey: string | null;
   referralNoteType: string;
-  versionUser: string;
-  idRegister: number;
+  versionUser: string | null;
+  registryNumber: number | null;
 }

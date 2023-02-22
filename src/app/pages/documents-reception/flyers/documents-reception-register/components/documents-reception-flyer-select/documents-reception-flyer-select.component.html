@@ -9,12 +9,11 @@
       <form-field class="col-md-10" [control]="flyerForm.get('flyerNumber')">
         <ngx-select
           [form]="flyerForm"
-          [data]="flyers"
-          (fetchItems)="getNotifications($event)"
-          bindLabel="wheelNumber"
+          value="id"
+          bindLabel="id"
           control="flyerNumber"
-          label="No. Volante"
-          [searchOnInit]="true"></ngx-select>
+          [data]="flyers"
+          label="No. Volante"></ngx-select>
       </form-field>
     </form>
   </div>
@@ -24,9 +23,7 @@
       <div class="m-3">
         <confirm-button
           text="Aceptar"
-          loadingText="Cargando"
           [disabled]="!flyerForm.valid"
-          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

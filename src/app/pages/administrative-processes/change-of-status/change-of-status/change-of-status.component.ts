@@ -1,33 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
-import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
-import { IGood } from 'src/app/core/models/good/good.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { GoodService } from 'src/app/core/services/good/good.service';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { COLUMNS_STATUS, COLUMNS_USER } from './columns';
+import { ModalChangeComponent } from '../modal-change/modal-change.component';
+import { COLUMNS_STATUS, COLUMNS_USER, Data } from './columns';
 
 @Component({
   selector: 'app-change-of-status',
   templateUrl: './change-of-status.component.html',
   styles: [],
 })
-export class ChangeOfStatusComponent extends BasePage implements OnInit {
+export class ChangeOfStatusComponent implements OnInit {
   //Reactive Forms
   form: FormGroup;
-  good: IGood;
-  status = new DefaultSelect<IStatusCode>();
+
   columns: any = COLUMNS_STATUS;
   columnsUser: any = COLUMNS_USER;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  statusSelect: IStatusCode;
-  endProcess: boolean = false;
   //Criterio por clasificación de bienes
   get numberGood() {
     return this.form.get('numberGood');
@@ -42,48 +30,41 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     return this.form.get('descriptionStatus');
   }
 
-  get processesGood() {
-    return this.form.get('processesGood');
+  get processes() {
+    return this.form.get('processes');
   }
 
   //Reactive Forms
   formNew: FormGroup;
 
-  get goodStatus() {
-    return this.formNew.get('goodStatus');
+  get newStatus() {
+    return this.form.get('newStatus');
+  }
+  get newDescripcionStatus() {
+    return this.form.get('newDescripcionStatus');
   }
   get dateStatus() {
-    return this.formNew.get('dateStatus');
+    return this.form.get('dateStatus');
   }
-  get extDomProcess() {
-    return this.formNew.get('extDomProcess');
+  get newProcesses() {
+    return this.form.get('newProcesses');
   }
-  get issuingUser() {
-    return this.formNew.get('issuingUser');
+  get userRequesting() {
+    return this.form.get('userRequesting');
+  }
+  get userName() {
+    return this.form.get('userName');
   }
   get description() {
-    return this.formNew.get('description');
+    return this.form.get('description');
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private readonly goodServices: GoodService,
-    private token: AuthService,
-    private readonly historyGoodService: HistoryGoodService
-  ) {
-    super();
-  }
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.buildFormNew();
-    this.dateStatus.setValue(new Date());
-    this.form.disable();
-    this.formNew.disable();
-    this.numberGood.enable();
   }
-
-  //disbaledInpust;
 
   /**
    * @method: metodo para iniciar el formulario
@@ -106,7 +87,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      processesGood: [
+      processes: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -114,16 +95,24 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   }
   private buildFormNew() {
     this.formNew = this.fb.group({
-      goodStatus: [
+      newStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      newDescripcionStatus: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       dateStatus: [null, [Validators.required]],
-      extDomProcess: [
+      newProcesses: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      issuingUser: [
+      userRequesting: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userName: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -131,88 +120,41 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   }
 
-  loadGood() {
-    this.loading = true;
-    this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
-        this.good = response;
-        this.loadDescriptionStatus(this.good);
-        this.loading = false;
-        this.formNew.enable();
-        this.dateStatus.disable();
-        this.endProcess = true;
-      },
+  openModalStatus(): void {
+    this.modalService.show(ModalChangeComponent, {
+      initialState: this.columns,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     });
   }
 
-  setGood(good: IGood, status: any) {
-    this.descriptionGood.setValue(good.description);
-    this.currentStatus.setValue(good.status);
-    this.descriptionStatus.setValue(status.status_descripcion);
-    this.processesGood.setValue(good.extDomProcess);
+  openModalUser(): void {
+    this.modalService.show(ModalChangeComponent, {
+      initialState: this.columnsUser,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
-  loadDescriptionStatus(good: IGood) {
-    let status: any;
-    this.goodServices.getStatusByGood(good.id).subscribe({
-      next: response => {
-        this.setGood(good, response);
-      },
-      error: error => {
-        this.loading = false;
-      },
+  loandGood() {
+    const good = this.numberGood.value;
+    const data = Data;
+    data.forEach(elemen => {
+      if (elemen.numberGood === good) {
+        this.setGood(elemen);
+      }
     });
+  }
+
+  setGood(data: any) {
+    this.descriptionGood.setValue(data.description);
+    this.currentStatus.setValue(data.currentStatus);
+    this.currentStatus.setValue(data.currentStatus);
+    this.descriptionStatus.setValue(data.descriptionStatus);
+    this.processes.setValue(data.processes);
   }
 
   accept() {
-    //5457740
-    this.good.status =
-      this.goodStatus.value === null ? this.good.status : this.goodStatus.value;
-    this.good.observations = this.description.value;
-    this.good.extDomProcess =
-      this.extDomProcess.value === null
-        ? this.good.extDomProcess
-        : this.extDomProcess.value;
-    this.good.userModification = this.token.decodeToken().preferred_username;
-    this.goodServices
-      .updateStatusGood(this.numberGood.value, this.good)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.postHistoryGood();
-          this.form.reset();
-          this.formNew.reset();
-          this.dateStatus.setValue(new Date());
-          this.onLoadToast(
-            'success',
-            'Actualizado',
-            'Se le ha cambiado el Estatus al bien'
-          );
-        },
-        error: error => (this.loading = false),
-      });
-    this.endProcess = false;
-  }
-  postHistoryGood() {
-    const historyGood: IHistoryGood = {
-      propertyNum: this.numberGood.value,
-      status: this.goodStatus.value,
-      changeDate: new Date(),
-      userChange: this.token.decodeToken().preferred_username,
-      statusChangeProgram: 'CAMMUEESTATUS',
-      reasonForChange: this.description.value,
-      registryNum: null,
-      extDomProcess:
-        this.extDomProcess.value === null
-          ? this.good.extDomProcess
-          : this.extDomProcess.value,
-    };
-
-    this.historyGoodService.create(historyGood).subscribe({
-      next: response => {},
-      error: error => {
-        this.loading = false;
-      },
-    });
+    console.log(this.formNew.value);
   }
 }

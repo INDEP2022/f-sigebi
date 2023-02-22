@@ -30,28 +30,26 @@
         <label for="" class="form-group">Registros Procesados: 0</label>
       </div>
     </div>
-    <div class="ch-content">
-      <h5 class="title">&nbsp;</h5>
-      <div class="row justify-content-end mr-1">
-        <div class="col-12">
-          <app-columns-select
-            [(settings)]="settings"
-            class="row justify-content-end">
-          </app-columns-select>
+    <div class="row pt-5">
+      <div class="ch-content">
+        <h5 class="title">&nbsp;</h5>
+        <div class="row justify-content-end mr-1">
+          <div class="col-12">
+            <app-columns-select
+              [(settings)]="settings"
+              class="row justify-content-end">
+            </app-columns-select>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="ExcelData"></ng2-smart-table>
-        </div>
+      <div class="row pt-3 scroll-table table-responsive">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="settings"
+          [source]="ExcelData"></ng2-smart-table>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
   </div>
 </app-card>

@@ -1,5 +1,5 @@
 export const BANK_CONCEPTS_COLUMNS = {
-  key: {
+  cve: {
     title: 'Concepto',
     sort: false,
   },

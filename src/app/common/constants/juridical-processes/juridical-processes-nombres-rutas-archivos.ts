@@ -72,17 +72,17 @@ export const routesJuridicalProcesses: any = [
   },
   {
     // Lista - Monitor de Abandono por Devolución
-    label: 'Monitor de Abandono por Devolución',
+    label: 'Lista - Monitor de Abandono por Devolución',
     // link: 'monitor-abandono-devolucion',
     link: 'monitor-return-abandonment',
-    menu: 'Monitor de Abandono por Devolución',
+    menu: 'Lista - Monitor de Abandono por Devolución',
   },
   {
     // Formulario - Monitor Abandono por Devolución
-    label: 'Monitor Abandono por Devolución',
+    label: 'Formulario - Monitor Abandono por Devolución',
     // link: 'abandono-devolucion-monitor',
     link: 'return-abandonment-monitor',
-    menu: '',
+    menu: 'Formulario - Monitor Abandono por Devolución',
   },
   {
     // Declaración de Abandono por Aseguramiento

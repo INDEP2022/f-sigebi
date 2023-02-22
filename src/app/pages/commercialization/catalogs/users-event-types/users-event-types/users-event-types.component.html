@@ -3,14 +3,12 @@
     <h5 class="title">USUARIOS POR TIPO DE EVENTO</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="teventsForm">
+    <form class="form-material" [formGroup]="form">
       <label>Filtrar</label>
       <div class="row mb-3 mt-3">
         <!--Event Types Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-event-type-shared
-            [form]="teventsForm"
-            (emitTevents)="onTeventsChange($event)"></app-event-type-shared>
+          <app-event-type-shared [form]="form"></app-event-type-shared>
         </div>
       </div>
     </form>
@@ -21,7 +19,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="valuesList">
+            [source]="data">
           </ng2-smart-table>
         </div>
       </div>

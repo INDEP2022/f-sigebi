@@ -3,29 +3,9 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequestInTurnSelected } from 'src/app/core/models/catalogs/request-in-turn-selected.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TURN_SELECTED_COLUMNS } from '../../request-in-turn/request-in-turn-selected/request-in-turn-selected-columns';
-
-var users: any[] = [
-  {
-    id: 1,
-    user: 'Jose',
-    email: 'jose@gmail.com',
-    otro: 'otro dato',
-  },
-  {
-    id: 2,
-    user: 'Mari',
-    email: 'maroa@gmail.com',
-    otro: 'otro dato',
-  },
-  {
-    id: 3,
-    user: 'Noe',
-    email: 'Noe@gmail.com',
-    otro: 'otro dato',
-  },
-];
 
 @Component({
   selector: 'app-users-selected-to-turn',
@@ -33,14 +13,12 @@ var users: any[] = [
   styles: [],
 })
 export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
-  title: string = '¿DESEA TURNAR LA SOLICITUD SELECCIONADA?';
-  paragraphs: any[] = [];
+  title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
+  paragraphs: IRequestInTurnSelected[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   public event: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
-  //typeTurn: string;
-  request: any;
-  user: any;
+  typeTurn: string;
 
   constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
     super();
@@ -55,23 +33,18 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    let typeUser = this.request.requestStatus;
-    this.getAllUsers(typeUser);
+    //todo: search users by the type user and display
+    console.log(this.typeTurn);
   }
 
-  getAllUsers(typeUser: string) {
-    this.paragraphs = users;
-  }
-
-  selectedRow(user: any) {
-    this.user = user.data;
-  }
-  triggerEvent(item: any) {
+  triggerEvent(item: IRequestInTurnSelected) {
     this.event.emit(item);
   }
 
   confirm(): void {
-    this.triggerEvent(this.user);
+    let user = { user: 'Jon Estragos', email: 'email.com' };
+
+    this.triggerEvent(user);
     this.close();
   }
 

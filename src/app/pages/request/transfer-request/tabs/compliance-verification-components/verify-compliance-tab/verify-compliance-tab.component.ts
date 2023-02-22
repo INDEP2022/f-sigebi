@@ -62,7 +62,7 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-  detailArray: any;
+  detailArray: Array<any>;
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
 

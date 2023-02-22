@@ -274,7 +274,7 @@ const routes: Routes = [
     path: 'person',
     loadChildren: async () =>
       (await import('./persons/persons.module')).PersonsModule,
-    data: { title: 'Mantto. a administrador, depositario e interventor' },
+    data: { title: 'Personas' },
   },
   {
     path: 'oring',

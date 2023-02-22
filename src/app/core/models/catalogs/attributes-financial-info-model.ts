@@ -1,8 +1,8 @@
 export interface IAttributesFinancialInfo {
-  id?: number;
+  id: number;
   name: string;
   description: string;
   type: string;
   subType: string;
-  registerNumber?: number;
+  //registerNumber: number;
 }

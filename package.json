@@ -9,7 +9,7 @@
     "test": "ng test",
     "prepare": "husky install",
     "format": "prettier --write \"./src/**/*.{ts,json,html}\"",
-    "server": "node --max_old_space_size=4048 ./node_modules/@angular/cli/bin/ng s"
+    "server": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng s"
   },
   "private": true,
   "dependencies": {

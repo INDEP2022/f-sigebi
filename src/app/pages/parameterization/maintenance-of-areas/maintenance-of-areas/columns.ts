@@ -1,9 +1,9 @@
 export const COLUMNS = {
-  id: {
+  keyAdmi: {
     title: 'Clave Admi',
     sort: false,
   },
-  dsarea: {
+  area: {
     title: 'Área',
     sort: false,
   },

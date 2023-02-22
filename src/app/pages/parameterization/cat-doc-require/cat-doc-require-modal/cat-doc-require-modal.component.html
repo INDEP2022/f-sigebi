@@ -7,9 +7,9 @@
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="documentsForDictumForm.get('id')"
+            [control]="documentsForDictumForm.get('cve')"
             label="Clave del documento">
-            <input type="text" class="form-control" formControlName="id" />
+            <input type="text" class="form-control" formControlName="cve" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -50,9 +50,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          (confirm)="confirm()"></confirm-button>
+        <confirm-button [type]="'button'" (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

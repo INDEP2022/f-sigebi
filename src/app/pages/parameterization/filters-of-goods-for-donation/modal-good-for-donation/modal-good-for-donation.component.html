@@ -8,8 +8,37 @@
         <div class="col-md-6">
           <app-goods-status-shared [form]="form"></app-goods-status-shared>
         </div>
-        <div class="col-md-6">
-          <app-label-good-shared [form]="form"></app-label-good-shared>
+        <div class="col-md-6 mt-3">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descrici&oacute;n Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 mt-3">
+          <form-field
+            [control]="form.get('targetIndicator')"
+            label="Indicador destino">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="targetIndicator" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-3">
+          <form-field
+            [control]="form.get('targetIndicatorDesc')"
+            label="Descrici&oacute;n Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="targetIndicatorDesc" />
+          </form-field>
         </div>
       </div>
     </form>
@@ -20,7 +49,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="createDonation()"></confirm-button>
+          (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

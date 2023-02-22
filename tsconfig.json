@@ -16,9 +16,9 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "ES2021",
+    "target": "es2020",
     "module": "es2020",
-    "lib": ["ES2021", "dom"],
+    "lib": ["es2020", "dom"],
     "strictPropertyInitialization": false,
     "strictNullChecks": false
   },

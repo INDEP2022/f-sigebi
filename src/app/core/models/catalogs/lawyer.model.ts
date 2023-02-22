@@ -1,6 +1,8 @@
+import { IOffice } from './office.model';
+
 export interface ILawyer {
   id: number | null;
-  idOffice: number;
+  idOffice: IOffice;
   name: string;
   street: string | null;
   streetNumber: string | null;

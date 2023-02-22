@@ -1,10 +1,10 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">LISTA DE ACLARACIONES</h5>
+    <h5 class="title">LISTA DE ALCARACI&Oacute;NES</h5>
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+        <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
           Nueva
         </button>
       </div>
@@ -24,8 +24,8 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="clarifications"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event.data)">
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
       </div>

@@ -6,9 +6,7 @@
     <div class="row">
       <div class="col-sm-12 col-md-12 col-lg-6">
         <div class="form-material">
-          <search-bar
-            [filterParams]="filterParams"
-            [filterField]="searchFilter"></search-bar>
+          <search-bar [params]="params"></search-bar>
         </div>
       </div>
     </div>
@@ -22,7 +20,7 @@
         </ng2-smart-table>
       </div>
     </ng-scrollbar>
-    <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
+    <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
   </div>
   <div footer>
@@ -32,7 +30,7 @@
           type="button"
           class="btn btn-primary active"
           (click)="confirm()"
-          [disabled]="selectedRow == null">
+          [disabled]="selectedRows.length == 0">
           Seleccionar
         </button>
       </div>

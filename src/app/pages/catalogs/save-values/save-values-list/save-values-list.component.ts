@@ -67,7 +67,7 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.saveValueService.remove(saveValue.id).subscribe({
+        this.saveValueService.remove(saveValue.cve).subscribe({
           next: data => this.getSaveValues(),
           error: error => (this.loading = false),
         });
