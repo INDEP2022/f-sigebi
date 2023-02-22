@@ -9,19 +9,16 @@ import { IThirdParty } from '../../models/ms-thirdparty/third-party.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class ThirdPartyService extends HttpService {
-    
-    constructor(){
-        super();
-        this.microservice = ThirdPartyEndpoints.BasePath;
-    }
-
-    getAll(params?: ListParams | string): Observable<IListResponse<IThirdParty>> {
-    return this.get<IListResponse<IThirdParty>>(ThirdPartyEndpoints.ThirdParty, params);
+  constructor() {
+    super();
+    this.microservice = ThirdPartyEndpoints.BasePath;
   }
 
-
-
-
+  getAll(params?: ListParams | string): Observable<IListResponse<IThirdParty>> {
+    return this.get<IListResponse<IThirdParty>>(
+      ThirdPartyEndpoints.ThirdParty,
+      params
+    );
+  }
 }

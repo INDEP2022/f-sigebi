@@ -1,6 +1,6 @@
 export enum ThirdPartyEndpoints {
   BasePath = 'thirdparty',
-  ThirdParty = `third-party`, 
+  ThirdParty = `third-party`,
   TypeEventsXterComer = 'type-events-xter-comer',
-  ComiXthird = 'comi-xthird'
+  ComiXthird = 'comi-xthird',
 }

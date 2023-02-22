@@ -10,7 +10,9 @@
       <div class="col-md-5 buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <div>
-          <button (click)="openForm1()" class="btn btn-primary active btn-sm ml-3">
+          <button
+            (click)="openForm1()"
+            class="btn btn-primary active btn-sm ml-3">
             Nuevo
           </button>
         </div>
@@ -18,15 +20,20 @@
     </div>
     <div [class]="loading ? 'table-loading' : ''">
       <div class="table-responsive">
-        <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="thirdPartyList"
-          (userRowSelect)="rowsSelected($event)" (edit)="openForm1($event.data)"></ng2-smart-table>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="thirdPartyList"
+          (userRowSelect)="rowsSelected($event)"
+          (edit)="openForm1($event.data)"></ng2-smart-table>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
-  
 </app-card>
- 
+
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
@@ -39,18 +46,24 @@
       <div class="col-md-5 buttons">
         <app-columns-select [(settings)]="settings3"></app-columns-select>
         <div>
-          <button (click)="openForm2()" class="btn btn-primary active btn-sm ml-3">
+          <button
+            (click)="openForm2()"
+            class="btn btn-primary active btn-sm ml-3">
             Nuevo
           </button>
         </div>
       </div>
     </div>
-     <div [class]="loading ? 'table-loading' : ''">
+    <div [class]="loading ? 'table-loading' : ''">
       <div class="table-responsive">
-        <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="typeEventList"
-          (userRowSelect)="rowsSelected2($event)" (edit)="openForm2($event.data)"></ng2-smart-table>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings2"
+          [source]="typeEventList"
+          (userRowSelect)="rowsSelected2($event)"
+          (edit)="openForm2($event.data)"></ng2-smart-table>
       </div>
-     </div>
+    </div>
   </div>
 </app-card>
 
@@ -66,12 +79,18 @@
       <div class="col-md-5 buttons">
         <app-columns-select [(settings)]="settings3"></app-columns-select>
         <div>
-          <button (click)="openForm3()" class="btn btn-primary active btn-sm ml-3">
+          <button
+            (click)="openForm3()"
+            class="btn btn-primary active btn-sm ml-3">
             Nuevo
           </button>
         </div>
       </div>
     </div>
-    <ng2-smart-table [attr.class]="'table-bordered'"  [settings]="settings3" [source]="amountList" (edit)="openForm3($event.data)"></ng2-smart-table>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings3"
+      [source]="amountList"
+      (edit)="openForm3($event.data)"></ng2-smart-table>
   </div>
 </app-card>

@@ -7,32 +7,29 @@ import { ITypeEventXtercomer } from 'src/app/core/models/ms-thirdparty/third-par
 @Component({
   selector: 'app-type-event-modal',
   templateUrl: './type-event-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeEventModalComponent implements OnInit {
-
   title: string = 'Tipo de eventos';
   edit: boolean = false;
 
   typeEvent3erForm: ModelForm<ITypeEventXtercomer>;
   typeEvents: ITypeEventXtercomer;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) { }
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.typeEvent3erForm = this.fb.group({
       thirdPartyId: [null, []],
       typeEventId: [null, []],
     });
-    if (this.typeEvents != null){
+    if (this.typeEvents != null) {
       this.edit = true;
       this.typeEvent3erForm.patchValue(this.typeEvents);
-
     }
   }
 
@@ -44,12 +41,11 @@ export class TypeEventModalComponent implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
-  update(){
+  update() {
     console.log('Actualizar');
   }
 
-  create(){
-  console.log('Crear');
+  create() {
+    console.log('Crear');
   }
-
 }

@@ -5,17 +5,16 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { maxDate } from 'src/app/common/validations/date.validators';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //PAtterns
 //columns
 import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
 import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proceedings-columns';
 import { RULINGS_COLUMNS } from './destruction-authorization-management-rulings-columns';
 //models
-import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 //Services
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -50,8 +49,7 @@ export class DestructionAuthorizationManagementComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-
-  goodPDS: IGood[]=[];
+  goodPDS: IGood[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -96,22 +94,24 @@ export class DestructionAuthorizationManagementComponent
   }
 
   //Método para select, que trae el listado de todos (No se esta usando)
-  getProceedingsAll(params: ListParams){
-    this.proceedingsDeliveryReceptionService.getAllProceedingsDeliveryReception(params).subscribe(
-      data => {
-        this.proceedings = new DefaultSelect(data.data, data.count);
-      },
-      err => {
-        let error = '';
-        if (err.proceedings === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-      },
-      () => {}
-    );
+  getProceedingsAll(params: ListParams) {
+    this.proceedingsDeliveryReceptionService
+      .getAllProceedingsDeliveryReception(params)
+      .subscribe(
+        data => {
+          this.proceedings = new DefaultSelect(data.data, data.count);
+        },
+        err => {
+          let error = '';
+          if (err.proceedings === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+        () => {}
+      );
   }
 
   onValuesChange(modelChange: IProccedingsDeliveryReception) {
@@ -136,24 +136,26 @@ export class DestructionAuthorizationManagementComponent
     this.form.controls['observations'].setValue(this.modelValue.observations);
   }
 
-  getProceedingsByKey(): void{
+  getProceedingsByKey(): void {
     let keys = this.form.controls['id'].value;
-    this.proceedingsDeliveryReceptionService.getProceedingsByKey(keys).subscribe(
-      response => {
-        //TODO: Validate Response
-        if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
-          // this.getGoodsByExpedient(response.id);
-        } else {
-          //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontraron registros', '');
-        }
+    this.proceedingsDeliveryReceptionService
+      .getProceedingsByKey(keys)
+      .subscribe(
+        response => {
+          //TODO: Validate Response
+          if (response !== null) {
+            this.form.patchValue(response);
+            this.form.updateValueAndValidity();
+            // this.getGoodsByExpedient(response.id);
+          } else {
+            //TODO: CHECK MESSAGE
+            this.alert('info', 'No se encontraron registros', '');
+          }
 
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
   }
 
   //Método para traer los bienes con estatus PDS
@@ -169,8 +171,6 @@ export class DestructionAuthorizationManagementComponent
       error: error => (this.loading = false),
     });
   }
-
-  
 
   dataActRec = [
     {
@@ -195,8 +195,6 @@ export class DestructionAuthorizationManagementComponent
       actasRecepcion: 'DCCR/DECRO/DRBC/ATJRBC/00003/2018',
     },
   ];
-
-  
 
   msjRequest() {
     this.alertQuestion(

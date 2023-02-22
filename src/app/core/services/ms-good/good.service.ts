@@ -90,10 +90,10 @@ export class GoodService extends HttpService {
     return this.post<IListResponse<IGood>>(route, body);
   }
 
-  getGoodByStatusPDS(params?: ListParams | string): Observable<IListResponse<IGood>>{
+  getGoodByStatusPDS(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.status=PDS`;
     return this.get<IListResponse<IGood>>(route, params);
   }
-
-  
 }

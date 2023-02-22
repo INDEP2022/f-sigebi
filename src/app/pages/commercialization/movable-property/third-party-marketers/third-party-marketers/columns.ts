@@ -10,22 +10,21 @@ export const THIRD_COLUMNS = {
   calculationRoutine: {
     title: 'Rutina Cálculo',
     sort: false,
-  }
+  },
 };
 
 export const TYPE_EVENT_THIRD_COLUMNS = {
-    thirdPartyId: {
-      title: 'ID 3ro comercializador',
-      sort: false,
-      
+  thirdPartyId: {
+    title: 'ID 3ro comercializador',
+    sort: false,
   },
-    typeEventId: {
-      title: 'Tipo de evento',
-      sort: false,
-  }
-}
+  typeEventId: {
+    title: 'Tipo de evento',
+    sort: false,
+  },
+};
 
-export const COMI_XTHIRC_COLUMNS  = {
+export const COMI_XTHIRC_COLUMNS = {
   /*idComiXThird: {
       title: 'ID comer',
       sort: false,
@@ -36,19 +35,16 @@ export const COMI_XTHIRC_COLUMNS  = {
       sort: false,
       
   },*/
-    startingAmount: {
-      title: 'Monto inicial',
-      sort: false,
-      
+  startingAmount: {
+    title: 'Monto inicial',
+    sort: false,
   },
-    pctCommission: {
-      title: 'Pct comisión',
-      sort: false,
-      
+  pctCommission: {
+    title: 'Pct comisión',
+    sort: false,
   },
-    finalAmount: {
-      title: 'Monto Final',
-      sort: false,
-      
+  finalAmount: {
+    title: 'Monto Final',
+    sort: false,
   },
-}
+};

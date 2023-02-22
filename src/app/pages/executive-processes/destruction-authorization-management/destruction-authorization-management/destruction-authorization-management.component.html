@@ -11,16 +11,17 @@
       <div class="row">
         <div class="col-md-1">
           <form-field [control]="form.get('id')" label="No.">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="id" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('keysProceedings')" label="Oficio de Solicitud">
-            <input type="text" class="form-control" formControlName="keysProceedings" />
+            [control]="form.get('keysProceedings')"
+            label="Oficio de Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keysProceedings" />
             <!-- <ngx-select
                   [searchOnInit]="true"
                   [form]="form"
@@ -95,17 +96,27 @@
       </div>
       <div class="row">
         <div class="col-md-2" *ngIf="form.get('id').value !== null">
-          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid" (click)="getProceedingsByKey()">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getProceedingsByKey()">
             Sacar bienes
           </button>
         </div>
-        <div class="col-md-2"*ngIf="form.get('keysProceedings').value !== null">
-          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid">
+        <div
+          class="col-md-2"
+          *ngIf="form.get('keysProceedings').value !== null">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid">
             Crear nuevo
           </button>
         </div>
         <div class="col-md-2" *ngIf="form.get('id').value !== null">
-          <button (click)="cleanForm()" type="button" class="btn btn-sm btn-danger active">
+          <button
+            (click)="cleanForm()"
+            type="button"
+            class="btn btn-sm btn-danger active">
             Limpiar
           </button>
         </div>
@@ -175,23 +186,28 @@
         </div>
 
         <div class="row">
-              <div class="table-responsive">
-                <div [class]="loading ? 'table-loading' : ''">
-                  <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="goodPDS">
-                  </ng2-smart-table>
-                </div>
-              </div>
-            <app-pagination [params]="params" [totalItems]="totalItems">
-            </app-pagination>
-          
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="goodPDS">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
         <div class="row">
-            <div class="table-responsive">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="goodPDS">
-                </ng2-smart-table>
-              </div>
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="goodPDS">
+              </ng2-smart-table>
             </div>
+          </div>
         </div>
       </div>
       <div class="row pt-5">

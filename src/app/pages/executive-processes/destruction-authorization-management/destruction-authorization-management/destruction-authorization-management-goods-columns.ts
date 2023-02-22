@@ -20,5 +20,4 @@ export const GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  
 };

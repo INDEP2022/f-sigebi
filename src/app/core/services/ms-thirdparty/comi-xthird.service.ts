@@ -9,24 +9,21 @@ import { IComiXThird } from '../../models/ms-thirdparty/third-party.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class ComiXThirdService extends HttpService {
-    
-    constructor(){
-        super();
-        this.microservice = ThirdPartyEndpoints.BasePath;
-    }
-
-    getAll(params?: ListParams | string): Observable<IListResponse<IComiXThird>> {
-    return this.get<IListResponse<IComiXThird>>(ThirdPartyEndpoints.ThirdParty, params);
+  constructor() {
+    super();
+    this.microservice = ThirdPartyEndpoints.BasePath;
   }
 
-  getById(id: string | number): Observable<IListResponse<IComiXThird>>  {
+  getAll(params?: ListParams | string): Observable<IListResponse<IComiXThird>> {
+    return this.get<IListResponse<IComiXThird>>(
+      ThirdPartyEndpoints.ThirdParty,
+      params
+    );
+  }
+
+  getById(id: string | number): Observable<IListResponse<IComiXThird>> {
     const route = `${ThirdPartyEndpoints.ComiXthird}/id/${id}`;
     return this.get<IListResponse<IComiXThird>>(route);
   }
-
-
-
-
 }

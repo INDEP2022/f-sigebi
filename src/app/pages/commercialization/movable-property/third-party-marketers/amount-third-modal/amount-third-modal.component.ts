@@ -7,24 +7,22 @@ import { IComiXThird } from 'src/app/core/models/ms-thirdparty/third-party.model
 @Component({
   selector: 'app-amount-third-modal',
   templateUrl: './amount-third-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AmountThirdModalComponent implements OnInit {
-  
   title: string = 'Montos';
   edit: boolean = false;
 
   amountForm: ModelForm<IComiXThird>;
-  amounts:IComiXThird;
+  amounts: IComiXThird;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) { }
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.amountForm = this.fb.group({
       idComiXThird: [null, []],
       idThirdParty: [null, []],
@@ -32,12 +30,10 @@ export class AmountThirdModalComponent implements OnInit {
       pctCommission: [null, []],
       finalAmount: [null, []],
     });
-    if(this.amounts != null){
+    if (this.amounts != null) {
       this.edit = true;
       this.amountForm.patchValue(this.amounts);
-
     }
-
   }
 
   close() {
@@ -48,12 +44,11 @@ export class AmountThirdModalComponent implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
-  update(){
+  update() {
     console.log('Actualizar');
   }
 
-  create(){
-  console.log('Crear');
+  create() {
+    console.log('Crear');
   }
-
 }
