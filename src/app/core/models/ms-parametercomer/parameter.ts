@@ -18,11 +18,11 @@ export interface ISubBrands {
 }
 
 export interface ITiieV1 {
-  id: string | number;
+  id: number;
   tiieDays: number;
-  tiieMonth: string;
-  tiieYear: string;
+  tiieMonth: number;
+  tiieYear: number;
   tiieAverage: number;
   registryDate: string;
-  user: number;
+  user: string;
 }

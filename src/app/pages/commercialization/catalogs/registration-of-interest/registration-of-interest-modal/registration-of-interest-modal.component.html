@@ -5,74 +5,93 @@
   <div body>
     <form class="form-material" [formGroup]="providerForm">
       <div class="row">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="providerForm.get('user')" label="User">
             <input type="text" class="form-control" formControlName="user" />
           </form-field>
+
+        </div> -->
+        <div class="form-group">
+          <div class="col-sm-4">
+            <form-field
+              [control]="providerForm.get('user')"
+              label="Selecciona usuario&#58;">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="user"
+                placeH />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <button
+              (click)="searchUser()"
+              class="btn btn-primary btn-sm active">
+              Buscar usuario
+            </button>
+          </div>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="providerForm.get('tille')" label="Días TIIE">
+          <form-field
+            [control]="providerForm.get('tiieDays')"
+            label="Días TIIE">
             <input
               type="number"
               class="form-control"
-              formControlName="tille"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="tiieDays" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="providerForm.get('TIIE_PROMEDIO')"
+            [control]="providerForm.get('tiieAverage')"
             label="Promedio TIIE">
             <input
-              type="double"
+              type="number"
               class="form-control"
-              formControlName="TIIE_PROMEDIO" />
+              formControlName="tiieAverage" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('tiieMonth')"
+            label="Mes TIIE">
+            <input
+              type="number"
+              class="form-control"
+              max="99"
+              formControlName="tiieMonth" />
           </form-field>
         </div>
 
-        <div class="col-md-4">
-          <form-field [control]="providerForm.get('mesTille')" label="Mes TIIE">
-            <input
-              class="form-control"
-              formControlName="mesTille"
-              bsDatepicker
-              [bsConfig]="{
+        <!-- <div class="col-md-4">
+          <form-field [control]="providerForm.get('tiieMonth')" label="Mes TIIE">
+            <input class="form-control" dateFormat="m/d/Y h:i K" formControlName="tiieMonth" bsDatepicker [bsConfig]="{
                 minMode: 'month',
                 adaptivePosition: true,
-                dateInputFormat: 'MM/YYYY'
+                dateInputFormat: 'MM'
               }" />
           </form-field>
-        </div>
+            <div class="col-md-4">
+              <form-field [control]="providerForm.get('tiieYear')" label="Año TILLE">
+                <input class="form-control" formControlName="tiieYear" min="2010" max="2025" bsDatepicker [bsConfig]="{
+                            minMode: 'year',
+                            adaptivePosition: true,
+                            dateInputFormat: 'YYYY'
+                          }" />
+              </form-field>
+            </div>
+        </div> -->
       </div>
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="providerForm.get('mes')" label="Mes">
+          <form-field [control]="providerForm.get('tiieYear')" label="Año TIIE">
             <input
+              type="number"
               class="form-control"
-              formControlName="mes"
-              bsDatepicker
-              [bsConfig]="{
-                minMode: 'month',
-                adaptivePosition: true,
-                dateInputFormat: 'MM/YYYY'
-              }" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="providerForm.get('anioTille')"
-            label="Año TILLE">
-            <input
-              class="form-control"
-              formControlName="anioTille"
-              bsDatepicker
-              [bsConfig]="{
-                minMode: 'month',
-                adaptivePosition: true,
-                dateInputFormat: 'MM/YYYY'
-              }" />
+              min="2010"
+              max="2025"
+              formControlName="tiieYear" />
           </form-field>
         </div>
       </div>

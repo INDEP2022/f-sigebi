@@ -8,6 +8,7 @@ import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RegistrationOfInterestModalComponent } from './registration-of-interest-modal/registration-of-interest-modal.component';
+
 @Component({
   selector: 'app-registration-of-interest',
   templateUrl: './registration-of-interest.component.html',
@@ -17,7 +18,7 @@ export class RegistrationOfInterestComponent
   extends BasePage
   implements OnInit
 {
-  catObject: ITiieV1;
+  tiies: ITiieV1;
   cats: ITiieV1[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -78,13 +79,13 @@ export class RegistrationOfInterestComponent
   ngOnInit(): void {
     this.getTiie();
   }
+
   getTiie() {
     this.loading = true;
-
-    this.parameterTiieService.getTiie().subscribe({
-      next: response => {
-        // this.cats = response.data;
-        console.log(response);
+    this.parameterTiieService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        console.log(data);
+        // this.cats = data;
         // this.totalItems = response.count;
         this.loading = false;
       },
