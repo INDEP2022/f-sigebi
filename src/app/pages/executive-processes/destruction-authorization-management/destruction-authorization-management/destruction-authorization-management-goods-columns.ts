@@ -1,29 +1,24 @@
 export const GOODS_COLUMNS = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     width: '25px',
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
   },
-  ofsol: {
+  requestFolio: {
     title: 'Of. Sol.',
     type: 'string',
     sort: false,
   },
-  availability: {
-    title: 'Disponibilidad',
-    type: 'boolean',
-    sort: false,
-    hide: true,
-  },
+  
 };

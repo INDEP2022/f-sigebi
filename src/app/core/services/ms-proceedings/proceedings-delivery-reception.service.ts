@@ -28,4 +28,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       params
     );
   }
+
+  getProceedingsByKey(id: string | number): Observable<IListResponse<IProceedings>> {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.get<IListResponse<IProceedings>>(route);
+  }
 }
