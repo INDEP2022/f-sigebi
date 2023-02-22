@@ -42,7 +42,7 @@ export class NumeraryOperatorComponent extends BasePage implements OnInit {
     this.loading = true;
     console.log(this.numeraryForm.value);
     // const pdfurl =
-    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGENADBNUMERARIOP.pdf?PARAMFORM=NO&PF_INI=` +
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGENADBNUMERARIOP.pdf?PARAMFORM=NO&PF_INI=` +
     //   this.datePipe.transform(
     //     this.numeraryForm.controls['startedDate'].value,
     //     'dd-mm-yyyy'

@@ -59,7 +59,7 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
   public send(): void {
     this.loading = true;
     // const pdfurl =
-    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGENADBNUMEFISICO.pdf?PARAMFORM=NO&PN_DELEG=` +
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGENADBNUMEFISICO.pdf?PARAMFORM=NO&PN_DELEG=` +
     //   this.physicsForm.controls['delegation'].value +
     //   `&PF_FECINI=` +
     //   this.datePipe.transform(
