@@ -41,6 +41,10 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
         link: '/pages/judicial-physical-reception/cancellation-sale',
       },
       {
+        label: 'Programación de Recepciones',
+        link: '/pages/judicial-physical-reception/scheduled-maintenance',
+      },
+      {
         label: 'Mantenimiento de Programaciones',
         link: '/pages/judicial-physical-reception/scheduled-maintenance-1',
       },
@@ -49,7 +53,7 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
         link: '/pages/judicial-physical-reception/scheduled-maintenance-2',
       },
       {
-        label: 'Mantenimiento de Acatas',
+        label: 'Mantenimiento de Actas',
         link: '/pages/judicial-physical-reception/maintenance-records',
       },
     ],
