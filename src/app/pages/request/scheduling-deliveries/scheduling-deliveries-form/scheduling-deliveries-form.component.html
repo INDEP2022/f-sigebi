@@ -20,13 +20,20 @@
       <div class="row pt-3">
         <div class="col-md-6">
           <div class="pt-3">
-            <ngx-select
-              [form]="schedulingDeliverieForm"
-              control="typeEvent"
-              [data]="TypeEventOptions"
-              value="nameEvent"
-              bindLabel="nameEvent"
-              label="Selecciona un tipo de evento"></ngx-select>
+            <form-field
+              [control]="schedulingDeliverieForm.get('typeEvent')"
+              label="Tipo de evento">
+              <select
+                class="form-control"
+                formControlName="typeEvent"
+                (change)="selectEvent($event)">
+                <option [value]="null">Tipo evento</option>
+                <option [value]="'ventas'">Ventas</option>
+                <option [value]="'donacion'">Donaci&oacute;n</option>
+                <option [value]="'devolucion'">Devoluci&oacute;n</option>
+                <option [value]="'destruccion'">Destrucci&oacute;n</option>
+              </select>
+            </form-field>
           </div>
 
           <div class="pt-3">
@@ -53,14 +60,13 @@
 
         <div class="col-md-6">
           <div class="pt-3">
-            <ngx-select
-              [form]="schedulingDeliverieForm"
-              control="warehouse"
-              [data]="warehouse"
-              value="id"
-              bindLabel="description"
-              label="Selecciona un almac&eacute;n"
-              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+            <form-field
+              [control]="schedulingDeliverieForm.get('warehouse')"
+              label="Almacén">
+              <select class="form-control" formControlName="warehouse">
+                <option [value]="null">Almac&eacute;n</option>
+              </select>
+            </form-field>
           </div>
 
           <div class="pt-3">

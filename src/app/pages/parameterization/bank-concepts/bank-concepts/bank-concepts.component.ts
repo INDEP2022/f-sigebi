@@ -10,7 +10,6 @@ import { BANK_CONCEPTS_COLUMNS } from './bank-concepts-columns';
 import { IBankConcepts } from 'src/app/core/models/catalogs/bank-concepts-model';
 //services
 import { BankConceptsService } from 'src/app/core/services/catalogs/bank-concepts-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-bank-concepts',
@@ -32,7 +31,7 @@ export class BankConceptsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...BANK_CONCEPTS_COLUMNS },
@@ -72,16 +71,15 @@ export class BankConceptsComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(bankConcepts.key);
-        Swal.fire('Borrado', '', 'success');
+        this.delete(bankConcepts.noRegistration);
       }
     });
   }
 
-  delete(id: string) {
+  delete(id: number) {
     this.bankConceptsService.remove(id).subscribe({
       next: () => this.getBankConcepts(),
     });

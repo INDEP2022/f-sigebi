@@ -2,13 +2,6 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
-import { INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -16,31 +9,20 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './documents-reception-flyer-select.component.html',
   styles: [],
 })
-export class DocumentsReceptionFlyerSelectComponent
-  extends BasePage
-  implements OnInit
-{
+export class DocumentsReceptionFlyerSelectComponent implements OnInit {
   flyerForm = this.fb.group({
-    flyerNumber: new FormControl<INotification>(null, [Validators.required]),
+    flyerNumber: new FormControl<string | number>(null, [Validators.required]),
   });
-  // flyers = new DefaultSelect<{ id: number }>(
-  //   FLYERS_EXAMPLE,
-  //   FLYERS_EXAMPLE.length
-  // );
-  flyers = new DefaultSelect<INotification>();
-  callback?: (next: INotification) => void;
+  flyers = new DefaultSelect<{ id: number }>(
+    FLYERS_EXAMPLE,
+    FLYERS_EXAMPLE.length
+  );
+  callback?: (next: string | number) => void;
   constructor(
     private fb: FormBuilder,
     private location: Location,
-    private modalRef: BsModalRef,
-    private notifService: NotificationService
-  ) {
-    super();
-  }
-
-  get flyerNumber() {
-    return this.flyerForm.controls['flyerNumber'];
-  }
+    private modalRef: BsModalRef
+  ) {}
 
   ngOnInit(): void {}
 
@@ -52,25 +34,6 @@ export class DocumentsReceptionFlyerSelectComponent
     const flyerNumber = this.flyerForm.controls.flyerNumber.value;
     this.modalRef.content.callback(flyerNumber);
     this.modalRef.hide();
-  }
-
-  getNotifications(lparams: ListParams) {
-    this.loading = true;
-    const params = new FilterParams();
-    params.page = lparams.inicio;
-    params.limit = 10;
-    if (lparams.text.length > 0) params.addFilter('wheelNumber', lparams.text);
-    this.notifService.getAllFilter(params.getParams()).subscribe({
-      next: data => {
-        this.flyers = new DefaultSelect(data.data, data.count);
-        this.loading = false;
-      },
-      error: err => {
-        console.log(err);
-        this.flyers = new DefaultSelect();
-        this.loading = false;
-      },
-    });
   }
 }
 

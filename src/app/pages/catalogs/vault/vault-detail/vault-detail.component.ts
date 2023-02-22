@@ -73,10 +73,7 @@ export class VaultDetailComponent implements OnInit {
       registerNumber: [null, Validators.compose([Validators.pattern('')])],
       municipalityCode: [null, Validators.compose([Validators.pattern('')])],
       localityCode: [null, Validators.compose([Validators.pattern('')])],
-      stateCode: [
-        null,
-        Validators.compose([Validators.pattern(STRING_PATTERN)]),
-      ],
+      stateCode: [null, Validators.compose([Validators.pattern('')])],
       cityCode: [null, Validators.compose([Validators.pattern('')])],
     });
     if (this.edit) {
@@ -87,7 +84,7 @@ export class VaultDetailComponent implements OnInit {
       this.id.disable();
       //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
       // this.states = new DefaultSelect([descState], 1);
-      this.cities = new DefaultSelect([nameCity], 1);
+      // this.cities = new DefaultSelect([nameCity], 1);
       // this.municipalities = new DefaultSelect([municipalityName], 1);
       // this.localities = new DefaultSelect([localityName], 1);
     }

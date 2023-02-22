@@ -1,8 +1,8 @@
 export interface IShelves {
-  key?: string;
-  batteryNumber?: number;
-  id?: number;
+  cve?: string;
+  noBatery?: number;
+  noShelves?: number;
   description: string;
   status: string;
-  registerNumber?: number;
+  noRegistration?: number;
 }

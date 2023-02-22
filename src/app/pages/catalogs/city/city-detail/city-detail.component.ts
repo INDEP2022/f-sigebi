@@ -1,9 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ICity } from 'src/app/core/models/catalogs/city.model';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CityService } from '../../../../core/services/catalogs/city.service';
 
@@ -12,39 +9,38 @@ import { CityService } from '../../../../core/services/catalogs/city.service';
   templateUrl: './city-detail.component.html',
   styles: [],
 })
-export class CityDetailComponent extends BasePage implements OnInit {
-  cityForm: ModelForm<ICity>;
-  city: ICity;
-  title: string = 'Catálogos de Ciudades';
+export class CityDetailComponent implements OnInit {
+  loading: boolean = false;
+  status: string = 'Nueva';
   edit: boolean = false;
+  form: FormGroup = new FormGroup({});
+  city: any;
 
   @Output() refresh = new EventEmitter<true>();
 
-  public get state() {
-    return this.cityForm.get('state');
+  public get cveState() {
+    return this.form.get('cveState');
   }
 
   public get noRegister() {
-    return this.cityForm.get('noRegister');
+    return this.form.get('noRegister');
   }
 
   public get id() {
-    return this.cityForm.get('idSafe');
+    return this.form.get('idSafe');
   }
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private cityService: CityService
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
   prepareForm() {
-    this.cityForm = this.fb.group({
+    this.form = this.fb.group({
       idCity: [
         null,
         [
@@ -57,22 +53,21 @@ export class CityDetailComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      state: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      cveState: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       noDelegation: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
       ],
       noSubDelegation: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
       ],
       legendOffice: [
         null,
@@ -88,10 +83,12 @@ export class CityDetailComponent extends BasePage implements OnInit {
       ],
     });
 
-    if (this.city != null) {
-      this.edit = true;
-      console.log(this.city);
-      this.cityForm.patchValue(this.city);
+    if (this.edit) {
+      this.status = 'Actualizar';
+      this.form.patchValue(this.city);
+      this.noRegister.disable();
+      this.cveState.disable();
+      this.form.controls['cveState'].setValue(this.city.state['cveState']);
     }
   }
 
@@ -105,25 +102,72 @@ export class CityDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.cityService.create(this.cityForm.value).subscribe(
+    const {
+      idCity,
+      nameCity,
+      noDelegation,
+      noSubDelegation,
+      legendOffice,
+      cveState,
+      noRegister,
+    } = this.form.value;
+
+    const newCity = {
+      idCity,
+      nameCity,
+      noRegister,
+      noDelegation,
+      noSubDelegation,
+      legendOffice,
+      version: 1,
+      creationUser: localStorage.getItem('name'),
+      creationDate: new Date(),
+      state: {
+        cveState,
+      },
+    };
+
+    this.cityService.create(newCity).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
   }
 
-  update() {
-    this.loading = true;
-    this.cityService.update(this.city.idCity, this.cityForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+  handleSuccess() {
+    this.loading = false;
+    this.refresh.emit(true);
+    this.modalRef.hide();
   }
 
-  handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+  update() {
+    this.loading = true;
+
+    const {
+      idCity,
+      nameCity,
+      noDelegation,
+      noSubDelegation,
+      legendOffice,
+      cveState,
+    } = this.form.value;
+
+    const cityToUpdate = {
+      idCity,
+      nameCity,
+      noDelegation,
+      noSubDelegation,
+      legendOffice,
+      version: 1,
+      creationUser: localStorage.getItem('name'),
+      creationDate: new Date(),
+      state: {
+        cveState,
+      },
+    };
+
+    this.cityService.update(this.city.idCity, cityToUpdate).subscribe(
+      data => this.handleSuccess(),
+      error => (this.loading = false)
+    );
   }
 }

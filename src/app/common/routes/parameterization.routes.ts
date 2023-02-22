@@ -36,18 +36,18 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Conceptos bancarios',
         link: '/pages/parameterization/bank-concepts',
       },
-      /*{ REPETIDO EN CATALOGOS
+      {
         label: 'Catalogo de conceptos de pagos depositarias',
         link: '/pages/parameterization/cat-depository-payment',
-      },*/
+      },
       {
         label: 'Mant. a delegaciones y subdelegaciones',
         link: '/pages/parameterization/maintenance-deleg-subdeleg',
       },
-      /*{ REPETIDO EN CATALOGOS
+      {
         label: 'Mantto. a administrador, depositario e interventor',
         link: '/pages/parameterization/mnce-adm-depository-auditor',
-      },*/
+      },
       {
         label: 'Registro de atributos para tablas lógicas',
         link: '/pages/parameterization/attributes-reg-logical-tables',
@@ -71,14 +71,6 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Catálogo de relación y de asunto dictamen',
         link: '/pages/parameterization/cat-relationship-opinion',
-      },
-      {
-        label: 'Catálogo de Transferentes',
-        link: '/pages/parameterization/cat-transferent',
-      },
-      {
-        label: 'Matt. Correos',
-        link: '/pages/parameterization/mail',
       },
       //Alexander
       {
@@ -138,10 +130,6 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/indicia-registration',
       },
       {
-        label: 'Tiempos Maximos para abandono',
-        link: '/pages/parameterization/maximum-times-for-abandonment',
-      },
-      {
         label: 'Catálogo de tipos de documentos',
         link: '/pages/parameterization/catalog-of-document-types',
       },
@@ -150,10 +138,6 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/catalog-of-inventory-types',
       },
       //Félix
-      {
-        label: 'Catálogo de separadores a documentos',
-        link: '/pages/parameterization/cat-of-separators-documents',
-      },
       {
         label: 'Valores',
         link: '/pages/parameterization/values',
@@ -186,10 +170,6 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Tiempo Máximo Para Cierre Actas Devolución',
         link: '/pages/parameterization/maximum-times',
-      },
-      {
-        label: 'Catálogo de peritos',
-        link: '/pages/parameterization/cat-appraisers',
       },
     ],
   },

@@ -1,5 +1,4 @@
 export interface ITvalTable5 {
-  id: number;
   table: number;
   otKey1: string;
   otKey2: string;

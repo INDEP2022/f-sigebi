@@ -1,23 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { CustomersBlackListComponent } from '../customers-black-list/customers-black-list.component';
-import { CustomersModalComponent } from '../customers-modal/customers-modal.component';
-import { CustomersWhiteListComponent } from '../customers-white-list/customers-white-list.component';
-import { RepresentativesModalComponent } from '../representatives-modal/representatives-modal.component';
-//Columns
-import { CUSTOMERS_COLUMNS } from './customers-columns';
-import { REPRESENTATIVES_COLUMNS } from './representatives-columns';
-//Models
-import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
-import { IRepresentative } from 'src/app/core/models/catalogs/representative-model';
-//Services
-import { ExcelService } from 'src/app/common/services/excel.service';
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
+import { CustomersRepresentativesComponent } from '../customers-representatives/customers-representatives.component';
+import { COLUMNS } from './columns';
+import { data } from './data';
 
 @Component({
   selector: 'app-customers-list',
@@ -25,129 +14,66 @@ import { CustomerService } from 'src/app/core/services/catalogs/customer.service
   styles: [],
 })
 export class CustomersListComponent extends BasePage implements OnInit {
+  data: any[] = data;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems2: number = 0;
-  params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  customers: ICustomer[] = [];
-  representative: IRepresentative[] = [];
-
-  settings2;
-  data: any;
-
-  constructor(
-    private modalService: BsModalService,
-    private customerService: CustomerService,
-    private excelService: ExcelService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: 'Acciones',
-        edit: true,
+        ...this.settings.actions,
+        add: false,
+        edit: false,
         delete: false,
-        position: 'right',
+        columnTitle: 'Representantes',
+        custom: [
+          {
+            name: 'export',
+            title:
+              '<i class="fa fa-solid fa-file-csv text-success mx-2 fa-lg"></i>',
+          },
+          {
+            name: 'info',
+            title: '<i class="fa fa-solid fa-info text-info mx-2 fa-lg"></i>',
+          },
+        ],
       },
-      columns: { ...CUSTOMERS_COLUMNS },
-    };
-
-    this.settings2 = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
-        position: 'right',
-      },
-
-      columns: { ...REPRESENTATIVES_COLUMNS },
+      columns: { ...COLUMNS },
     };
   }
 
   ngOnInit(): void {
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getCustomers());
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRepresentative());
+      .subscribe(() => this.getExample());*/
   }
 
-  //Table de todos los clientes
-  getCustomers() {
-    this.loading = true;
-    this.customerService.getAllClients(this.params.getValue()).subscribe({
-      next: response => {
-        this.customers = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
+  openModal(context?: Partial<CustomersRepresentativesComponent>): void {
+    const modalRef = this.modalService.show(CustomersRepresentativesComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     });
+
+    /*modalRef.content.selected.subscribe((data: any) => {
+      //console.log(data)
+      //if (data)
+    });*/
   }
 
-  //Exportar todos los clientes
-  exportAllClients(): void {
-    this.excelService.exportAsExcelFile(this.customers, 'Todos los clientes');
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
 
-  openFormClients(customers?: ICustomer) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      customers,
-      callback: (next: boolean) => {
-        if (next) this.getCustomers();
-      },
-    };
-    this.modalService.show(CustomersModalComponent, modalConfig);
-  }
-
-  //Abrir modal de lista negra
-  openBlackList() {
-    const modalConfig = MODAL_CONFIG;
-
-    this.modalService.show(CustomersBlackListComponent, modalConfig);
-  }
-
-  //Abrir modal de lista blanca
-  openWhiteList() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(CustomersWhiteListComponent, modalConfig);
-  }
-
-  //Tabla de representates
-  getRepresentative() {
-    this.loading = true;
-    this.customerService
-      .getAllRepresentative(this.params2.getValue())
-      .subscribe({
-        next: response => {
-          this.representative = response.data;
-          this.totalItems2 = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
-  }
-
-  //Exportar representates
-  exportAllRepresentative(): void {
-    this.excelService.exportAsExcelFile(
-      this.representative,
-      'Todos los representantes'
-    );
-  }
-
-  openFormRepresentative(representative?: IRepresentative) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      representative,
-      callback: (next: boolean) => {
-        if (next) this.getRepresentative();
-      },
-    };
-    this.modalService.show(RepresentativesModalComponent, modalConfig);
+  onCustom(event: any) {
+    if (event.action === 'info') {
+      this.openModal();
+      //alert('info')
+    } else {
+      //alert('export')
+    }
+    //alert(`Custom event '${event.action}' fired on row №: ${event.data.id}`)
   }
 }

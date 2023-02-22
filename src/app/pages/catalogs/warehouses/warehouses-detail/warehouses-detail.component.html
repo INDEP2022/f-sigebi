@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ status }} BODEGA</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="warehouseForm">
+    <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('idWarehouse')" label="Id">
+          <form-field [control]="form.get('idWarehouse')" label="Id">
             <input
               type="number"
               class="form-control"
@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('indActive')" label="Activo">
+          <form-field [control]="form.get('indActive')" label="Activo">
             <input
               type="text"
               class="form-control"
@@ -28,7 +28,7 @@
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('description')"
+            [control]="form.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('ubication')"
+            [control]="form.get('ubication')"
             label="Ubicaci&oacute;n">
             <input
               type="text"
@@ -50,15 +50,13 @@
 
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('manager')"
-            label="Responsable">
+          <form-field [control]="form.get('manager')" label="Responsable">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('responsibleDelegation')"
+            [control]="form.get('responsibleDelegation')"
             label="Delegaci&oacute;n Responsable">
             <input
               type="text"
@@ -71,7 +69,7 @@
       <div class="row mt-4">
         <div class="col-md-4">
           <form-field
-            [control]="warehouseForm.get('registerNumber')"
+            [control]="form.get('registerNumber')"
             label="No&#46; Registro">
             <input
               type="number"
@@ -82,62 +80,52 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('stateCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="states"
-              bindLabel="descCondition"
-              label="Estado"
-              value="id"
-              (fetchItems)="getStates($event)"
-              control="stateCode"></ngx-select>
-          </form-field>
+          <ngx-select
+            [form]="form"
+            [data]="states"
+            bindLabel="descState"
+            label="Estado"
+            value="codeState"
+            (fetchItems)="getStates($event)"
+            control="stateCode"></ngx-select>
         </div>
         <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('cityCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="cities"
-              bindLabel="nameCity"
-              label="Ciudad"
-              value="idCity"
-              (fetchItems)="getCities($event)"
-              control="cityCode"></ngx-select>
-          </form-field>
+          <ngx-select
+            [form]="form"
+            [data]="cities"
+            bindLabel="nameCity"
+            label="Ciudad"
+            value="idCity"
+            (fetchItems)="getCities($event)"
+            control="cityCode"></ngx-select>
         </div>
       </div>
 
       <div class="row mt-4">
         <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('municipalityCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="municipalities"
-              bindLabel="description"
-              label="Municipio"
-              value="codeMunicipalityId"
-              (fetchItems)="getMunicipalities($event)"
-              control="municipalityCode"></ngx-select>
-          </form-field>
+          <ngx-select
+            [form]="form"
+            [data]="municipalities"
+            bindLabel="municipalityName"
+            label="Municipio"
+            value="key"
+            (fetchItems)="getMunicipalities($event)"
+            control="municipalityCode"></ngx-select>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="warehouseForm.get('type')"
-            label="Tipo Almac&eacute;n">
+          <form-field [control]="form.get('type')" label="Tipo Almac&eacute;n">
             <input type="text" class="form-control" formControlName="type" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('localityCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="localities"
-              label="Localidad"
-              bindLabel="localityName"
-              value="key"
-              (fetchItems)="getLocalities($event)"
-              control="localityCode"></ngx-select>
-          </form-field>
+          <ngx-select
+            [form]="form"
+            [data]="localities"
+            label="Localidad"
+            bindLabel="localityName"
+            value="key"
+            (fetchItems)="getLocalities($event)"
+            control="localityCode"></ngx-select>
         </div>
       </div>
     </form>
@@ -147,7 +135,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!warehouseForm.valid"
+          [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

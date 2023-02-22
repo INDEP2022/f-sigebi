@@ -1,17 +1,11 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
-//Models
-import { IGood } from 'src/app/core/models/ms-good/good';
-//Services
-import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 //Provisional Data
 import { goodsData } from './data';
 
@@ -39,12 +33,7 @@ export class ReturnsConficationsListComponent
   //Columns
   columns = COLUMNS;
 
-  constructor(
-    private datePipe: DatePipe,
-    private goodService: GoodService,
-    private expedientService: ExpedientService,
-    private fb: FormBuilder
-  ) {
+  constructor(private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
@@ -63,7 +52,7 @@ export class ReturnsConficationsListComponent
       },
       mode: '',
       rowClassFunction: (row: any) => {
-        if (row.data.estatus.active === '1') {
+        if (row.data.available) {
           return 'text-success';
         } else {
           return 'text-danger';
@@ -75,7 +64,7 @@ export class ReturnsConficationsListComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    //this.data.load(goodsData);
+    this.data.load(goodsData);
     /**
      * Instance renderComponent
      **/
@@ -93,77 +82,21 @@ export class ReturnsConficationsListComponent
   private prepareForm(): void {
     //Form
     this.form = this.fb.group({
-      idExpedient: [null, [Validators.required]],
+      record: [null, [Validators.required]],
       preliminaryInquiry: [
-        { value: null, disabled: true },
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       criminalCase: [
-        { value: null, disabled: true },
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      identifies: [{ value: null, disabled: true }],
-      noCourt: [{ value: null, disabled: true }],
     });
     //Massive Application Form
     this.formMA = this.fb.group({
       dateConfiscation: [null],
       promoter: [null],
     });
-  }
-
-  getExpedientById(): void {
-    let _id = this.form.controls['idExpedient'].value;
-    this.loading = true;
-    this.expedientService.getById(_id).subscribe(
-      response => {
-        console.log(response);
-        //TODO: Validate Response
-        if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
-          this.getGoodsByExpedient(response.id);
-        } else {
-          //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontrarón registros', '');
-        }
-
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
-  }
-
-  getGoodsByExpedient(id: string | number): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods(id));
-  }
-
-  getGoods(id: string | number): void {
-    this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
-      response => {
-        //console.log(response);
-        let data = response.data.map((item: IGood) => {
-          //console.log(item);
-          item.promoter = item.userPromoterDecoDevo?.id;
-
-          let dateDecoDev = item.scheduledDateDecoDev;
-          item.dateRenderDecoDev = this.datePipe.transform(
-            dateDecoDev,
-            'yyyy-MM-dd'
-          );
-
-          let dateTeso = item.tesofeDate;
-          item.tesofeDate = this.datePipe.transform(dateTeso, 'yyyy-MM-dd');
-          return item;
-        });
-        this.data.load(data);
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
   }
 
   settingsChange($event: any): void {
@@ -205,15 +138,13 @@ export class ReturnsConficationsListComponent
   }
 
   selectRow(row: any) {
-    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
   }
 
   onSaveConfirm(event: any) {
-    console.log(event);
+    //console.log(event);
     event.confirm.resolve();
-    //this.goodService.update()
     /**
      * Call Service
      * **/

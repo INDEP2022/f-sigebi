@@ -16,9 +16,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class DepartmentFormComponent extends BasePage implements OnInit {
   departmentForm: ModelForm<IDepartment>;
-  department: IDepartment;
   title: string = 'Departamento';
   edit: boolean = false;
+  deductive: IDepartment;
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
   constructor(
@@ -56,7 +56,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       ],
       lastOffice: [
         null,
-        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ],
       numRegister: [
         null,
@@ -66,10 +66,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      depend: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      depend: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       depDelegation: [
         null,
         [
@@ -80,9 +77,9 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       ],
       phaseEdo: [null, [Validators.required]],
     });
-    if (this.department != null) {
+    if (this.deductive != null) {
       this.edit = true;
-      this.departmentForm.patchValue(this.department);
+      this.departmentForm.patchValue(this.deductive);
     }
   }
 
@@ -119,7 +116,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.departmentService
-      .update(this.department.id, this.departmentForm.value)
+      .update(this.deductive.id, this.departmentForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

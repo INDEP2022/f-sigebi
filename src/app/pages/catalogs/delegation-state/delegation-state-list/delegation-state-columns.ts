@@ -1,19 +1,13 @@
 export const DELEGATION_STATE_COLUMNS = {
-  regionalDelegation: {
+  id: {
     title: 'Registro',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
-    },
   },
   stateCode: {
     title: 'Código de estado',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.codeCondition;
-    },
   },
   version: {
     title: 'Versión',
@@ -27,7 +21,7 @@ export const DELEGATION_STATE_COLUMNS = {
   },
   status: {
     title: 'Estatus',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
   editionUser: {

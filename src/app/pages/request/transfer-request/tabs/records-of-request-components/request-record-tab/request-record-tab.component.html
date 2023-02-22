@@ -9,201 +9,184 @@
       <div class="p-2 bd-highlight buttons">
         <button
           class="btn btn-primary btn-sm active"
-          [disabled]="requestForm.invalid"
+          [disabled]="receptionForm.invalid"
           (click)="confirm()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
     </div>
-    <form [formGroup]="requestForm" class="form-material">
+    <form [formGroup]="receptionForm" class="form-material">
       <div class="row pt-4">
-        <div class="col-md-3">
-          <form-check label="Prioridad" for="urgentPriority">
+        <div class="col-md-2">
+          <span style="line-height: 3">Prioridad</span>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="receptionForm.get('priority')">
             <input
-              id="urgentPriority"
               type="checkbox"
-              [ngModelOptions]="{ standalone: true }"
-              [(ngModel)]="priority"
-              (change)="changePriority($event)" />
-          </form-check>
+              formControlName="priority"
+              aria-label=""
+              id="priority" />
+          </form-field>
         </div>
         <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="originInfo"
-            (fetchItems)="getOriginInfo($event)"
-            [data]="selectOriginInfo"
-            [searchable]="false"
-            label="Procedencia Informaci&oacute;n"
-            bindLabel="description"
-            value="keyId">
-          </ngx-select>
+          <form-field
+            [control]="receptionForm.get('infoProvenance')"
+            label="Procedencia Informaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="infoProvenance" />
+          </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-2">
           <form-field
-            [control]="requestForm.get('receptionDate')"
+            [control]="receptionForm.get('receptDate')"
             label="Fecha de Recepci&oacute;n">
             <input
               type="text"
               class="form-control"
-              #dp="bsDatepicker"
-              bsDatepicker
-              [bsValue]="bsReceptionValue"
-              [disabled]="true" />
+              formControlName="receptDate"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="requestForm.get('paperDate')"
-            label="Fecha de Ofici&oacute;">
+            [control]="receptionForm.get('officeDate')"
+            label="&#42;Fecha de Ofici&oacute;n">
             <input
               type="text"
               class="form-control"
-              [bsValue]="bsPaperValue"
-              #dp="bsDatepicker"
-              bsDatepicker
-              (bsValueChange)="changeDateEvent($event)" />
+              formControlName="officeDate"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
           <ngx-select
-            [form]="requestForm"
-            control="typeRecord"
+            [form]="receptionForm"
+            control="typeExpedient"
             (fetchItems)="getTypeExpedient($event)"
             [data]="selectTypeExpedient"
-            [searchable]="false"
             label="Tipo Expediente"
-            bindLabel="description"
-            value="description">
+            bindLabel=""
+            value="id">
           </ngx-select>
+          <!-- bindLabel = name field -->
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('publicMinistry')"
-            label="Ministerio P&uacute;blico">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="publicMinistry" />
-          </form-field>
-        </div>
-        <!--<div class="col-md-3">
-          <form-field
-            [control]="requestForm.get('indicated')"
+            [control]="receptionForm.get('indiciado')"
             label="Indiciado">
             <input
               type="text"
               class="form-control"
-              formControlName="indicated" />
+              formControlName="indiciado" />
           </form-field>
-        </div>-->
+        </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('nameOfOwner')"
+            [control]="receptionForm.get('nameSender')"
             label="Nombre del Remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="nameOfOwner" />
+              formControlName="nameSender" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('holderCharge')"
+            [control]="receptionForm.get('roleSender')"
             label="Cargo del Remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="holderCharge" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono del Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="phoneOfOwner" />
+              formControlName="roleSender" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('emailOfOwner')"
+            [control]="receptionForm.get('phoneSender')"
+            label="Tel&eacute;fono del Remitente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="phoneSender" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="receptionForm.get('emailSender')"
             label="Email del Remitente">
             <input
               type="email"
               class="form-control"
-              formControlName="emailOfOwner" />
+              formControlName="emailSender" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
-        <!--<div class="col-md-3">
+        <div class="col-md-3">
           <form-field [control]="receptionForm.get('sender')" label="Remitente">
             <input type="text" class="form-control" formControlName="sender" />
           </form-field>
-        </div>-->
+        </div>
         <div class="col-md-3">
-          <form-field [control]="requestForm.get('court')" label="Juzgado">
-            <input type="text" class="form-control" formControlName="court" />
+          <form-field [control]="receptionForm.get('tribunal')" label="Juzgado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tribunal" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="requestForm.get('crime')" label="Delito">
+          <form-field [control]="receptionForm.get('crime')" label="Delito">
             <input type="text" class="form-control" formControlName="crime" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('receiptRoute')"
+            [control]="receptionForm.get('typeReception')"
             label="V&iacute;a de Recepci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="receiptRoute"
-              [readOnly]="true" />
+              formControlName="typeReception" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('destinationManagement')"
+            [control]="receptionForm.get('destinationManage')"
             label="Gesti&oacute;n de Destino">
             <input
               type="text"
               class="form-control"
-              formControlName="destinationManagement" />
+              formControlName="destinationManage" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('indicatedTaxpayer')"
+            [control]="receptionForm.get('contributor')"
             label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
               class="form-control"
-              formControlName="indicatedTaxpayer" />
+              formControlName="contributor" />
           </form-field>
         </div>
         <div class="col-md-5">
-          <form-field [control]="requestForm.get('affair')" label="Asunto">
-            <input
-              type="text"
-              class="form-control"
-              [ngModelOptions]="{ standalone: true }"
-              [ngModel]="affairName"
-              [readOnly]="true" />
+          <form-field [control]="receptionForm.get('subject')" label="Asunto">
+            <input type="text" class="form-control" formControlName="subject" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
-        <!--<div class="col-md-3">
+        <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('transExpedient')"
             label="Expediente Transferente&#47;PAMA">
@@ -222,25 +205,22 @@
               class="form-control"
               formControlName="typeTransfer" />
           </form-field>
-        </div>-->
+        </div>
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('transferEntNotes')"
+            [control]="receptionForm.get('transferEntityNotes')"
             label="Notas Entidad Transferente">
             <input
               type="text"
               class="form-control"
-              formControlName="transferEntNotes" />
+              formControlName="transferEntityNotes" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="requestForm.get('observations')"
+            [control]="receptionForm.get('observations')"
             label="Observaciones">
-            <textarea
-              class="form-control"
-              id="observations"
-              formControlName="observations">
+            <textarea class="form-control" id="" formControlName="observations">
             </textarea>
           </form-field>
         </div>

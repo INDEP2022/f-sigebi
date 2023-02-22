@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -14,18 +12,16 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class ModalListGoodsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  goods: IGood[] = [];
-  constructor(
-    private bsModalRef: BsModalRef,
-    private opcion: ModalOptions,
-    private readonly goodServices: GoodService
-  ) {
+  //Data Table
+
+  data1: any;
+  constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: {
-        goodId: {
+        numberGood: {
           title: 'No Bien',
           width: '10%',
           sort: false,
@@ -40,7 +36,7 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
           width: '10%',
           sort: false,
         },
-        fileNumber: {
+        dossier: {
           title: 'Expediente',
           width: '10%',
           sort: false,
@@ -50,29 +46,11 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    const idWarehouse = this.opcion.initialState;
-    console.log(Number(idWarehouse));
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() =>
-        this.getGoodByWarehouses({ ids: [Number(idWarehouse)] })
-      );
+    this.data1 = this.opcion.initialState;
   }
 
+  mostrar() {}
   return() {
     this.bsModalRef.hide();
-  }
-  getGoodByWarehouses(body: Object): void {
-    console.log(body);
-    this.goodServices.getByWarehouse(body, this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        this.goods = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
   }
 }

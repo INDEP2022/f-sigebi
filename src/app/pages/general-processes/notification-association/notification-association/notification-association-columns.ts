@@ -1,45 +1,40 @@
-import { IAffair } from 'src/app/core/models/ms-notification/notification.model';
-
 export const NOTIFICATION_ASSOCIATION_COLUMNS = {
-  wheelNumber: {
+  noVolante: {
     title: 'No. Volante',
     sort: false,
   },
-  identifier: {
+  identifica: {
     title: 'Identifica',
     sort: false,
   },
-  wheelType: {
+  tipoVolante: {
     title: 'Tipo Volante',
     sort: false,
   },
-  affair: {
+  asunto: {
     title: 'Asunto',
     sort: false,
-    valuePrepareFunction: (affair: IAffair) => affair?.description,
   },
-  captureDate: {
+  fecCaptura: {
     title: 'Fec. Captura',
     sort: false,
-    valuePrepareFunction: (date: string) => new Date(date).toLocaleDateString(),
   },
-  protectionKey: {
+  cveAmparo: {
     title: 'CVE Amparo',
     sort: false,
   },
-  preliminaryInquiry: {
+  averPrevia: {
     title: 'Averiguación Previa',
     sort: false,
   },
-  criminalCase: {
+  causaPenal: {
     title: 'Causa Penal',
     sort: false,
   },
-  // expedientNumber: {
-  //   title: 'No. Expediente',
-  //   sort: false,
-  //   showAlways: true,
-  // },
+  noExpediente: {
+    title: 'No. Expediente',
+    sort: false,
+  },
 };
 
 export const NOTIFICATION_ASSOCIATION_EXAMPLE_DATA = [

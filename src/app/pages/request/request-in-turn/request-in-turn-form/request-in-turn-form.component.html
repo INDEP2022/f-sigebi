@@ -13,7 +13,7 @@
             class="text-color"
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
-            <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Filtar
             solicitudes</a
           >
         </p>
@@ -23,15 +23,15 @@
             class="text-color"
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
-            <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Filtar
             solicitudes</a
           >
         </p>
       </h5>
     </div>
     <div class="row" *ngIf="showSearchForm">
-      <form [formGroup]="searchForm" class="form-material">
-        <!--<div class="row mb-2">
+      <form [formGroup]="requestForm" class="form-material">
+        <div class="row mb-2">
           <div class="col-sm-2">
             <span style="line-height: 3">Match</span>
           </div>
@@ -54,12 +54,12 @@
                 id="any" />
             </form-radio>
           </div>
-        </div>-->
+        </div>
 
         <div class="row mb-3">
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('dateRequest')"
+              [control]="requestForm.get('dateRequest')"
               label="Fecha de solicitud">
               <input
                 type="text"
@@ -72,18 +72,17 @@
 
           <div class="col-md-4">
             <ngx-select
-              [form]="searchForm"
+              [form]="requestForm"
               control="authority"
-              (fetchItems)="getAuthority($event)"
+              (fetchItems)="getSubDelegations($event)"
               [data]="selectAuthority"
-              bindLabel="authorityName"
               label="Autoridad"
-              value="idAuthority"></ngx-select>
+              value="Autoridad"></ngx-select>
           </div>
 
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('ascertainment')"
+              [control]="requestForm.get('ascertainment')"
               label="Averiguación previa">
               <input
                 type="text"
@@ -96,17 +95,16 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <ngx-select
-              [form]="searchForm"
-              control="stateOfRepublic"
-              (fetchItems)="getStateOfRepublic($event)"
+              [form]="requestForm"
+              control="state"
+              (fetchItems)="getSubDelegations($event)"
               [data]="selectState"
-              bindLabel="descCondition"
               label="Estado"
-              value="id"></ngx-select>
+              value="estado"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('contributor')"
+              [control]="requestForm.get('contributor')"
               label="Contribuyente y/o Indiciado">
               <input
                 type="text"
@@ -115,7 +113,9 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="searchForm.get('cause')" label="Causa penal">
+            <form-field
+              [control]="requestForm.get('cause')"
+              label="Causa penal">
               <input type="text" class="form-control" formControlName="cause" />
             </form-field>
           </div>
@@ -124,17 +124,16 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <ngx-select
-              [form]="searchForm"
-              [data]="selectTransfer"
+              [form]="requestForm"
               control="transfer"
-              bindLabel="nameTransferent"
-              (fetchItems)="getTransferente($event)"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectTransfer"
               label="Transferente"
-              value="id"></ngx-select>
+              value="transferencia"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('dateJob')"
+              [control]="requestForm.get('dateJob')"
               label="Fecha de oficio">
               <input
                 type="text"
@@ -146,7 +145,7 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('expedient')"
+              [control]="requestForm.get('expedient')"
               label="Expediente transferente/PAMA">
               <input
                 type="text"
@@ -159,30 +158,42 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <ngx-select
-              [form]="searchForm"
-              control="station"
-              (fetchItems)="getStation($event)"
-              [data]="selectStation"
+              [form]="requestForm"
+              control="transmitter"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectTransmitter"
               label="Emisora"
-              bindLabel="stationName"
+              bindLabel=""
               value="id"></ngx-select>
+            <!-- bindLabel = name field -->
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('acta')"
+              [control]="requestForm.get('acta')"
               label="Acta Circunstanciada">
               <input type="text" class="form-control" formControlName="acta" />
             </form-field>
           </div>
           <div class="col-md-4">
             <ngx-select
-              [form]="searchForm"
-              control="affair"
-              (fetchItems)="getAffair($event)"
-              [data]="selectAffeir"
-              bindLabel="description"
+              [form]="requestForm"
+              control="subject"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectSubject"
               label="Asunto"
-              value="id"></ngx-select>
+              value="asunto"></ngx-select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <ngx-select
+              [form]="requestForm"
+              control="deleRegional"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectDeleRegional"
+              label="Delegación regional"
+              value="Autoridad"></ngx-select>
           </div>
         </div>
 
@@ -191,7 +202,6 @@
             <div class="p-2">
               <button
                 (click)="search()"
-                [disabled]="searchForm.invalid"
                 class="btn btn-primary active btn-sm ml-3"
                 style="height: 36px">
                 <i class="bx bx-search-alt-2"></i> Buscar

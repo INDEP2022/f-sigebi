@@ -1,17 +1,17 @@
-export const GOODS_RECORDS_COLUMNS = {
-  goodsId: {
+export const CLOSING_RECORDS_COLUMNS = {
+  noBien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },
-  quantity: {
+  cantidad: {
     title: 'Cantidad',
     sort: false,
   },
-  amountReturned: {
+  importe: {
     title: 'Importe',
     sort: false,
   },

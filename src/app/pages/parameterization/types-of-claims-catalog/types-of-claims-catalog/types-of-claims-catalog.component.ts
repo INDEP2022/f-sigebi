@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalTypeOfClaimsComponent } from '../modal-type-of-claims/modal-type-of-claims.component';
-import { TypesOfClaimsService } from '../types-of-claims.service';
 
 @Component({
   selector: 'app-types-of-claims-catalog',
@@ -17,14 +15,7 @@ export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  dataTable: LocalDataSource = new LocalDataSource();
-
-  data: any = [];
-
-  constructor(
-    private modalService: BsModalService,
-    private claimServices: TypesOfClaimsService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -49,37 +40,16 @@ export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getPagination();
-    this.getClaims();
-  }
-
-  getClaims() {
-    this.data = [];
-    this.claimServices.getClaims().subscribe({
-      next: (resp: any) => {
-        if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.data.push({
-              keyClaims: item.flag,
-              description: item.description,
-              id: item.id,
-            });
-            this.dataTable.load(this.data);
-          });
-        }
-      },
-    });
   }
 
   openModal(context?: Partial<ModalTypeOfClaimsComponent>) {
     const modalRef = this.modalService.show(ModalTypeOfClaimsComponent, {
-      initialState: { ...context, lengthData: this.data.length + 1 },
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        this.getClaims();
-      }
+      if (next) this.getData();
     });
   }
 
@@ -99,8 +69,18 @@ export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
     this.totalItems = this.columns.length;
   }
 
+  data = [
+    {
+      keyClaims: 'DRR',
+      description: 'DESCRIPCION DEL SINIESTRO',
+    },
+    {
+      keyClaims: 'DRR',
+      description: 'DESCRIPCION DEL SINIESTRO 2',
+    },
+  ];
+
   delete(event: any) {
-    console.log(event);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -108,12 +88,7 @@ export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.claimServices.deleteClaims(event.id).subscribe({
-          next: (resp: any) => {
-            this.onLoadToast('success', 'Eliminado correctamente', '');
-            this.getClaims();
-          },
-        });
+        this.onLoadToast('success', 'Eliminado correctamente', '');
       }
     });
   }

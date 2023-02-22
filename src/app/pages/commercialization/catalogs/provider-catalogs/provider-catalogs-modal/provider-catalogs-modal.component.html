@@ -19,12 +19,9 @@
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="providerForm.get('nameReason')"
+            [control]="providerForm.get('name')"
             label="Nombre o Razón Social">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameReason" />
+            <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -35,8 +32,13 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('colony')" label="Colonia">
-            <input type="text" class="form-control" formControlName="colony" />
+          <form-field
+            [control]="providerForm.get('neighborhood')"
+            label="Colonia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="neighborhood" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -52,45 +54,45 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('clkedo')">
+          <form-field [control]="providerForm.get('state')">
             <ngx-select
               [form]="providerForm"
               [data]="stateItems"
               label="Estado"
-              value="id"
-              bindLabel="descCondition"
+              value="description"
+              bindLabel="description"
               (fetchItems)="getStates($event)"
-              control="clkedo">
+              control="state">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('clkmun')">
+          <form-field [control]="providerForm.get('city')">
             <ngx-select
               [form]="providerForm"
               [data]="cityItems"
               label="Ciudad"
-              value="idCity"
-              bindLabel="nameCity"
+              value="description"
+              bindLabel="description"
               (fetchItems)="getCities($event)"
-              control="clkmun">
+              control="city">
             </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('desCountry')" label="País">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="desCountry" />
-          </form-field>
-          <!-- <form-field [control]="providerForm.get('clkCountry')">
-            <ngx-select [form]="providerForm" [data]="countryItems" label="País" value="description"
-              bindLabel="description" (fetchItems)="getCountries($event)" control="clkCountry">
+          <form-field [control]="providerForm.get('country')">
+            <ngx-select
+              [form]="providerForm"
+              [data]="countryItems"
+              label="País"
+              value="description"
+              bindLabel="description"
+              (fetchItems)="getCountries($event)"
+              control="country">
             </ngx-select>
-          </form-field> -->
+          </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field [control]="providerForm.get('cp')" label="Cp">
@@ -112,23 +114,20 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="providerForm.get('webMail')"
-            label="Correo Web">
-            <input type="text" class="form-control" formControlName="webMail" />
+          <form-field [control]="providerForm.get('email')" label="Correo Web">
+            <input type="text" class="form-control" formControlName="email" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="providerForm.get('typePerson')"
-            label="Tipo Persona">
+          <form-field [control]="providerForm.get('type')" label="Tipo Persona">
             <ng-select
-              formControlName="typePerson"
+              formControlName="type"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">F&Iacute;SICA</ng-option>
-              <ng-option value="2">MORAL</ng-option>
+              <ng-option *ngFor="let t of typeTestData" value="t.type">{{
+                t.description
+              }}</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -136,22 +135,22 @@
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="providerForm.get('preponderantAct')"
+            [control]="providerForm.get('activity')"
             label="Actividad Preponderante">
             <input
               type="text"
               class="form-control"
-              formControlName="preponderantAct" />
+              formControlName="activity" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="providerForm.get('contractNo')"
+            [control]="providerForm.get('contractNumber')"
             label="N° Contrato">
             <input
               type="text"
               class="form-control"
-              formControlName="contractNo" />
+              formControlName="contractNumber" />
           </form-field>
         </div>
       </div>

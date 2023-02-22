@@ -9,14 +9,13 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   `,
   styles: [],
 })
-export class CheckboxElementComponent<T = any> implements OnInit {
+export class CheckboxElementComponent implements OnInit {
   checked: boolean;
 
   @Input() value: boolean;
-  @Input() rowData: T;
+  @Input() rowData: any;
 
-  @Output() toggle: EventEmitter<{ row: T; toggle: boolean }> =
-    new EventEmitter();
+  @Output() toggle: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
 
@@ -24,9 +23,9 @@ export class CheckboxElementComponent<T = any> implements OnInit {
     this.checked = this.value;
   }
 
-  onToggle($event: Event) {
+  onToggle($event: any) {
     let row = this.rowData;
-    let toggle = ($event.currentTarget as HTMLInputElement).checked;
+    let toggle = $event;
     this.toggle.emit({ row, toggle });
   }
 }

@@ -8,7 +8,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { BrandsSubBrandsService } from '../brands-sub-brands.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -33,8 +32,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private sanitizer: DomSanitizer,
-    private brandServices: BrandsSubBrandsService
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -93,35 +91,13 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   onSaveConfirm(event: any) {
-    const body = {
-      idBrand: this.form.get('brand').value,
-      idSubBrand: event.newData.subBrand,
-      subBrandDescription: event.newData.description,
-    };
-    this.brandServices.putSubBrands(body).subscribe({
-      next: (respSubBrand: any) => {
-        if (respSubBrand) {
-          event.confirm.resolve();
-          this.onLoadToast('success', 'Elemento Actualizado', '');
-        }
-      },
-    });
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Actualizado', '');
   }
 
   onAddConfirm(event: any) {
-    const body = {
-      idBrand: this.form.get('brand').value,
-      idSubBrand: event.newData.subBrand,
-      subBrandDescription: event.newData.description,
-    };
-    this.brandServices.postSubBrands(body).subscribe({
-      next: (respSubBrand: any) => {
-        if (respSubBrand) {
-          event.confirm.resolve();
-          this.onLoadToast('success', 'Elemento Creado', '');
-        }
-      },
-    });
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Creado', '');
   }
 
   onDeleteConfirm(event: any) {
@@ -141,7 +117,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
     this.data.getElements().then((data: any) => {
       //console.log(data)
       this.loading = true;
-      this.createBrand();
+      this.handleSuccess();
     });
     /*this.bankService.create(this.form.value).subscribe(
       data => this.handleSuccess(),
@@ -155,38 +131,9 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  updateBrand() {
-    const body = {
-      id: this.form.get('brand').value,
-      brandDescription: this.form.get('description').value,
-    };
-    this.brandServices.PutBrand(body.id, body).subscribe({
-      next: (resp: any) => {
-        if (resp.statusCode === 200) {
-          return this.handleSuccess();
-        }
-      },
-    });
-  }
-
-  createBrand() {
-    const body = {
-      id: this.form.get('brand').value,
-      brandDescription: this.form.get('description').value,
-    };
-    this.brandServices.postBrands(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          return this.handleSuccess();
-        }
-      },
-    });
-  }
-
   update() {
     this.loading = true;
-    this.updateBrand();
-
+    this.handleSuccess();
     /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)

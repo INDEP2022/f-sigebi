@@ -3,22 +3,18 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import Keyboard from 'simple-keyboard';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
 import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-indicators-model';
 //services
 import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-financial-indicators-modal',
   templateUrl: './cat-financial-indicators-modal.component.html',
   styleUrls: ['./cat-financial-indicators-modal.css'],
 })
-export class CatFinancialIndicatorsModalComponent
-  extends BasePage
-  implements OnInit
-{
+export class CatFinancialIndicatorsModalComponent implements OnInit {
   value = '';
   keyboard: Keyboard;
   financialIndicatorsForm: ModelForm<IFinancialIndicators>;
@@ -31,9 +27,7 @@ export class CatFinancialIndicatorsModalComponent
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private financialIndicatorsService: FinancialIndicatorsService
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.prepareform();
@@ -41,9 +35,12 @@ export class CatFinancialIndicatorsModalComponent
 
   private prepareform() {
     this.financialIndicatorsForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      id: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       formula: [null, [Validators.required]],
     });
     if (this.financialIndicators != null) {
@@ -51,6 +48,10 @@ export class CatFinancialIndicatorsModalComponent
       console.log(this.financialIndicators);
       this.financialIndicatorsForm.patchValue(this.financialIndicators);
     }
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
   //Teclado virtual
@@ -93,41 +94,4 @@ export class CatFinancialIndicatorsModalComponent
       layoutName: shiftToggle,
     });
   };
-
-  //CRUD
-  close() {
-    this.modalRef.hide();
-  }
-
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
-
-  create() {
-    this.loading = true;
-    this.financialIndicatorsService
-      .create(this.financialIndicatorsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-  }
-
-  update() {
-    this.loading = true;
-    this.financialIndicatorsService
-      .update(this.financialIndicators.id, this.financialIndicatorsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-  }
-
-  handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
-  }
 }

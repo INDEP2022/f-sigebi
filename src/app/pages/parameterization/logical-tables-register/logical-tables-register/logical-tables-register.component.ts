@@ -10,7 +10,6 @@ import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-colum
 import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
 //service
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-logical-tables-register',
@@ -60,15 +59,14 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.modalService.show(LogicalTablesRegisterModalComponent, modalConfig);
   }
 
-  showDeleteAlert(dinamicTables: ITables) {
+  showDeleteAlert(documentsForDictum: ITables) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(dinamicTables.table);
-        Swal.fire('Borrado', '', 'success');
+        this.delete(documentsForDictum.table);
       }
     });
   }
@@ -78,4 +76,86 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
       next: () => this.getDinamicTables(),
     });
   }
+
+  // openForm(allotment?: any) {
+  //   this.openModal({ allotment });
+  // }
+
+  // openModal(context?: Partial<LogicalTablesRegisterModalComponent>) {
+  //   const modalRef = this.modalService.show(
+  //     LogicalTablesRegisterModalComponent,
+  //     {
+  //       initialState: { ...context },
+  //       class: 'modal-lg modal-dialog-centered',
+  //       ignoreBackdropClick: true,
+  //     }
+  //   );
+  //   modalRef.content.refresh.subscribe(next => {
+  //     if (next) this.getData();
+  //   });
+  // }
+
+  // getPagination() {
+  //   this.columns = this.data;
+  //   this.totalItems = this.columns.length;
+  // }
+
+  // getData() {
+  //   this.loading = true;
+  //   this.columns = this.data;
+  //   this.totalItems = this.data.length;
+  //   this.loading = false;
+  // }
+
+  // data = [
+  //   {
+  //     noTable: 1,
+  //     name: 'CAT_ENTFED',
+  //     access: 'Acceso único',
+  //     type: 'Una clave',
+  //     description: 'EEntidades Federativas',
+  //   },
+  //   {
+  //     noTable: 2,
+  //     name: 'Delitos',
+  //     access: 'Acceso único',
+  //     type: 'Una clave',
+  //     description: 'Catálogos de delitos',
+  //   },
+  //   {
+  //     noTable: 3,
+  //     name: 'CAT_MON',
+  //     access: 'Acceso único',
+  //     type: 'Cinco claves',
+  //     description: 'Catálogos de monedas',
+  //   },
+  //   {
+  //     noTable: 4,
+  //     name: 'COLORES',
+  //     access: 'Acceso único',
+  //     type: 'Una clave',
+  //     description: 'Catálogos de colores',
+  //   },
+  //   {
+  //     noTable: 6,
+  //     name: 'TASACETES',
+  //     access: 'Acceso por transacción',
+  //     type: 'Cinco claves',
+  //     description: 'Tipos de cetes a 28 días',
+  //   },
+  //   {
+  //     noTable: 7,
+  //     name: 'NOMBRAMIEN',
+  //     access: 'Acceso único',
+  //     type: 'Una clave',
+  //     description: 'Tipos de nombramientos',
+  //   },
+  //   {
+  //     noTable: 8,
+  //     name: 'GIROSEMPR',
+  //     access: 'Acceso único',
+  //     type: 'Una clave',
+  //     description: 'Giros de empresas',
+  //   },
+  // ];
 }

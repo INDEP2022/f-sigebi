@@ -1,6 +1,5 @@
 export interface IDocumentsForDictum {
-  id?: string;
-  key?: string;
+  cve?: number;
   description: string;
   typeDictum: string;
   //numRegister: number;

@@ -39,7 +39,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="parametersD"
+            [source]="data"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)"
             (userRowSelect)="selectRow($event.data)">
@@ -52,7 +52,7 @@
     <!--PARAMETER-->
     <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
       <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-        <label for="">Par&aacute;metro</label>
+        <label for="">Par&aacutemetro</label>
         <div class="mt-4">
           <h5 class="font-size-14 text-muted">
             <i class="bx bxs-circle me-1 text-muted"></i>

@@ -2,8 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { CityService } from 'src/app/core/services/catalogs/city.service';
-import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -13,8 +11,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IComerProvider } from '../../../../../core/models/ms-provider/provider-model';
-import { ComerProvidersService } from '../../../../../core/services/ms-provider/comer-providers.service';
 
 @Component({
   selector: 'app-provider-catalogs-modal',
@@ -23,7 +19,7 @@ import { ComerProvidersService } from '../../../../../core/services/ms-provider/
 })
 export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
   title: string = 'Proveedor';
-  provider: IComerProvider;
+  provider: any;
   edit: boolean = false;
   cityItems = new DefaultSelect();
   stateItems = new DefaultSelect();
@@ -31,118 +27,129 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
   @Output() onConfirm = new EventEmitter<any>();
 
-  constructor(
-    private modalRef: BsModalRef,
-    private fb: FormBuilder,
-    private providerService: ComerProvidersService,
-    private stateService: StateOfRepublicService,
-    private citiesService: CityService
-  ) {
+  cityTestData = [
+    {
+      id: 1,
+      description: 'CIUDAD 1',
+    },
+    {
+      id: 2,
+      description: 'CIUDAD 2',
+    },
+    {
+      id: 3,
+      description: 'CIUDAD 3',
+    },
+    {
+      id: 4,
+      description: 'CIUDAD 4',
+    },
+    {
+      id: 5,
+      description: 'CIUDAD 5',
+    },
+  ];
+
+  stateTestData = [
+    {
+      id: 1,
+      description: 'ESTADO 1',
+    },
+    {
+      id: 2,
+      description: 'ESTADO 2',
+    },
+    {
+      id: 3,
+      description: 'ESTADO 3',
+    },
+    {
+      id: 4,
+      description: 'ESTADO 4',
+    },
+    {
+      id: 5,
+      description: 'ESTADO 5',
+    },
+  ];
+
+  countryTestData = [
+    {
+      id: 1,
+      description: 'PAÍS 1',
+    },
+    {
+      id: 2,
+      description: 'PAÍS 2',
+    },
+    {
+      id: 3,
+      description: 'PAÍS 3',
+    },
+    {
+      id: 4,
+      description: 'PAÍS 4',
+    },
+    {
+      id: 5,
+      description: 'PAÍS 5',
+    },
+  ];
+
+  typeTestData = [
+    {
+      type: 'S',
+      description: 'TIPO 1',
+    },
+    {
+      type: 'P',
+      description: 'TIPO 2',
+    },
+    {
+      type: 'D',
+      description: 'TIPO 3',
+    },
+  ];
+
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.getCities({ page: 1, text: '', limit: 1000 });
-    this.getStates({ page: 1, text: '', limit: 100 });
     this.prepareForm();
+    this.getCities({ page: 1, text: '' });
+    this.getStates({ page: 1, text: '' });
+    this.getCountries({ page: 1, text: '' });
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      providerId: [null],
-      rfc: [
+      rfc: [null, Validators.pattern(RFCCURP_PATTERN)],
+      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      neighborhood: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(RFCCURP_PATTERN),
-          Validators.maxLength(20),
-        ],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      curp: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(RFCCURP_PATTERN),
-          Validators.maxLength(20),
-        ],
-      ],
-      nameReason: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      street: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ],
-      colony: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      delegation: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      stateDesc: [
-        null,
-        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
-      ],
-      cityDesc: [
-        null,
-        [Validators.maxLength(50), Validators.pattern(STRING_PATTERN)],
-      ],
-      clkCountry: [null, Validators.pattern(STRING_PATTERN)],
-      desCountry: [null],
-      clkmun: [null, [Validators.required, Validators.maxLength(3)]],
-      clkedo: [null, [Validators.required, Validators.maxLength(2)]],
-      cp: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(6)],
-      ],
+      delegation: [null, Validators.pattern(STRING_PATTERN)],
+      state: [null],
+      city: [null],
+      country: [null],
+      cp: [null, Validators.pattern(STRING_PATTERN)],
       phone: [null, Validators.pattern(PHONE_PATTERN)],
-      fax: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
-      ],
-      webMail: [null, Validators.pattern(EMAIL_PATTERN)],
-      typePerson: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      preponderantAct: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      contractNo: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      fax: [null],
+      email: [null, Validators.pattern(EMAIL_PATTERN)],
+      type: [null],
+      activity: [null, Validators.pattern(STRING_PATTERN)],
+      contractNumber: [null, Validators.pattern(NUMBERS_PATTERN)],
     });
-
-    this.providerForm.patchValue(this.provider);
-    this.providerForm.controls['desCountry'].setValue('MÉXICO');
-    this.providerForm.controls['clkCountry'].setValue(138);
-  }
-
-  getDescCityAndState() {
-    const idState = this.providerForm.get('clkedo').value;
-    const state = this.stateItems.data.filter(state => state.id === idState)[0];
-    this.providerForm.get('stateDesc').patchValue(state.descCondition);
-
-    const idCity = this.providerForm.get('clkmun').value;
-    const city = this.cityItems.data.filter(city => city.idCity === idCity)[0];
-    this.providerForm.get('cityDesc').patchValue(city.nameCity);
+    if (this.provider !== undefined) {
+      this.edit = true;
+      this.providerForm.patchValue(this.provider);
+    } else {
+      this.providerForm.controls['country'].setValue('MÉXICO');
+    }
   }
 
   close() {
@@ -150,61 +157,43 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.getDescCityAndState();
-    this.edit ? this.update() : this.create();
+    this.handleSuccess();
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = true;
+    // Llamar servicio para agregar control
     this.loading = false;
-    this.onConfirm.emit(true);
+    this.onConfirm.emit(this.providerForm.value);
     this.modalRef.hide();
   }
 
-  create(): void {
-    this.loading = true;
-    const provider = { ...this.providerForm.value };
-    delete provider.desCountry;
-    this.providerService.create(provider).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.showError(error);
-        this.loading = false;
-      },
-    });
+  getCities(params: ListParams) {
+    if (params.text == '') {
+      this.cityItems = new DefaultSelect(this.cityTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.cityTestData.filter((i: any) => i.id == id)];
+      this.cityItems = new DefaultSelect(item[0], 1);
+    }
   }
 
-  update(): void {
-    this.loading = true;
-    const provider = { ...this.providerForm.value };
-    delete provider.desCountry;
-    this.providerService.update(this.provider.providerId, provider).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.showError(error);
-        this.loading = false;
-      },
-    });
+  getStates(params: ListParams) {
+    if (params.text == '') {
+      this.stateItems = new DefaultSelect(this.stateTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.stateTestData.filter((i: any) => i.id == id)];
+      this.stateItems = new DefaultSelect(item[0], 1);
+    }
   }
-
-  showError(error?: any) {
-    this.onLoadToast('error', error.error.message, '');
-  }
-
-  getCities(params?: ListParams) {
-    this.citiesService.getAll(params).subscribe({
-      next: resp => {
-        this.cityItems = new DefaultSelect(resp.data, resp.count);
-      },
-    });
-  }
-
-  getStates(params?: ListParams) {
-    this.stateService.getAll(params).subscribe({
-      next: resp => {
-        this.stateItems = new DefaultSelect(resp.data, resp.count);
-      },
-    });
+  getCountries(params: ListParams) {
+    if (params.text == '') {
+      this.countryItems = new DefaultSelect(this.countryTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.countryTestData.filter((i: any) => i.id == id)];
+      this.countryItems = new DefaultSelect(item[0], 1);
+    }
   }
 }

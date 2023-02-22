@@ -58,7 +58,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="bankAccounts"
+            [source]="data"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>

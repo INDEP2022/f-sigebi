@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { TypesDocuments } from 'src/app/core/models/ms-documents/documents-type';
-import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalCatalogOfDocumentTypesComponent } from '../modal-catalog-of-document-types/modal-catalog-of-document-types.component';
 
@@ -20,13 +17,8 @@ export class CatalogOfDocumentTypesComponent
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  contentDocuments: IListResponse<TypesDocuments> =
-    {} as IListResponse<TypesDocuments>;
 
-  constructor(
-    private modalService: BsModalService,
-    private documentsServ: DocumentsTypeService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -37,7 +29,7 @@ export class CatalogOfDocumentTypesComponent
         position: 'right',
       },
       columns: {
-        id: {
+        typesDocuments: {
           title: 'Tipo Documento',
           sort: false,
         },
@@ -50,53 +42,62 @@ export class CatalogOfDocumentTypesComponent
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getPagination());
+    this.getPagination();
   }
 
-  openForm(allotment?: TypesDocuments) {
-    let config: ModalOptions = {
-      initialState: {
-        allotment,
-        callback: (next: boolean) => {
-          if (next) this.getPagination();
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ModalCatalogOfDocumentTypesComponent, config);
-  }
-
-  getPagination() {
-    this.loading = true;
-    this.documentsServ.getAll(this.params.getValue()).subscribe({
-      next: resp => {
-        this.contentDocuments = resp;
-        this.loading = false;
-      },
-      error: error => (
-        this.onLoadToast('error', error.error.message, ''),
-        (this.loading = false)
-      ),
+  openModal(context?: Partial<ModalCatalogOfDocumentTypesComponent>) {
+    const modalRef = this.modalService.show(
+      ModalCatalogOfDocumentTypesComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.getData();
+        this.onLoadToast('success', 'Guardado Correctamente', '');
+      }
     });
   }
 
-  deleteDocument(id: string) {
+  openForm(allotment?: any) {
+    this.openModal({ allotment });
+  }
+
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
+  }
+
+  data = [
+    {
+      typesDocuments: 'CC',
+      description: 'Cedula de ciudadania',
+    },
+    {
+      typesDocuments: 'CEXT',
+      description: 'Cedula Extranjera',
+    },
+  ];
+
+  delete(event: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.documentsServ.delete(id).subscribe({
-          next: () => (
-            this.onLoadToast('success', 'Eliminado correctamente', ''),
-            this.getPagination()
-          ),
-          error: err => this.onLoadToast('error', err.error.message, ''),
-        });
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Eliminado correctamente', '');
       }
     });
   }

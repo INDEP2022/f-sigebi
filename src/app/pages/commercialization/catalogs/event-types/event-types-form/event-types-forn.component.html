@@ -1,46 +1,46 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} {{ title }}</h5>
+    <h5 class="modal-title">{{ status }} TIPO DE EVENTO</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field [control]="form.get('descripcion')" label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="descripcion" />
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
           <form-field
-            [control]="form.get('descReceipt')"
+            [control]="form.get('desc_recibo')"
             label="Descripción Reporte">
             <input
               type="text"
               class="form-control"
-              formControlName="descReceipt" />
+              formControlName="desc_recibo" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
           <form-field
-            [control]="form.get('typeDispId')"
+            [control]="form.get('id_tipo_disp')"
             label="Tipo de Dispersión">
             <input
               type="number"
               class="form-control"
-              formControlName="typeDispId" />
+              formControlName="id_tipo_disp" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
           <form-field
-            [control]="form.get('typeFailedpId')"
+            [control]="form.get('id_tipo_fallo')"
             label="Tipo de Fallo">
             <input
               type="number"
               class="form-control"
-              formControlName="typeFailedpId" />
+              formControlName="id_tipo_fallo" />
           </form-field>
         </div>
       </div>

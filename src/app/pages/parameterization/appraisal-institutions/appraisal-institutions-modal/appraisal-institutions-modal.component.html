@@ -3,29 +3,39 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="appraisersForm" class="form-material">
+    <form [formGroup]="appraisalInstitutionsForm" class="form-material">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-2">
           <form-field
-            [control]="appraisersForm.get('description')"
+            [control]="appraisalInstitutionsForm.get('noAppraiser')"
+            label="No&#46; Valuador">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noAppraiser" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('nameComplete')"
             label="Apellido Paterno&#44; Materno y Nombre">
             <input
               type="text"
-              formControlName="description"
+              formControlName="nameComplete"
               placeholder="Apellido Paterno&#44; Materno y Nombre"
               class="form-control" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="appraisersForm.get('street')" label="Calle">
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('street')"
+            label="Calle">
             <input type="text" formControlName="street" class="form-control" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-4">
+        <div class="col-md-2">
           <form-field
-            [control]="appraisersForm.get('noExterior')"
+            [control]="appraisalInstitutionsForm.get('noExterior')"
             label="No&#46; Exterior">
             <input
               type="text"
@@ -33,84 +43,95 @@
               formControlName="noExterior" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="appraisersForm.get('noInterior')"
+            [control]="appraisalInstitutionsForm.get('noInside')"
             label="No&#46; Interior">
             <input
               type="text"
               class="form-control"
-              formControlName="noInterior" />
+              formControlName="noInside" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="appraisersForm.get('codepostal')"
+            [control]="appraisalInstitutionsForm.get('postalCode')"
             label="C&oacute;digo postal">
             <input
               type="number"
               class="form-control"
-              formControlName="codepostal" />
+              formControlName="postalCode" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="appraisersForm.get('colony')" label="Colonia">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('colony')"
+            label="Colonia">
             <input type="text" formControlName="colony" class="form-control" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="appraisersForm.get('deleg')"
+            [control]="appraisalInstitutionsForm.get('delegationMunicipality')"
             label="Delegaci&oacute;n Municipio">
-            <input type="text" formControlName="deleg" class="form-control" />
+            <input
+              type="text"
+              formControlName="delegationMunicipality"
+              class="form-control" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="appraisersForm.get('cveEntfed')"
+            [control]="appraisalInstitutionsForm.get('federalEntity')"
             label="Entidad Federativa">
             <input
               type="text"
-              formControlName="cveEntfed"
+              formControlName="federalEntity"
               class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('rfc')"
+            label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="appraisersForm.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="appraisersForm.get('curp')" label="CURP">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('curp')"
+            label="CURP">
             <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="appraisersForm.get('tel')"
+            [control]="appraisalInstitutionsForm.get('phone')"
             label="Tel&eacute;fono">
-            <input type="text" class="form-control" formControlName="tel" />
+            <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="appraisersForm.get('represent')"
+            [control]="appraisalInstitutionsForm.get('representative')"
             label="Representante">
             <input
               type="text"
               class="form-control"
-              formControlName="represent" />
+              formControlName="representative" />
           </form-field>
         </div>
-        <div class="col-md-8">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
           <form-field
-            [control]="appraisersForm.get('observations')"
+            [control]="appraisalInstitutionsForm.get('observations')"
             label="Observaciones">
             <textarea
               class="form-control"
@@ -125,8 +146,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!appraisersForm.valid"
-          (confirm)="confirm()">
+          [disabled]="!appraisalInstitutionsForm.valid"
+          (click)="close()">
         </confirm-button>
       </div>
       <div class="m-3">

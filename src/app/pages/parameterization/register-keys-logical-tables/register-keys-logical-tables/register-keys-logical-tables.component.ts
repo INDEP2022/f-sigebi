@@ -1,21 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RegisterKeysLogicalTablesModalComponent } from '../register-keys-logical-tables-modal/register-keys-logical-tables-modal.component';
 import { REGISTER_KEYS_LOGICAL_COLUMNS } from './register-keys-logical-columns';
-//Services
-import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
-import { TdescCveService } from 'src/app/core/services/ms-parametergood/tdesccve.service';
-//Models
-import { LocalDataSource } from 'ng2-smart-table';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ITable } from 'src/app/core/models/catalogs/dinamic-tables.model';
-import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 
 @Component({
   selector: 'app-register-keys-logical-tables',
@@ -26,21 +15,11 @@ export class RegisterKeysLogicalTablesComponent
   extends BasePage
   implements OnInit
 {
+  columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  tdescCve: ITdescCve[] = [];
 
-  tableForm: ModelForm<ITable>;
-  idTable: ITable;
-
-  data2: LocalDataSource = new LocalDataSource();
-
-  constructor(
-    private modalService: BsModalService,
-    private fb: FormBuilder,
-    private dynamicTablesService: DynamicTablesService,
-    private tdescCveService: TdescCveService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -50,80 +29,104 @@ export class RegisterKeysLogicalTablesComponent
         delete: false,
         position: 'right',
       },
-
       columns: { ...REGISTER_KEYS_LOGICAL_COLUMNS },
     };
   }
 
   ngOnInit(): void {
-    this.prepareForm();
+    this.getPagination();
   }
 
-  private prepareForm() {
-    this.tableForm = this.fb.group({
-      table: [null, [Validators.required]],
-      name: [{ value: null, disabled: true }],
-      description: [{ value: null, disabled: true }],
-      actionType: [{ value: null, disabled: true }],
-      tableType: [{ value: null, disabled: true }],
+  openModal(context?: Partial<RegisterKeysLogicalTablesModalComponent>) {
+    const modalRef = this.modalService.show(
+      RegisterKeysLogicalTablesModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
     });
   }
 
-  //Método para buscar y llenar inputs (Encabezado)
-  getLogicalTablesByID(): void {
-    let _id = this.tableForm.controls['table'].value;
-    this.loading = true;
-    this.dynamicTablesService.getById(_id).subscribe(
-      response => {
-        if (response !== null) {
-          this.tableForm.patchValue(response);
-          this.tableForm.updateValueAndValidity();
-          this.getKeysByLogicalTables(_id);
-        } else {
-          this.alert('info', 'No se encontraron los registros', '');
-        }
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
+  openForm(allotment?: any) {
+    this.openModal({ allotment });
   }
 
-  getKeysByLogicalTables(id: string | number): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getKeys(id));
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
   }
 
-  getKeys(id: string | number): void {
-    this.loading = true;
-    this.tdescCveService
-      .getById(id)
-      .pipe(
-        map((data2: any) => {
-          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
-          const array2: ITdescCve[] = [{ ...data2 }];
-          list.data = array2;
-          return list;
-        })
-      )
-      .subscribe(response => {
-        this.tdescCve = response.data;
-        console.log(response);
-      });
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
-  openForm(tdescCve?: ITdescCve) {
-    let _id = this.tableForm.controls['table'].value;
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      tdescCve,
-      _id,
-      callback: (next: boolean) => {
-        if (next) this.getKeysByLogicalTables(tdescCve.id);
-      },
-    };
-    this.modalService.show(
-      RegisterKeysLogicalTablesModalComponent,
-      modalConfig
-    );
-  }
+
+  data = [
+    {
+      name: 'CAT_ENTFED',
+      description: 'ENTIDADES FEDERATIVAS',
+      type1: true,
+      type5: false,
+      cve1: 'NÚMERO',
+      format1: 'Numérico',
+      minLong1: 1,
+      maxLong1: 2,
+    },
+    {
+      name: 'CAT_DELEG',
+      description: 'DELEGACIONES',
+      type1: true,
+      type5: true,
+      cve1: 'NÚMERO',
+      format1: 'Numérico',
+      minLong1: 4,
+      maxLong1: 9,
+      cve2: 'NÚMERO 2',
+      format2: 'Numérico 2',
+      minLong2: 4,
+      maxLong2: 9,
+    },
+    {
+      name: 'CAT_SUBDELEG',
+      description: 'SUBDELEGACIONES',
+      type1: true,
+      type5: false,
+      cve1: 'NÚMERO',
+      format1: 'Numérico',
+      minLong1: 2,
+      maxLong1: 4,
+    },
+    {
+      name: 'CAT_BIENES_MUEBLES',
+      description: 'BIENES MUEBLES',
+      type1: true,
+      type5: true,
+      cve1: 'NÚMERO 1',
+      format1: 'Numérico 1',
+      minLong1: 1,
+      maxLong1: 5,
+      cve2: 'NÚMERO 2',
+      format2: 'Numérico 2',
+      minLong2: 1,
+      maxLong2: 5,
+      cve3: 'NÚMERO 3',
+      format3: 'Numérico 3',
+      minLong3: 1,
+      maxLong3: 5,
+      cve4: 'NÚMERO 4',
+      format4: 'Numérico 4',
+      minLong4: 1,
+      maxLong4: 5,
+      cve5: 'NÚMERO 5',
+      format5: 'Numérico 5',
+      minLong5: 1,
+      maxLong5: 5,
+    },
+  ];
 }

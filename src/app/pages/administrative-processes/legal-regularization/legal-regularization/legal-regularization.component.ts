@@ -1,12 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
-import { IDocuments } from 'src/app/core/models/ms-documents/documents';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -18,8 +11,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class LegalRegularizationComponent extends BasePage implements OnInit {
   //Reactive Forms
   form: FormGroup;
-  good: IGood;
-  document: IDocuments;
+
   get numberGood() {
     return this.form.get('numberGood');
   }
@@ -33,20 +25,34 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     return this.form.get('justifier');
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private readonly goodServices: GoodService,
-    private readonly historyGoodService: HistoryGoodService,
-    private readonly documnetServices: DocumentsService,
-    private token: AuthService
-  ) {
+  goods: any[] = [
+    {
+      numberGood: '1',
+      status: 'Estatus 1',
+      description: 'Descripción del bien 1',
+    },
+    {
+      numberGood: '2',
+      status: 'Estatus 2',
+      description: 'Descripción del bien 2',
+    },
+    {
+      numberGood: '3',
+      status: 'Estatus 3',
+      description: 'Descripción del bien 3',
+    },
+    {
+      numberGood: '4',
+      status: 'Estatus 4',
+      description: 'Descripción del bien 4',
+    },
+  ];
+  constructor(private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
     this.buildForm();
-    this.status.disable();
-    this.description.disable();
   }
 
   /**
@@ -71,107 +77,29 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   }
 
   loadGood() {
-    //2314753
-    this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
-        if (response.status === 'REJ' || response.status === 'ADM') {
-          this.good = response;
-          this.setGood();
-          this.onLoadToast('success', 'Éxitoso', 'Bien cargado correctamente');
-        } else {
-          this.onLoadToast(
-            'error',
-            'ERROR',
-            'El bien no puede ser administrado en pantalla, debe tener status REJ o ADM'
-          );
-        }
-      },
-      error: err => {
-        console.log(err);
-        this.onLoadToast('error', 'ERROR', err.error.message);
-      },
+    let found: boolean = false;
+    const good = this.numberGood.value;
+    this.goods.forEach(element => {
+      if (element.numberGood === good) {
+        this.status.setValue(element.status);
+        this.description.setValue(element.description);
+        found = true;
+      }
     });
-  }
-
-  setGood() {
-    this.status.setValue(this.good.status);
-    this.description.setValue(this.good.description);
-    this.status.disable();
-    this.description.disable();
+    found
+      ? this.onLoadToast('success', 'Bien encontrado', '')
+      : this.onLoadToast('error', 'No se encontro el bien ingresado', '');
   }
 
   updateStatus(): any {
-    console.log('Cambiando Staus');
-    if (this.validDocument()) {
-      this.good.status = this.good.status === 'REJ' ? 'ADM' : 'REJ';
-      this.goodServices.update(this.good.id, this.good).subscribe({
-        next: response => {
-          console.log(response);
-          this.postHistoryGood();
-        },
-        error: error => {
-          this.onLoadToast('error', 'ERROR', error.error.message);
-        },
+    if (this.goods) {
+      this.goods.forEach((element: any) => {
+        element.status = 'REJ';
       });
+      console.log(this.goods);
+      this.onLoadToast('success', 'Bien actualizado', '');
+    } else {
+      this.onLoadToast('error', 'no hay datos para cambiar', 'Error');
     }
-  }
-  changeFoli(event: any) {
-    console.log(event);
-    this.document = event;
-  }
-  validDocument(): boolean {
-    let valid: boolean = false;
-    console.log('entro a Valid');
-    if (this.document === undefined) {
-      this.onLoadToast(
-        'error',
-        'ERROR',
-        `No puede cambiar el estatus al bien ${this.good.id} porque aun no se ha generado un folio`
-      );
-      return valid;
-    }
-    this.documnetServices
-      .getByGoodAndScanStatus(this.document.id, this.good.id, 'ESCANEADO')
-      .subscribe({
-        next: response => {
-          console.log(response);
-          valid = true;
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast(
-            'error',
-            'ERROR',
-            `No puede cambiar el estatus al bien ${this.good.id} porque aun no tiene documentos escaneados`
-          );
-        },
-      });
-    return valid;
-  }
-  postHistoryGood() {
-    const historyGood: IHistoryGood = {
-      propertyNum: this.numberGood.value,
-      status: this.good.status,
-      changeDate: new Date(),
-      userChange: this.token.decodeToken().preferred_username,
-      statusChangeProgram: 'FREGULARIZAJUR',
-      reasonForChange: this.justifier.value,
-      registryNum: null,
-      extDomProcess: this.good.extDomProcess,
-    };
-
-    this.historyGoodService.create(historyGood).subscribe({
-      next: response => {
-        this.onLoadToast(
-          'success',
-          'Actualizado',
-          `El estatus del bien ${this.good.id} se cambio con éxito`
-        );
-      },
-      error: error => {
-        console.log(error);
-        this.loading = false;
-      },
-    });
   }
 }

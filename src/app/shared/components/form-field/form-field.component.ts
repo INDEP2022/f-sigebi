@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, Validators } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 import { ValidationService } from 'src/app/common/services/validation.service';
 @Component({
   selector: 'form-field',
@@ -11,12 +11,7 @@ import { ValidationService } from 'src/app/common/services/validation.service';
       <!-- ? Trasnclusion con ng-content -->
       <ng-content></ng-content>
       <span class="form-bar"></span>
-      <label *ngIf="label" class="float-label"
-        >{{ label }}
-        <span [style.color]="'#9D2449'" *ngIf="isRequired() && showRequiredMark"
-          >*</span
-        >
-      </label>
+      <label *ngIf="label" class="float-label">{{ label }}</label>
       <div
         *ngIf="isInvalid(control)"
         class="invalid-feedback animated fadeInUp"
@@ -34,7 +29,6 @@ export class FormFieldComponent implements OnInit {
   @Input() control: AbstractControl;
   @Input() label: string = null;
   @Input() labelClass: string = '';
-  @Input() showRequiredMark: boolean = true;
   constructor(private validationService: ValidationService) {}
   ngOnInit(): void {}
 
@@ -48,9 +42,5 @@ export class FormFieldComponent implements OnInit {
 
   getErrorMessage(control: AbstractControl): string {
     return this.validationService.handleError(control);
-  }
-
-  isRequired() {
-    return this.control.hasValidator(Validators.required);
   }
 }

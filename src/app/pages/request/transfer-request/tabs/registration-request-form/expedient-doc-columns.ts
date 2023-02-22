@@ -1,24 +1,17 @@
-import { AssociateFieldComponent } from './actions/associate-field/associate-field.component';
-
 export const EXPEDIENT_DOC_GEN_COLUMNS = {
   associate: {
-    defaultValue: 'Asociar a Expediente',
     title: 'Asociar',
-    type: 'custom',
-    class: 'custom-field',
-    filter: false,
-    renderComponent: AssociateFieldComponent,
-    onComponentInitFunction(instance?: any) {},
+    type: 'text',
     sort: false,
   },
 
-  id: {
+  requestNumber: {
     title: 'No°. solicitud',
     type: 'text',
     sort: false,
   },
 
-  recordId: {
+  expedientNumber: {
     title: 'No°. expediente',
     type: 'text',
     sort: false,
@@ -26,65 +19,65 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
 
   applicationDate: {
     title: 'Fecha de solicitud',
-    type: 'date',
+    type: 'text',
     sort: false,
   },
 
-  paperDate: {
+  officialDate: {
     title: 'Fecha de oficio',
     type: 'text',
     sort: false,
   },
 
-  nameOfOwner: {
+  sendersName: {
     title: 'Nombre del remitente',
     type: 'text',
     sort: false,
   },
 
-  holderCharge: {
+  sendersCharge: {
     title: 'Cargo del remitente',
     type: 'text',
     sort: false,
   },
 
-  phoneOfOwner: {
+  sendersPhone: {
     title: 'Telefono del remitente',
     type: 'text',
     sort: false,
   },
 
-  emailOfOwner: {
+  sendersEmail: {
     title: 'Email del remitente',
     type: 'text',
     sort: false,
   },
 
-  regionalDelegationName: {
+  regionalDelegation: {
     title: 'Delegación regional',
     type: 'string',
     sort: false,
   },
 
-  stateName: {
+  state: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
 
-  transferentName: {
+  transferent: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
 
-  stationName: {
+  station: {
     title: 'Emisora',
     type: 'string',
     sort: false,
   },
 
-  authorityName: {
+  authority: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
@@ -120,31 +113,31 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  previousInquiry: {
+  preliminaryInquiry: {
     title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
 
-  lawsuit: {
+  causePenal: {
     title: 'Causa penal',
     type: 'string',
     sort: false,
   },
 
-  protectNumber: {
+  protectionNumber: {
     title: 'No° amparo',
     type: 'string',
     sort: false,
   },
 
-  tocaPenal: {
+  perfomPenal: {
     title: 'Toca penal',
     type: 'string',
     sort: false,
   },
 
-  paperNumber: {
+  officeNumber: {
     title: 'No° oficio',
     type: 'string',
     sort: false,
@@ -174,7 +167,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  receiptRoute: {
+  receivingPath: {
     title: 'Vía de recepción',
     type: 'string',
     sort: false,
@@ -186,7 +179,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  typeRecord: {
+  typeExpedient: {
     title: 'Tipo expediente',
     type: 'string',
     sort: false,
@@ -194,23 +187,13 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
 };
 
 export const EXPEDIENT_DOC_REQ_COLUMNS = {
-  associate: {
-    defaultValue: 'Ver Bienes',
-    title: '',
-    type: 'custom',
-    class: 'custom-field',
-    filter: false,
-    renderComponent: AssociateFieldComponent,
-    onComponentInitFunction(instance?: any) {},
-    sort: false,
-  },
-  id: {
+  requestNumber: {
     title: 'No°. solicitud',
     type: 'text',
     sort: false,
   },
 
-  recordId: {
+  expedientNumber: {
     title: 'No°. expediente',
     type: 'text',
     sort: false,
@@ -222,61 +205,61 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  paperDate: {
+  officialDate: {
     title: 'Fecha de oficio',
     type: 'text',
     sort: false,
   },
 
-  nameOfOwner: {
+  sendersName: {
     title: 'Nombre del remitente',
     type: 'text',
     sort: false,
   },
 
-  holderCharge: {
+  sendersCharge: {
     title: 'Cargo del remitente',
     type: 'text',
     sort: false,
   },
 
-  phoneOfOwner: {
+  sendersPhone: {
     title: 'Telefono del remitente',
     type: 'text',
     sort: false,
   },
 
-  emailOfOwner: {
+  sendersEmail: {
     title: 'Email del remitente',
     type: 'text',
     sort: false,
   },
 
-  regionalDelegationName: {
+  regionalDelegation: {
     title: 'Delegación regional',
     type: 'string',
     sort: false,
   },
 
-  stateName: {
+  state: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
 
-  transferentName: {
+  transferent: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
 
-  stationName: {
+  station: {
     title: 'Emisora',
     type: 'string',
     sort: false,
   },
 
-  authorityName: {
+  authority: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
@@ -306,25 +289,25 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  transferenceFile: {
+  transferFile: {
     title: 'Expediente transferente/PAMA',
     type: 'string',
     sort: false,
   },
 
-  transferEntNotes: {
+  transferEntityNotes: {
     title: 'Notas entidad transferente',
     type: 'string',
     sort: false,
   },
 
-  addressId: {
+  idDirection: {
     title: 'idDireccion',
     type: 'string',
     sort: false,
   },
 
-  originInfo: {
+  provenanceInformation: {
     title: 'Procedencia información',
     type: 'string',
     sort: false,
@@ -336,31 +319,31 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  previousInquiry: {
+  preliminaryInquiry: {
     title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
 
-  lawsuit: {
+  causePenal: {
     title: 'Causa penal',
     type: 'string',
     sort: false,
   },
 
-  protectNumber: {
+  protectionNumber: {
     title: 'No° amparo',
     type: 'string',
     sort: false,
   },
 
-  tocaPenal: {
+  perfomPenal: {
     title: 'Toca penal',
     type: 'string',
     sort: false,
   },
 
-  paperNumber: {
+  officeNumber: {
     title: 'No° oficio',
     type: 'string',
     sort: false,
@@ -378,7 +361,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  court: {
+  judged: {
     title: 'Juzgado',
     type: 'string',
     sort: false,
@@ -390,7 +373,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  receiptRoute: {
+  receivingPath: {
     title: 'Vía de recepción',
     type: 'string',
     sort: false,
@@ -408,12 +391,12 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  typeRecord: {
+  typeExpedient: {
     title: 'Tipo expediente',
     type: 'string',
     sort: false,
   },
-  municipalityName: {
+  municipality: {
     title: 'Municipio',
     type: 'string',
     sort: false,
@@ -425,7 +408,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  exteriorNumber: {
+  outdoorNumber: {
     title: 'Num. Ext.',
     type: 'number',
     sort: false,
@@ -437,7 +420,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  code: {
+  postalCode: {
     title: 'C.P',
     type: 'number',
     sort: false,
@@ -463,7 +446,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
 };
 
 export const EXPEDIENT_DOC_EST_COLUMNS = {
-  goodId: {
+  numberGestion: {
     title: 'Número de gestión',
     type: 'number',
     sort: false,
@@ -475,19 +458,19 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
     sort: false,
   },
 
-  fileNumber: {
+  numExpTransferent: {
     title: 'No°. expediente de la transferente',
     type: 'string',
     sort: false,
   },
 
-  requestId: {
+  numberRequest: {
     title: 'No°. solicitud',
     type: 'number',
     sort: false,
   },
 
-  goodDescription: {
+  descriptionTransferent: {
     title: 'Descripción de bien transferente',
     type: 'string',
     sort: false,
@@ -499,31 +482,31 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
     sort: false,
   },
 
-  physicalStatusName: {
+  conditionPhysical: {
     title: 'Estado fisico',
     type: 'string',
     sort: false,
   },
 
-  unitMeasure: {
+  transerUnit: {
     title: 'Unidad de medida transferente',
     type: 'string',
     sort: false,
   },
 
-  quantity: {
+  quantityTransferent: {
     title: 'Cantidad de la transferente',
     type: 'string',
     sort: false,
   },
 
-  destinyName: {
+  destinityLigie: {
     title: 'Destino ligie',
     type: 'string',
     sort: false,
   },
 
-  fractionName: {
+  fraction: {
     title: 'Fracción',
     type: 'string',
     sort: false,

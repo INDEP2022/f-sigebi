@@ -10,18 +10,11 @@
     </div>
   </div>
   <div body>
-    <div class="form-material col-md-5">
-      <search-bar [params]="params"></search-bar>
-    </div>
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings1"
-        [source]="tiiesList"
-        (edit)="openForm($event.data)"
-        (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+        [source]="data"
+        (edit)="openForm($event.data)"></ng2-smart-table>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>

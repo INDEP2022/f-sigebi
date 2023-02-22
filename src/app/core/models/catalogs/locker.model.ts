@@ -1,12 +1,9 @@
-import { IShelves } from './shelves.model';
-
 export interface ILocker {
-  saveValueKey: string;
+  id?: string;
   numBattery: number;
   numShelf: number;
-  id: number;
-  description: string;
+  numLocker: number;
   status: string;
+  description: string;
   numRegister: number;
-  shelf?: IShelves;
 }

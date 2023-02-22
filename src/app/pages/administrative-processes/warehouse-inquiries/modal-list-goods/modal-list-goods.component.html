@@ -1,6 +1,6 @@
-<app-modal>
-  <div header class="d-flex justify-content-between">
-    <div><h5 class="modal-title">LISTA DE BIENES DENTRO DEL ALMACEN</h5></div>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Lista de bienes dentro del almacen</h5>
   </div>
   <div body>
     <div class="row">
@@ -12,7 +12,7 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="goods">
+        [source]="data1">
       </ng2-smart-table>
       <app-pagination
         [params]="params"
@@ -20,12 +20,10 @@
     </div>
   </div>
   <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="return()">
-          regresar
-        </button>
-      </div>
+    <div class="space justify-content-center">
+      <button class="btn btn-primary btn-sm active" (click)="return()">
+        regresar
+      </button>
     </div>
   </div>
-</app-modal>
+</app-card>

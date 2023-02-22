@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -19,11 +18,7 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef,
-    private bankMovementType: BankMovementType
-  ) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -69,10 +64,10 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.handleSuccess();
-    // this.bankMovementType.create(this.form.value).subscribe(
-    //   data => this.handleSuccess(),
-    //   error => (this.loading = false)
-    // );
+    /*this.bankService.create(this.form.value).subscribe(
+      data => this.handleSuccess(),
+      error => (this.loading = false)
+    );*/
   }
 
   handleSuccess() {

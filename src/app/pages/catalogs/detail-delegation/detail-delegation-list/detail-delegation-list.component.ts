@@ -7,7 +7,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DetailDelegationFormComponent } from '../detail-delegation-form/detail-delegation-form.component';
 import { DETAIL_DELEGATION_COLUMNS } from './detail-delegation-columns';
 
@@ -33,10 +32,10 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDetailDelegation());
+      .subscribe(() => this.getDeductives());
   }
 
-  getDetailDelegation() {
+  getDeductives() {
     this.loading = true;
     this.detailDelegationService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -53,7 +52,7 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       detailDelegation,
       callback: (next: boolean) => {
-        if (next) this.getDetailDelegation();
+        if (next) this.getDeductives();
       },
     };
     this.modalService.show(DetailDelegationFormComponent, modalConfig);
@@ -67,14 +66,13 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(detailDelegation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.detailDelegationService.remove(id).subscribe({
-      next: () => this.getDetailDelegation(),
+      next: () => this.getDeductives(),
     });
   }
 }

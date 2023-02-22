@@ -11,7 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { GoodService } from 'src/app/core/services/good/good.service';
+import { goodsStatuData } from './data';
 
 @Component({
   selector: 'app-goods-status-shared',
@@ -23,7 +23,7 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() goodStatusField: string = 'goodStatus';
-  @Input() labelStatus: string = 'Estatus Bienes';
+
   @Input() showGoodStatus: boolean = true;
 
   status = new DefaultSelect<IGoodStatus>();
@@ -32,22 +32,20 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     return this.form.get(this.goodStatusField);
   }
 
-  constructor(private service: GoodService) {
+  constructor(/*private service: WarehouseService*/) {
     super();
   }
 
-  ngOnInit(): void {
-    if (this.goodStatus.value) this.getGoodStatus(new ListParams());
-  }
+  ngOnInit(): void {}
 
   getGoodStatus(params: ListParams) {
     //Provisional data
-    this.service.getStatusAll(params).subscribe({
-      next: data => {
-        console.log(data);
-        this.status = new DefaultSelect(data.data, data.count);
-      },
-      error: err => {
+    let data = goodsStatuData;
+    let count = data.length;
+    this.status = new DefaultSelect(data, count);
+    /*this.service.getAll(params).subscribe(data => {
+        this.status = new DefaultSelect(data.data,data.count);
+      },err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -55,16 +53,19 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
-      },
-    });
+
+      }, () => {}
+    );*/
   }
 
   onGoodStatusChange(type: any) {
+    //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
+      //field.setValue(null);
       field = null;
     });
     this.form.updateValueAndValidity();

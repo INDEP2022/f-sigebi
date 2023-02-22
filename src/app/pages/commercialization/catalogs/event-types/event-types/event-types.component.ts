@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
 import { EventTypesFornComponent } from '../event-types-form/event-types-forn.component';
 //Provisional Data
-import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
-import { IComerTpEvent } from '../../../../../core/models/ms-event/event-type.model';
-import { ComerTpEventosService } from '../../../../../core/services/ms-event/comer-tpeventos.service';
+import { data } from './data';
 
 @Component({
   selector: 'app-event-types',
@@ -20,25 +18,19 @@ import { ComerTpEventosService } from '../../../../../core/services/ms-event/com
 })
 export class EventTypesComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  eventTypesD: IComerTpEvent[] = [];
+  eventTypesD = data;
 
   totalItems: number = 0;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
-  searchFilter: SearchBarFilter;
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   rowSelected: boolean = false;
-  selectedRow: IComerTpEvent | null = null;
-  newId: number = 0;
+  selectedRow: any = null;
 
   //Columns
   columns = COLUMNS;
 
-  constructor(
-    private modalService: BsModalService,
-    private tpEventService: ComerTpEventosService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
-    this.searchFilter = { field: 'description' };
     this.settings = {
       ...this.settings,
       actions: {
@@ -52,91 +44,42 @@ export class EventTypesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData();
-    });
+    this.data.load(this.eventTypesD);
   }
 
-  getData(): void {
-    this.loading = true;
-    this.tpEventService
-      .getAllWithFilters(this.params.getValue().getParams())
-      .subscribe({
-        next: response => {
-          this.eventTypesD = response.data;
-          this.data.load(this.eventTypesD);
-          this.totalItems = response.count;
-          this.newId = this.tpEventService.getNewId(response.data);
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
-  }
-
-  openModal(context?: Partial<EventTypesFornComponent>): void {
+  openModal(context?: Partial<EventTypesFornComponent>) {
     const modalRef = this.modalService.show(EventTypesFornComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
-  add(): void {
-    this.openModal({ newId: this.newId });
+  add() {
+    this.openModal();
   }
 
-  openForm(eventType: IComerTpEvent): void {
+  openForm(eventType: any) {
     this.openModal({ edit: true, eventType });
   }
 
-  delete(eventType: IComerTpEvent): void {
+  delete(eventType: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.loading = true;
-        this.tpEventService.remove(eventType.id).subscribe({
-          next: data => {
-            this.loading = false;
-            this.showSuccess();
-            this.getData();
-          },
-          error: error => {
-            this.loading = false;
-            this.showError();
-          },
-        });
+        //Ejecutar el servicio
       }
     });
   }
 
-  selectRow(row: IComerTpEvent): void {
+  selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;
-  }
-
-  showSuccess(): void {
-    this.onLoadToast(
-      'success',
-      'Tipo Evento',
-      `Registro Eliminado Correctamente`
-    );
-  }
-
-  showError(error?: any): void {
-    this.onLoadToast(
-      'error',
-      `Error al eliminar datos`,
-      'Hubo un problema al conectarse con el servior'
-    );
-    error ? console.log(error) : null;
   }
 }

@@ -4,32 +4,51 @@
       <h5 class="title">
         Tiempo M&aacute;ximo Para Cierre Actas Devoluci&oacute;n
       </h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="openForm()">
-            Nuevo
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="maximumTimes"
-            (edit)="openForm($event.data)">
-          </ng2-smart-table>
+    <form class="form-material" [formGroup]="maximumTimesForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="maximumTimesForm.get('type')"
+            label="Tipo&#58;">
+            <select class="form-control" formControlName="type">
+              <option [value]="null">Seleccione un tipo</option>
+              <option value="Enero">Tipo de acta</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Plazo" [control]="maximumTimesForm.get('term')">
+            <input class="form-control" formControlName="term" type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-check label="Activar" for="activate">
+            <input id="activate" type="checkbox" formControlName="activate" />
+          </form-check>
         </div>
       </div>
-    </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field label="Usuario" [control]="maximumTimesForm.get('user')">
+            <input class="form-control" formControlName="user" type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="maximumTimesForm.get('date')"
+            label="Fecha captura">
+            <input
+              type="text"
+              formControlName="date"
+              placeholder="Fecha captura"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
   </div>
 </app-card>

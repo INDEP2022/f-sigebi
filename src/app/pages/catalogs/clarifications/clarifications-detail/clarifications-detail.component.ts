@@ -1,9 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
 
@@ -12,26 +9,31 @@ import { ClarificationService } from '../../../../core/services/catalogs/clarifi
   templateUrl: './clarifications-detail.component.html',
   styles: [],
 })
-export class ClarificationsDetailComponent extends BasePage implements OnInit {
-  clarificationForm: ModelForm<IClarification>;
-  title: string = 'Catálogo de aclaraciones ';
+export class ClarificationsDetailComponent implements OnInit {
+  loading: boolean = false;
+  status: string = 'Nueva';
   edit: boolean = false;
-  clarification: IClarification;
+  form: FormGroup = new FormGroup({});
+  clarification: any;
+
+  public get id() {
+    return this.form.get('id');
+  }
+
+  @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private clarificationService: ClarificationService
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
   prepareForm() {
-    this.clarificationForm = this.fb.group({
+    this.form = this.fb.group({
       id: [
         null,
         [
@@ -41,7 +43,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
         ],
       ],
       clarification: [
-        null,
+        '',
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       type: [
@@ -54,29 +56,21 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
       ],
       active: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
       ],
       version: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
       ],
-      modificationDate: [null],
-      creationUser: [null],
-      creationDate: [null],
-      editionUser: [null],
     });
-    if (this.clarification != null) {
-      this.edit = true;
-      console.log(this.clarification);
-      this.clarificationForm.patchValue(this.clarification);
+    if (this.edit) {
+      this.status = 'Actualizar';
+      this.form.patchValue(this.clarification);
+      this.id.disable();
     }
   }
 
@@ -90,27 +84,26 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.clarificationService.create(this.clarificationForm.value).subscribe(
+    this.clarificationService.create(this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
   }
 
-  update() {
-    this.loading = true;
-    this.clarificationService
-      .update(this.clarification.id, this.clarificationForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+  handleSuccess() {
+    this.loading = false;
+    this.refresh.emit(true);
+    this.modalRef.hide();
   }
 
-  handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+  update() {
+    this.loading = true;
+
+    this.clarificationService
+      .update(this.clarification.id, this.form.value)
+      .subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
   }
 }

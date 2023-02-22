@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -9,6 +10,7 @@ import {
   RFCCURP_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { PersonService } from '../../../../core/services/catalogs/person.service';
 
@@ -18,11 +20,11 @@ import { PersonService } from '../../../../core/services/catalogs/person.service
   styles: [],
 })
 export class PersonFormComponent extends BasePage implements OnInit {
-  personForm: ModelForm<IPerson>;
-  person: IPerson;
-  title: string = 'Mantto. a administrador, depositario e interventor';
+  form: ModelForm<IPerson>;
+  title: string = 'Persona';
   edit: boolean = false;
-
+  person: IPerson;
+  persons = new DefaultSelect<IPerson>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -36,7 +38,7 @@ export class PersonFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.personForm = this.fb.group({
+    this.form = this.fb.group({
       id: [null],
       personNumber: [null, [Validators.required]],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -114,17 +116,19 @@ export class PersonFormComponent extends BasePage implements OnInit {
       ],
       registryNumber: [null, [Validators.required]],
       email: [null, [Validators.required, Validators.email]],
-      blackList: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      blackList: [null, [Validators.required, Validators.email]],
     });
     if (this.person != null) {
       this.edit = true;
-      this.personForm.patchValue(this.person);
+      this.form.patchValue(this.person);
     }
   }
 
+  getData(params: ListParams) {
+    this.personService.getAll(params).subscribe(data => {
+      this.persons = new DefaultSelect(data.data, data.count);
+    });
+  }
   close() {
     this.modalRef.hide();
   }
@@ -135,7 +139,7 @@ export class PersonFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.personService.create(this.personForm.value).subscribe({
+    this.personService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -143,14 +147,16 @@ export class PersonFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.personService.update(this.person.id, this.personForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.personService
+      .update(this.person.id, this.form.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

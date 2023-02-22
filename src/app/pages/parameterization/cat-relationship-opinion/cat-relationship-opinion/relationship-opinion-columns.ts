@@ -1,72 +1,129 @@
-export const AFFAIR_TYPE_COLUMNS = {
-  code: {
-    title: 'Código',
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
+export const REL_OPINION_COLUMNS = {
+  idD: {
+    title: 'No. Dictamen',
     sort: false,
     filter: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
+  },
+  name: {
+    title: 'Dictamen',
+    sort: false,
+    filter: false,
+  },
+  d: {
+    title: 'D',
+    sort: false,
+    filter: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
     },
   },
-  referralNoteType: {
-    title: 'Tipo de volante',
+  b: {
+    title: 'B',
     sort: false,
     filter: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
-  relationPropertyKey: {
-    title: 'Relación con bien',
+  u: {
+    title: 'U',
     sort: false,
     filter: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
-  versionUser: {
-    title: 'Permiso Usuario',
+  i: {
+    title: 'I',
     sort: false,
     filter: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
-  idRegister: {
-    title: 'Num Registro',
+  e: {
+    title: 'E',
     sort: false,
     filter: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
 };
 
-export const DICTA_COLUMNS = {
-  code: {
+export const AFFAIR_COLUMNS = {
+  id: {
     title: 'Código',
     sort: false,
   },
-  dictum: {
-    title: 'Dictámen',
-    sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
-    },
-  },
-  flyerType: {
-    title: 'Tipo volante',
+  description: {
+    title: 'Descripción',
     sort: false,
   },
-  doc: {
-    title: 'Doc',
+  referralNoteType: {
+    title: 'tipo_volante',
     sort: false,
   },
-  property: {
-    title: 'Bien',
+  creationUser: {
+    title: 'Usuario creado',
     sort: false,
   },
-  g_of: {
-    title: 'g_of',
+  creationDate: {
+    title: 'Fecha creación',
     sort: false,
   },
-  i: {
-    title: 'i',
+  additionUser: {
+    title: 'usuario_adicion',
     sort: false,
   },
-  e: {
-    title: 'e',
+  modificationDate: {
+    title: 'Fecha modificación',
     sort: false,
   },
-  registryNumber: {
-    title: 'No. Registro',
+  versionUser: {
+    title: 'ver_usuario',
+    sort: false,
+  },
+  status: {
+    title: 'Estado',
+    sort: false,
+  },
+  registerNumber: {
+    title: 'Número registrado',
+    sort: false,
+  },
+  version: {
+    title: 'Versión',
+    sort: false,
+  },
+  processDetonate: {
+    title: 'processDetonate',
+    sort: false,
+  },
+  clv: {
+    title: 'clv',
     sort: false,
   },
 };

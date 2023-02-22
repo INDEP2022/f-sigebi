@@ -1,20 +1,10 @@
-export const TTABLAS_COLUMNS = {
-  cdtabla: {
+export const VALUES_COLUMNS = {
+  name: {
     title: 'Nombre',
     sort: false,
   },
-  dstabla: {
+  desciption: {
     title: 'Descripción',
-    sort: false,
-  },
-};
-export const TVALTABLA1_COLUMNS = {
-  otKey: {
-    title: 'Clave',
-    sort: false,
-  },
-  value: {
-    title: 'Atributo',
     sort: false,
   },
 };

@@ -9,31 +9,31 @@ import { Component } from '@angular/core';
       <div body>
         <div class="md-tabs">
           <tabset>
-            <tab heading="Datos busqueda">
-              <app-search-tab (dataSearch)="chargeData($event)"></app-search-tab
+            <tab heading="Datos busqueda"
+              ><app-search-tab></app-search-tab
             ></tab>
-            <tab heading="Datos generales del bien" *ngIf="dataSearch">
-              <app-general-data-goods [goodId]="data"></app-general-data-goods>
+            <tab heading="Datos generales del bien">
+              <app-general-data-goods></app-general-data-goods>
             </tab>
-            <tab heading="Datos inventario" *ngIf="dataSearch">
+            <tab heading="Datos inventario">
               <app-inventory-data></app-inventory-data>
             </tab>
-            <tab heading="Datos avaluos" *ngIf="dataSearch">
+            <tab heading="Datos avaluos">
               <app-data-valuations></app-data-valuations>
             </tab>
-            <tab heading="Datos seguro" *ngIf="dataSearch">
+            <tab heading="Datos seguro">
               <app-secure-data></app-secure-data>
             </tab>
-            <tab heading="Registro servicios" *ngIf="dataSearch">
+            <tab heading="Registro servicios">
               <app-registry-services></app-registry-services>
             </tab>
-            <tab heading="Menaje" *ngIf="dataSearch">
+            <tab heading="Menaje">
               <app-household></app-household>
             </tab>
-            <tab heading="Ingresos por bien" *ngIf="dataSearch">
+            <tab heading="Ingresos por bien">
               <app-income-per-asset></app-income-per-asset>
             </tab>
-            <tab heading="Informe depositaria" *ngIf="dataSearch">
+            <tab heading="Informe depositaria">
               <app-depositary-report></app-depositary-report>
             </tab>
           </tabset>
@@ -42,11 +42,4 @@ import { Component } from '@angular/core';
     </app-card>
   `,
 })
-export class AdministrationAssetsComponent {
-  dataSearch: boolean;
-  data: any;
-  chargeData(event: any) {
-    this.dataSearch = event.exist;
-    this.data = event.data;
-  }
-}
+export class AdministrationAssetsComponent {}

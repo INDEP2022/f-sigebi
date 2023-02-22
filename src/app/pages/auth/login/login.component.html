@@ -40,7 +40,6 @@
                 (ngSubmit)="onSubmit()">
                 <div class="mb-3">
                   <form-field
-                    [showRequiredMark]="false"
                     [control]="loginForm.get('username')"
                     label="Usuario">
                     <input
@@ -51,7 +50,6 @@
                 </div>
                 <div class="mb-3">
                   <form-field
-                    [showRequiredMark]="false"
                     [control]="loginForm.get('password')"
                     label="Contraseña">
                     <input

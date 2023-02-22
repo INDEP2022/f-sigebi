@@ -19,11 +19,6 @@ export class StateOfRepublicService implements ICrudMethods<IStateOfRepublic> {
     return this.stateOfRepublicRepository.getAllPaginated(this.route, params);
   }
 
-  search(params?: ListParams): Observable<IListResponse<IStateOfRepublic>> {
-    var route = `${this.route}/search`;
-    return this.stateOfRepublicRepository.getAllPaginated(route, params);
-  }
-
   getById(id: string | number): Observable<IStateOfRepublic> {
     return this.stateOfRepublicRepository.getById(this.route, id);
   }

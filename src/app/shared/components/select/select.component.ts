@@ -1,14 +1,12 @@
 import {
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -17,10 +15,7 @@ import {
   switchMap,
 } from 'rxjs';
 import { SELECT_SIZE } from 'src/app/common/constants/select-size';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from './default-select';
 
 @Component({
@@ -37,35 +32,25 @@ export class SelectComponent<T> implements OnInit {
   @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
   @Input() multiple: boolean = false;
-  @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
-  @Input() maxSelectedItems: number;
-  @Input() searchable: boolean = true;
-  @Input() searchOnInit: boolean = false;
-  @Input() paramFilter = 'search';
+  @Input() maxSelectedItems: number = 0;
   @Output() fetchItems = new EventEmitter<ListParams>();
-  @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
   @Output() change = new EventEmitter<any>();
-  @Input() readonly: boolean = false;
   buffer: any[] = [];
+  loading = false;
   input$ = new Subject<string>();
   page: number = 1;
   totalItems: number = 0;
-  @ViewChild('select') select: ElementRef;
   private concat: boolean = false;
   private readonly selectSize: number = SELECT_SIZE;
   constructor() {}
 
   ngOnInit() {
-    if (this.searchOnInit) {
-      const params = new ListParams();
-      this.fetchItems.emit(params);
-    }
     this.onSearch();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data']?.currentValue.length === 0) {
+    if (changes['data'].currentValue.length === 0) {
       this.buffer = [];
     } else if (changes['data'] && this.concat) {
       this.buffer = [...this.buffer, ...this.data.data];
@@ -76,34 +61,13 @@ export class SelectComponent<T> implements OnInit {
     this.loading = false;
   }
 
-  private emitListParams(text: string) {
-    const params = {
-      page: this.page,
-      text: text ?? '',
-      limit: this.selectSize,
-    };
-    this.fetchItems.emit(params);
-  }
-  private filterParams(text: string) {
-    let filterParam = new FilterParams();
-    filterParam.page = this.page;
-    filterParam.limit = this.selectSize;
-    if (this.paramFilter === 'search') {
-      filterParam.search = text ?? '';
-    } else {
-      filterParam.addFilter(this.paramFilter, text ?? '');
-    }
-    console.log(filterParam);
-    this.fetchByParamsItems.emit(filterParam);
-  }
-
   fetchMore(text: string) {
     if (!this.loading && this.buffer.length < this.totalItems) {
       this.page++;
       this.loading = true;
       this.concat = true;
-      this.emitListParams(text);
-      this.filterParams(text);
+      const params = { page: this.page, text, limit: this.selectSize };
+      this.fetchItems.emit(params);
     }
   }
 
@@ -113,16 +77,12 @@ export class SelectComponent<T> implements OnInit {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((text: string) => {
-          if (text === null) {
-            console.log('texto nulo');
-            return of([]);
-          }
           this.page = 1;
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          this.emitListParams(text);
-          this.filterParams(text);
+          const params = { page: this.page, text, limit: this.selectSize };
+          this.fetchItems.emit(params);
           return of([]);
         })
       )
@@ -130,14 +90,5 @@ export class SelectComponent<T> implements OnInit {
   }
   onChange(event: any) {
     this.change.emit(event);
-  }
-
-  getLabel(item: any) {
-    const key = this.bindLabel;
-    return item[key] ?? '';
-  }
-
-  isRequired() {
-    return this.form.get(this.control).hasValidator(Validators.required);
   }
 }

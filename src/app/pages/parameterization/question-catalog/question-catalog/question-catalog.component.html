@@ -14,12 +14,10 @@
     <!-- Tabla de preguntas -->
     <div class="row">
       <div class="table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="questionI"
-            (edit)="openForm($event.data)"></ng2-smart-table>
-        </div>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="questionI"
+          (edit)="openForm($event.data)"></ng2-smart-table>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
@@ -40,12 +38,10 @@
         </div>
       </div>
       <div class="table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [settings]="settings2"
-            [source]="responseI"
-            (edit)="openForm2($event.data)"></ng2-smart-table>
-        </div>
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="responseI"
+          (edit)="openForm2($event.data)"></ng2-smart-table>
       </div>
     </div>
     <app-pagination [params]="params2" [totalItems]="totalItems2">

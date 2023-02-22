@@ -4,12 +4,26 @@
   </div>
   <div body>
     <form class="form-material mb-0" [formGroup]="providerForm">
-      <div class="row">
+      <div class="row mt-3 ps-4">
+        <div class="col-sm-6 col-md-3">
+          <form-field [control]="providerForm.get('id')">
+            <ngx-select
+              [form]="providerForm"
+              [data]="eventItems"
+              label="Id Proveedor"
+              value="id"
+              bindLabel="id"
+              (fetchItems)="getProviders($event)"
+              control="id"
+              (change)="getData($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <div class="form-material">
-            <search-bar
-              [filterParams]="filterParams"
-              [filterField]="searchFilter"></search-bar>
+            <search-bar [params]="params"></search-bar>
           </div>
         </div>
         <div class="col-sm-12 col-md-12">
@@ -20,15 +34,17 @@
             </div>
             <div>
               <button
-                class="btn btn-sm btn-primary active me-2 font-size-14"
-                (click)="openFormProvider(false)">
-                Nuevo proveedor
+                class="btn btn-sm btn-success active me-2 font-size-14"
+                (click)="openFormProvider()"
+                [disabled]="">
+                Agregar Registro
               </button>
             </div>
             <div>
               <button
-                class="btn btn-sm btn-primary active me-2 font-size-14"
-                (click)="openClientsModal()">
+                class="btn btn-sm btn-secondary active me-2 font-size-14"
+                (click)="openClientsModal()"
+                [disabled]="">
                 Clientes
               </button>
             </div>
@@ -42,62 +58,13 @@
             [attr.class]="'table-bordered'"
             [settings]="providerSettings"
             [source]="providerColumns"
-            (userRowSelect)="selectProvider($event.data)"
-            (edit)="openFormProvider(true, $event.data)"
-            (delete)="delete($event.data)">
+            (edit)="openFormProvider($event.data)">
           </ng2-smart-table>
         </div>
         <div class="table-padding"></div>
       </ng-scrollbar>
-      <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
+      <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
-      <div class="row mt-4">
-        <div class="col-sm-6 col-md-4">
-          <form-field
-            [control]="providerForm.get('providerId')"
-            label="Id Proveedor">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="providerId" />
-          </form-field>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <form-field [control]="providerForm.get('bank')" label="Banco">
-            <input type="text" class="form-control" formControlName="bank" />
-          </form-field>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <form-field [control]="providerForm.get('branch')" label="Sucursal">
-            <input type="text" class="form-control" formControlName="branch" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row my-3">
-        <div class="col-sm-6 col-md-4">
-          <form-field
-            [control]="providerForm.get('checkingCta')"
-            label="No. Cuenta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="checkingCta" />
-          </form-field>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <form-field [control]="providerForm.get('key')" label="Clabe">
-            <input type="text" class="form-control" formControlName="key" />
-          </form-field>
-        </div>
-        <div class="col-sm-6 col-md-4" *ngIf="isSelected">
-          <button
-            class="btn btn-sm btn-primary active me-2 font-size-14"
-            [disabled]="!providerForm.valid"
-            (click)="saveBank()">
-            Guardar Datos
-          </button>
-        </div>
-      </div>
     </form>
   </div>
 </app-card>

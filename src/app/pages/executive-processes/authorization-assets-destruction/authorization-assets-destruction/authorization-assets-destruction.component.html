@@ -11,23 +11,23 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('idExpedient')" label="No expediente">
+          <form-field [control]="form.get('idExp')" label="No expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="idExpedient"
+              formControlName="idExp"
               minlength="1"
               maxlength="10" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('preliminaryInquiry')"
+            [control]="form.get('preInquiry')"
             label="Averiguaci&oacute;n Previa">
             <input
               type="text"
               class="form-control"
-              formControlName="preliminaryInquiry" />
+              formControlName="preInquiry" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -40,31 +40,23 @@
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('circumstantialRecord')"
+            [control]="form.get('circumstAct')"
             label="Acta Circunstanciada">
             <input
               type="text"
               class="form-control"
-              formControlName="circumstantialRecord" />
+              formControlName="circumstAct" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('keyPenalty')" label="Toca penal">
+          <form-field [control]="form.get('touchPenalty')" label="Toca penal">
             <input
               type="text"
               class="form-control"
-              formControlName="keyPenalty" />
+              formControlName="touchPenalty" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
-            (click)="getExpedientById()">
-            Buscar
-          </button>
-        </div>
-        <!-- <div class="col-md-2">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
@@ -76,13 +68,13 @@
               </button>
             </div>
           </div>
-        </div> -->
+        </div>
       </div>
     </form>
   </div>
 </app-card>
 
-<app-card>
+<app-card *ngIf="show">
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-5">
@@ -137,17 +129,10 @@
           </div>
         </div>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data"
-              (userRowSelect)="selectRow($event.data)">
-            </ng2-smart-table>
-          </div>
-        </div>
+      <div class="row pt-3 scroll-table table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>

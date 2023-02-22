@@ -7,43 +7,26 @@
       <div class="row">
         <div class="col-md-6 pt-sm-5">
           <form-field
-            [control]="penaltyTypeForm.get('descPenalty')"
+            [control]="penaltyTypeForm.get('description')"
             label="Descripción">
             <textarea
               rows="2"
               class="form-control"
-              formControlName="descPenalty">
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
         <div class="col-md-3 pt-sm-5">
-          <form-field
-            [control]="penaltyTypeForm.get('daysPenalty')"
-            label="Días">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="daysPenalty" />
+          <form-field [control]="penaltyTypeForm.get('days')" label="Días">
+            <input type="number" class="form-control" formControlName="days" />
           </form-field>
         </div>
         <div class="col-md-3 pt-sm-5">
           <form-field
             [control]="penaltyTypeForm.get('process')"
             label="Proceso">
-            <ng-select
-              formControlName="process"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="A">AUTOM&Aacute;TICO</ng-option>
-              <ng-option value="M">MANUAL</ng-option>
-            </ng-select>
-          </form-field>
-          <!-- <form-field
-            [control]="penaltyTypeForm.get('process')"
-            label="Proceso">
             <input type="text" class="form-control" formControlName="process" />
-          </form-field> -->
+          </form-field>
         </div>
       </div>
     </form>

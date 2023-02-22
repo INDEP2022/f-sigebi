@@ -1,7 +1,3 @@
-import { ICity } from './city.model';
-import { ILocality } from './locality.model';
-import { IMunicipality } from './municipality.model';
-
 export interface IWarehouse {
   idWarehouse: number | null;
   description: string;
@@ -9,10 +5,10 @@ export interface IWarehouse {
   manager: string;
   registerNumber: number | null;
   stateCode: number | null;
-  cityCode: ICity;
-  municipalityCode: IMunicipality;
-  localityCode: ILocality;
+  cityCode: number | null;
+  municipalityCode: number | null;
+  localityCode: number | null;
   indActive: string | null;
   type: string | null;
-  responsibleDelegation: number | string | null;
+  responsibleDelegation: number | null;
 }

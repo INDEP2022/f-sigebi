@@ -10,115 +10,71 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-1">
-          <form-field [control]="form.get('id')" label="No.">
-            <input type="text" class="form-control" formControlName="id" />
+          <form-field [control]="form.get('noAuth')" label="No.">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noAuth"
+              maxlength="8"
+              minlength="1" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('keysProceedings')"
+            [control]="form.get('requesOffice')"
             label="Oficio de Solicitud">
             <input
               type="text"
               class="form-control"
-              formControlName="keysProceedings" />
-            <!-- <ngx-select
-                  [searchOnInit]="true"
-                  [form]="form"
-                  (fetchItems)="getProceedings($event)"
-                  [data]="proceedings"
-                  value="keysProceedings"
-                  bindLabel="keysProceedings"
-                  label="Oficio de Solicitud"
-                  [control]="'keysProceedings'"
-                  (change)="onValuesChange($event)">
-                </ngx-select>  -->
+              formControlName="requesOffice" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('typeProceedings')"
+            [control]="form.get('requesScop')"
             label="Oficio de alcance">
             <input
               type="text"
               class="form-control"
-              formControlName="typeProceedings" />
+              formControlName="requesScop" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('datePhysicalReception')"
+            [control]="form.get('recepDate')"
             label="Fecha recepci&oacute;n">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="datePhysicalReception"
+              formControlName="recepDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="form.get('dateDeliveryGood')"
-            label="Fecha de alcance">
+          <form-field [control]="form.get('scopDate')" label="Fecha de alcance">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="dateDeliveryGood"
+              formControlName="scopDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('dateCaptureHc')"
+            [control]="form.get('inteDate')"
             label="Fecha de integraci&oacute;n">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="dateCaptureHc"
+              formControlName="inteDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
-        </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('statusProceedings')" label="Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="statusProceedings"
-              readonly />
-          </form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2" *ngIf="form.get('id').value !== null">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
-            (click)="getProceedingsByKey()">
-            Sacar bienes
-          </button>
-        </div>
-        <div
-          class="col-md-2"
-          *ngIf="form.get('keysProceedings').value !== null">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid">
-            Crear nuevo
-          </button>
-        </div>
-        <div class="col-md-2" *ngIf="form.get('id').value !== null">
-          <button
-            (click)="cleanForm()"
-            type="button"
-            class="btn btn-sm btn-danger active">
-            Limpiar
-          </button>
         </div>
       </div>
       <div class="row pt-5">
@@ -141,12 +97,12 @@
       <div class="form-group row pt-5">
         <div class="col-md-3">
           <form-field
-            [control]="form.get('universalFolio')"
+            [control]="form.get('scanFolio')"
             label="Folio de escaneo">
             <input
               type="text"
               class="form-control"
-              formControlName="universalFolio" />
+              formControlName="scanFolio" />
           </form-field>
         </div>
         <div class="col-md-1">
@@ -185,30 +141,12 @@
           </form-field>
         </div>
 
-        <div class="row">
-          <div class="table-responsive">
-            <div [class]="loading ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
-                [source]="goodPDS">
-              </ng2-smart-table>
-            </div>
-          </div>
-          <app-pagination [params]="params" [totalItems]="totalItems">
-          </app-pagination>
+        <div class="row pt-5 table-responsive">
+          <ng2-smart-table [settings]="settings" [source]="dataNoBien">
+          </ng2-smart-table>
         </div>
-        <div class="row">
-          <div class="table-responsive">
-            <div [class]="loading ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
-                [source]="goodPDS">
-              </ng2-smart-table>
-            </div>
-          </div>
-        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
       <div class="row pt-5">
         <div class="col-md-8">
@@ -217,7 +155,7 @@
               ><i class="fa fa-square"></i> Disponibles</span
             >
             <span class="text-danger"
-              ><i class="fa fa-square"></i> No disponible</span
+              ><i class="fa fa-square"></i> No disponibles</span
             >
           </p>
         </div>

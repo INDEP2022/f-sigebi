@@ -53,7 +53,6 @@ export class CatFinancialInformationAttributesModalComponent
       ],
       type: [null, [Validators.required]],
       subType: [null, [Validators.required]],
-      registerNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.attributesFinancialInfo != null) {
       this.edit = true;

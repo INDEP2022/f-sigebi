@@ -10,7 +10,6 @@ import { FINANCIAL_INDICATORS_COLUMNS } from './financial-indicators-columns';
 import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-indicators-model';
 //services
 import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-indicators',
@@ -35,7 +34,7 @@ export class CatFinancialIndicatorsComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...FINANCIAL_INDICATORS_COLUMNS },
@@ -75,11 +74,10 @@ export class CatFinancialIndicatorsComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(financialIndicators.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }

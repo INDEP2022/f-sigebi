@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -10,15 +9,9 @@ import { IStation } from '../../models/catalogs/station.model';
 @Injectable({
   providedIn: 'root',
 })
-export class StationService
-  extends HttpService
-  implements ICrudMethods<IStation>
-{
+export class StationService implements ICrudMethods<IStation> {
   private readonly route: string = ENDPOINT_LINKS.Station;
-  constructor(private stationRepository: Repository<IStation>) {
-    super();
-    this.microservice = 'catalog';
-  }
+  constructor(private stationRepository: Repository<IStation>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IStation>> {
     return this.stationRepository.getAllPaginated(this.route, params);
@@ -38,14 +31,5 @@ export class StationService
 
   remove(id: string | number): Observable<Object> {
     return this.stationRepository.remove(this.route, id);
-  }
-
-  getAllFilter(params?: _Params) {
-    return this.get('station', params);
-  }
-
-  search(params: ListParams) {
-    var route = 'station/search';
-    return this.get(route, params);
   }
 }

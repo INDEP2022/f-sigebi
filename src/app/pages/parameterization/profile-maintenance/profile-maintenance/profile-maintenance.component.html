@@ -8,33 +8,15 @@
         <search-bar [params]="params"></search-bar>
       </div>
     </div>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="segProfile">
-          </ng2-smart-table>
-        </div>
-        <app-pagination
-          [params]="params2"
-          [totalItems]="totalItems2"></app-pagination>
-      </div>
-    </div>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="screenProfile">
-          </ng2-smart-table>
-        </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
-      </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>

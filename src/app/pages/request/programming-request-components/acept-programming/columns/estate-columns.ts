@@ -1,59 +1,53 @@
 export const ESTATE_COLUMNS = {
-  idGood: {
+  gestionNumber: {
     title: 'No° gestión',
     type: 'string',
     sort: false,
   },
 
-  keyUnique: {
+  uniqueKey: {
     title: 'Clave única',
     type: 'string',
     sort: false,
   },
 
-  transferFile: {
+  record: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
 
-  descriptionGood: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
 
-  decriptionGoodSae: {
+  descriptionSae: {
     title: 'Descripción SAE',
     type: 'string',
     sort: false,
   },
 
-  quantity: {
+  transerAmount: {
     title: 'Cantidad transferente',
     type: 'string',
     sort: false,
   },
 
-  unitMeasurement: {
+  transerUnit: {
     title: 'Unidad transferente',
     type: 'string',
     sort: false,
   },
 
-  physicalState: {
+  stateTransference: {
     title: 'Estado Físico transferente',
     type: 'string',
     sort: false,
   },
 
-  esReprogramming: {
-    title: 'No. reprogramación',
-    type: 'string',
-    sort: false,
-  },
-
-  aliasWarehouse: {
-    title: 'Alias almacén',
+  addressDetail: {
+    title: 'Detalle dirección',
     type: 'string',
     sort: false,
   },

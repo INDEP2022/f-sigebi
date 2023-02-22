@@ -1,13 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { GenericService } from 'src/app/core/services/catalogs/generic.service';
-import { RequestService } from 'src/app/core/services/requests/request.service';
+import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IRequest } from '../../../../../../core/models/requests/request.model';
-import { AffairService } from '../../../../../../core/services/catalogs/affair.service';
 
 @Component({
   selector: 'app-request-record-tab',
@@ -15,114 +12,67 @@ import { AffairService } from '../../../../../../core/services/catalogs/affair.s
   styles: [],
 })
 export class RequestRecordTabComponent extends BasePage implements OnInit {
-  @Input() requestForm: ModelForm<IRequest>;
-  bsReceptionValue = new Date();
-  bsPaperValue: any;
-  selectTypeExpedient = new DefaultSelect<any>();
-  selectOriginInfo = new DefaultSelect<any>();
-  affairName: string = '';
-  datePaper: any;
-  priority: boolean = false;
+  @Input() dataObject: any;
+  receptionForm: ModelForm<IRequest>;
+  selectTypeExpedient = new DefaultSelect<IRequest>();
 
-  constructor(
-    public fb: FormBuilder,
-    private affairService: AffairService,
-    private genericsService: GenericService,
-    private requestService: RequestService
-  ) {
+  constructor(public fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.getOriginInfo(new ListParams());
-    this.getTypeExpedient(new ListParams());
+    this.getCurrentDate();
+    this.prepareForm();
+  }
 
-    this.requestForm.controls['affair'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['id'].value != null) {
-        this.getAffair(this.requestForm.controls['affair'].value);
-      }
-
-      if (this.requestForm.controls['urgentPriority'].value) {
-        this.priority =
-          this.requestForm.controls['urgentPriority'].value === '0'
-            ? false
-            : true;
-        this.requestForm.controls['urgentPriority'].setValue(this.priority);
-      }
-
-      if (this.requestForm.controls['paperDate'].value != null) {
-        let date = new Date(this.requestForm.controls['paperDate'].value);
-        this.bsPaperValue = date;
-        this.requestForm.controls['paperDate'].setValue(date.toISOString());
-      }
+  prepareForm(): void {
+    //console.log(this.dataObject);
+    let fecha = this.getCurrentDate();
+    this.receptionForm = this.fb.group({
+      priority: [false],
+      infoProvenance: [null, [Validators.pattern(STRING_PATTERN)]],
+      receptDate: [{ value: fecha, disabled: true }],
+      officeDate: [null, Validators.required],
+      typeExpedient: [null],
+      indiciado: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
+      roleSender: [null, [Validators.pattern(STRING_PATTERN)]],
+      phoneSender: [null],
+      emailSender: [null, Validators.email],
+      publicMinister: [null],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
+      tribunal: [null, [Validators.pattern(STRING_PATTERN)]],
+      crime: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeReception: [
+        { value: 'FISICO', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //esta campo depende de que tipo de recepcion es el formulario
+      destinationManage: [null, [Validators.pattern(STRING_PATTERN)]],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
+      subject: [
+        { value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      transExpedient: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferEntityNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
-  getTypeExpedient(params: ListParams) {
-    params['filter.name'] = '$eq:Tipo Expediente';
-    params.limit = 20;
-    this.genericsService.getAll(params).subscribe((data: any) => {
-      this.selectTypeExpedient = new DefaultSelect(data.data, data.count);
-    });
+  getCurrentDate(): string {
+    var today = new Date();
+    var year = today.getFullYear();
+    var mes = today.getMonth() + 1;
+    var dia = today.getDate();
+    var fecha = dia + '/' + mes + '' + year;
+    return fecha;
   }
 
-  getOriginInfo(params?: ListParams) {
-    params['filter.name'] = '$eq:Procedencia';
-    params.limit = 20;
-    this.genericsService.getAll(params).subscribe((data: any) => {
-      this.selectOriginInfo = new DefaultSelect(data.data, data.count);
-    });
-  }
-
-  getAffair(id: number) {
-    this.affairService.getById(id).subscribe((data: any) => {
-      this.affairName = data.description;
-    });
-  }
-
-  changeDateEvent(event: Date) {
-    this.bsPaperValue =
-      this.bsPaperValue !== undefined ? this.bsPaperValue : event;
-
-    if (this.bsPaperValue != undefined) {
-      let date = new Date(this.bsPaperValue);
-      this.requestForm.controls['paperDate'].setValue(date.toISOString());
-    }
-  }
-
-  changePriority(event: any) {
-    let checked = event.currentTarget.checked;
-    let value = checked === true ? '1' : '0';
-    this.requestForm.controls['urgentPriority'].setValue(value);
-  }
+  getTypeExpedient(event: any) {}
 
   confirm() {
     this.loading = true;
-    console.log(this.requestForm.getRawValue());
-
-    const request = this.requestForm.getRawValue() as IRequest;
-    this.requestService.update(request.id, request).subscribe({
-      next: (resp: any) => {
-        if (resp.id != null) {
-          this.message(
-            'success',
-            'Guardado',
-            'Se guardo la solicitud correctamente'
-          );
-        }
-        if (resp.statusCode != null) {
-          this.message('error', 'Error', 'No se guardo la solicitud!');
-        }
-
-        this.loading = false;
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
-  }
-
-  message(header: any, title: string, body: string) {
-    this.onLoadToast(header, title, body);
+    console.log(this.receptionForm.value);
   }
 }

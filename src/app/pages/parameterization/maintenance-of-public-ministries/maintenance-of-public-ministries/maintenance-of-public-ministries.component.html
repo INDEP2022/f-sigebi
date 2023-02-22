@@ -5,112 +5,136 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('manager')"
-            label="Responsable Ministerio P&uacute;blico">
-            <input type="text" class="form-control" formControlName="manager" />
+            [control]="form.get('dateInitRatification')"
+            label="Ministerio P&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('description')"
+            [control]="form.get('dateInitRatification')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="dateInitRatification" />
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateInitRatification')"
+            label="Responsable Ministerio P&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
       </div>
       <hr />
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('street')" label="Calle">
-            <input type="text" class="form-control" formControlName="street" />
+          <form-field
+            [control]="form.get('dateInitRatification')"
+            label="Calle">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('outNumber')"
+            [control]="form.get('dateInitRatification')"
             label="No&#46; Exterior">
             <input
               type="text"
               class="form-control"
-              formControlName="outNumber" />
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('insideNumber')"
+            [control]="form.get('dateInitRatification')"
             label="No&#46; Interior">
             <input
               type="text"
               class="form-control"
-              formControlName="insideNumber" />
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('colony')" label="Colonia">
-            <input type="text" class="form-control" formControlName="colony" />
+          <form-field
+            [control]="form.get('dateInitRatification')"
+            label="Colonia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('delegNunic')"
+            [control]="form.get('dateInitRatification')"
             label="Delegaci&oacute;n Municipio">
             <input
               type="text"
               class="form-control"
-              formControlName="delegNunic" />
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('zipCode')"
+            [control]="form.get('dateInitRatification')"
             label="C&oacute;digo Postal">
-            <input type="text" class="form-control" formControlName="zipCode" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
-            <input type="text" class="form-control" formControlName="phone" />
+          <form-field
+            [control]="form.get('dateInitRatification')"
+            label="Tel&eacute;fono">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
           </form-field>
         </div>
       </div>
       <hr />
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <app-cities-shared
+          <app-cities-shared [form]="form"></app-cities-shared>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            [control]="form.get('dateInitRatification')"
+            label="Entidad Federativa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <app-delegation-shared
             [form]="form"
-            (state)="updateEntity($event)"></app-cities-shared>
+            [showSubdelegation]="false"></app-delegation-shared>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('entity')" label="Entidad Federativa">
-            <input type="text" class="form-control" formControlName="entity" />
-          </form-field>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field
-            label="Delegaci&oacute;n"
-            [control]="form.get('delegation')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field
-            label="Sub Delegaci&oacute;n"
-            [control]="form.get('subDelegation')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subDelegation" />
-          </form-field>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <app-delegation-shared
+            [form]="form"
+            [showDelegation]="false"></app-delegation-shared>
         </div>
       </div>
     </form>
@@ -118,11 +142,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-success active"
-          (click)="saved()"
-          [disabled]="!form.valid || loading">
+        <button type="button" class="btn btn-success active" (click)="saved()">
           Guardar
         </button>
       </div>

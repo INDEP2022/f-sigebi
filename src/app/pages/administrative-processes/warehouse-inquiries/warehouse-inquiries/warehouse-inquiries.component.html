@@ -1,9 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Consulta de Almacenes</h5>
-    <div class="add-select">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-    </div>
   </div>
   <div body>
     <div class="row">
@@ -15,8 +12,8 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="warehouses"
-        (userRowSelect)="select($event.data)">
+        [source]="data"
+        (userRowSelect)="select($event)">
       </ng2-smart-table>
       <app-pagination
         [params]="params"

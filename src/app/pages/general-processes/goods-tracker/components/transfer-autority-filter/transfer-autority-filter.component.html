@@ -1,40 +1,25 @@
 <form [formGroup]="form" class="form-material" (submit)="search()">
   <div class="row">
-    <form-field [control]="form.get('transfers')" class="col-md-4">
+    <form-field [control]="form.get('transfer')" class="col-md-4">
       <ngx-select
-        [searchOnInit]="true"
-        [multiple]="true"
-        value="id"
-        bindLabel="nameTransferent"
         [form]="form"
-        control="transfers"
+        control="transfer"
         label="Transferente"
-        [data]="transfers"
-        (fetchItems)="getTransfers($event)"
-        (change)="transferChange()"></ngx-select>
+        [data]="select"></ngx-select>
     </form-field>
-    <form-field [control]="form.get('transmitters')" class="col-md-4">
+    <form-field [control]="form.get('emisora')" class="col-md-4">
       <ngx-select
         [form]="form"
-        [multiple]="true"
-        control="transmitters"
-        value="id"
-        bindLabel="stationName"
+        control="emisora"
         label="Emisora"
-        [data]="transmitters"
-        (fetchItems)="getTransmitters($event)"
-        (change)="transmitterChange()"></ngx-select>
+        [data]="select"></ngx-select>
     </form-field>
-    <form-field [control]="form.get('autorities')" class="col-md-4">
+    <form-field [control]="form.get('autoridad')" class="col-md-4">
       <ngx-select
         [form]="form"
-        [multiple]="true"
-        value="idAuthority"
-        bindLabel="authorityName"
-        control="autorities"
+        control="autoridad"
         label="Autoridad"
-        [data]="autorities"
-        (fetchItems)="getAutorities($event)"></ngx-select>
+        [data]="select"></ngx-select>
     </form-field>
   </div>
   <div class="row">

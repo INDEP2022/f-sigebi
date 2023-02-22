@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MasiveConversionPermissionsDeleteComponent } from '../masive-conversion-permissions-delete/masive-conversion-permissions-delete.component';
 import {
@@ -22,17 +20,12 @@ export class MassiveConversionPermissionsComponent
 {
   settings2 = { ...this.settings, actions: false };
 
-  data1: ISegUsers[] = [];
+  data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
-  data2: any[] = [];
-  params1 = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems2: number = 0;
   constructor(
     private modalRef: BsModalRef,
-    private modalService: BsModalService,
-    private usersService: UsersService
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -43,29 +36,9 @@ export class MassiveConversionPermissionsComponent
     this.settings2.columns = PRIVILEGESUSER_COLUMNS;
   }
 
-  ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getValuesAll());
-  }
+  ngOnInit(): void {}
   close() {
     this.modalRef.hide();
-  }
-  getValuesAll() {
-    this.loading = true;
-
-    this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        this.data1 = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        console.log(error);
-      },
-    });
   }
   openPermissionsDelete(data: any) {
     // let config: ModalOptions = {

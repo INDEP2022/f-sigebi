@@ -14,9 +14,9 @@
 
       <div class="p-2">
         <confirm-button
+          [disabled]="requestForm.invalid"
           [loading]="loading"
           [btnSmall]="true"
-          [disabled]="requestForm.invalid"
           (confirm)="confirm()">
         </confirm-button>
       </div>
@@ -25,8 +25,16 @@
           type="button"
           class="btn btn-secondary btn-sm active"
           [disabled]="requestForm.invalid"
-          (click)="turnRequest()">
+          (click)="confirm()">
           Turnar
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
         </button>
       </div>
     </div>
@@ -62,12 +70,13 @@
             <div class="row pt-5">
               <div class="col-md-2">
                 <form-field
-                  [control]="requestForm.get('applicationDate')"
+                  [control]="requestForm.get('date')"
                   label="Fecha de solicitud">
                   <input
+                    type="text"
                     class="form-control"
                     #dp="bsDatepicker"
-                    formControlName="applicationDate"
+                    formControlName="date"
                     bsDatepicker
                     [bsValue]="bsValue" />
                 </form-field>
@@ -76,77 +85,70 @@
               <div class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="regionalDelegationId"
+                  control="regDelega"
                   (fetchItems)="getRegionalDeleg($event)"
                   [data]="selectRegionalDeleg"
-                  bindLabel="description"
                   label="Delegaci&oacute;n Regional"
-                  value="id"></ngx-select>
+                  value="regDelega"></ngx-select>
               </div>
+
+              <div class="col-md-4">
+                <ngx-select
+                  [form]="requestForm"
+                  control="transmitter"
+                  (fetchItems)="getTransmitter($event)"
+                  [data]="selectTransmitter"
+                  label="Emisora"
+                  value="transmitter"></ngx-select>
+              </div>
+
               <div class="col-md-3">
                 <form-field
-                  [control]="requestForm.get('paperNumber')"
-                  label="No&#46; Oficio">
+                  [control]="requestForm.get('noOfi')"
+                  label="No&#46; Oficina">
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="paperNumber" />
+                    formControlName="noOfi" />
                 </form-field>
-              </div>
-              <div class="col-md-3">
-                <ngx-select
-                  [form]="requestForm"
-                  control="keyStateOfRepublic"
-                  (fetchItems)="getEntity($event)"
-                  [data]="selectEntity"
-                  bindLabel="descCondition"
-                  [searchable]="false"
-                  label="Entidad"
-                  value="id"></ngx-select>
               </div>
             </div>
             <div class="row pt-5">
               <div class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="transferenceId"
-                  (fetchItems)="getTransferent($event)"
-                  [data]="selectTransfe"
-                  bindLabel="nameTransferent"
-                  label="Transferente"
-                  value="id"></ngx-select>
+                  control="entity"
+                  (fetchItems)="getEntity($event)"
+                  [data]="selectEntity"
+                  label="Entidad"
+                  value="regDelega"></ngx-select>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="stationId"
-                  (fetchItems)="getStation($event)"
-                  [data]="selectStation"
-                  bindLabel="stationName"
-                  [searchable]="false"
-                  label="Emisora"
-                  value="id"></ngx-select>
-              </div>
-              <div class="col-md-4">
-                <ngx-select
-                  [form]="requestForm"
-                  control="authorityId"
+                  control="authority"
                   (fetchItems)="getAuthority($event)"
                   [data]="selectAuthority"
-                  bindLabel="authorityName"
-                  [searchable]="false"
                   label="Autoridad"
-                  value="idAuthority"></ngx-select>
+                  value="regDelega"></ngx-select>
+              </div>
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="tranfe"
+                  (fetchItems)="getTransfe($event)"
+                  [data]="selectTransfe"
+                  label="Transferente"
+                  value="regDelega"></ngx-select>
               </div>
               <div *ngIf="op == 2" class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="keyStateOfRepublic"
+                  control="state"
                   (fetchItems)="getState($event)"
                   [data]="selectState"
-                  bindLabel="descCondition"
                   label="Estado"
-                  value="id"></ngx-select>
+                  value="regDelega"></ngx-select>
               </div>
             </div>
           </div>
@@ -161,7 +163,7 @@
           <div body>
             <div class="row pt-5">
               <div class="col-md-6">
-                <form-field [control]="requestForm.get('affair')">
+                <form-field [control]="requestForm.get('issue')">
                   <ngx-select
                     (fetchItems)="getIssue($event)"
                     [data]="issues"
@@ -169,7 +171,7 @@
                     value="id"
                     bindLabel="issue"
                     label="Asunto"
-                    [control]="'affair'">
+                    [control]="'issue'">
                   </ngx-select>
                 </form-field>
               </div>
@@ -191,8 +193,8 @@
               <form-radio label="T.E">
                 <input
                   type="radio"
-                  formControlName="targetUserType"
-                  value="TE"
+                  formControlName="typeUser"
+                  value="te"
                   id="te"
                   [checked]="checked" />
               </form-radio>
@@ -201,8 +203,8 @@
               <form-radio label="SAE">
                 <input
                   type="radio"
-                  formControlName="targetUserType"
-                  value="SAE"
+                  formControlName="typeUser"
+                  value="sae"
                   id="sae" />
               </form-radio>
             </div>
@@ -221,9 +223,7 @@
               <input
                 type="text"
                 class="form-control"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="userName"
-                [readOnly]="true" />
+                formControlName="receiUser" />
             </div>
           </div>
         </div>

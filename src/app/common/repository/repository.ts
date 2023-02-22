@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { INoCityByAsuntoSAT } from 'src/app/core/models/catalogs/authority.model';
 import { environment } from 'src/environments/environment';
 import { ListParams } from './interfaces/list-params';
 import { IRepository } from './interfaces/repository.interface';
@@ -13,7 +12,7 @@ export class Repository<T> implements IRepository<T> {
 
   getAllPaginated(
     route: string,
-    _params?: ListParams | string
+    _params?: ListParams
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
@@ -27,16 +26,11 @@ export class Repository<T> implements IRepository<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    // console.log(fullRoute);
-
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    // console.log(`${fullRoute}/${id}`);
-    // console.log(formData);
-
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
@@ -78,10 +72,7 @@ export class Repository<T> implements IRepository<T> {
     return keysArray.join('/');
   }
 
-  private makeParams(params: ListParams | string): HttpParams {
-    if (typeof params === 'string') {
-      return new HttpParams({ fromString: params });
-    }
+  private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
       httpParams = httpParams.append(key, (params as any)[key]);
@@ -103,22 +94,6 @@ export class Repository<T> implements IRepository<T> {
   getById2(route: string, id: number | string): Observable<T> {
     return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
   }
-  getById3(route: string, id: number | string): Observable<IListResponse<T>> {
-    return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL2}${route}/${id}`
-    );
-  }
-  getById4(
-    route: string,
-    id: number | string,
-    _params?: ListParams
-  ): Observable<IListResponse<T>> {
-    const params = _params ? this.makeParams(_params) : {};
-    return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL2}${route}/${id}`,
-      { params }
-    );
-  }
 
   create2(route: string, formData: Object) {
     return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
@@ -130,19 +105,11 @@ export class Repository<T> implements IRepository<T> {
       formData
     );
   }
-  update3(route: string, formData: Object) {
-    return this.httpClient.put(
-      `${environment.API_URL2}catalog/api/v1/${route}`,
-      formData
-    );
-  }
+
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
   }
-  remove3(route: string, formData: Object) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.delete<T>(`${fullRoute}`, formData);
-  }
+
   updateByIds2(route: string, ids: Partial<T>, formData: Object) {
     const idsRoute: string = this.makeIdsRoute(ids);
     return this.httpClient.put(
@@ -163,47 +130,5 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(
       `${environment.API_URL2}${route}/${idsRoute}`
     );
-  }
-
-  getByIdDelegationSubdelegation(
-    /* route: string, */
-    idDelegation: string | number,
-    idSubdelegation: string | number
-  ): Observable<IListResponse<T>> {
-    return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL}catalog/api/v1/departament?limit=5&page=1&filter.numDelegation=${idDelegation}&filter.numSubDelegation=${idSubdelegation}`
-    );
-  }
-  removeByBody(route: string, obj: Object) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.delete(`${fullRoute}`, obj);
-  }
-  update4(route: string, formData: Object) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.put(`${fullRoute}${route}`, formData);
-  }
-  update5(
-    route: string,
-    id: number | string,
-    id1: number | string,
-    formData: Object
-  ) {
-    const fullRoute = this.buildRoute(route);
-    // console.log(fullRoute);
-    return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
-  }
-  update6(route: string, formData: Object) {
-    const fullRoute = this.buildRoute(route);
-    // console.log(`${fullRoute}/${id}`);
-    // console.log(formData);
-
-    return this.httpClient.put(`${fullRoute}`, formData);
-  }
-  getCityByAsuntoSat(
-    route: string,
-    id: number | string
-  ): Observable<INoCityByAsuntoSAT> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.get<INoCityByAsuntoSAT>(`${fullRoute}/${id}`);
   }
 }

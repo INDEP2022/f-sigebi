@@ -1,27 +1,26 @@
 export const ATT_REG_LOG_TAB_COLUMNS = {
-  idNmTable: {
-    title: 'No. Tabla',
+  name: {
+    title: 'Nombre',
     sort: false,
   },
-  keyAtrib: {
+  type: {
+    title: 'Tipo de tabla',
+    sort: false,
+  },
+  noAtt: {
     title: 'No. Atributo',
     sort: false,
   },
-
-  descriptionAtrib: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  swFormat: {
+  format: {
     title: 'Formato',
     sort: false,
   },
-  longMax: {
+  maxLong: {
     title: 'Longitud Máxima',
-    sort: false,
-  },
-  longMin: {
-    title: 'Longitud Mínima',
     sort: false,
   },
 };

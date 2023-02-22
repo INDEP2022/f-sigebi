@@ -4,13 +4,13 @@
   </div>
   <div body>
     <form [formGroup]="estateForm" class="form-material">
-      <form-field [control]="estateForm.get('warehouse')">
+      <form-field [control]="estateForm.get('akaWarehouse')">
         <ngx-select
           [form]="estateForm"
-          control="warehouse"
+          control="akaWarehouse"
           [data]="akaWarehouse"
-          value="idWarehouse"
-          bindLabel="description"
+          value="id"
+          bindLabel="norm"
           label="Alias Almacén"
           (fetchItems)="getAkaWarehouseSelect($event)"></ngx-select>
       </form-field>
@@ -22,9 +22,8 @@
             control="state"
             [data]="states"
             value="id"
-            bindLabel="descCondition"
+            bindLabel="norm"
             label="Estado"
-            (change)="stateSelect($event)"
             (fetchItems)="getStateSelect($event)"></ngx-select>
         </form-field>
       </div>
@@ -35,24 +34,23 @@
             [form]="estateForm"
             control="municipality"
             [data]="municipalities"
-            value="idMunicipality"
-            bindLabel="nameMunicipality"
+            value="id"
+            bindLabel="norm"
             label="Municipio"
-            (change)="municipalitySelect($event)"
             (fetchItems)="getMunicipalitySelect($event)"></ngx-select>
         </form-field>
       </div>
 
       <div class="row pt-4">
-        <form-field [control]="estateForm.get('locality')">
+        <form-field [control]="estateForm.get('colony')">
           <ngx-select
             [form]="estateForm"
-            control="locality"
-            [data]="localities"
+            control="colony"
+            [data]="colonies"
             value="id"
-            bindLabel="nameLocation"
-            label="Localidad"
-            (fetchItems)="getLocalitySelect($event)"></ngx-select>
+            bindLabel="norm"
+            label="Colonia"
+            (fetchItems)="getColonySelect($event)"></ngx-select>
         </form-field>
       </div>
 

@@ -32,11 +32,4 @@ export class TypeRelevantService implements ICrudMethods<ITypeRelevant> {
   remove(id: string | number): Observable<Object> {
     return this.typeRelevantRepository.remove(this.route, id);
   }
-
-  search(params: ListParams): Observable<IListResponse<ITypeRelevant>> {
-    return this.typeRelevantRepository.getAllPaginated(
-      `${this.route}/search`,
-      params
-    );
-  }
 }

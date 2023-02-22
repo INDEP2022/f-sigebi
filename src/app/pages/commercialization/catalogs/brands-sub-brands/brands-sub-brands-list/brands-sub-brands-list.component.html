@@ -37,6 +37,7 @@
                 [settings]="settings"
                 [source]="data"
                 (edit)="openForm($event.data)"
+                (delete)="delete($event.data)"
                 (userRowSelect)="selectRow($event.data)">
               </ng2-smart-table>
             </div>

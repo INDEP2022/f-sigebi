@@ -1,13 +1,13 @@
 export const RECORDS_VALDIATION_COLUMNS = {
-  secVal: {
+  secuencia: {
     title: 'Secuencia',
     sort: false,
   },
-  descVal: {
+  validacion: {
     title: 'Validación',
     sort: false,
   },
-  resultValue: {
+  resultado: {
     title: 'Resultado',
     sort: false,
   },

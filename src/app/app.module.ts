@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,9 +14,7 @@ import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
-import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
-import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
-import { MailModule } from './pages/parameterization/mail/mail.module';
+
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
@@ -46,9 +43,6 @@ export function tokenGetter() {
     AppRoutingModule,
     HttpClientModule,
     DateFnsModule.forRoot(),
-    MailModule,
-    CatTransferentModule,
-    AuthorizationKeysModule,
   ],
   providers: [
     {
@@ -62,7 +56,6 @@ export function tokenGetter() {
       multi: true,
     },
     JwtInterceptor,
-    DatePipe,
   ],
   bootstrap: [AppComponent],
 })

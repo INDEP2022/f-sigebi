@@ -1,11 +1,9 @@
-import { IDelegation } from './delegation.model';
-
 export interface ISubdelegation {
-  id: number;
+  id?: number;
   description: string;
-  delegationNumber: IDelegation | number;
-  dailyConNumber?: number;
-  dateDailyCon?: string;
-  registerNumber?: number;
-  phaseEdo?: number;
+  numDelegation: number;
+  numDailyCon: number;
+  dateDailyCon: Date;
+  numRegister: number;
+  phaseEdo: number;
 }

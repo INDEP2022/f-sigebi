@@ -3,11 +3,11 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
-    <!-- <div class="row">
+    <div class="row">
       <div class="form-material col-md-5">
         <search-bar [params]="params"></search-bar>
       </div>
-    </div> -->
+    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -19,9 +19,6 @@
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination
-        [filterParams]="params"
-        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
   <div footer>

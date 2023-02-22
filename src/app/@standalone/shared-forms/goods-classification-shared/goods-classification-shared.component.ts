@@ -24,7 +24,6 @@ export class GoodsClasificationSharedComponent
   extends BasePage
   implements OnInit
 {
-  @Input() label = 'Classificación de Bienes';
   @Input() form: FormGroup;
   @Input() goodClassificationField: string = 'goodClassification';
 
