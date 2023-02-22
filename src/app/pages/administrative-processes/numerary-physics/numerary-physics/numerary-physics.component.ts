@@ -58,22 +58,22 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
 
   public send(): void {
     this.loading = true;
-    const pdfurl =
-      `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGENADBNUMEFISICO.pdf?PARAMFORM=NO&PN_DELEG=` +
-      this.physicsForm.controls['delegation'].value +
-      `&PF_FECINI=` +
-      this.datePipe.transform(
-        this.physicsForm.controls['startedDate'].value,
-        'dd-mm-yyyy'
-      ) +
-      `&PF_FECFIN=` +
-      this.datePipe.transform(
-        this.physicsForm.controls['finishedDate'].value,
-        'dd-mm-yyyy'
-      ) +
-      `&PC_TIPO=` +
-      this.physicsForm.controls['type'].value;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    // const pdfurl =
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGENADBNUMEFISICO.pdf?PARAMFORM=NO&PN_DELEG=` +
+    //   this.physicsForm.controls['delegation'].value +
+    //   `&PF_FECINI=` +
+    //   this.datePipe.transform(
+    //     this.physicsForm.controls['startedDate'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PF_FECFIN=` +
+    //   this.datePipe.transform(
+    //     this.physicsForm.controls['finishedDate'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PC_TIPO=` +
+    //   this.physicsForm.controls['type'].value;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
     const downloadLink = document.createElement('a');
     downloadLink.href = pdfurl;
     downloadLink.target = '_blank';
