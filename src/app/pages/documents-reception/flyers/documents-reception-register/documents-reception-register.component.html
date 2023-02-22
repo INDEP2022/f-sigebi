@@ -63,7 +63,8 @@
                 (fetchItems)="getIdentifiers($event)"
                 bindLabel="description"
                 control="identifier"
-                label="Identificador">
+                label="Identificador"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
 
@@ -147,7 +148,7 @@
             </div>
             <div class="col-md-4">
               <button
-                [disabled]="procedureStatus == 'ENVIADO'"
+                [disabled]="procedureStatus == 'ENVIADO' || wheelNumber == null"
                 type="button"
                 class="ml-5 btn btn-warning btn-sm"
                 (click)="sendFlyer()">
@@ -379,7 +380,7 @@
               [control]="documentsReceptionForm.get('officeExternalKey')"
               label="No. Oficio">
               <input
-                type="number"
+                type="text"
                 formControlName="officeExternalKey"
                 class="form-control"
                 [readonly]="pgrInterface" />
@@ -392,6 +393,7 @@
               <input
                 formControlName="externalOfficeDate"
                 class="form-control"
+                [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
                 bsDatepicker
                 [readonly]="pgrInterface" />
             </form-field>
@@ -442,9 +444,13 @@
               [control]="documentsReceptionForm.get('uniqueKey')">
               <ngx-select
                 [form]="documentsReceptionForm"
-                [data]="identifiers"
+                [data]="uniqueKeys"
+                (fetchItems)="getUniqueKey($event)"
+                value="uniqueCve"
+                bindLabel="uniqueCve"
                 control="uniqueKey"
-                label="Clave única 3 niveles">
+                label="Clave única 3 niveles"
+                (change)="setUniqueKeyData($event)">
               </ngx-select>
             </form-field>
 
@@ -458,6 +464,7 @@
                 bindLabel="nameCity"
                 control="cityNumber"
                 label="Ciudad"
+                [searchOnInit]="true"
                 (change)="cityChange($event)">
               </ngx-select>
             </form-field>
@@ -482,7 +489,8 @@
                 (fetchItems)="getFederalEntities($event)"
                 bindLabel="value"
                 control="entFedKey"
-                label="Ent. Fed">
+                label="Ent. Fed"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
 
@@ -496,6 +504,7 @@
                 bindLabel="nameTransferent"
                 control="endTransferNumber"
                 label="Transferente"
+                [searchOnInit]="true"
                 (change)="changeTransferor($event)">
               </ngx-select>
             </form-field>
@@ -511,7 +520,8 @@
                 (fetchItems)="getStations($event)"
                 bindLabel="stationName"
                 control="stationNumber"
-                label="Emisora">
+                label="Emisora"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
 
@@ -525,6 +535,7 @@
                 bindLabel="authorityName"
                 control="autorityNumber"
                 label="Autoridad"
+                [searchOnInit]="true"
                 [readonly]="pgrInterface">
               </ngx-select>
             </form-field>
@@ -553,6 +564,7 @@
                 (fetchItems)="getPublicMinistries($event)"
                 bindLabel="description"
                 control="minpubNumber"
+                [searchOnInit]="true"
                 label="Min. P&uacute;blico">
               </ngx-select>
             </form-field>
@@ -567,6 +579,7 @@
                 bindLabel="value"
                 control="crimeKey"
                 label="Delito"
+                [searchOnInit]="true"
                 [readonly]="pgrInterface">
               </ngx-select>
             </form-field>
@@ -583,7 +596,8 @@
                 (fetchItems)="getCourts($event)"
                 bindLabel="description"
                 control="courtNumber"
-                label="Juzgado">
+                label="Juzgado"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
           </div>
@@ -598,7 +612,8 @@
                 (fetchItems)="getDefendants($event)"
                 bindLabel="name"
                 control="indiciadoNumber"
-                [label]="taxpayerLabel">
+                [label]="taxpayerLabel"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
 
@@ -611,7 +626,8 @@
                 (fetchItems)="getReceptionWays($event)"
                 bindLabel="value"
                 control="viaKey"
-                label="V&iacute;a Recepci&oacute;n">
+                label="V&iacute;a Recepci&oacute;n"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
           </div>
@@ -700,7 +716,8 @@
                 (fetchItems)="getManagementAreas($event)"
                 bindLabel="description"
                 control="estatusTramite"
-                label="Gestión Destino">
+                label="Gestión Destino"
+                [searchOnInit]="true">
               </ngx-select>
             </form-field>
           </div>
@@ -715,9 +732,10 @@
             [form]="flyerCopyRecipientForm"
             [data]="users"
             (fetchItems)="getUsers($event)"
-            bindLabel="user.name"
+            bindLabel="user.id"
             control="copyuser"
-            label="En atención">
+            label="En atención"
+            [searchOnInit]="true">
           </ngx-select>
         </form-field>
       </form>
@@ -727,9 +745,10 @@
             [form]="flyerCopyCppForm"
             [data]="usersCopy"
             (fetchItems)="getUsersCopy($event)"
-            bindLabel="user.name"
+            bindLabel="user.id"
             control="copyuser"
-            label="C.P.P.">
+            label="C.P.P."
+            [searchOnInit]="true">
           </ngx-select>
         </form-field>
       </form>

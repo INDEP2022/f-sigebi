@@ -1,8 +1,7 @@
-import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IParametersV2 } from 'src/app/core/models/ms-parametergood/parameters.model';
+import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -20,12 +19,11 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = 'Parámetro';
   edit: boolean = false;
-  parameter: IParametersV2;
+  parameter: IParameters = {} as IParameters;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalRef,
-    private datePipe: DatePipe,
     private parameterServ: ParameterCatService
   ) {
     super();
@@ -37,7 +35,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      cve: [
+      id: [
         null,
         [
           Validators.required,
@@ -55,22 +53,10 @@ export class ParameterFormComponent extends BasePage implements OnInit {
       ],
       initialValue: [null, [Validators.required, Validators.maxLength(100)]],
       finalValue: [null, Validators.maxLength(30)],
-      startDate: [null],
+      startDate: [null, Validators.required],
       endDate: [null],
     });
 
-    if (this.parameter?.startDate != null) {
-      this.parameter.startDate = new Date(
-        this.parameter.startDate.toString().split('-').join('/')
-      );
-      //this.datePipe.transform(this.parameter.startDate, 'dd/MM/yyyy', '+0430') as any //'30/12/2014'
-    }
-    if (this.parameter?.endDate != null) {
-      this.parameter.endDate = new Date(
-        this.parameter.endDate.toString().split('-').join('/')
-      );
-      //this.datePipe.transform(this.parameter.endDate, 'dd/MM/yyyy', '+0430') as any //'30/12/2014'
-    }
     this.form.patchValue(this.parameter);
   }
 
@@ -78,7 +64,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     if (this.form.valid) {
       if (this.edit) {
         this.parameterServ
-          .update(this.form.get('cve').value, this.form.value)
+          .update(this.form.get('id').value, this.form.value)
           .subscribe({
             next: () => this.handleSuccess(),
             error: err => this.onLoadToast('error', err.error.message, ''),
@@ -90,14 +76,6 @@ export class ParameterFormComponent extends BasePage implements OnInit {
         });
       }
     }
-  }
-
-  convertDate() {
-    this.datePipe.transform(
-      this.parameter.startDate,
-      'dd/MM/yyyy',
-      '+0430'
-    ) as any;
   }
 
   handleSuccess() {

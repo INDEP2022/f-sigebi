@@ -1,9 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -11,10 +20,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 //Services
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
-import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
-import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 export interface IReport {
   data: File;
 }
@@ -96,7 +105,7 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
     );
   }
 
- onDelegationsChange(element: any) {
+  onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
     this.subdelegations = new DefaultSelect();
     // console.log(this.PN_NODELEGACION.value);
@@ -135,10 +144,9 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
 
   onSubDelegationsChange(element: any) {
     this.resetFields([this.subdelegation]);
-    
   }
 
-  getAreas(params: ListParams){
+  getAreas(params: ListParams) {
     this.departamentService.getAll(params).subscribe(
       data => {
         this.areas = new DefaultSelect(data.data, data.count);
@@ -176,7 +184,7 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
     this.form.reset();
   }
 
- confirm(): void {
+  confirm(): void {
     this.loading = true;
     console.log(this.form.value);
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
@@ -197,8 +205,6 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
-  
-
   readFile(file: IReport) {
     const reader = new FileReader();
     reader.readAsDataURL(file.data);
@@ -207,7 +213,6 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
       this.openPrevPdf(reader.result as string);
     };
   }
-  
 
   openPrevPdf(pdfurl: string) {
     console.log(pdfurl);

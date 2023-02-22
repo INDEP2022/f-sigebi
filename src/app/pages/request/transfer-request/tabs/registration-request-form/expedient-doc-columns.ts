@@ -2,6 +2,7 @@ import { AssociateFieldComponent } from './actions/associate-field/associate-fie
 
 export const EXPEDIENT_DOC_GEN_COLUMNS = {
   associate: {
+    defaultValue: 'Asociar a Expediente',
     title: 'Asociar',
     type: 'custom',
     class: 'custom-field',
@@ -193,13 +194,23 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
 };
 
 export const EXPEDIENT_DOC_REQ_COLUMNS = {
-  requestNumber: {
+  associate: {
+    defaultValue: 'Ver Bienes',
+    title: '',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: AssociateFieldComponent,
+    onComponentInitFunction(instance?: any) {},
+    sort: false,
+  },
+  id: {
     title: 'No°. solicitud',
     type: 'text',
     sort: false,
   },
 
-  expedientNumber: {
+  recordId: {
     title: 'No°. expediente',
     type: 'text',
     sort: false,
@@ -211,61 +222,61 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  officialDate: {
+  paperDate: {
     title: 'Fecha de oficio',
     type: 'text',
     sort: false,
   },
 
-  sendersName: {
+  nameOfOwner: {
     title: 'Nombre del remitente',
     type: 'text',
     sort: false,
   },
 
-  sendersCharge: {
+  holderCharge: {
     title: 'Cargo del remitente',
     type: 'text',
     sort: false,
   },
 
-  sendersPhone: {
+  phoneOfOwner: {
     title: 'Telefono del remitente',
     type: 'text',
     sort: false,
   },
 
-  sendersEmail: {
+  emailOfOwner: {
     title: 'Email del remitente',
     type: 'text',
     sort: false,
   },
 
-  regionalDelegation: {
+  regionalDelegationName: {
     title: 'Delegación regional',
     type: 'string',
     sort: false,
   },
 
-  state: {
+  stateName: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
 
-  transferent: {
+  transferentName: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
 
-  station: {
+  stationName: {
     title: 'Emisora',
     type: 'string',
     sort: false,
   },
 
-  authority: {
+  authorityName: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
@@ -295,25 +306,25 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  transferFile: {
+  transferenceFile: {
     title: 'Expediente transferente/PAMA',
     type: 'string',
     sort: false,
   },
 
-  transferEntityNotes: {
+  transferEntNotes: {
     title: 'Notas entidad transferente',
     type: 'string',
     sort: false,
   },
 
-  idDirection: {
+  addressId: {
     title: 'idDireccion',
     type: 'string',
     sort: false,
   },
 
-  provenanceInformation: {
+  originInfo: {
     title: 'Procedencia información',
     type: 'string',
     sort: false,
@@ -325,31 +336,31 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  preliminaryInquiry: {
+  previousInquiry: {
     title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
 
-  causePenal: {
+  lawsuit: {
     title: 'Causa penal',
     type: 'string',
     sort: false,
   },
 
-  protectionNumber: {
+  protectNumber: {
     title: 'No° amparo',
     type: 'string',
     sort: false,
   },
 
-  perfomPenal: {
+  tocaPenal: {
     title: 'Toca penal',
     type: 'string',
     sort: false,
   },
 
-  officeNumber: {
+  paperNumber: {
     title: 'No° oficio',
     type: 'string',
     sort: false,
@@ -367,7 +378,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  judged: {
+  court: {
     title: 'Juzgado',
     type: 'string',
     sort: false,
@@ -379,7 +390,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  receivingPath: {
+  receiptRoute: {
     title: 'Vía de recepción',
     type: 'string',
     sort: false,
@@ -397,12 +408,12 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  typeExpedient: {
+  typeRecord: {
     title: 'Tipo expediente',
     type: 'string',
     sort: false,
   },
-  municipality: {
+  municipalityName: {
     title: 'Municipio',
     type: 'string',
     sort: false,
@@ -414,7 +425,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  outdoorNumber: {
+  exteriorNumber: {
     title: 'Num. Ext.',
     type: 'number',
     sort: false,
@@ -426,7 +437,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
 
-  postalCode: {
+  code: {
     title: 'C.P',
     type: 'number',
     sort: false,
@@ -452,7 +463,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
 };
 
 export const EXPEDIENT_DOC_EST_COLUMNS = {
-  numberGestion: {
+  goodId: {
     title: 'Número de gestión',
     type: 'number',
     sort: false,
@@ -464,19 +475,19 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
     sort: false,
   },
 
-  numExpTransferent: {
+  fileNumber: {
     title: 'No°. expediente de la transferente',
     type: 'string',
     sort: false,
   },
 
-  numberRequest: {
+  requestId: {
     title: 'No°. solicitud',
     type: 'number',
     sort: false,
   },
 
-  descriptionTransferent: {
+  goodDescription: {
     title: 'Descripción de bien transferente',
     type: 'string',
     sort: false,
@@ -488,31 +499,31 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
     sort: false,
   },
 
-  conditionPhysical: {
+  physicalStatusName: {
     title: 'Estado fisico',
     type: 'string',
     sort: false,
   },
 
-  transerUnit: {
+  unitMeasure: {
     title: 'Unidad de medida transferente',
     type: 'string',
     sort: false,
   },
 
-  quantityTransferent: {
+  quantity: {
     title: 'Cantidad de la transferente',
     type: 'string',
     sort: false,
   },
 
-  destinityLigie: {
+  destinyName: {
     title: 'Destino ligie',
     type: 'string',
     sort: false,
   },
 
-  fraction: {
+  fractionName: {
     title: 'Fracción',
     type: 'string',
     sort: false,

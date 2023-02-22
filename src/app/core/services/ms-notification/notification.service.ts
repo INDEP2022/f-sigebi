@@ -33,10 +33,10 @@ export class NotificationService extends HttpService {
     );
   }
 
-  update(id: string | number, notification: Object) {
-    const fullRoute = `${this.route.Notification}/${id}`;
-    return this.put(fullRoute, notification);
-  }
+  // update(id: string | number, notification: Object) {
+  //   const fullRoute = `${this.route.Notification}/${id}`;
+  //   return this.put(fullRoute, notification);
+  // }
 
   getAllFilter(params: _Params): Observable<IListResponse<INotification>> {
     return this.get<IListResponse<INotification>>(
@@ -49,6 +49,13 @@ export class NotificationService extends HttpService {
       this.route.NotifyRatification,
       model
     );
+  }
+
+  update(
+    wheelNumber: number,
+    notification: Partial<INotification>
+  ): Observable<{ statusCode: number; message: string[] }> {
+    return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
   }
 
   createNotificationxPropertyFilter(model: any): Observable<any> {

@@ -11,7 +11,10 @@ import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
-import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import {
+  ITransferente,
+  ITransferingLevelView,
+} from 'src/app/core/models/catalogs/transferente.model';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 
@@ -122,5 +125,16 @@ export class DocReceptionRegisterService extends HttpService {
       UserEndpoints.SegAccessAreas,
       params
     ).pipe(tap(() => (this.microservice = '')));
+  }
+
+  getUniqueKeyData(
+    params?: string
+  ): Observable<IListResponse<ITransferingLevelView>> {
+    let partials = ENDPOINT_LINKS.Transferente.split('/');
+    this.microservice = partials[0];
+    const route = `${partials[1]}/transferring-levels-view`;
+    return this.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
+      tap(() => (this.microservice = ''))
+    );
   }
 }

@@ -53,4 +53,13 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.Documents}/${description}`;
     return this.get<IListResponse<IDocuments>>(route, params);
   }
+  getByGoodAndScanStatus(
+    id: string | number,
+    idGood: string | number,
+    scanStatus: string,
+    params?: ListParams
+  ): Observable<IListResponse<IDocuments>> {
+    const route = `${DocumentsEndpoints.Documents}/?filter.id=$eq:${id}&filter.noGood=$eq:${idGood}&filter.scanStatus=$eq:${scanStatus}`;
+    return this.get<IListResponse<IDocuments>>(route, params);
+  }
 }
