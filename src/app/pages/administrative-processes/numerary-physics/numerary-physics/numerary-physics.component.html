@@ -10,15 +10,18 @@
           <form-field [control]="physicsForm.get('delegation')">
             <ngx-select
               [form]="physicsForm"
-              [data]="delegations"
-              bindLabel="name"
-              label="Delegación"
-              value="id"
               (fetchItems)="getDelegations($event)"
-              control="delegation"></ngx-select>
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
+
       <div class="row mt-4">
         <div class="col-md-3 mb-3">
           <form-field

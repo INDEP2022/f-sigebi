@@ -88,6 +88,8 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
 
   getDelegations(params: ListParams) {
     this.delegationService.getAll(params).subscribe(data => {
+      console.log(data);
+
       this.delegations = new DefaultSelect(data.data, data.count);
     });
   }
