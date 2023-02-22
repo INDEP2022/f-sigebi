@@ -9,7 +9,6 @@ import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SearchUserFormComponent } from 'src/app/pages/request/programming-request-components/schedule-reception/search-user-form/search-user-form.component';
-
 @Component({
   selector: 'app-registration-of-interest-modal',
   templateUrl: './registration-of-interest-modal.component.html',
@@ -26,7 +25,8 @@ export class RegistrationOfInterestModalComponent
   edit: boolean = false;
   providerForm: FormGroup = new FormGroup({});
   nameUser: string = '';
-
+  id: number;
+  tiiesList: any[];
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
@@ -46,7 +46,7 @@ export class RegistrationOfInterestModalComponent
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      id: ['1054', [Validators.required]],
+      id: ['1062', [Validators.required]],
       tiieDays: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -59,7 +59,7 @@ export class RegistrationOfInterestModalComponent
       tiieYear: [null, [Validators.required]],
       registryDate: [new Date()],
       tiieAverage: [null, [Validators.required]],
-      user: [this.programmingRequestService.getUserInfo()],
+      user: [null, [Validators.required]],
     });
     if (this.provider !== undefined) {
       this.edit = true;
@@ -75,7 +75,6 @@ export class RegistrationOfInterestModalComponent
 
   confirm() {
     let params = {
-      id: this.providerForm.controls['id'].value,
       tiieDays: this.providerForm.controls['tiieDays'].value,
       tiieMonth: this.providerForm.controls['tiieMonth'].value,
       tiieYear: this.providerForm.controls['tiieYear'].value,
@@ -83,13 +82,7 @@ export class RegistrationOfInterestModalComponent
       registryDate: this.providerForm.controls['registryDate'].value,
       user: this.providerForm.controls['user'].value,
     };
-
-    //this.showSearch = true;
-    //console.log(params);
     this.handleSuccess();
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?P_IDENTIFICADOR=${params}`; //window.URL.createObjectURL(blob);
-    // const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
-    // window.open(pdfurl, 'FCOMERCATINTERES.pdf');
     this.close();
   }
 
@@ -105,7 +98,12 @@ export class RegistrationOfInterestModalComponent
           this.onLoadToast('success', 'Registro exitoso', '');
         }, 2000);
       },
-      error: error => (this.loading = false),
+      // ,
+      // error: error => {
+      //   this.loading = false
+      //   this.onLoadToast('error', 'Año duplicado', '');
+      //   this.modalRef;
+      // },
     });
   }
   getUserInfo() {
@@ -130,4 +128,15 @@ export class RegistrationOfInterestModalComponent
 
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
+  getTiies() {
+    return this.tiiesList;
+  }
+
+  // update() {
+  //   this.loading = true;
+  //   this.parameterTiieService.update(, this.providerForm.value).subscribe(
+  //     data => this.handleSuccess(),
+  //     error => (this.loading = false)
+  //   );
+  // }
 }

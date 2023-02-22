@@ -8,7 +8,6 @@ import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RegistrationOfInterestModalComponent } from './registration-of-interest-modal/registration-of-interest-modal.component';
-
 @Component({
   selector: 'app-registration-of-interest',
   templateUrl: './registration-of-interest.component.html',
@@ -20,6 +19,7 @@ export class RegistrationOfInterestComponent
 {
   tiies: ITiieV1;
   cats: ITiieV1[] = [];
+  tiiesList: any[];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -32,41 +32,46 @@ export class RegistrationOfInterestComponent
       position: 'right',
     },
     columns: {
-      tipo: {
-        title: 'Tipo',
+      id: {
+        title: 'Id',
+        type: 'number',
+        sort: false,
+      },
+      tiieDays: {
+        title: 'Tiie Days',
+        type: 'number',
+        sort: false,
+      },
+      tiieAverage: {
+        title: 'Tiie Average',
+        type: 'number',
+        sort: false,
+      },
+      tiieMonth: {
+        title: 'Tiie Month',
+        type: 'number',
+        sort: false,
+      },
+      tiieYear: {
+        title: 'Tiie Year',
+        type: 'number',
+        sort: false,
+      },
+      registryDate: {
+        title: 'Registry Date',
         type: 'string',
         sort: false,
       },
-      tille: {
-        title: 'TILLE',
+      user: {
+        title: 'User',
         type: 'string',
-        sort: false,
-      },
-      mes: {
-        title: 'Mes',
-        type: 'string',
-        sort: false,
-      },
-      anio: {
-        title: 'Año TILLE',
-        type: 'string',
-        sort: false,
-      },
-      usuario: {
-        title: 'Usuario',
-        type: 'string',
-        sort: false,
-      },
-      fechaRegristro: {
-        title: 'Fecha Registro',
-        type: Date,
         sort: false,
       },
     },
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data = EXAMPLE_DATA;
+  data = this.parameterTiieService.getTiie();
   form: FormGroup;
 
   constructor(
@@ -84,7 +89,8 @@ export class RegistrationOfInterestComponent
     this.loading = true;
     this.parameterTiieService.getAll(this.params.getValue()).subscribe({
       next: data => {
-        console.log(data);
+        this.tiiesList = data.data;
+        console.log(this.tiiesList);
         // this.cats = data;
         // this.totalItems = response.count;
         this.loading = false;
@@ -108,70 +114,3 @@ export class RegistrationOfInterestComponent
     );
   }
 }
-
-const EXAMPLE_DATA = [
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-  {
-    tipo: 'ejemplo',
-    tille: 'ejemplo',
-    mes: '11',
-    anio: '2022',
-    usuario: 'ejemplo',
-    fechaRegristro: new Date(),
-  },
-];
