@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
@@ -25,11 +26,14 @@ export class RegistrationOfInterestModalComponent
   edit: boolean = false;
   providerForm: FormGroup = new FormGroup({});
   nameUser: string = '';
-  id: number;
+  id: number = 0;
   tiiesList: any[];
+
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private parameterTiieService: ParameterTiieService,
@@ -42,11 +46,21 @@ export class RegistrationOfInterestModalComponent
     this.prepareForm();
     this.getUserInfo();
     this.getUserSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getTiie());
+    try {
+      if (this.route.snapshot.params['id'] !== undefined) {
+        this.id = this.route.snapshot.params['id'];
+      }
+    } catch {
+      console.error('error');
+    }
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      id: ['1062', [Validators.required]],
+      id: [this.getRandomInt(4)],
       tiieDays: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -83,28 +97,36 @@ export class RegistrationOfInterestModalComponent
       user: this.providerForm.controls['user'].value,
     };
     this.handleSuccess();
-    this.close();
   }
 
   handleSuccess() {
     this.loading = true;
-    this.parameterTiieService.create(this.providerForm.value).subscribe({
-      next: response => {
-        this.totalItems = response.count;
-        this.loading = false;
-        this.onConfirm.emit(this.providerForm.value);
-        this.modalRef.hide();
-        setTimeout(() => {
-          this.onLoadToast('success', 'Registro exitoso', '');
-        }, 2000);
-      },
-      // ,
-      // error: error => {
-      //   this.loading = false
-      //   this.onLoadToast('error', 'Año duplicado', '');
-      //   this.modalRef;
-      // },
-    });
+    if (this.id) {
+      this.update();
+    } else {
+      this.parameterTiieService.create(this.providerForm.value).subscribe({
+        next: response => {
+          this.totalItems = response.count;
+          this.loading = false;
+          this.onConfirm.emit(this.providerForm.value);
+          this.modalRef.hide();
+          setTimeout(() => {
+            this.onLoadToast('success', 'Registro exitoso', '');
+          }, 2000);
+          this.close();
+          this.getTiie();
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast(
+            'error',
+            'Ya existe un registro con el mismo identificador!',
+            ''
+          );
+          return;
+        },
+      });
+    }
   }
   getUserInfo() {
     this.programmingRequestService.getUserInfo().subscribe((data: any) => {
@@ -128,15 +150,34 @@ export class RegistrationOfInterestModalComponent
 
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
-  getTiies() {
-    return this.tiiesList;
+  getTiie() {
+    this.loading = true;
+    this.parameterTiieService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.tiiesList = data.data;
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  getRandomInt(long: number) {
+    const cadena = '0123456789';
+    let alea = '';
+    for (let i = 0; i < long; i++) {
+      alea += cadena.charAt(Math.floor(Math.random() * cadena.length));
+    }
+    console.log(alea);
+    return alea;
   }
 
-  // update() {
-  //   this.loading = true;
-  //   this.parameterTiieService.update(, this.providerForm.value).subscribe(
-  //     data => this.handleSuccess(),
-  //     error => (this.loading = false)
-  //   );
-  // }
+  update() {
+    this.loading = true;
+    this.parameterTiieService
+      .update(this.id, this.providerForm.value)
+      .subscribe(
+        data => this.onLoadToast('success', 'Registro actualizado', ''),
+        error => (this.loading = false)
+      );
+  }
 }
