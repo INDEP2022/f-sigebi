@@ -12,6 +12,10 @@ import { IComiXThird, IThirdParty, ITypeEventXtercomer } from 'src/app/core/mode
 import { TypeEventXterComerService } from 'src/app/core/services/ms-thirdparty/type-events-xter-comer.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ComiXThirdService } from 'src/app/core/services/ms-thirdparty/comi-xthird.service';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { ThirdPartyModalComponent } from '../third-party-modal/third-party-modal.component';
+import { TypeEventModalComponent } from '../type-event-modal/type-event-modal.component';
+import { AmountThirdModalComponent } from '../amount-third-modal/amount-third-modal.component';
 
 @Component({
   selector: 'app-third-party-marketers',
@@ -40,23 +44,38 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   settings2;
   settings3;
   
-  constructor(private thirdPartyService:ThirdPartyService, private typeEventXterComerService:TypeEventXterComerService, private comiXThirdService:ComiXThirdService) {
+  constructor(private thirdPartyService:ThirdPartyService, private typeEventXterComerService:TypeEventXterComerService, private comiXThirdService:ComiXThirdService, private modalService: BsModalService,) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
       columns: { ...THIRD_COLUMNS },
     }; 
     
     this.settings2 = {
       ...this.settings,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
       columns: { ...TYPE_EVENT_THIRD_COLUMNS },
     };
 
     this.settings3 = {
       ...this.settings,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
       columns: { ...COMI_XTHIRC_COLUMNS },
     };
 
@@ -135,6 +154,42 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
+  }
+
+  openForm1(thirPartys?: IThirdParty){
+    let config: ModalOptions = {
+      initialState: {
+        thirPartys,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ThirdPartyModalComponent, config);
+  }
+
+   openForm2(typeEvents? : ITypeEventXtercomer){
+    let config: ModalOptions = {
+      initialState: {
+        typeEvents,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(TypeEventModalComponent, config);
+  }
+
+   openForm3(amounts? : IComiXThird){
+    let config: ModalOptions = {
+      initialState: {
+        amounts,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AmountThirdModalComponent, config);
   }
 
 }
