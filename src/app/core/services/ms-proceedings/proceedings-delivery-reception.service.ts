@@ -8,6 +8,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
+import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import { ProceedingsDetailDeliveryReceptionService } from './proceedings-detail-delivery-reception.service';
 
 @Injectable({
