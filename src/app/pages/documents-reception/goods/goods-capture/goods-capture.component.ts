@@ -232,9 +232,58 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   }
 
   handleSuccesSave(good: any) {
-    this.alert('success', 'Se agrego el bien al expediente', '');
+    // this.alert('success', 'Se agrego el bien al expediente', '');
     if (this.formControls.esEmpresa.value) {
       this.createMenage(good);
+    } else {
+      this.askMoreGoods();
+    }
+  }
+
+  async askMoreGoods() {
+    const response = await this.alertQuestion(
+      'success',
+      'Se agrego el bien al expediente',
+      '¿Decea agregar mas bienes?'
+    );
+    if (response.isConfirmed) {
+      const fields = [
+        'noPartida',
+        'valorAvaluo',
+        'capitulo',
+        'partida',
+        'subpartida',
+        'ssubpartida',
+        'noClasifBien',
+        'type',
+        'subtype',
+        'ssubtype',
+        'sssubtype',
+        'unidadLigie',
+        'unidadMedida',
+        'cantidad',
+        'destino',
+        'estadoConservacion',
+        'noBien',
+        'valRef',
+        'identifica',
+        'descripcion',
+        'almacen',
+        'entFed',
+        'municipio',
+        'ciudad',
+        'localidad',
+        'flyerNumber',
+        'observaciones',
+      ];
+      this.setFieldsNull(fields);
+      fields.forEach(field => {
+        this.assetsForm.get(field).setErrors(null);
+      });
+      this.goodFeatures = [];
+      window.scrollTo(0, 0);
+    } else {
+      this.router.navigate(['/']);
     }
   }
 
@@ -245,7 +294,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       roRegister: 1,
     };
     this.menageService.create(menage).subscribe({
-      next: res => console.log(res),
+      next: res => this.askMoreGoods(),
       error: error => {
         this.showError('Error al crear el menaje del bien');
       },

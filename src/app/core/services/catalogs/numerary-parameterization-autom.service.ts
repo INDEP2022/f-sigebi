@@ -33,11 +33,8 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
   ): Observable<ICategorizationAutomNumerary> {
     return this.categorizationNumerarysRepository.create(this.route, model);
   }
-  update(
-    id: string | number,
-    model: ICategorizationAutomNumerary
-  ): Observable<Object> {
-    return this.categorizationNumerarysRepository.update(this.route, id, model);
+  update6(model: ICategorizationAutomNumerary): Observable<Object> {
+    return this.categorizationNumerarysRepository.update6(this.route, model);
   }
 
   remove3(model: any): Observable<Object> {

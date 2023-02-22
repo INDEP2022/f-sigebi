@@ -33,7 +33,7 @@ export class CatOfSeparatorsDocumentsModalComponent
   }
   private prepareForm() {
     this.separatorsDocumentsModalForm = this.fb.group({
-      cve: [null, [Validators.required]],
+      key: [null, [Validators.required]],
       description: [null, [Validators.required]],
       numRegister: [null],
     });
@@ -62,7 +62,7 @@ export class CatOfSeparatorsDocumentsModalComponent
     this.loading = true;
     this.documentsSeparatorsService
       .update(
-        this.separatorsDocumentsModalForm.controls['cve'].value,
+        this.separatorsDocumentsModalForm.controls['key'].value,
         this.separatorsDocumentsModalForm.value
       )
       .subscribe({
