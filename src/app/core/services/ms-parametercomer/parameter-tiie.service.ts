@@ -28,7 +28,7 @@ export class ParameterTiieService extends HttpService {
   }
 
   getById(id: string | number) {
-    const route = `${this.endpoint}/id/${id}`;
+    const route = `${this.endpoint}/${id}`;
     return this.get(route);
   }
 
@@ -37,12 +37,12 @@ export class ParameterTiieService extends HttpService {
   }
 
   update(id: string | number, tiie: ITiieV1) {
-    const route = `${this.endpoint}/id/${id}`;
+    const route = `${this.endpoint}/${id}`;
     return this.put(route, tiie);
   }
 
   remove(id: string | number) {
-    const route = `${this.endpoint}/id/${id}`;
+    const route = `${this.endpoint}/${id}`;
     return this.delete(route);
   }
 }
