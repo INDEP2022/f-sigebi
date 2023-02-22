@@ -34,6 +34,7 @@
             </div>
             <clasification-filter
               [form]="form"
+              [(subloading)]="subloading"
               [params]="params"
               (onSubmit)="searchGoods($event)"></clasification-filter>
           </accordion-group>
@@ -50,6 +51,7 @@
             <data-filter
               [form]="form"
               [params]="params"
+              [(subloading)]="subloading"
               (onSubmit)="searchGoods($event)"></data-filter>
           </accordion-group>
           <accordion-group>
@@ -64,6 +66,7 @@
             </div>
             <record-notification-filter
               [form]="form"
+              [(subloading)]="subloading"
               (onSubmit)="searchGoods($event)"></record-notification-filter>
           </accordion-group>
           <accordion-group>
@@ -115,6 +118,7 @@
 </app-card>
 <div #scrollTable></div>
 <goods-table
+  [loading]="loading"
   *ngIf="showTable"
   [goods]="goods"
   [params]="_params"

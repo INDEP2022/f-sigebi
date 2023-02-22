@@ -25,6 +25,8 @@ export class DataFilterComponent implements OnInit {
   targetIdentifiers = TARGET_IDENTIFIERS;
   @Input() form: FormGroup<GoodTrackerForm>;
   @Input() params: FilterParams;
+  @Input() subloading: boolean;
+  @Output() subloadingChange = new EventEmitter<boolean>();
   labels = new DefaultSelect();
   goodStatuses = new DefaultSelect();
   processes = PROCESSES;

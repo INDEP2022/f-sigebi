@@ -12,7 +12,7 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 
-class SweetalertModel implements SweetAlertOptions {
+export class SweetalertModel implements SweetAlertOptions {
   title: string;
   text: string;
   icon: SweetAlertIcon;
