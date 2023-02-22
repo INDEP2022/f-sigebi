@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -25,11 +26,13 @@ export class RegistrationOfInterestModalComponent
   edit: boolean = false;
   providerForm: FormGroup = new FormGroup({});
   nameUser: string = '';
-  id: number;
+  id: number = 0;
   tiiesList: any[];
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private parameterTiieService: ParameterTiieService,
@@ -42,11 +45,19 @@ export class RegistrationOfInterestModalComponent
     this.prepareForm();
     this.getUserInfo();
     this.getUserSelect(new ListParams());
+
+    try {
+      if (this.route.snapshot.params['id'] !== undefined) {
+        this.id = this.route.snapshot.params['id'];
+      }
+    } catch {
+      console.error('error');
+    }
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      id: ['1062', [Validators.required]],
+      id: [null],
       tiieDays: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -94,16 +105,17 @@ export class RegistrationOfInterestModalComponent
         this.loading = false;
         this.onConfirm.emit(this.providerForm.value);
         this.modalRef.hide();
+        // this.getDate();
         setTimeout(() => {
           this.onLoadToast('success', 'Registro exitoso', '');
         }, 2000);
       },
-      // ,
-      // error: error => {
-      //   this.loading = false
-      //   this.onLoadToast('error', 'Año duplicado', '');
-      //   this.modalRef;
-      // },
+
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'Año duplicado', '');
+        this.modalRef;
+      },
     });
   }
   getUserInfo() {
@@ -128,15 +140,14 @@ export class RegistrationOfInterestModalComponent
 
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
-  getTiies() {
-    return this.tiiesList;
-  }
 
-  // update() {
-  //   this.loading = true;
-  //   this.parameterTiieService.update(, this.providerForm.value).subscribe(
-  //     data => this.handleSuccess(),
-  //     error => (this.loading = false)
-  //   );
-  // }
+  update() {
+    this.loading = true;
+    this.parameterTiieService
+      .update(this.id, this.providerForm.value)
+      .subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
+  }
 }
