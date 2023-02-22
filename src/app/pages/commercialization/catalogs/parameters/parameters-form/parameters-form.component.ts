@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -11,11 +12,11 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ParametersFormComponent extends BasePage implements OnInit {
-  status: string = 'Nuevo';
+  title: string = 'PARÁMETRO COMERCIALIZACIÓN';
   edit: boolean = false;
 
   form: FormGroup = new FormGroup({});
-  parameter: any;
+  parameter: IParameter;
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -47,12 +48,11 @@ export class ParametersFormComponent extends BasePage implements OnInit {
       ],
       idDirection: [null, [Validators.required]],
       eventTypeId: [null, [Validators.required]],
-      eventDescription: [null],
     });
 
-    if (this.edit) {
+    if (this.parameter) {
       //console.log(this.brand)
-      this.status = 'Actualizar';
+      this.edit = true;
       this.form.patchValue(this.parameter);
     }
   }
@@ -75,19 +75,18 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   update() {
     this.loading = true;
-    this.handleSuccess();
-    this.parameterModService
-      .update(this.parameter.idParam, this.form.value)
-      .subscribe(
-        data => this.handleSuccess(),
-        error => (this.loading = false)
-      );
+    this.parameterModService.update(this.form.value).subscribe(
+      data => this.handleSuccess(),
+      error => (this.loading = false)
+    );
   }
 }
