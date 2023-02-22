@@ -1,8 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      FORMULARIO &#45; MONITOR DE ABANDONO POR DEVOLUCI&Oacute;N
-    </h5>
+    <h5 class="title">MONITOR DE ABANDONO POR DEVOLUCI&Oacute;N</h5>
   </div>
 
   <div body>
@@ -19,8 +17,13 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('cantidad')" label="Cantidad">
-            <input class="form-control" formControlName="cantidad" />
+          <form-field [control]="form.get('goodEstatus')" label="Estatus Bien">
+            <input class="form-control" formControlName="goodEstatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input class="form-control" formControlName="quantity" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">

@@ -12,7 +12,7 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 
-class SweetalertModel implements SweetAlertOptions {
+export class SweetalertModel implements SweetAlertOptions {
   title: string;
   text: string;
   icon: SweetAlertIcon;
@@ -121,7 +121,7 @@ export abstract class BasePage implements OnDestroy {
     let sweetalert = new SweetalertModel();
     sweetalert.toast = true;
     sweetalert.position = 'top-end';
-    sweetalert.timer = 2000;
+    sweetalert.timer = 6000;
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;

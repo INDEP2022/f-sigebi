@@ -1,0 +1,86 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">ENVIO DE OFICIOS</h5>
+  </div>
+  <div body>
+    <form class="form-material" (submit)="getJob()">
+      <div class="row" *ngIf="queryMode == null">
+        <div class="col-md-12 d-flex justify-content-between">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary active"
+              (click)="queryMode = true">
+              Consultar envio
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-secondary active"
+              (click)="close()">
+              Nuevo envio
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="queryMode">
+        <div class="row">
+          <div class="col-md-12">
+            <form-field
+              class="col-md-6"
+              [control]="jobNumber"
+              label="No&#46; Oficio">
+              <input
+                class="form-control"
+                type="number"
+                [formControl]="jobNumber" />
+            </form-field>
+
+            <div class="col-md-6 d-flex.justify-content-end">
+              <confirm-button
+                [loading]="loading"
+                loadingText="Buscando..."
+                text="Buscar"></confirm-button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 d-flex justify-content-end">
+            <div>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active"
+                (click)="queryMode = null">
+                Regresar
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <!-- <confirm-button
+          text="Buscar"
+          loadingText="Buscando ..."
+          [loading]="loading"
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button> -->
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

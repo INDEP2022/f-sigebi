@@ -15,17 +15,17 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   street: {
-    title: 'Direccion',
+    title: 'Dirección',
     type: 'string',
     sort: false,
   },
   streetNumber: {
-    title: 'Numero Direccion',
+    title: 'Numero Dirección',
     type: 'string',
     sort: false,
   },
   apartmentNumber: {
-    title: 'Numero Apartamento',
+    title: 'Número Apartamento',
     type: 'string',
     sort: false,
   },
@@ -35,12 +35,12 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   delegation: {
-    title: 'Delegacion Municipal',
+    title: 'Delegación Municipal',
     type: 'string',
     sort: false,
   },
   zipCode: {
-    title: 'Codigo Postal',
+    title: 'Código Postal',
     type: 'number',
     sort: false,
   },
@@ -50,12 +50,12 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   curp: {
-    title: 'curp',
+    title: 'CURP',
     type: 'string',
     sort: false,
   },
   phone: {
-    title: 'Telefono',
+    title: 'Teléfono',
     type: 'string',
     sort: false,
   },
@@ -75,12 +75,12 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   numberDeep: {
-    title: 'Numero Deep',
+    title: 'Número Deep',
     type: 'string',
     sort: false,
   },
   profesion: {
-    title: 'Profesion',
+    title: 'Profesión',
     type: 'string',
     sort: false,
   },
@@ -95,7 +95,7 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   keyOperation: {
-    title: 'Llave Operacion',
+    title: 'Llave Operación',
     type: 'string',
     sort: false,
   },
@@ -130,7 +130,7 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   registryNumber: {
-    title: 'Numero Registro',
+    title: 'Número Registro',
     type: 'number',
     sort: false,
   },

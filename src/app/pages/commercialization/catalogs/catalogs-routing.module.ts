@@ -11,8 +11,8 @@ const routes: Routes = [
   {
     path: 'authorization-keys-ois',
     loadChildren: async () =>
-      (await import('./authorization-keys-ois/authorization-keys-ois.module'))
-        .CCMAuthorizationKeysOisModule,
+      (await import('./authorization-keys/authorization-keys.module'))
+        .AuthorizationKeysModule,
     data: {
       title: 'Claves de Autorización Envío Ext. OIs',
       screen: 'FCOMERCVEAUTOI',
@@ -28,7 +28,7 @@ const routes: Routes = [
     path: 'customers',
     loadChildren: async () =>
       (await import('./customers/customers.module')).CustomersModule,
-    data: { title: 'Clientes' },
+    data: { title: 'Clientes', screen: 'FCOMER060' },
   },
   {
     path: 'providers',
@@ -100,7 +100,7 @@ const routes: Routes = [
     path: 'event-process',
     loadChildren: async () =>
       (await import('./event-process/event-process.module')).EventProcessModule,
-    data: { title: 'Eventos por Proceso' },
+    data: { title: 'Eventos por Proceso', screen: 'FCOMEREVENTPOPROCESO' },
   },
   {
     path: 'registration-of-interest',

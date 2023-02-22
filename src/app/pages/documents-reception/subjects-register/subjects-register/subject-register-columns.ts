@@ -1,78 +1,78 @@
 const PGR_PAPERWORK_MAILBOX_COLUMNS = {
-  noBien: {
+  processNumber: {
     title: 'No. Tramite',
     type: 'number',
     sort: false,
   },
-  description: {
-    title: 'Estatus Tramite',
+  processStatus: {
+    title: 'Estatus tramite',
     type: 'string',
     sort: false,
   },
-  cantidad: {
-    title: 'Fecha ingreso tramite',
+  processEntryDate: {
+    title: 'Fecha Ingreso Trámite',
     type: 'string',
     sort: false,
   },
-  ident: {
-    title: 'No Volante',
-    type: 'string',
+  wheelNumber: {
+    title: 'No. Volante',
+    type: 'number',
     sort: false,
   },
-  est: {
-    title: 'No expediente',
-    type: 'string',
+  proceedingsNumber: {
+    title: 'No. Expediente',
+    type: 'number',
     sort: false,
   },
-  proceso: {
+  issue: {
     title: 'Aver. Previa',
     type: 'string',
     sort: false,
   },
-  oficio: {
+  officeNumber: {
     title: 'Oficio PGR',
     type: 'string',
     sort: false,
   },
-  delegacion: {
-    title: 'No Delegación',
-    type: 'string',
+  delegationNumber: {
+    title: 'No. Delegación',
+    type: 'number',
     sort: false,
   },
-  usuario: {
-    title: 'Usuario turnado',
+  turnadoiUser: {
+    title: 'Usuario Turnado',
     type: 'string',
     sort: false,
   },
 };
 
 const PGR_TRANSFERS_COLUMNS = {
-  noBien: {
+  pgrGoodNumber: {
     title: 'PGR No. Bien',
     type: 'number',
     sort: false,
   },
-  description: {
+  office: {
     title: 'PGR Oficio',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  aveprev: {
     title: 'Aver. Previa',
     type: 'string',
     sort: false,
   },
-  ident: {
+  saeGoodNumber: {
     title: 'SAE No. Bien',
     type: 'string',
     sort: false,
   },
-  est: {
+  description: {
     title: 'SAE Descripción',
     type: 'string',
     sort: false,
   },
-  proceso: {
+  estatus: {
     title: 'SAE Estatus',
     type: 'string',
     sort: false,

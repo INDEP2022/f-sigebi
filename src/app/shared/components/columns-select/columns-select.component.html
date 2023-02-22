@@ -17,7 +17,7 @@
       role="menuitem"
       *ngFor="let column of columns"
       [class]="
-        selectVal().length < 3 && column.show
+        (selectVal().length < 3 && column.show) || column.showAlways
           ? 'dropdown-item disabled '
           : 'dropdown-item '
       "
@@ -32,7 +32,9 @@
           column.show = !column.show;
           selectColumn($event, column.id, column.show)
         "
-        [disabled]="selectVal().length < 3 && column.show"
+        [disabled]="
+          (selectVal().length < 3 && column.show) || column.showAlways
+        "
         [value]="column"
         [checked]="column.show" />
       {{ column.name }}

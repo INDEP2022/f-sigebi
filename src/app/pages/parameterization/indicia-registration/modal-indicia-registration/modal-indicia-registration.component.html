@@ -5,17 +5,12 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('numberIndiciado')"
-            label="No Indiciado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numberIndiciado" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('id')" label="No Indiciado">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
           <form-field [control]="form.get('name')" label="Nombre">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
@@ -23,6 +18,18 @@
         <div class="col-md-4">
           <form-field [control]="form.get('curp')" label="CURP">
             <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('noRegistration')"
+            label="Número de registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noRegistration" />
           </form-field>
         </div>
       </div>
@@ -34,7 +41,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="saved()"></confirm-button>
+          (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

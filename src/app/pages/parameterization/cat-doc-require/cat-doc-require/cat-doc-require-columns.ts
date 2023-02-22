@@ -1,5 +1,5 @@
 export const CAT_DOC_REQUIRE_COLUMNS = {
-  cve: {
+  id: {
     title: 'Clave del Documento',
     sort: false,
   },

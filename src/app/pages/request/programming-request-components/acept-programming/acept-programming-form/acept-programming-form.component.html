@@ -2,33 +2,46 @@
   <div class="ch-content" header>
     <h5 class="title">
       Aceptar programaci&oacute;n con folio&#58;
-      R&#45;NORESTE&#45;SAT&#45;650&#45;OS
+      {{ programming?.folio }}
     </h5>
   </div>
   <div body>
-    <div class="row">
+    <div class="d-flex justify-content-end">
+      <div class="mt-3 btn-toolbar">
+        <button (click)="signOffice()" class="btn btn-info btn-sm active">
+          Firmar oficio
+        </button>
+        <button class="btn btn-primary btn-sm active">Aprobar</button>
+        <button
+          (click)="rejectProgramming()"
+          class="btn btn-danger btn-sm active">
+          Rechazar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <div class="col-md-4">
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-5 text-right"
               >Delegaci&oacute;n regional&#58;</label
             >
-            <span> NOROESTE </span>
+            <span> {{ programming?.regionalDelegationNumber }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Transferente&#58;</label>
-            <span> SAT - comercio exterior </span>
+            <span> {{ programming?.tranferId }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Emisora&#58;</label>
-            <span> AGA </span>
+            <span> {{ programming?.stationId }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Autoridad&#58;</label>
-            <span> Administración de la aduana de Nuevo Laredo </span>
+            <span> {{ programming?.autorityId }} </span>
           </div>
         </form>
       </div>
@@ -37,24 +50,24 @@
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-5 text-right">Correo transferente&#58;</label>
-            <span> OST12363@SAE.GOB.MX </span>
+            <span>{{ programming?.emailTransfer }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right"
-              >Fecha page operativo&#58;</label
+              >Fecha inicio operativo&#58;</label
             >
-            <span> 11-oct-2022 00&#58;00 </span>
+            <span> {{ programming?.startDate }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
-            <span> 12-oct-2022 00:00 </span>
+            <span> {{ programming?.endDate }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Dirección&#58;</label>
-            <span> Domicilio desconocido </span>
+            <span> {{ programming?.address }} </span>
           </div>
         </form>
       </div>
@@ -63,17 +76,17 @@
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
-            <span> Diverso </span>
+            <span> {{ programming?.typeRelevantId }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Ciudad&#58;</label>
-            <span> Nuevo Laredo </span>
+            <span> {{ programming?.city }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Observación&#58;</label>
-            <span> Ninguna </span>
+            <span> {{ programming?.observation }} </span>
           </div>
         </form>
       </div>
@@ -82,8 +95,8 @@
     <div class="row pt-4">
       <h5 class="title">Almac&eacute;n</h5>
       <div class="form-group">
-        <label class="text-right">Almac&eacute;n&#58;</label>
-        <span> Nombre de Almacén test </span>
+        <label class="text-right">Nombre:</label>
+        <span> {{ programming?.storeId }} </span>
       </div>
     </div>
 
@@ -138,15 +151,6 @@
               [totalItems]="totalItems"></app-pagination>
           </tab>
         </tabset>
-      </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <div class="m-3 btn-toolbar">
-        <button (click)="signOffice()" class="btn btn-info active">
-          Firmar oficio
-        </button>
-        <button class="btn btn-primary active">Aprobar</button>
-        <button class="btn btn-danger active">Cancelar</button>
       </div>
     </div>
   </div>

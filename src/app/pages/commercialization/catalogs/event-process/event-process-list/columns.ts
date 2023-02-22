@@ -1,24 +1,21 @@
-//Components
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export const COLUMNS = {
-  event: {
+  id: {
     title: 'Id Evento',
     sort: false,
   },
-  eventKey: {
-    title: 'Clave',
+  processKey: {
+    title: 'Cve Proceso',
     sort: false,
   },
-  eventType: {
+  tpeventoId: {
     title: 'Tipo',
     sort: false,
   },
-  status: {
+  StatusvtaId: {
     title: 'Estatus',
     sort: false,
   },
-  phase: {
+  phaseInmu: {
     title: 'Fase',
     sort: false,
   },
@@ -26,15 +23,8 @@ export const COLUMNS = {
     title: 'Año',
     sort: false,
   },
-  warrantyDate: {
+  notificationDate: {
     title: 'Fecha Garantía',
     sort: false,
-  },
-  isPublished: {
-    title: 'Publicar',
-    sort: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction: (instance: any) => {},
   },
 };

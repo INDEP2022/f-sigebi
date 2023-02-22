@@ -13,9 +13,12 @@
 
         <div class="col-md-6 offset-md-4">
           <form-field
-            [control]="detailDelegationForm.get('name')"
+            [control]="detailDelegationForm.get('numDelegation')"
             label="Delegaci&oacute;n">
-            <input type="number" class="form-control" formControlName="name" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numDelegation" />
           </form-field>
         </div>
       </div>
@@ -25,7 +28,7 @@
           <form-field
             [control]="detailDelegationForm.get('name')"
             label="Nombre">
-            <input type="number" class="form-control" formControlName="name" />
+            <input type="string" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-md-6">

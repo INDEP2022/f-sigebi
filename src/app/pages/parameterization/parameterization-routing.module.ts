@@ -17,6 +17,7 @@ const routes: Routes = [
     },
   },
   {
+    //YA EXISTE EN CATALOGS
     path: 'cat-financial-indicators',
     loadChildren: async () =>
       (
@@ -82,7 +83,8 @@ const routes: Routes = [
       (await import('./bank-concepts/bank-concepts.module')).BankConceptsModule,
     data: { title: 'Conceptos bancarios', screen: 'FCATCATCONCEPBANC' },
   },
-  {
+  //YA EXISTE EN CATALOGS
+  /*{
     path: 'cat-depository-payment',
     loadChildren: async () =>
       (await import('./cat-depository-payment/cat-depository-payment.module'))
@@ -91,7 +93,7 @@ const routes: Routes = [
       title: 'Catalogo de conceptos de pagos depositarias',
       screen: 'FCATCATCONCEPPAGO',
     },
-  },
+  },*/
   {
     path: 'maintenance-deleg-subdeleg',
     loadChildren: async () =>
@@ -105,7 +107,8 @@ const routes: Routes = [
       screen: 'FCATCATDELYSUBDEL',
     },
   },
-  {
+  //YA EXISTE EN CATALOGS
+  /*{
     path: 'mnce-adm-depository-auditor',
     loadChildren: async () =>
       (
@@ -117,7 +120,7 @@ const routes: Routes = [
       title: 'Mantto. a administrador, depositario e interventor',
       screen: 'FCATCATDEPOINTEAD',
     },
-  },
+  },*/
   {
     path: 'attributes-reg-logical-tables',
     loadChildren: async () =>
@@ -184,6 +187,25 @@ const routes: Routes = [
       screen: 'FCATADBRELASDIC',
     },
   },
+  {
+    path: 'cat-transferent',
+    loadChildren: async () =>
+      (await import('./cat-transferent/cat-transferent.module'))
+        .CatTransferentModule,
+    data: {
+      title: 'Catálogo de Transferentes',
+      screen: 'FCATCATTRANSFERENTE',
+    },
+  },
+  {
+    path: 'mail',
+    loadChildren: async () => (await import('./mail/mail.module')).MailModule,
+    data: {
+      title: 'Matt. Correos',
+      screen: 'FMTODESTCORREOS',
+    },
+  },
+
   //Alexander
   {
     path: 'maintenance-of-areas',
@@ -207,7 +229,7 @@ const routes: Routes = [
           './maintenance-of-public-ministries/maintenance-of-public-ministries.module'
         )
       ).MaintenanceOfPublicMinistriesModule,
-    data: { title: 'Mantenimiento a ministerios publicos' },
+    data: { title: 'Mantenimiento a ministerios públicos' },
   },
   {
     path: 'wareahouse-catalog',
@@ -307,6 +329,18 @@ const routes: Routes = [
     },
   },
   {
+    path: 'maximum-times-for-abandonment',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maximum-times-for-abandonment/c-p-m-maximum-times-for-abandonment.module'
+        )
+      ).CPMMaximumTimesForAbandonmentModule,
+    data: {
+      title: 'Tiempos Maximos para abandono',
+    },
+  },
+  {
     path: 'catalog-of-document-types',
     loadChildren: async () =>
       (
@@ -335,35 +369,35 @@ const routes: Routes = [
     path: 'values',
     loadChildren: async () =>
       (await import('./values/values.module')).ValuesModule,
-    data: { title: 'Valores' },
+    data: { title: 'Valores', screen: 'FCATCATVALORTABL1' },
   },
   {
     path: 'additional-values',
     loadChildren: async () =>
       (await import('./additional-values/additional-values.module'))
         .AdditionalValuesModule,
-    data: { title: 'Valores Adicionales' },
+    data: { title: 'Valores Adicionales', screen: 'FCATCATVALORTABL5' },
   },
   {
     path: 'appraisal-institutions',
     loadChildren: async () =>
       (await import('./appraisal-institutions/appraisal-institutions.module'))
         .AppraisalInstitutionsModule,
-    data: { title: 'Instituciones Valuadoras' },
+    data: { title: 'Instituciones Valuadoras', screen: 'FCATCATVALUADORES' },
   },
   {
     path: 'non-working-days',
     loadChildren: async () =>
       (await import('./non-working-days/non-working-days.module'))
         .NonWorkingDaysModule,
-    data: { title: 'Días Inhábiles' },
+    data: { title: 'Días Inhábiles', screen: 'FDIASINHABILES' },
   },
   {
     path: 'date-documents',
     loadChildren: async () =>
       (await import('./date-documents/date-documents.module'))
         .DateDocumentsModule,
-    data: { title: 'Fechas para Documentos' },
+    data: { title: 'Fechas para Documentos', screen: 'Fecha_x_Docum' },
   },
   {
     path: 'indicators-of-performance',
@@ -373,7 +407,7 @@ const routes: Routes = [
           './indicators-of-performance/indicators-of-performance.module'
         )
       ).IndicatorsOfPerformanceModule,
-    data: { title: 'Indicadores de Desempeño' },
+    data: { title: 'Indicadores de Desempeño', screen: 'FINDICA_0009' },
   },
   {
     path: 'maintenance-document-validators',
@@ -383,14 +417,44 @@ const routes: Routes = [
           './maintenance-document-validators/maintenance-document-validators.module'
         )
       ).MaintenanceDocumentValidatorsModule,
-    data: { title: 'Mantenimiento a validadores de actas' },
+    data: {
+      title: 'Mantenimiento a validadores de actas',
+      screen: 'FMTOVALIDADORES',
+    },
   },
   {
     path: 'maximum-times',
     loadChildren: async () =>
       (await import('./maximum-times/maximum-times.module')).MaximumTimesModule,
-    data: { title: 'Tiempo Máximo Para Cierre Actas Devolución' },
+    data: {
+      title: 'Tiempo Máximo Para Cierre Actas Devolución',
+      screen: 'TMPMAXCIERREACTDEV',
+    },
   },
+  {
+    path: 'cat-appraisers',
+    loadChildren: async () =>
+      (await import('./cat-appraisers/cat-appraisers.module'))
+        .CatAppraisersModule,
+    data: {
+      title: 'Catalao de Peritos',
+      screen: 'FCATCATMTOPERITOS',
+    },
+  },
+  {
+    path: 'cat-of-separators-documents',
+    loadChildren: async () =>
+      (
+        await import(
+          './cat-of-separators-documents/cat-of-separators-documents.module'
+        )
+      ).CatOfSeparatorsDocumentsModule,
+    data: {
+      title: 'Catálogo de separadores a documentos',
+      screen: 'FCATCATSEPARDOCUM',
+    },
+  },
+  // CatOfSeparatorsDocumentsModule
 ];
 
 @NgModule({

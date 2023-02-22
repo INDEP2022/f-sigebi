@@ -1,8 +1,8 @@
 export interface ILocality {
-  key: string;
+  id: string;
   entityKey: string;
   municipalityKey: string;
-  localityName: string;
+  nameLocation: string;
   ambitKey: number;
   userCreation: string;
   creationDate: Date;

@@ -17,11 +17,16 @@ export class AuthService {
   private readonly userInfo = environment.api_external_userInfo;
   private readonly userType = environment.api_external_typeUser;
   private readonly userRoles = environment.api_external_rolesUser;
+  private reportAuthFlag: boolean = false;
 
   constructor(
     private readonly http: HttpClient,
     private readonly jwtService: JwtHelperService
   ) {}
+
+  get useReportToken(): boolean {
+    return this.reportAuthFlag;
+  }
 
   getToken(username: string, password: string): Observable<AuthModel> {
     let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
@@ -81,5 +86,9 @@ export class AuthService {
         return roles;
       })
     );
+  }
+
+  setReportFlag(flag: boolean) {
+    this.reportAuthFlag = flag;
   }
 }

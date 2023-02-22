@@ -4,12 +4,12 @@ export const PENALTY_TYPE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  description: {
+  descPenalty: {
     title: 'Descripción',
     type: 'number',
     sort: false,
   },
-  days: {
+  daysPenalty: {
     title: 'Días',
     type: 'number',
     sort: false,

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -11,7 +11,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
+import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -43,6 +46,10 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() ssubtypes = new DefaultSelect();
   @Input() sssubtypes = new DefaultSelect();
 
+  @Output() goodTypeChange = new EventEmitter<IGoodType>();
+  @Output() goodSubtypeChange = new EventEmitter<IGoodSubType>();
+  @Output() goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
+  @Output() goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
   get type() {
     return this.form.get(this.typeField);
   }
@@ -129,37 +136,46 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
     this.form.updateValueAndValidity();
+    this.goodTypeChange.emit(type);
   }
 
   onSubtypesChange(subtype: any) {
-    this.types = new DefaultSelect([subtype.type], 1);
-    this.type.setValue(subtype.type.id);
+    if (!this.type.value) {
+      this.types = new DefaultSelect([subtype.idTypeGood], 1);
+      this.type.setValue(subtype.idTypeGood.id);
+    }
     this.resetFields([this.ssubtype, this.sssubtype]);
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
+    this.goodSubtypeChange.emit(subtype);
   }
 
   onSsubtypesChange(ssubtype: any) {
-    this.types = new DefaultSelect([ssubtype.type], 1);
-    this.subtypes = new DefaultSelect([ssubtype.subtype], 1);
-    this.type.setValue(ssubtype.type.id);
-    this.subtype.setValue(ssubtype.subtype.id);
+    if (!this.type.value || !this.subtype.value) {
+      this.types = new DefaultSelect([ssubtype.noType], 1);
+      this.subtypes = new DefaultSelect([ssubtype.noSubType], 1);
+      this.type.setValue(ssubtype.noType.id);
+      this.subtype.setValue(ssubtype.noSubType.id);
+    }
     this.resetFields([this.sssubtype]);
+    this.goodSsubtypeChange.emit(ssubtype);
   }
 
   onSssubtypesChange(sssubtype: any) {
-    this.types = new DefaultSelect([sssubtype.type], 1);
-    this.subtypes = new DefaultSelect([sssubtype.subtype], 1);
-    this.ssubtypes = new DefaultSelect([sssubtype.ssubtype], 1);
-    this.type.setValue(sssubtype.type.id);
-    this.subtype.setValue(sssubtype.subtype.id);
-    this.ssubtype.setValue(sssubtype.ssubtype.id);
+    if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
+      this.types = new DefaultSelect([sssubtype.numType], 1);
+      this.subtypes = new DefaultSelect([sssubtype.numSubType], 1);
+      this.ssubtypes = new DefaultSelect([sssubtype.numSsubType], 1);
+      this.type.setValue(sssubtype.numType.id);
+      this.subtype.setValue(sssubtype.numSubType.id);
+      this.ssubtype.setValue(sssubtype.numSsubType.id);
+    }
+    this.goodSssubtypeChange.emit(sssubtype);
   }
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
-      //field.setValue(null);
-      field = null;
+      field.setValue(null);
     });
     this.form.updateValueAndValidity();
   }

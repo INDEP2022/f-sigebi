@@ -1,0 +1,33 @@
+export interface IExpedient {
+  id: string | number;
+  natureDocument: string;
+  documentDescription: string;
+  significantDate: string;
+  scanningStatus: string;
+  archivalStatus: string;
+  userRequestScan: string;
+  dateRequestScan: Date;
+  userRegisterScan: string;
+  dateRegisterScan: Date;
+  userReceiveFile: string;
+  dateReceiveFile: string;
+  cveDocumentType: string;
+  cveSeparator: string;
+  noExpedient: string;
+  sheets: string;
+  noDelegationRequests: string;
+  noSubDelegationRequests: string;
+  noDepartmentRequest: string;
+  noRegister: string;
+  noVolante: string;
+  userSend: string;
+  areaSend: string;
+  dateSent: Date;
+  cveFileSend: string;
+  usrResponsibleFile: string;
+  idMedium: string;
+  folioUniversalAsoc: string;
+  fecRegistroEscaneoHc: Date;
+  fecRegistrationScanningHc: Date;
+  noGood: string;
+}

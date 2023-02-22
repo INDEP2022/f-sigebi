@@ -1,12 +1,26 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { forkJoin } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
+import { IRequest } from '../../../../core/models/requests/request.model';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
+import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
+import { StationService } from '../../../../core/services/catalogs/station.service';
+import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
+import { RequestService } from '../../../../core/services/requests/request.service';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 
 @Component({
@@ -18,14 +32,18 @@ export class RegistrationOfRequestsComponent
   extends BasePage
   implements OnInit
 {
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   registRequestForm: ModelForm<IRequest>;
   edit: boolean = false;
-  title: string = 'title';
+  title: string = 'Registro de solicitud con folio: ';
   parameter: any;
   object: any = '';
+  requestData: any;
   btnTitle: string = '';
   btnSaveTitle: string = '';
   saveClarifiObject: boolean = false;
+  bsValue = new Date();
+  isExpedient: boolean = false;
 
   //tabs
   tab1: string = '';
@@ -48,44 +66,141 @@ export class RegistrationOfRequestsComponent
   //aprovacion del proceso
   approvalProcess: boolean = false;
 
+  stateOfRepublicName: string = '';
+  transferentName: string = '';
+  stationName: string = '';
+  delegationName: string = '';
+  authorityName: string = '';
+
   constructor(
     public fb: FormBuilder,
     public modalRef: BsModalRef,
     public modalService: BsModalService,
     public route: ActivatedRoute,
     public router: Router,
-    public location: Location
+    private location: Location,
+    private requestService: RequestService,
+    private requestHelperService: RequestHelperService,
+    private stateOfRepublicService: StateOfRepublicService,
+    private transferentService: TransferenteService,
+    private stationService: StationService,
+    private delegationService: RegionalDelegationService,
+    private authorityService: AuthorityService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
     this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
-    this.route.params.subscribe(params => {
-      this.object = this.registRequestForm.value;
+    this.getRequest(id);
+    this.associateExpedientListener();
+  }
+
+  //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
+  associateExpedientListener() {
+    this.requestHelperService.currentExpedient.subscribe({
+      next: resp => {
+        if (resp === true) {
+          this.isExpedient = resp;
+          this.staticTabs.tabs[0].active = true;
+        }
+      },
     });
   }
 
   prepareForm() {
     this.registRequestForm = this.fb.group({
-      date: [],
-      noOfi: ['400-10-00-01*00*2020-7824'],
-      regDelega: ['BAJA CALIFORNIA'],
-      entity: ['Juan Pablo'],
-      tranfe: ['SAT FISCO FEDERAL'],
-      transmitter: ['ADMINISTRACION GENERAL DE RECAUDACION'],
-      authority: [
-        'ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA',
-      ],
-      typeUser: [''],
-      receiUser: [''],
-      noExpedient: ['24355'],
-      typeExpedient: ['AGR'],
-      noRequest: ['27445'],
+      applicationDate: [null],
+      paperNumber: [null, [Validators.required]],
+      regionalDelegationId: [null],
+      keyStateOfRepublic: [null],
+      transferenceId: [null],
+      stationId: [null],
+      authorityId: [null],
+      //typeUser: [''],
+      //receiUser: [''],
+      id: [null],
+      urgentPriority: [null],
+      originInfo: [null],
+      receptionDate: [{ value: null, disabled: true }],
+      paperDate: [null, Validators.required],
+      typeRecord: [null],
+      publicMinistry: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]], //nombre remitente
+      holderCharge: [null, [Validators.pattern(STRING_PATTERN)]], //cargo remitente
+      phoneOfOwner: [null, Validators.pattern(PHONE_PATTERN)], //telefono remitente
+      emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]], //email remitente
+      court: [null, [Validators.pattern(STRING_PATTERN)]],
+      crime: [null, [Validators.pattern(STRING_PATTERN)]],
+      receiptRoute: [null],
+      destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
+      indicatedTaxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
+      affair: [null],
+      transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+  }
+
+  getRequest(id: any) {
+    this.requestService.getById(id).subscribe((data: any) => {
+      let request = data;
+      //verifica si la solicitud tiene expediente si no tiene no muestra el tab asociar expediente
+      this.isExpedient = request.recordId ? true : false;
+      request.receptionDate = new Date().toISOString();
+      this.object = request as IRequest;
+      this.requestData = request as IRequest;
+      this.registRequestForm.patchValue(request);
+      this.getData(request);
+    });
+  }
+
+  getData(request: any) {
+    const stateOfRepublicService = this.stateOfRepublicService.getById(
+      request.keyStateOfRepublic
+    );
+    const transferentService = this.transferentService.getById(
+      request.transferenceId
+    );
+    const stationService = this.stationService.getById(request.stationId);
+    const delegationService = this.delegationService.getById(
+      request.regionalDelegationId
+    );
+    let ids = {
+      idAuthority: Number(request.authorityId),
+      idTransferer: Number(request.transferenceId),
+      idStation: Number(request.stationId),
+    };
+    const authorityervice = this.authorityService.postByIds(ids);
+
+    forkJoin([
+      stateOfRepublicService,
+      transferentService,
+      stationService,
+      delegationService,
+      authorityervice,
+    ]).subscribe(
+      ([_state, _transferent, _station, _delegation, _authority]) => {
+        let state = _state as any;
+        let transferent = _transferent as any;
+        let station = _station as any;
+        let delegation = _delegation as any;
+        let authority = _authority as any;
+
+        this.stateOfRepublicName = state.descCondition;
+        this.transferentName = transferent.nameTransferent;
+        this.stationName = station.stationName;
+        this.delegationName = delegation.description;
+        this.authorityName = authority.authorityName;
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   setView(path: string): void {
@@ -155,6 +270,7 @@ export class RegistrationOfRequestsComponent
   }
 
   confirm() {
+    console.log(this.registRequestForm.getRawValue());
     this.msgAvertanceModal(
       '',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
@@ -173,7 +289,6 @@ export class RegistrationOfRequestsComponent
   }
 
   signDictum() {
-    //habrir modal generar dictamen
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
 

@@ -2,7 +2,7 @@
   <div class="form-group form-secondary form-static-label">
     <ng-select
       #select
-      [clearable]="false"
+      [clearable]="true"
       class="form-control"
       [items]="buffer"
       [bindLabel]="bindLabel"
@@ -20,9 +20,14 @@
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
       (change)="onChange($event)"
-      [placeholder]="placeholder">
+      [searchable]="searchable"
+      [placeholder]="placeholder"
+      [readonly]="readonly">
     </ng-select>
     <span class="form-bar"></span>
-    <label class="float-label">{{ label }}</label>
+    <label class="float-label"
+      >{{ label }}
+      <span [style.color]="'#9D2449'" *ngIf="isRequired()">*</span></label
+    >
   </div>
 </ng-container>

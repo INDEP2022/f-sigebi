@@ -9,14 +9,35 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <app-delegation-shared [form]="form" [showSubdelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="onDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
         </div>
         <div class="col-md-3">
-          <app-delegation-shared [form]="form" [showDelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="onSubDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
         </div>
-        <div class="col-md-4 mt-3">
+        <div class="col-md-2">
           <form-field
             [control]="form.get('rangeDate')"
             label="Fechas de recepci&oacute;n">
@@ -32,14 +53,43 @@
               }" />
           </form-field>
         </div>
-        <div class="col-md-2 mt-3">
-          <form-field [control]="form.get('idArea')">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('departamentDes')">
             <ngx-select
-              typeToSearchText="Escriba 3 o m&aacute;s caracteres"
-              label="&Aacute;rea Destino"
+              [searchOnInit]="true"
               [form]="form"
-              control="idArea">
+              (fetchItems)="getAreas($event)"
+              [data]="areas"
+              value="id"
+              bindLabel="dsarea"
+              label="Área Destino"
+              [control]="'departamentDes'"
+              (change)="onValuesChange($event)">
             </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Delegación Destino"
+            [control]="form.get('delegationDes')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationDes"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Sub Delegación Destino"
+            [control]="form.get('subdelegationDes')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subdelegationDes"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -53,8 +103,16 @@
           type="button"
           class="btn btn-primary active"
           [disabled]="!form.valid"
-          (click)="openPrevPdf()">
+          (click)="confirm()">
           Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
         </button>
       </div>
     </div>

@@ -1,9 +1,9 @@
 export const APPRAISALINSTITUTIONS_COLUMNS = {
-  noAppraiser: {
+  id: {
     title: 'No.Valuador',
     sort: false,
   },
-  nameComplete: {
+  description: {
     title: 'Nombre',
     sort: false,
   },
@@ -19,7 +19,7 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'No.Interior',
     sort: false,
   },
-  postalCode: {
+  codepostal: {
     title: 'Código Postal',
     sort: false,
   },
@@ -27,15 +27,15 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'Colonia',
     sort: false,
   },
-  delegationMunicipality: {
+  deleg: {
     title: 'Delegación Municipio',
     sort: false,
   },
-  federalEntity: {
+  cve_entfed: {
     title: 'Entidad Federativa',
     sort: false,
   },
-  representative: {
+  represent: {
     title: 'Representante',
     sort: false,
   },

@@ -42,8 +42,14 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      idTypeDocSat: [null, [Validators.required]],
-      idTypeDocSatXml: [null, [Validators.required]],
+      idTypeDocSat: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      idTypeDocSatXml: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       typeDocSae: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -51,8 +57,12 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
       type: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.docCompensation != null) {
-      this.fillForm();
+      this.edit = true;
+      this.docCompensationForm.patchValue(this.docCompensation);
     }
+    // if (this.docCompensation != null) {
+    //   this.fillForm();
+    // }
   }
 
   fillForm() {

@@ -1,0 +1,138 @@
+<form [formGroup]="form" class="form-material">
+  <app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Cambio de indicadores de destino de bienes</h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('targetIndicator')"
+            label="Indicador de destino">
+            <select class="form-control" formControlName="targetIndicator">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="1">Venta</option>
+              <option value="2">Donación</option>
+              <option value="3">Resguardo</option>
+              <option value="4">Destrucción</option>
+              <option value="5">Enterado LIF</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-danger btn-sm active">
+                Selección de Bienes
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Asigna Indicador
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-info btn-sm active">
+                Aplica indicador
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <form [formGroup]="userExample" class="form-material">
+        <div>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            (click)="addRole()">
+            Agregar Bien
+          </button>
+        </div>
+        <br />
+        <br />
+        <ng-container
+          formArrayName="roles"
+          *ngFor="let role of roles.controls; index as i">
+          <br />
+          <div class="d-flex" [formGroupName]="i">
+            <form-field [control]="role.get('role')" label="N° Bien">
+              <input type="text" class="form-control" formControlName="role" />
+            </form-field>
+            &nbsp;&nbsp;
+            <form-field [control]="role.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+            &nbsp;&nbsp;
+            <form-field [control]="role.get('status')" label="Status">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+            &nbsp;&nbsp;
+            <form-field
+              [control]="role.get('labelNumber')"
+              label="Indicador de destino">
+              <select class="form-control" formControlName="labelNumber">
+                <option [value]="null">Seleccione un valor</option>
+                <option value="1">Venta</option>
+                <option value="2">Donación</option>
+                <option value="3">Resguardo</option>
+                <option value="4">Destrucción</option>
+                <option value="5">Enterado LIF</option>
+              </select>
+            </form-field>
+            &nbsp; &nbsp;
+            <div>
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="removeRole(i)">
+                -
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </form>
+      <!--       <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('goodId')" label="Ingrese el bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodId"
+              (change)="addGood()" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-5">
+          <p>Ingrese el número del bien a agregar y dar enter</p>
+        </div>
+      </div>
+      <div class="row" *ngIf="!massive">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </app-card>
+</form>

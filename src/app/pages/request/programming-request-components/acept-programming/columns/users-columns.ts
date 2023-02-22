@@ -11,7 +11,7 @@ export const USER_COLUMNS = {
     sort: false,
   },
 
-  chargeUser: {
+  userCharge: {
     title: 'Cargo del usuario',
     type: 'string',
     sort: false,

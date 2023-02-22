@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-12">
         <h5 class="title">Permisos de Usuarios para conversión masiva</h5>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
@@ -17,18 +17,20 @@
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
       </div>
-      <div class="col-md-6">
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <h5 class="title">Privilegios de Usuarios</h5>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data1">
+            [source]="data2">
           </ng2-smart-table>
         </div>
         <app-pagination
           [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+          [totalItems]="totalItems2"></app-pagination>
       </div>
     </div>
   </div>

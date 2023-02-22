@@ -1,28 +1,46 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+//models
+import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
+//services
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+
 @Component({
   selector: 'app-register-attributes-types-modal',
   templateUrl: './register-attributes-types-modal.component.html',
   styles: [],
 })
-export class RegisterAttributesTypesModalComponent implements OnInit {
+export class RegisterAttributesTypesModalComponent
+  extends BasePage
+  implements OnInit
+{
   title: string = 'Alta de atributos por tipo de bien';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
-  allotment: any;
-  @Output() refresh = new EventEmitter<true>();
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
+  attribClassifGoodForm: ModelForm<IAttribClassifGoods>;
+  attribClassifGood: IAttribClassifGoods;
+
+  noClass: IAttribClassifGoods;
+  _id: any;
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private goodsQueryService: GoodsQueryService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      cve: [
+    this.attribClassifGoodForm = this.fb.group({
+      classifGoodNumber: [
         null,
         [
           Validators.required,
@@ -30,17 +48,33 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
         ],
+      ],
+      columnNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      attribute: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      attributes: [
+      required: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      typeDate: [null, [Validators.required]],
-      longMax: [
+      dataType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      length: [
         null,
         [
           Validators.required,
@@ -49,22 +83,73 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      update: [null, [Validators.required]],
-      unique: [null, [Validators.required]],
-      requerid: [null, [Validators.required]],
-      tableSupport: [
+      update: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      accessKey: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      tableCd: [null, [Validators.pattern(STRING_PATTERN)]],
+      registrationNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(12),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      typeAct: [
+        null,
+        [
+          Validators.maxLength(8),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
     });
-    if (this.allotment != null) {
+    if (this.attribClassifGood != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      this.attribClassifGoodForm.patchValue(this.attribClassifGood);
+    } else {
+      this.edit = false;
+      this.attribClassifGoodForm.controls['classifGoodNumber'].setValue(
+        this._id
+      );
+      console.log('Valor de modal: ', this._id);
     }
   }
 
+  message: any = false;
+
   close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    this.goodsQueryService.create(this.attribClassifGoodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  update() {
+    this.loading = true;
+    this.goodsQueryService.update(this.attribClassifGoodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

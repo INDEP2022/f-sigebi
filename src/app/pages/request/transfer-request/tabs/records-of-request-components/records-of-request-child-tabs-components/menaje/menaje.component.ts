@@ -2,9 +2,20 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MENAJE_COLUMN } from './menaje-columns';
+
+class Manege {
+  id: number;
+  description: string;
+  requestId: string;
+}
 
 @Component({
   selector: 'app-menaje',
@@ -14,14 +25,21 @@ import { MENAJE_COLUMN } from './menaje-columns';
 export class MenajeComponent extends BasePage implements OnInit {
   title: any = 'Inmuebles de la solicitud';
   paragraphs: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
   immovablesSelected: any;
+  requestId: number = null;
+  listMenage: any = [];
+  menage = new Manege();
 
-  data: any;
+  goodsObject: any;
 
-  constructor(private modelRef: BsModalRef) {
+  constructor(
+    private modelRef: BsModalRef,
+    private goodService: GoodService,
+    private goodRealState: RealStateService
+  ) {
     super();
   }
 
@@ -31,23 +49,92 @@ export class MenajeComponent extends BasePage implements OnInit {
       actions: false,
       columns: MENAJE_COLUMN,
     };
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    this.loadPaginator();
   }
 
-  getData() {}
+  loadPaginator() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData();
+    });
+  }
+
+  getData() {
+    this.loading = true;
+    this.paragraphs = [];
+    this.listMenage = [];
+    this.params.value.addFilter('requestId', this.requestId);
+    var filter = this.params.getValue().getParams();
+    this.goodService.getAll(filter).subscribe({
+      next: async (resp: any) => {
+        if (resp.data) {
+          const result = resp.data.map(async (item: any) => {
+            const menage = await this.getGoodRealState(item);
+            if (menage !== null) {
+              this.listMenage.push(menage);
+            }
+          });
+
+          Promise.all(result).then(data => {
+            this.totalItems = this.listMenage.length;
+            this.paragraphs = this.listMenage;
+            this.loading = false;
+          });
+        }
+      },
+    });
+  }
+
+  getGoodRealState(item: any): any {
+    const params = new ListParams();
+    return new Promise((resolve, reject) => {
+      params['filter.id'] = `$eq:${item.id}`;
+      this.goodRealState.getAll(params).subscribe({
+        next: resp => {
+          this.menage = new Manege();
+          var good = resp.data;
+          if (good.length !== 0) {
+            this.menage.id = good[0].id;
+            this.menage.description = good[0].description;
+            this.menage.requestId = item.requestId;
+            resolve(this.menage);
+          } else {
+            resolve(null);
+          }
+        },
+      });
+    });
+  }
 
   selectRow(event: any) {
-    console.log(event);
-
-    this.immovablesSelected = event.data;
+    if (event.isSelected) {
+      this.immovablesSelected = event.data;
+    } else {
+      this.immovablesSelected = null;
+    }
   }
 
   selectImmovable() {
-    this.event.emit(this.immovablesSelected);
+    if (!this.immovablesSelected) {
+      this.onLoadToast('info', 'Información', `Seleccione un inmueble!`);
+      return;
+    }
+    var menages = this.builtMenage(this.immovablesSelected);
+
+    this.event.emit(menages);
     this.close();
+  }
+
+  builtMenage(menage: any) {
+    const menageList: any[] = [];
+    for (let i = 0; i < this.goodsObject.length; i++) {
+      const element = this.goodsObject[i];
+      menageList.push({
+        noGood: menage.id, //bien padre o Bien Inmueble
+        noGoodMenage: element.id, //Good hijo o Good
+        noRegister: null, //no insertar nada
+      });
+    }
+    return menageList;
   }
 
   close() {

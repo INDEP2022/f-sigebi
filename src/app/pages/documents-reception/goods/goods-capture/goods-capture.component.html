@@ -3,25 +3,32 @@
     <h5 class="title">Captura de bienes y sus caracter&iacute;sticas</h5>
   </div>
 
-  <div body>
+  <div body #form>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
-      <div class="row">
+      <div class="row" #top>
         <form-field
+          *ngIf="global.pIndicadorSat != null"
           class="col-md-3"
           [control]="assetsForm.get('noPartida')"
           label="Fracción Arancelaria">
-          <input class="form-control" type="text" formControlName="noPartida" />
+          <input
+            class="form-control"
+            type="text"
+            formControlName="noPartida"
+            (change)="fractionChange()" />
         </form-field>
 
-        <div class="col">
+        <div class="col" *ngIf="global.pIndicadorSat != null">
           <button
+            (click)="searchFraction()"
+            type="button"
             class="btn btn-secondary btn-sm active"
             [disabled]="!ligieButtonEnabled">
             Buscar Fracción
           </button>
         </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-3"
           [control]="assetsForm.get('valorAvaluo')"
           label="Valor Avalúo">
@@ -29,27 +36,30 @@
             class="form-control"
             type="text"
             formControlName="valorAvaluo" />
-        </form-field>
+        </form-field> -->
 
         <form-field
           class="col-md-3"
           [control]="assetsForm.get('noClasifBien')"
           label="No&#46; Clasificaci&oacute;n Bien">
           <input
+            #goodClasifNumField
             class="form-control"
-            type="text"
+            type="number"
             formControlName="noClasifBien"
             (change)="goodClasifNumberChange()" />
         </form-field>
       </div>
       <div class="row pt-3">
-        <div class="col-md-6" *ngIf="global.satIndicator">
+        <div class="col-md-6" *ngIf="global.pIndicadorSat != null">
           <div class="row pt-3">
             <form-field [control]="assetsForm.get('capitulo')">
               <ngx-select
                 [form]="assetsForm"
                 control="capitulo"
-                [data]="select"
+                [data]="chapters"
+                value="chapter"
+                bindLabel="chapterDesc"
                 label="Capítulo"></ngx-select>
             </form-field>
           </div>
@@ -58,7 +68,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="partida"
-                [data]="select"
+                [data]="departures"
+                value="departure"
+                bindLabel="departureDesc"
                 label="Partida"></ngx-select>
             </form-field>
           </div>
@@ -67,7 +79,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="subpartida"
-                [data]="select"
+                [data]="sdepartures"
+                value="sDeparture"
+                bindLabel="sDepartureDesc"
                 label="Subpartida"></ngx-select>
             </form-field>
           </div>
@@ -76,7 +90,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="ssubpartida"
-                [data]="select"
+                [data]="ssdepartures"
+                value="ssDeparture"
+                bindLabel="ssDepartureDesc"
                 label="Ssubpartida"></ngx-select>
             </form-field>
           </div>
@@ -91,12 +107,19 @@
             [types]="types"
             [subtypes]="subtypes"
             [ssubtypes]="ssubtypes"
-            [sssubtypes]="sssubtypes"></app-goods-types-shared>
+            [sssubtypes]="sssubtypes"
+            (goodTypeChange)="isGoodTypeValid()"
+            (goodSubtypeChange)="goodSubtypeChange()"
+            (goodSsubtypeChange)="goodSsubtypeChange()"
+            (goodSssubtypeChange)="
+              goodSssubtypeChange($event)
+            "></app-goods-types-shared>
         </div>
       </div>
       <hr />
       <div class="row pt-4">
         <form-field
+          *ngIf="global.pIndicadorSat != null"
           class="col-md-2"
           [control]="assetsForm.get('unidadLigie')"
           label="Unidad LIGIE">
@@ -105,20 +128,26 @@
             type="text"
             formControlName="unidadLigie" />
         </form-field>
-        <form-field
-          class="col-md-2"
-          [control]="assetsForm.get('unidadMedida')"
-          label="Unidad de medida">
-          <input
-            class="form-control"
-            type="text"
-            formControlName="unidadMedida" />
+        <form-field class="col-md-2" [control]="assetsForm.get('unidadMedida')">
+          <ngx-select
+            (fetchItems)="getMeasureUnits($event)"
+            [data]="unitsMeasures"
+            [form]="assetsForm"
+            value="unit"
+            label="Unidad de Medida"
+            bindLabel="unit"
+            control="unidadMedida">
+          </ngx-select>
         </form-field>
         <form-field
           class="col-md-2"
           [control]="assetsForm.get('cantidad')"
           label="Cantidad">
-          <input class="form-control" type="text" formControlName="cantidad" />
+          <input
+            class="form-control"
+            type="number"
+            formControlName="cantidad"
+            (change)="amountChange()" />
         </form-field>
 
         <form-field
@@ -132,7 +161,9 @@
           <ngx-select
             [form]="assetsForm"
             control="destino"
-            [data]="select"
+            [data]="goodLabels"
+            value="id"
+            bindLabel="description"
             label="Identificador de Destino"></ngx-select>
         </form-field>
       </div>
@@ -141,7 +172,7 @@
         <form-field
           class="col-md-2"
           [control]="assetsForm.get('valRef')"
-          label="Val&#46; Ref&#46;">
+          label="Valor de Referencia">
           <input class="form-control" type="number" formControlName="valRef" />
         </form-field>
 
@@ -152,25 +183,32 @@
           <input
             class="form-control"
             type="text"
+            readonly
             formControlName="identifica" />
         </form-field>
 
         <form-field
+          *ngIf="global.pIndicadorSat != null"
           class="col-md-4"
-          [control]="assetsForm.get('estadoConservacion')">
-          <ngx-select
-            [form]="assetsForm"
-            control="estadoConservacion"
-            [data]="select"
-            label="Estado de Conservación"></ngx-select>
+          [control]="assetsForm.get('estadoConservacion')"
+          label="Estado de Conservacion">
+          <ng-select
+            formControlName="estadoConservacion"
+            [searchable]="false"
+            class="form-control"
+            [clearable]="false">
+            <ng-option value="Bueno">Bueno</ng-option>
+            <ng-option value="Malo">Malo</ng-option>
+          </ng-select>
         </form-field>
 
         <div class="col">
-          <button
+          <!-- <button
+            *ngIf="global.pIndicadorSat != null"
             class="btn btn-secondary btn-sm active"
             [disabled]="!regulationsButtonEnabled">
             Regulaciones Aplicadas
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -186,31 +224,45 @@
         <div class="row">
           <div class="col-md-12">
             <button
+              type="button"
+              (click)="getSiaviLink()"
               class="btn btn-info active btn-sm"
-              [disabled]="!normsButtonEnabled">
+              [disabled]="!normsButtonEnabled"
+              *ngIf="global.pIndicadorSat != null">
               Consultar Normatividad en SIAVI
             </button>
           </div>
         </div>
       </div>
 
+      <div class="row"></div>
+
       <div class="row">
         <div class="col-md-12">
-          ----------- Atributos de bienes
           <button
             type="button"
             class="btn btn-info btn-sm"
             (click)="showObservations(modal)">
             Observaciones
           </button>
+          <good-features
+            [good]="good"
+            [goodForm]="goodForm"
+            [goodFeatures]="goodFeatures"
+            (onSave)="save()"
+            [loading]="loading"></good-features>
         </div>
       </div>
-      <div class="row">
-        <form-check label="Almacen" for="warehouse">
-          <input id="warehouse" type="checkbox" formControlName="almacen" />
-        </form-check>
-      </div>
+      <div class="row"></div>
       <hr />
+      <div class="row pt-3" *ngIf="formControls.almacen.value">
+        <state-locality
+          [form]="assetsForm"
+          stateField="entFed"
+          municipalityField="municipio"
+          cityField="ciudad"
+          localityField="localidad"></state-locality>
+      </div>
       <div class="row pt-3" *ngIf="formControls.almacen.value">
         <form-field class="col-md-3" [control]="assetsForm.get('entFed')">
           <ngx-select
@@ -246,7 +298,7 @@
 
         <div class="row pt-2">
           <div class="col-md-12 text-right">
-            <button class="btn btn-primary btn-sm ml-3 active" type="submit">
+            <button class="btn btn-primary btn-sm ml-3 active" type="button">
               Guardar
             </button>
           </div>
@@ -260,23 +312,26 @@
           </div>
           <div body>
             <div class="row">
-              <textarea class="form-control" rows="5"></textarea>
+              <textarea
+                class="form-control"
+                formControlName="observaciones"
+                rows="5"></textarea>
             </div>
           </div>
 
           <div footer>
             <div class="d-flex justify-content-center">
               <div class="m-3">
-                <button type="button" class="btn btn-primary active">
+                <!-- <button type="button" class="btn btn-primary active" (click)="hideObservations()">
                   Guardar
-                </button>
+                </button> -->
               </div>
               <div class="m-3">
                 <button
                   type="button"
                   class="btn btn-danger active"
                   (click)="hideObservations()">
-                  Cancelar
+                  Cerrar
                 </button>
               </div>
             </div>

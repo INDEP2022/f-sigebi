@@ -25,7 +25,7 @@
             [settings]="settings"
             [source]="lawyers"
             (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
+            (delete)="showDeleteAlert($event.data)">
           </ng2-smart-table>
         </div>
       </div>

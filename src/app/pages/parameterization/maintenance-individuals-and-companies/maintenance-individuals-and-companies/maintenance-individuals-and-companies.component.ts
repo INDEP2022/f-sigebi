@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   RFCCURP_PATTERN,
   STRING_PATTERN,
@@ -16,9 +18,13 @@ export class MaintenanceIndividualsAndCompaniesComponent
   extends BasePage
   implements OnInit
 {
-  form: FormGroup = new FormGroup({});
+  form!: FormGroup;
+  isCreate: boolean = true;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly personService: PersonService
+  ) {
     super();
   }
 
@@ -28,52 +34,119 @@ export class MaintenanceIndividualsAndCompaniesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      numberPerson: [null, [Validators.required]],
-      surname: [
+      personNumber: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      names: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      address: [
+      name: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
-      noOutside: [null, [Validators.required]],
-      noInside: [null, [Validators.required]],
-      colonia: [
+      street: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
       ],
-      zipCode: [null, [Validators.required]],
-      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      observation: [
+      streetNumber: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ],
-      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
-      delegation: [null, [Validators.required]],
-      federative: [null, [Validators.required]],
-      curriculum: [null, [Validators.required]],
-      personMoral: [null, [Validators.required]],
-      personPhysics: [null, [Validators.required]],
-      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
-      moneyOrder: [
+      apartmentNumber: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ],
+      suburb: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      zipCode: [null, Validators.pattern(NUMBERS_PATTERN)],
+      delegation: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      federative: [null],
+      phone: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.pattern(PHONE_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      rfc: [
+        null,
+        [
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(RFCCURP_PATTERN),
+        ],
+      ],
+      curp: [
+        null,
+        [
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(RFCCURP_PATTERN),
+        ],
+      ],
+      curriculumV: [null],
+      curriculum: ['N'],
+      typePerson: [null, Validators.required],
+      keyOperation: [null],
       profile: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
       ],
-      representative: [
+      manager: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
       ],
-      deed: [null, [Validators.required]],
+      numberDeep: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
+      keyEntFed: [null],
+      typeResponsible: [null],
+    });
+
+    this.onChangeForm();
+  }
+
+  onChangeForm() {
+    this.form.get('curriculumV').valueChanges.subscribe({
+      next: (value: boolean) =>
+        this.form.get('curriculum').patchValue(value ? 'S' : 'N'),
+    });
+
+    this.form.get('typePerson').valueChanges.subscribe({
+      next: (value: string) => {
+        if (value === 'F') {
+          this.form.get('manager').patchValue(null);
+          this.form.get('numberDeep').patchValue(null);
+        }
+      },
+    });
+
+    this.form.get('federative').valueChanges.subscribe({
+      next: (value: string) => {
+        this.form.get('keyEntFed').patchValue(value);
+      },
     });
   }
 
   saved() {
-    console.log(this.form.value);
+    if (this.form.valid) {
+      this.form.get('typeResponsible').patchValue('D');
+      this.personService.create(this.form.value).subscribe({
+        next: () => {
+          this.onLoadToast('success', 'Ha sido creado con éxito', '');
+          this.form.reset();
+        },
+        error: error => this.onLoadToast('error', error.error.message, ''),
+      });
+    }
   }
 }

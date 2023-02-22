@@ -30,7 +30,7 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.identifierForm = this.fb.group({
-      code: [null, [Validators.required]],
+      id: [null, [Validators.required]],
       description: [null, [Validators.required]],
       keyview: [null, [Validators.required, Validators.maxLength(1)]],
       noRegistration: [null, [Validators.required]],
@@ -57,7 +57,7 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
 
   update() {
     this.identifierService
-      .update(this.identifier.code, this.identifierForm.value)
+      .update(this.identifier.id, this.identifierForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

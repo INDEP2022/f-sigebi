@@ -11,10 +11,11 @@ import { ILawyer } from '../../models/catalogs/lawyer.model';
 })
 export class LawyerService implements ICrudMethods<ILawyer> {
   private readonly route: string = ENDPOINT_LINKS.Lawyer;
+  private readonly route2: string = 'catalog/lawyer/search';
   constructor(private lawyerRepository: Repository<ILawyer>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ILawyer>> {
-    return this.lawyerRepository.getAllPaginated(this.route, params);
+    return this.lawyerRepository.getAllPaginated(this.route2, params);
   }
 
   getById(id: string | number): Observable<ILawyer> {

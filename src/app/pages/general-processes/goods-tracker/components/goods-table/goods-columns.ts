@@ -1,34 +1,66 @@
 export const GP_GOODS_COLUMNS = {
-  noFotos: {
+  numberPhotos: {
     title: 'No. Fotos',
     sort: false,
   },
-  noExpediente: {
+  file: {
     title: 'No. Expediente',
     sort: false,
   },
-  noBien: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  noInventario: {
+  inventorySiabiId: {
     title: 'No. Inventario NDBDDB',
     sort: false,
   },
-  gabinete: {
+  socialCabite: {
     title: 'Gabinete Social',
     sort: false,
   },
-  noBienPadre: {
-    title: 'No. Bien Padre Parcialización',
-    sort: false,
-  },
-  noBienPadreMenaje: {
+  parentGoodMenajeNumber: {
     title: 'No. Bien Padre Menaje',
     sort: false,
   },
-  canidad: {
+  quantity: {
     title: 'Cantidad',
+    sort: false,
+  },
+  destiny: {
+    title: 'Identificado de Destino',
+    sort: false,
+  },
+  clasif: {
+    title: 'Número de Clasificación',
+    sort: false,
+  },
+  goodType: {
+    title: 'Tipo de Bien',
+    sort: false,
+  },
+  goodStype: {
+    title: 'Subtipo de Bien',
+    sort: false,
+  },
+  goodSsType: {
+    title: 'Ssubtipo de Bien',
+    sort: false,
+  },
+  emisorAuthority: {
+    title: 'Autoridad Emisora',
+    sort: false,
+  },
+  measurementUnit: {
+    title: 'Unidad de Medida',
+    sort: false,
+  },
+  identificator: {
+    title: 'Identificador',
+    sort: false,
+  },
+  goodDescription: {
+    title: 'Descripcion del Bien',
     sort: false,
   },
 };

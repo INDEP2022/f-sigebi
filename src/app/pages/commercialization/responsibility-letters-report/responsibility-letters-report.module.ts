@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
+import { DepartmentsSharedComponent } from 'src/app/@standalone/shared-forms/departments-shared/departments-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ResponsibilityLettersReportRoutingModule } from './responsibility-letters-report-routing.module';
 import { ResponsibilityLettersReportComponent } from './responsibility-letters-report.component';
@@ -15,6 +17,8 @@ import { ResponsibilityLettersReportComponent } from './responsibility-letters-r
     SharedModule,
     ModalModule.forChild(),
     TabsModule,
+    DelegationSharedComponent,
+    DepartmentsSharedComponent,
   ],
 })
 export class ResponsibilityLettersReportModule {}

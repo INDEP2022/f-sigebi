@@ -2,18 +2,16 @@
   <div class="paginator-outer-container">
     <div class="paginator-container">
       <div class="paginator-page-size">
-        <div class="paginator-page-size-label">Items por página :</div>
+        <div class="paginator-page-size-label">Registros por página :</div>
         <div class="form-field paginator-page-size-select">
           <div class="form-field-wrapper">
             <div class="form-field-flex">
               <div class="form-field-infix">
                 <select
                   class="select"
-                  (change)="limitChange()"
+                  (change)="pageSizeChange()"
                   [formControl]="limit">
-                  <option
-                    *ngFor="let limit of limitOptions"
-                    [value]="limit">
+                  <option *ngFor="let limit of pageSizeOptions" [value]="limit">
                     {{ limit }}
                   </option>
                 </select>

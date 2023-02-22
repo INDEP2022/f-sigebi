@@ -1,11 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SearchBarFilter } from '../../../../../common/repository/interfaces/search-bar-filters';
+import { IComerProvider } from '../../../../../core/models/ms-provider/provider-model';
+import { ComerProvidersService } from '../../../../../core/services/ms-provider/comer-providers.service';
 import { ClientsModalComponent } from '../clients-modal/clients-modal.component';
 import { ProviderCatalogsModalComponent } from '../provider-catalogs-modal/provider-catalogs-modal.component';
 import { PROVIDER_CATALOGS_PROVIDER_COLUMNS } from './provider-catalogs-columns';
@@ -17,158 +24,103 @@ import { PROVIDER_CATALOGS_PROVIDER_COLUMNS } from './provider-catalogs-columns'
 })
 export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
-  eventItems = new DefaultSelect();
+  providerItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
   totalItems: number = 0;
-  providerColumns: any[] = [];
+  selectedProvider: IComerProvider | null = null;
+  providerColumns: IComerProvider[] = [];
   providerSettings = {
     ...TABLE_SETTINGS,
     actions: {
       columnTitle: 'Acciones',
-      position: 'left',
-      add: true,
+      position: 'right',
       edit: true,
       delete: true,
     },
   };
+  isSelected: boolean = false;
 
-  providerTestData = [
-    {
-      id: 1,
-      rfc: 'SRHSR6616SHRH',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 1',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 2,
-      rfc: 'SEGS681JHDJFKDS7',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 2',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 3,
-      rfc: '18RSGHRSHHASD1',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 3',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 4,
-      rfc: 'SHSRH8189A3EK',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 4',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 5,
-      rfc: 'HJDTJD9219JDAW',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 5',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-  ];
-
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private providerService: ComerProvidersService
+  ) {
     super();
     this.providerSettings.columns = PROVIDER_CATALOGS_PROVIDER_COLUMNS;
+    this.searchFilter = { field: 'nameReason', operator: SearchFilter.ILIKE };
   }
 
   ngOnInit(): void {
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData();
+    });
     this.prepareForm();
-    this.getData();
-    this.getProviders({ page: 1, text: '' });
+    this.getProviders();
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      id: [null],
+      providerId: [null],
+      bank: [null, Validators.maxLength(20)],
+      branch: [null, Validators.maxLength(4)],
+      checkingCta: [null, Validators.maxLength(10)],
+      key: [null, Validators.maxLength(18)],
+    });
+
+    this.providerForm.disable();
+  }
+
+  getProviders() {
+    this.providerService.getAll(this.params.getValue()).subscribe(data => {
+      this.providerItems = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getProviders(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.providerTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.providerTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  getData(id?: any) {
+  getData(id?: IComerProvider) {
     if (id) {
-      this.providerColumns = [this.providerTestData[0]];
-      this.totalItems = this.providerColumns.length;
+      this.loading = true;
+      this.providerService.getById(id.providerId).subscribe({
+        next: response => {
+          this.providerColumns = [response];
+          this.totalItems = 1;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          console.log(error);
+        },
+      });
     } else {
-      this.providerColumns = this.providerTestData;
-      this.totalItems = this.providerColumns.length;
+      this.loading = true;
+      this.providerService
+        .getAllWithFilters(this.filterParams.getValue().getParams())
+        .subscribe({
+          next: response => {
+            this.providerColumns = response.data;
+            this.totalItems = response.count;
+            this.loading = false;
+          },
+          error: error => {
+            this.showError(error);
+            this.loading = false;
+          },
+        });
     }
   }
 
-  openFormProvider(provider?: any) {
-    this.openModalProvider({ provider });
+  selectProvider(provider: IComerProvider) {
+    this.isSelected = true;
+    this.providerForm.patchValue(provider);
+    this.selectedProvider = provider;
+    this.providerForm.enable();
+  }
+
+  openFormProvider(edit: boolean, provider?: IComerProvider) {
+    this.isSelected = false;
+    this.providerForm.reset();
+    this.openModalProvider({ provider, edit });
   }
 
   openModalProvider(context?: Partial<ProviderCatalogsModalComponent>) {
@@ -183,12 +135,73 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   openClientsModal() {
+    this.isSelected = false;
+    this.providerForm.reset();
     const modalRef = this.modalService.show(ClientsModalComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe((data: boolean) => {
-      if (data) console.log(data);
+      if (data) this.getData();
     });
+  }
+
+  delete(provider: IComerProvider): void {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loading = true;
+        this.providerService.remove(provider.providerId).subscribe({
+          next: () => {
+            this.loading = false;
+            this.showSuccess();
+            this.getData();
+          },
+          error: error => {
+            this.loading = false;
+            this.showError(error);
+          },
+        });
+      }
+    });
+  }
+
+  showSuccess() {
+    this.onLoadToast(
+      'success',
+      'Proveedor',
+      `Registro Eliminado Correctamente`
+    );
+  }
+
+  showError(error?: any) {
+    this.onLoadToast('error', error.error.message, '');
+  }
+
+  saveBank() {
+    this.selectedProvider = {
+      ...this.selectedProvider,
+      ...this.providerForm.value,
+    };
+    delete this.selectedProvider.customer;
+    const provider = { ...this.selectedProvider };
+    this.providerService
+      .update(this.selectedProvider.providerId, provider)
+      .subscribe({
+        next: resp => {
+          this.getData(), this.onLoadToast('success', resp.message, '');
+          this.isSelected = false;
+          this.providerForm.reset();
+        },
+        error: error => {
+          this.showError(error);
+          this.loading = false;
+        },
+      });
+
+    console.log(this.selectedProvider);
   }
 }

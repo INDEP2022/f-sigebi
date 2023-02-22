@@ -10,6 +10,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
+import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { ChangeOfStatusStiRoutingModule } from './change-of-status-sti-routing.module';
 import { ChangeOfStatusStiComponent } from './change-of-status-sti/change-of-status-sti.component';
@@ -29,6 +30,7 @@ import { ChangeOfStatusStiComponent } from './change-of-status-sti/change-of-sta
     TabsModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
+    GoodsStatusSharedComponent,
   ],
 })
 export class ChangeOfStatusStiModule {}

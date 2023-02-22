@@ -1,10 +1,12 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -36,9 +38,13 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   searchForm: ModelForm<any>;
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
   selectTypeRelevant = new DefaultSelect<any>();
   complaince: any;
   public event: EventEmitter<any> = new EventEmitter();
+
+  private fractionService = inject(FractionService);
+  private typeRelevantService = inject(TypeRelevantService);
 
   constructor(public fb: FormBuilder, private modelRef: BsModalRef) {
     super();
@@ -51,6 +57,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       columns: ADVANCED_SEARCH_COLUMNS,
     };
     this.initForm();
+    this.getTypeRelevant(new ListParams());
   }
 
   initForm(): void {
@@ -61,14 +68,59 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
     });
   }
 
-  getTypeRelevant(event: any): void {}
+  getTypeRelevant(params: ListParams): void {
+    params.limit = 30;
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.selectTypeRelevant = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
 
   rowSelected(event: any) {
     this.complaince = event.data;
   }
 
   search(): void {
-    this.paragraphs = data;
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      /*params.page = data.inicio;
+      params.limit = data.pageSize;*/
+      this.getSearch(data);
+    });
+  }
+
+  getSearch(data: any) {
+    let params = new ListParams();
+    params.page = data.inicio;
+    params.limit = data.pageSize;
+
+    const code = this.searchForm.controls['code'].value;
+    const description = this.searchForm.controls['description'].value;
+    const typeRelevant = this.searchForm.controls['typeRelevant'].value;
+
+    if (code != null) {
+      params['filter.fractionCode'] = `$eq:${code}`;
+    }
+    if (description != null) {
+      params['filter.description'] = `$eq:${description}`;
+    }
+    if (typeRelevant != null) {
+      params['filter.relevantTypeId'] = `$eq:${typeRelevant}`;
+    }
+
+    this.fractionService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.paragraphs = data.data;
+        this.totalItems = data.count;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   clean(): void {

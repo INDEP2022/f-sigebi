@@ -1,27 +1,45 @@
 export interface ITransferente {
   id?: number;
-  name?: string;
-  keyCode?: string;
+  nameTransferent: string;
+  keyTransferent: string;
   userCreation: string;
-  creationDate?: Date;
-  modificationUser: string;
-  modificationDate?: Date;
-  type?: string;
-  version?: number;
-  status?: string;
-  operationStartDate?: Date;
-  operationEndDate?: Date;
-  sedativePrincipal?: string;
-  commissionedObject?: string;
-  sector?: string;
-  formalization?: string;
-  formalizationDate?: Date;
-  entity?: string;
-  agreementModification?: string;
-  agreementDate?: Date;
-  goodGuy?: string;
-  guardGuardWell?: string;
-  destinyWelll?: string;
-  daysAdminGood?: string;
-  goodReceptionPlace?: string;
+  dateCreation: string;
+  userUpdate: string;
+  dateUpdate: string;
+  typeTransferent: string;
+  version: number;
+  status: string;
+  dateBegOperation: string;
+  dateFinalOperation: string;
+  assignor: string;
+  objectCharge: string;
+  sector: string;
+  formalization: string;
+  dateFormalization: string;
+  entity: string;
+  amedingAgree: string;
+  dateAmeding: string;
+  typeGoods: string;
+  custodyGuardGoods: string;
+  destinyGoods: string;
+  daysAdminGoods: string;
+  cvman: string;
+  indcap: string;
+  active: string;
+  risk: string;
+}
+
+export interface ITransferingLevelView {
+  uniqueCve: string | number;
+  transfereeNum: string | number;
+  transfereeDesc: string;
+  transferShortName: string;
+  stationNum: string | number;
+  stationDesc: string | number;
+  authorityNum: string | number;
+  authorityDesc: string | number;
+  cityNum: string | number;
+  cityDesc: string;
+  federalEntityCve: string | number;
+  federalEntityDesc: string;
 }

@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 interface BaseResponse {
@@ -36,9 +36,9 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
-      // map(response => {
-      //   return this.handleSuccess(response);
-      // }),
+      map(response => {
+        return this.handleSuccess(response);
+      }),
       catchError((error: HttpErrorResponse) => {
         this.handleError(error);
         return throwError(() => error);
@@ -46,14 +46,28 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     );
   }
 
-  async handleError(error: HttpErrorResponse) {
+  handleError(error: HttpErrorResponse) {
     const status = error.status;
-    const message = error?.error?.message ?? 'Unknown error';
+    let message = '';
+    if (Array.isArray(error?.error?.message) === true) {
+      message = error?.error?.message[0];
+    } else if (Array.isArray(error?.error?.message) === false) {
+      message = error?.error?.message;
+    } else {
+      message = 'Unknown error';
+    }
     if (status === 0) {
       this.onLoadToast('error', 'Error', 'Unable to connect to server');
       return;
     }
-
+    if (status === 400) {
+      this.onLoadToast('warning', 'advertencia', message);
+      return;
+    }
+    if (status === 500) {
+      this.onLoadToast('warning', 'advertencia', message);
+      return;
+    }
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
@@ -71,24 +85,42 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    this.onLoadToast('error', 'Error' + status, message);
+    // this.onLoadToast('error', 'Error' + status, message);
   }
 
   private handleSuccess(response: HttpEvent<any>) {
     if (response instanceof HttpResponse) {
       this.validateResponse(response);
-      const body = response.body?.data ?? response.body;
-      return response.clone({ body });
+      if (!response.body) {
+        const error = new HttpErrorResponse({
+          error: { message: 'data not found' },
+          headers: response.headers,
+          status: 404,
+          url: response.url,
+        });
+        throw error;
+      }
+      const { data, count } = response.body;
+      if (Array.isArray(data)) {
+        if (data && count >= 0) {
+          return response.clone({ body: { count, data } });
+        }
+        return response.clone({ body: { data } });
+      }
+      if (data) {
+        return response.clone({ body: data });
+      }
+      return response;
     }
     return response;
   }
 
   private validateResponse(response: HttpResponse<BaseResponse>) {
-    const statusCode = Number(response.body?.data?.statusCode);
+    const statusCode = Number(response.body?.statusCode);
     if (!statusCode) return;
     if (statusCode >= 400) {
       const error = new HttpErrorResponse({
-        error: { message: response.body.data.message },
+        error: { message: response.body?.message[0] ?? '' },
         headers: response.headers,
         status: statusCode,
         url: response.url,
