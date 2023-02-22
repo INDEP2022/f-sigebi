@@ -12,9 +12,15 @@ import {
 } from 'src/app/core/shared/patterns';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 //XLSX
-import { BehaviorSubject } from 'rxjs';
+import { DatePipe } from '@angular/common';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import * as XLSX from 'xlsx';
+//Models
+import { LocalDataSource } from 'ng2-smart-table';
+import { IGood } from 'src/app/core/models/ms-good/good';
 
 @Component({
   selector: 'app-authorization-assets-destruction',
@@ -30,7 +36,11 @@ export class AuthorizationAssetsDestructionComponent
   ExcelData: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  columns: any[] = [];
+
+  data: LocalDataSource = new LocalDataSource();
+
+  rowSelected: boolean = false;
+  selectedRow: any = null;
 
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
@@ -38,30 +48,34 @@ export class AuthorizationAssetsDestructionComponent
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private expedientService: ExpedientService,
+    private goodService: GoodService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
       columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
-      rowClassFunction: function (row: {
-        data: { availability: any };
-      }): 'available' | 'not-available' {
-        return row.data.availability ? 'available' : 'not-available';
+      mode: '',
+      rowClassFunction: (row: any) => {
+        if (row.data.estatus.active === '1') {
+          return 'text-success';
+        } else {
+          return 'text-danger';
+        }
       },
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getPagination();
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      idExp: [
+      idExpedient: [
         null,
         [
           Validators.required,
@@ -70,10 +84,10 @@ export class AuthorizationAssetsDestructionComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preInquiry: [null, Validators.pattern(STRING_PATTERN)],
+      preliminaryInquiry: [null, Validators.pattern(STRING_PATTERN)],
       criminalCase: [null, Validators.pattern(STRING_PATTERN)],
-      circumstAct: [null, Validators.pattern(STRING_PATTERN)],
-      touchPenalty: [null, Validators.pattern(STRING_PATTERN)],
+      circumstantialRecord: [null, Validators.pattern(STRING_PATTERN)],
+      keyPenalty: [null, Validators.pattern(STRING_PATTERN)],
       noAuth: [null, Validators.pattern(STRING_PATTERN)],
       authNotice: [null, Validators.pattern(STRING_PATTERN)],
       fromDate: [null, maxDate(new Date())],
@@ -82,9 +96,64 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  getExpedientById(): void {
+    let _id = this.form.controls['idExpedient'].value;
+    this.loading = true;
+    this.expedientService.getById(_id).subscribe(
+      response => {
+        //TODO: Validate Response
+        if (response !== null) {
+          this.form.patchValue(response);
+          this.form.updateValueAndValidity();
+          this.getGoodsByExpedient(response.id);
+        } else {
+          //TODO: CHECK MESSAGE
+          this.alert('info', 'No se encontraron registros', '');
+        }
+
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  getGoodsByExpedient(id: string | number): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoods(id));
+  }
+  getGoods(id: string | number): void {
+    this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
+      response => {
+        //console.log(response);
+        let data = response.data.map((item: IGood) => {
+          //console.log(item);
+          item.promoter = item.userPromoterDecoDevo?.id;
+          let dateDecoDev = item.scheduledDateDecoDev;
+          let dateTeso = item.tesofeDate;
+          item.scheduledDateDecoDev = this.datePipe.transform(
+            dateDecoDev,
+            'yyyy-MM-dd'
+          );
+          item.tesofeDate = this.datePipe.transform(dateTeso, 'yyyy-MM-dd');
+          return item;
+        });
+        this.data.load(data);
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  settingsChange($event: any): void {
+    this.settings = $event;
+  }
+
+  selectRow(row: any) {
+    console.log(row);
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 
   msjRequest() {
@@ -133,47 +202,8 @@ export class AuthorizationAssetsDestructionComponent
     fileReader.onload = e => {
       var workbook = XLSX.read(fileReader.result, { type: 'binary' });
       var sheetNames = workbook.SheetNames;
-      this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
+      // this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
       console.log(this.data);
     };
   }
-
-  data = [
-    {
-      noBien: 1448,
-      description: 'CUARENTA Y DOS CHAMARRAS',
-      ubiExact: 'ALMACEN',
-      direction: 'PROLONGACIÓN MORELOS',
-      passed: true,
-      noOficio: 'DG/006/2004',
-      fecha: '12/12/2005',
-      status: 'ADE',
-      extraDom: 'DECOMISO',
-      availability: false,
-    },
-    {
-      noBien: 1449,
-      description: 'SETENTA Y DOS CELULARES',
-      ubiExact: 'ALMACEN',
-      direction: 'PROLONGACIÓN MORELOS',
-      passed: true,
-      noOficio: 'DG/006/2004',
-      fecha: '12/12/2005',
-      status: 'ADE',
-      extraDom: 'DECOMISO',
-      availability: false,
-    },
-    {
-      noBien: 1450,
-      description: 'CUARENTA Y TRES CABLES USB',
-      ubiExact: 'ALMACEN',
-      direction: 'PROLONGACIÓN MORELOS',
-      passed: false,
-      noOficio: 'DG/006/2004',
-      fecha: '12/12/2005',
-      status: 'ADE',
-      extraDom: 'DECOMISO',
-      availability: true,
-    },
-  ];
 }

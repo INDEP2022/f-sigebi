@@ -1,4 +1,7 @@
 import { FormControl, Validators } from '@angular/forms';
+import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsTrackerCriteriasEnum } from './goods-tracker-criterias.enum';
 
@@ -87,9 +90,9 @@ export class GoodTrackerForm {
   alternativeClasifNum = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  types = new FormControl<string[]>([]);
-  subtypes = new FormControl<string[]>([]);
-  ssubtypes = new FormControl<string[]>([]);
+  types = new FormControl<IGoodType[]>([]);
+  subtypes = new FormControl<IGoodSubType[]>([]);
+  ssubtypes = new FormControl<IGoodSsubType[]>([]);
   sssubtypes = new FormControl<string[]>([]);
   goodNum = new FormControl<string>(null);
   process = new FormControl<string>(null);

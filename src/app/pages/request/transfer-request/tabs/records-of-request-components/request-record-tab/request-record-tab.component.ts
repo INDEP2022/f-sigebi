@@ -22,6 +22,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   selectOriginInfo = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
+  priority: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -39,6 +40,14 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     this.requestForm.controls['affair'].valueChanges.subscribe(val => {
       if (this.requestForm.controls['id'].value != null) {
         this.getAffair(this.requestForm.controls['affair'].value);
+      }
+
+      if (this.requestForm.controls['urgentPriority'].value) {
+        this.priority =
+          this.requestForm.controls['urgentPriority'].value === '0'
+            ? false
+            : true;
+        this.requestForm.controls['urgentPriority'].setValue(this.priority);
       }
 
       if (this.requestForm.controls['paperDate'].value != null) {
@@ -79,6 +88,12 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       let date = new Date(this.bsPaperValue);
       this.requestForm.controls['paperDate'].setValue(date.toISOString());
     }
+  }
+
+  changePriority(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? '1' : '0';
+    this.requestForm.controls['urgentPriority'].setValue(value);
   }
 
   confirm() {

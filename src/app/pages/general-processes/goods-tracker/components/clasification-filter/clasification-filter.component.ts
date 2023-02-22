@@ -1,12 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { tap } from 'rxjs';
 import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ITypesByClasification } from 'src/app/core/models/catalogs/types-by-clasification';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
@@ -30,6 +35,9 @@ export class ClasificationFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
   @Input() form: FormGroup<GoodTrackerForm>;
   @Input() params: FilterParams;
+  @Input() subloading: boolean;
+  @Output() subloadingChange = new EventEmitter<boolean>();
+
   types = new DefaultSelect();
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
@@ -47,6 +55,11 @@ export class ClasificationFilterComponent implements OnInit {
     private typesByClasificationService: TypesByClasificationService
   ) {}
 
+  changeSubloading(value: boolean) {
+    this.subloading = value;
+    this.subloadingChange.emit(this.subloading);
+  }
+
   ngOnInit(): void {}
 
   fractionChange() {}
@@ -56,77 +69,129 @@ export class ClasificationFilterComponent implements OnInit {
   }
 
   getTypes(params: ListParams) {
-    this.goodTypesService.getAll(params).subscribe(response => {
-      this.types = new DefaultSelect(response.data, response.count);
+    this.changeSubloading(true);
+    this.goodTypesService.getAll(params).subscribe({
+      next: response => {
+        this.changeSubloading(false);
+        this.types = new DefaultSelect(response.data, response.count);
+      },
+      error: () => this.changeSubloading(false),
     });
   }
 
   getSubtypes(params?: ListParams) {
-    const types = this.form.controls.types.value;
+    const _types = this.form.controls.types.value;
+    const types = _types.map(type => type.id);
+    this.changeSubloading(true);
     this.goodSubtypeService.getByManyIds({ types }, params).subscribe({
-      next: response =>
-        (this.subtypes = new DefaultSelect(response.data, response.count)),
+      next: response => {
+        this.changeSubloading(false);
+        this.subtypes = new DefaultSelect(response.data, response.count);
+      },
+      error: () => this.changeSubloading(false),
     });
   }
 
   getSsubtypes(params?: ListParams) {
-    const types = this.form.controls.types.value;
-    const subtypes = this.form.controls.subtypes.value;
+    const _types = this.form.controls.types.value;
+    const types = _types.map(type => type.id);
+    const _subtypes = this.form.controls.subtypes.value;
+    const subtypes = _subtypes.map(subtype => subtype.id);
+    this.changeSubloading(true);
     this.goodSsubtypeService
       .getByManyIds({ types, subtypes }, params)
       .subscribe({
-        next: response =>
-          (this.ssubtypes = new DefaultSelect(response.data, response.count)),
+        next: response => {
+          this.changeSubloading(false);
+          this.ssubtypes = new DefaultSelect(response.data, response.count);
+        },
+        error: () => this.changeSubloading(false),
       });
   }
 
   getSssubtypes(params?: ListParams) {
-    const types = this.form.controls.types.value;
-    const subtypes = this.form.controls.subtypes.value;
-    const ssubtypes = this.form.controls.ssubtypes.value;
+    const _types = this.form.controls.types.value;
+    const types = _types.map(type => type.id);
+    const _subtypes = this.form.controls.subtypes.value;
+    const subtypes = _subtypes.map(subtype => subtype.id);
+    const _ssubtypes = this.form.controls.ssubtypes.value;
+    const ssubtypes = _ssubtypes.map(ssubtype => ssubtype.id);
+    this.changeSubloading(true);
     this.goodSssubtypeService
       .getByManyIds({ types, subtypes, ssubtypes }, params)
       .subscribe({
-        next: response =>
-          (this.sssubtypes = new DefaultSelect(response.data, response.count)),
+        next: response => {
+          this.changeSubloading(false);
+          this.sssubtypes = new DefaultSelect(response.data, response.count);
+        },
+        error: () => this.changeSubloading(false),
       });
   }
 
   getClasif() {
     const params = new ListParams();
     params.limit = 1000;
-    const types = this.form.controls.types.value;
-    const subtypes = this.form.controls.subtypes.value;
-    const ssubtypes = this.form.controls.ssubtypes.value;
-    return this.goodSssubtypeService.getByManyIds(
-      { types, subtypes, ssubtypes },
-      params
-    );
+    const _types = this.form.controls.types.value;
+    const types = _types.map(type => type.id);
+    const _subtypes = this.form.controls.subtypes.value;
+    const subtypes = _subtypes.map(subtype => subtype.id);
+    const _ssubtypes = this.form.controls.ssubtypes.value;
+    const ssubtypes = _ssubtypes.map(ssubtype => ssubtype.id);
+    console.log({ types, subtypes, ssubtypes });
+    return this.goodSssubtypeService
+      .getByManyIds({ types, subtypes, ssubtypes }, params)
+      .pipe(tap(() => (TYPES_CLASIF.length = 0)));
   }
 
-  typesChange() {
+  typesChange(types: IGoodType[]) {
     TYPES_CLASIF.length = 0;
+    if (types.length == 0) {
+      return;
+    }
+    this.changeSubloading(true);
     this.getClasif().subscribe({
-      next: res => TYPES_CLASIF.push(res.data.map(t => t.numClasifGoods)),
+      next: res => {
+        this.changeSubloading(false);
+        TYPES_CLASIF.push(res.data.map(t => t.numClasifGoods));
+      },
+      error: () => this.changeSubloading(false),
     });
     this.getSubtypes();
   }
 
-  subtypesChange() {
+  subtypesChange(subtypes: IGoodSubType[]) {
     SUBTYPES_CLASIF.length = 0;
+    if (subtypes.length == 0) {
+      return;
+    }
+    this.changeSubloading(true);
     this.getClasif().subscribe({
-      next: res => SUBTYPES_CLASIF.push(res.data.map(t => t.numClasifGoods)),
+      next: res => {
+        this.changeSubloading(false);
+        SUBTYPES_CLASIF.push(res.data.map(t => t.numClasifGoods));
+      },
+      error: () => this.changeSubloading(false),
     });
     this.getSsubtypes();
   }
 
-  ssubtypesChange() {
+  ssubtypesChange(ssubtypes: IGoodSsubType[]) {
     SSSUBTYPES_CLASIF.length = 0;
+    if (ssubtypes.length == 0) {
+      return;
+    }
+    this.changeSubloading(true);
     this.getClasif().subscribe({
-      next: res => SSSUBTYPES_CLASIF.push(res.data.map(t => t.numClasifGoods)),
+      next: res => {
+        this.changeSubloading(false);
+        SSSUBTYPES_CLASIF.push(res.data.map(t => t.numClasifGoods));
+      },
+      error: () => this.changeSubloading(false),
     });
     this.getSssubtypes();
   }
+
+  sssubtypesChange(sssubtypes: IGoodSssubtype[]) {}
 
   selectFraction() {
     const modalConfig = {
@@ -143,8 +208,13 @@ export class ClasificationFilterComponent implements OnInit {
   }
 
   getTypesByClasif(clasifNum: number | string) {
+    this.changeSubloading(true);
     this.typesByClasificationService.getById(clasifNum).subscribe({
-      next: res => this.fillTypesByClasif(res),
+      next: res => {
+        this.changeSubloading(false);
+        this.fillTypesByClasif(res);
+      },
+      error: () => this.changeSubloading(false),
     });
   }
 

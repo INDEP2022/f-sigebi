@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { TabsetComponent } from 'ngx-bootstrap/tabs/tabset.component';
 
 @Component({
   selector: 'app-registration-request-form',
@@ -7,6 +8,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styles: [],
 })
 export class RegistrationRequestFormComponent implements OnInit {
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
+  docGoodRequestId: number = null;
   searchFileForm: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {}
@@ -50,5 +53,13 @@ export class RegistrationRequestFormComponent implements OnInit {
       goodNumber: [null],
       sender: [null],
     });
+  }
+
+  changeTab(event: any) {
+    console.log(event);
+    if (event.changeTab === true) {
+      this.docGoodRequestId = event.requestId;
+      this.staticTabs.tabs[2].active = true;
+    }
   }
 }

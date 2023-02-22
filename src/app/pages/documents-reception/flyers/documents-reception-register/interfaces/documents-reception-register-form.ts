@@ -27,7 +27,15 @@ export type DocumentsReceptionRegisterFieldsToListen = Partial<
 
 // constants
 export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsToListen =
-  ['identifier', 'wheelType'];
+  [
+    'identifier',
+    'wheelType',
+    'departamentDestinyNumber',
+    'affairKey',
+    'judgementType',
+    'stage',
+    'autorityNumber',
+  ];
 
 export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   wheelType: new FormControl<string>(null, Validators.required),
@@ -47,21 +55,14 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   dailyEviction: new FormControl<boolean | number>(false),
   addressGeneral: new FormControl<boolean | number>(false),
   stage: new FormControl<string>(null, Validators.required),
-  circumstantialRecord: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
-  preliminaryInquiry: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
-  criminalCase: new FormControl<string | number>(null, Validators.required),
-  protectionKey: new FormControl<string | number>(null, Validators.required),
+  stageName: new FormControl<string>(null),
+  circumstantialRecord: new FormControl<string | number>(null),
+  preliminaryInquiry: new FormControl<string | number>(null),
+  criminalCase: new FormControl<string | number>(null),
+  judgementType: new FormControl<string>(null),
+  protectionKey: new FormControl<string | number>(null),
   touchPenaltyKey: new FormControl<string | number>(null),
-  officeExternalKey: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
+  officeExternalKey: new FormControl<string>(null, Validators.required),
   externalOfficeDate: new FormControl<string | number | Date>(
     null,
     Validators.required
@@ -103,31 +104,30 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   subDelegationName: new FormControl<string>(null, Validators.required),
   estatusTramite: new FormControl<IManagementArea>(null),
   goodRelation: new FormControl<string>(null),
-  institutionNumber: new FormControl<string | number>(null),
+  institutionNumber: new FormControl<string | number>(200, Validators.required),
   officeNumber: new FormControl<string | number>(null),
   captureDate: new FormControl<string | number | Date>(null),
   wheelStatus: new FormControl<string>(null),
-  entryProcedureDate: new FormControl<string | number | Date>(null),
+  entryProcedureDate: new FormControl<string | number | Date>(new Date()),
   registerNumber: new FormControl<string | number>(null),
   originNumber: new FormControl<string | number>(null),
   dictumKey: new FormControl<string | number>(null),
-  reservado: new FormControl<string>(null),
+  reserved: new FormControl<string>(null),
+  autoscan: new FormControl<string>(null),
 };
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
   copyNumber: new FormControl<string | number>(1, Validators.required),
   copyuser: new FormControl<IUserAccessAreas>(null, Validators.required),
   persontype: new FormControl<string>('D', Validators.required),
-  flierNumber: new FormControl<string | number>(null, Validators.required),
-  registryNumber: new FormControl<string | number>(null, Validators.required),
+  flierNumber: new FormControl<string | number>(null),
 };
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
-  copyNumber: new FormControl<string | number>(2, Validators.required),
+  copyNumber: new FormControl<string | number>(2),
   copyuser: new FormControl<IUserAccessAreas>(null),
-  persontype: new FormControl<string>('C', Validators.required),
-  flierNumber: new FormControl<string | number>(null, Validators.required),
-  registryNumber: new FormControl<string | number>(null, Validators.required),
+  persontype: new FormControl<string>('C'),
+  flierNumber: new FormControl<string | number>(null),
 };
 
 export enum TaxpayerLabel {
@@ -146,3 +146,31 @@ export enum ProcedureStatus {
   pending = 'PENDIENTE',
   sent = 'ENVIADO',
 }
+
+export interface IGlobalFlyerRegistration {
+  gNoExpediente: number | null; //Puede ser null porque el endpoint no deberia requerirlo para crear expediente
+  noVolante: number | null;
+  bn: number | null;
+  gCreaExpediente: string | null;
+  gstMensajeGuarda: string | null;
+  gnuActivaGestion: number | null;
+  antecede: number | null;
+  pSatTipoExp: string | number | null;
+  pIndicadorSat: string | number | null;
+  gLastCheck: number | null;
+  vTipoTramite: number | null;
+  gCommit: string | number;
+  gOFFCommit: string | number;
+  noTransferente: string | number;
+}
+
+export interface IDocReceptionFlyersRegistrationParams {
+  pGestOk: number | null;
+  pNoVolante: number | null;
+  pSatTipoExp: string | null; //No necesario si existe global
+  pNoTramite: number | null;
+}
+
+export type FlyersRegistrationParamName = Partial<
+  keyof IDocReceptionFlyersRegistrationParams
+>;

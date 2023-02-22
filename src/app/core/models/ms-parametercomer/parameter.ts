@@ -16,3 +16,13 @@ export interface ISubBrands {
   idSubBrand: string;
   subBrandDescription: string;
 }
+
+export interface ITiieV1 {
+  id: number;
+  tiieDays: number;
+  tiieMonth: number;
+  tiieYear: number;
+  tiieAverage: number;
+  registryDate: string;
+  user: string;
+}
