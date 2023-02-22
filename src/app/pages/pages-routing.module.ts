@@ -25,15 +25,15 @@ const routes: Routes = [
   //     (await import('./documents-reception/documents-reception.module'))
   //       .DocumentsReceptionModule,
   // },
-  // {
-  //   path: 'administrative-processes',
-  //   loadChildren: async () =>
-  //     (
-  //       await import(
-  //         './administrative-processes/administrative-processes.module'
-  //       )
-  //     ).AdministrativeProcessesModule,
-  // },
+  {
+    path: 'administrative-processes',
+    loadChildren: async () =>
+      (
+        await import(
+          './administrative-processes/administrative-processes.module'
+        )
+      ).AdministrativeProcessesModule,
+  },
   // {
   //   path: 'master-file',
   //   loadChildren: async () =>
