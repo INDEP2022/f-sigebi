@@ -179,6 +179,42 @@
                 [dataObject]="object"></app-approval-assets-tabs>
               <!-- Fin -->
             </tab>
+            <tab heading="{{ tab3 }}">
+              <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
+              <app-address-transferor-tab
+                *ngIf="requestRegistration || approvalProcess"
+                [requestObject]="requestData"></app-address-transferor-tab>
+              <!-- fin -->
+              <!-- cumplimiento de verificacion y clasificacion de bienes -->
+              <app-expedients-tabs
+                *ngIf="
+                  complianceVerifi ||
+                  classifyAssets ||
+                  validateDocument ||
+                  notifyClarifiOrImpropriety
+                "></app-expedients-tabs>
+              <!-- fin -->
+            </tab>
+            <tab
+              heading="{{ tab4 }}"
+              *ngIf="(requestRegistration || approvalProcess) && !isExpedient">
+              <app-registration-request-form
+                *ngIf="requestRegistration"></app-registration-request-form>
+              <!-- Aprovacion de de solicitudes -->
+              <app-classification-assets-tab
+                *ngIf="approvalProcess"
+                [dataObject]="object"
+                [typeDoc]="'approval-process'"></app-classification-assets-tab>
+              <!-- Fin -->
+            </tab>
+            <tab
+              heading="{{ tab5 }}"
+              *ngIf="requestRegistration || approvalProcess">
+              <app-expedients-tabs
+                *ngIf="
+                  requestRegistration || approvalProcess
+                "></app-expedients-tabs>
+            </tab>
           </tabset>
         </div>
       </form>

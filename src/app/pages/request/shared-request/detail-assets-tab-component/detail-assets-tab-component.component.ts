@@ -58,7 +58,7 @@ export class DetailAssetsTabComponentComponent
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
-  @Input() detailAssets: ModelForm<any>; // bienes
+  @Input() detailAssets: ModelForm<any>; // bienes ModelForm
   @Input() domicilieObject: IDomicilies; //
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;

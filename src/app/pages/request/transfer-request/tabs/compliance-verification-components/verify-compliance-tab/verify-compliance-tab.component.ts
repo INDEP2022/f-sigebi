@@ -80,7 +80,7 @@ export class VerifyComplianceTabComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
 
-  detailArray: any;
+  detailArray: ModelForm<any>;
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
 
@@ -92,7 +92,6 @@ export class VerifyComplianceTabComponent
     private genericService: GenericService
   ) {
     super();
-    this.detailArray = new Array();
   }
 
   ngOnInit(): void {
@@ -242,7 +241,13 @@ export class VerifyComplianceTabComponent
     console.log(event);
   } */
 
-  selectGood(event: any) {}
+  selectGood(event: any) {
+    console.log('good', event);
+    //this.detailArray.patchValue(event.data);
+    //console.log(this.detailArray.getRawValue());
+
+    //requestObject;
+  }
 
   confirm() {
     if (
