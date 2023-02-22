@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 import {
   DynamicFilterLike,
   FilterParams,
+  ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -26,11 +27,16 @@ export class SelectListFilteredModalComponent
   selectedRow: any = null;
   columns: any[] = [];
   totalItems: number = 0;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   title: string = ''; // Input requerido al llamar el modal
   columnsType: any = {}; // Input requerido al llamar el modal
   service: any; // Input requerido al llamar el modal
-  dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
+  dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal por filterParams
+  dataObservableListParamsFn: (
+    self: any,
+    params: ListParams
+  ) => Observable<any>; // Input requerido al llamar el modal por listParams
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar filtros sin usar busqueda
   @Output() onSelect = new EventEmitter<any>();
@@ -47,27 +53,42 @@ export class SelectListFilteredModalComponent
       columns: { ...this.columnsType },
     };
     this.addFilters();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    if (this.dataObservableFn) {
+      this.filterParams
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    } else if (this.dataObservableListParamsFn) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    }
+
+    console.log(this.settings);
   }
 
   getData(): void {
     this.loading = true;
-    this.dataObservableFn(
-      this.service,
-      this.params.getValue().getParams()
-    ).subscribe({
-      next: data => {
-        this.columns = data.data;
-        this.totalItems = data.count;
-        this.loading = false;
-      },
-      error: err => {
-        this.loading = false;
-        this.onLoadToast('error', 'Error', err);
-      },
-    });
+    let servicio = this.dataObservableFn
+      ? this.dataObservableFn(
+          this.service,
+          this.filterParams.getValue().getParams()
+        )
+      : this.dataObservableListParamsFn
+      ? this.dataObservableListParamsFn(this.service, this.params.getValue())
+      : null;
+    if (servicio) {
+      servicio.subscribe({
+        next: data => {
+          this.columns = data.data;
+          this.totalItems = data.count;
+          this.loading = false;
+        },
+        error: err => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', err);
+        },
+      });
+    }
   }
 
   addFilters() {
@@ -76,7 +97,7 @@ export class SelectListFilteredModalComponent
       this.filters.forEach(f => {
         if (f.value !== null) params.addFilter(f.field, f.value, f?.operator);
       });
-      this.params.next(params);
+      this.filterParams.next(params);
     }
   }
 
@@ -84,7 +105,16 @@ export class SelectListFilteredModalComponent
     this.modalRef.hide();
   }
 
+  selectEvent(event: any) {
+    if (this.settings.selectMode === 'multi') {
+      this.selectRow(event.selected);
+    } else {
+      this.selectRow(event.data);
+    }
+  }
+
   selectRow(row: any) {
+    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
   }

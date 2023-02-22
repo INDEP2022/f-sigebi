@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
@@ -82,7 +82,10 @@ export class RegistrationOfInterestComponent
     super();
   }
   ngOnInit(): void {
-    this.getTiie();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getTiie());
+    this.settings1.actions.delete = true;
   }
 
   getTiie() {
@@ -92,7 +95,7 @@ export class RegistrationOfInterestComponent
         this.tiiesList = data.data;
         console.log(this.tiiesList);
         // this.cats = data;
-        // this.totalItems = response.count;
+        this.totalItems = data.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -112,5 +115,27 @@ export class RegistrationOfInterestComponent
         ignoreBackdropClick: true,
       }
     );
+  }
+
+  showDeleteAlert(tiie: ITiieV1) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.parameterTiieService.remove(tiie.id).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Registro eliminado', '');
+            this.getTiie();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.loading = false;
+          },
+        });
+      }
+    });
   }
 }

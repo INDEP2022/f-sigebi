@@ -1,4 +1,8 @@
 export const COLUMNSLIST = {
+  accountNumber: {
+    title: 'No Cuenta',
+    sort: false,
+  },
   cveBank: {
     title: 'Clave Banco',
     sort: false,

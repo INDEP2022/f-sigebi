@@ -24,6 +24,7 @@ export class BanksSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() bankField: string = 'bank';
   @Input() showBanks: boolean = true;
+  @Input() labelName: string = 'Bancos';
   @Output() nameBank: EventEmitter<string> = new EventEmitter<string>();
 
   params = new BehaviorSubject<ListParams>(new ListParams());
