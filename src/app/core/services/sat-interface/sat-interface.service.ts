@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
+import { IDinamicQueryParams } from '../../models/ms-interfacesat/ms-interfacesat.interface';
 import { ICountResponse } from '../../models/operations/count-response.model';
 
 interface ISatTransferLength {
   sat_no_partida: number;
 }
-
 interface ISatCountOffie {
   asunto: number;
 }
@@ -63,7 +63,7 @@ export class SatInterfaceService {
       );
   }
 
-  getSatTransfer(body: any) {
+  getSatTransfer(body: IDinamicQueryParams | any) {
     return this.satInterfaceRepository.create(
       'interfacesat/transfersat-v3/dynamicQuery',
       body

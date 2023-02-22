@@ -4,7 +4,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export class GOOD_CAPTURE_FORM {
   noPartida = new FormControl<string>(null, [
-    Validators.minLength(8),
+    Validators.minLength(6),
     Validators.maxLength(8),
     onlyNumbers(),
   ]);
@@ -23,15 +23,17 @@ export class GOOD_CAPTURE_FORM {
   cantidad = new FormControl<number>(null, [
     Validators.required,
     Validators.min(1),
+    Validators.maxLength(18),
   ]);
   destino = new FormControl(null, [Validators.required]);
   estadoConservacion = new FormControl(null);
   noBien = new FormControl({ value: null, disabled: true });
-  valRef = new FormControl(null);
+  valRef = new FormControl(null, [Validators.min(1), Validators.maxLength(18)]);
   identifica = new FormControl(null, [Validators.required]);
   descripcion = new FormControl(null, [
     Validators.required,
     Validators.pattern(STRING_PATTERN),
+    Validators.maxLength(1250),
   ]);
   fichaNumerario = new FormControl(null);
   captura = new FormControl('');
@@ -46,10 +48,10 @@ export class GOOD_CAPTURE_FORM {
   ciudad = new FormControl(null);
   localidad = new FormControl(null);
   flyerNumber = new FormControl<string | number>(null);
-  observaciones = new FormControl<string>(
-    null,
-    Validators.pattern(STRING_PATTERN)
-  );
+  observaciones = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+    Validators.maxLength(600),
+  ]);
   esEmpresa = new FormControl<boolean>(null);
   noExpediente = new FormControl<number>(null);
 }

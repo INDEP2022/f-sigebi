@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { INoCityByAsuntoSAT } from 'src/app/core/models/catalogs/authority.model';
 import { environment } from 'src/environments/environment';
 import { ListParams } from './interfaces/list-params';
 import { IRepository } from './interfaces/repository.interface';
@@ -194,5 +195,12 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}`, formData);
+  }
+  getCityByAsuntoSat(
+    route: string,
+    id: number | string
+  ): Observable<INoCityByAsuntoSAT> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<INoCityByAsuntoSAT>(`${fullRoute}/${id}`);
   }
 }

@@ -1,5 +1,6 @@
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 export interface INotification {
   wheelNumber: number;
@@ -29,7 +30,7 @@ export interface INotification {
   subDelDestinyNumber: number;
   departamentDestinyNumber: number;
   officeNumber: number;
-  minpubNumber: number;
+  minpubNumber: number | IMinpub;
   cityNumber: number;
   courtNumber: number;
   registerNumber: number;
