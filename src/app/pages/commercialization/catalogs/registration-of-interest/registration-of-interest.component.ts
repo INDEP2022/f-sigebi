@@ -95,7 +95,7 @@ export class RegistrationOfInterestComponent
         this.tiiesList = data.data;
         console.log(this.tiiesList);
         // this.cats = data;
-        // this.totalItems = response.count;
+        this.totalItems = data.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
