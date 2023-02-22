@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -5,13 +6,14 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-numerary-operator',
   templateUrl: './numerary-operator.component.html',
   styles: [],
 })
-export class NumeraryOperatorComponent implements OnInit {
+export class NumeraryOperatorComponent extends BasePage implements OnInit {
   public numeraryForm: FormGroup;
 
   public get startedDate(): AbstractControl {
@@ -21,7 +23,9 @@ export class NumeraryOperatorComponent implements OnInit {
     return this.numeraryForm.get('finishedDate');
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private datePipe: DatePipe) {
+    super();
+  }
 
   ngOnInit(): void {
     this.buildForm();
@@ -35,6 +39,29 @@ export class NumeraryOperatorComponent implements OnInit {
   }
 
   public send(): void {
+    this.loading = true;
     console.log(this.numeraryForm.value);
+    // const pdfurl =
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGENADBNUMERARIOP.pdf?PARAMFORM=NO&PF_INI=` +
+    //   this.datePipe.transform(
+    //     this.numeraryForm.controls['startedDate'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PF_FIN=` +
+    //   this.datePipe.transform(
+    //     this.numeraryForm.controls['finishedDate'].value,
+    //     'dd-mm-yyyy'
+    //   );
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    let params = { ...this.numeraryForm.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }
