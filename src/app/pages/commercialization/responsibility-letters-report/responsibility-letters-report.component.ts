@@ -57,18 +57,9 @@ export class ResponsibilityLettersReportComponent
       estado: [null, [Validators.required]],
       cp: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      parrafo1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      parrafo2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      parrafo3: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      parrafo1: [null, [Validators.pattern(STRING_PATTERN)]],
+      parrafo2: [null, [Validators.pattern(STRING_PATTERN)]],
+      parrafo3: [null, [Validators.pattern(STRING_PATTERN)]],
       bienes: [null],
     });
   }
@@ -98,8 +89,8 @@ export class ResponsibilityLettersReportComponent
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
 
-    //const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERCARTARESP.pdf?DESTYPE=${params.DESTYPE}&DOMICILIO=${params.DOMICILIO}&ID_LOTE=${params.ID_LOTE}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&PARRAFO2=${params.PARRAFO2}&PARRAFO3=${params.PARRAFO3}`;
+    //const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);

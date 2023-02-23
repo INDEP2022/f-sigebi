@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
+import { IDelegation } from '../../models/catalogs/delegation.model';
+import { ISubdelegation } from '../../models/catalogs/subdelegation.model';
 @Injectable({
   providedIn: 'root',
 })
 export class ReportService {
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   /**
    * @deprecated Checar como se usara esta parte
@@ -38,6 +40,14 @@ export class ReportService {
       `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?NO_OFICIO=${params}`
     );
   }
-
-
+  getRecepcion(
+    PN_DELEG: IDelegation,
+    PN_SUBDEL: ISubdelegation,
+    PF_MES: string,
+    PF_ANIO: string
+  ) {
+    return this.httpClient.get(
+      `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${PN_DELEG}&PN_SUBDEL=${PN_SUBDEL}&PF_MES=${PF_MES}&PF_ANIO=${PF_ANIO}`
+    );
+  }
 }
