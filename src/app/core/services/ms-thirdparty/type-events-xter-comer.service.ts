@@ -28,4 +28,13 @@ export class TypeEventXterComerService extends HttpService {
     const route = `${ThirdPartyEndpoints.TypeEventsXterComer}/${id}/4`;
     return this.get<IListResponse<ITypeEventXtercomer>>(route);
   }
+
+  update(id1: string | number, id2: string | number, model: ITypeEventXtercomer) {
+    const route = `${ThirdPartyEndpoints.TypeEventsXterComer}/${id1}/${id2}`;
+    return this.put(route, model);
+  }
+
+  create(model: ITypeEventXtercomer) {
+    return this.post(ThirdPartyEndpoints.TypeEventsXterComer, model);
+  }
 }

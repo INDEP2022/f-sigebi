@@ -7,22 +7,31 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-            label="Identificador 1"
+            label="Identificador 3ro Comer"
             [control]="typeEvent3erForm.get('thirdPartyId')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="thirdPartyId" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            label="Identificador 12"
             [control]="typeEvent3erForm.get('typeEventId')">
-            <input
-              type="text"
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="typeEvent3erForm"
+              control="typeEventId"
+              [data]="typeEventsSelect"
+              value="id"
+              bindLabel="description"
+              label="Identificador Tipo Evento"
+              (fetchItems)="getTypeEvents($event)">
+            </ngx-select>
+            <!-- <input
+              type="number"
               class="form-control"
-              formControlName="typeEventId" />
+              formControlName="typeEventId" /> -->
           </form-field>
         </div>
       </div>
