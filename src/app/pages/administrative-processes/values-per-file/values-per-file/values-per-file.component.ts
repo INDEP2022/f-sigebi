@@ -45,7 +45,7 @@ export class ValuesPerFileComponent extends BasePage implements OnInit {
   public send(): void {
     console.log(this.form.value);
     this.loading = true;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERADBNUMEOTRMON.pdf?PARAMFORM=NO&PARA_FEC_DESDE=` +
+    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERADBNUMVALORES.pdf?PARAMFORM=NO&PARA_FEC_DESDE=` +
     //   this.datePipe.transform(
     //     this.form.controls['from'].value,
     //     'dd-mm-yyyy'
