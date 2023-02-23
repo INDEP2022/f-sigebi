@@ -12,6 +12,7 @@ export enum ENDPOINT_LINKS {
   ClaimStatus = 'catalog/claims-status',
   Clarification = 'catalog/clarification',
   Court = 'catalog/court',
+  CourtByCity = 'catalog/court-by-city',
   Customer = 'catalog/', // ? Checar si se implementa este catalogo
   DeductiveVerification = 'catalog/deductive-verification',
   Deductive = 'catalog/deductive',

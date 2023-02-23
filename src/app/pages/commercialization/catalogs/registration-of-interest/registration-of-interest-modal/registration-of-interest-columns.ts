@@ -5,27 +5,32 @@ export const COUNT_TIIE_COLUMNS = {
     sort: false,
   },
   tiieDays: {
-    title: 'Tiie Days',
+    title: 'Dias Tiie',
     type: 'number',
     sort: false,
   },
   tiieAverage: {
-    title: 'Tiie Average',
+    title: 'Promedio Tiie',
     type: 'number',
     sort: false,
   },
   tiieMonth: {
-    title: 'Tiie Month',
+    title: 'Mes Tiie',
+    type: 'number',
+    sort: false,
+  },
+  tiieYear: {
+    title: 'Año Tiie',
     type: 'number',
     sort: false,
   },
   registryDate: {
-    title: 'Registry Date',
+    title: 'Fecha de registro',
     type: 'string',
     sort: false,
   },
   user: {
-    title: 'User',
+    title: 'Usuario',
     type: 'string',
     sort: false,
   },

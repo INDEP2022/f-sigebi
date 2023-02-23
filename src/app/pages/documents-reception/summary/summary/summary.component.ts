@@ -82,85 +82,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       PC_ENTFED: this.flyersForm.controls['federative'].value,
       DEPARTAMENTO: this.flyersForm.controls['department'].value,
     };
-    /*
-        let entidadades = [
-      {
-        id: 1,
-        etapaEdo: 1252,
-        cveState: 'Nayarit',
-        description: 'Nayarit',
-        addressOffice: 'Nayarit',
-        regionalDelegate: 'Nayarit',
-        city: 'Nayarit',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-      {
-        id: 2,
-        etapaEdo: 1252,
-        cveState: 'Nuevo León',
-        description: 'Nuevo León',
-        addressOffice: 'Nuevo León',
-        regionalDelegate: 'Nuevo León',
-        city: 'Nuevo León',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-      {
-        id: 3,
-        etapaEdo: 1252,
-        cveState: 'Oaxaca',
-        description: 'Oaxaca',
-        addressOffice: 'Oaxaca',
-        regionalDelegate: 'Oaxaca',
-        city: 'Oaxaca',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-      {
-        id: 4,
-        etapaEdo: 1252,
-        cveState: 'Sinaloa',
-        description: 'Sinaloa',
-        addressOffice: 'Sinaloa',
-        regionalDelegate: 'Sinaloa',
-        city: 'Sinaloa',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-    ];
-        let params = {
-          PN_DELEG: this.flyersForm.controls['delegation'].value,
-          PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-          PF_FECINI: this.flyersForm.controls['from'].value,
-          PF_FECFIN: this.flyersForm.controls['to'].value,
-          PC_ENTFED: this.flyersForm.controls['entidad'].value,
-          PARAMFORM: this.flyersForm.controls['includeArea'].value,
-          PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
-          PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
-          PN_DEPARTAMENTO: this.flyersForm.controls['area'].value,
-        };
-        */
+
     const start = new Date(this.flyersForm.get('PF_FECINI').value);
     const end = new Date(this.flyersForm.get('PF_FECFIN').value);
 
@@ -185,14 +107,13 @@ export class SummaryComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
-
-    //const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRESUMENDIAA.pdf?PN_DELEG=${params.PN_DELEG}&PN_SUBDEL=${params.PN_SUBDEL}&PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${params.PN_SUBDELEGACION}&PF_FECINI=${params.PF_FECINI}&PF_FECFIN=${params.PF_FECFIN}&PC_ENTFED=${params.PC_ENTFED}&DEPARTAMENTO=${params.DEPARTAMENTO}`;
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
 
-    window.open(pdfurl, 'RGEROFPRESUMENDIA.pdf');
+    window.open(pdfurl, 'RGEROFPRESUMENDIAA.pdf');
     this.loading = false;
     this.cleanForm();
   }

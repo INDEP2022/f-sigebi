@@ -19,3 +19,7 @@ export interface IIssuingInstitution {
   numClasif: number;
   numRegister: number;
 }
+
+export interface IOTClaveEntityFederativeByAsuntoSAT {
+  otclave: string;
+}

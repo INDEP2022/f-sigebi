@@ -52,6 +52,8 @@ const ERROR_CITY_ASUNTO_SAT = (asunto_sat: string) =>
   `No se encontro la clave de la ciudad filtrada por el asunto SAT: ${asunto_sat}.`;
 const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
   `No se encontro SAT_CVE_UNICA de: ${descripcion}.`;
+const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
+  `No se encontro la institución emisora: ${cveIssuing}.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -80,4 +82,5 @@ export {
   ERROR_EXPEDIENTE,
   ERROR_CITY_ASUNTO_SAT,
   ERROR_GET_CLAVE_SAT,
+  ERROR_ISSUING_INSTITUTION,
 };
