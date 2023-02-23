@@ -51,7 +51,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IProceduremanagement } from '../../../../core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
+import { DocReceptionTrackRecordsModalComponent } from './components/doc-reception-track-records-modal/doc-reception-track-records-modal.component';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
+import { DOCUMENTS_RECEPTION_TRACK_RECORDS_TEST_DATA } from './constants/documents-reception-register-default-values';
 import {
   DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS,
   DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS,
@@ -99,7 +101,6 @@ export class DocumentsReceptionRegisterComponent
   initialDate: Date = new Date();
   maxDate: Date = new Date();
   taxpayerLabel: TaxpayerLabel = TaxpayerLabel.Taxpayer;
-  // transfers = new DefaultSelect();
   identifiers = new DefaultSelect<IIdentifier>();
   subjects = new DefaultSelect<IAffair>();
   cities = new DefaultSelect<ICity>();
@@ -895,6 +896,28 @@ export class DocumentsReceptionRegisterComponent
     this.modalService.show(DocumentsReceptionFlyerSelectComponent, modalConfig);
   }
 
+  showTrackRecords(trackRecords?: INotification[]) {
+    this.openModalTrackRecords({
+      trackRecords: DOCUMENTS_RECEPTION_TRACK_RECORDS_TEST_DATA,
+    });
+  }
+
+  openModalTrackRecords(
+    context?: Partial<DocReceptionTrackRecordsModalComponent>
+  ) {
+    const modalRef = this.modalService.show(
+      DocReceptionTrackRecordsModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) this.captureGoods(data);
+    });
+  }
+
   sendFlyer() {
     this.alertQuestion(
       'question',
@@ -1369,11 +1392,15 @@ export class DocumentsReceptionRegisterComponent
 
   save() {}
 
-  captureGoods() {
+  goodsCaptureCheck() {
     this.prepareFormData();
     //TODO: establecer valor variable global con ngrx
     this.globals.bn = 1;
     //TODO: Usar las consultas de PUP_PREPARA_NOTIFICACIONES para abrir modal de antecedentes
+  }
+
+  captureGoods(trackRecord: INotification) {
+    console.log(trackRecord);
     //TODO: Incluir en el if si el expediente de antecedentes seleccionado no es nulo
     //y asignarlo a la variable global
     if (this.formControls.expedientNumber.value != null) {
@@ -1381,5 +1408,7 @@ export class DocumentsReceptionRegisterComponent
         this.formControls.expedientNumber.value
       );
     }
+    //TODO: Llenar Tmp_Notificaciones y Tmp_Expedientes
+    //TODO: Consultar para decidir si mandar a Captura de Bienes o Captura Masiva
   }
 }

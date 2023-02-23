@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
+import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { ProcedureManagementEndPoints } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -8,6 +9,7 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IGood } from 'src/app/core/models/catalogs/goods.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
@@ -134,6 +136,13 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     const route = `${partials[1]}/transferring-levels-view`;
     return this.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
+  getGoods(params?: string): Observable<IListResponse<IGood>> {
+    this.microservice = GoodEndpoints.Good;
+    return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params).pipe(
       tap(() => (this.microservice = ''))
     );
   }

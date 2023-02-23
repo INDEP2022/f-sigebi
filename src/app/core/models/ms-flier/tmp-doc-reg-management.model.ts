@@ -1,0 +1,55 @@
+import { IAffair } from 'src/app/core/models/catalogs/affair.model';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+
+export interface ICopiesxFlier {
+  copyNumber: string;
+  copyuser: string;
+  persontype: Persontype;
+  flierNumber: string;
+  registryNumber?: string;
+  notification?: INotification;
+}
+
+enum Persontype {
+  D = 'D',
+  C = 'C',
+}
+
+export interface ITmpGestRegDoc {
+  description: null | string;
+  affair: IAffair | null;
+  id: number;
+  senderExt: null | string;
+  affairKey: null | string;
+  typeProcedure: null | string;
+  cityNumber: null | string | number;
+  stationNumber: null | string | number;
+  onlyKey: null | string;
+  taxpayerNumber: null | string | number;
+  courtNumber: null | string | number;
+  authorityNumber: null | string | number;
+  typeJudgment: null | string | number;
+  officeNumber: null | string;
+  entfedKey: null | string | number;
+  officeExternalDate: null | string;
+  transfereeFinalNumber: null | string | number;
+  affairSijNumber: null | string | number;
+  affairDijpNumber: null | string | number;
+  city: null | string;
+  transferent: null | string;
+  station: null | string;
+  authority: null | string;
+  status: null | string;
+}
+
+export interface INotificationDetailFunctionData {
+  notif_det: string;
+}
+
+export interface IExpedientDetailFunctionData {
+  exp_det: string;
+}
+
+export interface IDataAttributeGoodFunctionData {
+  val_bien: string;
+}
