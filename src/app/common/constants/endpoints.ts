@@ -73,6 +73,7 @@ export enum ENDPOINT_LINKS {
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
   Proeficient = 'catalog/proficient',
+  Protection = 'catalog/protection',
   QAccumulatedGoods = 'catalog/q-accumulated-goods',
   Question = 'catalog/question',
   RAsuntDic = 'catalog/r-asunt-dic',
