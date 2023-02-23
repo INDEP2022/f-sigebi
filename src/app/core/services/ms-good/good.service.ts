@@ -4,6 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
 import { IGood } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 
@@ -95,5 +96,9 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.status=PDS`;
     return this.get<IListResponse<IGood>>(route, params);
+  }
+  updateTracked(id: string | number, good: ITrackedGood) {
+    const route = `${GoodEndpoints.Good}/${id}`;
+    return this.put(route, good);
   }
 }

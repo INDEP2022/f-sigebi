@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -24,7 +25,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   goods: IGood[] = [];
   goodsNotChange: number[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
-
+  data: LocalDataSource = new LocalDataSource();
   //Data Table
 
   get radio() {
@@ -74,30 +75,26 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         title: 'Boveda',
         sort: false,
       },
-      /*       check: {
-        title: '',
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            if (data.toggle) {
-              goodCheck.push(data);
-            } else {
-              goodCheck = goodCheck.filter(
-                valor => valor.row.id != data.row.id
-              );
-            }
-          });
-        },
-        sort: true,
-      }, */
     };
     this.settings.actions.delete = true;
     this.settings.actions.edit = false;
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.buildForm();
+    this.$trackedGoods.subscribe({
+      next: response => {
+        response.forEach(good => {
+          this.getGoodByID(good.goodNumber);
+        });
+        this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+        this.loading = false;
+      },
+    });
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(() => this.getGood());
@@ -119,7 +116,6 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     try {
       this.goods.forEach(good => {
         let valid: boolean = true;
-        /* const good: IGood = item.row; */
         if (this.radio.value === 'A') {
           if (Number(good.type) === 5 && Number(good.subTypeId) === 16) {
             this.goodsNotChange.push(Number(good.id));
@@ -144,6 +140,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           this.goodServices.update(good.id, good).subscribe({
             next: response => {
               console.log('response', response);
+              this.add();
             },
           });
         }
@@ -153,8 +150,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         'Exito',
         'Se ha cambiado la ubicación de los bienes seleccionados'
       );
+      this.loading = false;
     } catch (error) {
       console.log(error);
+      this.loading = false;
       this.onLoadToast(
         'error',
         'ERROR',
@@ -176,20 +175,24 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
 
   deleteGood(good: IGood) {
-    console.log(good);
     this.goods = this.goods.filter(item => item.id != good.id);
+    this.add();
   }
   /////////// Temporal
-  getGood() {
-    this.goodServices.getAll(this.params.getValue()).subscribe({
+  getGoodByID(idGood: number | string) {
+    this.goodServices.getById(idGood).subscribe({
       next: response => {
-        this.goods = response.data;
-        console.log(response.data);
+        this.goods.push(response);
+        this.add();
       },
       error: err => {
         console.log(err);
       },
     });
+  }
+  add() {
+    this.data.load(this.goods);
+    this.data.refresh();
   }
 
   goToGoodTracker() {

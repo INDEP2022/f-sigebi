@@ -26,4 +26,13 @@ export class ComiXThirdService extends HttpService {
     const route = `${ThirdPartyEndpoints.ComiXthird}/id/${id}`;
     return this.get<IListResponse<IComiXThird>>(route);
   }
+
+  update(id: string | number, model: IComiXThird) {
+    const route = `${ThirdPartyEndpoints.ComiXthird}/id/${id}`;
+    return this.put(route, model);
+  }
+
+  create(model: IComiXThird) {
+    return this.post(ThirdPartyEndpoints.ComiXthird, model);
+  }
 }
