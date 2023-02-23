@@ -21,4 +21,15 @@ export class ThirdPartyService extends HttpService {
       params
     );
   }
+
+  update(id: string | number, model: IThirdParty) {
+    const route = `${ThirdPartyEndpoints.ThirdParty}/id/${id}`;
+    return this.put(route, model);
+  }
+
+  create(model: IThirdParty) {
+    return this.post(ThirdPartyEndpoints.ThirdParty, model);
+  }
+
+
 }

@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="thirdPartyForm.get('id')" label="ID">
-            <input type="text" class="form-control" formControlName="id" />
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -24,10 +24,15 @@
           <form-field
             [control]="thirdPartyForm.get('calculationRoutine')"
             label="Rutina Cálculo">
-            <input
-              type="text"
+            <ng-select
+              formControlName="calculationRoutine"
+              [searchable]="false"
               class="form-control"
-              formControlName="calculationRoutine" />
+              [clearable]="false">
+              <ng-option value="COMI_RANGO">COMI_RANGO</ng-option>
+              <ng-option value="COMI_RANGOESP">COMI_RANGOESP</ng-option>
+              <ng-option value="COMI_TOTAL">COMI_TOTAL</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
@@ -37,7 +42,7 @@
             [control]="thirdPartyForm.get('userAttempts')"
             label="intentos">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="userAttempts" />
           </form-field>
@@ -45,7 +50,7 @@
         <div class="col-md-2">
           <form-field
             [control]="thirdPartyForm.get('userBlocked')"
-            label="intentos">
+            label="Bloqueos">
             <input
               type="text"
               class="form-control"
