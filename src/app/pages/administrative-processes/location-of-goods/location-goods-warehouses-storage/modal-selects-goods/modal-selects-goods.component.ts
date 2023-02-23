@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 
 /* let goodCheck: any[] = []; */
 
@@ -20,6 +23,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   form: FormGroup;
   goods: IGood[] = [];
   goodsNotChange: number[] = [];
+  $trackedGoods = this.store.select(getTrackedGoods);
+
   //Data Table
 
   get radio() {
@@ -35,7 +40,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   constructor(
     private bsModalRef: BsModalRef,
     private fb: FormBuilder,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private router: Router,
+    private store: Store
   ) {
     super();
     this.settings.columns = {
@@ -91,9 +98,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGood());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getGood());
   }
 
   returnModal() {
@@ -182,6 +189,13 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
       },
+    });
+  }
+
+  goToGoodTracker() {
+    this.bsModalRef.hide();
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBUBICABIEN' },
     });
   }
 }

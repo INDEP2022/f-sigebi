@@ -26,14 +26,18 @@
       <input type="text" formControlName="certificate" class="form-control" />
     </form-field>
 
-    <form-field
-      [control]="form.get('receptionStatus')"
-      label="Estatus"
-      class="col-md-3">
-      <input
-        type="text"
-        formControlName="receptionStatus"
-        class="form-control" />
+    <form-field [control]="form.get('receptionStatus')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        (change)="statusChange()"
+        [multiple]="true"
+        [searchOnInit]="true"
+        control="receptionStatus"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
     </form-field>
   </div>
 

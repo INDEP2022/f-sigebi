@@ -11,9 +11,11 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 ///Components
+import { StoreModule } from '@ngrx/store';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SafeSharedComponent } from 'src/app/@standalone/shared-forms/safe-shared/safe-shared.component';
 import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
+import { trackedGoodsReducer } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.reducer';
 import { PaLgMLocationGoodsWarehousesStorageRoutingModule } from './location-goods-warehouses-storage-routing.module';
 import { LocationGoodsWarehousesStorageComponent } from './location-goods-warehouses-storage/location-goods-warehouses-storage.component';
 import { ModalSelectsGoodsComponent } from './modal-selects-goods/modal-selects-goods.component';
@@ -38,6 +40,7 @@ import { ModalSelectsGoodsComponent } from './modal-selects-goods/modal-selects-
     GoodsTypesSharedComponent,
     WarehouseSharedComponent,
     SafeSharedComponent,
+    StoreModule.forFeature('trackedGoods', trackedGoodsReducer),
   ],
 })
 export class PaLgMLocationGoodsWarehousesStorageModule {}

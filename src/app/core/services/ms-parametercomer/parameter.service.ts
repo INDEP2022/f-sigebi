@@ -29,8 +29,8 @@ export class ParameterModService extends HttpService {
     return this.post(this.endpoint, tpenalty);
   }
 
-  update(id: string | number, tpenalty: IParameter) {
-    const route = `${this.endpoint}/id/${id}`;
+  update(tpenalty: IParameter) {
+    const route = `${this.endpoint}`;
     return this.put(route, tpenalty);
   }
 

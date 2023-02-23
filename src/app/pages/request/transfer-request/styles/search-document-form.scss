@@ -10,6 +10,22 @@ a.text-color:active {
     text-align: center;
   }
 
+  .nameOfOwner {
+    min-width: 25rem;
+  }
+
+  .holderCharge {
+    min-width: 25rem;
+  }
+
+  .phoneOfOwner {
+    min-width: 20rem;
+  }
+
+  .emailOfOwner {
+    min-width: 25rem;
+  }
+
   .transferentName {
     min-width: 25rem;
   }
@@ -32,5 +48,29 @@ a.text-color:active {
 
   .observations {
     min-width: 31rem;
+  }
+
+  .uniqueKey {
+    min-width: 20rem;
+  }
+
+  .fileNumber {
+    min-width: 16rem;
+  }
+
+  .requestId {
+    min-width: 15rem;
+  }
+
+  .goodDescription {
+    min-width: 35rem;
+  }
+
+  .physicalStatusName {
+    min-width: 13rem;
+  }
+
+  .fractionName {
+    min-width: 30rem;
   }
 }

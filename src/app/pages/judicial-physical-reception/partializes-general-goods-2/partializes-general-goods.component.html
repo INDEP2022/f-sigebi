@@ -56,10 +56,17 @@
               [form]="form"
               [data]="itemsSelect"></ngx-select>
           </form-field> -->
-          <app-goods-status-shared
+          <app-select-form
+            [form]="form"
+            formField="estatus"
+            label="Estatus"
+            value="status"
+            [getListObservable]="goodStatusData"
+            [(params)]="paramsStatus"></app-select-form>
+          <!-- <app-goods-status-shared
             [form]="form"
             labelStatus="Estatus"
-            goodStatusField="estatus"></app-goods-status-shared>
+            goodStatusField="estatus"></app-goods-status-shared> -->
         </div>
         <div class="col-md-4">
           <form-field

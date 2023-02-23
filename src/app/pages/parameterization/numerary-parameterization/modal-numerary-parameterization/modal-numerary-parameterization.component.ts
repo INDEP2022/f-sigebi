@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ICategorizationAutomNumerary } from 'src/app/core/models/catalogs/numerary-categories-model';
 import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -17,7 +18,8 @@ export class ModalNumeraryParameterizationComponent
 {
   title: string = 'TASA';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
+  form: ModelForm<ICategorizationAutomNumerary>;
+
   allotment: ICategorizationAutomNumerary;
   @Output() refresh = new EventEmitter<true>();
 
@@ -47,6 +49,7 @@ export class ModalNumeraryParameterizationComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      registerNumber: [null],
     });
     if (this.allotment != null) {
       this.edit = true;
@@ -69,7 +72,7 @@ export class ModalNumeraryParameterizationComponent
   update() {
     this.loading = true;
     this.numeraryParameterizationAutomService
-      .update(this.form.controls['typeProceeding'].value, this.form.value)
+      .update6(this.form.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

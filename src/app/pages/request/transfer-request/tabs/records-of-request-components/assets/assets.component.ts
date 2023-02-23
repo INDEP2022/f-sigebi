@@ -3,7 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -45,7 +48,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
   btnCreate: string = 'Crear Nuevo';
@@ -64,7 +67,7 @@ export class AssetsComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private requestHelperService: RequestHelperService,
     private excelService: ExcelService,
-    private menageSerice: MenageService
+    private menageService: MenageService
   ) {
     super();
   }
@@ -85,20 +88,17 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   paginatedData() {
-    var newParam = new ListParams();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      newParam.page = data.inicio;
-      newParam.limit = data.pageSize;
-      this.getData(newParam);
+      this.getData();
     });
   }
 
-  getData(params: ListParams) {
+  getData() {
     this.loading = true;
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
-    params['filter.requestId'] = `$eq:${requestId}`;
-    this.goodService.getAll(params).subscribe({
+    this.params.value.addFilter('requestId', requestId);
+    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {
           const result = data.data.map(async (item: any) => {
@@ -124,10 +124,13 @@ export class AssetsComponent extends BasePage implements OnInit {
             );
             item['transferentDestinyName'] = transferentDestiny;
             item['destinyLigieName'] = transferentDestiny;
+
+            const goodMenaje = await this.getMenaje(item.id);
+            item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {
-            this.totalItems = data.data.length;
+            this.totalItems = data.count;
             this.paragraphs = data.data;
             this.loading = false;
           });
@@ -201,6 +204,23 @@ export class AssetsComponent extends BasePage implements OnInit {
       } else {
         resolve('');
       }
+    });
+  }
+
+  getMenaje(id: number) {
+    return new Promise((resolve, reject) => {
+      this.menageService.getById(id).subscribe({
+        next: (resp: any) => {
+          if (resp) {
+            resolve(resp['noGood']);
+          } else {
+            resolve('');
+          }
+        },
+        error: error => {
+          resolve('');
+        },
+      });
     });
   }
 
@@ -334,6 +354,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.stateConservationName;
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
+        delete element.goodMenaje;
         this.goodService.update(element.id, element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -366,7 +387,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         const element = this.menajeSelected[i];
         console.log(element);
 
-        this.menageSerice.create(element).subscribe({
+        this.menageService.create(element).subscribe({
           next: data => {
             if (data.statusCode != null) {
               this.message(

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -13,16 +14,16 @@ import { ISegUsers } from '../../models/ms-users/seg-users-model';
 /**
  * @deprecated Implementar el repositorio cuando se tenga listo
  */
-export class UsersService {
+export class UsersService extends HttpService {
   private readonly route = GoodEndpoints;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(protected override httpClient: HttpClient) {
+    super();
+    this.microservice = 'users';
+  }
 
-  getAllSegUsers(params: ListParams) {
-    return this.httpClient.get<IListResponse<any>>(
-      `${environment.API_URL}users/api/v1/seg-users`,
-      { params }
-    );
+  getAllSegUsers(_params: ListParams | string) {
+    return this.get<IListResponse<any>>(`seg-users`, _params);
   }
 
   getAllSegXAreas(params: ListParams) {

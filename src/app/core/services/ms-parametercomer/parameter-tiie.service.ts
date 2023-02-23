@@ -12,7 +12,7 @@ import { ITiieV1 } from '../../models/ms-parametercomer/parameter';
   providedIn: 'root',
 })
 export class ParameterTiieService extends HttpService {
-  private readonly endpoint: string = ParameterComerEndpoints.ParameterMod;
+  private readonly endpoint: string = ParameterComerEndpoints.Tiie;
   constructor(private htpp: HttpClient) {
     super();
     this.microservice = ParameterComerEndpoints.BasePath;
@@ -28,7 +28,7 @@ export class ParameterTiieService extends HttpService {
   }
 
   getById(id: string | number) {
-    const route = `${this.endpoint}/id/${id}`;
+    const route = `${this.endpoint}/${id}`;
     return this.get(route);
   }
 
@@ -36,13 +36,13 @@ export class ParameterTiieService extends HttpService {
     return this.post(this.endpoint, tiie);
   }
 
-  // update(id: string | number, tiie: ITiieV1) {
-  //   const route = `${this.endpoint}/id/${id}`;
-  //   return this.put(route, tiie);
-  // }
+  update(id: string | number, tiie: ITiieV1) {
+    const route = `${this.endpoint}/${id}`;
+    return this.put(route, tiie);
+  }
 
-  // remove(id: string | number) {
-  //   const route = `${this.endpoint}/id/${id}`;
-  //   return this.delete(route);
-  // }
+  remove(id: string | number) {
+    const route = `${this.endpoint}/${id}`;
+    return this.delete(route);
+  }
 }
