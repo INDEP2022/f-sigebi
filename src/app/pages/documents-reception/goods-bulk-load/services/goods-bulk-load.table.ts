@@ -78,8 +78,14 @@ export class GoodsBulkLoadService {
   getIssuingInstitutionById(idInstitution: string) {
     return this.authorityService.getById(idInstitution);
   }
+  /**
+   * Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
+   * @param asuntoSat Clave de Asunto SAT
+   */
   getEntityFederativeByAsuntoSat(asuntoSat: string) {
-    return this.issuingInstitutionService.getById(asuntoSat);
+    return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
+      asuntoSat
+    );
   }
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);
