@@ -1,34 +1,18 @@
 export const COLUMNS = {
-  noCity: {
+  idCity: {
     title: 'No Ciudad',
     sort: false,
   },
-  descriptionCity: {
+  nameCity: {
     title: 'Descripción',
-    sort: false,
-  },
-  federalEntityKey: {
-    title: 'Cve Entidad Federativa',
-    sort: false,
-  },
-  descriptionKeyFedeal: {
-    title: 'Descripción ',
     sort: false,
   },
   noDelegation: {
     title: 'No Delegación',
     sort: false,
   },
-  descriptionDelegation: {
-    title: 'Descripción ',
-    sort: false,
-  },
-  noSubdelegation: {
+  noSubDelegation: {
     title: 'No Subdelegación',
-    sort: false,
-  },
-  descriptionSubdelegation: {
-    title: 'Descripción ',
     sort: false,
   },
 };
