@@ -126,11 +126,8 @@ export class LocationGoodsWarehousesStorageComponent
     });
   }
 
-  massAssignment() {
-    this.openModal();
-  }
-
   checkLocations() {
+    if (this.radio.value === null) return;
     this.radio.value === 'A'
       ? this.router.navigate([
           '/pages/administrative-processes/warehouse-inquiries',

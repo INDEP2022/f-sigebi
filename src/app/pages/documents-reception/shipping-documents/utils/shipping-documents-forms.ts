@@ -9,6 +9,7 @@ export class SHIPPING_DOCUMENTS_FORM {
   messageBody = new FormControl<string>(null, [
     Validators.required,
     Validators.pattern(STRING_PATTERN),
+    Validators.maxLength(4000),
   ]);
   delegation = new FormControl<number>({ value: null, disabled: true });
   subdelegation = new FormControl<number>({ value: null, disabled: true });

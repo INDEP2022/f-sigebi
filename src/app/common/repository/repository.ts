@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { INoCityByAsuntoSAT } from 'src/app/core/models/catalogs/authority.model';
+import { IOTClaveEntityFederativeByAsuntoSAT } from 'src/app/core/models/catalogs/issuing-institution.model';
 import { environment } from 'src/environments/environment';
 import { ListParams } from './interfaces/list-params';
 import { IRepository } from './interfaces/repository.interface';
@@ -13,7 +14,7 @@ export class Repository<T> implements IRepository<T> {
 
   getAllPaginated(
     route: string,
-    _params?: ListParams
+    _params?: ListParams | string
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
@@ -78,7 +79,10 @@ export class Repository<T> implements IRepository<T> {
     return keysArray.join('/');
   }
 
-  private makeParams(params: ListParams): HttpParams {
+  private makeParams(params: ListParams | string): HttpParams {
+    if (typeof params === 'string') {
+      return new HttpParams({ fromString: params });
+    }
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
       httpParams = httpParams.append(key, (params as any)[key]);
@@ -189,12 +193,27 @@ export class Repository<T> implements IRepository<T> {
     // console.log(fullRoute);
     return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
   }
+  update6(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/${id}`);
+    // console.log(formData);
 
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
   getCityByAsuntoSat(
     route: string,
     id: number | string
   ): Observable<INoCityByAsuntoSAT> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<INoCityByAsuntoSAT>(`${fullRoute}/${id}`);
+  }
+  getOTClaveEntityFederativeByAsuntoSat(
+    route: string,
+    id: number | string
+  ): Observable<IOTClaveEntityFederativeByAsuntoSAT> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IOTClaveEntityFederativeByAsuntoSAT>(
+      `${fullRoute}/${id}`
+    );
   }
 }

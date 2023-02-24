@@ -8,7 +8,7 @@
           [form]="form"
           value="bankCode"
           bindLabel="name"
-          label="Bancos"
+          [label]="labelName"
           [control]="bankField"
           (change)="onBanksChange($event)">
         </ngx-select>

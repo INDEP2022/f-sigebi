@@ -199,6 +199,12 @@
 
       <div class="row pt-4">
         <div class="col-md-12 text-right">
+          <button
+            class="btn btn-secondary active mx-2"
+            type="button"
+            (click)="resetScreen()">
+            Consultar / Crear Envío
+          </button>
           <confirm-button
             [loading]="loading"
             [text]="queryMode ? 'Imprimir' : 'Guardar'"

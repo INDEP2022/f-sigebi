@@ -437,7 +437,7 @@ const routes: Routes = [
       (await import('./cat-appraisers/cat-appraisers.module'))
         .CatAppraisersModule,
     data: {
-      title: 'Catalao de Peritos',
+      title: 'Catálago de Peritos',
       screen: 'FCATCATMTOPERITOS',
     },
   },
@@ -452,6 +452,16 @@ const routes: Routes = [
     data: {
       title: 'Catálogo de separadores a documentos',
       screen: 'FCATCATSEPARDOCUM',
+    },
+  },
+  {
+    path: 'cat-types-of-goods',
+    loadChildren: async () =>
+      (await import('./cat-types-of-goods/cat-types-of-goods.module'))
+        .CatTypesOfGoodsModule,
+    data: {
+      title: 'Catálogo de tipos de bienes',
+      screen: 'FCATCATTIPOSDBIEN',
     },
   },
   // CatOfSeparatorsDocumentsModule

@@ -159,6 +159,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
             this.patchFormValue(data);
           } else {
             this.queryMode = false;
+            this.documentsForm.enable();
           }
         },
       },
@@ -372,6 +373,16 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.officeKey = job.jobKey;
     this.officeNumber = job.id;
     window.scrollTo(0, 0);
+  }
+
+  resetScreen() {
+    this.notifications = [];
+    window.scrollTo(0, 0);
+    this.documentsForm.reset();
+    this.jobForm.reset();
+    this.officeNumber = null;
+    this.officeKey = null;
+    this.openDialog();
   }
 
   handleError(message: string) {

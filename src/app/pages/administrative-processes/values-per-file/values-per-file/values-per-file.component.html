@@ -10,12 +10,14 @@
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
-              [data]="delegations"
-              bindLabel="name"
-              label="Delegación"
-              value="id"
               (fetchItems)="getDelegations($event)"
-              control="delegation"></ngx-select>
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -24,12 +26,14 @@
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
-              [data]="subdelegations"
-              bindLabel="name"
-              label="Subdelegación"
-              value="id"
               (fetchItems)="getSubdelegations($event)"
-              control="subdelegation"></ngx-select>
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -81,12 +85,12 @@
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-danger active"
-            [disabled]="form.invalid">
-            IMPRIMIR REPORTE
-          </button>
+          <confirm-button
+            text="IMPRIMIR REPORTE"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
         </div>
       </div>
     </div>
