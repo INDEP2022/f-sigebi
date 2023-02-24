@@ -36,14 +36,19 @@ export class CourtByCityService
     return this.courtRepository.update(this.route, id, model);
   }
 
-  updateCourt(model: ICourtModel) {
+  updateCity(model: ICourtModel) {
     return this.httpClient.put(
       `${environment.API_URL}catalog/api/v1/court`,
       model
     );
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.courtRepository.remove(this.route, id);
+  deleteCity(
+    idCourt: number | string,
+    idCity: number | string
+  ): Observable<ICourtModel> {
+    return this.httpClient.delete<ICourtModel>(
+      `${environment.API_URL}catalog/api/v1/court-by-city/city/${idCity}/court/${idCourt}`
+    );
   }
 }

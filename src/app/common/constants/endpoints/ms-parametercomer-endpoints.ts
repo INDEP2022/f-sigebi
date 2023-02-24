@@ -8,4 +8,5 @@ export enum ParameterComerEndpoints {
   Tiie = 'comer-cat-tiie',
   Layouts = 'comer-layouts-t',
   layoutSH = 'comer-layouts-h',
+  Configvtadmun = 'comer-configvtadmun',
 }

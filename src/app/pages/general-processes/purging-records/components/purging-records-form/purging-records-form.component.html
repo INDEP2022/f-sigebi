@@ -1,72 +1,67 @@
 <ng-container [formGroup]="form">
   <div class="row pt-3">
     <form-field
-      [control]="form.get(recordField)"
+      [control]="formControls.id"
       label="No&#46; Expediente"
-      class="col-md-6">
-      <input type="text" class="form-control" [formControlName]="recordField" />
-    </form-field>
-
-    <form-field
-      [control]="form.get(previusInquiryField)"
-      label="Averiguaci&oacute;n Previa"
-      class="col-md-6">
+      class="col-md-4">
       <input
         type="text"
         class="form-control"
-        [formControlName]="previusInquiryField" />
+        formControlName="id"
+        (change)="expedientChange()" />
+    </form-field>
+
+    <form-field
+      [control]="formControls.preliminaryInquiry"
+      label="Averiguaci&oacute;n Previa"
+      class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="preliminaryInquiry" />
     </form-field>
   </div>
 
   <div class="row pt-3">
     <form-field
-      [control]="form.get(criminalCaseField)"
+      [control]="formControls.criminalCase"
       label="Causa Penal"
       class="col-md-6">
-      <input
-        type="text"
-        class="form-control"
-        [formControlName]="criminalCaseField" />
+      <input type="text" class="form-control" formControlName="criminalCase" />
     </form-field>
 
     <form-field
-      [control]="form.get(circumstantialRecordField)"
+      [control]="formControls.circumstantialRecord"
       label="Acta Circunstanciada"
       class="col-md-6">
       <input
         type="text"
         class="form-control"
-        [formControlName]="circumstantialRecordField" />
+        formControlName="circumstantialRecord" />
     </form-field>
   </div>
 
   <div class="row pt-3">
     <form-field
-      [control]="form.get(protectionField)"
+      [control]="formControls.protectionKey"
       label="Amparo"
       class="col-md-6">
-      <input
-        type="text"
-        class="form-control"
-        [formControlName]="protectionField" />
+      <input type="text" class="form-control" formControlName="protectionKey" />
     </form-field>
 
     <form-field
-      [control]="form.get(penalField)"
+      [control]="formControls.keyPenalty"
       label="Toca Penal"
       class="col-md-6">
-      <input type="text" class="form-control" [formControlName]="penalField" />
+      <input type="text" class="form-control" formControlName="keyPenalty" />
     </form-field>
   </div>
   <div class="row pt-3">
     <form-field
-      [control]="form.get(identifierField)"
+      [control]="formControls.identifier"
       label="Identificador"
       class="col-md-6">
-      <input
-        type="text"
-        class="form-control"
-        [formControlName]="identifierField" />
+      <input type="text" class="form-control" formControlName="identifier" />
     </form-field>
   </div>
 </ng-container>

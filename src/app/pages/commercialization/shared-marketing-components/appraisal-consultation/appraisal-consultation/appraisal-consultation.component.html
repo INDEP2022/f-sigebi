@@ -2,27 +2,34 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">CONSULTA DE AVAL&Uacute;OS MUEBLES</h5>
-      
     </div>
   </div>
   <div body>
     <div class="ch-content">
       <h5 class="title">Parámetros de búsqueda</h5>
-    </div>  
+    </div>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-5">
         <div class="col-md-2">
           <form-field label="id Evento" [control]="form.get('idEvent')">
-            <input type="number" class="form-control" formControlName="idEvent">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idEvent" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field label="id Avaluo" [control]="form.get('idAppraisal')">
-            <input type="number" class="form-control" formControlName="idAppraisal">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idAppraisal" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field label="Avaluo Estatus" [control]="form.get('statusAppraisal')">
+          <form-field
+            label="Avaluo Estatus"
+            [control]="form.get('statusAppraisal')">
             <ng-select
               formControlName="statusAppraisal"
               [searchable]="false"
@@ -35,48 +42,65 @@
         </div>
         <div class="col-md-3">
           <form-field label="Clave Avaluo" [control]="form.get('keyAppraisal')">
-            <input type="text" class="form-control" formControlName="keyAppraisal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyAppraisal" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field label="Clave oficio" [control]="form.get('keyOffice')">
-            <input type="number" class="form-control" formControlName="keyOffice">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="keyOffice" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-2">
           <form-field label="No. Bien" [control]="form.get('noGood')">
-            <input type="number" class="form-control" formControlName="noGood">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noGood" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field label="Dictamen Desc" [control]="form.get('opinion')">
-            <input type="text" class="form-control" formControlName="opinion">
+            <input type="text" class="form-control" formControlName="opinion" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid" (click)="getAppraiseByParams()" >
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getAppraiseByParams()">
             Consultar Avaluos
           </button>
         </div>
-        
       </div>
     </form>
 
-  <hr/>
+    <hr />
 
     <div class="row pt-5">
       <div class="form-material col-md-5">
-        <search-bar [filterParams]="filterParams" [filterField]="searchFilter"></search-bar>
+        <search-bar
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
       </div>
       <div class="ch-content">
         <h5 class="title">BIENES ENCONTRADOS</h5>
         <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings" class="row justify-content-end">
+          <app-columns-select
+            [(settings)]="settings"
+            class="row justify-content-end">
           </app-columns-select>
           <div>
-            <button (click)="exportAsXLSX()" class="btn btn-success active btn-sm ml-3">
+            <button
+              (click)="exportAsXLSX()"
+              class="btn btn-success active btn-sm ml-3">
               Exportar Excel
             </button>
           </div>
@@ -85,15 +109,14 @@
       <div [class]="loading ? 'table-loading' : ''">
         <div class="table-responsive">
           <ng2-smart-table
-          [attr.class]="'table-bordered'"
-            
+            [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="appraisals">
-        </ng2-smart-table>
+          </ng2-smart-table>
         </div>
       </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
   </div>
 </app-card>

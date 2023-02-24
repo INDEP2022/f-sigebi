@@ -37,7 +37,7 @@ export class DocumentsService extends HttpService {
     return this.post<IDocuments>(DocumentsEndpoints.Documents, documents);
   }
 
-  update(id: string | number, documents: IDocuments) {
+  update(id: string | number, documents: Partial<IDocuments>) {
     const route = `${DocumentsEndpoints.Documents}/${id}`;
     return this.put(route, documents);
   }

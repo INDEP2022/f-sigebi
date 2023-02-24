@@ -21,7 +21,11 @@ export class ThirdPartyModalComponent extends BasePage implements OnInit {
   thirdPartyForm: ModelForm<IThirdParty>;
   thirPartys: IThirdParty;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder, private thirdPartyService: ThirdPartyService,) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private thirdPartyService: ThirdPartyService
+  ) {
     super();
   }
 
@@ -32,15 +36,42 @@ export class ThirdPartyModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.thirdPartyForm = this.fb.group({
       id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      nameReason: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      calculationRoutine: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userAttempts: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      userBlocked: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userBlockedEnd: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userBlockedStart: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userStatus: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userKey: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userPwd: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      nameReason: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      calculationRoutine: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userAttempts: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      userBlocked: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userBlockedEnd: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userBlockedStart: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userKey: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userPwd: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
     if (this.thirPartys != null) {

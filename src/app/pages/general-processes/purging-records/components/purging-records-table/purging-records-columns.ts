@@ -1,13 +1,13 @@
 export const PURGING_RECORDS_COLUMNS = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     sort: false,
   },
