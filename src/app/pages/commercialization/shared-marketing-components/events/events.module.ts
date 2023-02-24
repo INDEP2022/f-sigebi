@@ -10,9 +10,10 @@ import { EventsRoutingModule } from './events-routing.module';
 import { EventPermissionControlComponent } from './event-permission-control/event-permission-control.component';
 //@Standalone Components
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
+import { EvenPermissionControlModalComponent } from './even-permission-control-modal/even-permission-control-modal.component';
 
 @NgModule({
-  declarations: [EventPermissionControlComponent],
+  declarations: [EventPermissionControlComponent, EvenPermissionControlModalComponent],
   imports: [
     CommonModule,
     EventsRoutingModule,

@@ -28,8 +28,8 @@ export class BankAccountService
     );
   }
 
-  getById(id: string | number): Observable<IBankAccount> {
-    return this.repository.getById(`${this.microservice}/${this.api}`, id);
+  getById(accountNumber: Object): Observable<IBankAccount> {
+    return this.post<IBankAccount>(`${this.api}/find-by-ids`, accountNumber);
   }
 
   getAllWithFilters(params?: string): Observable<IListResponse<IBankAccount>> {

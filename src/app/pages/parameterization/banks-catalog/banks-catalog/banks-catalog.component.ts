@@ -60,7 +60,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       ],
       accountType: [null, [Validators.required]],
       delegationNumber: [null, Validators.pattern(STRING_PATTERN)],
-      accountNumberTransfer: [null],
+      accountNumberTransfer: [null, Validators.pattern(NUMBERS_PATTERN)],
       square_I: [{ value: '', disabled: true }],
       branch_I: [{ value: '', disabled: true }],
       currency_I: [{ value: '', disabled: true }],
@@ -76,6 +76,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
         callback: (next: boolean, data: IBankAccount) => {
           if (next) {
             this.edit = next;
+            data.accountNumberTransfer = Number(data.accountNumberTransfer);
             this.form.patchValue(data);
           }
         },

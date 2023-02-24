@@ -1,5 +1,5 @@
 export const VALIDATION_EXEMPTED_GOODS_COLUMS = {
-  noBien: {
+  id: {
     title: 'Bien',
     width: '25px',
     type: 'string',
@@ -10,12 +10,12 @@ export const VALIDATION_EXEMPTED_GOODS_COLUMS = {
     type: 'string',
     sort: false,
   },
-  unit: {
+  quantity: {
     title: 'Unidad',
     type: 'string',
     sort: false,
   },
-  proccess: {
+  processStatus: {
     title: 'Proceso',
     type: 'string',
     sort: false,

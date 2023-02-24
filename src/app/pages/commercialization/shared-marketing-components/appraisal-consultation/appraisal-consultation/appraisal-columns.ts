@@ -39,7 +39,7 @@ export const APPRAISAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  
+
   status: {
     title: 'Estatus',
     type: 'string',

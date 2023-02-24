@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  noAppraisers: {
+  id: {
     title: 'No Perito',
     type: 'string',
     sort: false,
@@ -11,7 +11,7 @@ export const COLUMNS = {
     sort: false,
   },
 
-  charge: {
+  position: {
     title: 'Puesto',
     type: 'string',
     sort: false,
