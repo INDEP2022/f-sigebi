@@ -173,7 +173,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       initialState: {
         thirPartys,
         callback: (next: boolean) => {
-          if(next) this.getThirdPartyAll();
+          if (next) this.getThirdPartyAll();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -187,7 +187,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       initialState: {
         typeEvents,
         callback: (next: boolean) => {
-          if(next) this.getThirdPartyAll();
+          if (next) this.getThirdPartyAll();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -201,7 +201,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       initialState: {
         amounts,
         callback: (next: boolean) => {
-          if(next) this.getThirdPartyAll();
+          if (next) this.getThirdPartyAll();
         },
       },
       class: 'modal-lg modal-dialog-centered',

@@ -30,6 +30,4 @@ export class ThirdPartyService extends HttpService {
   create(model: IThirdParty) {
     return this.post(ThirdPartyEndpoints.ThirdParty, model);
   }
-
-
 }
