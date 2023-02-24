@@ -44,6 +44,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -65,6 +66,7 @@ import {
   DOCUMENTS_RECEPTION_REGISTER_FORM,
   DOC_RECEPT_REG_FIELDS_TO_LISTEN,
   IDocReceptionFlyersRegistrationParams,
+  IDocumentsReceptionData,
   IGlobalFlyerRegistration,
   ProcedureStatus,
   TaxpayerLabel,
@@ -94,9 +96,11 @@ export class DocumentsReceptionRegisterComponent
     stage: (value: string) => this.stageChange(value),
     autorityNumber: (value: string) => this.authorityChange(value),
   };
+  formData: IDocumentsReceptionData = null;
   initialCondition: string = 'A';
   pgrInterface: boolean = false;
   satInterface: boolean = false;
+  identifier: string = null;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -156,7 +160,8 @@ export class DocumentsReceptionRegisterComponent
     private departamentService: DepartamentService,
     private procedureManageService: ProcedureManagementService,
     private identifierService: IdentifierService,
-    private interfacefgrService: InterfacefgrService
+    private interfacefgrService: InterfacefgrService,
+    private expedientService: ExpedientService
   ) {
     super();
     this.pageParams = this.docDataService.flyersRegistrationParams;
@@ -168,6 +173,10 @@ export class DocumentsReceptionRegisterComponent
 
   get wheelNumber() {
     return this.documentsReceptionForm.controls['wheelNumber'];
+  }
+
+  get expedientNumber() {
+    return this.documentsReceptionForm.controls['expedientNumber'];
   }
 
   get stationNumber() {
@@ -627,6 +636,12 @@ export class DocumentsReceptionRegisterComponent
     // if (identifier.includes('4') || identifier === 'MIXTO')
     //   this.formControls.receiptDate.disable();
     // else this.formControls.receiptDate.enable();
+    this.identifier = this.formControls.identifier.value.id;
+    let initialDate;
+    if (['MIXTO', '4', '4MT'].includes(this.identifier)) {
+      initialDate = this.parseDatepickerFormat(this.initialDate);
+      this.formControls.receiptDate.setValue(initialDate);
+    }
   }
 
   wheelTypeChange(type: string) {
@@ -634,6 +649,7 @@ export class DocumentsReceptionRegisterComponent
     this.formControls.affair.setValue(null);
     this.formControls.endTransferNumber.setValue(null);
     this.getTransferors({ page: 1, text: '' });
+    this.getIdentifiers({ page: 1, text: '' });
     if (['A', 'P'].includes(type)) {
       this.initialCondition = 'A';
     } else if (['AT', 'T'].includes(type)) {
@@ -648,7 +664,7 @@ export class DocumentsReceptionRegisterComponent
       if (this.formControls.crimeKey.hasValidator(Validators.required))
         this.formControls.crimeKey.addValidators(Validators.required);
     }
-    if ((type = 'P')) {
+    if (type == 'P') {
       this.formControls.circumstantialRecord.addValidators(Validators.required);
       this.formControls.preliminaryInquiry.addValidators(Validators.required);
       this.formControls.criminalCase.addValidators(Validators.required);
@@ -686,6 +702,11 @@ export class DocumentsReceptionRegisterComponent
     } else {
       if (!this.formControls.cityNumber.hasValidator(Validators.required))
         this.formControls.cityNumber.addValidators(Validators.required);
+    }
+    if (affair == '50') {
+      this.formControls.stage.addValidators(Validators.required);
+    } else {
+      this.formControls.stage.clearValidators();
     }
   }
 
@@ -760,7 +781,10 @@ export class DocumentsReceptionRegisterComponent
     this.initialCondition = notif.wheelType;
     if (notif.identifier != null)
       this.identifierService.getById(notif.identifier).subscribe({
-        next: data => this.formControls.identifier.setValue(data),
+        next: data => {
+          this.formControls.identifier.setValue(data);
+          this.formControls.identifierExp.setValue(data.id);
+        },
       });
     if (notif.affairKey != null)
       this.affairService.getById(notif.affairKey).subscribe({
@@ -914,7 +938,7 @@ export class DocumentsReceptionRegisterComponent
       }
     );
     modalRef.content.onSelect.subscribe(data => {
-      if (data) this.captureGoods(data);
+      if (data) this.trackRecordsCheck(data);
     });
   }
 
@@ -1011,8 +1035,10 @@ export class DocumentsReceptionRegisterComponent
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
       params.addFilter('description', lparams.text, SearchFilter.LIKE);
-    if (this.wheelType.value != null)
-      params.addFilter('keyview', this.wheelType.value);
+    let type: string;
+    if (['A', 'P'].includes(this.wheelType.value)) type = 'A';
+    if (['AT', 'T'].includes(this.wheelType.value)) type = 'T';
+    if (this.wheelType.value != null) params.addFilter('keyview', type);
     this.docRegisterService.getIdentifiers(params.getParams()).subscribe({
       next: data => {
         this.identifiers = new DefaultSelect(data.data, data.count);
@@ -1369,13 +1395,49 @@ export class DocumentsReceptionRegisterComponent
       });
   }
 
+  // isITablesEntryData(obj: any): obj is ITablesEntryData {
+  //   return (
+  //     'otKey' in obj &&
+  //     'table' in obj &&
+  //     'value' in obj &&
+  //     'abbreviation' in obj
+  //   );
+  // }
+
   prepareFormData() {
-    let formData = { ...this.documentsReceptionForm.value };
+    let formData = {
+      ...this.documentsReceptionForm.value,
+      identifier: this.formControls.identifier.value?.id,
+      cityNumber: this.formControls.cityNumber.value?.idCity,
+      endTransferNumber: this.formControls.endTransferNumber.value?.id,
+      courtNumber: this.formControls.courtNumber.value?.id,
+      stationNumber: this.formControls.stationNumber.value?.id,
+      autorityNumber: this.formControls.autorityNumber.value?.idAuthority,
+      minpubNumber: this.formControls.minpubNumber.value?.id,
+      indiciadoNumber: this.formControls.indiciadoNumber.value?.id,
+      estatusTramite: this.formControls.estatusTramite.value?.id,
+      entFedKey: this.formControls.entFedKey.value?.otKey,
+      crimeKey: this.formControls.crimeKey.value?.otKey,
+      viaKey: this.formControls.viaKey.value?.otKey,
+    };
+    // let entFedKey, viaKey, crimeKey;
+    // if (this.isITablesEntryData(formData.entFedKey)) {
+    //   entFedKey = formData.entFedKey.table as unknown as ITablesEntryData;
+    //   formData.entFedKey = entFedKey.otKey as any;
+    // }
+    // if (this.isITablesEntryData(formData.crimeKey)) {
+    //   crimeKey = formData.crimeKey.table as unknown as ITablesEntryData;
+    //   formData.crimeKey = crimeKey.otKey as any;
+    // }
+    // if (this.isITablesEntryData(formData.viaKey)) {
+    //   viaKey = formData.viaKey.table as unknown as ITablesEntryData;
+    //   formData.viaKey = viaKey.otKey as any;
+    // }
     if (this.formControls.affairKey.value == 50) {
       formData.expedientTransferenceNumber = `${formData.stage} ${formData.expedientTransferenceNumber}`;
     }
-    delete formData.stage;
-    delete formData.stageName;
+    // delete formData.stage;
+    // delete formData.stageName;
     if ([21, 22, '21', '22'].includes(this.formControls.affairKey.value)) {
       this.formControls.observations.setValue(
         'INFORME DE ASEGURAMIENTO DE BIENES NO ADMINISTRABLES'
@@ -1385,30 +1447,143 @@ export class DocumentsReceptionRegisterComponent
         'POR ACUERDO DE GRUPO SIAB SE DESAHOGA DE CONOCIMIENTO EN AUTOMATICO POR SER BIENES NO ADMINISTRABLES'
       );
     } else {
-      delete formData.dictumKey;
-      delete formData.reserved;
+      // delete formData.dictumKey;
+      // delete formData.reserved;
     }
+    this.formData = formData as IDocumentsReceptionData;
+    console.log(this.formData);
   }
 
   save() {}
 
   goodsCaptureCheck() {
+    for (const key in this.formControls) {
+      const control = this.documentsReceptionForm.get(key);
+      if (control.errors != null) {
+        console.log(key, control.errors);
+      }
+    }
     this.prepareFormData();
+    // return;
     //TODO: establecer valor variable global con ngrx
     this.globals.bn = 1;
     //TODO: Usar las consultas de PUP_PREPARA_NOTIFICACIONES para abrir modal de antecedentes
+    let expedientNumber: number;
+    let trackRecords: INotification[] = [];
+    let params = new FilterParams();
+    this.loading = true;
+    if (this.initialCondition == 'T') {
+      if (
+        !['1', '5', 1, 5].includes(this.formControls.indiciadoNumber.value.id)
+      ) {
+        params.addFilter(
+          'expedientTransferenceNumber',
+          this.formControls.expedientTransferenceNumber.value
+        );
+        params.addFilter(
+          'indiciadoNumber',
+          this.formControls.indiciadoNumber.value.id
+        );
+        params.addFilter(
+          'cityNumber',
+          this.formControls.cityNumber.value.idCity
+        );
+        this.notificationService.getAllFilter(params.getParams()).subscribe({
+          next: data => {
+            if (data.data.length > 0) {
+              let expedients = data.data.map(n => n.expedientNumber);
+              expedientNumber = Math.max(...expedients);
+            }
+          },
+          error: () => {
+            this.loading = false;
+          },
+        });
+      }
+      if (
+        this.globals.pIndicadorSat == 0 &&
+        this.formControls.expedientTransferenceNumber.value != 'S/N' &&
+        !['1', '5', 1, 5].includes(this.formControls.indiciadoNumber.value.id)
+      ) {
+        //TODO: Arreglar filtros en una sola consulta para guardar los antecedentes
+        // y pasarlos al modal de antecedentes.
+        // !!!Pasar el max(expediente) al global
+        params.addFilter(
+          'expedientTransferenceNumber',
+          this.formControls.expedientTransferenceNumber.value
+        );
+        params.addFilter(
+          'indiciadoNumber',
+          this.formControls.indiciadoNumber.value.id
+        );
+        params.addFilter(
+          'cityNumber',
+          this.formControls.cityNumber.value.idCity
+        );
+        this.notificationService.getAllFilter(params.getParams()).subscribe({
+          next: data => {
+            if (data.data.length > 0) {
+              trackRecords = data.data;
+              this.showTrackRecords();
+            } else {
+              this.trackRecordsCheck();
+            }
+          },
+          error: () => {
+            this.loading = false;
+            this.trackRecordsCheck();
+          },
+        });
+      }
+    } else {
+      //TODO: Obtener el array de notificaciones con el endpoint y determinar
+      // longitud para llamar a showTrackRecords o captureGoods
+      this.showTrackRecords();
+      this.trackRecordsCheck();
+    }
   }
 
-  captureGoods(trackRecord: INotification) {
+  trackRecordsCheck(trackRecord?: INotification) {
     console.log(trackRecord);
-    //TODO: Incluir en el if si el expediente de antecedentes seleccionado no es nulo
-    //y asignarlo a la variable global
-    if (this.formControls.expedientNumber.value != null) {
-      this.globals.gNoExpediente = Number(
-        this.formControls.expedientNumber.value
-      );
+    if (trackRecord) {
+      if (this.formControls.expedientNumber.value != null) {
+        this.globals.gNoExpediente = Number(
+          this.formControls.expedientNumber.value
+        );
+      } else if (trackRecord?.expedientNumber) {
+        this.globals.gNoExpediente = trackRecord.expedientNumber;
+        this.formControls.expedientNumber.setValue(trackRecord.expedientNumber);
+      }
+      this.globals.gLastCheck = 1;
+      this.globals.antecede = 1;
+      this.startGoodsCapture();
     }
     //TODO: Llenar Tmp_Notificaciones y Tmp_Expedientes
     //TODO: Consultar para decidir si mandar a Captura de Bienes o Captura Masiva
+    this.startGoodsCapture();
   }
+
+  startGoodsCapture() {
+    if (this.formControls.wheelType.value == 'A') {
+      this.globals.gCreaExpediente = 'N';
+    }
+    if (this.globals.gNoExpediente == null) {
+      this.expedientService.getNextVal().subscribe({
+        next: data => {
+          this.globals.gNoExpediente = data.nextval;
+          console.log(this.globals.gNoExpediente);
+        },
+      });
+    }
+    this.prepareFormData();
+    this.saveTmpExpedients();
+    this.saveTmpnotifications();
+    this.captureGoods();
+  }
+
+  saveTmpExpedients() {}
+
+  saveTmpnotifications() {}
+
+  captureGoods() {}
 }

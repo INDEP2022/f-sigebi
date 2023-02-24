@@ -52,9 +52,10 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   consecutiveNumber: new FormControl<string | number>(null),
   expedientNumber: new FormControl<string | number>(null),
   recordId: new FormControl<string | number>(null),
+  identifierExp: new FormControl<string | number>(null),
   dailyEviction: new FormControl<boolean | number>(false),
   addressGeneral: new FormControl<boolean | number>(false),
-  stage: new FormControl<string>(null, Validators.required),
+  stage: new FormControl<string>(null),
   stageName: new FormControl<string>(null),
   circumstantialRecord: new FormControl<string | number>(null),
   preliminaryInquiry: new FormControl<string | number>(null),
@@ -102,7 +103,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   subDelegationName: new FormControl<string>(null, Validators.required),
-  estatusTramite: new FormControl<IManagementArea>(null),
+  estatusTramite: new FormControl<IManagementArea>(null, Validators.required),
   goodRelation: new FormControl<string>(null),
   institutionNumber: new FormControl<string | number>(200, Validators.required),
   officeNumber: new FormControl<string | number>(null),
@@ -115,6 +116,65 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   reserved: new FormControl<string>(null),
   autoscan: new FormControl<string>(null),
 };
+
+export interface IDocumentsReceptionData {
+  wheelType: string;
+  identifier: string | number;
+  externalRemitter: string | number;
+  affairKey: string | number;
+  affair: string | number;
+  receiptDate: string | number | Date;
+  priority: string | number;
+  wheelNumber?: string | number;
+  consecutiveNumber?: string | number;
+  expedientNumber?: string | number;
+  recordId?: string | number;
+  identifierExp?: string | number;
+  dailyEviction?: boolean | number;
+  addressGeneral?: boolean | number;
+  stage?: string;
+  stageName?: string;
+  circumstantialRecord?: string | number;
+  preliminaryInquiry?: string | number;
+  criminalCase?: string | number;
+  judgementType?: string;
+  protectionKey?: string | number;
+  touchPenaltyKey?: string | number;
+  officeExternalKey: string;
+  externalOfficeDate: string | number | Date;
+  observations: string | number;
+  expedientTransferenceNumber?: string | number;
+  uniqueKey?: string | number;
+  cityNumber: string | number;
+  entFedKey: string | number;
+  endTransferNumber: string | number;
+  transference: string | number;
+  courtNumber?: string | number;
+  stationNumber: string | number;
+  autorityNumber: string | number;
+  minpubNumber?: string | number;
+  crimeKey: string | number;
+  indiciadoNumber: string | number;
+  viaKey: string | number;
+  destinationArea: string | number;
+  departamentDestinyNumber: string | number;
+  delegationNumber: string | number;
+  delegationName: string | number;
+  subDelegationNumber: string | number;
+  subDelegationName: string | number;
+  estatusTramite: string | number;
+  goodRelation?: string;
+  institutionNumber: string | number;
+  officeNumber?: string | number;
+  captureDate?: string | number | Date;
+  wheelStatus?: string;
+  entryProcedureDate?: string | number | Date;
+  registerNumber?: string | number;
+  originNumber?: string | number;
+  dictumKey?: string | number;
+  reserved?: string;
+  autoscan?: string;
+}
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
   copyNumber: new FormControl<string | number>(1, Validators.required),
@@ -148,7 +208,7 @@ export enum ProcedureStatus {
 }
 
 export interface IGlobalFlyerRegistration {
-  gNoExpediente: number | null; //Puede ser null porque el endpoint no deberia requerirlo para crear expediente
+  gNoExpediente: number | string | null; //Puede ser null porque el endpoint no deberia requerirlo para crear expediente
   noVolante: number | null;
   bn: number | null;
   gCreaExpediente: string | null;

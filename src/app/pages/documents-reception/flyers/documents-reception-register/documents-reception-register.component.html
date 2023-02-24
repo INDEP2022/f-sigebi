@@ -69,7 +69,8 @@
                 bindLabel="description"
                 control="identifier"
                 label="Identificador"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                [readonly]="expedientNumber == null">
               </ngx-select>
             </form-field>
 
@@ -184,7 +185,12 @@
                 formControlName="receiptDate"
                 class="form-control"
                 [maxDate]="initialDate"
-                bsDatepicker />
+                bsDatepicker
+                [readonly]="
+                  identifier == 'MIXTO' ||
+                  identifier == '4' ||
+                  identifier == '4MT'
+                " />
             </form-field>
 
             <form-field
@@ -240,11 +246,11 @@
 
             <div class="col-md-4">
               <form-field
-                [control]="documentsReceptionForm.get('identifier')"
+                [control]="documentsReceptionForm.get('identifierExp')"
                 label="Ident. Exp">
                 <input
                   type="number"
-                  formControlName="identifier"
+                  formControlName="identifierExp"
                   class="form-control"
                   readonly />
               </form-field>
@@ -742,7 +748,7 @@
             [form]="flyerCopyRecipientForm"
             [data]="users"
             (fetchItems)="getUsers($event)"
-            bindLabel="user.id"
+            bindLabel="user"
             control="copyuser"
             label="En atención"
             [searchOnInit]="true">
@@ -755,7 +761,7 @@
             [form]="flyerCopyCppForm"
             [data]="usersCopy"
             (fetchItems)="getUsersCopy($event)"
-            bindLabel="user.id"
+            bindLabel="user"
             control="copyuser"
             label="C.P.P."
             [searchOnInit]="true">
@@ -795,7 +801,9 @@
             type="button"
             class="btn btn-primary active"
             (click)="goodsCaptureCheck()"
-            [disabled]="!flyerCopyRecipientForm.valid">
+            [disabled]="
+              !flyerCopyRecipientForm.valid || !documentsReceptionForm.valid
+            ">
             Siguiente
           </button>
         </div>
