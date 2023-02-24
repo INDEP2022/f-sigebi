@@ -1,12 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IComerLayoutsH } from 'src/app/core/models/ms-parametercomer/parameter';
+import {
+  IComerLayouts,
+  IComerLayoutsH,
+} from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import {
+  EXAMPLE_DAT2,
+  EXAMPLE_DAT3,
+  EXAMPLE_DAT4,
+  EXAMPLE_DATA,
+  LAYOUTS_COLUMNS1,
+  LAYOUTS_COLUMNS2,
+  LAYOUTS_COLUMNS3,
+  LAYOUTS_COLUMNS4,
+  LAYOUTS_COLUMNS56,
+  LAYOUTS_COLUMNS6,
+} from './layouts-config-columns';
 
 @Component({
   selector: 'app-layouts-configuration',
@@ -14,273 +28,17 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
   styleUrls: ['layouts-configuration.component.scss'],
 })
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
-  layoutsH: IComerLayoutsH;
-  layoutH: any[] = [];
-  totalItems: number = 0;
+  layout: IComerLayouts[] = [];
+  idLayout: any[];
+  layoutHSelected: IComerLayoutsH[];
+  isSelected: string;
+  layoutH: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  totalItems2: number = 0;
+  form: FormGroup = new FormGroup({});
 
-  settings1 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      id: {
-        title: 'Id',
-        type: 'number',
-        sort: false,
-      },
-      clave: {
-        title: 'Clave',
-        type: 'string',
-        sort: false,
-      },
-      status: {
-        title: 'Status',
-        type: 'string',
-        sort: false,
-      },
-      d: {
-        title: 'D',
-        type: 'string',
-        sort: false,
-      },
-      tipoDispersion: {
-        title: 'Tipo Dispersion',
-        type: 'string',
-        sort: false,
-      },
-      origen: {
-        title: 'Origen',
-        type: 'string',
-        sort: false,
-      },
-      fechaCreacion: {
-        title: 'Fecha Creacion',
-        type: Date,
-        sort: false,
-      },
-      fechaTermino: {
-        title: 'Fecha Termino',
-        type: Date,
-        sort: false,
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data = EXAMPLE_DATA;
-
-  settings2 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      id: {
-        title: 'Id',
-        type: 'number',
-        sort: false,
-      },
-      cveProceso: {
-        title: 'C.V.E Proceso',
-        type: 'string',
-        sort: false,
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-        sort: false,
-      },
-      monto: {
-        title: 'Monto',
-        type: 'number',
-        sort: false,
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data2 = EXAMPLE_DAT2;
-
-  settings3 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      fis: {
-        title: 'FIS',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-      cnt: {
-        title: 'CNT',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-      pto: {
-        title: 'PTO',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-      TSR: {
-        title: 'TSR',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data3 = EXAMPLE_DAT3;
-
-  settings4 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      fechaTransf: {
-        title: 'Fecha Transferencia',
-        type: Date,
-        sort: false,
-      },
-      claveValida: {
-        title: 'Clave Validad',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data4 = EXAMPLE_DAT4;
-
-  settings5 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      id: {
-        title: 'Id',
-        type: 'number',
-        sort: false,
-      },
-      descripcion: {
-        title: 'Descripción',
-        type: 'string',
-        sort: false,
-      },
-      pantalla: {
-        title: 'Pantalla',
-        type: 'string',
-        sort: false,
-      },
-      tablaVista: {
-        title: 'Tabla o Vista',
-        type: 'string',
-        sort: false,
-      },
-      filtro: {
-        title: 'Filtro de Selección',
-        type: 'string',
-        sort: false,
-      },
-      activo: {
-        title: 'Activo',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data5 = EXAMPLE_DAT5;
-
-  settings6 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    columns: {
-      posicion: {
-        title: 'Posición',
-        type: 'number',
-        sort: false,
-      },
-      columna: {
-        title: 'Columna',
-        type: 'string',
-        sort: false,
-      },
-      tipoDato: {
-        title: 'Tipo Dato',
-        type: 'string',
-        sort: false,
-      },
-      longitud: {
-        title: 'Longitud',
-        type: 'number',
-        sort: false,
-      },
-      constante: {
-        title: 'Constante',
-        type: 'string',
-        sort: false,
-      },
-      caracterRelleno: {
-        title: 'Caracter de Relleno',
-        type: 'string',
-        sort: false,
-      },
-      relleno: {
-        title: 'Relleno',
-        type: 'string',
-        sort: false,
-      },
-      decimales: {
-        title: 'Decimales',
-        type: 'string',
-        sort: false,
-      },
-      formatoFecha: {
-        title: 'Formato Fecha',
-        type: 'string',
-        sort: false,
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  data6 = EXAMPLE_DAT6;
-
-  form: FormGroup;
+  @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
     private fb: FormBuilder,
@@ -290,22 +48,11 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getLayoutH();
     this.prepareForm();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getLayoutsH());
-  }
-
-  getLayoutsH() {
-    this.loading = true;
-    this.layoutsConfigService.getLayoutsH().subscribe({
-      next: data => {
-        console.log(data);
-        // this.totalItems = data.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+      .subscribe(() => this.getLayouts());
   }
 
   prepareForm() {
@@ -325,233 +72,119 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ccp2: [null, [Validators.required]],
     });
   }
+
+  duplicateLayouts() {
+    // let params = {
+    //   id: this.form.controls['idLayout'].value,
+    //   descLayout: this.form.controls['descLayout'].value,
+    //   screenKey: this.form.controls['screenKey'].value,
+    //   table: this.form.controls['table'].value,
+    //   criterio: this.form.controls['criterio'].value,
+    //   indActive: this.form.controls['indActive'].value,
+    //   registryNumber: this.form.controls['indActive'].value,
+    // };
+    this.layout.forEach((obj: any) => {
+      if (obj.idLayout.id != undefined) {
+        this.isSelected += obj.idLayout.id + ',';
+      }
+    });
+    console.log(this.isSelected);
+    this.layoutsConfigService.create(this.form.value).subscribe({
+      next: response => {
+        this.totalItems = response.count;
+        this.loading = false;
+        this.onConfirm.emit(this.form.value);
+        setTimeout(() => {
+          this.onLoadToast('success', 'Layout duplicado!', '');
+        }, 2000);
+        this.getLayouts();
+      },
+      error: () => {
+        this.loading = false;
+        this.onLoadToast('error', 'Error al duplicar layout!', '');
+        return;
+      },
+    });
+  }
+
+  getLayouts() {
+    this.loading = true;
+    this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
+      next: data => {
+        this.layout = data.data;
+        console.log(this.layout);
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  getLayoutH() {
+    this.loading = true;
+    this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
+      next: data => {
+        this.layoutH = data.data;
+        this.totalItems2 = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  settings1 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: {
+      ...LAYOUTS_COLUMNS1,
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  data = EXAMPLE_DATA;
+
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: { ...LAYOUTS_COLUMNS2 },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  data2 = EXAMPLE_DAT2;
+
+  settings3 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: { ...LAYOUTS_COLUMNS3 },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  data3 = EXAMPLE_DAT3;
+
+  settings4 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: { ...LAYOUTS_COLUMNS4 },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  data4 = EXAMPLE_DAT4;
+
+  settings5 = {
+    ...TABLE_SETTINGS,
+    editable: true,
+    actions: false,
+    columns: { ...LAYOUTS_COLUMNS56.idLayout },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  data5 = this.getLayouts();
+
+  settings6 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: { ...LAYOUTS_COLUMNS6 },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  data6 = this.getLayouts();
 }
-
-const EXAMPLE_DATA = [
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-  {
-    id: 1,
-    clave: 'clave',
-    status: 'activo',
-    d: 'ejemplo',
-    tipoDispersion: 'ejemplo',
-    origen: 'ejemplo',
-    fechaCreacion: new Date(),
-    fechaTermino: new Date(),
-  },
-];
-
-const EXAMPLE_DAT2 = [
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-  {
-    id: 1,
-    cveProceso: 'proceso',
-    cantidad: 5,
-    monto: 500,
-  },
-];
-
-const EXAMPLE_DAT3 = [{}, {}, {}, {}];
-
-const EXAMPLE_DAT4 = [
-  {
-    fechaTransf: new Date(),
-  },
-  {
-    fechaTransf: new Date(),
-  },
-  {
-    fechaTransf: new Date(),
-  },
-  {
-    fechaTransf: new Date(),
-  },
-];
-
-const EXAMPLE_DAT5 = [
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-  {
-    id: 1,
-    descripcion: 'ejemplo',
-    pantalla: 'ejemplo',
-    tablaVista: 'pantalla',
-    filtro: 'criterio',
-  },
-];
-
-const EXAMPLE_DAT6 = [
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-  {
-    posicion: 1,
-    columna: 'ejemplo',
-    tipoDato: 'ejemplo',
-    longitud: 3,
-    constante: 'criterio',
-    caracterRelleno: 'caracter',
-    relleno: 'relleno',
-    decimales: 3,
-    formatoFecha: 'dd/mm/aaaa',
-  },
-];

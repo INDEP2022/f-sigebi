@@ -134,15 +134,22 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     this.modalService.show(CourtListComponent, config);
   }
 
-  delete(event: any) {
+  deleteCity(city: TableCity) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Eliminado correctamente', '');
+        this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.getCourtByCity();
+          },
+          error: err => {
+            this.onLoadToast('error', err.error.message, '');
+          },
+        });
       }
     });
   }
