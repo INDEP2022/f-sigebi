@@ -153,7 +153,7 @@ export const LAYOUTS_COLUMNS5 = {
     type: 'string',
     sort: false,
   },
-  criterion: {
+  criterio: {
     title: 'Filtro de Selección',
     type: 'string',
     sort: false,
@@ -177,6 +177,102 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
+  position: {
+    title: 'Posición',
+    type: 'number',
+    sort: false,
+  },
+  column: {
+    title: 'Columna',
+    type: 'string',
+    sort: false,
+  },
+  type: {
+    title: 'Tipo Dato',
+    type: 'string',
+    sort: false,
+  },
+  length: {
+    title: 'Longitud',
+    type: 'number',
+    sort: false,
+  },
+  constant: {
+    title: 'Constante',
+    type: 'string',
+    sort: false,
+  },
+  carFilling: {
+    title: 'Caracter de Relleno',
+    type: 'string',
+    sort: false,
+  },
+  justification: {
+    title: 'Justificación',
+    type: 'string',
+    sort: false,
+  },
+  decimal: {
+    title: 'Decimales',
+    type: 'string',
+    sort: false,
+  },
+  dateFormat: {
+    title: 'Formato de Fecha',
+    type: 'string',
+    sort: true,
+  },
+  registryNumber: {
+    title: 'Número de Registro',
+    type: 'number',
+    sort: false,
+  },
+};
+
+export const LAYOUTS_COLUMNS56 = {
+  idLayout: {
+    id: {
+      title: 'Id',
+      type: 'number',
+      sort: false,
+    },
+    descLayout: {
+      title: 'Descripción',
+      type: 'string',
+      sort: false,
+    },
+    screenKey: {
+      title: 'Pantalla',
+      type: 'string',
+      sort: false,
+    },
+    table: {
+      title: 'Tabla o Vista',
+      type: 'string',
+      sort: false,
+    },
+    criterio: {
+      title: 'Filtro de Selección',
+      type: 'string',
+      sort: false,
+    },
+    registryNumber: {
+      title: 'Número de registro',
+      type: 'number',
+      sort: false,
+    },
+    indActive: {
+      title: 'Activo',
+      sort: false,
+      type: 'custom',
+      renderComponent: CheckboxElementComponent,
+      onComponentInitFunction(instance: any) {
+        instance.toggle.subscribe((data: any) => {
+          data.row.to = data.toggle;
+        });
+      },
+    },
+  },
   position: {
     title: 'Posición',
     type: 'number',

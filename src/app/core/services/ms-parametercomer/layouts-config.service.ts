@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { environment } from 'src/environments/environment';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
 import {
   IComerLayouts,
@@ -21,17 +20,8 @@ export class LayoutsConfigService extends HttpService {
     this.microservice = ParameterComerEndpoints.BasePath;
   }
 
-  getLayouts() {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-layouts-t`;
-    return this.htpp.get(url);
-  }
-
   getAllLayouts(params?: ListParams): Observable<IListResponse<IComerLayouts>> {
     return this.get<IListResponse<IComerLayouts>>(this.endpoint, params);
-  }
-  getLayoutsH() {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-layouts-h`;
-    return this.htpp.get(url);
   }
   getAllLayoutsH(
     params?: ListParams

@@ -150,7 +150,6 @@
           [settings]="settings5"
           [source]="layout"></ng2-smart-table>
       </div>
-
       <div class="row mt-5">
         <label for="">Estructura Layouts</label>
       </div>
@@ -165,11 +164,10 @@
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
         <div class="col-md-2">
-          <button
-            (confirm)="duplicateLayouts()"
-            class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
-            Duplicar Layouts
-          </button>
+          <confirm-button
+            text="Duplicar Layouts"
+            [loading]="loading"
+            (confirm)="duplicateLayouts()"></confirm-button>
         </div>
       </div>
     </form>
