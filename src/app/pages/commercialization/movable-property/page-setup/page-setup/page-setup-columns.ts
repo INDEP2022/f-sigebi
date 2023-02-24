@@ -1,21 +1,21 @@
 export const PAGE_SETUP_COLUMNS = {
-  table: {
+  idTable: {
     title: 'Tabla',
     sort: false,
   },
-  column: {
+  idColumn: {
     title: 'Columna',
     sort: false,
   },
-  ak: {
+  aliastab: {
     title: 'Alias',
     sort: false,
   },
-  orderColumns: {
+  ordencol: {
     title: 'Orden Columna',
     sort: false,
   },
-  ak2: {
+  aliascol: {
     title: 'Alias',
     sort: false,
   },

@@ -48,6 +48,12 @@ const ERROR_GOOD_INMUEBLE = (good_number: string) =>
 // PROCESO 4
 const ERROR_EXPEDIENTE = (expedient: string) =>
   `No se encontro el expediente en el documento: ${expedient}.`;
+const ERROR_CITY_ASUNTO_SAT = (asunto_sat: string) =>
+  `No se encontro la clave de la ciudad filtrada por el asunto SAT: ${asunto_sat}.`;
+const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
+  `No se encontro SAT_CVE_UNICA de: ${descripcion}.`;
+const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
+  `No se encontro la institución emisora: ${cveIssuing}.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -74,4 +80,7 @@ export {
   VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE,
   VALIDATION_UPLOAD_GENERATION_EXPEDIENTE_MESSAGE,
   ERROR_EXPEDIENTE,
+  ERROR_CITY_ASUNTO_SAT,
+  ERROR_GET_CLAVE_SAT,
+  ERROR_ISSUING_INSTITUTION,
 };

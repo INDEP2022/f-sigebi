@@ -32,6 +32,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   _params = new BehaviorSubject(new ListParams());
   goods: ITrackedGood[] = [];
+  subloading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -76,7 +77,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     return match[key] ?? null;
   }
 
-  getValue(value: string | number | (string | number)[], key: string) {
+  getValue(value: any, key: string) {
     let _val;
     const customVal = TrackerValues[key];
     _val = value;
@@ -97,11 +98,18 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   }
 
   getGoods() {
+    this.loading = true;
     this.scrollTable.nativeElement.scrollIntoView();
     this.goodTrackerService.getAll(this.params.getParams()).subscribe({
       next: res => {
+        this.loading = false;
         this.goods = res.data;
         this.totalItems = res.count;
+      },
+      error: () => {
+        this.goods = [];
+        this.totalItems = 0;
+        this.loading = false;
       },
     });
   }

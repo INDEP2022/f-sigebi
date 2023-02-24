@@ -1,14 +1,19 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
+import { IListResponse } from '../../interfaces/list-response.interface';
+import { IJob } from '../../models/ms-officemanagement/job.model';
 @Injectable({
   providedIn: 'root',
 })
-export class JobsService {
-  constructor(private httpClient: HttpClient) {}
+export class JobsService extends HttpService {
+  constructor() {
+    super();
+    this.microservice = 'officemanagement';
+  }
 
-  getAll() {
-    return;
+  getAllFiltered(params: _Params) {
+    return this.get<IListResponse<IJob>>('jobs', params);
   }
 
   getById(id: number | string) {
@@ -20,5 +25,9 @@ export class JobsService {
   create(job: any) {
     const route = `${environment.API_URL}officemanagement/api/v1/jobs`;
     return this.httpClient.post(route, job);
+  }
+
+  update(id: string | number, job: any) {
+    return this.put(`jobs/${id}`, job);
   }
 }

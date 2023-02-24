@@ -187,6 +187,14 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Tiempo Máximo Para Cierre Actas Devolución',
         link: '/pages/parameterization/maximum-times',
       },
+      {
+        label: 'Catálogo de peritos',
+        link: '/pages/parameterization/cat-appraisers',
+      },
+      {
+        label: 'Catálogo de tipos de bienes',
+        link: '/pages/parameterization/cat-types-of-goods',
+      },
     ],
   },
 ];

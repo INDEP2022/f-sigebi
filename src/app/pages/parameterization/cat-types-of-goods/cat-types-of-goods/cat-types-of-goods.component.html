@@ -1,0 +1,73 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Tipos de bienes</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <h6>Tipo de bien</h6>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="typeSettings"
+            [source]="dataType"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <h6>Subtipo de bien</h6>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="subTypeSettings"
+            [source]="dataSubType"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <h6>Subsubtipo de bien</h6>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="subsubTypeSettings"
+            [source]="dataSubsubType"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <h6>Subsubsubtipo de bien</h6>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="subsubsubTypeSettings"
+            [source]="datasubsubsubType"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

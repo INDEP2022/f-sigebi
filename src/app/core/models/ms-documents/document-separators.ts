@@ -1,5 +1,5 @@
 export class SeparatorsDocuments {
-  cve: string;
+  key: string;
   description: string;
   numRegister: number;
 }

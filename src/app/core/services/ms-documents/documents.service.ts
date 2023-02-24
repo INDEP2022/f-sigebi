@@ -37,7 +37,7 @@ export class DocumentsService extends HttpService {
     return this.post<IDocuments>(DocumentsEndpoints.Documents, documents);
   }
 
-  update(id: string | number, documents: IDocuments) {
+  update(id: string | number, documents: Partial<IDocuments>) {
     const route = `${DocumentsEndpoints.Documents}/${id}`;
     return this.put(route, documents);
   }
@@ -51,6 +51,15 @@ export class DocumentsService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IDocuments>> {
     const route = `${DocumentsEndpoints.Documents}/${description}`;
+    return this.get<IListResponse<IDocuments>>(route, params);
+  }
+  getByGoodAndScanStatus(
+    id: string | number,
+    idGood: string | number,
+    scanStatus: string,
+    params?: ListParams
+  ): Observable<IListResponse<IDocuments>> {
+    const route = `${DocumentsEndpoints.Documents}/?filter.id=$eq:${id}&filter.noGood=$eq:${idGood}&filter.scanStatus=$eq:${scanStatus}`;
     return this.get<IListResponse<IDocuments>>(route, params);
   }
 }

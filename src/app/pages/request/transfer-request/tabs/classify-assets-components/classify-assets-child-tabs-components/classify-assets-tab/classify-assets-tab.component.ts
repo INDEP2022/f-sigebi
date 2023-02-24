@@ -363,7 +363,6 @@ export class ClassifyAssetsTabComponent
 
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
-    console.log('bienes: ', goods);
     var goodAction =
       goods.goodId === null
         ? this.goodService.create(goods)
@@ -388,7 +387,10 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['id'].setValue(data.id);
 
           this.refreshTable(true);
-          // this.principalSave = false;
+
+          setTimeout(() => {
+            this.refreshTable(false);
+          }, 5000);
         }
       },
     });
@@ -535,29 +537,31 @@ export class ClassifyAssetsTabComponent
   }
 
   getUnidMeasure(value: string) {
-    if (value.length === 8) {
-      const fractionCode = { fraction: value };
-      this.goodsQueryService
-        .getUnitLigie(fractionCode)
-        .subscribe((data: any) => {
-          //guarda el no_clasify_good
-          if (data.clasifGoodNumber != null) {
-            this.classiGoodsForm.controls['goodClassNumber'].setValue(
-              data.clasifGoodNumber
-            );
-          }
-          //guarda el tipo de unidad
-          this.goodsQueryService
-            .getLigieUnitDescription(data.ligieUnit)
-            .subscribe((data: any) => {
-              this.classiGoodsForm.controls['unitMeasure'].setValue(
-                data.description
+    if (value) {
+      if (value.length === 8) {
+        const fractionCode = { fraction: value };
+        this.goodsQueryService
+          .getUnitLigie(fractionCode)
+          .subscribe((data: any) => {
+            //guarda el no_clasify_good
+            if (data.clasifGoodNumber != null) {
+              this.classiGoodsForm.controls['goodClassNumber'].setValue(
+                data.clasifGoodNumber
               );
-              this.classiGoodsForm.controls['ligieUnit'].setValue(
-                data.description
-              );
-            });
-        });
+            }
+            //guarda el tipo de unidad
+            this.goodsQueryService
+              .getLigieUnitDescription(data.ligieUnit)
+              .subscribe((data: any) => {
+                this.classiGoodsForm.controls['unitMeasure'].setValue(
+                  data.description
+                );
+                this.classiGoodsForm.controls['ligieUnit'].setValue(
+                  data.description
+                );
+              });
+          });
+      }
     }
   }
 

@@ -6,7 +6,12 @@
     <div class="row mt-n3" *ngIf="filters.length == 0">
       <div class="form-material col-md-5">
         <search-bar
-          [filterParams]="params"
+          *ngIf="dataObservableFn"
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
+        <search-bar
+          *ngIf="dataObservableListParamsFn"
+          [params]="params"
           [filterField]="searchFilter"></search-bar>
       </div>
     </div>
@@ -26,7 +31,15 @@
         </ng-scrollbar>
       </div>
     </div>
-    <app-pagination [filterParams]="params" [totalItems]="totalItems">
+    <app-pagination
+      *ngIf="dataObservableFn"
+      [filterParams]="filterParams"
+      [totalItems]="totalItems">
+    </app-pagination>
+    <app-pagination
+      *ngIf="dataObservableListParamsFn"
+      [params]="params"
+      [totalItems]="totalItems">
     </app-pagination>
   </div>
   <div footer>

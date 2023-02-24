@@ -6,7 +6,10 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IIssuingInstitution } from '../../models/catalogs/issuing-institution.model';
+import {
+  IIssuingInstitution,
+  IOTClaveEntityFederativeByAsuntoSAT,
+} from '../../models/catalogs/issuing-institution.model';
 import { ITransferente } from '../../models/catalogs/transferente.model';
 @Injectable({
   providedIn: 'root',
@@ -54,6 +57,15 @@ export class IssuingInstitutionService
     return this.transferenteRepository.getAllPaginated(
       this.transferRoute,
       params
+    );
+  }
+  getOTClaveEntityFederativeByAsuntoSat(
+    id: string | number
+  ): Observable<IOTClaveEntityFederativeByAsuntoSAT> {
+    const route = `catalog/api/v1/state-of-republic/otclave/`;
+    return this.issuingInstitutionRepository.getOTClaveEntityFederativeByAsuntoSat(
+      this.route,
+      id
     );
   }
 }

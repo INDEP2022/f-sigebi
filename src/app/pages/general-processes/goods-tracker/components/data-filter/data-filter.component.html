@@ -195,7 +195,8 @@
   <div class="row">
     <div class="col-md-12">
       <button class="btn btn-primary active">
-        Buscar <i class="fa fa-search ml-2"></i>
+        {{ subloading ? 'Espere un momento ...' : 'Buscar' }}
+        <i class="fa fa-search ml-2"></i>
       </button>
     </div>
   </div>

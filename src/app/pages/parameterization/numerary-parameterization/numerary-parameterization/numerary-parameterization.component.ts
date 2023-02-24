@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
@@ -64,25 +64,20 @@ export class NumeraryParameterizationComponent
         },
       });
   }
-  openModal(context?: Partial<ModalNumeraryParameterizationComponent>) {
-    const modalRef = this.modalService.show(
-      ModalNumeraryParameterizationComponent,
-      {
-        initialState: { ...context },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-      }
-    });
+  openForm(allotment?: ICategorizationAutomNumerary) {
+    console.log(allotment);
+    let config: ModalOptions = {
+      initialState: {
+        allotment,
+        callback: (next: boolean) => {
+          if (next) this.getValuesAll();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalNumeraryParameterizationComponent, config);
   }
-
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
   showDeleteAlert(event: ICategorizationAutomNumerary) {
     this.alertQuestion(
       'warning',

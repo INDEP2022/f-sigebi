@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { PURGING_RECORDS_COLUMNS } from './purging-records-columns';
 
@@ -8,7 +9,7 @@ import { PURGING_RECORDS_COLUMNS } from './purging-records-columns';
   styles: [],
 })
 export class PurgingRecordsTableComponent extends BasePage implements OnInit {
-  @Input() data: any[] = [];
+  @Input() data: IGood[] = [];
 
   constructor() {
     super();

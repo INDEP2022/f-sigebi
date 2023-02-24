@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -10,6 +10,7 @@ import { COLUMNS } from './columns';
 //Components
 import { ParametersFormComponent } from '../parameters-form/parameters-form.component';
 //Provisional Data
+import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 
 @Component({
@@ -64,24 +65,27 @@ export class ParametersListComponent extends BasePage implements OnInit {
       error => (this.loading = false)
     );
   }
-
-  openModal(context?: Partial<ParametersFormComponent>) {
-    const modalRef = this.modalService.show(ParametersFormComponent, {
-      initialState: context,
+  openModal(parameter?: IParameter) {
+    let config: ModalOptions = {
+      initialState: {
+        parameter,
+        callback: (next: boolean) => {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getParameters());
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
-    });
+    };
+    this.modalService.show(ParametersFormComponent, config);
   }
-
   add() {
     this.openModal();
   }
 
-  openForm(parameter: any) {
-    this.openModal({ edit: true, parameter });
+  openForm(parameter: IParameter) {
+    this.openModal(parameter);
   }
 
   delete(parameter: any) {
