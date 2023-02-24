@@ -14,7 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class EvenPermissionControlModalComponent extends BasePage implements OnInit {
 
-  title: string = 'Delegar permisos';
+  title: string = 'CONTROL DE PERMISOS A EVENTOS';
   edit: boolean = false;
 
   comerUserForm: ModelForm<IComerUsuaTxEvent>;
@@ -42,7 +42,6 @@ export class EvenPermissionControlModalComponent extends BasePage implements OnI
     } else {
       this.edit = false;
       this.comerUserForm.controls['idEvent'].setValue(this.comerUser.idEvent);
-      console.log(this.comerUser.idEvent);
     }
   }
 
