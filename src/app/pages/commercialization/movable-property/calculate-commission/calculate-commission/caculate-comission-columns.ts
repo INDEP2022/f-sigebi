@@ -1,4 +1,22 @@
-export const CALCULATE_COMISSION_COLUMNS = {
+export const THIRD_PARTY = {
+  id: {
+    title: 'ID 3ero',
+    type: 'string',
+    sort: false,
+  },
+  nameReason: {
+    title: 'Nombre',
+    type: 'string',
+    sort: false,
+  },
+  calculationRoutine: {
+    title: 'Rutina calculada',
+    type: 'string',
+    sort: false,
+  },
+}
+
+export const COMISIONESXBIEN = {
   idEvento: {
     title: 'ID Evento',
     type: 'string',
