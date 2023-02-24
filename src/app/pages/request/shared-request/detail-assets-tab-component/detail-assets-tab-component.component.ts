@@ -59,14 +59,14 @@ export class DetailAssetsTabComponentComponent
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
   @Input() detailAssets: ModelForm<any>; // bienes ModelForm
-  @Input() domicilieObject: IDomicilies; //
+  @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodRealState>; // bien del inmueble
+  goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
@@ -126,9 +126,10 @@ export class DetailAssetsTabComponentComponent
   parameterSubBrandsService = inject(ParameterSubBrandsService);
   menageService = inject(MenageService);
 
-  isDisabled: boolean = true;
+  isDisabled: boolean = true; //desabilita el campo domicilio
   menajeSelected: any;
   isSaveMenaje: boolean = false;
+  disableDuplicity: boolean = false; //para verificar cumplimientos = false
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {
     super();
@@ -137,6 +138,19 @@ export class DetailAssetsTabComponentComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (this.typeDoc === 'clarification') {
       console.log(changes['detailAssets'].currentValue);
+    }
+    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+      if (this.detailAssets.controls['addressId'].value) {
+        this.addressId = this.detailAssets.controls['addressId'].value;
+        this.getGoodDomicilie(this.addressId);
+      }
+      if (this.typeDoc === 'verify-compliance') {
+        this.detailAssets.disable();
+        this.disableDuplicity = true;
+        if (this.goodDomicilieForm !== undefined) {
+          this.goodDomicilieForm.disable();
+        }
+      }
     }
   }
 
@@ -332,11 +346,6 @@ export class DetailAssetsTabComponentComponent
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
-
-    if (this.detailAssets.controls['addressId'].value) {
-      this.addressId = this.detailAssets.controls['addressId'].value;
-      this.getGoodDomicilie(this.addressId);
-    }
   }
 
   //formulario del inmueble
@@ -523,7 +532,7 @@ export class DetailAssetsTabComponentComponent
   initInputs(): void {
     //control de disable de pantalla
     if (this.typeDoc === 'verify-compliance') {
-      this.assetsForm.disable();
+      this.detailAssets.disable();
     } else if (this.typeDoc === 'classify-assets') {
       this.assetsForm.disable();
       this.assetsForm.controls['physicalState'].enable();

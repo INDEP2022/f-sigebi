@@ -5,6 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -12,47 +13,16 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDomicilies } from 'src/app/core/models/good/good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { Articulo12, Articulo3 } from './articulos';
 import { DETAIL_ESTATE_COLUMNS } from './detail-estates-columns';
-import { IDetailEstate } from './detail-estates.model';
 import { VERIRY_COMPLIANCE_COLUMNS } from './verify-compliance-columns';
-
-var bienes: IDetailEstate[] = [
-  {
-    id: 4,
-    gestion: 'texto de prueba',
-    descripEstateTransfe: 'texto de prueba',
-    descriptionEstateSAE: '',
-    typeEstate: 'texto de prueba',
-    quantityTransfe: 'texto de prueba',
-    measureUnitLigia: 'texto de prueba',
-    measureUnit: 'texto de prueba',
-    uniqueKey: 'texto de prueba',
-    physicalState: 'texto de prueba',
-    stateConservation: 'texto de prueba',
-    destinyLigie: 'texto de prueba',
-    transferDestina: 'texto de prueba',
-  },
-  {
-    id: 5,
-    gestion: 'string',
-    descripEstateTransfe: 'string',
-    descriptionEstateSAE: '',
-    typeEstate: 'string',
-    quantityTransfe: 'string',
-    measureUnitLigia: 'string',
-    measureUnit: 'string',
-    uniqueKey: 'string',
-    physicalState: 'string',
-    stateConservation: 'string',
-    destinyLigie: 'string',
-    transferDestina: 'string',
-  },
-];
 
 @Component({
   selector: 'app-verify-compliance-tab',
@@ -63,10 +33,10 @@ export class VerifyComplianceTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
-  //@Input() dataObject: any;
   @Input() requestObject: any;
   @Input() typeDoc: string = '';
   verifComplianceForm: ModelForm<any>;
+  domicilieObject: IDomicilies;
 
   goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -80,16 +50,17 @@ export class VerifyComplianceTabComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
 
-  detailArray: ModelForm<any>;
+  detailArray: ModelForm<IGood>;
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
-
-  //goodSettings = { ...TABLE_SETTINGS, actions: false };
+  goodsSelected: any = [];
 
   constructor(
+    private fb: FormBuilder,
     private goodServices: GoodService,
     private typeRelevantService: TypeRelevantService,
-    private genericService: GenericService
+    private genericService: GenericService,
+    private goodDomicilieService: GoodDomiciliesService
   ) {
     super();
   }
@@ -106,10 +77,11 @@ export class VerifyComplianceTabComponent
       ...this.columns.descriptionGoodSae,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log(data);
+          this.setDescriptionGoodSae(data);
         });
       },
     };
+    this.initForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -118,6 +90,79 @@ export class VerifyComplianceTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData());
     }
+  }
+
+  initForm() {
+    this.detailArray = this.fb.group({
+      id: [null],
+      goodId: [null],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
+      requestId: [null],
+      goodTypeId: [null],
+      color: [null],
+      goodDescription: [null],
+      quantity: [1],
+      duplicity: ['N'],
+      capacity: [null],
+      volume: [null],
+      fileeNumber: [null],
+      useType: [null],
+      physicalStatus: [null],
+      stateConservation: [null],
+      origin: [null],
+      goodClassNumber: [null],
+      ligieUnit: [null],
+      appraisal: [null],
+      destiny: [null], //preguntar Destino ligie
+      transferentDestiny: [null],
+      compliesNorm: [null],
+      notesTransferringEntity: [null],
+      unitMeasure: [null], // preguntar Unidad Medida Transferente
+      saeDestiny: [null],
+      brand: [null],
+      subBrand: [null],
+      armor: [null],
+      model: [null],
+      doorsNumber: [null],
+      axesNumber: [null],
+      engineNumber: [null], //numero motor
+      tuition: [null],
+      serie: [null],
+      chassis: [null],
+      cabin: [null],
+      fitCircular: [null],
+      theftReport: [null],
+      addressId: [null],
+      operationalState: [null],
+      manufacturingYear: [null],
+      enginesNumber: [null], // numero de motores
+      flag: [null],
+      openwork: [null],
+      sleeve: [null],
+      length: [null],
+      shipName: [null],
+      publicRegistry: [null], //registro public
+      ships: [null],
+      dgacRegistry: [null], //registro direccion gral de aereonautica civil
+      airplaneType: [null],
+      caratage: [null], //kilatage
+      material: [null],
+      weight: [null],
+      descriptionGoodSae: [null],
+    });
+  }
+
+  setDescriptionGoodSae(data: any) {
+    this.goodData.map((item: any) => {
+      if (item.id === data.data.id) {
+        item.descriptionGoodSae = data.text;
+      }
+    });
   }
 
   getData() {
@@ -158,6 +203,9 @@ export class VerifyComplianceTabComponent
           this.loading = false;
         });
       },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
@@ -192,6 +240,14 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  getDomicilieGood(id: number) {
+    this.goodDomicilieService.getById(id).subscribe({
+      next: resp => {
+        this.domicilieObject = resp as IDomicilies;
+      },
+    });
+  }
+
   article3Selected(event: any): void {
     this.article3array = [];
     this.article3array = event.selected;
@@ -202,51 +258,16 @@ export class VerifyComplianceTabComponent
     this.article12and13array = event.selected;
   }
 
-  clicked(event: any) {
-    console.log('table');
-    console.log(event);
-  }
-
-  /*  selectAll(event?: any) {
-    this.detailArray = [];
-    if (event.target.checked) {
-      this.detallesBienes.forEach(x => {
-        x.checked = event.target.checked;
-        this.detailArray.push(x);
-      });
-    } else {
-      this.detallesBienes.forEach(x => {
-        x.checked = event.target.checked;
-        this.detailArray = [];
-      });
-    }
-    console.log(this.detailArray);
-  } */
-
-  /* selectOne(event: any) {
-    if (event.target.checked == true) {
-      this.detailArray.push(
-        this.detallesBienes.find(x => x.id == event.target.value)
-      );
-    } else {
-      let index = this.detailArray.indexOf(
-        this.detallesBienes.find(x => x.id == event.target.value)
-      );
-      this.detailArray.splice(index, 1);
-    }
-    console.log(this.detailArray);
-  }
-
-  getTableElements(event: any) {
-    console.log(event);
-  } */
-
   selectGood(event: any) {
     console.log('good', event);
-    //this.detailArray.patchValue(event.data);
-    //console.log(this.detailArray.getRawValue());
-
-    //requestObject;
+    this.detailArray.reset();
+    this.goodsSelected = event.selected;
+    if (this.goodsSelected.length === 1) {
+      setTimeout(() => {
+        this.detailArray.patchValue(this.goodsSelected[0] as IGood);
+        this.getDomicilieGood(this.goodsSelected[0].addressId);
+      }, 3000);
+    }
   }
 
   confirm() {

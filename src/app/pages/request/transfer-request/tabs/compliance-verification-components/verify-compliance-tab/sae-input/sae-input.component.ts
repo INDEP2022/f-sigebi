@@ -20,6 +20,6 @@ export class SaeInputComponent implements ViewCell, OnInit {
 
   onKeyUp(event: any) {
     let text = event.target.value;
-    this.input.emit(text);
+    this.input.emit({ data: this.rowData, text: text });
   }
 }

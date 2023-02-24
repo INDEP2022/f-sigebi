@@ -124,7 +124,7 @@
 
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
-          (rowSelect)="selectGood($event)"
+          (userRowSelect)="selectGood($event)"
           [attr.class]="'table-bordered table-responsive'"
           [settings]="goodSettings"
           [source]="goodData">
@@ -142,12 +142,14 @@
       </button>
     </div>
   </div>
-  <div class="row pt-4">
+  <div *ngIf="goodsSelected.length == 1" class="row pt-4">
     <app-detail-assets-tab-component
       [typeDoc]="typeDoc"
-      [detailAssets]="detailArray"></app-detail-assets-tab-component>
-    <!--
-        [requestObject]="requestObject"
+      [requestObject]="requestObject"
+      [detailAssets]="detailArray"
+      [domicilieObject]="domicilieObject"></app-detail-assets-tab-component>
+
+    <!--[requestObject]="requestObject"
       [detailAssets]="classiGoodsForm" 
         [domicilieObject]="domicilieObject" -->
   </div>
