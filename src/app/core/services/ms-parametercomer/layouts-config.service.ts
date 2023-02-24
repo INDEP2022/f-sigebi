@@ -38,14 +38,14 @@ export class LayoutsConfigService extends HttpService {
   ): Observable<IListResponse<IComerLayoutsH>> {
     return this.get<IListResponse<IComerLayoutsH>>(this.endpoint, params);
   }
-  // getById(id: string | number) {
-  //   const route = `${this.endpoint}/${id}`;
-  //   return this.get(route);
-  // }
+  getById(id: string | number) {
+    const route = `${this.endpoint}/${id}`;
+    return this.get(route);
+  }
 
-  // create(tiie: IComerLayouts) {
-  //   return this.post(this.endpoint, tiie);
-  // }
+  create(layout: IComerLayouts) {
+    return this.post(this.endpoint, layout);
+  }
 
   // update(id: string | number, tiie: IComerLayouts) {
   //   const route = `${this.endpoint}/${id}`;
