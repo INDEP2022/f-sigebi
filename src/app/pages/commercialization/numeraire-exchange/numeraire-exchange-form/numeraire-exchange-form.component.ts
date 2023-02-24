@@ -2,11 +2,16 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { SELECT_SIZE } from 'src/app/common/constants/select-size';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IBankAccount } from 'src/app/core/models/catalogs/bank-account.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { HistoricalGoodSituationComponent } from 'src/app/pages/general-processes/historical-good-situation/historical-good-situation/historical-good-situation.component';
@@ -38,11 +43,11 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   hasExpenses: boolean = false;
   toggleExpenses: boolean = true;
   adding: boolean = false;
-  goodItems = new DefaultSelect();
-  accountItems = new DefaultSelect();
+  goodItems = new DefaultSelect<IGood>();
+  banksAccounts = new DefaultSelect<IBankAccount>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  selectedGood: any = null;
+  selectedGood: IGood = null;
   selectedAccount: any = null;
   createButton: string =
     '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
@@ -88,53 +93,53 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   numeraireColumns: any[] = [];
   fileName: string = 'Seleccionar archivo';
 
-  individualGoodTestData: any = [
-    {
-      id: 1,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-      appraisal: 200,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 2,
-      code: 'BIEN',
-      description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
-      appraisal: 500,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 3,
-      code: 'GOOD',
-      description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
-      appraisal: 100,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 4,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
-      appraisal: 700,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 5,
-      code: 'BIEN',
-      description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
-      appraisal: 50,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-  ];
+  // individualGoodTestData: any = [
+  //   {
+  //     id: 1,
+  //     code: 'ASEG',
+  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+  //     appraisal: 200,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     code: 'BIEN',
+  //     description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
+  //     appraisal: 500,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     code: 'GOOD',
+  //     description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
+  //     appraisal: 100,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 4,
+  //     code: 'ASEG',
+  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
+  //     appraisal: 700,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 5,
+  //     code: 'BIEN',
+  //     description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
+  //     appraisal: 50,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  // ];
 
   accountsTestData = [
     {
@@ -181,7 +186,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private goodService: GoodService,
+    private bankAccountService: BankAccountService
   ) {
     super();
   }
@@ -189,7 +196,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getGoods({ page: 1, text: '' });
-    this.getAccounts({ page: 1, text: '' });
+    this.getBanks({ page: 1, text: '' });
     this.expenseSettings.columns = EXPENSE_COLUMNS;
     this.expenseSettings.columns = {
       ...this.expenseSettings.columns,
@@ -205,16 +212,16 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       },
     };
     this.numeraireSettings.columns = NUMERAIRE_COLUMNS;
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSearch());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getSearch());
   }
 
-  getSearch() {
-    this.loading = true;
-    console.log(this.params.getValue());
-    this.loading = false;
-  }
+  // getSearch() {
+  //   this.loading = true;
+  //   console.log(this.params.getValue());
+  //   this.loading = false;
+  // }
 
   private prepareForm(): void {
     this.numeraireExchangeForm = this.fb.group({
@@ -242,21 +249,44 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   getGoods(params: ListParams) {
+    // if (params.text == '') {
+    //   this.goodItems = new DefaultSelect(this.individualGoodTestData, 5);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.individualGoodTestData.filter((i: any) => i.id == id)];
+    //   this.goodItems = new DefaultSelect(item[0], 1);
+    // }
+    // console.log(params.text)
     if (params.text == '') {
-      this.goodItems = new DefaultSelect(this.individualGoodTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.individualGoodTestData.filter((i: any) => i.id == id)];
-      this.goodItems = new DefaultSelect(item[0], 1);
+      const paramsSend = `page=${params.page}&limit=${SELECT_SIZE}`;
+      this.goodService.getAllFilter(paramsSend).subscribe(res => {
+        this.goodItems = new DefaultSelect(res.data, res.count);
+      });
+      return;
+    } else if (!isNaN(params.text as any)) {
+      console.log({ params });
+      this.goodService.getById(params.text).subscribe({
+        next: res => {
+          this.goodItems = new DefaultSelect([res], 1);
+        },
+        error: () => {
+          this.goodItems = new DefaultSelect([], 0);
+        },
+      });
+      return;
     }
+    this.goodItems = new DefaultSelect([], 0);
   }
 
   selectGood(event: any) {
+    if (!event) return;
     this.selectedGood = event;
-    this.hideFilters();
+    console.log(this.selectedGood);
+    this.hideFiltersTable();
+    this.getBanks();
   }
 
-  hideFilters() {
+  hideFiltersTable() {
     setTimeout(() => {
       let filterArray = document.getElementsByClassName('ng2-smart-filters');
       this.filterRow = filterArray.item(0);
@@ -267,14 +297,35 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     }, 200);
   }
 
-  getAccounts(params: ListParams) {
+  getBanks(params?: ListParams) {
+    // this.goodService.getBankData(this.selectedGood.id).subscribe(res => {
+    //   console.log(res)
+    // })
+    // if (params.text == '') {
+    //   this.banks = new DefaultSelect(this.accountsTestData, 5);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.accountsTestData.filter((i: any) => i.id == id)];
+    //   this.banks = new DefaultSelect(item[0], 1);
+    // }
     if (params.text == '') {
-      this.accountItems = new DefaultSelect(this.accountsTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.accountsTestData.filter((i: any) => i.id == id)];
-      this.accountItems = new DefaultSelect(item[0], 1);
+      const paramsSend = { page: params.page, limit: SELECT_SIZE };
+      this.bankAccountService.getAll(paramsSend).subscribe(res => {
+        this.banksAccounts = new DefaultSelect(res.data, res.count);
+      });
+      return;
+    } else if (!isNaN(params.text as any)) {
+      this.bankAccountService.getById(params.text).subscribe({
+        next: res => {
+          this.banksAccounts = new DefaultSelect([res], 1);
+        },
+        error: () => {
+          this.banksAccounts = new DefaultSelect([], 0);
+        },
+      });
+      return;
     }
+    this.banksAccounts = new DefaultSelect([], 0);
   }
 
   selectAccount(event: any) {
@@ -483,3 +534,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     this.modalService.show(HistoricalGoodSituationComponent, modalConfig);
   }
 }
+
+/*
+good
+accountmvmnt
+numerary
+massivenumerary
+numerary
+reportnumerary
+captureline
+massivecaptureline
+*/
