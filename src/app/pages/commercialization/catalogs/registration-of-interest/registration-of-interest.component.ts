@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { COUNT_TIIE_COLUMNS } from './registration-of-interest-modal/registration-of-interest-columns';
 import { RegistrationOfInterestModalComponent } from './registration-of-interest-modal/registration-of-interest-modal.component';
 @Component({
   selector: 'app-registration-of-interest',
@@ -31,43 +32,8 @@ export class RegistrationOfInterestComponent
       delete: false,
       position: 'right',
     },
-    columns: {
-      id: {
-        title: 'Id',
-        type: 'number',
-        sort: false,
-      },
-      tiieDays: {
-        title: 'Tiie Days',
-        type: 'number',
-        sort: false,
-      },
-      tiieAverage: {
-        title: 'Tiie Average',
-        type: 'number',
-        sort: false,
-      },
-      tiieMonth: {
-        title: 'Tiie Month',
-        type: 'number',
-        sort: false,
-      },
-      tiieYear: {
-        title: 'Tiie Year',
-        type: 'number',
-        sort: false,
-      },
-      registryDate: {
-        title: 'Registry Date',
-        type: 'string',
-        sort: false,
-      },
-      user: {
-        title: 'User',
-        type: 'string',
-        sort: false,
-      },
-    },
+    columns: { ...COUNT_TIIE_COLUMNS },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
