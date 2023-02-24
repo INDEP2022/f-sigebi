@@ -56,12 +56,14 @@
           <form-field [control]="form.get('bank')">
             <ngx-select
               [form]="form"
+              (fetchItems)="getBanks($event)"
               [data]="banks"
+              value="bankCode"
               bindLabel="name"
               label="Banco"
-              value="id"
-              (fetchItems)="getBanks($event)"
-              control="bank"></ngx-select>
+              [control]="'bank'"
+              (change)="getBanks($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -91,12 +93,12 @@
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-danger active"
-            [disabled]="form.invalid">
-            IMPRIMIR REPORTE
-          </button>
+          <confirm-button
+            text="IMPRIMIR REPORTE"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
         </div>
       </div>
     </div>
