@@ -12,6 +12,7 @@ export enum ENDPOINT_LINKS {
   ClaimStatus = 'catalog/claims-status',
   Clarification = 'catalog/clarification',
   Court = 'catalog/court',
+  CourtByCity = 'catalog/court-by-city',
   Customer = 'catalog/', // ? Checar si se implementa este catalogo
   DeductiveVerification = 'catalog/deductive-verification',
   Deductive = 'catalog/deductive',
@@ -125,7 +126,7 @@ export enum ENDPOINT_LINKS {
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
   DocumentsForDictumType = 'documents/api/v1/documents-for-dictum',
-  DocumentSeparators = 'document-separator',
+  DocumentSeparators = 'documents/document-separator',
   DocumentsType = 'documents-types/',
   DinamicTables = 'dynamiccatalog/dinamic-tables',
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',

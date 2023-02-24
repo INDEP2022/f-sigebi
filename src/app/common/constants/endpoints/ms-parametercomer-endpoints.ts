@@ -7,4 +7,5 @@ export enum ParameterComerEndpoints {
   SubBrand = 'sub-brands',
   Tiie = 'comer-cat-tiie',
   Configvtadmun = 'comer-configvtadmun',
+  Layouts = 'layouts-configuration',
 }

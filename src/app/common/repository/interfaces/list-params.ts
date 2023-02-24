@@ -13,8 +13,16 @@ export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
   search?: string = '';
-
   private filters: string[] = [];
+
+  constructor(filter?: FilterParams) {
+    if (filter) {
+      this.page = filter.page ?? 1;
+      this.limit = filter.limit ?? 10;
+      this.search = filter.search ?? '';
+      this.filters = filter.filters ?? [];
+    }
+  }
 
   addFilter(field: string, value: string | number, operator?: SearchFilter) {
     const filter = new DynamicFilter(field, value, operator).getParams();
@@ -66,6 +74,7 @@ export enum SearchFilter {
   LT = '$lt',
   GTE = '$gte',
   LTE = '$lte',
+  BTW = '$btw',
 }
 
 export interface DynamicFilterLike {

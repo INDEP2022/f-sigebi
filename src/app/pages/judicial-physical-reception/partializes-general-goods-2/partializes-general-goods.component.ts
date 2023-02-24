@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-partializes-general-goods',
@@ -51,8 +51,10 @@ export class PartializesGeneralGoodsComponent implements OnInit {
     noDataMessage: 'No se encontrarón registros',
   };
   data = EXAMPLE_DATA;
-  itemsSelect = new DefaultSelect();
-  types = new DefaultSelect();
+  // itemsSelect = new DefaultSelect();
+  // types = new DefaultSelect();
+
+  paramsStatus: ListParams = new ListParams();
   constructor(private fb: FormBuilder, private goodService: GoodService) {}
 
   ngOnInit(): void {
@@ -87,6 +89,15 @@ export class PartializesGeneralGoodsComponent implements OnInit {
       cantidad2: [null, [Validators.required, Validators.min(1)]],
       saldo: [null, [Validators.required, Validators.min(1)]],
     });
+  }
+
+  // setParamsStatus(params: ListParams) {
+  //   console.log(params);
+  //   this.paramsStatus = params;
+  // }
+
+  get goodStatusData() {
+    return this.goodService.getStatusAll(this.paramsStatus);
   }
 
   get cantidadRows() {

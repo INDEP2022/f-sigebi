@@ -3,7 +3,7 @@
     <h5 class="title">CAT&Aacute;LOGO DE BANCOS</h5>
     <div class="buttons">
       <button class="btn btn-primary active btn-sm ml-3" (click)="openModal()">
-        CUENTAS BANCOS
+        CUENTAS BANCARIAS
       </button>
     </div>
   </div>
@@ -13,6 +13,7 @@
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <app-banks-shared
+            [labelName]="'Clave Banco'"
             [form]="form"
             [bankField]="'cveBank'"
             (nameBank)="
@@ -31,11 +32,11 @@
       <hr />
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('accountNumber')" label="Cuenta">
+          <form-field [control]="form.get('cveAccount')" label="Cuenta">
             <input
               type="text"
               class="form-control"
-              formControlName="accountNumber" />
+              formControlName="cveAccount" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -50,22 +51,22 @@
         </div>
       </div>
       <div class="row mt-2">
-        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('cveCurrency')" label="Moneda">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <app-currency-shared [form]="form"></app-currency-shared>
+          <!-- <form-field [control]="form.get('cveCurrency')" label="Moneda">
             <input
               type="text"
               class="form-control"
               formControlName="cveCurrency" />
-          </form-field>
+          </form-field> -->
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field
             [control]="form.get('accountType')"
             label="Tipo de cuenta">
             <select class="form-control" formControlName="accountType">
-              <option [value]="null">Seleccione un valor</option>
               <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
-              <option [value]="'ACEGURADA'">ACEGURADA</option>
+              <option [value]="'ASEGURADA'">ASEGURADA</option>
               <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
             </select>
           </form-field>
@@ -73,6 +74,7 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <app-delegation-shared
             [form]="form"
+            [delegationField]="'delegationNumber'"
             [showSubdelegation]="false"></app-delegation-shared>
         </div>
       </div>
@@ -84,22 +86,14 @@
         >
       </div>
       <div class="row mt-2">
-        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field
-            [control]="form.get('accountNumberTransfer')"
-            label="Cuenta a traspasar">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="accountNumberTransfer" />
-          </form-field>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <app-account-banks-shared
+            [form]="form"
+            (properties)="setProperties($event)"></app-account-banks-shared>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('square_I')" label="Banco">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="square_I" />
+          <form-field [control]="form.get('bank_I')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank_I" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -133,10 +127,9 @@
             [control]="form.get('accountType_I')"
             label="Tipo de cuenta">
             <select class="form-control" formControlName="accountType_I">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">CONCENTRADORA</option>
-              <option [value]="2">ACEGURADA</option>
-              <option [value]="3">DEVOLUCIONES</option>
+              <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
+              <option [value]="'ASEGURADA'">ASEGURADA</option>
+              <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
             </select>
           </form-field>
         </div>
@@ -145,7 +138,19 @@
     <div class="row">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="submit" class="btn btn-primary active">Guardar</button>
+          <button
+            type="button"
+            class="btn btn-success active"
+            [disabled]="!form.valid"
+            (click)="confirm()">
+            {{ edit ? 'Actualizar' : 'Guardar' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary active ml-3"
+            (click)="clean()">
+            Limpiar
+          </button>
         </div>
       </div>
     </div>

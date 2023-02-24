@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
+import { CourtByCityService } from 'src/app/core/services/catalogs/court-by-city.service';
 import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -12,7 +18,9 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CourtListComponent } from 'src/app/pages/parameterization/court-maintenance/court-list/court-list.component';
+import { CourtCityComponent } from '../court-city/court-city.component';
 import { COLUMNS } from './columns';
+import { TableCity } from './table.model';
 
 @Component({
   selector: 'app-court-maintenance',
@@ -20,24 +28,27 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class CourtMaintenanceComponent extends BasePage implements OnInit {
-  columns: any[] = [];
-  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
   isPresent: boolean = false;
 
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  dataCourtCity: IListResponse<TableCity> = {} as IListResponse<TableCity>;
+  idCourt: string | number = null;
+
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private courtServ: CourtService
+    private courtServ: CourtService,
+    private courtCityServ: CourtByCityService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         position: 'right',
       },
@@ -51,7 +62,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      circuitCVE: [null, Validators.maxLength(15)],
+      circuitCVE: [null, [Validators.maxLength(15), Validators.required]],
       description: [
         null,
         [
@@ -104,6 +115,16 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
           if (next) {
             this.form.patchValue(data);
             this.edit = true;
+            this.idCourt = data.id;
+            this.filterParams.getValue().removeAllFilters();
+            this.filterParams
+              .getValue()
+              .addFilter('court', this.idCourt, SearchFilter.EQ);
+            this.filterParams
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => {
+                this.getCourtByCity();
+              });
           }
         },
       },
@@ -113,15 +134,22 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     this.modalService.show(CourtListComponent, config);
   }
 
-  delete(event: any) {
+  deleteCity(city: TableCity) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Eliminado correctamente', '');
+        this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.getCourtByCity();
+          },
+          error: err => {
+            this.onLoadToast('error', err.error.message, '');
+          },
+        });
       }
     });
   }
@@ -149,8 +177,56 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     }
   }
 
+  getCourtByCity() {
+    this.loading = true;
+    this.courtCityServ
+      .getAllWithFilters(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          let dataCity: TableCity[] = [];
+          response.data.map(city => {
+            dataCity.push({ ...(city.city as any) });
+          });
+          this.dataCourtCity.data = dataCity;
+          this.dataCourtCity.count = response.count;
+          this.loading = false;
+          this.isPresent = true;
+        },
+        error: error => (
+          this.onLoadToast('error', error.error.message, ''),
+          (this.loading = false)
+        ),
+      });
+  }
+
   clean() {
     this.form.reset();
     this.edit = false;
+    this.isPresent = false;
+    this.dataCourtCity = {} as IListResponse<TableCity>;
+  }
+
+  openModalCity() {
+    let id = this.idCourt;
+    let config: ModalOptions = {
+      initialState: {
+        id,
+        callback: (next: boolean) => {
+          if (next) {
+            this.filterParams
+              .getValue()
+              .addFilter('court', this.idCourt, SearchFilter.EQ);
+            this.filterParams
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => {
+                this.getCourtByCity();
+              });
+          }
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CourtCityComponent, config);
   }
 }

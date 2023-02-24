@@ -17,12 +17,18 @@
         </div>
 
         <div class="col">
-          <form-field [control]="form.get('statusActa')" label="Status Acta">
+          <!-- <form-field [control]="form.get('statusActa')" label="Status Acta">
             <ngx-select
               control="statusActa"
               [form]="form"
               [data]="itemsSelect"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <app-select-form
+            [form]="form"
+            formField="statusActa"
+            label="Status Acta"
+            [list]="statusList"
+            [(params)]="paramsStatus"></app-select-form>
         </div>
 
         <div class="col">

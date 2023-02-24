@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IComerLayoutsH } from 'src/app/core/models/ms-parametercomer/parameter';
+import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 @Component({
@@ -8,7 +13,12 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
   templateUrl: './layouts-configuration.component.html',
   styleUrls: ['layouts-configuration.component.scss'],
 })
-export class LayoutsConfigurationComponent implements OnInit {
+export class LayoutsConfigurationComponent extends BasePage implements OnInit {
+  layoutsH: IComerLayoutsH;
+  layoutH: any[] = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -272,10 +282,30 @@ export class LayoutsConfigurationComponent implements OnInit {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private layoutsConfigService: LayoutsConfigService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLayoutsH());
+  }
+
+  getLayoutsH() {
+    this.loading = true;
+    this.layoutsConfigService.getLayoutsH().subscribe({
+      next: data => {
+        console.log(data);
+        // this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   prepareForm() {
