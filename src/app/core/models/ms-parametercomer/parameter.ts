@@ -47,7 +47,16 @@ export interface IComerLayoutsH {
   registryNumber: number;
 }
 
-export interface IComerLayoutsT {
+export interface IComerLayouts {
+  idLayout: {
+    id: number;
+    descLayout: string;
+    screenKey: string;
+    table: string;
+    criterion: string;
+    indActive: boolean;
+    registryNumber: number;
+  };
   idConsec: number;
   position: number;
   column: string;
@@ -59,9 +68,4 @@ export interface IComerLayoutsT {
   decimal: string;
   dateFormat: string;
   registryNumber: number;
-}
-
-export interface IComerLayouts {
-  idLayout: IComerLayoutsH;
-  comerH: IComerLayoutsT;
 }

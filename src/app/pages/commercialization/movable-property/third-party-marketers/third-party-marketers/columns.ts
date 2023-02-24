@@ -26,16 +26,15 @@ export const TYPE_EVENT_THIRD_COLUMNS = {
 
 export const COMI_XTHIRC_COLUMNS = {
   idThirdParty: {
-      title: 'ID 3ro comercializador',
-      sort: false,
-      valuePrepareFunction: (value: any) => {
+    title: 'ID 3ro comercializador',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
       return value.id;
     },
   },
   idComiXThird: {
-      title: 'ID comer',
-      sort: false,
-      
+    title: 'ID comer',
+    sort: false,
   },
   startingAmount: {
     title: 'Monto inicial',

@@ -437,7 +437,7 @@ const routes: Routes = [
       (await import('./cat-appraisers/cat-appraisers.module'))
         .CatAppraisersModule,
     data: {
-      title: 'Catalao de Peritos',
+      title: 'Catálago de Peritos',
       screen: 'FCATCATMTOPERITOS',
     },
   },
