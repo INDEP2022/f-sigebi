@@ -37,41 +37,34 @@ export class AccountBanksSharedComponent extends BasePage implements OnInit {
   searchFilter: SearchBarFilter;
   banks = new DefaultSelect<IBank>();
 
+  get account() {
+    return this.form.get(this.bankField);
+  }
+
   constructor(private service: BankAccountService) {
     super();
   }
 
   ngOnInit(): void {
-    this.form.get('accountNumberTransfer').valueChanges.subscribe(data => {
+    this.form.get(this.bankField).valueChanges.subscribe(data => {
       if (data) {
-        this.searchNoAccount(data);
-        this.service
-          .getAllWithFilters(this.filterParams.getValue().getParams())
-          .subscribe({
-            next: resp => {
-              this.banks = new DefaultSelect(resp.data, resp.count);
-              this.properties.next(resp.data[0]);
-            },
-            error: err => {
-              let error = '';
-              if (err.status === 0) {
-                error = 'Revise su conexión de Internet.';
-                this.onLoadToast('error', 'Error', error);
-              } else {
-                this.onLoadToast('error', 'Error', err.error.message);
-              }
-            },
-          });
+        this.service.getById({ accountNumber: data }).subscribe({
+          next: resp => {
+            this.banks = new DefaultSelect([resp], 1);
+            this.properties.next(resp);
+          },
+          error: err => {
+            let error = '';
+            if (err.status === 0) {
+              error = 'Revise su conexión de Internet.';
+              this.onLoadToast('error', 'Error', error);
+            } else {
+              this.onLoadToast('error', 'Error', err.error.message);
+            }
+          },
+        });
       }
     });
-  }
-
-  searchNoAccount(text: string) {
-    this.filterParams.getValue().removeAllFilters();
-    this.filterParams.getValue().page = 1;
-    this.filterParams
-      .getValue()
-      .addFilter('accountNumber', text, SearchFilter.EQ);
   }
 
   getBanks(params: ListParams) {
@@ -96,8 +89,10 @@ export class AccountBanksSharedComponent extends BasePage implements OnInit {
       });
   }
 
-  onBanksChange(type: any) {
-    this.form.updateValueAndValidity();
+  onBanksChange(type: IBankAccount) {
+    if (typeof type == 'undefined') type = {} as IBankAccount;
+    this.properties.next(type);
+    this.banks = new DefaultSelect();
   }
 
   resetFields(fields: AbstractControl[]) {

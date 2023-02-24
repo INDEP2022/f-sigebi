@@ -66,7 +66,7 @@
             label="Tipo de cuenta">
             <select class="form-control" formControlName="accountType">
               <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
-              <option [value]="'ACEGURADA'">ACEGURADA</option>
+              <option [value]="'ASEGURADA'">ASEGURADA</option>
               <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
             </select>
           </form-field>
@@ -127,9 +127,9 @@
             [control]="form.get('accountType_I')"
             label="Tipo de cuenta">
             <select class="form-control" formControlName="accountType_I">
-              <option [value]="1">CONCENTRADORA</option>
-              <option [value]="2">ACEGURADA</option>
-              <option [value]="3">DEVOLUCIONES</option>
+              <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
+              <option [value]="'ASEGURADA'">ASEGURADA</option>
+              <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
             </select>
           </form-field>
         </div>
