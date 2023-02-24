@@ -79,12 +79,12 @@ const routes: Routes = [
   //     (await import('./executive-processes/executive-processes.module'))
   //       .ExecutiveProcessesModule,
   // },
-  // {
-  //   path: 'commercialization',
-  //   loadChildren: async () =>
-  //     (await import('./commercialization/commercialization.module'))
-  //       .CommercializationModule,
-  // },
+  {
+    path: 'commercialization',
+    loadChildren: async () =>
+      (await import('./commercialization/commercialization.module'))
+        .CommercializationModule,
+  },
   // {
   //   path: 'judicial-physical-reception',
   //   loadChildren: async () =>
@@ -95,12 +95,12 @@ const routes: Routes = [
   //     ).JudicialPhysicalReceptionModule,
   // },
 
-  {
-    path: 'general-processes',
-    loadChildren: async () =>
-      (await import('./general-processes/general-processes.module'))
-        .GeneralProcessesModule,
-  },
+  // {
+  //   path: 'general-processes',
+  //   loadChildren: async () =>
+  //     (await import('./general-processes/general-processes.module'))
+  //       .GeneralProcessesModule,
+  // },
 
   // {
   //   path: 'parameterization',
