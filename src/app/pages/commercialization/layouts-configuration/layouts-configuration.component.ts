@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IComerLayoutsH } from 'src/app/core/models/ms-parametercomer/parameter';
+import {
+  IComerLayouts,
+  IComerLayoutsH,
+} from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -15,7 +18,7 @@ import {
   LAYOUTS_COLUMNS2,
   LAYOUTS_COLUMNS3,
   LAYOUTS_COLUMNS4,
-  LAYOUTS_COLUMNS5,
+  LAYOUTS_COLUMNS56,
   LAYOUTS_COLUMNS6,
 } from './layouts-config-columns';
 
@@ -25,8 +28,8 @@ import {
   styleUrls: ['layouts-configuration.component.scss'],
 })
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
-  //layout: IComerLayouts;
-  layout: any[];
+  layout: IComerLayouts[] = [];
+  idLayout: any[];
   layoutHSelected: IComerLayoutsH[];
   isSelected: string;
   layoutH: any;
@@ -71,22 +74,21 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   duplicateLayouts() {
-    let params = {
-      id: this.form.controls['idLayout'].value,
-      descLayout: this.form.controls['descLayout'].value,
-      screenKey: this.form.controls['screenKey'].value,
-      table: this.form.controls['table'].value,
-      criterion: this.form.controls['criterion'].value,
-      indActive: this.form.controls['indActive'].value,
-      registryNumber: this.form.controls['indActive'].value,
-    };
-    this.loading = true;
-    // this.layoutH.forEach((obj: any) => {
-    //   if (obj.id != undefined) {
-    //     this.isSelected += obj.id + ',';
-    //   }
-    // })
-    // this.isSelected = this.isSelected.slice(0, -1);
+    // let params = {
+    //   id: this.form.controls['idLayout'].value,
+    //   descLayout: this.form.controls['descLayout'].value,
+    //   screenKey: this.form.controls['screenKey'].value,
+    //   table: this.form.controls['table'].value,
+    //   criterio: this.form.controls['criterio'].value,
+    //   indActive: this.form.controls['indActive'].value,
+    //   registryNumber: this.form.controls['indActive'].value,
+    // };
+    this.layout.forEach((obj: any) => {
+      if (obj.idLayout.id != undefined) {
+        this.isSelected += obj.idLayout.id + ',';
+      }
+    });
+    console.log(this.isSelected);
     this.layoutsConfigService.create(this.form.value).subscribe({
       next: response => {
         this.totalItems = response.count;
@@ -111,7 +113,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       next: data => {
         this.layout = data.data;
         console.log(this.layout);
-        // this.layout = data.data;
         this.totalItems = data.count;
         this.loading = false;
       },
@@ -123,8 +124,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
       next: data => {
         this.layoutH = data.data;
-        // console.log(this.layoutH)
-        // this.layout = data.data;
         this.totalItems2 = data.count;
         this.loading = false;
       },
@@ -172,12 +171,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
 
   settings5 = {
     ...TABLE_SETTINGS,
+    editable: true,
     actions: false,
-    columns: { ...LAYOUTS_COLUMNS5 },
+    columns: { ...LAYOUTS_COLUMNS56.idLayout },
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data5 = this.layoutsConfigService.getLayoutsH();
+  data5 = this.getLayouts();
 
   settings6 = {
     ...TABLE_SETTINGS,
