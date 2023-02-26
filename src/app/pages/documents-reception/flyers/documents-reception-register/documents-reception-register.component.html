@@ -261,7 +261,7 @@
       <div class="row">
         <div
           class="col-md-6"
-          *ngIf="affairKey.value == 50 && initialCondition == 'T'">
+          *ngIf="affairKey.value == '50' && initialCondition == 'T'">
           <div class="d-flex">
             <form-radio class="ml-3" label="Primera Etapa">
               <input type="radio" formControlName="stage" value="ETAPA 1" />
@@ -417,7 +417,7 @@
 
           <div class="row pt-5" *ngIf="initialCondition == 'T'">
             <form-field
-              *ngIf="affairKey.value == 50"
+              *ngIf="affairKey.value == '50'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('stageName')"
               label="">
@@ -557,7 +557,7 @@
             </form-field>
           </div>
 
-          <div class="row pt-5">
+          <div class="row pt-5" *ngIf="initialCondition != 'T'">
             <!-- <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('transference')">
@@ -571,7 +571,6 @@
             </ngx-select>
           </form-field> -->
             <form-field
-              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('minpubNumber')">
               <ngx-select
@@ -801,9 +800,7 @@
             type="button"
             class="btn btn-primary active"
             (click)="goodsCaptureCheck()"
-            [disabled]="
-              !flyerCopyRecipientForm.valid || !documentsReceptionForm.valid
-            ">
+            [disabled]="!flyerCopyRecipientForm.valid">
             Siguiente
           </button>
         </div>

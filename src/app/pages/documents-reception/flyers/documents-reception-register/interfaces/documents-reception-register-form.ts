@@ -40,36 +40,30 @@ export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsTo
 export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   wheelType: new FormControl<string>(null, Validators.required),
   identifier: new FormControl<IIdentifier>(null, Validators.required),
-  externalRemitter: new FormControl<string | number>(null, Validators.required),
-  affairKey: new FormControl<string | number>(null, Validators.required),
+  externalRemitter: new FormControl<string>(null, Validators.required),
+  affairKey: new FormControl<string>(null, Validators.required),
   affair: new FormControl<string | number>(null, Validators.required),
-  receiptDate: new FormControl<string | number | Date>(
-    null,
-    Validators.required
-  ),
-  priority: new FormControl<string | number>(null, Validators.required),
-  wheelNumber: new FormControl<string | number>(null),
-  consecutiveNumber: new FormControl<string | number>(null),
-  expedientNumber: new FormControl<string | number>(null),
+  receiptDate: new FormControl<string | Date>(null, Validators.required),
+  priority: new FormControl<string>(null, Validators.required),
+  wheelNumber: new FormControl<number>(null),
+  consecutiveNumber: new FormControl<number>(null),
+  expedientNumber: new FormControl<number>(null),
   recordId: new FormControl<string | number>(null),
   identifierExp: new FormControl<string | number>(null),
-  dailyEviction: new FormControl<boolean | number>(false),
+  dailyEviction: new FormControl<boolean>(false),
   addressGeneral: new FormControl<boolean | number>(false),
   stage: new FormControl<string>(null),
   stageName: new FormControl<string>(null),
-  circumstantialRecord: new FormControl<string | number>(null),
-  preliminaryInquiry: new FormControl<string | number>(null),
-  criminalCase: new FormControl<string | number>(null),
+  circumstantialRecord: new FormControl<string>(null),
+  preliminaryInquiry: new FormControl<string>(null),
+  criminalCase: new FormControl<string>(null),
   judgementType: new FormControl<string>(null),
-  protectionKey: new FormControl<string | number>(null),
-  touchPenaltyKey: new FormControl<string | number>(null),
+  protectionKey: new FormControl<string>(null),
+  touchPenaltyKey: new FormControl<string>(null),
   officeExternalKey: new FormControl<string>(null, Validators.required),
-  externalOfficeDate: new FormControl<string | number | Date>(
-    null,
-    Validators.required
-  ),
-  observations: new FormControl<string | number>(null, Validators.required),
-  expedientTransferenceNumber: new FormControl<string | number>(null),
+  externalOfficeDate: new FormControl<string | Date>(null, Validators.required),
+  observations: new FormControl<string>(null, Validators.required),
+  expedientTransferenceNumber: new FormControl<string>(null),
   uniqueKey: new FormControl<string | number>(null),
   cityNumber: new FormControl<ICity>(null, Validators.required),
   entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(
@@ -77,7 +71,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
-  transference: new FormControl<string | number>(null, Validators.required),
+  transference: new FormControl<number>(null, Validators.required),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null, Validators.required),
   autorityNumber: new FormControl<IAuthority>(null, Validators.required),
@@ -92,26 +86,20 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   destinationArea: new FormControl<string | number>(null, Validators.required),
-  departamentDestinyNumber: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
-  delegationNumber: new FormControl<string | number>(null, Validators.required),
+  departamentDestinyNumber: new FormControl<number>(null, Validators.required),
+  delDestinyNumber: new FormControl<number>(null, Validators.required),
   delegationName: new FormControl<string>(null, Validators.required),
-  subDelegationNumber: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
+  subDelDestinyNumber: new FormControl<number>(null, Validators.required),
   subDelegationName: new FormControl<string>(null, Validators.required),
   estatusTramite: new FormControl<IManagementArea>(null, Validators.required),
   goodRelation: new FormControl<string>(null),
-  institutionNumber: new FormControl<string | number>(200, Validators.required),
-  officeNumber: new FormControl<string | number>(null),
-  captureDate: new FormControl<string | number | Date>(null),
+  institutionNumber: new FormControl<number>(200, Validators.required),
+  officeNumber: new FormControl<number>(null),
+  captureDate: new FormControl<Date>(new Date()),
   wheelStatus: new FormControl<string>(null),
-  entryProcedureDate: new FormControl<string | number | Date>(new Date()),
+  entryProcedureDate: new FormControl<Date>(new Date()),
   registerNumber: new FormControl<string | number>(null),
-  originNumber: new FormControl<string | number>(null),
+  originNumber: new FormControl<number>(null),
   dictumKey: new FormControl<string | number>(null),
   reserved: new FormControl<string>(null),
   autoscan: new FormControl<string>(null),
@@ -119,60 +107,61 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
 
 export interface IDocumentsReceptionData {
   wheelType: string;
-  identifier: string | number;
-  externalRemitter: string | number;
-  affairKey: string | number;
+  identifier: string;
+  externalRemitter: string;
+  affairKey: string;
   affair: string | number;
-  receiptDate: string | number | Date;
-  priority: string | number;
-  wheelNumber?: string | number;
-  consecutiveNumber?: string | number;
-  expedientNumber?: string | number;
+  receiptDate: string | Date;
+  priority: string;
+  wheelNumber: number;
+  consecutiveNumber: number;
+  expedientNumber: number;
   recordId?: string | number;
   identifierExp?: string | number;
-  dailyEviction?: boolean | number;
+  dailyEviction: number;
   addressGeneral?: boolean | number;
   stage?: string;
   stageName?: string;
-  circumstantialRecord?: string | number;
-  preliminaryInquiry?: string | number;
-  criminalCase?: string | number;
-  judgementType?: string;
-  protectionKey?: string | number;
-  touchPenaltyKey?: string | number;
+  circumstantialRecord: string;
+  preliminaryInquiry: string;
+  criminalCase: string;
+  judgementType: string;
+  protectionKey: string;
+  touchPenaltyKey: string;
   officeExternalKey: string;
-  externalOfficeDate: string | number | Date;
-  observations: string | number;
-  expedientTransferenceNumber?: string | number;
+  externalOfficeDate: string | Date;
+  observations: string;
+  expedientTransferenceNumber: string;
   uniqueKey?: string | number;
-  cityNumber: string | number;
-  entFedKey: string | number;
-  endTransferNumber: string | number;
-  transference: string | number;
-  courtNumber?: string | number;
-  stationNumber: string | number;
-  autorityNumber: string | number;
-  minpubNumber?: string | number;
-  crimeKey: string | number;
-  indiciadoNumber: string | number;
-  viaKey: string | number;
+  cityNumber: number;
+  entFedKey: string;
+  endTransferNumber: number;
+  transference: number;
+  courtNumber: number;
+  stationNumber: number;
+  autorityNumber: number;
+  minpubNumber: number;
+  crimeKey: string;
+  indiciadoNumber: number;
+  indiciadoName: string;
+  viaKey: string;
   destinationArea: string | number;
-  departamentDestinyNumber: string | number;
-  delegationNumber: string | number;
+  departamentDestinyNumber: number;
+  delDestinyNumber: number;
   delegationName: string | number;
-  subDelegationNumber: string | number;
+  subDelDestinyNumber: number;
   subDelegationName: string | number;
   estatusTramite: string | number;
   goodRelation?: string;
-  institutionNumber: string | number;
-  officeNumber?: string | number;
-  captureDate?: string | number | Date;
-  wheelStatus?: string;
-  entryProcedureDate?: string | number | Date;
-  registerNumber?: string | number;
-  originNumber?: string | number;
-  dictumKey?: string | number;
-  reserved?: string;
+  institutionNumber: number;
+  officeNumber: number;
+  captureDate: Date;
+  wheelStatus: string;
+  entryProcedureDate: Date;
+  registerNumber?: number;
+  originNumber: number;
+  dictumKey: string;
+  reserved: string;
   autoscan?: string;
 }
 
@@ -222,6 +211,7 @@ export interface IGlobalFlyerRegistration {
   gCommit: string | number;
   gOFFCommit: string | number;
   noTransferente: string | number;
+  gNoVolante: string | number;
 }
 
 export interface IDocReceptionFlyersRegistrationParams {

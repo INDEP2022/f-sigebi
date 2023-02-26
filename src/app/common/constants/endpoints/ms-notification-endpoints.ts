@@ -11,4 +11,8 @@ export enum NotificationEndpoints {
   NotifyRatification = `notify-ratification`,
   //post
   NotificationxPropertyFilter = `notification/notification-x-property/filter`,
+  //get, post
+  TmpNotification = `tmp-notification`,
+  //get
+  MaxFlyerNumber = `notification/max-flyer-number`,
 }

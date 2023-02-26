@@ -24,31 +24,14 @@ export class NotificationService extends HttpService {
     return this.notificationRepository.getAll(this.route.Notification, params);
   }
 
-  getByNotificationxProperty(
-    params?: ListParams
-  ): Observable<IListResponse<INotification>> {
-    return this.notificationRepository.getAll(
-      this.route.NotificationxProperty,
-      params
-    );
-  }
-
-  // update(id: string | number, notification: Object) {
-  //   const fullRoute = `${this.route.Notification}/${id}`;
-  //   return this.put(fullRoute, notification);
-  // }
-
   getAllFilter(params: _Params): Observable<IListResponse<INotification>> {
     return this.get<IListResponse<INotification>>(
       `${this.route.Notification}?${params}`
     );
   }
 
-  create(model: INotification): Observable<INotification> {
-    return this.notificationRepository.create(
-      this.route.NotifyRatification,
-      model
-    );
+  create(body: INotification): Observable<INotification> {
+    return this.post(this.route.Notification, body);
   }
 
   update(
@@ -56,6 +39,15 @@ export class NotificationService extends HttpService {
     notification: Partial<INotification>
   ): Observable<{ statusCode: number; message: string[] }> {
     return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
+  }
+
+  getByNotificationxProperty(
+    params?: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository.getAll(
+      this.route.NotificationxProperty,
+      params
+    );
   }
 
   createNotificationxPropertyFilter(model: any): Observable<any> {

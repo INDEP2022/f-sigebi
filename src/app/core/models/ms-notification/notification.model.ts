@@ -43,7 +43,7 @@ export interface INotification {
   priority: string;
   wheelType: string;
   reserved: string;
-  entryProcedureDate: string;
+  entryProcedureDate: Date;
   userInsert: string;
   originNumber: number;
   stationNumber: number;
