@@ -2,6 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">Cat&aacute;logo Registro de Intereses</h5>
     <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings1"></app-columns-select>
       <div>
         <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
           Nuevo
@@ -21,6 +22,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [settings]="settings1"
+            [attr.class]="'table-bordered'"
             [source]="tiiesList"
             (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)"></ng2-smart-table>

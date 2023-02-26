@@ -37,7 +37,7 @@ export class RegistrationOfInterestComponent
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data = this.parameterTiieService.getAll();
+  data = this.tiiesList;
   form: FormGroup;
 
   constructor(
@@ -59,8 +59,6 @@ export class RegistrationOfInterestComponent
     this.parameterTiieService.getAll(this.params.getValue()).subscribe({
       next: data => {
         this.tiiesList = data.data;
-        console.log(this.tiiesList);
-        // this.cats = data;
         this.totalItems = data.count;
         this.loading = false;
       },

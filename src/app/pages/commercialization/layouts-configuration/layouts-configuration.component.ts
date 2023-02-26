@@ -70,19 +70,26 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       firmante: [null, [Validators.required]],
       ccp1: [null, [Validators.required]],
       ccp2: [null, [Validators.required]],
+      id: [null],
+      descLayout: [null, [Validators.required]],
+      screenKey: [null, [Validators.required]],
+      table: [null, [Validators.required]],
+      criterio: [null, [Validators.required]],
+      indActive: [null, [Validators.required]],
+      registryNumber: [null, [Validators.required]],
     });
   }
 
   duplicateLayouts() {
-    // let params = {
-    //   id: this.form.controls['idLayout'].value,
-    //   descLayout: this.form.controls['descLayout'].value,
-    //   screenKey: this.form.controls['screenKey'].value,
-    //   table: this.form.controls['table'].value,
-    //   criterio: this.form.controls['criterio'].value,
-    //   indActive: this.form.controls['indActive'].value,
-    //   registryNumber: this.form.controls['indActive'].value,
-    // };
+    let params = {
+      id: this.form.controls['idLayout'].value,
+      descLayout: this.form.controls['descLayout'].value,
+      screenKey: this.form.controls['screenKey'].value,
+      table: this.form.controls['table'].value,
+      criterio: this.form.controls['criterio'].value,
+      indActive: this.form.controls['indActive'].value,
+      registryNumber: this.form.controls['indActive'].value,
+    };
     this.layout.forEach((obj: any) => {
       if (obj.idLayout.id != undefined) {
         this.isSelected += obj.idLayout.id + ',';
@@ -93,7 +100,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       next: response => {
         this.totalItems = response.count;
         this.loading = false;
-        this.onConfirm.emit(this.form.value);
+        //this.onConfirm.emit(this.form.value);
         setTimeout(() => {
           this.onLoadToast('success', 'Layout duplicado!', '');
         }, 2000);
