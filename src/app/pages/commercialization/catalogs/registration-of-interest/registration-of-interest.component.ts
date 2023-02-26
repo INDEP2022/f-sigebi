@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
@@ -18,9 +19,8 @@ export class RegistrationOfInterestComponent
   extends BasePage
   implements OnInit
 {
-  tiies: ITiieV1;
-  cats: ITiieV1[] = [];
-  tiiesList: any[];
+  tiie: ITiieV1;
+  tiiesList: ITiieV1[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -37,7 +37,7 @@ export class RegistrationOfInterestComponent
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data = this.parameterTiieService.getTiie();
+  data = this.parameterTiieService.getAll();
   form: FormGroup;
 
   constructor(
@@ -68,8 +68,15 @@ export class RegistrationOfInterestComponent
     });
   }
 
-  openForm(provider?: any) {
-    this.openModal({ provider });
+  openForm(provider?: ITiieV1) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getTiie();
+      },
+    };
+    this.modalService.show(RegistrationOfInterestModalComponent, modalConfig);
   }
 
   openModal(context?: Partial<RegistrationOfInterestModalComponent>) {
