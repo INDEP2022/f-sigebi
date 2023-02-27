@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IComiXThird, IThirdParty } from 'src/app/core/models/ms-thirdparty/third-party.model';
+import {
+  IComiXThird,
+  IThirdParty,
+} from 'src/app/core/models/ms-thirdparty/third-party.model';
 import { ComiXThirdService } from 'src/app/core/services/ms-thirdparty/comi-xthird.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -19,7 +22,11 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
   amounts: IComiXThird;
   thirdParty: IThirdParty;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder, private comiXThirdService: ComiXThirdService,) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private comiXThirdService: ComiXThirdService
+  ) {
     super();
   }
 

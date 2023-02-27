@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { PurginRecordsForm } from '../../utils/purgin-records-form';
 
 @Component({
   selector: 'app-purging-records-form',
@@ -7,16 +8,20 @@ import { FormGroup } from '@angular/forms';
   styles: [],
 })
 export class PurgingRecordsFormComponent implements OnInit {
-  @Input() form: FormGroup;
-  @Input() recordField: string = '';
-  @Input() previusInquiryField: string = '';
-  @Input() criminalCaseField: string = '';
-  @Input() circumstantialRecordField: string = '';
-  @Input() protectionField: string = '';
-  @Input() penalField: string = '';
-  @Input() identifierField: string = '';
+  @Input() form: FormGroup<PurginRecordsForm>;
+  @Output() onExpedientChange = new EventEmitter<string | number>();
+  get formControls() {
+    return this.form.controls;
+  }
 
   constructor() {}
 
   ngOnInit(): void {}
+
+  expedientChange() {
+    const expedientId = this.formControls.id.value;
+    if (expedientId) {
+      this.onExpedientChange.emit(expedientId);
+    }
+  }
 }
