@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
@@ -39,6 +39,19 @@ export class NotificationService extends HttpService {
     notification: Partial<INotification>
   ): Observable<{ statusCode: number; message: string[] }> {
     return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
+  }
+
+  getMaxFlyerByExpedient(
+    expedient: number,
+    type: 'MIN' | 'MAX'
+  ): Observable<{ no_volante: number }> {
+    return this.get(
+      `${this.route.MaxFlyerNumber}/${expedient}/option/${type}`
+    ).pipe(
+      map((resp: { no_volante: string }) => {
+        return { no_volante: Number(resp.no_volante) };
+      })
+    );
   }
 
   getByNotificationxProperty(

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, Observable, takeUntil } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
@@ -54,9 +55,13 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ITempExpedient } from '../../../../core/models/ms-expedient/tmp-expedient.model';
+import { ICountAffairOptions } from '../../../../core/models/ms-interfacesat/ms-interfacesat.interface';
 import { IProceduremanagement } from '../../../../core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { AuthService } from '../../../../core/services/authentication/auth.service';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
 import { TmpGestRegDocService } from '../../../../core/services/ms-flier/tmp-gest-reg-doc.service';
+import { CatalExpSatService } from '../../../../core/services/ms-interfacesat/catal-exp-sat.service';
+import { SatTransferService } from '../../../../core/services/ms-interfacesat/sat-transfer.service';
 import { DocReceptionTrackRecordsModalComponent } from './components/doc-reception-track-records-modal/doc-reception-track-records-modal.component';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
 import { DOCUMENTS_RECEPTION_TRACK_RECORDS_TEST_DATA } from './constants/documents-reception-register-default-values';
@@ -106,6 +111,9 @@ export class DocumentsReceptionRegisterComponent
   pgrInterface: boolean = false;
   satInterface: boolean = false;
   identifier: string = null;
+  //TODO: Dejar la delegacion y subdelegacion nulos
+  userDelegation: number = 0;
+  userSubdelegation: number = 0;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -146,6 +154,7 @@ export class DocumentsReceptionRegisterComponent
   pageParams: Partial<IDocReceptionFlyersRegistrationParams>;
 
   constructor(
+    private router: Router,
     private fb: FormBuilder,
     private modalService: BsModalService,
     private docDataService: DocumentsReceptionDataService,
@@ -170,7 +179,10 @@ export class DocumentsReceptionRegisterComponent
     private interfacefgrService: InterfacefgrService,
     private expedientService: ExpedientService,
     private tmpExpedientService: TmpExpedientService,
-    private tmpGestRegDocService: TmpGestRegDocService
+    private tmpGestRegDocService: TmpGestRegDocService,
+    private satTransferService: SatTransferService,
+    private catExpSatService: CatalExpSatService,
+    private authService: AuthService
   ) {
     super();
     this.pageParams = this.docDataService.flyersRegistrationParams;
@@ -229,13 +241,59 @@ export class DocumentsReceptionRegisterComponent
   }
 
   ngOnInit(): void {
+    this.checkParams();
     // ! descomentar esta linea para mostrar el modal al page
     // this.selectFlyer();
     this.onFormChanges();
+    this.getLoggedUserArea();
     this.setInitialConditions();
     this.setFormLayout();
     this.setDefaultValues();
     this.checkManagementArea();
+    console.log(this.docDataService.documentsReceptionRegisterForm);
+  }
+
+  checkParams() {
+    //Parametros para pruebas
+    if (this.pageParams == null) {
+      this.pageParams = {
+        pGestOk: null,
+        pNoVolante: null,
+        pSatTipoExp: null,
+        pNoTramite: null,
+        noTransferente: null,
+        pIndicadorSat: null,
+      };
+    }
+    console.log(this.pageParams);
+    //If para pruebas
+    if (this.docDataService.documentsReceptionRegisterForm != null) {
+      this.globals.gCommit = 'S';
+      this.globals.gOFFCommit = 'S';
+    }
+    if (this.globals.gCommit == 'S') {
+      if (this.globals.gOFFCommit == 'N') {
+        this.postGoodsCapture();
+      } else {
+        this.deleteDuplicatedGoods();
+        this.postGoodsCapture();
+      }
+    }
+  }
+
+  getLoggedUserArea() {
+    const token = this.authService.decodeToken();
+    const params = new FilterParams();
+    params.addFilter('user', token.preferred_username);
+    this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          this.userDelegation = data.data[0].delegation1Number;
+          this.userSubdelegation = data.data[0].subdelegationNumber;
+        }
+      },
+      error: () => {},
+    });
   }
 
   setInitialConditions() {
@@ -598,10 +656,6 @@ export class DocumentsReceptionRegisterComponent
   }
 
   setDefaultValues() {
-    // const day = this.initialDate.getDate();
-    // const month = this.initialDate.getMonth() + 1;
-    // const year = this.initialDate.getFullYear();
-    // const initialDate = `${day}/${month}/${year}`;
     const initialDate = this.parseDatepickerFormat(this.initialDate);
     this.formControls.receiptDate.setValue(initialDate);
   }
@@ -768,7 +822,6 @@ export class DocumentsReceptionRegisterComponent
       wheelNumber: notif.wheelNumber,
       consecutiveNumber: notif.consecutiveNumber,
       expedientNumber: notif.expedientNumber,
-      // dailyEviction: notif.dailyEviction,
       addressGeneral: notif.addressGeneral,
       circumstantialRecord: notif.circumstantialRecord,
       preliminaryInquiry: notif.preliminaryInquiry,
@@ -1493,6 +1546,12 @@ export class DocumentsReceptionRegisterComponent
       }
     }
     this.prepareFormData();
+    this.docDataService.documentsReceptionRegisterForm =
+      this.documentsReceptionForm.value;
+    // this.docDataService.setDocumentsReceptionRegisterForm(
+    //   this.documentsReceptionForm.value
+    // );
+    console.log(this.docDataService.documentsReceptionRegisterForm);
     return;
     //TODO: establecer valor variable global con ngrx
     this.globals.bn = 1;
@@ -1688,6 +1747,302 @@ export class DocumentsReceptionRegisterComponent
   }
 
   captureGoods() {
-    //
+    let subject: number = null,
+      expedient: number = null;
+    // const params = new FilterParams();
+    // params.addFilter(
+    //   'expedientNumber',
+    //   this.formControls.expedientNumber.value
+    // );
+    // this.notificationService.getAllFilter(params.getParams()).subscribe({
+    //   next: data => {
+    //     expedient = data.data[0].expedientNumber;
+    //   },
+    //   error: () => {},
+    // });
+    // if (expedient != null) {
+    // }
+    if (this.globals.pIndicadorSat == 0) {
+      const options: ICountAffairOptions = {
+        office: this.formControls.officeExternalKey.value,
+        expedient: this.formControls.expedientTransferenceNumber.value,
+      };
+      this.satTransferService.getCountAffair(options).subscribe({
+        next: data => {
+          if (data.count > 1) {
+            this.sentToSatBulkLoad();
+          } else if (data.count == 1) {
+            this.sendToGoodsCapture();
+          }
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Error al buscar el oficio del SAT'
+          );
+        },
+      });
+    } else if (this.globals.pIndicadorSat == 1) {
+      const options: ICountAffairOptions = {
+        office: this.formControls.officeExternalKey.value,
+      };
+      this.satTransferService.getCountAffair(options).subscribe({
+        next: data => {
+          if (data.count > 1) {
+            this.sentToSatBulkLoad();
+          } else if (data.count == 1) {
+            this.sendToGoodsCapture();
+          }
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Error al buscar el oficio del SAT'
+          );
+        },
+      });
+    } else if (this.globals.vTipoTramite == 3) {
+      this.interfacefgrService
+        .getCountAffair(this.formData.officeExternalKey)
+        .subscribe({
+          next: data => {
+            if (data.count > 1) {
+              this.sendToPgrBulkLoad();
+            } else if (data.count == 1) {
+              this.sendToGoodsCapture(true);
+            }
+          },
+          error: () => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Error al buscar el oficio del SAT'
+            );
+          },
+        });
+    }
+  }
+
+  sentToSatBulkLoad() {
+    this.docDataService.documentsReceptionRegisterForm =
+      this.documentsReceptionForm.value;
+    // this.docDataService.setDocumentsReceptionRegisterForm(
+    //   this.documentsReceptionForm.value
+    // );
+    this.docDataService.goodsBulkLoadSatSaeParams = {
+      asuntoSat: this.formData.expedientTransferenceNumber,
+      pNoExpediente: this.formControls.expedientNumber.value,
+      pNoOficio: this.formData.officeExternalKey,
+      pNoVolante: this.formControls.wheelNumber.value,
+      pSatTipoExp: this.pageParams.pSatTipoExp,
+      pIndicadorSat: this.pageParams.pIndicadorSat,
+    };
+    console.log(this.docDataService.goodsBulkLoadSatSaeParams);
+    this.alert(
+      'info',
+      'Información',
+      'El asunto registrado por el SAT contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
+    );
+    this.router.navigateByUrl('pages/documents-reception/goods-bulk-load');
+  }
+
+  sendToPgrBulkLoad() {
+    this.docDataService.documentsReceptionRegisterForm =
+      this.documentsReceptionForm.value;
+    // this.docDataService.setDocumentsReceptionRegisterForm(
+    //   this.documentsReceptionForm.value
+    // );
+    this.docDataService.goodsBulkLoadPgrSaeParams = {
+      pNoExpediente: this.formControls.expedientNumber.value,
+      pNoVolante: this.formControls.wheelNumber.value,
+      pAvPrevia: this.formData.preliminaryInquiry,
+    };
+    console.log(this.docDataService.goodsBulkLoadPgrSaeParams);
+    this.alert(
+      'info',
+      'Información',
+      'El asunto registrado por la PGR contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
+    );
+    this.router.navigateByUrl('pages/documents-reception/goods-bulk-load');
+  }
+
+  sendToGoodsCapture(pgr?: boolean) {
+    this.docDataService.documentsReceptionRegisterForm =
+      this.documentsReceptionForm.value;
+    // this.docDataService.setDocumentsReceptionRegisterForm(
+    //   this.documentsReceptionForm.value
+    // );
+    if (pgr) {
+      this.docDataService.goodsCaptureTempParams = {
+        iden: this.formData.identifier,
+        noTransferente: this.pageParams.noTransferente,
+        desalojo: this.formData.dailyEviction,
+        pNoVolante: null,
+        pNoOficio: null,
+        asuntoSat: null,
+      };
+    } else {
+      this.docDataService.goodsCaptureTempParams = {
+        iden: this.formData.identifier,
+        noTransferente: this.pageParams.noTransferente,
+        desalojo: this.formData.dailyEviction,
+        pNoVolante: this.formControls.wheelNumber.value,
+        pNoOficio: this.formData.officeExternalKey,
+        asuntoSat: this.formData.expedientTransferenceNumber,
+      };
+    }
+    console.log(this.docDataService.goodsCaptureTempParams);
+    this.router.navigateByUrl('pages/documents-reception/goods-capture');
+  }
+
+  deleteDuplicatedGoods() {
+    //TODO: Usar el query para borrar bienes duplicados
+    //   DELETE bienes bie
+    // WHERE no_expediente = :BLK_NOTIFICACIONES.NO_EXPEDIENTE
+    // AND EXISTS (SELECT 1
+    // FROM	 bienes xxx
+    // WHERE	 xxx.no_bien 				= bie.no_bien_referencia
+    // AND		 xxx.no_expediente 	= bie.no_expediente
+    // AND		 xxx.no_bien 			 <> bie.no_bien);
+    const params = new FilterParams();
+    if (this.userDelegation != null && this.userSubdelegation != null) {
+      params.addFilter('fileNumber', this.formControls.expedientNumber.value);
+      this.docRegisterService.getGoods(params.getParams()).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            const body = {
+              delegationNumber: this.userDelegation,
+              subDelegationNumber: this.userSubdelegation,
+            };
+            this.docRegisterService
+              .updateGood(data.data[0].goodId, body)
+              .subscribe({
+                next: () => {},
+                error: () => {},
+              });
+          }
+        },
+        error: () => {},
+      });
+    }
+  }
+
+  postGoodsCapture() {
+    const params = new FilterParams();
+    this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
+      next: data => {
+        if (data.noSubjectSij) {
+          params.addFilter('expedientNumber', this.globals.gNoExpediente);
+          this.notificationService.getAllFilter(params.getParams()).subscribe({
+            next: data => {
+              if (data.data.length > 0) {
+                this.formControls.expedientNumber.setValue(
+                  data.data[0].expedientNumber
+                );
+                this.formControls.wheelNumber.setValue(
+                  data.data[0].wheelNumber
+                );
+                this.updateProcedureManagement();
+              }
+            },
+            error: () => {},
+          });
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  updateProcedureManagement() {
+    const params = new FilterParams();
+    params.addFilter(
+      'expedientNumber',
+      this.formControls.expedientNumber.value
+    );
+    params.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+    this.docRegisterService.getGoods(params.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          this.updateProcedure(true);
+        } else {
+          this.updateProcedure(false);
+        }
+      },
+      error: () => {
+        this.updateProcedure(false);
+      },
+    });
+    this.alert(
+      'success',
+      'Notificación agregada',
+      `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+    );
+  }
+
+  updateProcedure(goods: boolean) {
+    let areaToTurn = this.formControls.estatusTramite.value.id;
+    if (areaToTurn == null) areaToTurn = 'OP';
+    let status: string;
+    if (goods) {
+      status = 'OPS';
+    } else {
+      status = 'OPP';
+    }
+    const body = {
+      userToTurn: this.userRecipient.value.user,
+      areaToTurn,
+      wheelNumber: this.formControls.wheelNumber.value,
+      expedient: this.formControls.expedientNumber.value,
+      status,
+    };
+    const params = new FilterParams();
+    if (this.pageParams.pNoTramite != null) {
+      if (goods) {
+        this.procedureManageService
+          .update(this.pageParams.pNoTramite, body)
+          .subscribe({
+            next: () => {
+              this.endProcess();
+            },
+            error: () => {
+              this.endProcess();
+            },
+          });
+      } else {
+        params.addFilter('id', this.pageParams.pNoTramite);
+        params.addFilter('status', 'OPI');
+        this.procedureManageService
+          .getAllFiltered(params.getParams())
+          .subscribe({
+            next: data => {
+              if (data.data.length > 0) {
+                this.procedureManageService
+                  .update(this.pageParams.pNoTramite, body)
+                  .subscribe({
+                    next: () => {
+                      this.endProcess();
+                    },
+                    error: () => {
+                      this.endProcess();
+                    },
+                  });
+              } else {
+                this.endProcess();
+              }
+            },
+            error: () => {
+              this.endProcess();
+            },
+          });
+      }
+    }
+  }
+
+  endProcess() {
+    //TODO: Limpiar globales usadas con Ngrx
+    this.globals = null;
+    this.router.navigateByUrl('pages/general-processes/work-mailbox');
   }
 }

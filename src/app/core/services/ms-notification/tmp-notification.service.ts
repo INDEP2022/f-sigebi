@@ -32,7 +32,7 @@ export class TmpNotificationService extends HttpService {
     );
   }
 
-  getById(id: string | number) {
+  getById(id: string | number): Observable<ITmpNotification> {
     const route = `${this.route.TmpNotification}/${id}`;
     return this.get(route);
   }

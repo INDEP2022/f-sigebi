@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ExpedientEndpoints } from '../../../common/constants/endpoints/ms-expedient-endpoints';
 import { ITempExpedient } from '../../models/ms-expedient/tmp-expedient.model';
@@ -13,7 +14,7 @@ export class TmpExpedientService extends HttpService {
     this.microservice = this.route.BasePath;
   }
 
-  getById(id: string | number) {
+  getById(id: string | number): Observable<ITempExpedient> {
     const route = `${this.route.GetTempExpedient}/${id}`;
     return this.get(route);
   }

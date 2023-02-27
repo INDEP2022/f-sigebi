@@ -9,7 +9,6 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
-import { IGood } from 'src/app/core/models/catalogs/goods.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
@@ -17,6 +16,7 @@ import {
   ITransferente,
   ITransferingLevelView,
 } from 'src/app/core/models/catalogs/transferente.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 
@@ -143,6 +143,13 @@ export class DocReceptionRegisterService extends HttpService {
   getGoods(params?: string): Observable<IListResponse<IGood>> {
     this.microservice = GoodEndpoints.Good;
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
+  updateGood(id: number, body: Partial<IGood>): Observable<IGood> {
+    this.microservice = GoodEndpoints.Good;
+    return this.put(`${GoodEndpoints.Good}/${id}`, body).pipe(
       tap(() => (this.microservice = ''))
     );
   }

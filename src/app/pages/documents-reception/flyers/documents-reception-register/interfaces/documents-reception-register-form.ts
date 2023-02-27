@@ -98,9 +98,9 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   captureDate: new FormControl<Date>(new Date()),
   wheelStatus: new FormControl<string>(null),
   entryProcedureDate: new FormControl<Date>(new Date()),
-  registerNumber: new FormControl<string | number>(null),
+  registerNumber: new FormControl<number>(null),
   originNumber: new FormControl<number>(null),
-  dictumKey: new FormControl<string | number>(null),
+  dictumKey: new FormControl<string>(null),
   reserved: new FormControl<string>(null),
   autoscan: new FormControl<string>(null),
 };
@@ -148,9 +148,9 @@ export interface IDocumentsReceptionData {
   destinationArea: string | number;
   departamentDestinyNumber: number;
   delDestinyNumber: number;
-  delegationName: string | number;
+  delegationName: string;
   subDelDestinyNumber: number;
-  subDelegationName: string | number;
+  subDelegationName: string;
   estatusTramite: string | number;
   goodRelation?: string;
   institutionNumber: number;
@@ -163,6 +163,65 @@ export interface IDocumentsReceptionData {
   dictumKey: string;
   reserved: string;
   autoscan?: string;
+}
+
+export interface IDocumentsReceptionRegisterForm {
+  wheelType: string;
+  identifier: IIdentifier;
+  externalRemitter: string;
+  affairKey: string;
+  affair: string | number;
+  receiptDate: string | Date;
+  priority: string;
+  wheelNumber: number;
+  consecutiveNumber: number;
+  expedientNumber: number;
+  recordId: string | number;
+  identifierExp: string | number;
+  dailyEviction: boolean;
+  addressGeneral: boolean | number;
+  stage: string;
+  stageName: string;
+  circumstantialRecord: string;
+  preliminaryInquiry: string;
+  criminalCase: string;
+  judgementType: string;
+  protectionKey: string;
+  touchPenaltyKey: string;
+  officeExternalKey: string;
+  externalOfficeDate: string | Date;
+  observations: string;
+  expedientTransferenceNumber: string;
+  uniqueKey: string | number;
+  cityNumber: ICity;
+  entFedKey: TvalTable1Data | ITablesEntryData;
+  endTransferNumber: ITransferente;
+  transference: number;
+  courtNumber: ICourt;
+  stationNumber: IStation;
+  autorityNumber: IAuthority;
+  minpubNumber: IMinpub;
+  crimeKey: TvalTable1Data | ITablesEntryData;
+  indiciadoNumber: IIndiciados;
+  viaKey: TvalTable1Data | ITablesEntryData;
+  destinationArea: string | number;
+  departamentDestinyNumber: number;
+  delDestinyNumber: number;
+  delegationName: string;
+  subDelDestinyNumber: number;
+  subDelegationName: string;
+  estatusTramite: IManagementArea;
+  goodRelation: string;
+  institutionNumber: number;
+  officeNumber: number;
+  captureDate: Date;
+  wheelStatus: string;
+  entryProcedureDate: Date;
+  registerNumber: number;
+  originNumber: number;
+  dictumKey: string;
+  reserved: string;
+  autoscan: string;
 }
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
@@ -215,12 +274,34 @@ export interface IGlobalFlyerRegistration {
 }
 
 export interface IDocReceptionFlyersRegistrationParams {
-  pGestOk: number | null;
-  pNoVolante: number | null;
-  pSatTipoExp: string | null; //No necesario si existe global
-  pNoTramite: number | null;
+  pGestOk: number;
+  pNoVolante: number;
+  pSatTipoExp: string; //No necesario si existe global
+  pNoTramite: number;
+  noTransferente: number;
+  pIndicadorSat: number;
 }
 
-export type FlyersRegistrationParamName = Partial<
-  keyof IDocReceptionFlyersRegistrationParams
->;
+export interface IGoodsBulkLoadSatSaeParams {
+  asuntoSat: string;
+  pNoExpediente: number;
+  pNoOficio: string;
+  pNoVolante: number;
+  pSatTipoExp: string;
+  pIndicadorSat: number;
+}
+
+export interface IGoodsBulkLoadPgrSaeParams {
+  pNoExpediente: number;
+  pNoVolante: number;
+  pAvPrevia: string;
+}
+
+export interface IGoodsCaptureTempParams {
+  iden: string;
+  noTransferente: number;
+  desalojo: number;
+  pNoVolante: number;
+  pNoOficio: string;
+  asuntoSat: string;
+}
