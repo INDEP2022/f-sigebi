@@ -127,9 +127,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   //   });
   // }
 
-  duplicar() {
+  duplicar(idLayout: number) {
     this.loading = false;
-    this.layoutsConfigService.create(Number(this.idLayout)).subscribe({
+    console.log(Number(this.idLayout));
+    this.layoutsConfigService.create(idLayout).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
