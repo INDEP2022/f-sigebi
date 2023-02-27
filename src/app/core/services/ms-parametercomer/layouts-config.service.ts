@@ -15,6 +15,7 @@ import {
 })
 export class LayoutsConfigService extends HttpService {
   private readonly endpoint: string = ParameterComerEndpoints.Layouts;
+  private readonly endpointH: string = ParameterComerEndpoints.layoutSH;
   constructor(private htpp: HttpClient) {
     super();
     this.microservice = ParameterComerEndpoints.BasePath;
@@ -26,24 +27,27 @@ export class LayoutsConfigService extends HttpService {
   getAllLayoutsH(
     params?: ListParams
   ): Observable<IListResponse<IComerLayoutsH>> {
-    return this.get<IListResponse<IComerLayoutsH>>(this.endpoint, params);
+    return this.get<IListResponse<IComerLayoutsH>>(this.endpointH, params);
   }
-  getById(id: string | number) {
-    const route = `${this.endpoint}/${id}`;
+  getByIdH(id: string | number) {
+    const route = `${this.endpointH}/${id}`;
     return this.get(route);
   }
-
   create(layout: IComerLayouts) {
     return this.post(this.endpoint, layout);
   }
 
-  // update(id: string | number, tiie: IComerLayouts) {
-  //   const route = `${this.endpoint}/${id}`;
-  //   return this.put(route, tiie);
-  // }
+  update(id: string | number, tiie: IComerLayouts) {
+    const route = `${this.endpointH}/${id}`;
+    return this.put(route, tiie);
+  }
 
   // remove(id: string | number) {
   //   const route = `${this.endpoint}/${id}`;
   //   return this.delete(route);
+  // }
+
+  // create(layout: IComerLayoutsH) {
+  //   return this.post(this.endpointH, layout);
   // }
 }

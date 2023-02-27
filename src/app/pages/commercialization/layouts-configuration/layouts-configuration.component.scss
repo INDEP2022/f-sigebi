@@ -29,3 +29,9 @@
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
 }
+
+::ng-deep .nb-theme-default ng2-smart-table tbody tr.selected,
+.nb-theme-default ng2-smart-table tbody tr:hover {
+  background: rgb(34, 151, 190) !important;
+  border: 1px solid blue;
+}

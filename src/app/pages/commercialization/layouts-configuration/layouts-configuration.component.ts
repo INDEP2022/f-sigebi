@@ -9,6 +9,7 @@ import {
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 import {
   EXAMPLE_DAT2,
   EXAMPLE_DAT3,
@@ -18,7 +19,7 @@ import {
   LAYOUTS_COLUMNS2,
   LAYOUTS_COLUMNS3,
   LAYOUTS_COLUMNS4,
-  LAYOUTS_COLUMNS56,
+  LAYOUTS_COLUMNS5,
   LAYOUTS_COLUMNS6,
 } from './layouts-config-columns';
 
@@ -28,16 +29,21 @@ import {
   styleUrls: ['layouts-configuration.component.scss'],
 })
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
-  layout: IComerLayouts[] = [];
-  idLayout: any[];
-  layoutHSelected: IComerLayoutsH[];
+  title = 'Layous';
+  layoutsList: IComerLayouts[] = [];
+  idLayout: IComerLayoutsH;
+  layoutDuplicated: IComerLayoutsH;
+  layousthList: IComerLayoutsH[] = [];
+  layoutHSelected: IComerLayoutsH[] = [];
   isSelected: string;
-  layoutH: any;
+  id: number = 0;
+  layout: IComerLayouts;
+  provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   totalItems2: number = 0;
   form: FormGroup = new FormGroup({});
-
+  edit: boolean = false;
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
@@ -70,67 +76,84 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       firmante: [null, [Validators.required]],
       ccp1: [null, [Validators.required]],
       ccp2: [null, [Validators.required]],
-      id: [null],
-      descLayout: [null, [Validators.required]],
-      screenKey: [null, [Validators.required]],
-      table: [null, [Validators.required]],
-      criterio: [null, [Validators.required]],
-      indActive: [null, [Validators.required]],
-      registryNumber: [null, [Validators.required]],
     });
+    if (this.provider !== undefined) {
+      this.edit = true;
+      this.form.patchValue(this.provider);
+    } else {
+      this.edit = false;
+    }
   }
 
   duplicateLayouts() {
+    this.isSelected = '';
     let params = {
-      id: this.form.controls['idLayout'].value,
-      descLayout: this.form.controls['descLayout'].value,
-      screenKey: this.form.controls['screenKey'].value,
-      table: this.form.controls['table'].value,
-      criterio: this.form.controls['criterio'].value,
-      indActive: this.form.controls['indActive'].value,
-      registryNumber: this.form.controls['indActive'].value,
+      id: this.settings5.columns.id,
+      descLayout: this.settings5.columns.descLayout,
+      screenKey: this.settings5.columns.screenKey,
+      table: this.settings5.columns.table,
+      criterion: this.settings5.columns.criterion,
+      indActive: this.settings5.columns.indActive,
+      registryNumber: this.settings5.columns.registryNumber,
     };
-    this.layout.forEach((obj: any) => {
-      if (obj.idLayout.id != undefined) {
-        this.isSelected += obj.idLayout.id + ',';
-      }
-    });
-    console.log(this.isSelected);
-    this.layoutsConfigService.create(this.form.value).subscribe({
-      next: response => {
-        this.totalItems = response.count;
-        this.loading = false;
-        //this.onConfirm.emit(this.form.value);
-        setTimeout(() => {
-          this.onLoadToast('success', 'Layout duplicado!', '');
-        }, 2000);
-        this.getLayouts();
+  }
+
+  userRowSelect(event: any) {
+    console.log(event);
+    this.layoutsConfigService.getByIdH(this.id).subscribe({
+      next: data => {
+        this.layoutDuplicated = data.idLayout;
+        console.log(this.idLayout.id);
+        console.log(this.layoutDuplicated);
+        this.duplicar(data.idLayout);
       },
-      error: () => {
+      error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Error al duplicar layout!', '');
+        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
         return;
       },
     });
+  }
+
+  duplicar(layout: IComerLayouts) {
+    this.isSelected = '';
+    this.loading = true;
+    this.layoutsConfigService.create(layout).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+        return;
+      },
+    });
+  }
+
+  handleSuccess() {
+    const message: string = 'Dup´licado';
+    this.onLoadToast('success', `${message} Correctamente`, '');
+    this.loading = false;
+    this.onConfirm.emit(true);
   }
 
   getLayouts() {
     this.loading = true;
     this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
       next: data => {
-        this.layout = data.data;
-        console.log(this.layout);
+        this.layoutsList = data.data;
+        console.log(this.layoutsList);
         this.totalItems = data.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
+
   getLayoutH() {
     this.loading = true;
-    this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
+    this.layoutsConfigService.getAllLayoutsH(this.params.getValue()).subscribe({
       next: data => {
-        this.layoutH = data.data;
+        this.layousthList = data.data;
+        //console.log(this.layousthList);
         this.totalItems2 = data.count;
         this.loading = false;
       },
@@ -180,11 +203,11 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     editable: true,
     actions: false,
-    columns: { ...LAYOUTS_COLUMNS56.idLayout },
+    columns: { ...LAYOUTS_COLUMNS5 },
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data5 = this.getLayouts();
+  data5 = this.layousthList;
 
   settings6 = {
     ...TABLE_SETTINGS,
@@ -193,5 +216,5 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data6 = this.getLayouts();
+  data6 = this.layoutsList;
 }
