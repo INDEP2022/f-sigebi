@@ -5,7 +5,7 @@
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
-        <div class="row mt-4">
+        <!-- <div class="row mt-4">
           <div class="col-md-6">
             <form-field [control]="form.get('delegation')" label="Delegación">
               <input formControlName="delegation" class="form-control" />
@@ -17,18 +17,20 @@
               label="Subdelegación">
               <input formControlName="subdelegation" class="form-control" />
             </form-field>
-          </div>
-        </div>
+          </div> 
+        </div>-->
+        <app-delegation-shared [form]="form"></app-delegation-shared>
         <div class="row mt-4">
-          <div class="col-md-6">
+          <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')" label="Moneda:">
               <input formControlName="currency" class="form-control" />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('bank')" label="Banco:">
+            <!-- <form-field [control]="form.get('bank')" label="Banco:">
               <input formControlName="bank" class="form-control" />
-            </form-field>
+            </form-field> -->
+            <app-banks-shared [form]="form"></app-banks-shared>
           </div>
         </div>
         <div class="row mt-4">
@@ -45,6 +47,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="Al:">
               <input
+                [maxDate]="maxDate"
                 formControlName="fileTo"
                 class="form-control"
                 bsDatepicker />
@@ -59,7 +62,11 @@
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('to')" label="Al:">
-              <input formControlName="to" class="form-control" bsDatepicker />
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
         </div>
@@ -67,7 +74,10 @@
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <div>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
+            <button
+              (click)="print()"
+              type="button"
+              class="btn btn-sm btn-primary active m-3">
               IMPRIMIR
             </button>
           </div>

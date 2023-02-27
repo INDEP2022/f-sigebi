@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { Observable } from 'rxjs/internal/Observable';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from './../../../../shared/components/select/default-select';
 import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
@@ -135,7 +138,11 @@ export class SirsaePaymentConsultationListComponent
     },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private goodService: GoodService,
+    private bankAccountService: BankAccountService
+  ) {
     super();
     this.tableSource = new LocalDataSource(this.columns);
   }
@@ -147,6 +154,27 @@ export class SirsaePaymentConsultationListComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSearch());
+  }
+
+  subscribeBankAccountInput() {
+    // this.input$
+    //   .pipe(
+    //     debounceTime(200),
+    //     distinctUntilChanged(),
+    //     switchMap((text: string) => {
+    //     })
+    //   )
+    //   .subscribe();
+  }
+
+  bankAccountObservable(params: { [key: string]: string }): Observable<any> {
+    if (!params) {
+      return this.bankAccountService.getAll({});
+    }
+    if (!isNaN(params as any)) {
+      return this.bankAccountService.getById(params);
+    }
+    return this.bankAccountService.getAll({});
   }
 
   getSearch() {
@@ -168,12 +196,32 @@ export class SirsaePaymentConsultationListComponent
   }
 
   getGoods(params: ListParams) {
-    if (params.text == '') {
-      this.goodItems = new DefaultSelect(this.goodTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.goodTestData.filter((i: any) => i.id == id)];
-      this.goodItems = new DefaultSelect(item[0], 1);
+    // if (params.text == '') {
+    //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
+    //   this.goodItems = new DefaultSelect(item[0], 1);
+    // }
+    if (params.text === '') {
+      this.goodService.getAll(params).subscribe(res => {
+        this.goodItems = new DefaultSelect(res.data, 5);
+      });
+      return;
+    } else if (!isNaN(params.text as any)) {
+      this.goodService.getById(params.text).subscribe(res => {
+        this.goodItems = new DefaultSelect([res], 1);
+      });
+      return;
+    }
+    this.goodItems = new DefaultSelect([], 0);
+  }
+
+  getBankAccount(params: ListParams) {
+    if (params.text) {
+      this.bankAccountService.getAll(params).subscribe(res => {
+        // this.bankAccountItems = new DefaultSelect(res.data, 5);
+      });
     }
   }
 
