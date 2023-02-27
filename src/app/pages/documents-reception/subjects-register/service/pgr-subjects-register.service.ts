@@ -66,4 +66,17 @@ export class PgrSubjectsRegisterService {
   getPgrTransferenciaBySearch(params: ListParams) {
     return this.interfacefgrService.getPgrTransfer(params);
   }
+
+  getReport(params: ListParams, tipoReport: string) {
+    console.log(tipoReport, params);
+    if (tipoReport == 'gestion_sat') {
+      return this.procedureManagementRepository.getReportProcedureManage(
+        params
+      );
+    } else {
+      return this.procedureManagementRepository.getReportTransferenciaSat(
+        params
+      );
+    }
+  }
 }
