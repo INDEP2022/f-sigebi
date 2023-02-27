@@ -177,6 +177,74 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
+  idConsec: {
+    title: 'id',
+    type: 'number',
+    sort: false,
+  },
+  position: {
+    title: 'Posición',
+    type: 'number',
+    sort: false,
+  },
+  column: {
+    title: 'Columna',
+    type: 'string',
+    sort: false,
+  },
+  type: {
+    title: 'Tipo Dato',
+    type: 'string',
+    sort: false,
+  },
+  length: {
+    title: 'Longitud',
+    type: 'number',
+    sort: false,
+  },
+  constant: {
+    title: 'Constante',
+    type: 'string',
+    sort: false,
+  },
+  carFilling: {
+    title: 'Caracter de Relleno',
+    type: 'string',
+    sort: false,
+  },
+  justification: {
+    title: 'Justificación',
+    type: 'string',
+    sort: false,
+  },
+  decimal: {
+    title: 'Decimales',
+    type: 'string',
+    sort: false,
+  },
+  dateFormat: {
+    title: 'Formato de Fecha',
+    type: 'string',
+    sort: true,
+  },
+  registryNumber: {
+    title: 'Número de Registro',
+    type: 'number',
+    sort: false,
+  },
+};
+
+export const LAYOUTS_COLUMNS56 = {
+  idLayout: {
+    title: 'idLayout',
+    type: 'number',
+    sort: false,
+  },
+  idConsec: {
+    title: 'id Consec',
+    type: 'number',
+    sort: false,
+  },
   position: {
     title: 'Posición',
     type: 'number',
