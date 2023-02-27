@@ -8,6 +8,8 @@ import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
@@ -38,7 +40,7 @@ import {
 export class MassiveConversionMainComponent extends BasePage implements OnInit {
   consultForm: FormGroup = new FormGroup({});
   selectedEvent: any = null;
-  eventItems = new DefaultSelect();
+  // eventItems: IComerEvent[] = []//new DefaultSelect();
   batchItems = new DefaultSelect();
   operationItems = new DefaultSelect();
   toggleFilter: boolean = true;
@@ -115,16 +117,17 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       class: 'table-bordered center-checkbox',
     },
   };
-  eventTestData: any[] = [
-    {
-      id: 22410,
-      cve: 'LPBM PRUEBAS',
-      date: '14/07/2021',
-      place: 'CIUDAD DE MÉXICO',
-      rulingDate: '15/07/2021',
-      status: 'VENDIDO',
-    },
-  ];
+  events = new DefaultSelect<IComerEvent>();
+  // [] = [
+  //   // {
+  //   //   id: 22410,
+  //   //   cve: 'LPBM PRUEBAS',
+  //   //   date: '14/07/2021',
+  //   //   place: 'CIUDAD DE MÉXICO',
+  //   //   rulingDate: '15/07/2021',
+  //   //   status: 'VENDIDO',
+  //   // },
+  // ];
 
   batchTestData: any[] = [
     {
@@ -369,7 +372,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private comerEventosService: ComerEventosService
   ) {
     super();
     this.dataSettings.columns = DATA_COLUMNS;
@@ -403,12 +407,34 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventTestData, 5);
+    // if (params.text == '') {
+    //   this.eventItems = new DefaultSelect(this.events, 5);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.events.filter((i: any) => i.id == id)];
+    //   this.eventItems = new DefaultSelect(item[0], 1);
+    // }
+    if (!params.text) {
+      this.events = new DefaultSelect([], 1);
+    }
+    if (!isNaN(params.text as any)) {
+      this.comerEventosService.getById(params.text).subscribe({
+        next: (res: any) => {
+          this.events = new DefaultSelect([res], 1);
+        },
+        error: () => {
+          this.events = new DefaultSelect([], 1);
+        },
+      });
     } else {
-      const id = parseInt(params.text);
-      const item = [this.eventTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
+      this.comerEventosService.getAll(params).subscribe({
+        next: (res: any) => {
+          this.events = new DefaultSelect(res.data, 1);
+        },
+        error: () => {
+          this.events = new DefaultSelect([], 1);
+        },
+      });
     }
   }
 

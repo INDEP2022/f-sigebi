@@ -115,13 +115,19 @@
               <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
               <ngx-select
                 [form]="consultForm"
-                [data]="eventItems"
+                [data]="events"
                 value="id"
                 bindLabel="id"
                 (fetchItems)="getEvents($event)"
                 (change)="selectEvent($event)"
                 control="id">
               </ngx-select>
+              <!-- <ng-select
+              not
+              (change)="selectEvent($event)">
+                <ng-option *ngFor="let event of events" [value]="event.id">
+                  {{event.id}}/ {{event.processKey}}</ng-option>
+              </ng-select> -->
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -130,7 +136,7 @@
               <i
                 class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-              <p class="text-muted">{{ selectedEvent.cve }}</p>
+              <p class="text-muted">{{ selectedEvent.processKey }}</p>
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -139,7 +145,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.date }}
+                {{ selectedEvent.eventDate }}
               </p>
             </div>
             <div
@@ -159,7 +165,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.rulingDate }}
+                {{ selectedEvent.failedDate }}
               </p>
             </div>
             <div
@@ -169,7 +175,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
               <p class="text-muted">
-                {{ selectedEvent.status }}
+                {{ selectedEvent.StatusvtaId }}
               </p>
             </div>
           </div>
