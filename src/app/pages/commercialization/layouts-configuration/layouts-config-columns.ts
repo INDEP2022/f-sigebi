@@ -153,7 +153,7 @@ export const LAYOUTS_COLUMNS5 = {
     type: 'string',
     sort: false,
   },
-  criterio: {
+  criterion: {
     title: 'Filtro de Selección',
     type: 'string',
     sort: false,
@@ -177,6 +177,11 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
+  idConsec: {
+    title: 'id',
+    type: 'number',
+    sort: false,
+  },
   position: {
     title: 'Posición',
     type: 'number',
@@ -231,47 +236,14 @@ export const LAYOUTS_COLUMNS6 = {
 
 export const LAYOUTS_COLUMNS56 = {
   idLayout: {
-    id: {
-      title: 'Id',
-      type: 'number',
-      sort: false,
-    },
-    descLayout: {
-      title: 'Descripción',
-      type: 'string',
-      sort: false,
-    },
-    screenKey: {
-      title: 'Pantalla',
-      type: 'string',
-      sort: false,
-    },
-    table: {
-      title: 'Tabla o Vista',
-      type: 'string',
-      sort: false,
-    },
-    criterio: {
-      title: 'Filtro de Selección',
-      type: 'string',
-      sort: false,
-    },
-    registryNumber: {
-      title: 'Número de registro',
-      type: 'number',
-      sort: false,
-    },
-    indActive: {
-      title: 'Activo',
-      sort: false,
-      type: 'custom',
-      renderComponent: CheckboxElementComponent,
-      onComponentInitFunction(instance: any) {
-        instance.toggle.subscribe((data: any) => {
-          data.row.to = data.toggle;
-        });
-      },
-    },
+    title: 'idLayout',
+    type: 'number',
+    sort: false,
+  },
+  idConsec: {
+    title: 'id Consec',
+    type: 'number',
+    sort: false,
   },
   position: {
     title: 'Posición',

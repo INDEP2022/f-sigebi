@@ -141,14 +141,15 @@
           </button>
         </div>
       </div>
-      <div class="row mt-5">
-        <label for="">Layouts</label>
-      </div>
+
+      <div class="row mt-5"></div>
       <div class="row pt-2 scroll-table">
         <ng2-smart-table
           class="col-md-12"
+          [attr.class]="'table-bordered'"
           [settings]="settings5"
-          [source]="layout"></ng2-smart-table>
+          (userRowSelect)="userRowSelect($event)"
+          [source]="layousthList"></ng2-smart-table>
       </div>
       <div class="row mt-5">
         <label for="">Estructura Layouts</label>
@@ -156,8 +157,10 @@
       <div class="row pt-2 scroll-table">
         <ng2-smart-table
           class="col-md-12"
+          [attr.class]="'table-bordered'"
           [settings]="settings6"
-          [source]="layout"></ng2-smart-table>
+          [source]="layoutsList"
+          edi></ng2-smart-table>
       </div>
       <div class="row mt-5 d-flex justify-content-center">
         <app-pagination
@@ -166,8 +169,9 @@
         <div class="col-md-2">
           <confirm-button
             text="Duplicar Layouts"
+            [disabled]="!valid"
             [loading]="loading"
-            (confirm)="duplicateLayouts()"></confirm-button>
+            (confirm)="duplicar()"></confirm-button>
         </div>
       </div>
     </form>
