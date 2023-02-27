@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -56,8 +58,24 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
     }
   }
 
-  confirm() {
+  async confirm() {
     if (this.form.valid) {
+      let isPresent: boolean = false;
+      const text = this.form.get('name').value;
+      await this.searchProficient(text).then(resp => {
+        const values = resp.filter(data => data.name === text);
+        isPresent = values.length > 0 ? true : false;
+      });
+
+      if (isPresent) {
+        this.onLoadToast(
+          'error',
+          `El perito ${text} ya existe, favor de verificar`,
+          ''
+        );
+        return;
+      }
+
       if (this.edit) {
         this.proficientSer.updateProficient(this.form.value).subscribe({
           next: () => this.handleSuccess(),
@@ -84,5 +102,15 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
 
   close() {
     this.modalRef.hide();
+  }
+
+  searchProficient(text: string): Promise<IProficient[]> {
+    const params = new ListParams();
+    params.text = text;
+    return new Promise(resolve => {
+      this.proficientSer.searchText(params).subscribe({
+        next: resp => resolve(resp.data),
+      });
+    });
   }
 }

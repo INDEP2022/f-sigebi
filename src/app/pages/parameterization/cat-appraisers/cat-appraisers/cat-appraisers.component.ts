@@ -67,13 +67,20 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
     this.openModal({ allotment });
   }
 
-  delete(drawer: any) {
+  delete({ id }: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.proficientSer.remove(id).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.getProficient();
+          },
+          error: err => this.onLoadToast('error', err.error.message, ''),
+        });
       }
     });
   }

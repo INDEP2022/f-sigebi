@@ -46,4 +46,11 @@ export class ProeficientService
   remove(id: string | number): Observable<Object> {
     return this.proeficientRepository.remove(this.route, id);
   }
+
+  searchText(params?: ListParams) {
+    return this.proeficientRepository.getAllPaginated(
+      this.route.concat('/search'),
+      params
+    );
+  }
 }
