@@ -31,12 +31,10 @@ import {
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   title = 'Layous';
   layoutsList: IComerLayouts[] = [];
-  idLayout: IComerLayoutsH;
-  layoutDuplicated: IComerLayoutsH;
+  idLayout: number = 0;
+  layoutDuplicated: IComerLayouts;
   layousthList: IComerLayoutsH[] = [];
-  layoutHSelected: IComerLayoutsH[] = [];
-  isSelected: string;
-  id: number = 0;
+  valid: boolean = false;
   layout: IComerLayouts;
   provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -86,7 +84,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   duplicateLayouts() {
-    this.isSelected = '';
     let params = {
       id: this.settings5.columns.id,
       descLayout: this.settings5.columns.descLayout,
@@ -99,26 +96,40 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   userRowSelect(event: any) {
-    console.log(event);
-    this.layoutsConfigService.getByIdH(this.id).subscribe({
+    this.layoutsConfigService.getByIdH(event.data.id).subscribe({
       next: data => {
-        this.layoutDuplicated = data.idLayout;
-        console.log(this.idLayout.id);
-        console.log(this.layoutDuplicated);
-        this.duplicar(data.idLayout);
+        this.layoutsList.forEach(o => {
+          if (o.idLayout.id === data.id) {
+            this.idLayout = data.id;
+            console.log(this.idLayout);
+            this.valid = true;
+          }
+        });
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+        this.onLoadToast('error', 'Layout no existe!!', '');
         return;
       },
     });
   }
 
-  duplicar(layout: IComerLayouts) {
-    this.isSelected = '';
-    this.loading = true;
-    this.layoutsConfigService.create(layout).subscribe({
+  // findOne(id: number) {
+  //   this.layoutsConfigService.findOne(id).subscribe({
+  //     next: data => {
+  //       this.layoutDuplicated = data.id;
+  //     },
+  //     error: error => {
+  //       this.loading = false;
+  //       this.onLoadToast('error', 'Layout no existe!!', '');
+  //       return;
+  //     },
+  //   });
+  // }
+
+  duplicar() {
+    this.loading = false;
+    this.layoutsConfigService.create(Number(this.idLayout)).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
@@ -140,7 +151,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
       next: data => {
         this.layoutsList = data.data;
-        console.log(this.layoutsList);
         this.totalItems = data.count;
         this.loading = false;
       },
@@ -154,7 +164,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       next: data => {
         this.layousthList = data.data;
         //console.log(this.layousthList);
-        this.totalItems2 = data.count;
+        this.totalItems = data.count;
         this.loading = false;
       },
       error: error => (this.loading = false),

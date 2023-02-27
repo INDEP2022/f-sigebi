@@ -29,17 +29,26 @@ export class LayoutsConfigService extends HttpService {
   ): Observable<IListResponse<IComerLayoutsH>> {
     return this.get<IListResponse<IComerLayoutsH>>(this.endpointH, params);
   }
-  getByIdH(id: string | number) {
+  getById(id: number) {
+    const route = `${this.endpoint}/${id}`;
+    return this.get(route);
+  }
+
+  getByIdH(id: number) {
     const route = `${this.endpointH}/${id}`;
     return this.get(route);
   }
-  create(layout: IComerLayouts) {
-    return this.post(this.endpoint, layout);
+  create(idLayout: number) {
+    return this.post(this.endpoint, idLayout);
   }
 
-  update(id: string | number, tiie: IComerLayouts) {
+  update(id: number, tiie: IComerLayouts) {
     const route = `${this.endpointH}/${id}`;
     return this.put(route, tiie);
+  }
+  findOne(id: number) {
+    const route = `${this.endpoint}/find-one`;
+    return this.post(route, id);
   }
 
   // remove(id: string | number) {
@@ -47,7 +56,7 @@ export class LayoutsConfigService extends HttpService {
   //   return this.delete(route);
   // }
 
-  // create(layout: IComerLayoutsH) {
-  //   return this.post(this.endpointH, layout);
-  // }
+  createH(layout: IComerLayoutsH) {
+    return this.post(this.endpointH, layout);
+  }
 }
