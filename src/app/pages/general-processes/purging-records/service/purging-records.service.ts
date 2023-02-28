@@ -49,7 +49,7 @@ export class PurgingRecordsService {
         return forkJoin(
           response.data.map(good => {
             const { id } = good;
-            return this.goodService.update(id, { fileNumber: Number(_new) });
+            // return this.goodService.update(id, { fileNumber: Number(_new) });
           })
         );
       })

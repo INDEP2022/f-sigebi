@@ -25,7 +25,6 @@ export class ValidationExemptedGoodsComponent
   extends BasePage
   implements OnInit
 {
-  
   form: FormGroup = new FormGroup({});
 
   totalItems: number = 0;
@@ -73,7 +72,7 @@ export class ValidationExemptedGoodsComponent
     
   }
 
-  getGoods(){
+  getGoods() {
     this.loading = true;
     this.filterParams.getValue().removeAllFilters();
     this.goodService.getExemptedGoods(this.filterParams.getValue().getParams()).subscribe({
@@ -135,13 +134,13 @@ export class ValidationExemptedGoodsComponent
 
   
 
-  openForm(good? : IGood) {
-    console.log("me estoy ejecutando");
+  openForm(good?: IGood) {
+    console.log('me estoy ejecutando');
     let config: ModalOptions = {
       initialState: {
         good,
         callback: (next: boolean) => {
-          if(next) this.getGoods();
+          if (next) this.getGoods();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -149,6 +148,4 @@ export class ValidationExemptedGoodsComponent
     };
     this.modalService.show(EditValidationExemptedGoodsModalComponent, config);
   }
-
-  
 }

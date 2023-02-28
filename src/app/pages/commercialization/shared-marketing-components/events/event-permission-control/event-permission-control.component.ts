@@ -2,19 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS } from './columns';
+import { IComerUsuaTxEvent } from 'src/app/core/models/ms-event/comer-usuatxevent-model';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerUsuauTxEventService } from 'src/app/core/services/ms-event/comer-usuautxevento.service';
-import { IComerUsuaTxEvent } from 'src/app/core/models/ms-event/comer-usuatxevent-model';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { EvenPermissionControlModalComponent } from '../even-permission-control-modal/even-permission-control-modal.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-event-permission-control',
@@ -93,7 +92,7 @@ export class EventPermissionControlComponent
     );
   }
 
-  getUserEvent(id: string | number) : void {
+  getUserEvent(id: string | number): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUserByidEVent(id));
@@ -120,13 +119,10 @@ export class EventPermissionControlComponent
       event,
       idE,
       callback: (next: boolean) => {
-       if (next) this.getUserByidEVent(comerUser.idEvent);
+        if (next) this.getUserByidEVent(comerUser.idEvent);
       },
     };
-    this.modalService.show(
-      EvenPermissionControlModalComponent,
-      modalConfig
-    );
+    this.modalService.show(EvenPermissionControlModalComponent, modalConfig);
   }
 
  

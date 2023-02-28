@@ -1,4 +1,4 @@
-import { IGood } from "../good/good.model";
+import { IGood } from '../good/good.model';
 
 export interface IGoodsTransAva {
     goodNumber: string ,

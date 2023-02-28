@@ -32,4 +32,5 @@ export class PageSetupForm {
     Validators.max(99),
     Validators.pattern(NUMBERS_PATTERN),
   ]);
+  visualiza = new FormControl<string>(null);
 }

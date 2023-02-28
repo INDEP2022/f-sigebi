@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -7,7 +7,6 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,11 +18,10 @@ export class EditValidationExemptedGoodsModalComponent
   extends BasePage
   implements OnInit
 {
-
   title: string = 'Bienes Exentos de validación';
   edit: boolean = false;
 
-  goodForm : ModelForm<IGood>;
+  goodForm: ModelForm<IGood>;
   good: IGood;
 
   goods = new DefaultSelect();
