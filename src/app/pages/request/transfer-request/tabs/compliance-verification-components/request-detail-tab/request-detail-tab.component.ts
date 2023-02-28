@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
@@ -10,20 +16,27 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './request-detail-tab.component.html',
   styleUrls: ['./request-detail-tab.component.scss'],
 })
-export class RequestDetailTabComponent extends BasePage implements OnInit {
+export class RequestDetailTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() typeDoc = '';
   //datos pasados del padre
-  @Input() dataObject: any;
+  @Input() requestForm: ModelForm<any>;
   public receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
+  priority: any = null;
 
   constructor(public fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.prepareForm();
+    //this.prepareForm();
+    this.reactiveFormCalls();
   }
+
+  ngOnChanges(changes: SimpleChanges): void {}
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
@@ -57,5 +70,17 @@ export class RequestDetailTabComponent extends BasePage implements OnInit {
   confirm() {
     this.loading = true;
     console.log(this.receptionForm.value);
+  }
+
+  reactiveFormCalls() {
+    this.requestForm.valueChanges.subscribe((val: any) => {
+      var v = this.requestForm.getRawValue();
+      if (this.requestForm.controls['urgentPriority'].value) {
+        this.priority =
+          this.requestForm.controls['urgentPriority'].value === '0'
+            ? false
+            : true;
+      }
+    });
   }
 }
