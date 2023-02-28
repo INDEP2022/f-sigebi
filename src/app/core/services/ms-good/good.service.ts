@@ -101,4 +101,14 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.put(route, good);
   }
+
+  getExemptedGoods(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}?filter.extDomProcess=TRANSFERENTE`;
+    const route2 = `${GoodEndpoints.Good}?filter.goodId=2203409`;
+    return this.get<IListResponse<IGood>>(route2, params);
+  }
+
+
 }

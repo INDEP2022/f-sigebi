@@ -1,7 +1,7 @@
 import { IGood } from "../good/good.model";
 
 export interface IGoodsTransAva {
-    goodNumber: IGood | string,
+    goodNumber: string ,
     process: string,
     registryNumber: number
 }

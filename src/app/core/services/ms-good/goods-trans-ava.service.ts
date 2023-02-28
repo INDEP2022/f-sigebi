@@ -19,4 +19,18 @@ export class GoodTransAvaService extends HttpService {
     return this.get<IListResponse<IGoodsTransAva>>(GoodEndpoints.GoodsTransAva, params);
   }
 
+  getById(id: string | number, params?: ListParams) {
+    const route = `${GoodEndpoints.GoodsTransAva}/${id}`;
+    return this.get(route, params);
+  }
+
+  create(model: IGoodsTransAva) {
+    return this.post(GoodEndpoints.GoodsTransAva, model);
+  }
+
+  update(model: IGoodsTransAva) {
+    const route = `${GoodEndpoints.GoodsTransAva}`;
+    return this.put(route,  model);
+  }
+
 }
