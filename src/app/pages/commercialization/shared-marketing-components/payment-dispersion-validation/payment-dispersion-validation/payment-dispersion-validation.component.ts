@@ -2,18 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { COLUMNS } from './columns';
 import { ALLOTMENT_COLUMNS } from './payment-dispersion-validation-allotment-columns';
 import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
-import { COLUMNS } from './columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
-import { ExcelService } from 'src/app/common/services/excel.service';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { ILot } from 'src/app/core/models/ms-lot/lot.model';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-payment-dispersion-validation',
@@ -24,12 +24,11 @@ export class PaymentDispersionValidationComponent
   extends BasePage
   implements OnInit
 {
-
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  lotByEvent: ILot[]=[];
-  
+  lotByEvent: ILot[] = [];
+
   settingsLotes = {
     ...this.settings,
     actions: false,
@@ -49,7 +48,12 @@ export class PaymentDispersionValidationComponent
   form: FormGroup = new FormGroup({});
   show = false;
 
-  constructor(private fb: FormBuilder, private excelService: ExcelService, private comerEventosService:ComerEventosService, private lotService:LotService ) {
+  constructor(
+    private fb: FormBuilder,
+    private excelService: ExcelService,
+    private comerEventosService: ComerEventosService,
+    private lotService: LotService
+  ) {
     super();
 
     this.settings = {
@@ -88,7 +92,7 @@ export class PaymentDispersionValidationComponent
     });
   }
 
-  getEventByID(): void{
+  getEventByID(): void {
     let _id = this.form.controls['id'].value;
     this.loading = true;
     this.comerEventosService.getById(_id).subscribe(
@@ -109,14 +113,14 @@ export class PaymentDispersionValidationComponent
     );
   }
 
-  getLotEvents(id: string | number):void{
+  getLotEvents(id: string | number): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLotByIdEvent(id));
   }
 
-  getLotByIdEvent(id?: string | number):void {
-     this.loading = true;
+  getLotByIdEvent(id?: string | number): void {
+    this.loading = true;
     this.lotService.getLotbyEvent(id, this.params.value).subscribe({
       next: response => {
         this.lotByEvent = response.data;
@@ -125,10 +129,8 @@ export class PaymentDispersionValidationComponent
       },
       error: error => (this.loading = false),
     });
-
   }
 
-  
   exportAsXLSXLotes(): void {
     this.excelService.exportAsExcelFile(this.lotByEvent, 'lotes_de_evento');
   }

@@ -6,12 +6,9 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
 //Components
 import { AddDocsComponent } from '../add-docs/add-docs.component';
+import { MarketingRecordsForm } from '../utils/marketing-records-form';
 import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
 import { DocsData, GoodsData } from './data';
@@ -22,7 +19,7 @@ import { DocsData, GoodsData } from './data';
   styles: [],
 })
 export class MarketingRecordsComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
+  form = new FormGroup(new MarketingRecordsForm());
   formCcp: FormGroup = new FormGroup({});
   /**
    * Goods
@@ -61,39 +58,11 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.data.load(this.goodsData);
-    //this.data2.load(this.docsData);
   }
 
   private prepareForm(): void {
-    this.form = this.fb.group({
-      recordType: ['physicalDelivery', [Validators.required]],
-      goodId: [null, [Validators.required]],
-      portfolio: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      recordCommerType: ['goodId', [Validators.required]],
-      recordKey: [null, Validators.pattern(KEYGENERATION_PATTERN)],
-      sender: [null, [Validators.required]],
-      recipient: [null, [Validators.required]],
-      salesProcess: [null, [Validators.required]],
-      city: [null, [Validators.required]],
-      paragraph1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraph2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraph3: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-    });
-
     this.form.get('recordCommerType').valueChanges.subscribe(value => {
-      if (value === 'goodId') {
+      if (value === 'good') {
         this.form.controls['goodId'].setValidators([Validators.required]);
         this.form.controls['goodId'].updateValueAndValidity();
 

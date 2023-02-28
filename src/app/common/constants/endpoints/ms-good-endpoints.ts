@@ -4,5 +4,5 @@ export enum GoodEndpoints {
   SearchByExpedient = `good/expedient/search`,
   GoodAndDesc = `good/getGoodAndDesc`,
   StatusAndDesc = `good/getDescAndStatus`,
-  GoodsTransAva = 'goods-trans-ava'
+  GoodsTransAva = 'goods-trans-ava',
 }

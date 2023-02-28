@@ -13,21 +13,36 @@
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('processKey')" label="Cve Proceso">
-            <input formControlName="processKey" type="text" class="form-control" readonly/>
+            <input
+              formControlName="processKey"
+              type="text"
+              class="form-control"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('username')" label="Usuario">
-            <input formControlName="username" type="text" class="form-control" readonly/>
+            <input
+              formControlName="username"
+              type="text"
+              class="form-control"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('address')" label="Área">
-            <input formControlName="address" type="text" class="form-control" readonly/>
+            <input
+              formControlName="address"
+              type="text"
+              class="form-control"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid" (click)="getEventByID()" >
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getEventByID()">
             Buscar
           </button>
         </div>
@@ -39,7 +54,9 @@
         <div class="col-md-5 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
           <div>
-            <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+            <button
+              (click)="openForm()"
+              class="btn btn-primary active btn-sm ml-3">
               Nuevo
             </button>
           </div>
@@ -55,9 +72,8 @@
           </ng2-smart-table>
         </div>
       </div>
-     <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination> 
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-    
   </div>
 </app-card>

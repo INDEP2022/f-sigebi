@@ -11,12 +11,12 @@
       <h5 class="title">
         Tablas y Columnas para visualizar en la p&aacute;gina web
       </h5>
-      <!-- <button
+      <button
         type="button"
         class="btn btn-primary btn-sm active ml-3"
         (click)="openForm()">
         Nuevo
-      </button> -->
+      </button>
     </div>
     <div class="row">
       <div class="col-md-12">
@@ -24,7 +24,8 @@
           <ng2-smart-table
             [settings]="settings"
             [source]="data"
-            (edit)="openForm($event.data)"></ng2-smart-table>
+            (edit)="openForm($event.data)"
+            (delete)="confirmDelete($event.data)"></ng2-smart-table>
         </div>
 
         <app-pagination

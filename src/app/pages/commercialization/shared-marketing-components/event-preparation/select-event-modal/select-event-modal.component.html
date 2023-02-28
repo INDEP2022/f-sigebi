@@ -15,11 +15,17 @@
       <div class="row">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="eventList"
-              (edit)="openForm($event.data)" (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="eventList"
+              (edit)="openForm($event.data)"
+              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
           </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
 
@@ -33,15 +39,17 @@
       <div class="row">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="loteList"
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="loteList"
               (edit)="openForm2($event.data)"></ng2-smart-table>
           </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-
   </div>
-
 </app-card>
-

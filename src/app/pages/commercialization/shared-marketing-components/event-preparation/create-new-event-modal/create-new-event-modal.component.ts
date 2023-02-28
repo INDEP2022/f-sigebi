@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
@@ -11,10 +11,9 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class CreateNewEventModalComponent implements OnInit {
-
   title: string = 'Eventos';
   edit: boolean = false;
-  
+
   eventForm: ModelForm<IComerEvent>;
   event: IComerEvent;
 
@@ -36,7 +35,7 @@ export class CreateNewEventModalComponent implements OnInit {
       delegationNumber: [null, []],
       statusvtaId: [null, []],
     });
-    if(this.event != null) {
+    if (this.event != null) {
       this.edit = true;
       this.eventForm.patchValue(this.event);
     }
