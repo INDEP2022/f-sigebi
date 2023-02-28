@@ -90,13 +90,7 @@ export class EventPreparationComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe((next: any) => {
-      if (next) {
-        console.log(next);
-        this.event = next;
-        this.authKey = '';
-      }
-    });
+    
   }
 
   openModal2(): void {
@@ -134,13 +128,11 @@ export class EventPreparationComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
+    
   }
 
   openForm(allotment?: any) {
-    this.openModal3({ allotment });
+    
   }
 
   delete(allotment: any) {

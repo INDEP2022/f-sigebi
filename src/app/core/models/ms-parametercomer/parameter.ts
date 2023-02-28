@@ -38,7 +38,7 @@ export interface IComerLayoutsH {
 }
 
 export interface IComerLayouts {
-  idLayout: IComerLayoutsH;
+  idLayout: number;
   idConsec: number;
   position: number;
   column: string;
@@ -50,4 +50,8 @@ export interface IComerLayouts {
   decimal: string;
   dateFormat: string;
   registryNumber: number;
+}
+
+export interface ILay {
+  idLayout: number;
 }

@@ -1,9 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { ILot } from 'src/app/core/models/ms-lot/lot.model';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { LIST_EVENT_COLUMNS } from './list-event-columns';
+import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
+import { CreateNewEventModalComponent } from '../create-new-event-modal/create-new-event-modal.component';
+import { EVENT_COLUMNS, LOTE_COLUMNS } from './columns';
 
 @Component({
   selector: 'app-select-event-modal',
@@ -11,108 +17,123 @@ import { LIST_EVENT_COLUMNS } from './list-event-columns';
   styles: [],
 })
 export class SelectEventModalComponent extends BasePage implements OnInit {
-  rowSelected: boolean = false;
-  selectedRow: any = null;
-  columns: any[] = [];
+  
   totalItems: number = 0;
-  title: string = 'Tipo Penalización';
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() refresh = new EventEmitter<true>();
-  table: HTMLElement;
+  totalItems2: number = 0;
 
-  constructor(private modalRef: BsModalRef) {
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+
+  eventList: IComerEvent[]=[];
+  event: IComerEvent;
+
+  loteList: ILot[]=[];
+  lote: ILot;
+
+  settings2;
+
+  constructor(private modalService: BsModalService, private comerEventosService:ComerEventosService, private lotService:LotService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: LIST_EVENT_COLUMNS,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...EVENT_COLUMNS },
     };
+
+    this.settings2 = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...LOTE_COLUMNS },
+    };
+    
   }
+
+  data:any;
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+      .subscribe(() => this.getAllEvent());
   }
 
-  getData() {
+  getAllEvent():void{
+     this.loading = true;
+
+    this.comerEventosService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.eventList = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
+    });
+  }
+  
+  openForm(event? : IComerEvent) {
+    let config: ModalOptions = {
+      initialState: {
+        event,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CreateNewEventModalComponent, config);
+  }
+
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.loteList = [];
+    this.event = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLotesByEvent(this.event));
+  }
+
+  getLotesByEvent(event : IComerEvent):void{
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    this.lotService
+      .getLotbyEvent(event.id, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.loteList = response.data;
+          this.totalItems2 = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
-  selectRow(row: any) {
-    console.log(row);
-    this.selectedRow = row;
-    this.rowSelected = true;
+
+  openForm2(lote?: ILot) {
+    let config: ModalOptions = {
+      initialState: {
+        lote,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AddEditLoteModalComponent, config);
   }
 
-  confirm() {
-    if (!this.rowSelected) return;
-    this.refresh.emit(this.selectedRow);
-    this.modalRef.hide();
-  }
 
-  close() {
-    this.modalRef.hide();
-  }
 
-  data = [
-    {
-      id_evento: '1448',
-      cve_proceso: 'CRTG/COMDD/017/2008',
-      tipo: 'Evento comercial',
-      lugar: 'TGZ',
-      observaciones: 'SI ESTOY ENTRANDO  3 6 M T',
-      fecha: '10-10-2019',
-      usuario: 'JFELIX',
-      no_delegacion: '9',
-      id_estatusvta: 'PREP',
-    },
-    {
-      id_evento: '1408',
-      cve_proceso: 'MEXICO, D.F., A 18 DE JULIO DE 2008',
-      tipo: 'Remesas',
-      lugar: 'TGZ',
-      observaciones: 'SI ESTOY ENTRANDO  3 3 I T',
-      fecha: '10-10-2020',
-      usuario: 'JFELIX',
-      no_delegacion: '0',
-      id_estatusvta: 'CONC',
-    },
-    {
-      id_evento: '1417',
-      cve_proceso: 'CRHMO/DES/ADUANA PTO PALOMAS/146/08',
-      tipo: 'Preparación',
-      lugar: 'PTO PALOMAS CHIHUAHUA',
-      observaciones: 'SI ESTOY ENTRANDO  3 6 M T',
-      fecha: '10-10-2021',
-      usuario: 'JFELIX',
-      no_delegacion: '2',
-      id_estatusvta: 'PREP',
-    },
-    {
-      id_evento: '1450',
-      cve_proceso: 'CRTG/COMDD/018/2008',
-      tipo: 'preparación',
-      lugar: 'TGZ',
-      observaciones: 'SI ESTOY ENTRANDO  3 6 M T',
-      fecha: '10-10-2022',
-      usuario: 'JFELIX',
-      no_delegacion: '4',
-      id_estatusvta: 'PREP',
-    },
-    {
-      id_evento: '1624',
-      cve_proceso: 'CRHMO/DAD/ADUANA CD JUAREZ/183/08',
-      tipo: 'Remesas',
-      lugar: 'CD JUAREZ CHIHUAHUA',
-      observaciones: 'SI ESTOY ENTRANDO  3 6 M T',
-      fecha: '10-10-2018',
-      usuario: 'JFELIX',
-      no_delegacion: '4',
-      id_estatusvta: 'PREP',
-    },
-  ];
+ 
+  
 }

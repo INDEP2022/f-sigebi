@@ -27,6 +27,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
+          [loading]="loading"
           (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

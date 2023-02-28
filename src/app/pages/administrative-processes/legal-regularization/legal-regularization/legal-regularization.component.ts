@@ -20,6 +20,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   form: FormGroup;
   good: IGood;
   document: IDocuments;
+  showFoli: boolean = true;
   get numberGood() {
     return this.form.get('numberGood');
   }
@@ -72,17 +73,20 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
 
   loadGood() {
     //2314753
+    //5457725
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: response => {
         if (response.status === 'REJ' || response.status === 'ADM') {
+          console.log(response);
           this.good = response;
+          this.goodServices.good$.emit(this.good);
           this.setGood();
           this.onLoadToast('success', 'Éxitoso', 'Bien cargado correctamente');
         } else {
           this.onLoadToast(
             'error',
             'ERROR',
-            'El bien no puede ser administrado en pantalla, debe tener status REJ o ADM'
+            `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.'`
           );
         }
       },
@@ -104,7 +108,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     console.log('Cambiando Staus');
     if (this.validDocument()) {
       this.good.status = this.good.status === 'REJ' ? 'ADM' : 'REJ';
-      this.goodServices.update(this.good.id, this.good).subscribe({
+      this.goodServices.update(this.good).subscribe({
         next: response => {
           console.log(response);
           this.postHistoryGood();
@@ -167,6 +171,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           'Actualizado',
           `El estatus del bien ${this.good.id} se cambio con éxito`
         );
+        this.form.reset();
       },
       error: error => {
         console.log(error);

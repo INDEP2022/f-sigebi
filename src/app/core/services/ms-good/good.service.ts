@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -12,6 +12,7 @@ import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
   providedIn: 'root',
 })
 export class GoodService extends HttpService {
+  good$ = new EventEmitter<IGood>();
   constructor() {
     super();
     this.microservice = GoodEndpoints.Good;
@@ -34,7 +35,11 @@ export class GoodService extends HttpService {
     return this.post(GoodEndpoints.Good, good);
   }
 
+<<<<<<< HEAD
   update(id: string | number, good: IGood) {
+=======
+  update(good: IGood) {
+>>>>>>> 6660013aa2db49cd355fe751da42d4c6f2ce4362
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -87,7 +92,6 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}/getGoodBySafe`;
     console.log(route);
-
     return this.post<IListResponse<IGood>>(route, body);
   }
 
