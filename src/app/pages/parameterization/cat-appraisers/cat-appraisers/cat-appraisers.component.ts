@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -53,27 +53,37 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
   }
 
   openModal(context?: Partial<ModalCatAppraisersComponent>) {
-    const modalRef = this.modalService.show(ModalCatAppraisersComponent, {
-      initialState: { ...context },
+    let config: ModalOptions = {
+      initialState: {
+        ...context,
+        callback: (next: boolean) => {
+          if (next) this.getProficient();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getProficient();
-    });
+    };
+    this.modalService.show(ModalCatAppraisersComponent, config);
   }
 
   openForm(allotment?: any) {
     this.openModal({ allotment });
   }
 
-  delete(drawer: any) {
+  delete({ id }: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.proficientSer.remove(id).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.getProficient();
+          },
+          error: err => this.onLoadToast('error', err.error.message, ''),
+        });
       }
     });
   }

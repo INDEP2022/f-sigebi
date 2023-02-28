@@ -19,3 +19,12 @@ export interface IAuthority {
 export interface INoCityByAsuntoSAT {
   no_ciudad: string;
 }
+export interface IAuthorityIssuingParams {
+  expedientSat: string;
+  transferent: number;
+  city: number;
+}
+export interface IAuthorityIssuingResponse {
+  no_emisora: string;
+  no_autoridad: string;
+}

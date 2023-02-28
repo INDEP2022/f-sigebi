@@ -4,7 +4,6 @@
       <form-field [control]="form.get(currencyField)">
         <ngx-select
           (fetchItems)="getCurrency($event)"
-          [searchable]="false"
           [data]="currency"
           [form]="form"
           value="otKey1"
