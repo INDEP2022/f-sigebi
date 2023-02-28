@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGiro } from 'src/app/core/models/parameterization/giro.model';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -30,10 +31,11 @@ export class TurnCompanyComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    //en espera de filtros dinamicos
     this.getTurn();
   }
 
-  getTurn() {
+  getTurn(params?: ListParams) {
     this.service.getByIdData(8).subscribe({
       next: data =>
         (this.turn = new DefaultSelect(
@@ -51,12 +53,7 @@ export class TurnCompanyComponent extends BasePage implements OnInit {
       },
     });
   }
-  onTurnChange(type: any) {
-    this.turn = new DefaultSelect();
-    this.getTurn();
-    this.form.updateValueAndValidity();
-    // this.form.updateValueAndValidity();
-  }
+  onTurnChange(type: any) {}
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
