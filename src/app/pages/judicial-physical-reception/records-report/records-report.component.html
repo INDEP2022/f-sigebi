@@ -52,9 +52,9 @@
             <div class="col-md-9">
               <form-field [control]="form.get('actaInicial')">
                 <ngx-select
-                  (fetchItems)="getProceedings($event)"
+                  (fetchItems)="getInitialProceedings($event)"
                   value="id"
-                  bindLabel="proceedingsCve"
+                  bindLabel="cve_acta"
                   control="actaInicial"
                   label="Acta Inicial"
                   [form]="form"
@@ -67,11 +67,12 @@
             <div class="col-md-9">
               <form-field [control]="form.get('actaFinal')">
                 <ngx-select
-                  (fetchItems)="getProceedings($event)"
+                  (fetchItems)="getFinalProceedings($event)"
                   control="actaFinal"
+                  bindLabel="cve_acta"
                   label="Acta Final"
                   [form]="form"
-                  [data]="itemsSelect"></ngx-select>
+                  [data]="finalProceeding"></ngx-select>
               </form-field>
             </div>
           </div>
@@ -125,7 +126,7 @@
           <div class="d-flex justify-content-center">
             <div>
               <button
-                (click)="print()"
+                (click)="onSubmit()"
                 class="btn btn-primary active"
                 type="submit"
                 size="small">

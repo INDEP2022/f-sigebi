@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import {
   KEYGENERATION_PATTERN,
@@ -36,8 +37,11 @@ export class ConfiscatedReceptionComponent implements OnInit {
   }
 
   blurE() {
-    this.serviceProcDelRes.getByCve(this.form.get('cveActa').value).subscribe({
+    const paramsF = new FilterParams();
+    paramsF.addFilter('keysProceedings', this.form.get('cveActa').value);
+    this.serviceProcDelRes.getByFilter(paramsF.getParams()).subscribe({
       next: data => {
+        console.log(data);
         console.log('Acta duplicada');
         alert('Acta duplicada');
       },

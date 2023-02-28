@@ -2,6 +2,7 @@ export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
   Authority = 'catalog/authority',
   appraiser = 'catalog/valuadores',
+  Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',

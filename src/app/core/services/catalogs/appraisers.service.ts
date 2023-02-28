@@ -15,7 +15,9 @@ export class AppraisersService implements ICrudMethods<IAppraisers> {
   constructor(private appraisersRepository: Repository<IAppraisers>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IAppraisers>> {
-    return this.appraisersRepository.getAllPaginated(this.route, params);
+    const ro = this.appraisersRepository.getAllPaginated(this.route, params);
+    console.log(ro);
+    return ro;
   }
 
   getById(id: string | number): Observable<IAppraisers> {

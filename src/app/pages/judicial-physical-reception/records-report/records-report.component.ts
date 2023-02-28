@@ -26,6 +26,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   form: FormGroup = this.fb.group({});
   itemsSelect = new DefaultSelect();
   initialProceeding = new DefaultSelect();
+  finalProceeding = new DefaultSelect();
   delegacionRecibe: string = 'delegacionRecibe';
   subdelegationField: string = 'subdelegation';
   labelDelegation: string = 'Delegación Recibe';
@@ -70,22 +71,45 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       const value = this.form.get('delegacionRecibe').value;
       console.log({
         delegacionRecibe: value,
-        delegacionEmite: this.form.get('delegacionAdministra').value,
+        delegacionEmite: this.form.get('subdelegation').value,
       });
     }
   }
 
-  getProceedings(params: ListParams) {
-    console.log(params);
-    this.serviceProcVal.getAll(params).subscribe(
-      res => {
-        console.log(res);
-        this.initialProceeding = new DefaultSelect(res.data, res.count);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  getInitialProceedings(params: ListParams) {
+    this.serviceProcVal
+      .getProceedingsByDelAndSub(
+        this.form.get('delegacionRecibe').value,
+        this.form.get('subdelegation').value.id,
+        params
+      )
+      .subscribe(
+        res => {
+          console.log(res);
+          this.initialProceeding = new DefaultSelect(res.data, res.count);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
+
+  getFinalProceedings(params: ListParams) {
+    this.serviceProcVal
+      .getProceedingsByDelAndSub(
+        this.form.get('delegacionRecibe').value,
+        this.form.get('subdelegation').value.id,
+        params
+      )
+      .subscribe(
+        res => {
+          console.log(res);
+          this.finalProceeding = new DefaultSelect(res.data, res.count);
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 
   print() {

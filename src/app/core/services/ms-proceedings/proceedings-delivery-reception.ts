@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
@@ -17,14 +17,31 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IValidations>> {
+    return this.get<IListResponse<IValidations>>(`${this.endpoint}`);
+  }
+
+  getProceedingsByDelAndSub(
+    delegation: string | number,
+    subdelegation: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IValidations>> {
     return this.get<IListResponse<IValidations>>(
-      `${this.endpoint}?filter.typeProceedings=$eq:ENTREGA&filter.numDelegation=$eq:0`
+      `${this.endpoint}/find/delegation/${delegation}/subdelegation/${subdelegation}`,
+      params
     );
   }
 
-  getByCve(id: string | number): Observable<IListResponse<IValidations>> {
-    return this.get<IListResponse<IValidations>>(
-      `${this.endpoint}?filter.keysProceedings=$eq:${id}`
+  getByFilter(params?: string): Observable<IListResponse<IValidations>> {
+    let partials = this.endpoint;
+    console.log(partials);
+    /* this.microservice = partials[0]; */
+    console.log(
+      this.get<IListResponse<IValidations>>(partials[1], params).pipe(
+        tap(() => (this.microservice = ''))
+      )
+    );
+    return this.get<IListResponse<IValidations>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
     );
   }
 }
