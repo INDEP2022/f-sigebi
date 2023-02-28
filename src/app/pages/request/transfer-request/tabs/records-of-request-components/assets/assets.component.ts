@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component,Input,OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BsModalRef,BsModalService,ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject,takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
-  FilterParams,
-  ListParams,
+FilterParams,
+ListParams
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
@@ -441,7 +441,7 @@ export class AssetsComponent extends BasePage implements OnInit {
     for (let i = 0; i < this.listgoodObjects.length; i++) {
       const element = this.listgoodObjects[i];
       let goodRemove = { id: element.id, goodId: element.goodId };
-      this.goodService.remove(element.id).subscribe({
+      this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
           if (resp.statusCode === 200) {
             this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);

@@ -48,6 +48,11 @@ export class GoodService extends HttpService {
     return this.delete(route);
   }
 
+  removeGood(body: Object) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.delete(route, body);
+  }
+
   getByExpedient(
     expedient: number | string,
     params?: ListParams
