@@ -15,6 +15,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
+            [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="delegationList"
               (userRowSelect)="rowsSelected($event)"></ng2-smart-table>

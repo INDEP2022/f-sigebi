@@ -4,11 +4,16 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ALLOTMENT_COLUMNS } from './payment-dispersion-validation-allotment-columns';
 import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
-import { EVENT_COLUMNS } from './payment-dispersion-validation-event-columns';
+import { COLUMNS } from './columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { ILot } from 'src/app/core/models/ms-lot/lot.model';
 
 @Component({
   selector: 'app-payment-dispersion-validation',
@@ -19,6 +24,12 @@ export class PaymentDispersionValidationComponent
   extends BasePage
   implements OnInit
 {
+
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
+  lotByEvent: ILot[]=[];
+  
   settingsLotes = {
     ...this.settings,
     actions: false,
@@ -38,9 +49,20 @@ export class PaymentDispersionValidationComponent
   form: FormGroup = new FormGroup({});
   show = false;
 
-  constructor(private fb: FormBuilder, private excelService: ExcelService) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService, private comerEventosService:ComerEventosService, private lotService:LotService ) {
     super();
-    this.settingsLotes.columns = EVENT_COLUMNS;
+
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...COLUMNS },
+    };
+
     this.settingsBienes.columns = ALLOTMENT_COLUMNS;
     this.settingsPagosBanco.columns = BANK_COLUMNS;
     this.settingsCompos.columns = RECEIVED_COLUMNS;
@@ -52,7 +74,7 @@ export class PaymentDispersionValidationComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      idEvento: [
+      id: [
         '',
         [
           Validators.required,
@@ -61,26 +83,54 @@ export class PaymentDispersionValidationComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      event: ['', [Validators.required]],
+      processKey: ['', []],
+      address: ['', []],
     });
   }
 
-  dataLotes = [
-    {
-      lote: '1',
-      cliente: 'FRE060601M',
-      descripcion: 'DODGE RAM',
-      precio: '$42,000.00',
-    },
-    {
-      lote: '2',
-      cliente: 'QUCS721008RX4',
-      descripcion: 'SENTRA',
-      precio: '$16,000.00',
-    },
-  ];
+  getEventByID(): void{
+    let _id = this.form.controls['id'].value;
+    this.loading = true;
+    this.comerEventosService.getById(_id).subscribe(
+      response => {
+        //TODO: Validate Response
+        if (response !== null) {
+          this.form.patchValue(response);
+          this.form.updateValueAndValidity();
+          this.getLotEvents(response.id);
+        } else {
+          //TODO: CHECK MESSAGE
+          this.alert('info', 'No se encontraron registros', '');
+        }
+
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  getLotEvents(id: string | number):void{
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLotByIdEvent(id));
+  }
+
+  getLotByIdEvent(id?: string | number):void {
+     this.loading = true;
+    this.lotService.getLotbyEvent(id, this.params.value).subscribe({
+      next: response => {
+        this.lotByEvent = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+
+  }
+
+  
   exportAsXLSXLotes(): void {
-    this.excelService.exportAsExcelFile(this.dataLotes, 'lotes_de_evento');
+    this.excelService.exportAsExcelFile(this.lotByEvent, 'lotes_de_evento');
   }
 
   dataBienes = [

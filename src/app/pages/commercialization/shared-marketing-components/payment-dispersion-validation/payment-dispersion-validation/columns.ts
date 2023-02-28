@@ -1,21 +1,21 @@
-export const EVENT_COLUMNS = {
-  lote: {
-    title: 'Lote',
+export const COLUMNS = {
+  id: {
+    title: 'ID Lote',
     type: 'string',
     sort: false,
   },
-  cliente: {
-    title: 'Cliente',
+  customerId: {
+    title: 'ID Cliente',
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  precio: {
-    title: 'Precio',
+  finalPrice: {
+    title: 'Precio Final',
     type: 'string',
     sort: false,
   },
