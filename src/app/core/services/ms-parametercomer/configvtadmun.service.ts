@@ -24,6 +24,10 @@ export class ConfigvtadmunService extends HttpService {
   }
 
   create(config: Partial<IConfigvtadmun>) {
-    return this.put(this.endpoint, config);
+    return this.post(this.endpoint, config);
+  }
+
+  remove(body: { idTable: string; idColumn: string }) {
+    return this.delete(this.endpoint, body);
   }
 }

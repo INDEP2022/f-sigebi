@@ -8,4 +8,5 @@ export enum ParameterComerEndpoints {
   Tiie = 'comer-cat-tiie',
   Configvtadmun = 'comer-configvtadmun',
   Layouts = 'layouts-configuration',
+  Entities = 'type-entity-gov',
 }
