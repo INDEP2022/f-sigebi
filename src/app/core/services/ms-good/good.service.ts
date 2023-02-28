@@ -38,6 +38,11 @@ export class GoodService extends HttpService {
     return this.put(route, good);
   }
 
+  updateWithoutId(good: IGood) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
+
   remove(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);

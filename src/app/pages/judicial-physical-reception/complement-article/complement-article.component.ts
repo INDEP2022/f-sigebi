@@ -1,5 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
@@ -7,11 +8,14 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IAppraisersGood } from 'src/app/core/models/good/good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { IRequestAppraisal } from 'src/app/core/models/ms-request-appraisal/request-appraisal.model';
 import { AppraisersService } from 'src/app/core/services/catalogs/appraisers.service';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { AppraisalGoodService } from 'src/app/core/services/ms-appraisal-good/appraisal-good.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RequestAppraisalService } from 'src/app/core/services/ms-request-appraisal/request-appraisal.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
 import { AppraisalHistoryComponent } from './appraisal-history/appraisal-history.component';
@@ -30,7 +34,7 @@ export class ComplementArticleComponent implements OnInit {
   dataGoods: any[];
   goodDataSave: any;
   dataApprasialGood: any[];
-  idGood: string | number = '';
+  idGood: number | string;
   goodSelected: string = 'No se seleccionó bien';
   getgoodCategory: string;
   getoriginSignals: string;
@@ -50,7 +54,8 @@ export class ComplementArticleComponent implements OnInit {
     private render: Renderer2,
     private serviceDynamicCat: DynamicCatalogService,
     private serviceAppraiser: AppraisalGoodService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private serviceReqAppr: RequestAppraisalService
   ) {}
 
   ngOnInit(): void {
@@ -141,7 +146,6 @@ export class ComplementArticleComponent implements OnInit {
     if (
       (this.form.get('clasificacion').value != this.getgoodCategory ||
         this.form.get('remarks').value != this.getoriginSignals) &&
-      this.idGood != '' &&
       this.idGood != undefined &&
       this.idGood != null
     ) {
@@ -177,7 +181,6 @@ export class ComplementArticleComponent implements OnInit {
       (this.form.get('fechaAseg').value != this.getnotifyDate ||
         this.form.get('notificado').value != this.getnotifyA ||
         this.form.get('lugar').value != this.getplaceNotify) &&
-      this.idGood != '' &&
       this.idGood != undefined &&
       this.idGood != null
     ) {
@@ -188,8 +191,6 @@ export class ComplementArticleComponent implements OnInit {
   }
 
   btnOpinion() {
-    console.log(this.form.get('dictamenPerenidad').value);
-    console.log(this.getdictamenPerenidad);
     const dateString = this.form.get('fechaDictamen').value;
     const formatString = 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(]z[)]';
     const isValidDateFormat = moment(dateString, formatString, true).isValid();
@@ -202,7 +203,6 @@ export class ComplementArticleComponent implements OnInit {
           this.getdictamenInstitucion ||
         this.form.get('dictamenPerenidad').value !=
           this.getdictamenPerenidad) &&
-      this.idGood != '' &&
       this.idGood != undefined &&
       this.idGood != null
     ) {
@@ -228,7 +228,6 @@ export class ComplementArticleComponent implements OnInit {
   getInstitutions(param: ListParams) {
     this.serviceInstitutionAppraiser.getAll(param).subscribe(
       res => {
-        console.log(res);
         this.institutionSelect = new DefaultSelect(res.data, res.count);
       },
       err => {
@@ -314,12 +313,13 @@ export class ComplementArticleComponent implements OnInit {
   }
 
   updateGoodData() {
-    const updateData = {
+    const updateData: IGood = {
+      id: parseInt(this.idGood.toString()),
+      goodId: parseInt(this.idGood.toString()),
       goodCategory: this.form.get('clasificacion').value,
       originSignals: this.form.get('remarks').value,
     };
-    console.log(updateData);
-    this.serviceGood.update(this.idGood, updateData).subscribe(
+    this.serviceGood.updateWithoutId(updateData).subscribe(
       res => {
         console.log('Modificado');
         this.disabledButton('update-general-good');
@@ -342,6 +342,7 @@ export class ComplementArticleComponent implements OnInit {
       valuerOpinion: this.form.get('dictamenInstitucion').value.description,
       opinion: this.form.get('dictamenPerenidad').value,
     };
+
     /*  this.serviceGood.update(this.idGood, opinionData).subscribe(
       res => {
         console.log('Modificado');
@@ -359,11 +360,13 @@ export class ComplementArticleComponent implements OnInit {
 
   updateNotify() {
     const notifyData = {
+      id: parseInt(this.idGood.toString()),
+      goodId: parseInt(this.idGood.toString()),
       notifyDate: this.form.get('fechaAseg').value,
       notifyA: this.form.get('notificado').value,
       placeNotify: this.form.get('lugar').value,
     };
-    this.serviceGood.update(this.idGood, notifyData).subscribe(
+    this.serviceGood.updateWithoutId(notifyData).subscribe(
       res => {
         console.log('Modificado');
         this.disabledButton('first-notice-abandonment');
@@ -386,6 +389,7 @@ export class ComplementArticleComponent implements OnInit {
       this.serviceAppraiser
         .getAppraisalGood(paramsF.getParams())
         .subscribe(res => {
+          console.log(res);
           this.dataApprasialGood = res.data;
           this.enableButton('apprasial-history');
         });
@@ -406,21 +410,37 @@ export class ComplementArticleComponent implements OnInit {
       },
     };
 
+    const rxa: IRequestAppraisal = {
+      requestDate: format(new Date(), 'yyyy-MM-dd'),
+      requestType: 'E',
+      cveCurrencyAppraisal: this.form.get('moneda').value,
+    };
+
     console.log(dataAG);
-    this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
-      res => {
-        console.log(res);
-        this.getAppraisalGood();
-        this.form.get('fechaAvaluo').setValue('');
-        this.form.get('fechaVigencia').setValue('');
-        this.form.get('importe').setValue('');
-        this.form.get('moneda').setValue('');
-        this.form.get('perito').setValue('');
-        this.form.get('institucion').setValue('');
+    this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(res => {
+      const id = JSON.parse(JSON.stringify(res)).id;
+      dataAG.noRequest = id;
+      console.log(dataAG);
+      /* this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
+          res => {
+            console.log(res);
+            this.getAppraisalGood();
+            this.form.get('fechaAvaluo').setValue('');
+            this.form.get('fechaVigencia').setValue('');
+            this.form.get('importe').setValue('');
+            this.form.get('moneda').setValue('');
+            this.form.get('perito').setValue('');
+            this.form.get('institucion').setValue('');
+          },
+          err => {
+            console.log(err);
+          }
+        );
       },
       err => {
         console.log(err);
       }
-    );
+    );  */
+    });
   }
 }
