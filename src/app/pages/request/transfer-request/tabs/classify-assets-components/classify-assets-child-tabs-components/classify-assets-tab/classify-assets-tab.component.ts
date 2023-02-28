@@ -366,7 +366,7 @@ export class ClassifyAssetsTabComponent
     var goodAction =
       goods.goodId === null
         ? this.goodService.create(goods)
-        : this.goodService.update(goods.id, goods);
+        : this.goodService.update(goods);
 
     goodAction.subscribe({
       next: (data: any) => {
