@@ -32,14 +32,15 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   title = 'Layous';
   layoutsList: IComerLayouts[] = [];
   idLayout: number = 0;
-  layoutDuplicated: IComerLayouts;
+  layoutDuplicated: IComerLayoutsH;
   layousthList: IComerLayoutsH[] = [];
+  lay: any;
   valid: boolean = false;
   layout: IComerLayouts;
   provider: any;
+  id: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  totalItems2: number = 0;
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
   @Output() onConfirm = new EventEmitter<any>();
@@ -83,28 +84,14 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     }
   }
 
-  duplicateLayouts() {
-    let params = {
-      id: this.settings5.columns.id,
-      descLayout: this.settings5.columns.descLayout,
-      screenKey: this.settings5.columns.screenKey,
-      table: this.settings5.columns.table,
-      criterion: this.settings5.columns.criterion,
-      indActive: this.settings5.columns.indActive,
-      registryNumber: this.settings5.columns.registryNumber,
-    };
-  }
-
   userRowSelect(event: any) {
     this.layoutsConfigService.getByIdH(event.data.id).subscribe({
       next: data => {
-        this.layoutsList.forEach(o => {
-          if (o.idLayout.id === data.id) {
-            this.idLayout = data.id;
-            console.log(this.idLayout);
-            this.valid = true;
-          }
-        });
+        this.idLayout = data.id;
+        this.layoutDuplicated = event.data;
+        console.log(this.idLayout);
+        console.log(this.layoutDuplicated);
+        this.valid = true;
       },
       error: error => {
         this.loading = false;
@@ -127,24 +114,29 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   //   });
   // }
 
-  duplicar(idLayout: number) {
-    this.loading = false;
-    console.log(Number(this.idLayout));
-    this.layoutsConfigService.create(idLayout).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-        return;
-      },
-    });
+  duplicar() {
+    try {
+      this.loading = false;
+      this.layoutsConfigService.createH(this.layoutDuplicated).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+          return;
+        },
+      });
+    } catch {
+      console.error('Layout no existe');
+    }
   }
 
   handleSuccess() {
-    const message: string = 'Dup´licado';
+    const message: string = 'Duplicado';
     this.onLoadToast('success', `${message} Correctamente`, '');
     this.loading = false;
     this.onConfirm.emit(true);
+    this.getLayouts();
+    this.getLayoutH();
   }
 
   getLayouts() {
