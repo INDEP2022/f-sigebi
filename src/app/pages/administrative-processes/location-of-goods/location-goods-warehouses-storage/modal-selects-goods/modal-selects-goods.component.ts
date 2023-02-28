@@ -11,8 +11,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 
-/* let goodCheck: any[] = []; */
-
 @Component({
   selector: 'app-modal-selects-goods',
   templateUrl: './modal-selects-goods.component.html',
@@ -95,13 +93,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getGood());
   }
 
   returnModal() {
-    /*  goodCheck = []; */
     this.bsModalRef.hide();
   }
   private buildForm() {
@@ -137,7 +131,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         }
         if (valid) {
-          this.goodServices.update(good.id, good).subscribe({
+          this.goodServices.update(good).subscribe({
             next: response => {
               console.log('response', response);
               this.add();

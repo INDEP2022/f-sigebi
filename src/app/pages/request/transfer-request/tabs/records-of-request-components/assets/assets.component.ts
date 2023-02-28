@@ -355,7 +355,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
-        this.goodService.update(element.id, element).subscribe({
+        this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
               this.message(
