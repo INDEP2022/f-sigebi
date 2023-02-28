@@ -1,9 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component,Input,OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BsModalRef,BsModalService,ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject,takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+FilterParams,
+ListParams
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -45,7 +48,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
   btnCreate: string = 'Crear Nuevo';
@@ -64,7 +67,7 @@ export class AssetsComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private requestHelperService: RequestHelperService,
     private excelService: ExcelService,
-    private menageSerice: MenageService
+    private menageService: MenageService
   ) {
     super();
   }
@@ -85,20 +88,17 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   paginatedData() {
-    var newParam = new ListParams();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      newParam.page = data.inicio;
-      newParam.limit = data.pageSize;
-      this.getData(newParam);
+      this.getData();
     });
   }
 
-  getData(params: ListParams) {
+  getData() {
     this.loading = true;
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
-    params['filter.requestId'] = `$eq:${requestId}`;
-    this.goodService.getAll(params).subscribe({
+    this.params.value.addFilter('requestId', requestId);
+    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {
           const result = data.data.map(async (item: any) => {
@@ -124,10 +124,13 @@ export class AssetsComponent extends BasePage implements OnInit {
             );
             item['transferentDestinyName'] = transferentDestiny;
             item['destinyLigieName'] = transferentDestiny;
+
+            const goodMenaje = await this.getMenaje(item.id);
+            item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {
-            this.totalItems = data.data.length;
+            this.totalItems = data.count;
             this.paragraphs = data.data;
             this.loading = false;
           });
@@ -204,6 +207,23 @@ export class AssetsComponent extends BasePage implements OnInit {
     });
   }
 
+  getMenaje(id: number) {
+    return new Promise((resolve, reject) => {
+      this.menageService.getById(id).subscribe({
+        next: (resp: any) => {
+          if (resp) {
+            resolve(resp['noGood']);
+          } else {
+            resolve('');
+          }
+        },
+        error: error => {
+          resolve('');
+        },
+      });
+    });
+  }
+
   onFileChange(event: any) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
@@ -254,6 +274,10 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   openSelectAddressModal() {
+    if (this.listgoodObjects.length === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
     let config: ModalOptions = {
       initialState: {
         request: this.requestObject,
@@ -285,9 +309,13 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   menajeModal() {
+    if (this.listgoodObjects.length === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
     let config: ModalOptions = {
       initialState: {
-        data: '',
+        goodsObject: this.listgoodObjects,
         requestId: this.requestObject.id,
         callback: (next: boolean) => {
           //if (next) this.getExample();
@@ -330,7 +358,8 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.stateConservationName;
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
-        this.goodService.update(element.id, element).subscribe({
+        delete element.goodMenaje;
+        this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
               this.message(
@@ -347,7 +376,7 @@ export class AssetsComponent extends BasePage implements OnInit {
                 'Actualizado',
                 `Se guardo correctamente el bien del domicilio!`
               );
-
+              this.isSaveDomicilie = false;
               resolve('Se guardo correctamente el bien del domicilio!');
             }
           },
@@ -357,11 +386,12 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   saveMenaje() {
-    debugger;
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
-        this.menageSerice.create(element).subscribe({
+        console.log(element);
+
+        this.menageService.create(element).subscribe({
           next: data => {
             if (data.statusCode != null) {
               this.message(
@@ -372,8 +402,13 @@ export class AssetsComponent extends BasePage implements OnInit {
               reject('El registro del bien del domicilio no se guardo!');
             }
 
-            if (data.id != null) {
-              this.message('success', 'Actualizado', `Se guardo el menaje`);
+            if (data.noGoodMenaje != null) {
+              this.message(
+                'success',
+                'Menaje guardado',
+                `Se guardaron los menajes existosamente`
+              );
+              this.isSaveMenaje = false;
               resolve('Se guardo correctamente el menaje!');
             }
           },
@@ -405,8 +440,9 @@ export class AssetsComponent extends BasePage implements OnInit {
   deleteGood() {
     for (let i = 0; i < this.listgoodObjects.length; i++) {
       const element = this.listgoodObjects[i];
-      this.goodService.remove(element.id).subscribe({
-        next: resp => {
+      let goodRemove = { id: element.id, goodId: element.goodId };
+      this.goodService.removeGood(goodRemove).subscribe({
+        next: (resp: any) => {
           if (resp.statusCode === 200) {
             this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
             this.closeCreateGoodWIndows();
@@ -425,7 +461,6 @@ export class AssetsComponent extends BasePage implements OnInit {
     this.requestHelperService.currentRefresh.subscribe({
       next: data => {
         if (data) {
-          this.saveMenaje();
           setTimeout(() => {
             this.closeCreateGoodWIndows();
           }, 600);

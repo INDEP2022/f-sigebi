@@ -52,3 +52,38 @@ export interface IGoodProgramming {
 export interface IView {
   uniqueKey: string;
 }
+
+export interface IGoodProgrammingSelect {
+  addressGood: number;
+  aliasWarehouse: string;
+  code: number;
+  cveSettlement: number;
+  cveState: number;
+  cveTownship: number;
+  decriptionGoodSae: string;
+  descriptionGood: string;
+  detailAddress: string;
+  esReprogramming: number;
+  hasMessage: string;
+  idAuthority: 31;
+  idDelegationRegional: number;
+  idDelegationRegionalSol: number;
+  idGood: number;
+  idGoodProperty: number;
+  idRequest: number;
+  idStation: number;
+  idSubtypeGood: number;
+  idTransferee: number;
+  idTypeGood: number;
+  idTypeRelevant: number;
+  keyUnique: string;
+  numExt: number;
+  numIn: number;
+  physicalState: number;
+  quantity: number;
+  reasonCancReprog: number;
+  statusGood: string;
+  transferFile: number;
+  typeTransfer: string;
+  unitMeasurement: string;
+}

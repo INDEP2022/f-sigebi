@@ -103,25 +103,35 @@
               </button>
             </div>
           </div>
+          <div class="row pt-4 pb-3">
+            <div>
+              <button
+                (click)="resetProcess()"
+                type="button"
+                class="ml-2 mb-0 btn btn-danger btn-sm active">
+                Limpiar Proceso
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </form>
 
     <hr class="row" />
 
-    <div class="row mt-3 mb-3" *ngIf="DeclarationsSatSaeMassive">
+    <div class="row mt-3 mb-3" *ngIf="DeclarationsValidationMassive">
       <div class="col-md-12">
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             Proceso actual:
             <div class="badge badge-pill bg-primary text-wrap">
-              {{ DeclarationsSatSaeMassive.common_general.proceso }}
+              {{ DeclarationsValidationMassive.common_general.proceso }}
             </div>
           </li>
           <li class="list-group-item">
             Estatus del Proceso Actual:
             <div class="badge badge-pill bg-info text-wrap">
-              {{ DeclarationsSatSaeMassive.message_progress }}
+              {{ DeclarationsValidationMassive.message_progress }}
             </div>
           </li>
           <div class="list-group-item">
@@ -131,8 +141,8 @@
               aria-label="Example with label"
               style="background-color: lightgrey"
               [attr.aria-valuenow]="
-                ((DeclarationsSatSaeMassive.common_general.count + 1) /
-                  DeclarationsSatSaeMassive.common_general.total) *
+                ((DeclarationsValidationMassive.common_general.count + 1) /
+                  DeclarationsValidationMassive.common_general.total) *
                   100 | number: '1.2-2'
               "
               aria-valuemin="0"
@@ -140,13 +150,13 @@
               <div
                 class="progress-bar bg-info"
                 [style.width]="
-                  (((DeclarationsSatSaeMassive.common_general.count + 1) /
-                    DeclarationsSatSaeMassive.common_general.total) *
+                  (((DeclarationsValidationMassive.common_general.count + 1) /
+                    DeclarationsValidationMassive.common_general.total) *
                     100 | number: '1.2-2') + '%'
                 ">
                 {{
-                  ((DeclarationsSatSaeMassive.common_general.count + 1) /
-                    DeclarationsSatSaeMassive.common_general.total) *
+                  ((DeclarationsValidationMassive.common_general.count + 1) /
+                    DeclarationsValidationMassive.common_general.total) *
                     100 | number: '1.2-2'
                 }}%
               </div>
@@ -155,26 +165,26 @@
           <li class="list-group-item">
             Registro actual en proceso:
             <div class="badge badge-pill bg-info text-wrap">
-              {{ DeclarationsSatSaeMassive.common_general.count + 1 }}
+              {{ DeclarationsValidationMassive.common_general.count + 1 }}
             </div>
           </li>
           <li class="list-group-item">
             Total de Registros:
             <div class="badge badge-pill bg-success text-wrap">
-              {{ DeclarationsSatSaeMassive.common_general.total }}
+              {{ DeclarationsValidationMassive.common_general.total }}
             </div>
           </li>
           <li class="list-group-item">
             Total de Registros con Errores:
             <div class="badge badge-pill bg-danger text-wrap">
-              {{ DeclarationsSatSaeMassive.common_general.total_errores }}
+              {{ DeclarationsValidationMassive.common_general.total_errores }}
             </div>
           </li>
           <div
             class="list-group-item"
             *ngIf="
-              DeclarationsSatSaeMassive.common_general.total_errores > 0 &&
-              DeclarationsSatSaeMassive.common_general.valid == false
+              DeclarationsValidationMassive.common_general.total_errores > 0 &&
+              DeclarationsValidationMassive.common_general.valid == false
             ">
             El archivo que se genera al dar clic en "Exportar Errores
             Encontrados en el Proceso" contiene los campos donde se encontraron

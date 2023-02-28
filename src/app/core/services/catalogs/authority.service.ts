@@ -8,7 +8,11 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IAuthority } from '../../models/catalogs/authority.model';
+import {
+  IAuthority,
+  IAuthorityIssuingParams,
+  INoCityByAsuntoSAT,
+} from '../../models/catalogs/authority.model';
 
 @Injectable({
   providedIn: 'root',
@@ -83,5 +87,17 @@ export class AuthorityService
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+
+  getCityByAsuntoSat(id: string | number): Observable<INoCityByAsuntoSAT> {
+    const route = `catalog/api/v1/authority/city-number/`;
+    return this.authorityRepository.getCityByAsuntoSat(this.route, id);
+  }
+
+  getAuthorityIssuingByParams(body: IAuthorityIssuingParams | any) {
+    return this.authorityRepository.getAuthorityIssuingByParams(
+      'catalog/api/v1/authority/authority-and-station?limit=10&page=1',
+      body
+    );
   }
 }

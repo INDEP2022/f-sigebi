@@ -229,7 +229,7 @@ const routes: Routes = [
           './maintenance-of-public-ministries/maintenance-of-public-ministries.module'
         )
       ).MaintenanceOfPublicMinistriesModule,
-    data: { title: 'Mantenimiento a ministerios publicos' },
+    data: { title: 'Mantenimiento a ministerios públicos' },
   },
   {
     path: 'wareahouse-catalog',
@@ -325,7 +325,7 @@ const routes: Routes = [
       (await import('./parameter-maintenance/parameter-maintenance.module'))
         .ParameterMaintenanceModule,
     data: {
-      title: 'Mantenimiento de Parametros',
+      title: 'Mantenimiento de parámetros',
     },
   },
   {
@@ -431,6 +431,40 @@ const routes: Routes = [
       screen: 'TMPMAXCIERREACTDEV',
     },
   },
+  {
+    path: 'cat-appraisers',
+    loadChildren: async () =>
+      (await import('./cat-appraisers/cat-appraisers.module'))
+        .CatAppraisersModule,
+    data: {
+      title: 'Catálago de Peritos',
+      screen: 'FCATCATMTOPERITOS',
+    },
+  },
+  {
+    path: 'cat-of-separators-documents',
+    loadChildren: async () =>
+      (
+        await import(
+          './cat-of-separators-documents/cat-of-separators-documents.module'
+        )
+      ).CatOfSeparatorsDocumentsModule,
+    data: {
+      title: 'Catálogo de separadores a documentos',
+      screen: 'FCATCATSEPARDOCUM',
+    },
+  },
+  {
+    path: 'cat-types-of-goods',
+    loadChildren: async () =>
+      (await import('./cat-types-of-goods/cat-types-of-goods.module'))
+        .CatTypesOfGoodsModule,
+    data: {
+      title: 'Catálogo de tipos de bienes',
+      screen: 'FCATCATTIPOSDBIEN',
+    },
+  },
+  // CatOfSeparatorsDocumentsModule
 ];
 
 @NgModule({

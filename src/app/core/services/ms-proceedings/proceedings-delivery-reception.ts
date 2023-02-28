@@ -10,7 +10,7 @@ import { IValidations } from '../../models/ms-proceedings/validations.model';
   providedIn: 'root',
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
-  private readonly endpoint = ProceedingsEndpoints.ProccedingsDeliveryReception;
+  private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;

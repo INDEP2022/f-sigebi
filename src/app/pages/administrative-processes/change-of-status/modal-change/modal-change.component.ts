@@ -30,8 +30,6 @@ export class ModalChangeComponent extends BasePage implements OnInit {
     this.loadDate();
   }
 
-  mostrar() {}
-
   loadDate() {
     if (this.columns.username) {
       this.data = [

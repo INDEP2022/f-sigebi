@@ -5,7 +5,7 @@
 
   <div body #form>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
-      <div class="row">
+      <div class="row" #top>
         <form-field
           *ngIf="global.pIndicadorSat != null"
           class="col-md-3"
@@ -322,16 +322,16 @@
           <div footer>
             <div class="d-flex justify-content-center">
               <div class="m-3">
-                <button type="button" class="btn btn-primary active">
+                <!-- <button type="button" class="btn btn-primary active" (click)="hideObservations()">
                   Guardar
-                </button>
+                </button> -->
               </div>
               <div class="m-3">
                 <button
                   type="button"
                   class="btn btn-danger active"
                   (click)="hideObservations()">
-                  Cancelar
+                  Cerrar
                 </button>
               </div>
             </div>

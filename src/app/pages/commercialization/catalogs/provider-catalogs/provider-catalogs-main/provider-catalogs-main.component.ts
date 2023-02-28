@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -34,110 +35,12 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: {
       columnTitle: 'Acciones',
-      position: 'left',
-      add: true,
+      position: 'right',
       edit: true,
       delete: true,
     },
   };
-
-  providerTestData = [
-    {
-      id: 1,
-      rfc: 'SRHSR6616SHRH',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 1',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 2,
-      rfc: 'SEGS681JHDJFKDS7',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 2',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 3,
-      rfc: '18RSGHRSHHASD1',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 3',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 4,
-      rfc: 'SHSRH8189A3EK',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 4',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-    {
-      id: 5,
-      rfc: 'HJDTJD9219JDAW',
-      curp: 'EJEMPLO CURP',
-      name: 'NOMBRE EJEMPLO PROVEEDOR 5',
-      street: 'Calle Ejemplo',
-      neighborhood: 'Colonia Ejemplo',
-      delegation: 'Delegacion Ejemplo',
-      state: 'Estado Ejemplo',
-      city: 'Ciudad Ejemplo',
-      country: 'Pais Ejemplo',
-      cp: 'Ejemplo CP',
-      phone: '+52 111 111 1111',
-      fax: '111111111111',
-      email: 'correoejemplo@gmail.com',
-      type: 'A',
-      activity: 'Actividad de Ejemplo',
-      contractNumber: '11111111',
-    },
-  ];
+  isSelected: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -146,7 +49,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   ) {
     super();
     this.providerSettings.columns = PROVIDER_CATALOGS_PROVIDER_COLUMNS;
-    this.searchFilter = { field: 'nameReason' };
+    this.searchFilter = { field: 'nameReason', operator: SearchFilter.ILIKE };
   }
 
   ngOnInit(): void {
@@ -154,21 +57,23 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       this.getData();
     });
     this.prepareForm();
-    this.getProviders({ inicio: 1, text: '' });
+    this.getProviders();
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       providerId: [null],
-      bank: [null],
-      branch: [null],
-      checkingCta: [null],
-      key: [null],
+      bank: [null, Validators.maxLength(20)],
+      branch: [null, Validators.maxLength(4)],
+      checkingCta: [null, Validators.maxLength(10)],
+      key: [null, Validators.maxLength(18)],
     });
+
+    this.providerForm.disable();
   }
 
-  getProviders(params: ListParams) {
-    this.providerService.getAll(params).subscribe(data => {
+  getProviders() {
+    this.providerService.getAll(this.params.getValue()).subscribe(data => {
       this.providerItems = new DefaultSelect(data.data, data.count);
     });
   }
@@ -198,20 +103,24 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
             this.loading = false;
           },
           error: error => {
+            this.showError(error);
             this.loading = false;
-            console.log(error);
           },
         });
     }
   }
 
   selectProvider(provider: IComerProvider) {
+    this.isSelected = true;
     this.providerForm.patchValue(provider);
     this.selectedProvider = provider;
+    this.providerForm.enable();
   }
 
-  openFormProvider(provider?: IComerProvider) {
-    this.openModalProvider({ provider, edit: true });
+  openFormProvider(edit: boolean, provider?: IComerProvider) {
+    this.isSelected = false;
+    this.providerForm.reset();
+    this.openModalProvider({ provider, edit });
   }
 
   openModalProvider(context?: Partial<ProviderCatalogsModalComponent>) {
@@ -226,14 +135,14 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   openClientsModal() {
+    this.isSelected = false;
+    this.providerForm.reset();
     const modalRef = this.modalService.show(ClientsModalComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe((data: boolean) => {
-      if (data) {
-        console.log(data);
-      }
+      if (data) this.getData();
     });
   }
 
@@ -246,14 +155,14 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.loading = true;
         this.providerService.remove(provider.providerId).subscribe({
-          next: data => {
+          next: () => {
             this.loading = false;
             this.showSuccess();
             this.getData();
           },
           error: error => {
             this.loading = false;
-            this.showError();
+            this.showError(error);
           },
         });
       }
@@ -269,11 +178,30 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   showError(error?: any) {
-    this.onLoadToast(
-      'error',
-      `Error al eliminar datos`,
-      'Hubo un problema al conectarse con el servior'
-    );
-    error ? console.log(error) : null;
+    this.onLoadToast('error', error.error.message, '');
+  }
+
+  saveBank() {
+    this.selectedProvider = {
+      ...this.selectedProvider,
+      ...this.providerForm.value,
+    };
+    delete this.selectedProvider.customer;
+    const provider = { ...this.selectedProvider };
+    this.providerService
+      .update(this.selectedProvider.providerId, provider)
+      .subscribe({
+        next: resp => {
+          this.getData(), this.onLoadToast('success', resp.message, '');
+          this.isSelected = false;
+          this.providerForm.reset();
+        },
+        error: error => {
+          this.showError(error);
+          this.loading = false;
+        },
+      });
+
+    console.log(this.selectedProvider);
   }
 }

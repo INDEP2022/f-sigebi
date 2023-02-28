@@ -1,18 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodMassiveService } from 'src/app/core/services/ms-good/status-good-massive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { COLUMNS } from './columns';
 
-interface ExampleData {
-  number: number;
-  name: string;
-  description: string;
-  status: string;
+interface NotData {
+  id: number;
+  reason: string;
+}
+interface IDs {
+  goodNumber: number;
 }
 @Component({
   selector: 'app-massive-change-status',
@@ -21,13 +29,17 @@ interface ExampleData {
 })
 export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   fileName: string = 'Seleccionar archivo';
-
-  data: ExampleData[];
-
+  tableSource: previewData[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  ids: IDs[];
   form: FormGroup;
-
-  get status() {
-    return this.form.get('status');
+  goods: IGood[] = [];
+  idsNotExist: NotData[] = [];
+  showError: boolean = false;
+  showStatus: boolean = false;
+  $trackedGoods = this.store.select(getTrackedGoods);
+  get goodStatus() {
+    return this.form.get('goodStatus');
   }
   get observation() {
     return this.form.get('observation');
@@ -38,8 +50,11 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private readonly goodServices: GoodService,
+    private readonly goodMassiveServices: StatusGoodMassiveService,
+    private router: Router,
+    private store: Store
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -48,7 +63,17 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    this.loandData();
+    this.$trackedGoods.subscribe({
+      next: response => {
+        if (response !== undefined) {
+          this.loadGood(response);
+        }
+        this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
   }
 
   /**
@@ -58,36 +83,12 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      status: [null, [Validators.required]],
+      goodStatus: [null, [Validators.required]],
       observation: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      csv: [null, [Validators.required]],
     });
-  }
-
-  loandData() {
-    this.data = [
-      {
-        number: 1,
-        name: 'Nombre del status 1',
-        description: 'Esta es la descripcion del estatus 1',
-        status: 'Estatus 1',
-      },
-      {
-        number: 2,
-        name: 'Nombre del status 2',
-        description: 'Esta es la descripcion del estatus 2',
-        status: 'Estatus 2',
-      },
-      {
-        number: 3,
-        name: 'Nombre del status 3',
-        description: 'Esta es la descripcion del estatus 3',
-        status: 'Estatus 3',
-      },
-    ];
   }
 
   onFileChange(event: Event) {
@@ -99,14 +100,107 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   }
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      this.data = this.excelService.getData(binaryExcel);
-      console.log(this.data);
+      this.ids = this.excelService.getData(binaryExcel);
+      if (this.ids[0].goodNumber === undefined) {
+        this.onLoadToast(
+          'error',
+          'Ocurrio un error al leer el archivo',
+          'El archivo no cuenta con la estructura requerida'
+        );
+        return;
+      }
+      this.data.load([]);
+      this.goods = [];
+      this.idsNotExist = [];
+      this.showError = false;
+      this.showStatus = false;
+      this.loadGood(this.ids);
       this.onLoadToast('success', 'Archivo subido con Exito', 'Exitoso');
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
   loadDescription() {
-    console.log(this.status.value);
+    console.log(this.goodStatus.value);
+  }
+  loadGood(data: any[]) {
+    this.loading = true;
+    let count = 0;
+    data.forEach(good => {
+      count = count + 1;
+      this.goodServices.getById(good.goodNumber).subscribe({
+        next: response => {
+          this.goods.push(response);
+          this.addStatus();
+          this.validGood(response);
+        },
+        error: err => {
+          if (err.error.message === 'No se encontrarón registros')
+            this.idsNotExist.push({
+              id: good.goodNumber,
+              reason: err.error.message,
+            });
+        },
+      });
+      if (count === data.length) {
+        this.loading = false;
+        this.showError = true;
+      }
+    });
+  }
+  addStatus() {
+    this.data.load(this.goods);
+    this.data.refresh();
+  }
+
+  changeStatusGood() {
+    if (this.goods.length === 0) {
+      this.onLoadToast('error', 'ERROR', 'Debe cargar la lista de bienes');
+      return;
+    }
+    this.goods.forEach(good => {
+      good.status = this.goodStatus.value;
+      if (this.goodStatus.value === 'CAN') {
+        good.observations = `${this.observation.value}. ${good.observations}`;
+      }
+      this.goodServices.update(good).subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: err => {
+          this.loading = false;
+          this.idsNotExist.push({ id: good.id, reason: err.error.message });
+        },
+      });
+    });
+    this.onLoadToast(
+      'success',
+      'Actualizado',
+      'Se ha cambiado el status de los bienes seleccionados'
+    );
+    this.addStatus();
+    this.showStatus = true;
+  }
+  validGood(good: IGood) {
+    this.goodMassiveServices.checkStatusMasiv(good.status).subscribe({
+      next: response => {
+        console.log(response);
+      },
+      error: err => {
+        console.log(err);
+        console.log('No entro');
+        this.goods = this.goods.filter(item => item.id != good.id);
+        this.idsNotExist.push({
+          id: good.id,
+          reason: 'No se puede cambiar el Status en esta pantalla',
+        });
+        this.addStatus();
+      },
+    });
+  }
+  goToGoodTracker() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBUBICABIEN' },
+    });
   }
 }

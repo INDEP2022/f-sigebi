@@ -111,11 +111,13 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
 
   openForm(affairType?: IAffairType) {
     console.log(affairType);
+    const idF = { ...this.affairs };
     let affair = this.affairs;
     let config: ModalOptions = {
       initialState: {
         affairType,
         affair,
+        idF,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',

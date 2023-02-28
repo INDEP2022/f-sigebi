@@ -1,3 +1,7 @@
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 export interface INotification {
   wheelNumber: number;
   receiptDate: Date;
@@ -26,7 +30,7 @@ export interface INotification {
   subDelDestinyNumber: number;
   departamentDestinyNumber: number;
   officeNumber: number;
-  minpubNumber: number;
+  minpubNumber: number | IMinpub;
   cityNumber: number;
   courtNumber: number;
   registerNumber: number;
@@ -51,9 +55,12 @@ export interface INotification {
   desKnowingDate: Date;
   addressGeneral: number;
   affair: IAffair;
-  delegation: null;
-  subDelegation: null;
-  departament: null;
+  delegation: null | IDelegation;
+  subDelegation: null | ISubdelegation;
+  departament: null | IDepartment;
+  numberProperty: number;
+  notificationDate: any;
+  userCorrectsKey: any;
 }
 
 export interface IAffair {

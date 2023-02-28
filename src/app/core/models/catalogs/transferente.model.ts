@@ -28,3 +28,18 @@ export interface ITransferente {
   active: string;
   risk: string;
 }
+
+export interface ITransferingLevelView {
+  uniqueCve: string | number;
+  transfereeNum: string | number;
+  transfereeDesc: string;
+  transferShortName: string;
+  stationNum: string | number;
+  stationDesc: string | number;
+  authorityNum: string | number;
+  authorityDesc: string | number;
+  cityNum: string | number;
+  cityDesc: string;
+  federalEntityCve: string | number;
+  federalEntityDesc: string;
+}

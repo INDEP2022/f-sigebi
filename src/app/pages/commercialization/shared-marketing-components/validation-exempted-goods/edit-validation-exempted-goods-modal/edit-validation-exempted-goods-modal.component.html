@@ -3,15 +3,28 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="goodForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('noBien')" label="No. bien">
-            <input type="text" class="form-control" formControlName="noBien" />
+          <form-field [control]="goodForm.get('id')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="goodForm"
+              control="id"
+              [data]="goods"
+              value="id"
+              bindLabel="id"
+              label="No. bien"
+              (fetchItems)="getGoods($event)"
+              (change)="onValuesChange()"
+              [readonly]="true">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="goodForm.get('description')"
+            label="Descripción">
             <input
               type="text"
               class="form-control"
@@ -19,12 +32,15 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('unit')" label="Unidad">
-            <input type="text" class="form-control" formControlName="unit" />
+          <form-field [control]="goodForm.get('quantity')" label="Unidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="quantity" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('proccess')" label="Proceso">
+          <form-field [control]="goodForm.get('proccess')" label="Proceso">
             <ng-select
               formControlName="proccess"
               [searchable]="false"
@@ -42,7 +58,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="!goodForm.valid"
           (click)="close()"></confirm-button>
       </div>
       <div class="m-3">

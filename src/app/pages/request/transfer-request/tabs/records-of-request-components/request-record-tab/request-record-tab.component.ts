@@ -18,10 +18,14 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   @Input() requestForm: ModelForm<IRequest>;
   bsReceptionValue = new Date();
   bsPaperValue: any;
+  bsPriorityDate: any;
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
+  priority: boolean = false;
+  priorityString: string = 'N';
+  transferenceNumber: number = 0;
 
   constructor(
     public fb: FormBuilder,
@@ -41,10 +45,33 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         this.getAffair(this.requestForm.controls['affair'].value);
       }
 
+      if (this.requestForm.controls['urgentPriority'].value) {
+        this.priorityString = this.requestForm.controls['urgentPriority'].value;
+
+        this.priority =
+          this.requestForm.controls['urgentPriority'].value === 'Y'
+            ? true
+            : false;
+        //this.requestForm.controls['urgentPriority'].setValue(this.priority);
+      }
+
       if (this.requestForm.controls['paperDate'].value != null) {
         let date = new Date(this.requestForm.controls['paperDate'].value);
         this.bsPaperValue = date;
-        this.requestForm.controls['paperDate'].setValue(date.toISOString());
+        //this.requestForm.controls['paperDate'].setValue(date.toISOString());
+      }
+
+      if (this.requestForm.controls['transferenceId'].value != null) {
+        this.transferenceNumber = Number(
+          this.requestForm.controls['transferenceId'].value
+        );
+      }
+    });
+
+    this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
+      if (this.requestForm.controls['priorityDate'].value !== null) {
+        const date = new Date(this.requestForm.controls['priorityDate'].value);
+        this.bsPriorityDate = date;
       }
     });
   }
@@ -72,19 +99,38 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   }
 
   changeDateEvent(event: Date) {
-    this.bsPaperValue =
-      this.bsPaperValue !== undefined ? this.bsPaperValue : event;
+    this.bsPaperValue = event ? event : this.bsPaperValue;
 
-    if (this.bsPaperValue != undefined) {
+    if (this.bsPaperValue) {
+      //TODO: VERIFICAR LA FECHA
       let date = new Date(this.bsPaperValue);
-      this.requestForm.controls['paperDate'].setValue(date.toISOString());
+      var dateIso = date.toISOString();
+      const d1 = this.bsPaperValue.toISOString();
+      this.requestForm.controls['paperDate'].setValue(d1);
+    }
+  }
+
+  changePriorityDateEvent(event: Date) {
+    this.bsPriorityDate = event ? event : this.bsPriorityDate;
+
+    if (this.bsPriorityDate) {
+      let date = this.bsPriorityDate.toISOString();
+      this.requestForm.controls['priorityDate'].setValue(date);
+    }
+  }
+
+  changePriority(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.priorityString = value;
+    this.requestForm.controls['urgentPriority'].setValue(value);
+    if (checked === false) {
+      this.requestForm.controls['priorityDate'].setValue(null);
     }
   }
 
   confirm() {
     this.loading = true;
-    console.log(this.requestForm.getRawValue());
-
     const request = this.requestForm.getRawValue() as IRequest;
     this.requestService.update(request.id, request).subscribe({
       next: (resp: any) => {

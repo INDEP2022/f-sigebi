@@ -1,20 +1,41 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">CONTROL DIARIO DE RECEPCI&Oacute;N DE EXPEDIENTES</h5>
+    <h5 class="title">CONTROL DIARIO DE RECEPCI&Oacute;N DE EXPEDIENTES</h5> 
   </div>
 
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <app-delegation-shared [form]="form" [showSubdelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('delegation')"> 
+                <ngx-select
+                  [searchOnInit]="true"
+                  [form]="form"
+                  (fetchItems)="getDelegations($event)"
+                  [data]="delegations"
+                  value="id"
+                  bindLabel="description"
+                  label="Delegaci&oacute;n"
+                  [control]="'delegation'"
+                  (change)="onDelegationsChange($event)">
+                </ngx-select>
+              </form-field>
         </div>
         <div class="col-md-4">
-          <app-delegation-shared [form]="form" [showDelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+                  [form]="form"
+                  (fetchItems)="getSubDelegations($event)"
+                  [data]="subdelegations"
+                  value="id"
+                  bindLabel="description"
+                  label="Sub Delegaci&oacute;n"
+                  [control]="'subdelegation'"
+                  (change)="onSubDelegationsChange($event)">
+                </ngx-select>
+          </form-field>
         </div>
-        <div class="col-md-2 mt-3">
+        <div class="col-md-2">
           <form-field [control]="form.get('monthYear')" label="Seleccionar mes">
             <input
               type="text"
@@ -34,8 +55,13 @@
           type="button"
           class="btn btn-primary active"
           [disabled]="!form.valid"
-          (click)="openPrevPdf()">
+          (click)="confirm()">
           Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button (click)="cleanForm()" type="button" class="btn btn-danger active">
+          Limpiar
         </button>
       </div>
     </div>

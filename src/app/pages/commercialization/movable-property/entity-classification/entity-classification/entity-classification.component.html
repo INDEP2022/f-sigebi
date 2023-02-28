@@ -5,10 +5,33 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table
-      [settings]="settings"
-      [source]="data"
-      (editConfirm)="onSaveConfirm($event)"
-      (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-6">
+        <search-bar [filterParams]="params"></search-bar>
+      </div>
+      <div class="col-md-6 text-right">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="openModal()">
+          Nuevo
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [ngClass]="{ 'table-loading': loading }">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (delete)="confirmDelete($event.data)"></ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
   </div>
 </app-card>

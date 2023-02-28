@@ -2,6 +2,15 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">MANTENIMIENTO DE PERSONAS FíSICAS Y MORALES</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openModal()">
+            Personas
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   <div body>
@@ -16,7 +25,7 @@
           </form-field>
         </div>
         <div class="col-md-10">
-          <form-field [control]="form.get('name')" label="Nombre completo">
+          <form-field [control]="form.get('name')" label="Nombre Completo">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
@@ -70,7 +79,9 @@
           </form-field>
         </div>
         <div class="col-md-5">
-          <app-federative-shared [form]="form"></app-federative-shared>
+          <app-federative-shared
+            [form]="form"
+            [federativeField]="'keyEntFed'"></app-federative-shared>
         </div>
       </div>
       <div class="row mt-2">
@@ -151,12 +162,17 @@
       <div class="row">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-primary active"
+            <confirm-button
+              [type]="'button'"
+              [btnSmall]="true"
               [disabled]="!form.valid"
-              (click)="saved()">
-              Guardar
+              [loading]="loading"
+              (click)="confirm()"></confirm-button>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              type="button"
+              (click)="clean()">
+              Limpiar
             </button>
           </div>
         </div>

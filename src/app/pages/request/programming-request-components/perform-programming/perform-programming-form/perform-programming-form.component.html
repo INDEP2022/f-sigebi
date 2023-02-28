@@ -268,13 +268,10 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settingUser"
-          [source]="usersData"
+          [source]="usersToProgramming"
           (edit)="openForm($event.data)"
           (delete)="delete($event.data)">
         </ng2-smart-table>
-        <app-pagination
-          [params]="paramsUsers"
-          [totalItems]="totalItemsUsers"></app-pagination>
       </div>
 
       <div class="row pt-5" *ngIf="showForm">
@@ -285,7 +282,9 @@
             class="btn btn-info btn-sm active mr-2">
             filtrar bienes
           </button>
-          <button (click)="showGoods()" class="btn btn-primary btn-sm active">
+          <button
+            (click)="showGoodsProgramming()"
+            class="btn btn-primary btn-sm active">
             Mostrar bienes
           </button>
         </div>
@@ -308,10 +307,10 @@
         </div>
         <div [class]="loadingGoods ? 'table-loading' : ''">
           <ng2-smart-table
+            id="tableGoods"
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="estatesList"
-            (userRowSelect)="goodsSelect($event)">
+            [source]="estatesList">
           </ng2-smart-table>
         </div>
         <app-pagination
@@ -332,8 +331,8 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsTransportableGoods"
                   [source]="goodsTranportables"
-                  (edit)="showGood()"
-                  (delete)="onDeleteConfirm($event)">
+                  (edit)="showGood($event.data)"
+                  (delete)="removeGoodTrans($event.data)">
                 </ng2-smart-table>
               </tab>
               <tab [heading]="headingGuard">
@@ -345,8 +344,8 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingGuardGoods"
                   [source]="goodsGuards"
-                  (edit)="showGood()"
-                  (deleteConfirm)="removeGood($event)">
+                  (edit)="showGood($event.data)"
+                  (delete)="removeGoodGuard($event.data)">
                 </ng2-smart-table>
               </tab>
               <tab [heading]="headingWarehouse">
@@ -358,8 +357,8 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingWarehouseGoods"
                   [source]="goodsWarehouse"
-                  (edit)="showGood()"
-                  (deleteConfirm)="removeGood($event)">
+                  (edit)="showGood($event.data)"
+                  (delete)="removeGoodWarehouse($event.data)">
                 </ng2-smart-table>
               </tab>
             </tabset>

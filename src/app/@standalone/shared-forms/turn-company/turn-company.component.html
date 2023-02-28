@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <form-field [control]="form.get(turnField)">
         <ngx-select
-          (fetchItems)="getTurn()"
+          (fetchItems)="getTurn($event)"
           [data]="turn"
           [form]="form"
           value="otKey"

@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-responsibility-letters-report',
   templateUrl: './responsibility-letters-report.component.html',
   styles: [],
 })
-export class ResponsibilityLettersReportComponent implements OnInit {
+export class ResponsibilityLettersReportComponent
+  extends BasePage
+  implements OnInit
+{
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -25,7 +29,9 @@ export class ResponsibilityLettersReportComponent implements OnInit {
   data = EXAMPLE_DATA;
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -35,17 +41,10 @@ export class ResponsibilityLettersReportComponent implements OnInit {
     this.form = this.fb.group({
       evento: [null, [Validators.required]],
       lote: [null, [Validators.required]],
-      oficioCartaLiberacion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      factura: [null, [Validators.required]],
-      fechaFactura: [null, [Validators.required]],
       adjudicatorio: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
       domicilio: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -54,52 +53,80 @@ export class ResponsibilityLettersReportComponent implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      delegacion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      estado: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      delegacion: [null, [Validators.required]],
+      estado: [null, [Validators.required]],
       cp: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      parrafo1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      parrafo2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      parrafo3: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      parrafo1: [null, [Validators.pattern(STRING_PATTERN)]],
+      parrafo2: [null, [Validators.pattern(STRING_PATTERN)]],
+      parrafo3: [null, [Validators.pattern(STRING_PATTERN)]],
+      bienes: [null],
     });
+  }
+
+  confirm(): void {
+    // console.log(this.reportForm.value);
+    // let params = { ...this.form.value };
+    // for (const key in params) {
+    //   if (params[key] === null) delete params[key];
+    // }
+    let params = {
+      DESTYPE: this.form.controls['evento'].value,
+      DOMICILIO: this.form.controls['domicilio'].value,
+      ID_LOTE: this.form.controls['lote'].value,
+      COLONIA: this.form.controls['colonia'].value,
+      DELEGACION: this.form.controls['delegacion'].value,
+      ESTADO: this.form.controls['estado'].value,
+      CP: this.form.controls['cp'].value,
+      PARRAFO1: this.form.controls['parrafo1'].value,
+      ADJUDICATARIO: this.form.controls['adjudicatorio'].value,
+      PARRAFO2: this.form.controls['parrafo2'].value,
+      PARRAFO3: this.form.controls['parrafo3'].value,
+    };
+    console.log(params);
+    // open the window
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
+
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERCARTARESP.pdf?DESTYPE=${params.DESTYPE}&DOMICILIO=${params.DOMICILIO}&ID_LOTE=${params.ID_LOTE}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&PARRAFO2=${params.PARRAFO2}&PARRAFO3=${params.PARRAFO3}`;
+    //const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    setTimeout(() => {
+      this.onLoadToast('success', 'Reporte generado', '');
+    }, 2000);
+
+    window.open(pdfurl, 'FCOMERCARTARESP.pdf');
+    this.loading = false;
+    this.cleanForm();
+  }
+  cleanForm(): void {
+    this.form.reset();
   }
 }
 
 const EXAMPLE_DATA = [
   {
-    description: 'descripcion',
+    description: 'Comercialización',
   },
   {
-    description: 'descripcion',
+    description: 'Siap',
   },
   {
-    description: 'descripcion',
+    description: 'Entrega de bienes',
   },
   {
-    description: 'descripcion',
+    description: 'Inmuebles',
   },
   {
-    description: 'descripcion',
+    description: 'Muebles',
   },
   {
-    description: 'descripcion',
+    description: 'Importaciones',
   },
   {
-    description: 'descripcion',
+    description: 'Enajenación',
   },
   {
-    description: 'descripcion',
+    description: 'Lícito de bienes',
   },
 ];

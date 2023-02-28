@@ -6,74 +6,133 @@
   <div body>
     <form [formGroup]="associateFileForm" class="form-material">
       <div class="row">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field [control]="associateFileForm.get('user')">
             <ngx-select
               [form]="associateFileForm"
               control="user"
               [data]="users"
-              value="id"
-              bindLabel="id"
+              value="usrID"
+              bindLabel="Nombre"
               label="Usuario"
               (fetchItems)="getUserSelect($event)"></ngx-select>
           </form-field>
+        </div> -->
+        <div class="col-md-6">
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="user"
+              [clearable]="false"
+              [items]="users"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="Nombre"
+              bindValue="usrID">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.Nombre }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Usuario</label>
+          </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Transferente&#58;</label>
-            <span> SAT &#45; comercio exterior </span>
+            <span> {{ transferentName }} </span>
           </div>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="associateFileForm.get('unit')">
+          <!-- <form-field [control]="associateFileForm.get('unit')">
             <ngx-select
               [form]="associateFileForm"
               control="unit"
               [data]="units"
-              value="id"
-              bindLabel="id"
+              value="IdUnidad"
+              bindLabel="DscUnidad"
               label="Unidad"
               (fetchItems)="getUnitSelect($event)"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="unit"
+              [clearable]="false"
+              [items]="units"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="DscUnidad"
+              bindValue="IdUnidad">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.DscUnidad }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Unidad</label>
+          </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">ddcld&#58;</label>
-            <span> 4265 </span>
+            <span> {{ ddcId }} </span>
           </div>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="associateFileForm.get('file')">
+          <!-- <form-field [control]="associateFileForm.get('file')">
             <ngx-select
               [form]="associateFileForm"
               control="file"
               [data]="files"
-              value="id"
-              bindLabel="id"
+              value="arhID"
+              bindLabel="arhDescripcion"
               label="Archivo"
               (fetchItems)="getFileSelect($event)"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="file"
+              [clearable]="false"
+              [items]="files"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="arhDescripcion"
+              bindValue="arhID">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.arhDescripcion }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Archivo</label>
+          </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Codificaci&oacute;n&#58;</label>
-            <span> AND&#47;2C&#47;11 </span>
+            <span> {{ codificacion }} </span>
           </div>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="associateFileForm.get('disposition')">
+          <!-- <form-field [control]="associateFileForm.get('disposition')">
             <ngx-select
               [form]="associateFileForm"
               control="disposition"
@@ -82,13 +141,32 @@
               bindLabel="id"
               label="Disposici&oacute;n"
               (fetchItems)="getDispositionSelect($event)"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="disposition"
+              [clearable]="false"
+              [items]="dispositions"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="ddcCodificacion"
+              bindValue="ddcId">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.ddcCodificacion }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Disposici&oacute;n</label>
+          </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Periodo de reserva&#58;</label>
-            <span> 0 </span>
+            <span> {{ periodoRecerva }} </span>
           </div>
         </div>
       </div>
@@ -110,7 +188,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Clasificaci&oacute;n&#58;</label>
-            <span> Publico </span>
+            <span> Publico** </span>
           </div>
         </div>
       </div>
@@ -122,7 +200,7 @@
             label="Fecha expediente">
             <input
               class="form-control"
-              formControlName="startDate"
+              formControlName="fileDate"
               bsDatepicker />
           </form-field>
         </div>
@@ -132,7 +210,7 @@
             <label class="col-lg-5 text-right"
               >Secci&oacute;n docuemental&#58;</label
             >
-            <span> Interposicion de recursos administrativos </span>
+            <span> Interposicion de recursos administrativos** </span>
           </div>
         </div>
       </div>
@@ -151,8 +229,8 @@
 
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Serie docuemental&#58;</label>
-            <span> Interposicion de recursos administrativos</span>
+            <label class="col-lg-5 text-right">Serie documental&#58;</label>
+            <span> Interposicion de recursos administrativos**</span>
           </div>
         </div>
       </div>
@@ -169,7 +247,7 @@
             <label class="col-lg-5 text-right"
               >Vigencia del archivo de tr&aacute;mite&#58;</label
             >
-            <span> 1 </span>
+            <span> {{ vigenciaTramite }} </span>
           </div>
         </div>
       </div>
@@ -188,7 +266,7 @@
             <label class="col-lg-5 text-right"
               >Vigencia de archivo de concentraci&oacute;n&#58;</label
             >
-            <span> 10 </span>
+            <span> {{ vigenciaConcentracion }} </span>
           </div>
         </div>
       </div>
@@ -199,7 +277,7 @@
             <label class="col-lg-6 text-right"
               >Delegaci&oacute;n regional&#58;</label
             >
-            <span> Metropolitana </span>
+            <span> {{ regionalDelegacionName }} </span>
           </div>
         </div>
 

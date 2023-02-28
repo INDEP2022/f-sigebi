@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   inject,
@@ -14,9 +15,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
@@ -33,11 +36,15 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
+import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
+import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 
 @Component({
@@ -51,15 +58,15 @@ export class DetailAssetsTabComponentComponent
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
-  @Input() detailAssets: ModelForm<any>; // bienes
-  @Input() domicilieObject: IDomicilies; //
+  @Input() detailAssets: ModelForm<any>; // bienes ModelForm
+  @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodRealState>; // bien del inmueble
+  goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
@@ -72,6 +79,7 @@ export class DetailAssetsTabComponentComponent
   destinyLigie: string = '';
   addressId: number = null;
   bsEvaluoDate: any;
+  brandId: string = '';
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
@@ -114,8 +122,14 @@ export class DetailAssetsTabComponentComponent
   goodEstateService = inject(RealStateService);
   requestHelperService = inject(RequestHelperService);
   authService = inject(AuthService);
+  parameterBrandsService = inject(ParameterBrandsService);
+  parameterSubBrandsService = inject(ParameterSubBrandsService);
+  menageService = inject(MenageService);
 
-  isDisabled: boolean = true;
+  isDisabled: boolean = true; //desabilita el campo domicilio
+  menajeSelected: any;
+  isSaveMenaje: boolean = false;
+  disableDuplicity: boolean = false; //para verificar cumplimientos = false
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {
     super();
@@ -125,18 +139,19 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
       console.log(changes['detailAssets'].currentValue);
     }
-
-    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
-      (data: any) => {
-        if (data) {
-          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
-          this.displayTypeTapInformation(Number(data));
-        } else {
-          //limpia los tabs de los bienes
-          this.displayTypeTapInformation(data);
+    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+      if (this.detailAssets.controls['addressId'].value) {
+        this.addressId = this.detailAssets.controls['addressId'].value;
+        this.getGoodDomicilie(this.addressId);
+      }
+      if (this.typeDoc === 'verify-compliance') {
+        this.detailAssets.disable();
+        this.disableDuplicity = true;
+        if (this.goodDomicilieForm !== undefined) {
+          this.goodDomicilieForm.disable();
         }
       }
-    );
+    }
   }
 
   ngOnInit(): void {
@@ -304,6 +319,7 @@ export class DetailAssetsTabComponentComponent
       }),
     });
 
+    //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
       warehouseAlias: ['DOMICILIO TRANSFERENTE'],
@@ -330,13 +346,9 @@ export class DetailAssetsTabComponentComponent
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
-
-    if (this.detailAssets.controls['addressId'].value) {
-      this.addressId = this.detailAssets.controls['addressId'].value;
-      this.getGoodDomicilie(this.addressId);
-    }
   }
 
+  //formulario del inmueble
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
@@ -440,7 +452,7 @@ export class DetailAssetsTabComponentComponent
     keyTownship?: number,
     keyState?: number,
     keySettlement?: number
-  ) {
+  ): any {
     params.limit = 20;
     params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
@@ -452,19 +464,48 @@ export class DetailAssetsTabComponentComponent
 
     const par = new FilterParams();
 
-    this.goodsQueryService.getZipCode(params).subscribe({
-      next: data => {
-        this.selectCP = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
+    this.goodsQueryService
+      .getZipCode(params)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          let resp: any = '';
+          if (error?.error?.message !== 'No se encontrarón registros') {
+            resp = error;
+          }
+          return resp;
+        })
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.selectCP = new DefaultSelect(data.data, data.count);
+        },
+      });
+  }
+
+  getBrand(params: ListParams) {
+    const pa = new FilterParams();
+    pa.addFilter('id', params.text, SearchFilter.ILIKE);
+
+    this.parameterBrandsService.getAll(pa.getParams()).subscribe({
+      next: resp => {
+        this.selectBrand = new DefaultSelect(resp.data, resp.count);
       },
     });
   }
 
-  getBrand(event: any) {}
+  getSubBrand(params: ListParams, brandId?: string) {
+    const idBrand = brandId ? brandId : this.brandId;
+    const pa = new FilterParams();
+    pa.limit = 20;
+    pa.addFilter('idBrand', idBrand);
+    pa.addFilter('idSubBrand', params.text, SearchFilter.ILIKE);
 
-  getSubBrand(event: any) {}
+    this.parameterSubBrandsService.getAll(pa.getParams()).subscribe({
+      next: resp => {
+        this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
 
   getTypeUseBoat(event: any) {
     //mis cambios
@@ -491,7 +532,7 @@ export class DetailAssetsTabComponentComponent
   initInputs(): void {
     //control de disable de pantalla
     if (this.typeDoc === 'verify-compliance') {
-      this.assetsForm.disable();
+      this.detailAssets.disable();
     } else if (this.typeDoc === 'classify-assets') {
       this.assetsForm.disable();
       this.assetsForm.controls['physicalState'].enable();
@@ -510,9 +551,9 @@ export class DetailAssetsTabComponentComponent
           this.selectState = new DefaultSelect([data]);
           this.domicileForm.controls['statusKey'].setValue(data.id);
         },
-        error: error => {
+        /*error: error => {
           console.log(error);
-        },
+        },*/
       });
     }
   }
@@ -535,6 +576,29 @@ export class DetailAssetsTabComponentComponent
       this.setGoodDomicilieSelected(res);
       //habilita los campos
       this.isDisabled = false;
+    });
+  }
+
+  openSelectMenage() {
+    let config: ModalOptions = {
+      initialState: {
+        goodsObject: [this.detailAssets.getRawValue()],
+        requestId: this.requestObject.id,
+        callback: (next: boolean) => {
+          //if (next) this.getExample();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalServise.show(MenajeComponent, config);
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      //ver si es necesario recivir los datos desde menaje
+      if (res) {
+        this.menajeSelected = res;
+        this.isSaveMenaje = true;
+      }
     });
   }
 
@@ -589,27 +653,63 @@ export class DetailAssetsTabComponentComponent
 
   async save(): Promise<void> {
     const domicilie = this.domicileForm.getRawValue();
-    //this.isSave = true;
-
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
     }
-
     //Se guardar el bien inmueble
     if (this.immovablesAssets === true) {
       if (this.domicileForm.controls['id'].value === null) {
-        this.message('info', 'Error', `Se requiere el domicilio del bien`);
+        this.message(
+          'info',
+          'Error',
+          `Se reguiqere ingresar el domicilio del bien`
+        );
       } else {
         await this.saveGoodDomicilie();
       }
     }
 
-    //this.isSave = false;
+    //guarda el menaje
+    if (this.isSaveMenaje === true) {
+      await this.saveMenaje();
+    }
+  }
+
+  saveMenaje() {
+    new Promise((resolve, reject) => {
+      for (let i = 0; i < this.menajeSelected.length; i++) {
+        const element = this.menajeSelected[i];
+
+        this.menageService.create(element).subscribe({
+          next: data => {
+            if (data.statusCode != null) {
+              this.message(
+                'error',
+                'Error',
+                `El menaje no se pudo guardar!\n. ${data.message}`
+              );
+              reject('El registro del bien del domicilio no se guardo!');
+            }
+
+            if (data.id != null) {
+              this.message(
+                'success',
+                'Menaje guardado',
+                `Se guardaron los menajes existosamente`
+              );
+              this.isSaveMenaje = false;
+              resolve('Se guardo correctamente el menaje!');
+            }
+          },
+        });
+      }
+    });
   }
 
   saveDomicilieGood(domicilie: IDomicilies) {
     return new Promise((resolve, reject) => {
+      domicilie.id = Number(domicilie.id);
       this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
         next: (data: any) => {
           if (data.statusCode != null) {
@@ -625,7 +725,7 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'success',
               'Actualizado',
-              `Se actualizo el domicilio!`
+              `Se actualizo el domicilio del bien!`
             );
             this.domicileForm.controls['id'].setValue(data.id);
             resolve('Se actualizo el registro del domicilio del bien');
@@ -665,27 +765,34 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `El registro del bien del domicilio guardar!\n. ${data.message}`
+              `No se guardo el registro del bien inmueble!\n. ${data.message}`
             );
-            reject('El registro del bien del domicilio guardar!');
+            reject('El registro del bien del inmueble no se guardo!');
           }
 
           if (data.id != null) {
             this.message(
               'success',
-              'Actualizado',
-              `Se guardo correctamente el bien del domicilio!`
+              'Guardado',
+              `Se guardo correctamente el bien inmueble!`
             );
 
-            resolve('Se guardo correctamente el bien del domicilio!');
+            resolve('Se guardo correctamente el bien inmueble!');
           }
         },
       });
     });
   }
 
-  getGoodDomicilie(addressId: number) {
-    this.goodDomicilie.getById(addressId).subscribe({
+  getGoodDomicilie(addressId: any) {
+    let address = null;
+    if (addressId.id != null) {
+      address = addressId.id;
+    } else {
+      address = addressId;
+    }
+
+    this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
@@ -696,6 +803,25 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+          this.displayTypeTapInformation(Number(data));
+        } else {
+          //limpia los tabs de los bienes
+          this.displayTypeTapInformation(data);
+        }
+      }
+    );
+
+    this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
+      if (data) {
+        this.brandId = data;
+        this.getSubBrand(new ListParams(), data);
+      }
+    });
+
     this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
@@ -748,7 +874,7 @@ export class DetailAssetsTabComponentComponent
       this.goodEstateService.getById(id).subscribe({
         next: resp => {
           console.log(resp);
-          this.goodDomicilieForm.patchValue(resp.data);
+          this.goodDomicilieForm.patchValue(resp);
         },
       });
     }
@@ -771,7 +897,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: IDomicilies) {
-    this.detailAssets.controls['addressId'].setValue(domicilie.id);
+    this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
     this.domicileForm.patchValue(domicilie);

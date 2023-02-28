@@ -1,0 +1,127 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="thirdPartyForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="thirdPartyForm.get('id')" label="ID">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="thirdPartyForm.get('nameReason')"
+            label="Nombre Razón">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameReason" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="thirdPartyForm.get('calculationRoutine')"
+            label="Rutina Cálculo">
+            <ng-select
+              formControlName="calculationRoutine"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="COMI_RANGO">COMI_RANGO</ng-option>
+              <ng-option value="COMI_RANGOESP">COMI_RANGOESP</ng-option>
+              <ng-option value="COMI_TOTAL">COMI_TOTAL</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            [control]="thirdPartyForm.get('userAttempts')"
+            label="intentos">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="userAttempts" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="thirdPartyForm.get('userBlocked')"
+            label="Bloqueos">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userBlocked" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="thirdPartyForm.get('userBlockedEnd')"
+            label="Fecha de final de bloqueo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userBlockedEnd" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="thirdPartyForm.get('userBlockedStart')"
+            label="Fecha de inicial de bloqueo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userBlockedStart" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="thirdPartyForm.get('userStatus')"
+            label="Estados de usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="thirdPartyForm.get('userKey')" label="Clave">
+            <input type="text" class="form-control" formControlName="userKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="thirdPartyForm.get('userPwd')"
+            label="Contraseña">
+            <input type="text" class="form-control" formControlName="userPwd" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="thirdPartyForm.get('user')" label="Usuario">
+            <input type="text" class="form-control" formControlName="user" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="thirdPartyForm.invalid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

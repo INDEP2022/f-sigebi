@@ -1,10 +1,12 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import {
@@ -15,7 +17,10 @@ import {
   switchMap,
 } from 'rxjs';
 import { SELECT_SIZE } from 'src/app/common/constants/select-size';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from './default-select';
 
 @Component({
@@ -37,13 +42,16 @@ export class SelectComponent<T> implements OnInit {
   @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
+  @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
+  @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
   totalItems: number = 0;
+  @ViewChild('select') select: ElementRef;
   private concat: boolean = false;
   private readonly selectSize: number = SELECT_SIZE;
   constructor() {}
@@ -57,7 +65,7 @@ export class SelectComponent<T> implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'].currentValue.length === 0) {
+    if (changes['data']?.currentValue.length === 0) {
       this.buffer = [];
     } else if (changes['data'] && this.concat) {
       this.buffer = [...this.buffer, ...this.data.data];
@@ -68,17 +76,34 @@ export class SelectComponent<T> implements OnInit {
     this.loading = false;
   }
 
+  private emitListParams(text: string) {
+    const params = {
+      page: this.page,
+      text: text ?? '',
+      limit: this.selectSize,
+    };
+    this.fetchItems.emit(params);
+  }
+  private filterParams(text: string) {
+    let filterParam = new FilterParams();
+    filterParam.page = this.page;
+    filterParam.limit = this.selectSize;
+    if (this.paramFilter === 'search') {
+      filterParam.search = text ?? '';
+    } else {
+      filterParam.addFilter(this.paramFilter, text ?? '');
+    }
+    console.log(filterParam);
+    this.fetchByParamsItems.emit(filterParam);
+  }
+
   fetchMore(text: string) {
     if (!this.loading && this.buffer.length < this.totalItems) {
       this.page++;
       this.loading = true;
       this.concat = true;
-      const params = {
-        page: this.page,
-        text: text ?? '',
-        limit: this.selectSize,
-      };
-      this.fetchItems.emit(params);
+      this.emitListParams(text);
+      this.filterParams(text);
     }
   }
 
@@ -96,12 +121,8 @@ export class SelectComponent<T> implements OnInit {
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          const params = {
-            page: this.page,
-            text: text ?? '',
-            limit: this.selectSize,
-          };
-          this.fetchItems.emit(params);
+          this.emitListParams(text);
+          this.filterParams(text);
           return of([]);
         })
       )

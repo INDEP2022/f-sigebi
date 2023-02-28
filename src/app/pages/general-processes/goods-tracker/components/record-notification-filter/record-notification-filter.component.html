@@ -24,7 +24,7 @@
         formControlName="flyerNum"
         [items]="[]"
         [addTag]="true"
-        (change)="flyerChange()"
+        (change)="flyerChange($event)"
         [multiple]="true"
         [selectOnTab]="true"
         [isOpen]="false">
@@ -42,7 +42,7 @@
         value="id"
         bindLabel="description"
         (fetchItems)="getCourts($event)"
-        (change)="courtChange()"
+        (change)="courtChange($event)"
         label="No&#46; Juzgado"></ngx-select>
     </form-field>
 
@@ -162,8 +162,9 @@
 
   <div class="row">
     <div class="col-md-12">
-      <button class="btn btn-primary active">
-        Buscar<i class="fa fa-search ml-2"></i>
+      <button class="btn btn-primary active" [disabled]="subloading">
+        {{ subloading ? 'Espere un momento...' : 'Buscar'
+        }}<i class="fa fa-search ml-2"></i>
       </button>
     </div>
   </div>

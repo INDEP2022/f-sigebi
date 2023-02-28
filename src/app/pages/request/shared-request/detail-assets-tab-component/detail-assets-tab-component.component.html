@@ -62,7 +62,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="detailAssets.get('quantity')"
-                label="&#42;Cantidad de la Transferente">
+                label="Cantidad de la Transferente">
                 <input
                   type="number"
                   class="form-control"
@@ -79,7 +79,8 @@
                   type="checkbox"
                   [ngModelOptions]="{ standalone: true }"
                   [(ngModel)]="duplicity"
-                  (change)="modifyResponse($event)" />
+                  (change)="modifyResponse($event)"
+                  [disabled]="disableDuplicity" />
               </form-check>
             </div>
             <div class="col-md-3">
@@ -227,7 +228,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('unitMeasure')"
-                label="&#42;Unid&#46; Medida Transferente">
+                label="Unid&#46; Medida Transferente">
                 <input
                   type="text"
                   class="form-control"
@@ -277,8 +278,9 @@
               </button>
               <button
                 class="btn btn-secondary btn-sm active"
-                style="margin-left: 2px">
-                Mensaje
+                style="margin-left: 2px"
+                (click)="openSelectMenage()">
+                menaje
               </button>
             </div>
           </div>
@@ -505,7 +507,7 @@
                 [data]="selectBrand"
                 label="Marca"
                 value="id"
-                bindLabel="brand"></ngx-select>
+                bindLabel="id"></ngx-select>
             </div>
             <div class="col-md-4">
               <ngx-select
@@ -514,8 +516,8 @@
                 (fetchItems)="getSubBrand($event)"
                 [data]="selectSubBrand"
                 label="Sub Marca"
-                value="id"
-                bindLabel="subBrand"></ngx-select>
+                value="idSubBrand"
+                bindLabel="idSubBrand"></ngx-select>
             </div>
             <div class="col-md-2">
               <!--  <form-check label="Blindaje" for="Blindaje">
