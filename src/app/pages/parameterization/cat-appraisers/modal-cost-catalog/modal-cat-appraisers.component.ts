@@ -60,6 +60,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
 
   async confirm() {
     if (this.form.valid) {
+      this.loading = true;
       let isPresent: boolean = false;
       const text = this.form.get('name').value;
       await this.searchProficient(text).then(resp => {
@@ -67,24 +68,31 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
         isPresent = values.length > 0 ? true : false;
       });
 
-      if (isPresent) {
+      if (isPresent && !this.edit) {
         this.onLoadToast(
           'error',
           `El perito ${text} ya existe, favor de verificar`,
           ''
         );
+        this.loading = false;
         return;
       }
 
       if (this.edit) {
         this.proficientSer.updateProficient(this.form.value).subscribe({
           next: () => this.handleSuccess(),
-          error: err => this.onLoadToast('error', err.error.message, ''),
+          error: err => (
+            this.onLoadToast('error', err.error.message, ''),
+            (this.loading = false)
+          ),
         });
       } else {
         this.proficientSer.create(this.form.value).subscribe({
           next: () => this.handleSuccess(),
-          error: err => this.onLoadToast('error', err.error.message, ''),
+          error: err => (
+            this.onLoadToast('error', err.error.message, ''),
+            (this.loading = false)
+          ),
         });
       }
     }
@@ -96,6 +104,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
       `Se ha ${this.edit ? 'actualizado' : 'guardado'} correctament`,
       ''
     );
+    this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
