@@ -24,6 +24,8 @@ const VALIDATION_UPLOAD_GENERATION_EXPEDIENTE_MESSAGE =
 // PROCESOS VALIDACION
 const ERROR_UNIDAD = (unidad: string) =>
   `La cantidad es inválida. En el campo UNIDAD: ${unidad}.`;
+const ERROR_CANTIDAD = (cantidad: string) =>
+  `La cantidad es inválida. En el campo CANTIDAD: ${cantidad}.`;
 const ERROR_ESTATUS = (estatus: string) =>
   `El estatus ${estatus} no existe en el sistema.`;
 // PROCESO 1 Y PROCESO 3
@@ -90,4 +92,5 @@ export {
   ERROR_GET_CLAVE_SAT,
   ERROR_ISSUING_INSTITUTION,
   ERROR_TRANSFERENTE_PARAMS,
+  ERROR_CANTIDAD,
 };
