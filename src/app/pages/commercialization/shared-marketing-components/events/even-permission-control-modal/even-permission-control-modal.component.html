@@ -1,45 +1,55 @@
 <app-modal>
-    <div header>
-        <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
-    </div>
-    <div body>
-        
-       <form class="form-material" [formGroup]="comerUserForm">
-        <div class="row">
-            <div class="col-md-4">
-                <form-field label="ID Evento" [control]="comerUserForm.get('idEvent')">
-                    <input type="text" class="form-control" formControlName="idEvent">
-                </form-field>
-            </div>
-            <div class="col-md-4">
-                <form-field label="Nombre de usuario" [control]="comerUserForm.get('username')">
-                    <input type="text" class="form-control" formControlName="username">
-                </form-field>
-            </div>
-            <div class="col-md-4">
-                <form-field label="Fecha" [control]="comerUserForm.get('date')">
-                    <input type="text" class="form-control" formControlName="date" bsDatepicker
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="comerUserForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            label="ID Evento"
+            [control]="comerUserForm.get('idEvent')">
+            <input type="text" class="form-control" formControlName="idEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Nombre de usuario"
+            [control]="comerUserForm.get('username')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="username" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Fecha" [control]="comerUserForm.get('date')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="date"
+              bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD'
-              }" >
-                </form-field>
-            </div>
+              }" />
+          </form-field>
         </div>
-        
+      </div>
     </form>
-
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
-    <div footer>
-        <div class="d-flex justify-content-center">
-            <div class="m-3">
-                <confirm-button [type]="'button'" (confirm)="confirm()"></confirm-button>
-            </div>
-            <div class="m-3">
-                <button type="button" class="btn btn-danger active" (click)="close()">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
+  </div>
 </app-modal>

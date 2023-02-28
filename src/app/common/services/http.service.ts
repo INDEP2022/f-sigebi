@@ -51,10 +51,10 @@ export class HttpService {
     return this.httpClient.patch<T>(`${url}`, body, { params });
   }
 
-  protected delete<T = any>(route: string, _params?: _Params) {
+  protected delete<T = any>(route: string, body?: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    return this.httpClient.delete<T>(`${url}`, { params });
+    return this.httpClient.delete<T>(`${url}`, { params, body });
   }
 
   /**

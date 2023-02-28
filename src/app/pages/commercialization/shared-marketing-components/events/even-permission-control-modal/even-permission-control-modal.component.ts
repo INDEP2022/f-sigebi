@@ -9,11 +9,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-even-permission-control-modal',
   templateUrl: './even-permission-control-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class EvenPermissionControlModalComponent extends BasePage implements OnInit {
-
+export class EvenPermissionControlModalComponent
+  extends BasePage
+  implements OnInit
+{
   title: string = 'CONTROL DE PERMISOS A EVENTOS';
   edit: boolean = false;
 
@@ -22,7 +23,11 @@ export class EvenPermissionControlModalComponent extends BasePage implements OnI
 
   today: Date;
 
-  constructor(private modalRef: BsModalRef, private fb:FormBuilder, private comerUsuauTxEventService:ComerUsuauTxEventService) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private comerUsuauTxEventService: ComerUsuauTxEventService
+  ) {
     super();
   }
 
@@ -30,13 +35,13 @@ export class EvenPermissionControlModalComponent extends BasePage implements OnI
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.comerUserForm = this.fb.group({
       idEvent: [null, [Validators.required]],
-      username:  [null, [Validators.required]],
-      date:  [null, [Validators.required]]
+      username: [null, [Validators.required]],
+      date: [null, [Validators.required]],
     });
-    if(this.comerUser != null){
+    if (this.comerUser != null) {
       this.edit = true;
       this.comerUserForm.patchValue(this.comerUser);
     } else {
@@ -45,7 +50,7 @@ export class EvenPermissionControlModalComponent extends BasePage implements OnI
     }
   }
 
-   close() {
+  close() {
     this.modalRef.hide();
   }
 
@@ -63,13 +68,10 @@ export class EvenPermissionControlModalComponent extends BasePage implements OnI
 
   update() {
     this.loading = true;
-    this.comerUsuauTxEventService
-      .update(this.comerUserForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-    
+    this.comerUsuauTxEventService.update(this.comerUserForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -79,5 +81,4 @@ export class EvenPermissionControlModalComponent extends BasePage implements OnI
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

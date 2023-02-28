@@ -109,4 +109,4 @@ export const LOTE_COLUMNS = {
     title: 'UBICACION',
     sort: false,
   },
-}
+};

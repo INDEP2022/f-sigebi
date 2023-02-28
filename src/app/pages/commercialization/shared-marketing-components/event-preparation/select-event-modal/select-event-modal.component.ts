@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Component, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
@@ -17,22 +17,25 @@ import { EVENT_COLUMNS, LOTE_COLUMNS } from './columns';
   styles: [],
 })
 export class SelectEventModalComponent extends BasePage implements OnInit {
-  
   totalItems: number = 0;
   totalItems2: number = 0;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  eventList: IComerEvent[]=[];
+  eventList: IComerEvent[] = [];
   event: IComerEvent;
 
-  loteList: ILot[]=[];
+  loteList: ILot[] = [];
   lote: ILot;
 
   settings2;
 
-  constructor(private modalService: BsModalService, private comerEventosService:ComerEventosService, private lotService:LotService) {
+  constructor(
+    private modalService: BsModalService,
+    private comerEventosService: ComerEventosService,
+    private lotService: LotService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -55,10 +58,9 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
       },
       columns: { ...LOTE_COLUMNS },
     };
-    
   }
 
-  data:any;
+  data: any;
 
   ngOnInit(): void {
     this.params
@@ -66,8 +68,8 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
       .subscribe(() => this.getAllEvent());
   }
 
-  getAllEvent():void{
-     this.loading = true;
+  getAllEvent(): void {
+    this.loading = true;
 
     this.comerEventosService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -82,8 +84,8 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
       },
     });
   }
-  
-  openForm(event? : IComerEvent) {
+
+  openForm(event?: IComerEvent) {
     let config: ModalOptions = {
       initialState: {
         event,
@@ -104,21 +106,18 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
       .subscribe(() => this.getLotesByEvent(this.event));
   }
 
-  getLotesByEvent(event : IComerEvent):void{
+  getLotesByEvent(event: IComerEvent): void {
     this.loading = true;
-    this.lotService
-      .getLotbyEvent(event.id, this.params2.getValue())
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.loteList = response.data;
-          this.totalItems2 = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
+    this.lotService.getLotbyEvent(event.id, this.params2.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.loteList = response.data;
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
-
 
   openForm2(lote?: ILot) {
     let config: ModalOptions = {
@@ -131,9 +130,4 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
     };
     this.modalService.show(AddEditLoteModalComponent, config);
   }
-
-
-
- 
-  
 }

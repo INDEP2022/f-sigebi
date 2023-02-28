@@ -90,7 +90,6 @@ export class EventPreparationComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    
   }
 
   openModal2(): void {
@@ -128,12 +127,9 @@ export class EventPreparationComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    
   }
 
-  openForm(allotment?: any) {
-    
-  }
+  openForm(allotment?: any) {}
 
   delete(allotment: any) {
     this.alertQuestion(

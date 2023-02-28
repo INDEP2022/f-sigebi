@@ -1,12 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -18,16 +17,19 @@ export class EditValidationExemptedGoodsModalComponent
   extends BasePage
   implements OnInit
 {
-
   title: string = 'Bienes Exentos de validación';
   edit: boolean = false;
 
-  goodForm : ModelForm<IGood>;
+  goodForm: ModelForm<IGood>;
   good: IGood;
 
   goods = new DefaultSelect();
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder, private goodService:GoodService) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private goodService: GoodService
+  ) {
     super();
   }
 
@@ -40,7 +42,7 @@ export class EditValidationExemptedGoodsModalComponent
       id: [null, []],
       description: [null, []],
       quantity: [null, []],
-      
+
       proccess: [null, []],
     });
     if (this.good != null) {
@@ -50,14 +52,11 @@ export class EditValidationExemptedGoodsModalComponent
     }
   }
 
-
   getGoods(params: ListParams) {
     this.goodService.getAll(params).subscribe({
-      next: data =>
-        (this.goods = new DefaultSelect(data.data, data.count)),
+      next: data => (this.goods = new DefaultSelect(data.data, data.count)),
     });
   }
-
 
   onValuesChange() {
     // console.log(delegationChange);
