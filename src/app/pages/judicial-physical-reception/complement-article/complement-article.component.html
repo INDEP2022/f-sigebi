@@ -9,27 +9,36 @@
         <div class="col-md-4">
           <form-field [control]="form.get('expediente')" label="Expediente">
             <input
-              type="text"
+              (ngModelChange)="
+                toggleButton('search-goods-expedient', 'expediente')
+              "
+              type="number"
               class="form-control"
               formControlName="expediente" />
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field
+          <button
+            id="search-goods-expedient"
+            class="btn btn-primary btn-sm active disabled w-50"
+            (click)="getGoodsByExpedient()">
+            Buscar
+          </button>
+          <!--  <form-field
             [control]="form.get('fechaFe')"
             label="Fecha de f&eacute; ministerial">
             <input
               bsDatepicker
               class="form-control"
               formControlName="fechaFe" />
-          </form-field>
+          </form-field> -->
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4">
-          <table class="table">
+          <table class="table table-responsive" style="max-height: 300px">
             <thead>
               <tr>
                 <th>No Bien</th>
@@ -37,16 +46,18 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1231</td>
-                <td>Mueble &#46;&#46;&#46;&#46;</td>
+              <tr
+                *ngFor="let item of dataGoods"
+                (dblclick)="getGoodData(item.id)">
+                <td>{{ item.id }}</td>
+                <td>{{ item.description }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <div class="col-md-8 md-tabs">
-          <tabset>
+          <tabset id="tabset-id">
             <tab heading="General">
               <div class="row">
                 <div class="col-md-6">
@@ -54,6 +65,7 @@
                     [control]="form.get('clasificacion')"
                     label="Clasificaci&oacute;n del bien">
                     <textarea
+                      (ngModelChange)="btnGeneralTab()"
                       rows="5"
                       class="form-control"
                       formControlName="clasificacion">
@@ -65,11 +77,22 @@
                     [control]="form.get('remarks')"
                     label="Se&ntilde;alamientos del origen">
                     <textarea
+                      (ngModelChange)="btnGeneralTab()"
                       rows="5"
                       class="form-control"
                       formControlName="remarks">
                     </textarea>
                   </form-field>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center">
+                <div class="col-2">
+                  <button
+                    id="update-general-good"
+                    class="btn btn-primary active disabled btn-sm mx-auto"
+                    (click)="updateGoodData()">
+                    Actualizar
+                  </button>
                 </div>
               </div>
             </tab>
@@ -84,16 +107,28 @@
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="importe" />
+                        formControlName="importe"
+                        (ngModelChange)="btnAppraisTab()" />
                     </form-field>
                   </div>
 
                   <div class="row">
-                    <form-field [control]="form.get('moneda')" label="Moneda">
+                    <!-- <form-field [control]="form.get('moneda')" label="Moneda">
                       <input
                         type="text"
                         class="form-control"
                         formControlName="moneda" />
+                    </form-field> -->
+                    <form-field [control]="form.get('moneda')">
+                      <ngx-select
+                        (fetchItems)="getCurrency($event)"
+                        label="Moneda"
+                        bindLabel="otValue01"
+                        value="otKey1"
+                        control="moneda"
+                        [form]="form"
+                        [data]="currencySelect"
+                        (change)="btnAppraisTab()"></ngx-select>
                     </form-field>
                   </div>
 
@@ -104,7 +139,8 @@
                       <input
                         bsDatepicker
                         class="form-control"
-                        formControlName="fechaVigencia" />
+                        formControlName="fechaVigencia"
+                        (ngModelChange)="btnAppraisTab()" />
                     </form-field>
                   </div>
 
@@ -115,30 +151,51 @@
                       <input
                         bsDatepicker
                         class="form-control"
-                        formControlName="fechaAvaluo" />
+                        formControlName="fechaAvaluo"
+                        (ngModelChange)="btnAppraisTab()" />
                     </form-field>
                   </div>
 
                   <div class="row">
-                    <form-field [control]="form.get('perito')" label="Perito">
+                    <form-field [control]="form.get('perito')">
                       <ngx-select
+                        (fetchItems)="getProeficients($event)"
+                        label="Perito"
+                        bindLabel="name"
                         control="perito"
                         [form]="form"
-                        [data]="itemsSelect"></ngx-select>
+                        [data]="proeficientSelect"
+                        (change)="btnAppraisTab()"></ngx-select>
                     </form-field>
                   </div>
 
                   <div class="row">
-                    <form-field
-                      [control]="form.get('institucion')"
-                      label="Instituci&oacute;n">
+                    <form-field [control]="form.get('institucion')">
                       <ngx-select
+                        (fetchItems)="getInstitutions($event)"
+                        bindLabel="description"
+                        label="Instituci&oacute;n"
                         control="institucion"
                         [form]="form"
-                        [data]="itemsSelect"></ngx-select>
+                        [data]="institutionSelect"
+                        (change)="btnAppraisTab()"></ngx-select>
                     </form-field>
                   </div>
                 </div>
+              </div>
+              <div class="text-center">
+                <button
+                  id="apprasial-history"
+                  class="my-1 mx-2 btn btn-info active disabled btn-sm"
+                  (click)="add()">
+                  Historial de valuos
+                </button>
+                <button
+                  id="apprais-good"
+                  class="my-1 mx-2 btn btn-primary disabled active btn-sm"
+                  (click)="postAppraisGood()">
+                  Valuar
+                </button>
               </div>
             </tab>
 
@@ -152,29 +209,34 @@
                       <input
                         bsDatepicker
                         class="form-control"
-                        formControlName="fechaDictamen" />
+                        formControlName="fechaDictamen"
+                        (ngModelChange)="btnOpinion()" />
                     </form-field>
                   </div>
 
                   <div class="row">
-                    <form-field
-                      [control]="form.get('dictamenPerito')"
-                      label="Dictamen Perito">
+                    <form-field [control]="form.get('dictamenPerito')">
                       <ngx-select
+                        (fetchItems)="getProeficients($event)"
+                        label="Dictamen Perito"
+                        bindLabel="name"
                         control="dictamenPerito"
                         [form]="form"
-                        [data]="itemsSelect"></ngx-select>
+                        [data]="proeficientSelect"
+                        (change)="btnOpinion()"></ngx-select>
                     </form-field>
                   </div>
 
                   <div class="row">
-                    <form-field
-                      [control]="form.get('dictamenInstitucion')"
-                      label="Dictamen Instituci&oacute;n">
-                      <textarea
-                        rows="5"
-                        class="form-control mr-3"
-                        formControlName="dictamenInstitucion"></textarea>
+                    <form-field [control]="form.get('dictamenInstitucion')">
+                      <ngx-select
+                        (fetchItems)="getInstitutions($event)"
+                        label="Dictamen Instituci&oacute;n"
+                        bindLabel="description"
+                        control="dictamenInstitucion"
+                        [form]="form"
+                        [data]="institutionSelect"
+                        (change)="btnOpinion()"></ngx-select>
                     </form-field>
                   </div>
                 </div>
@@ -187,9 +249,20 @@
                       <textarea
                         rows="5"
                         class="form-control mr-3"
-                        formControlName="dictamenPerenidad"></textarea>
+                        formControlName="dictamenPerenidad"
+                        (ngModelChange)="btnOpinion()"></textarea>
                     </form-field>
                   </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center">
+                <div class="col-2">
+                  <button
+                    id="opinion"
+                    class="btn btn-primary active disabled btn-sm mx-auto"
+                    (click)="updateOpinion()">
+                    Actualizar
+                  </button>
                 </div>
               </div>
             </tab>
@@ -205,7 +278,8 @@
                         <input
                           bsDatepicker
                           class="form-control"
-                          formControlName="fechaAseg" />
+                          formControlName="fechaAseg"
+                          (ngModelChange)="btnAbandonment()" />
                       </form-field>
                     </div>
                   </div>
@@ -217,7 +291,8 @@
                       <textarea
                         rows="5"
                         class="form-control mr-3"
-                        formControlName="notificado"></textarea>
+                        formControlName="notificado"
+                        (ngModelChange)="btnAbandonment()"></textarea>
                     </form-field>
                   </div>
 
@@ -226,15 +301,27 @@
                       <textarea
                         rows="5"
                         class="form-control mr-3"
-                        formControlName="lugar"></textarea>
+                        formControlName="lugar"
+                        (ngModelChange)="btnAbandonment()"></textarea>
                     </form-field>
                   </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center">
+                <div class="col-2">
+                  <button
+                    id="first-notice-abandonment"
+                    class="btn btn-primary active disabled btn-sm mx-auto"
+                    (click)="updateNotify()">
+                    Actualizar
+                  </button>
                 </div>
               </div>
             </tab>
           </tabset>
         </div>
       </div>
+      <span>{{ goodSelected }}</span>
     </form>
   </div>
 </app-card>
