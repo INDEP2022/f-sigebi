@@ -27,16 +27,6 @@ export interface ITiieV1 {
   user: string;
 }
 
-export interface IIdLayout {
-  id: number;
-  descLayout: string;
-  screenKey: string;
-  table: string;
-  criterion: string;
-  indActive: boolean;
-  registryNumber: number;
-}
-
 export interface IComerLayoutsH {
   id: number;
   descLayout: string;
@@ -47,7 +37,8 @@ export interface IComerLayoutsH {
   registryNumber: number;
 }
 
-export interface IComerLayoutsT {
+export interface IComerLayouts {
+  idLayout: number;
   idConsec: number;
   position: number;
   column: string;
@@ -61,7 +52,6 @@ export interface IComerLayoutsT {
   registryNumber: number;
 }
 
-export interface IComerLayouts {
-  idLayout: IComerLayoutsH;
-  comerH: IComerLayoutsT;
+export interface ILay {
+  idLayout: number;
 }

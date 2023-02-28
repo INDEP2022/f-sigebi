@@ -5,72 +5,30 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="form.get('idName')">
-            <ngx-select
-              typeToSearchText="Escriba 3 o más caracteres"
-              label="Nombre Razón"
-              [form]="form"
-              control="idName">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('startDate')" label="Fecha page">
-            <input
-              type="text"
-              placeholder=""
-              class="form-control"
-              bsDatepicker
-              formControlName="startDate"
-              [bsConfig]="{ isAnimated: true }" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('endDate')" label="Fecha Fin">
-            <input
-              type="text"
-              placeholder=""
-              class="form-control"
-              bsDatepicker
-              formControlName="endDate"
-              [bsConfig]="{ isAnimated: true }" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('idEvent')">
-            <ngx-select
-              typeToSearchText="Escriba 3 o más caracteres"
-              label="Evento"
-              [form]="form"
-              control="idEvent">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('typeChange')" label="Tipo Cambio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeChange" />
-          </form-field>
-        </div>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-10">
-          <button class="btn btn-sm btn-primary active" type="submit">
-            Bienes
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-sm btn-secondary active" type="submit">
-            Calcular comisi&oacute;n
-          </button>
-        </div>
+    </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="thirdPartysList"></ng2-smart-table>
       </div>
-    </form>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="row pt-5">
+      <div class="col-md-2">
+        <button class="btn btn-sm btn-secondary active" type="submit">
+          Calcular comisi&oacute;n
+        </button>
+      </div>
+    </div>
+
     <div class="row pt-5">
       <div class="ch-content">
         <h5 class="title"></h5>
