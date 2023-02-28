@@ -12,6 +12,9 @@ import { IComerUsuaTxEvent } from 'src/app/core/models/ms-event/comer-usuatxeven
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { EvenPermissionControlModalComponent } from '../even-permission-control-modal/even-permission-control-modal.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
 
 @Component({
   selector: 'app-event-permission-control',
@@ -24,12 +27,18 @@ export class EventPermissionControlComponent
 {
   form: FormGroup = new FormGroup({});
   comerUsuaTxEvent: IComerUsuaTxEvent[]=[];
+  idEventE : IComerEvent;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+
+  users= new DefaultSelect<IComerClients>();
   
 
-  constructor(private fb: FormBuilder, private comerEventosService:ComerEventosService, private comerUsuauTxEventService:ComerUsuauTxEventService, private modalService: BsModalService,) {
+  constructor(private fb: FormBuilder, 
+    private comerEventosService:ComerEventosService, 
+    private comerUsuauTxEventService:ComerUsuauTxEventService, 
+    private modalService: BsModalService, ) {
     super();
     this.settings = {
       ...this.settings,
@@ -57,6 +66,10 @@ export class EventPermissionControlComponent
       username: [null, []],
       address: [null, []],
     });
+  }
+
+   cleanForm(): void {
+    this.form.reset();
   }
 
   getEventByID(): void{
@@ -100,8 +113,12 @@ export class EventPermissionControlComponent
 
   openForm(comerUser?: IComerUsuaTxEvent) {
     const modalConfig = MODAL_CONFIG;
+    const idE = {...this.idEventE};
+    let event = this.idEventE;
     modalConfig.initialState = {
       comerUser,
+      event,
+      idE,
       callback: (next: boolean) => {
        if (next) this.getUserByidEVent(comerUser.idEvent);
       },
@@ -111,6 +128,8 @@ export class EventPermissionControlComponent
       modalConfig
     );
   }
+
+ 
 
 
 

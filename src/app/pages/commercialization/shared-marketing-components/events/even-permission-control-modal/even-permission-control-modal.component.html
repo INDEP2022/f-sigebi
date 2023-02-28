@@ -12,8 +12,17 @@
                 </form-field>
             </div>
             <div class="col-md-4">
-                <form-field label="Nombre de usuario" [control]="comerUserForm.get('username')">
-                    <input type="text" class="form-control" formControlName="username">
+                <form-field [control]="comerUserForm.get('username')">
+                    <ngx-select 
+                    [searchOnInit]="true" 
+                    (fetchItems)="getUsers($event)" 
+                    [data]="users" 
+                    [form]="comerUserForm"
+                    value="reasonName" 
+                    bindLabel="reasonName" 
+                    control="username"
+                    label="Usuario">
+                    </ngx-select>
                 </form-field>
             </div>
             <div class="col-md-4">
