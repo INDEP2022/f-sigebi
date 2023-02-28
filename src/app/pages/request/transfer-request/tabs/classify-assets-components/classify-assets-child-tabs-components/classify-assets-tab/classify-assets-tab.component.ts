@@ -364,7 +364,6 @@ export class ClassifyAssetsTabComponent
 
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
-<<<<<<< HEAD
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -382,14 +381,8 @@ export class ClassifyAssetsTabComponent
     } else {
       goods.requestId = Number(goods.requestId.id);
       goods.addressId = Number(goods.addressId.id);
-      goodAction = this.goodService.update(goods.id, goods);
+      goodAction = this.goodService.update(goods);
     }
-=======
-    var goodAction =
-      goods.goodId === null
-        ? this.goodService.create(goods)
-        : this.goodService.update(goods);
->>>>>>> 6660013aa2db49cd355fe751da42d4c6f2ce4362
 
     goodAction.subscribe({
       next: (data: any) => {

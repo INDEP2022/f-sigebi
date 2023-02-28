@@ -440,8 +440,9 @@ export class AssetsComponent extends BasePage implements OnInit {
   deleteGood() {
     for (let i = 0; i < this.listgoodObjects.length; i++) {
       const element = this.listgoodObjects[i];
-      this.goodService.remove(Number(element.id)).subscribe({
-        next: resp => {
+      let goodRemove = { id: element.id, goodId: element.goodId };
+      this.goodService.remove(element.id).subscribe({
+        next: (resp: any) => {
           if (resp.statusCode === 200) {
             this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
             this.closeCreateGoodWIndows();
