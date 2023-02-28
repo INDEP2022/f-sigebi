@@ -43,9 +43,7 @@ export class CurrencySharedComponent extends BasePage implements OnInit {
       if (data) {
         this.filterParams.getValue().removeAllFilters();
         this.filterParams.getValue().page = 1;
-        this.filterParams
-          .getValue()
-          .addFilter('otKey1', data, SearchFilter.ILIKE);
+        this.filterParams.getValue().addFilter('otKey1', data, SearchFilter.EQ);
         this.tableServ
           .getById4WidthFilters(3, this.filterParams.getValue().getParams())
           .subscribe({
@@ -90,7 +88,9 @@ export class CurrencySharedComponent extends BasePage implements OnInit {
       });
   }
 
-  onCurrencyChange(subdelegation: any) {}
+  onCurrencyChange(currency: any) {
+    this.currency = new DefaultSelect();
+  }
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
