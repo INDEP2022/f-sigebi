@@ -24,6 +24,10 @@ import {
   ERROR_EXPORT,
   ERROR_FORM,
   ERROR_FORM_FECHA,
+  ERROR_FORM_NOT_INSERT,
+  ERROR_FORM_SEARCH_EXPEDIENTE_SAT,
+  ERROR_FORM_SEARCH_OFICIO_EXPEDIENTE_SAT,
+  ERROR_FORM_SEARCH_OFICIO_SAT,
   ERROR_INTERNET,
   INFO_DOWNLOAD,
   NOT_FOUND_MESSAGE,
@@ -89,10 +93,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   async initPage() {
     this.paramsGestionSat
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.consultarSatForm());
+      .subscribe(() => this.consultarSatForm(true));
     this.paramsSatTransferencia
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.consultarSatTransferForm());
+      .subscribe(() => this.consultarSatTransferForm(false, true));
   }
 
   /**
@@ -130,7 +134,41 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     });
   }
 
-  consultarSatForm() {
+  validationFieldsGestionSat(start: boolean = false) {
+    let valid = false;
+    if (
+      this.satForm.get('from').value ||
+      this.satForm.get('issue').value ||
+      this.satForm.get('delegationNumber').value ||
+      this.satForm.get('officeNumber').value ||
+      this.satForm.get('processStatus').value
+    ) {
+      valid = true;
+    } else {
+      if (!start) {
+        this.onLoadToast('warning', '¡Advertencia!', ERROR_FORM_NOT_INSERT);
+      }
+    }
+    return valid;
+  }
+  validationFieldsSatTransferencia(start: boolean = false) {
+    let valid = false;
+    if (
+      this.satTransferForm.get('satOnlyKey').value ||
+      this.satTransferForm.get('satProceedings').value ||
+      this.satTransferForm.get('satHouseGuide').value ||
+      this.satTransferForm.get('satMasterGuide').value
+    ) {
+      valid = true;
+    } else {
+      if (!start) {
+        this.onLoadToast('warning', '¡Advertencia!', ERROR_FORM_NOT_INSERT);
+      }
+    }
+    return valid;
+  }
+
+  consultarSatForm(start: boolean = false) {
     if (this.satForm.valid) {
       let validDate = null;
       if (!this.satForm.get('from').value && !this.satForm.get('to').value) {
@@ -145,9 +183,12 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         validDate = 0;
       }
       if (validDate >= 0) {
-        this.loadingGestionSat = true;
-        this.setEmptyGestionSat();
-        this.getGestionTramiteSat();
+        // Validar que se tengan al menos un campo para realizar la consulta
+        if (this.validationFieldsGestionSat(start)) {
+          this.loadingGestionSat = true;
+          this.setEmptyGestionSat();
+          this.getGestionTramiteSat();
+        }
       } else {
         this.onLoadToast('warning', 'Fechas incorrectas', ERROR_FORM_FECHA);
       }
@@ -156,11 +197,17 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     }
   }
 
-  consultarSatTransferForm(resetValues: boolean = false) {
+  consultarSatTransferForm(
+    resetValues: boolean = false,
+    start: boolean = false
+  ) {
     if (this.satTransferForm.valid) {
-      this.loadingSatTransferencia = true;
-      this.setEmptySatTransferencia();
-      this.getSatTransferencia(resetValues);
+      // Validar que se tengan al menos un campo para realizar la consulta
+      if (this.validationFieldsSatTransferencia(start)) {
+        this.loadingSatTransferencia = true;
+        this.setEmptySatTransferencia();
+        this.getSatTransferencia(resetValues);
+      }
     } else {
       this.onLoadToast('error', 'Error', ERROR_FORM);
     }
@@ -212,27 +259,67 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       'processEntryDate'
     );
     delete filtrados.page;
-    delete filtrados.limit;
-    this.satSubjectsRegisterService.getReport(filtrados).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        if (data.base64) {
-          this.downloadFile(data.base64, 'Reporte_Tramite_Bien');
-        } else {
-          this.onLoadToast(
-            'warning',
-            '',
-            NOT_FOUND_MESSAGE('Gestión Trámites')
-          );
-        }
-        this.loadingGestionSat = false;
-      },
-      error: error => {
-        this.loadingGestionSat = false;
-        this.errorGet(error);
-      },
-    });
+    // delete filtrados.limit;
+    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    this.satSubjectsRegisterService
+      .getReport(filtrados, 'gestion_sat')
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          if (data.base64) {
+            this.downloadFile(data.base64, 'Reporte_Tramite_Bien');
+          } else {
+            this.onLoadToast(
+              'warning',
+              '',
+              NOT_FOUND_MESSAGE('Gestión Trámites')
+            );
+          }
+          this.loadingGestionSat = false;
+        },
+        error: error => {
+          this.loadingGestionSat = false;
+          this.errorGet(error);
+        },
+      });
   }
+  /**
+   * Obtener el listado de Transferencia SAT
+   */
+  getReportTransferenciaSat() {
+    let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
+      this.satTransferForm.value,
+      this.paramsSatTransferencia.value,
+      this.filtroPaginado,
+      'filter',
+      'processEntryDate'
+    );
+    delete filtrados.page;
+    // delete filtrados.limit;
+    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    this.satSubjectsRegisterService
+      .getReport(filtrados, 'transferencia_sat')
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          if (data.base64) {
+            this.downloadFile(data.base64, 'Listado_Cves_SAT');
+          } else {
+            this.onLoadToast(
+              'warning',
+              '',
+              NOT_FOUND_MESSAGE('Transferencias SAT')
+            );
+          }
+          this.loadingSatTransferencia = false;
+        },
+        error: error => {
+          this.loadingSatTransferencia = false;
+          this.errorGet(error);
+        },
+      });
+  }
+
   downloadFile(base64: any, fileName: any) {
     const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64}`;
     const downloadLink = document.createElement('a');
@@ -240,12 +327,6 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     downloadLink.download = fileName;
     downloadLink.target = '_blank';
     downloadLink.click();
-    // const src = `data:application/pdf;base64,${base64}`;
-    // const link = document.createElement('a');
-    // link.href = src;
-    // link.download = fileName;
-    // link.click();
-
     downloadLink.remove();
   }
   /**
@@ -402,8 +483,27 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.satTransferForm.get('satProceedings').setValue(row.proceedingsNumber);
     this.satTransferForm.get('job').setValue(row.officeNumber);
     this.satTransferForm.updateValueAndValidity();
+    console.log(this.satTransferForm.value);
+    if (row.proceedingsNumber && row.officeNumber) {
+      this.onLoadToast(
+        'info',
+        '¡Búsqueda!',
+        ERROR_FORM_SEARCH_OFICIO_EXPEDIENTE_SAT
+      );
+    } else {
+      if (row.proceedingsNumber) {
+        this.onLoadToast(
+          'info',
+          '¡Búsqueda!',
+          ERROR_FORM_SEARCH_EXPEDIENTE_SAT
+        );
+      }
+      if (row.officeNumber) {
+        this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_SAT);
+      }
+    }
     setTimeout(() => {
-      this.consultarSatTransferForm(true);
+      this.consultarSatTransferForm(true, true);
     }, 100);
   }
 }
