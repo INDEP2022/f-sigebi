@@ -53,12 +53,6 @@
       <div class="row mt-2">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <app-currency-shared [form]="form"></app-currency-shared>
-          <!-- <form-field [control]="form.get('cveCurrency')" label="Moneda">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cveCurrency" />
-          </form-field> -->
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field
@@ -138,13 +132,12 @@
     <div class="row">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-success active"
-            [disabled]="!form.valid"
-            (click)="confirm()">
-            {{ edit ? 'Actualizar' : 'Guardar' }}
-          </button>
+          <confirm-button
+            text="Guardar"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
           <button
             type="button"
             class="btn btn-primary active ml-3"
