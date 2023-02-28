@@ -4,6 +4,7 @@
       <div class="mr-auto p-2">
         <h5 class="title">{{ title }}</h5>
       </div>
+
       <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
         <button
           type="button"
@@ -19,6 +20,14 @@
           class="btn btn-primary btn-sm active"
           (click)="signDictum()">
           <i class="bx bxs-pencil"></i> Firmar Dictamen
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active"
+          (click)="finish()">
+          <i class="bx bxs-right-arrow-square"></i> Finalizar
         </button>
       </div>
       <div class="p-2">
@@ -162,7 +171,7 @@
               <!-- clasificacion de bienes -->
               <app-classification-assets-tab
                 *ngIf="classifyAssets"
-                [dataObject]="object"
+                [requestObject]="requestData"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->

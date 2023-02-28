@@ -70,6 +70,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
           .pipe(
             map((item: any) => {
               if (item.statusKey) {
+                item['warehouseAlias'] = item.warehouseAlias.id;
                 this.stateOfRepublicService.getById(item.statusKey).subscribe({
                   next: resp => {
                     item['stateOfRepublicName'] = resp.descCondition;
@@ -116,7 +117,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
               setTimeout(() => {
                 this.paragraphs = [...array];
                 this.loading = false;
-              }, 1000);
+              }, 2000);
             },
           });
       },
@@ -152,7 +153,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
       }).then((item: any) => {
         debugger;
         new Promise((resolve, reject) => {
-          
+
           if (item.statusKey && item.municipalityKey) {
             var params = new ListParams();
             params['municipalityId'] = item.municipalityKey;
@@ -167,10 +168,10 @@ export class SelectAddressComponent extends BasePage implements OnInit {
             item['municipalityName'] = '';
             resolve(item);
           }
-    
+
         }).then((item: any) => {
           new Promise((resolve, reject) => {
-         
+
             if (item.statusKey && item.municipalityKey && item.localityKey) {
               var params = new ListParams();
               params['municipalityId'] = item.municipalityKey;

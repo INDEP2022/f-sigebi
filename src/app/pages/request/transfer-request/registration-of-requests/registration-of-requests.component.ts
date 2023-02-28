@@ -5,7 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { forkJoin } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -85,7 +88,9 @@ export class RegistrationOfRequestsComponent
     private transferentService: TransferenteService,
     private stationService: StationService,
     private delegationService: RegionalDelegationService,
-    private authorityService: AuthorityService
+    private authorityService: AuthorityService,
+    private goodService: GoodService,
+    private fractionService: FractionService
   ) {
     super();
   }
@@ -126,6 +131,7 @@ export class RegistrationOfRequestsComponent
       //receiUser: [''],
       id: [null],
       urgentPriority: [null],
+      priorityDate: [null],
       originInfo: [null],
       receptionDate: [{ value: null, disabled: true }],
       paperDate: [null, Validators.required],
@@ -144,6 +150,11 @@ export class RegistrationOfRequestsComponent
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       transferenceFile: [null],
+      previousInquiry: [null],
+      trialType: [null],
+      circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
+      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
+      tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -270,14 +281,258 @@ export class RegistrationOfRequestsComponent
     }
   }
 
+  getGoodQuantity(requestId: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.requestId'] = `$eq:${requestId}`;
+      this.goodService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
+  }
+
+  getFractionCode(fractionId: number) {
+    return new Promise((resolve, reject) => {
+      this.fractionService.getById(fractionId).subscribe({
+        next: resp => {
+          debugger;
+          if (resp.fractionCode) {
+            resolve(resp.fractionCode);
+          } else {
+            resolve('');
+          }
+        },
+      });
+    });
+  }
+
+  finish() {
+    this.requestData.requestStatus = 'FINALIZADA';
+    const typeCommit = 'finish';
+    this.msgSaveModal(
+      'Finalizar Solicitud',
+      'Asegurse de guardar toda la información antes de Finalizar la solicitud!',
+      'Confirmación',
+      undefined,
+      typeCommit
+    );
+  }
+
+  finishMethod() {
+    this.requestService
+      .update(this.requestData.id, this.requestData)
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp.statusCode !== null) {
+            this.message('error', 'Error', 'Ocurrio un error al guardar');
+          }
+          if (resp.id !== null) {
+            this.message(
+              'success',
+              'Solicitud Guardada',
+              'Se guardo la solicitud correctamente'
+            );
+          }
+        },
+      });
+  }
+
   confirm() {
     console.log(this.registRequestForm.getRawValue());
+    const typeCommit = 'confirm-request';
     this.msgAvertanceModal(
       '',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
-      ''
+      undefined,
+      typeCommit
     );
+  }
+
+  async confirmMethod() {
+    debugger;
+    const idTrandference = Number(this.requestData.transferenceId);
+    let validoOk = false;
+
+    const previousInquiry = this.requestData.previousInquiry;
+    const circumstantialRecord = this.requestData.circumstantialRecord;
+    const lawsuit = this.requestData.lawsuit;
+    const protectNumber = this.requestData.protectNumber;
+    const tocaPenal = this.requestData.tocaPenal;
+    const paperNumber = this.requestData.paperNumber; //no oficio
+    const transferenceFile = this.requestData.transferenceFile; //transferente expediente //pregunar si es ese campo o idTransferent
+    const typeRecord = this.requestData.typeRecord; //tipo expediente
+    const paperDate = this.requestData.paperDate; // fecha oficio
+    const trialType = this.requestData.trialType;
+    const urgentPriority = this.requestData.urgentPriority;
+    const priorityDate = this.requestData.priorityDate;
+
+    //Todo: verificar y obtener documentos de la solicitud
+
+    /*if (this.requestData.recordId === null) {
+      this.message(
+        'error',
+        'Error',
+        'La solicitud no tiene Expediente asociado'
+      );
+    }*/
+
+    //Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
+
+    if (previousInquiry === 'Y' && priorityDate === null) {
+      this.message(
+        'error',
+        'Error',
+        'Se marco la solicitud como urgente, se debe tener una fecha prioridad'
+      );
+    }
+    if (idTrandference === 1) {
+      if (paperNumber === '' || paperDate == null) {
+        this.message(
+          'error',
+          'Error',
+          'Para la transferente FGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
+        );
+      } else if (circumstantialRecord === '' && previousInquiry === '') {
+        this.message(
+          'error',
+          'Error',
+          'Para la transferente FGR se debe tener al menos Acta Circunstancial o Averiguación Previa'
+        );
+      } else {
+        validoOk = true;
+      }
+    }
+
+    if (idTrandference === 3) {
+      if (paperNumber === '' || paperDate == null) {
+        this.message(
+          'error',
+          'Error',
+          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
+        );
+      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
+        this.message(
+          'error',
+          'Error',
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
+        );
+      } else {
+        validoOk = true;
+      }
+    }
+
+    if (
+      idTrandference === 120 ||
+      idTrandference === 536 ||
+      idTrandference === 752
+    ) {
+      if (
+        // transferenceFile === '' || //consultar este campo
+        typeRecord === '' ||
+        paperNumber === '' ||
+        paperDate == null
+      ) {
+        this.message(
+          'error',
+          'Error',
+          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
+        );
+      } else {
+        validoOk = true;
+      }
+    }
+
+    if (
+      !(idTrandference === 1) &&
+      !(idTrandference === 3) &&
+      !(idTrandference === 120) &&
+      !(idTrandference === 536) &&
+      !(idTrandference === 752)
+    ) {
+      if (paperNumber === '' || paperDate == null) {
+        this.message(
+          'error',
+          'Error',
+          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
+        );
+      } else {
+        validoOk = true;
+      }
+    }
+
+    let goods: any = null;
+
+    if (validoOk === true) {
+      goods = await this.getGoodQuantity(Number(this.requestData.id));
+      if (goods.count < 1) {
+        this.message(
+          'error',
+          'Error',
+          'La solicitud no cuenta con bienes a transferir'
+        );
+      } else {
+        //validar bienes
+        let sinDireccion: boolean = false;
+        let sinTipoRelevante: boolean = false;
+        let sinCantidad: boolean = false;
+        let sinDestinoT: boolean = false;
+        let sinUnidadM: boolean = false;
+        let sinDescripcionT: boolean = false;
+        let codigoFraccion: any = null;
+        let faltaClasificacion: boolean = false;
+        // variables para validaci�n de atributos por tipo de bien LIRH 06/02/2021
+        const tipoRelVehiculo: boolean = false;
+        const tipoRelAeronave: boolean = false;
+        const tipoRelEmbarca: boolean = false;
+        const tipoRelInmueble: boolean = false;
+        const tipoRelJoya: boolean = false;
+        const existBienInm: boolean = false;
+
+        for (let i = 0; i < goods.data.length; i++) {
+          const good = goods.data[i];
+          if (good.addressId == null && good.idGoodProperty == null) {
+            sinDireccion = true;
+            break;
+          } else if (good.goodTypeId == null) {
+            sinTipoRelevante = true;
+            break;
+          } else if (
+            good.quantity == null ||
+            (good.quantity != null && Number.parseInt(good.quantity) < 1)
+          ) {
+            sinCantidad = true;
+            break;
+          } else if (good.transferentDestiny == null) {
+            sinDestinoT = true;
+            break;
+          } else if (good.ligieUnit == null) {
+            sinUnidadM = true;
+            break;
+          } else if (good.goodDescription == null) {
+            sinDescripcionT = true;
+            break;
+          }
+
+          // Se valida si la clasificacion tenga 8 caracteres
+          if (good.fractionId !== null) {
+            const fractionCode: any = await this.getFractionCode(
+              good.fractionId
+            );
+            if (fractionCode == null || fractionCode.length != 8) {
+              faltaClasificacion = true;
+              break;
+            }
+          } else {
+            faltaClasificacion = true;
+            break;
+          }
+        }
+      }
+    }
   }
 
   saveClarification(): void {
@@ -297,7 +552,8 @@ export class RegistrationOfRequestsComponent
     btnTitle: string,
     message: string,
     title: string,
-    typeMsg: any
+    typeMsg: any,
+    typeCommit: string
   ) {
     this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
       if (question.isConfirmed) {
@@ -306,13 +562,20 @@ export class RegistrationOfRequestsComponent
           this.btnTitle,
           '¿Deseas turnar la solicitud con Folio:....?',
           'Confirmación',
-          undefined
+          undefined,
+          typeCommit
         );
       }
     });
   }
 
-  msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
+  msgSaveModal(
+    btnTitle: string,
+    message: string,
+    title: string,
+    typeMsg: any,
+    typeCommit?: string
+  ) {
     Swal.fire({
       title: title,
       text: message,
@@ -324,9 +587,18 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
-        console.log('Guardar solicitud');
+        if (typeCommit === 'finish') {
+          this.finishMethod();
+        }
+        if (typeCommit === 'confirm-request') {
+          this.confirmMethod();
+        }
       }
     });
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 
   openModal(component: any, data?: any, typeAnnex?: String): void {

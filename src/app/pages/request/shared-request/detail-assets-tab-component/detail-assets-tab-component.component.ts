@@ -709,6 +709,7 @@ export class DetailAssetsTabComponentComponent
 
   saveDomicilieGood(domicilie: IDomicilies) {
     return new Promise((resolve, reject) => {
+      domicilie.id = Number(domicilie.id);
       this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
         next: (data: any) => {
           if (data.statusCode != null) {
@@ -783,8 +784,15 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getGoodDomicilie(addressId: number) {
-    this.goodDomicilie.getById(addressId).subscribe({
+  getGoodDomicilie(addressId: any) {
+    let address = null;
+    if (addressId.id != null) {
+      address = addressId.id;
+    } else {
+      address = addressId;
+    }
+
+    this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
@@ -889,7 +897,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: IDomicilies) {
-    this.detailAssets.controls['addressId'].setValue(domicilie.id);
+    this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
     this.domicileForm.patchValue(domicilie);
