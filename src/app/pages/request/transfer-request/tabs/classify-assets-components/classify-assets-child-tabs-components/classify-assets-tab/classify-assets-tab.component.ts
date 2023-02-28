@@ -34,7 +34,7 @@ export class ClassifyAssetsTabComponent
   @Input() typeDoc: string = '';
   @Input() goodObject: ModelForm<any> = null;
   @Input() domicilieObject: IDomicilies;
-  classiGoodsForm: ModelForm<IGood>;
+  classiGoodsForm: ModelForm<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
 
@@ -149,6 +149,7 @@ export class ClassifyAssetsTabComponent
       caratage: [null], //kilatage
       material: [null],
       weight: [null],
+      fractionId: [null],
     });
 
     if (this.goodObject != null) {
@@ -363,34 +364,64 @@ export class ClassifyAssetsTabComponent
 
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
-    var goodAction =
-      goods.goodId === null
-        ? this.goodService.create(goods)
-        : this.goodService.update(goods);
+    if (goods.addressId === null) {
+      this.message(
+        'error',
+        'Domicilio requerido',
+        'Es requerido el domicilio del bien'
+      );
+      return;
+    }
+
+    let goodAction: any = null;
+    if (goods.goodId === null) {
+      goods.requestId = Number(goods.requestId);
+      goods.addressId = Number(goods.addressId);
+      goodAction = this.goodService.create(goods);
+    } else {
+      goods.requestId = Number(goods.requestId.id);
+      goods.addressId = Number(goods.addressId.id);
+      goodAction = this.goodService.update(goods);
+    }
 
     goodAction.subscribe({
       next: (data: any) => {
-        if (data.statusCode != null) {
-          this.message(
-            'error',
-            'Error',
-            `El registro no sepudo guardar!. ${data.message}`
-          );
-        }
+        if (data) {
+          if (data.id) {
+            this.message(
+              'success',
+              'Guardado',
+              `El registro se actualizo exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-        if (data.id != null) {
-          this.message(
-            'success',
-            'Guardado',
-            `El registro se guardo exitosamente!`
-          );
-          this.classiGoodsForm.controls['id'].setValue(data.id);
+            this.refreshTable(true);
 
-          this.refreshTable(true);
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+          }
+        } else {
+          if (data.statusCode === 200) {
+            this.message(
+              'success',
+              'Guardado',
+              `El registro se guardo exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-          setTimeout(() => {
-            this.refreshTable(false);
-          }, 5000);
+            this.refreshTable(true);
+
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+          } else {
+            this.message(
+              'error',
+              'Error',
+              `El registro no sepudo guardar!. ${data.message}`
+            );
+          }
         }
       },
     });
@@ -480,6 +511,7 @@ export class ClassifyAssetsTabComponent
             dataLevel2
           );
           this.setRelevantTypeId(relativeTypeId);
+          this.setFractionId(dataLevel2, fractionCode, 'Nivel 2');
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
@@ -497,6 +529,7 @@ export class ClassifyAssetsTabComponent
             x => x.id === dataLevel3
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
+          this.setFractionId(dataLevel3, fractionCode, 'Nivel 3');
 
           const relevantTypeId = this.getRelevantTypeId(
             this.selectLevel3.data,
@@ -521,6 +554,12 @@ export class ClassifyAssetsTabComponent
             dataLevel4
           );
           this.setRelevantTypeId(relevantTypeId);
+
+          let fractionCode = this.selectLevel4.data.filter(
+            x => x.id === dataLevel4
+          )[0].fractionCode;
+          this.getUnidMeasure(fractionCode);
+          this.setFractionId(dataLevel4, fractionCode, 'Nivel 4');
         }
       }
     );
@@ -536,6 +575,22 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  setFractionId(fractionId: number, fractionCode: string, campo: string) {
+    if (fractionCode !== null) {
+      if (fractionCode.length >= 8) {
+        this.classiGoodsForm.controls['fractionId'].setValue(
+          Number(fractionId)
+        );
+      }
+    } else {
+      this.message(
+        'info',
+        'Fraccion Nula',
+        `La fracción del campo ${campo} no tiene un codigo`
+      );
+    }
+  }
+
   getUnidMeasure(value: string) {
     if (value) {
       if (value.length === 8) {
@@ -544,9 +599,15 @@ export class ClassifyAssetsTabComponent
           .getUnitLigie(fractionCode)
           .subscribe((data: any) => {
             //guarda el no_clasify_good
-            if (data.clasifGoodNumber != null) {
+            if (data.clasifGoodNumber !== null) {
               this.classiGoodsForm.controls['goodClassNumber'].setValue(
                 data.clasifGoodNumber
+              );
+            } else {
+              this.message(
+                'info',
+                'clasificación de bien nula',
+                'el bien seleccionado no tiene numero de clasificación de bien'
               );
             }
             //guarda el tipo de unidad

@@ -10,7 +10,7 @@ export const Articulo3: any = [
   },
   {
     cumplimiento:
-      'c) La solicitud cuenta con documentos soporte: Documentos que acrediten la propiedad...',
+      'c) La solicitud cuenta con documentos soporte: Documentos que acrediten la propiedad o la legitima posesión...',
     articulo: 'Articulo 3 Ley',
   },
 ];
@@ -18,7 +18,7 @@ export const Articulo3: any = [
 export const Articulo12: any = [
   {
     cumplimiento:
-      'a) Documento que acrediten la propiedad o la legitima posesión y la posibilidad de disponer del bien.',
+      'a) Documento que acrediten la propiedad o la legitima posesión y la posibilidad de disponer del bien (es).',
     articulo: 'Articulo 12 Ley',
   },
   {
@@ -39,7 +39,8 @@ export const Articulo12: any = [
     articulo: 'Articulo 12 y 13 Re..',
   },
   {
-    cumplimiento: 'f) Para el caso del vehiculo exterior: ...',
+    cumplimiento:
+      'f) Para el caso del vehiculo exterior: consulta del SAT al Consulado, respuesta del Consulado...',
     articulo: 'Articulo 12 y 13 Re..',
   },
 ];
