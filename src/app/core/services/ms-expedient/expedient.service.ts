@@ -25,4 +25,8 @@ export class ExpedientService extends HttpService {
   getAllFilter(params: _Params) {
     return this.get<IListResponse<IExpedient>>('expedient', params);
   }
+
+  update(id: string | number, expedient: any) {
+    return this.put(`expedient/${id}`, expedient);
+  }
 }

@@ -1,12 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ILot } from 'src/app/core/models/ms-lot/lot.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  NUMBERS_PATTERN,
-  RFCCURP_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-add-edit-lote-modal',
@@ -14,16 +12,11 @@ import {
   styles: [],
 })
 export class AddEditLoteModalComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-  allotment: any;
   title: string = 'Lote';
   edit: boolean = false;
 
-  @Output() refresh = new EventEmitter<true>();
-
-  get check() {
-    return this.form.get('check');
-  }
+  loteForm: ModelForm<ILot>;
+  lote: ILot;
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -34,8 +27,8 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      lote: [
+    this.loteForm = this.fb.group({
+      id: [
         null,
         [
           Validators.required,
@@ -44,19 +37,23 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      valorbase: [null, [Validators.required]],
-      idcliente: [null],
-      rfc: [null, Validators.pattern(RFCCURP_PATTERN)],
-      check: [false],
+      eventId: [null, []],
+      publicLot: [null, []],
+      description: [null, []],
+      baseValue: [null, []],
+      customerId: [null, []],
+      transferenceNumber: [null, []],
+      warrantyPrice: [null, []],
+      finalPrice: [null, []],
+      referential: [null, []],
+      statusVtantId: [null, []],
+      assignedEs: [null, []],
+      scrapEs: [null, []],
+      location: [null, []],
     });
-    if (this.allotment != null) {
+    if (this.lote != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      this.loteForm.patchValue(this.lote);
     }
   }
 
@@ -82,7 +79,7 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+
     this.modalRef.hide();
   }
 }

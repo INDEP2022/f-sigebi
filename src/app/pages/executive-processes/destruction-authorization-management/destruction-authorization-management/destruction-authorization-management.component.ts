@@ -117,6 +117,7 @@ export class DestructionAuthorizationManagementComponent
   onValuesChange(modelChange: IProccedingsDeliveryReception) {
     this.modelValue = modelChange;
     this.form.controls['id'].setValue(this.modelValue.id);
+    this.form.controls['keysProceedings'].setValue(this.modelValue.keysProceedings);
     this.form.controls['typeProceedings'].setValue(
       this.modelValue.typeProceedings
     );
@@ -137,7 +138,8 @@ export class DestructionAuthorizationManagementComponent
   }
 
   getProceedingsByKey(): void {
-    let keys = this.form.controls['id'].value;
+    let keys = this.form.controls['keysProceedings'].value;
+    console.log(keys);
     this.proceedingsDeliveryReceptionService
       .getProceedingsByKey(keys)
       .subscribe(

@@ -151,7 +151,9 @@ export class ComplementaryRequestInformationComponent
         ignoreBackdropClick: true,
       });
       modalRef.content.refresh.subscribe(next => {
-        if (next) console.log(next); //this.getCities();
+        if (next) {
+          console.log(next);
+        } //this.getCities();
       });
     } else {
       this.finishRequest();

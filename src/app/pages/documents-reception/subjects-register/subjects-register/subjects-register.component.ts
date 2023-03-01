@@ -20,6 +20,7 @@ import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefg
 import { IManagamentProcessPgr } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { PgrSubjectsRegisterService } from '../service/pgr-subjects-register.service';
 import {
+  DOWNLOAD_PROCESS,
   ERROR_EXPORT,
   ERROR_FORM,
   ERROR_FORM_FECHA,
@@ -63,6 +64,11 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   // Filtro de paginado
   filtroPaginado: string[] = ['page', 'limit'];
   INFO_DOWNLOAD = INFO_DOWNLOAD;
+  DOWNLOAD_PROCESS = DOWNLOAD_PROCESS;
+  base64Preview = '';
+  maxLimitReport = 20000;
+  downloading: boolean = false;
+  downloadingTransferente: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -398,23 +404,76 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de Gestion de Tramites
    */
   getReportTramitePgr() {
+    let objParams: any = {
+      from: this.pgrForm.value.from,
+      to: this.pgrForm.value.to,
+      issue: this.pgrForm.value.issue,
+      delegationNumber: this.pgrForm.value.delegationNumber,
+      officeNumber: this.pgrForm.value.officeNumber,
+      statusProcedure: this.pgrForm.value.processStatus,
+    };
+
+    // procedureNumber: number;
+    // no_tramite;
+    // statusProcedure: string;
+    // estatus_tramite;
+    // procedureAdmissionDate: Date;
+    // fec_ingreso_tramite;
+    // whell: number;
+    // no_volante;
+    // proceedingNumber: number;
+    // no_expediente;
+    // issue: string;
+    // asunto;
+    // officeNumber: string;
+    // no_oficio;
+    // delegationNumber: number;
+    // no_delegacion;
+    // turnedUser: string;
+    // usr_turnado;
+
+    /**
+ * 
+      from: [null],
+      to: [null],
+      issue: [null, [Validators.maxLength(30)]],
+      delegationNumber: [null],
+      officeNumber: [null, [Validators.maxLength(30)]],
+      processStatus: [null],
+    });
+
+    
+    this.pgrTransferForm = this.fb.group({
+      pgrGoodNumber: [null, [Validators.maxLength(400)]],
+      saeGoodNumber: [null, [Validators.maxLength(400)]],
+      estatus: [null, [Validators.maxLength(60)]],
+      office: [null],
+      aveprev: [null],
+    });
+
+ */
+
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
-      this.pgrForm.value,
+      objParams,
       this.paramsGestionPgr.value,
       this.filtroPaginado,
       'filter',
-      'processEntryDate'
+      'procedureAdmissionDate'
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    this.downloading = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'gestion_pgr')
       .subscribe({
         next: (data: any) => {
           console.log(data);
           if (data.base64) {
-            this.downloadFile(data.base64, 'Reporte_Tramite_PGR');
+            this.downloadFile(
+              data.base64,
+              `GestionSat__Listado_Tramites_PGR${new Date().getTime()}`
+            );
           } else {
             this.onLoadToast(
               'warning',

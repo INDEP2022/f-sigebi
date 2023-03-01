@@ -21,6 +21,7 @@ import { SatSubjectsRegisterService } from '../service/sat-subjects-register.ser
 import { IManagamentProcessSat } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { ISatSubjectsRegisterSatTransferencia } from './utils/interfaces/sat-subjects-register.sat-transferencia.interface';
 import {
+  DOWNLOAD_PROCESS,
   ERROR_EXPORT,
   ERROR_FORM,
   ERROR_FORM_FECHA,
@@ -64,7 +65,11 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   // Filtro de paginado
   filtroPaginado: string[] = ['page', 'limit'];
   INFO_DOWNLOAD = INFO_DOWNLOAD;
+  DOWNLOAD_PROCESS = DOWNLOAD_PROCESS;
   base64Preview = '';
+  maxLimitReport = 20000;
+  downloading: boolean = false;
+  downloadingTransferente: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -251,23 +256,35 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de Gestion de Tramites
    */
   getReportTramiteSat() {
+    let objParams: any = {
+      from: this.satForm.value.from,
+      to: this.satForm.value.to,
+      issue: this.satForm.value.issue,
+      delegationNumber: this.satForm.value.delegationNumber,
+      tradeNumber: this.satForm.value.officeNumber,
+      procedureStatus: this.satForm.value.processStatus,
+    };
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
-      this.satForm.value,
+      objParams,
       this.paramsGestionSat.value,
       this.filtroPaginado,
       'filter',
-      'processEntryDate'
+      'dateEntryProcedure'
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    this.downloading = true;
     this.satSubjectsRegisterService
       .getReport(filtrados, 'gestion_sat')
       .subscribe({
         next: (data: any) => {
           console.log(data);
           if (data.base64) {
-            this.downloadFile(data.base64, 'Reporte_Tramite_Bien');
+            this.downloadFile(
+              data.base64,
+              `GestionSat__Listado_Tramites_SAT${new Date().getTime()}`
+            );
           } else {
             this.onLoadToast(
               'warning',
@@ -275,35 +292,48 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
               NOT_FOUND_MESSAGE('Gestión Trámites')
             );
           }
-          this.loadingGestionSat = false;
+          this.downloading = false;
         },
         error: error => {
-          this.loadingGestionSat = false;
+          this.downloading = false;
           this.errorGet(error);
         },
       });
   }
+
   /**
    * Obtener el listado de Transferencia SAT
    */
-  getReportTransferenciaSat() {
+  getReportTransferenciaSat(filtroForm: boolean = false) {
+    let objParams = {
+      satCveUnique: this.satTransferForm.value.satOnlyKey,
+      trade: this.satTransferForm.value.job,
+      file: this.satTransferForm.value.satProceedings,
+      satGuiaHouse: this.satTransferForm.value.satHouseGuide,
+      satGuiaMaster: this.satTransferForm.value.satMasterGuide,
+    };
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
-      this.satTransferForm.value,
+      objParams,
       this.paramsSatTransferencia.value,
       this.filtroPaginado,
       'filter',
       'processEntryDate'
     );
-    delete filtrados.page;
+    // delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    if (filtroForm == true) {
+      filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    }
+    this.downloading = true;
     this.satSubjectsRegisterService
       .getReport(filtrados, 'transferencia_sat')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
-            this.downloadFile(data.base64, 'Listado_Cves_SAT');
+            this.downloadFile(
+              data.base64,
+              `SatTransferencia_Listado_Cves_SAT${new Date().getTime()}`
+            );
           } else {
             this.onLoadToast(
               'warning',
@@ -311,10 +341,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
               NOT_FOUND_MESSAGE('Transferencias SAT')
             );
           }
-          this.loadingSatTransferencia = false;
+          this.downloading = false;
         },
         error: error => {
-          this.loadingSatTransferencia = false;
+          this.downloading = false;
           this.errorGet(error);
         },
       });
@@ -483,7 +513,6 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.satTransferForm.get('satProceedings').setValue(row.proceedingsNumber);
     this.satTransferForm.get('job').setValue(row.officeNumber);
     this.satTransferForm.updateValueAndValidity();
-    console.log(this.satTransferForm.value);
     if (row.proceedingsNumber && row.officeNumber) {
       this.onLoadToast(
         'info',

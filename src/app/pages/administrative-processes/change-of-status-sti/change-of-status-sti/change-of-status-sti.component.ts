@@ -107,7 +107,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         good.status = this.goodStatus.value;
         good.observations = `${good.observations}. ${this.description.value}`;
         good.userModification = this.token.decodeToken().preferred_username;
-        this.goodServices.update(good.id, good).subscribe({
+        this.goodServices.update(good).subscribe({
           next: response => {
             console.log(response);
             this.postHistoryGood(good);

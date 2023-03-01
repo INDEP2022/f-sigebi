@@ -132,7 +132,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+      if (next) {
+        console.log(next);
+      } //this.getCities();
     });
   }
 
@@ -160,7 +162,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
-      if (data) console.log(data);
+      if (data) {
+        console.log(data);
+      }
     });
   }
 

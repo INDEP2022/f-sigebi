@@ -31,7 +31,7 @@ export class FilterParams {
 
   getParams() {
     const paginationParams = this.getPaginationParams();
-    const allParams = [...paginationParams, ...this.filters];
+    const allParams = [...this.filters, ...paginationParams];
     return allParams.join('&');
   }
 
