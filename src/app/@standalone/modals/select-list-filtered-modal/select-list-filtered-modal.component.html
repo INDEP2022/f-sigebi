@@ -13,6 +13,10 @@
           *ngIf="dataObservableListParamsFn"
           [params]="params"
           [filterField]="searchFilter"></search-bar>
+        <search-bar
+          *ngIf="dataObservableId"
+          [id]="id"
+          [filterField]="searchFilter"></search-bar>
       </div>
     </div>
     <div class="row pt-4">

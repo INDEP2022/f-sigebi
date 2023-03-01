@@ -47,6 +47,7 @@ export class SelectComponent<T> implements OnInit {
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
+  @Input() clearable = true;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;

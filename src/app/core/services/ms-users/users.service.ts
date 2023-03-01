@@ -26,6 +26,10 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<any>>(`seg-users`, _params);
   }
 
+  getAllSegUsersModal(self?: UsersService, _params?: ListParams | string) {
+    return self.get<IListResponse<any>>(`seg-users`, _params);
+  }
+
   getAllSegXAreas(params: ListParams) {
     return this.httpClient.get<IListResponse<any>>(
       `${environment.API_URL}users/api/v1/seg-access-x-areas`,

@@ -1,0 +1,176 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div>
+      <button class="btn btn-sm btn-return" (click)="return()">
+        <i class="bx bx-chevron-left float-icon"></i>
+      </button>
+      <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('acta')" label="No&#46; Acta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="acta"
+              readonly />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('fechaCaptura')"
+            label="Fecha Captura">
+            <input
+              [class]="'disabled'"
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaCaptura"
+              readonly />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <app-select-form
+            [form]="form"
+            formField="tipoEvento"
+            label="Tipo de Evento"
+            [list]="tiposEvento"
+            [haveTodos]="false"
+            [clearable]="false"
+            [(params)]="paramsTypes"
+            [readonly]="true"></app-select-form>
+        </div>
+        <div class="col-md-2">
+          <app-select-form
+            [form]="form"
+            formField="statusActa"
+            label="Status Acta"
+            [haveTodos]="false"
+            [clearable]="false"
+            [list]="statusList"
+            [(params)]="paramsStatus"></app-select-form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 table-responsive mt-3">
+          <ng2-smart-table
+            *ngIf="source"
+            class="col-md-12"
+            [settings]="settingKeysProceedings"
+            [source]="source"
+            (editConfirm)="updateKeysProcedding($event)"></ng2-smart-table>
+        </div>
+      </div>
+
+      <div class="row actions">
+        <div class="col-md-8 mt-5">
+          <div>
+            <form-field [control]="form.get('claveActa')" label="Clave Acta">
+              <input
+                class="form-control"
+                formControlName="claveActa"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4 mt-5 tracker">
+          <button class="btn btn-primary active" type="submit" size="small">
+            Rastreador
+          </button>
+        </div>
+      </div>
+
+      <div class="finalActions">
+        <div class="mt-3 deleteGoods">
+          <button
+            class="btn btn-primary active"
+            type="submit"
+            size="small"
+            (click)="deleteGoods()">
+            Eliminar bienes
+          </button>
+        </div>
+        <div class="mt-3 updateGoods">
+          <button
+            class="btn btn-primary active"
+            type="submit"
+            size="small"
+            (click)="updateGoods()">
+            Actualizar bienes
+          </button>
+        </div>
+        <div class="mt-3 excelExport">
+          <button class="btn btn-primary active" type="submit" size="small">
+            Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-4" style="margin-right: 0px">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              class="col-md-12"
+              [settings]="settingsGoods"
+              [source]="data"
+              (userRowSelect)="rowsSelected($event)"
+              (editConfirm)="updateGoodsRow($event)"
+              (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+
+      <hr class="row" />
+      <app-cants></app-cants>
+      <!-- <div class="row mt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadRegistros')"
+            label="Cantidad Registros">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadRegistros" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadBienes')"
+            label="Cantidad Bienes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadBienes" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadExpedientes')"
+            label="Cantidad Expedientes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadExpedientes" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadDictamenes')"
+            label="Cantidad Dict&aacute;menes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadDictamenes" />
+          </form-field>
+        </div>
+      </div> -->
+    </form>
+  </div>
+</app-card>

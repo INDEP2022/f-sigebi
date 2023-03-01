@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -61,29 +60,7 @@ export class MaintenanceRecordsComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm();
-  }
-
-  prepareForm() {
-    this.form = this.fb.group({
-      tipoEvento: [null, [Validators.required]],
-      fechapage: [null, [Validators.required]],
-      fechaFin: [null, [Validators.required]],
-      statusEvento: [null, [Validators.required]],
-      coordRegional: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      usuario: [null, [Validators.required]],
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      //
-
-      statusAcata: [null, [Validators.required]],
-      fechaAvaluo: [null, [Validators.required]],
-    });
+    // this.prepareForm();
   }
 }
 

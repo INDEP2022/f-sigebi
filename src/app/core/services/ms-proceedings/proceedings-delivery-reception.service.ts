@@ -11,6 +11,13 @@ import { IProceedingDeliveryReception } from '../../models/ms-proceedings/procee
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import { ProceedingsDetailDeliveryReceptionService } from './proceedings-detail-delivery-reception.service';
 
+export interface IProceedingByGood {
+  proceedingnumber: string;
+  proceedingkey: string;
+  proceedingstatus: string;
+  programmingtype: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -29,6 +36,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
         return this.delete(this.endpoint + '/' + selected.id);
       })
     );
+  }
+
+  deleteById(selected: IProceedingDeliveryReception) {
+    return this.delete(this.endpoint + '/' + selected.id);
   }
 
   getExcel(params?: ListParams | string) {
@@ -88,36 +99,43 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
+  getByGoodId(self?: ProceedingsDeliveryReceptionService, goodId?: string) {
+    return self.get<IListResponse<IProceedingByGood>>(
+      self.endpoint + '/find-good-in-procedings-delivery-reception/' + goodId
+    );
+  }
+
   getAll(
     params?: ListParams | string
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,
       params
-    ).pipe(
-      map(items => {
-        return {
-          ...items,
-          data: items.data.map(item => {
-            const nameArray = item.elaborateDetail
-              ? item.elaborateDetail['name']
-                ? item.elaborateDetail['name'].split(' ')
-                : []
-              : [];
-            let ingreso = '';
-            nameArray.forEach(text => {
-              ingreso += text.substring(0, 2)
-                ? text.substring(0, 2)
-                : text.substring(0, 1) ?? '';
-            });
-            return {
-              ...item,
-              ingreso,
-            };
-          }),
-        };
-      })
     );
+    // .pipe(
+    //   map(items => {
+    //     return {
+    //       ...items,
+    //       data: items.data.map(item => {
+    //         const nameArray = item.elaborateDetail
+    //           ? item.elaborateDetail['name']
+    //             ? item.elaborateDetail['name'].split(' ')
+    //             : []
+    //           : [];
+    //         let ingreso = '';
+    //         nameArray.forEach(text => {
+    //           ingreso += text.substring(0, 2)
+    //             ? text.substring(0, 2)
+    //             : text.substring(0, 1) ?? '';
+    //         });
+    //         return {
+    //           ...item,
+    //           ingreso,
+    //         };
+    //       }),
+    //     };
+    //   })
+    // );
   }
 
   getAll2(self?: ProceedingsDeliveryReceptionService, params?: string) {

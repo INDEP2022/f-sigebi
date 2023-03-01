@@ -47,8 +47,10 @@ export class ScheduledMaintenanceComponent
       delegationService,
       service,
       detailService,
-      userService
+      userService,
+      'filtersIndica'
     );
+    this.settings1 = { ...this.settings1, actions: null };
     this.tiposEvento = [
       {
         id: 'RECEPCIÓN FÍSICA',

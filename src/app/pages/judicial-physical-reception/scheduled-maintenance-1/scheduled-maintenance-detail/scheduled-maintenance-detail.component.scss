@@ -1,0 +1,74 @@
+:host ::ng-deep ng2-smart-table {
+  .fec_indica_usuario_aprobacion,
+  .fec_aprobacion_x_admon {
+    min-width: 100px;
+  }
+}
+
+.btn-return {
+  color: #9d2449;
+  padding-left: 0px;
+  left: -10px;
+  position: relative;
+  > i {
+    font-size: 35px;
+  }
+  &:hover {
+    color: #9d2449;
+  }
+}
+
+// .actions {
+//   display: flex;
+//   align-items: center;
+//   .deleteGoods {
+//     grid-area: deleteGoods;
+//   }
+//   .keysProceedings {
+//     grid-area: keysProceedings;
+//   }
+//   .excelExport {
+//     grid-area: excelExport;
+//   }
+//   @media (max-width: 768px) {
+//     display: grid;
+//     grid-template-areas:
+//       'keysProceedings keysProceedings'
+//       'deleteGoods excelExport';
+//   }
+// }
+
+.tracker {
+  text-align: right;
+  @media (max-width: 768px) {
+    text-align: center;
+  }
+}
+
+.excelExport {
+  text-align: right;
+}
+
+.updateGoods {
+  text-align: center;
+}
+
+.finalActions {
+  overflow: auto;
+  display: flex;
+  justify-content: space-between;
+  > div {
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+}
+
+// .excelExport,
+// .deleteGoods {
+//   @media (max-width: 576px) {
+//     > button {
+//       font-size: 13px;
+//     }
+//   }
+// }

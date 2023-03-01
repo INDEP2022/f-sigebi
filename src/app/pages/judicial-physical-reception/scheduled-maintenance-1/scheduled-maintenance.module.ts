@@ -5,11 +5,17 @@ import { SelectFormComponent } from './../../../@standalone/shared-forms/select-
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { CantsComponent } from './scheduled-maintenance-detail/cants/cants.component';
+import { ScheduledMaintenanceDetailComponent } from './scheduled-maintenance-detail/scheduled-maintenance-detail.component';
 import { ScheduledMaintenanceRoutingModule } from './scheduled-maintenance-routing.module';
 import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component';
 
 @NgModule({
-  declarations: [ScheduledMaintenanceComponent],
+  declarations: [
+    ScheduledMaintenanceComponent,
+    ScheduledMaintenanceDetailComponent,
+    CantsComponent,
+  ],
   imports: [
     CommonModule,
     ScheduledMaintenanceRoutingModule,

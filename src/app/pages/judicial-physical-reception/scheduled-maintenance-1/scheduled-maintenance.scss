@@ -29,3 +29,20 @@
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
 }
+
+ng2-smart-table {
+  padding: 0px;
+}
+
+.first {
+  grid-area: first;
+}
+.second {
+  grid-area: second;
+}
+.third {
+  grid-area: third;
+}
+.four {
+  grid-area: four;
+}

@@ -28,6 +28,9 @@ export class SelectFormComponent extends BasePage implements OnInit {
   @Input() multiple: boolean = false;
   @Input() searchable: boolean = true;
   @Input() paramFilter = 'search';
+  @Input() haveTodos = true;
+  @Input() readonly: boolean = false;
+  @Input() clearable: boolean = true;
   @Input()
   get paramsFilter(): FilterParams {
     return this._paramsFilter;
@@ -78,10 +81,11 @@ export class SelectFormComponent extends BasePage implements OnInit {
 
   private getDataOfList() {
     if (this.params.text.trim().toLowerCase() === '') {
-      this.data = new DefaultSelect([
-        { [this.value]: null, [this.bindLabel]: 'Todos' },
-        ...this.list,
-      ]);
+      this.data = new DefaultSelect(
+        this.haveTodos
+          ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...this.list]
+          : this.list
+      );
     } else {
       this.data = new DefaultSelect(
         this.list.filter(item => {
@@ -101,7 +105,9 @@ export class SelectFormComponent extends BasePage implements OnInit {
       next: data => {
         console.log(data);
         this.data = new DefaultSelect(
-          [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...data.data],
+          this.haveTodos
+            ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...data.data]
+            : data.data,
           data.count ? data.count : data.data.length
         );
       },

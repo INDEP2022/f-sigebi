@@ -1,29 +1,23 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Mantenimiento de Programaciones</h5>
+    <button class="btn btn-sm btn-danger" (click)="cleanFilters()">
+      <i class="bx bx-brush float-icon"></i> Limpiar Filtros
+    </button>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row controlsActas">
         <div class="col">
           <app-select-form
             [form]="form"
             formField="tipoEvento"
             label="Tipo de Evento"
             [list]="tiposEvento"
+            [haveTodos]="false"
             [(params)]="paramsTypes"></app-select-form>
         </div>
-
-        <!-- <form-field
-            [control]="form.get('fechapageFin')"
-            label="Fecha de Pago - Fin">
-            <input
-              class="form-control"
-              ngModel
-              bsDaterangepicker
-              formControlName="fechapageFin" />
-          </form-field> -->
-        <div class="col">
+        <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
@@ -31,7 +25,7 @@
               formControlName="fechaInicio" />
           </form-field>
         </div>
-        <div class="col">
+        <div class="col-md-2">
           <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
             <input
               bsDatepicker
@@ -40,7 +34,7 @@
               formControlName="fechaFin" />
           </form-field>
         </div>
-        <div class="col">
+        <div class="col-md-2">
           <app-select-form
             [form]="form"
             formField="statusEvento"
@@ -49,24 +43,55 @@
             [(params)]="paramsStatus"></app-select-form>
         </div>
       </div>
-      <div class="row mb-3">
-        <div class="col">
-          <button
-            class="btn btn-primary active"
-            type="submit"
-            size="small"
-            (click)="openModalCoordinaciones()">
-            Coord. Regional
-          </button>
+      <div class="row mt-3 mb-3">
+        <div class="col-md-6" style="padding: 0; display: flex">
+          <form-field
+            class="col-xs-10"
+            [control]="form.get('coordRegional')"
+            label="Coord. Regional">
+            <textarea
+              rows="2"
+              formControlName="coordRegional"
+              class="form-control"
+              readonly></textarea>
+          </form-field>
+
+          <div class="col-xs-2">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="openModalCoordinaciones()">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
-        <div class="col">
-          <app-select-form
+        <div class="col-md-6" style="padding: 0; display: flex">
+          <form-field
+            class="col-xs-10"
+            [control]="form.get('usuario')"
+            label="Usuario">
+            <input
+              type="text"
+              formControlName="usuario"
+              class="form-control"
+              readonly />
+          </form-field>
+
+          <div class="col-xs-2">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="openModalUsuarios()">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+          <!-- <app-select-form
             [form]="form"
             formField="usuario"
             label="Usuario"
-            bindLabel="name"
+            bindLabel="id"
             [getListObservable]="segUsers"
-            [(paramsFilter)]="paramsUsers"></app-select-form>
+            [(paramsFilter)]="paramsUsers"></app-select-form> -->
         </div>
       </div>
 
@@ -80,11 +105,6 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <!-- <div class="col">
-          <button class="btn btn-primary active" type="submit" size="small">
-            Calendario
-          </button>
-        </div> -->
         <div class="col">
           <button
             class="btn btn-primary active"
@@ -111,7 +131,9 @@
               class="col-md-12"
               [settings]="settings1"
               [source]="data"
-              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+              (userRowSelect)="rowsSelected($event)"
+              (edit)="redirectDetailMaintenance($event.data)"
+              (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>
