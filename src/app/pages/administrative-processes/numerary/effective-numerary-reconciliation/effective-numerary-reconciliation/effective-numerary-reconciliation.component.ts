@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { downloadReport, showToast } from 'src/app/common/helpers/helpers';
-import { type ListParams } from 'src/app/common/repository/interfaces/list-params';
+// import { type ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITvalTable5 } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -16,19 +15,19 @@ export class EffectiveNumeraryReconciliationComponent {
   form: FormGroup = new FormGroup({
     delegation: new FormControl('', [
       Validators.required,
-      Validators.pattern(STRING_PATTERN),
+      // Validators.pattern(STRING_PATTERN),
     ]),
     subdelegation: new FormControl('', [
       Validators.required,
-      Validators.pattern(STRING_PATTERN),
+      // Validators.pattern(STRING_PATTERN),
     ]),
     currency: new FormControl('', [
       Validators.required,
-      Validators.pattern(STRING_PATTERN),
+      // Validators.pattern(STRING_PATTERN),
     ]),
     bank: new FormControl('', [
       Validators.required,
-      Validators.pattern(STRING_PATTERN),
+      // Validators.pattern(STRING_PATTERN),
     ]),
     fileFrom: new FormControl('', Validators.required),
     fileTo: new FormControl('', Validators.required),
@@ -66,39 +65,29 @@ export class EffectiveNumeraryReconciliationComponent {
     // downloadLink.target = '_blank';
     // downloadLink.click();
     // this.onLoadToast('success', '', 'Reporte generado');
+    console.log(this.form.value);
     downloadReport('SIAB/RCONCOGVOLANTESRE', this.form.value);
     this.isLoading = false;
   }
 
-  // onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
-  //   let sweetalert = new SweetalertModel();
-  //   sweetalert.toast = true;
-  //   sweetalert.position = 'top-end';
-  //   sweetalert.timer = 6000;
-  //   sweetalert.title = title;
-  //   sweetalert.text = text;
-  //   sweetalert.icon = icon;
-  //   Swal.fire(sweetalert);
+  // getCurrency(params: ListParams): void {
+  //   this.tableServ.getById4(3, params).subscribe({
+  //     next: res => {
+  //       this.currencies = new DefaultSelect<ITvalTable5>(res.data, 0);
+  //     },
+  //     error: err => {
+  //       let error = '';
+  //       if (err.status === 0) {
+  //         error = 'Revise su conexión de Internet.';
+  //       } else {
+  //         error = err.message;
+  //       }
+  //       showToast({ icon: 'error', title: 'Error', text: error });
+  //     },
+  //   });
   // }
 
-  getCurrency(params: ListParams): void {
-    this.tableServ.getById4(3, params).subscribe({
-      next: res => {
-        this.currencies = new DefaultSelect<ITvalTable5>(res.data, 0);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        showToast({ icon: 'error', title: 'Error', text: error });
-      },
-    });
-  }
-
-  onCurrencyChange(event: any): void {}
+  // onCurrencyChange(event: any): void {}
 
   validateDateRange(from: Date, to: Date): boolean {
     if (from && to) {

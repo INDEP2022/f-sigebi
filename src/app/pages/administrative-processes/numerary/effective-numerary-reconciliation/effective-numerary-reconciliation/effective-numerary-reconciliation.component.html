@@ -17,13 +17,12 @@
               label="Subdelegación">
               <input formControlName="subdelegation" class="form-control" />
             </form-field>
-          </div> 
+          </div>
         </div>-->
         <app-delegation-shared [form]="form"></app-delegation-shared>
         <div class="row mt-4">
           <div class="col-md-6 pt-3">
-            <form-field [control]="form.get('currency')">
-              <!-- <input formControlName="currency" class="form-control" /> -->
+            <!-- <form-field [control]="form.get('currency')">
               <ngx-select
                 (fetchItems)="getCurrency($event)"
                 [data]="currencies"
@@ -34,8 +33,10 @@
                 control="currency"
                 (change)="onCurrencyChange($event)">
               </ngx-select>
-            </form-field>
-            <!-- <app-currency-shared [form]="form"></app-currency-shared> -->
+            </form-field> -->
+            <app-currency-shared
+              [form]="form"
+              currencyField="currency"></app-currency-shared>
           </div>
           <div class="col-md-6">
             <!-- <form-field [control]="form.get('bank')" label="Banco:">
@@ -50,6 +51,7 @@
               [control]="form.get('fileFrom')"
               label="Del expediente:">
               <input
+                [maxDate]="maxDate"
                 formControlName="fileFrom"
                 class="form-control"
                 bsDatepicker />
@@ -69,7 +71,11 @@
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field [control]="form.get('from')" label="Fecha del:">
-              <input formControlName="from" class="form-control" bsDatepicker />
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-6">

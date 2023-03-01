@@ -21,22 +21,13 @@
         </div> -->
         <app-delegation-shared [form]="form"></app-delegation-shared>
         <div class="row mt-4">
-          <div class="col-md-6 pt-3">
+          <div class="col-md-6">
             <!-- <form-field [control]="form.get('currency')" label="Moneda:">
               <input formControlName="currency" class="form-control" />
             </form-field> -->
-            <form-field [control]="form.get('currency')">
-              <!-- <input formControlName="currency" class="form-control" /> -->
-              <ngx-select
-                (fetchItems)="getCurrency($event)"
-                [data]="currencies"
-                [form]="form"
-                value="otKey1"
-                bindLabel="otValue01"
-                label="Moneda"
-                control="currency">
-              </ngx-select>
-            </form-field>
+            <app-currency-shared
+              [form]="form"
+              currencyField="currency"></app-currency-shared>
           </div>
           <div class="col-md-6">
             <!-- <form-field [control]="form.get('bank')" label="Banco:">
@@ -51,6 +42,7 @@
               [control]="form.get('depositFrom')"
               label="Deposito del:">
               <input
+                [maxDate]="maxDate"
                 formControlName="depositFrom"
                 class="form-control"
                 bsDatepicker />
@@ -74,6 +66,7 @@
               [control]="form.get('fileFrom')"
               label="Expediente del:">
               <input
+                [maxDate]="maxDate"
                 formControlName="fileFrom"
                 class="form-control"
                 bsDatepicker />

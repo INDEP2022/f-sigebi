@@ -25,8 +25,7 @@
             <!-- <form-field [control]="form.get('currency')" label="Moneda:">
               <input formControlName="currency" class="form-control" />
             </form-field> -->
-            <form-field [control]="form.get('currency')">
-              <!-- <input formControlName="currency" class="form-control" /> -->
+            <!-- <form-field [control]="form.get('currency')">
               <ngx-select
                 (fetchItems)="getCurrency($event)"
                 [data]="currencies"
@@ -36,9 +35,12 @@
                 label="Moneda"
                 control="currency">
               </ngx-select>
-            </form-field>
+            </form-field> -->
+            <app-currency-shared
+              [form]="form"
+              currencyField="currency"></app-currency-shared>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-3">
             <!-- <form-field [control]="form.get('bank')" label="Banco:">
               <input formControlName="bank" class="form-control" />
             </form-field> -->
@@ -53,6 +55,7 @@
               <input
                 formControlName="depositFrom"
                 class="form-control"
+                [maxDate]="maxDate"
                 bsDatepicker />
             </form-field>
           </div>

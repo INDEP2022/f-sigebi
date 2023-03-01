@@ -1,10 +1,11 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, type TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -70,29 +71,51 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //   '<span class="btn btn-info active font-size-12 me-2 mb-2 py-2 px-2">Actualizar</span>';
   // cancelButton: string =
   //   '<span class="btn btn-warning active font-size-12 text-black me-2 mb-2 py-2 px-2 cancel">Cancelar</span>';
-  expenseSettings = {
-    ...TABLE_SETTINGS,
-    selectedRowIndex: -1,
-    mode: 'internal',
-    hideSubHeader: false,
-    filter: {
-      inputClass: 'd-none',
+  // expenseSettings = {
+  //   ...TABLE_SETTINGS,
+  //   selectedRowIndex: -1,
+  //   mode: 'internal',
+  //   hideSubHeader: false,
+  //   filter: {
+  //     inputClass: 'd-none',
+  //   },
+  //   attr: {
+  //     class: 'table-bordered normal-hover',
+  //   },
+  //   // add: {
+  //   //   createButtonContent: this.createButton,
+  //   //   cancelButtonContent: this.cancelButton,
+  //   //   confirmCreate: true,
+  //   // },
+  //   // edit: {
+  //   //   editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+  //   //   saveButtonContent: this.saveButton,
+  //   //   cancelButtonContent: this.cancelButton,
+  //   //   confirmSave: true,
+  //   // },
+  // };
+  expenseTypeTest = [
+    {
+      id: 3107,
+      description: 'SERVICIO DE AGUA',
     },
-    attr: {
-      class: 'table-bordered normal-hover',
+    {
+      id: 3201,
+      description: 'ARRENDAMIENTO DE SERVICIO Y LOCALES',
     },
-    // add: {
-    //   createButtonContent: this.createButton,
-    //   cancelButtonContent: this.cancelButton,
-    //   confirmCreate: true,
-    // },
-    // edit: {
-    //   editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
-    //   saveButtonContent: this.saveButton,
-    //   cancelButtonContent: this.cancelButton,
-    //   confirmSave: true,
-    // },
-  };
+    {
+      id: 3305,
+      description: 'CAPACITACIONES',
+    },
+    {
+      id: 3306,
+      description: 'SERVICIOS DE INFORMÁTICA',
+    },
+    {
+      id: 3408,
+      description: 'COMISIONES POR VENTAS',
+    },
+  ];
   numeraireSettings = {
     ...TABLE_SETTINGS,
     selectedRowIndex: -1,
@@ -198,29 +221,35 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   ];
 
   expenses: any[] = [];
-  formExpense = new FormGroup({
-    register: new FormControl('', [Validators.required]),
-    description: new FormControl('', [Validators.required]),
-    import: new FormControl('', [Validators.required]),
-  });
+  formExpenses = new FormArray([
+    new FormGroup({
+      register: new FormControl('', [Validators.required]),
+      description: new FormControl('', [Validators.required]),
+      import: new FormControl('', [Validators.required]),
+    }),
+  ]);
 
   dialogExpenseRef: BsModalRef<any>;
+
+  // statusExpense: {
+  //   isEdit: boolean,
+  //   open:
+  //   id?: number;
+  //   data?: any
+  // } = {
+  //   isEdit: false
+  // }
 
   constructor(
     // private modalRef: BsModalRef,
     private modalService: BsModalService,
     // private fb: FormBuilder,
-    private excelService: ExcelService
-  ) // private goodService: GoodService,
-  // private bankAccountService: BankAccountService
-  {
+    private excelService: ExcelService // private goodService: GoodService, // private bankAccountService: BankAccountService
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    // this.prepareForm();
-    // this.getGoods({ page: 1, text: '' });
-    // this.getBanks({ page: 1, text: '' });
     this.expenseSettings.columns = EXPENSE_COLUMNS;
     this.expenseSettings.columns = {
       ...this.expenseSettings.columns,
@@ -301,13 +330,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //   }
   //   this.goodItems = new DefaultSelect([], 0);
   // }
-
-  openModal(template: TemplateRef<any>, isCreate = true) {
-    if (isCreate) {
-      this.formExpense.reset();
-    }
-    this.dialogExpenseRef = this.modalService.show(template);
-  }
 
   selectGood(event: any) {
     if (!event) return;
@@ -454,35 +476,35 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     }
   }
 
-  addRow() {
-    this.adding = true;
-    this.addOption.click();
-    setTimeout(() => {
-      this.addRowElement = document
-        .querySelectorAll('tr[ng2-st-thead-form-row]')
-        .item(0);
-      this.addRowElement.classList.add('row-no-pad');
-      this.addRowElement.classList.add('add-row-height');
-      this.readOnlyInput = document
-        .querySelectorAll('input[ng-reflect-name="id"]')
-        .item(0);
-      this.readOnlyInput.setAttribute('readonly', '');
-      this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-      this.cancelEvent = this.handleCancel.bind(this);
-      this.cancelBtn.addEventListener('click', this.cancelEvent);
-    }, 300);
-  }
+  // addRow() {
+  //   this.adding = true;
+  //   this.addOption.click();
+  //   setTimeout(() => {
+  //     this.addRowElement = document
+  //       .querySelectorAll('tr[ng2-st-thead-form-row]')
+  //       .item(0);
+  //     this.addRowElement.classList.add('row-no-pad');
+  //     this.addRowElement.classList.add('add-row-height');
+  //     this.readOnlyInput = document
+  //       .querySelectorAll('input[ng-reflect-name="id"]')
+  //       .item(0);
+  //     this.readOnlyInput.setAttribute('readonly', '');
+  //     this.cancelBtn = document.querySelectorAll('.cancel').item(0);
+  //     this.cancelEvent = this.handleCancel.bind(this);
+  //     this.cancelBtn.addEventListener('click', this.cancelEvent);
+  //   }, 300);
+  // }
 
-  addEntry(event: any) {
-    // if (!event.newData.description || event.newData.amount == '') {
-    //   this.alertTable();
-    //   return;
-    // }
-    // event.newData.id = event.newData.description.id;
-    // event.newData.description = event.newData.description.description;
-    // event.confirm.resolve(event.newData);
-    // this.adding = false;
-  }
+  // addEntry(event: any) {
+  //   // if (!event.newData.description || event.newData.amount == '') {
+  //   //   this.alertTable();
+  //   //   return;
+  //   // }
+  //   // event.newData.id = event.newData.description.id;
+  //   // event.newData.description = event.newData.description.description;
+  //   // event.confirm.resolve(event.newData);
+  //   // this.adding = false;
+  // }
 
   editEntry(event: any) {
     if (!event.newData.description || event.newData.amount == '') {
@@ -557,21 +579,35 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     this.modalService.show(HistoricalGoodSituationComponent, modalConfig);
   }
 
+  createOrEditExpense(id?: number): void {
+    this.formExpense.reset();
+    if (id) {
+      const values = this.expenses.find(x => x.id === id);
+      this.formExpense.patchValue(values);
+    }
+  }
+
   removeExpense(id: number) {
     this.expenses = this.expenses.filter(expense => expense.id !== id);
     // this.form.controls['expenses'].setValue(
     //   this.expenseTestData
     // );
   }
-}
 
-/*
-good
-accountmvmnt
-numerary
-massivenumerary
-numerary
-reportnumerary
-captureline
-massivecaptureline
-*/
+  openAddExpense(): void {
+    const formGroup = new FormGroup({});
+    this.formExpenses.push();
+  }
+
+  addExpense(): void {
+    if (this.formExpenses.invalid) {
+      showToast({
+        icon: 'error',
+        title: 'Gasto invalido',
+        text: 'Revise el gasto que va a ingresar unos de sus campos es invalido',
+      });
+      return;
+    }
+    this.expenses.unshift(this.formExpenses.value);
+  }
+}

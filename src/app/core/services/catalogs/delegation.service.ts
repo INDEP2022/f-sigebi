@@ -21,7 +21,7 @@ export class DelegationService implements ICrudMethods<IDelegation> {
     private zonesRepository: Repository<IZoneGeographic>
   ) {}
 
-  getAll(params?: ListParams | string): Observable<IListResponse<IDelegation>> {
+  getAll(params?: any): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 

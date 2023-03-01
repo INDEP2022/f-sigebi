@@ -1,6 +1,69 @@
 <app-card [header]="true">
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Registro</th>
+          <th>Descripción</th>
+          <th>Importe</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let formExpense of formExpenses.controls">
+          <td>
+            <form-field
+              [control]="formExpense.get('register')"
+              label="Registro">
+              <input
+                type="text"
+                formControlName="register"
+                class="form-control" />
+            </form-field>
+          </td>
+          <td>
+            <form-field
+              [control]="formExpense.get('description')"
+              label="Desripcion">
+              <ng-select class="form-control" formControlName="description">
+                <ng-option
+                  [value]="type.id"
+                  *ngFor="let type of expenseTypeTest"
+                  >{{ type.description }}</ng-option
+                >
+              </ng-select>
+            </form-field>
+          </td>
+          <td>
+            <form-field [control]="formExpense.get('import')" label="Importe">
+              <input
+                type="text"
+                formControlName="import"
+                class="form-control" />
+            </form-field>
+          </td>
+        </tr>
+        <tr *ngFor="let expense of expenses; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ expense.description }}</td>
+          <td>{{ expense.amount | currency }}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="removeExpense(i)">
+              <i class="bx bx-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div class="ch-content" header>
     <h5 class="title">conversi&oacute;n a numerario</h5>
+    <button
+      class="btn btn-sm btn-success active font-size-14"
+      (click)="addExpense(dialogExpense)"
+      [disabled]="adding">
+      Agregar Registro
+    </button>
   </div>
   <div body>
     <div class="md-tabs mt-n3">
@@ -198,12 +261,12 @@
                 [collapse]="!toggleExpenses">
                 <div class="d-flex flex-row-reverse mb-4 mt-0">
                   <div class="">
-                    <button
+                    <!-- <button
                       class="btn btn-sm btn-success active font-size-14"
                       (click)="openModal(dialogExpense)"
                       [disabled]="adding">
                       Agregar Registro
-                    </button>
+                    </button> -->
                   </div>
                 </div>
                 <div class="table-container">
@@ -217,7 +280,7 @@
                       (editConfirm)="editEntry($event)">
                     </ng2-smart-table> -->
                     <div>
-                      <table>
+                      <table class="table">
                         <thead>
                           <tr>
                             <th>Registro</th>
@@ -466,7 +529,7 @@
 
 <ng-template #dialogExpense>
   <div class="modal-header">
-    <h4 class="modal-title pull-left"></h4>
+    <h4 class="modal-title pull-left">{{ dialogData.title }}</h4>
     <button
       type="button"
       class="close pull-right"
@@ -475,13 +538,19 @@
       <span aria-hidden="true">×</span>
     </button>
   </div>
-  <div class="modal-body" [formGroup]="formExpense">
-    <form-field [control]="form.get('depositDate')" label="Fecha">
-      <input
-        type="text"
-        formControlName="depositDate"
-        class="form-control"
-        bsDatepicker />
+  <div class="modal-body form-material" [formGroup]="formExpense">
+    <form-field [control]="formExpense.get('register')" label="Registro">
+      <input type="text" formControlName="register" class="form-control" />
+    </form-field>
+    <form-field [control]="formExpense.get('description')" label="Desripcion">
+      <ng-select class="form-control" formControlName="description">
+        <ng-option [value]="type.id" *ngFor="let type of expenseTypeTest">{{
+          type.description
+        }}</ng-option>
+      </ng-select>
+    </form-field>
+    <form-field [control]="formExpense.get('import')" label="Importe">
+      <input type="text" formControlName="import" class="form-control" />
     </form-field>
   </div>
   <div class="modal-footer">
@@ -489,7 +558,7 @@
       type="button"
       class="btn btn-default"
       (click)="dialogExpenseRef?.hide()">
-      Close
+      Cerrar
     </button>
   </div>
 </ng-template>
