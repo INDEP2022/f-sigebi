@@ -41,7 +41,7 @@ export class ComplementArticleComponent implements OnInit {
   getnotifyDate: string | Date;
   getnotifyA: string;
   getplaceNotify: string;
-  getfechaDictamen: string;
+  getfechaDictamen: Date | string;
   getdictamenPerenidad: string;
   getdictamenPerito: string;
   getdictamenInstitucion: string;
@@ -333,17 +333,16 @@ export class ComplementArticleComponent implements OnInit {
   }
 
   updateOpinion() {
-    const formatString = 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(]z[)]';
-    const opinionData = {
-      dateOpinion: moment(this.form.get('fechaDictamen').value).format(
-        formatString
-      ),
+    const opinionData: IGood = {
+      id: parseInt(this.idGood.toString()),
+      dateOpinion: this.form.get('fechaDictamen').value,
       proficientOpinion: this.form.get('dictamenPerito').value.name,
       valuerOpinion: this.form.get('dictamenInstitucion').value.description,
       opinion: this.form.get('dictamenPerenidad').value,
     };
-
-    /*  this.serviceGood.update(this.idGood, opinionData).subscribe(
+    console.log(this.form.get('dictamenPerito').value);
+    console.log(opinionData); /* 
+    this.serviceGood.updateWithoutId(opinionData).subscribe(
       res => {
         console.log('Modificado');
         this.disabledButton('opinion');
@@ -403,25 +402,21 @@ export class ComplementArticleComponent implements OnInit {
       effectiveDate: this.form.get('fechaVigencia').value,
       valueAppraisal: this.form.get('importe').value,
       noRequest: '1234',
-      requestXAppraisal: {
-        cveCurrencyAppraisal: this.form.get('moneda').value,
-        noExpert: this.form.get('perito').value.id,
-        noAppraiser: this.form.get('institucion').value.id,
-      },
     };
 
     const rxa: IRequestAppraisal = {
       requestDate: format(new Date(), 'yyyy-MM-dd'),
       requestType: 'E',
       cveCurrencyAppraisal: this.form.get('moneda').value,
+      cveCurrencyCost: this.form.get('moneda').value,
+      noExpert: this.form.get('perito').value.id,
+      noAppraiser: this.form.get('institucion').value.id,
     };
-
-    console.log(dataAG);
-    this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(res => {
-      const id = JSON.parse(JSON.stringify(res)).id;
-      dataAG.noRequest = id;
-      console.log(dataAG);
-      /* this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
+    this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(
+      res => {
+        const id = JSON.parse(JSON.stringify(res)).id;
+        dataAG.noRequest = id;
+        this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
           res => {
             console.log(res);
             this.getAppraisalGood();
@@ -440,7 +435,6 @@ export class ComplementArticleComponent implements OnInit {
       err => {
         console.log(err);
       }
-    );  */
-    });
+    );
   }
 }
