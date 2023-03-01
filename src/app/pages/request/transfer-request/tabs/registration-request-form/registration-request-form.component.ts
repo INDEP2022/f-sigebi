@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TabsetComponent } from 'ngx-bootstrap/tabs/tabset.component';
 
@@ -9,6 +9,7 @@ import { TabsetComponent } from 'ngx-bootstrap/tabs/tabset.component';
 })
 export class RegistrationRequestFormComponent implements OnInit {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
+  @Input() requestForm: any;
   docGoodRequestId: number = null;
   searchFileForm: FormGroup = new FormGroup({});
 

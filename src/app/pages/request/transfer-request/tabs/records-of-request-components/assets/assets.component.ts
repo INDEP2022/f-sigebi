@@ -274,6 +274,10 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   openSelectAddressModal() {
+    if (this.listgoodObjects.length === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
     let config: ModalOptions = {
       initialState: {
         request: this.requestObject,
@@ -305,7 +309,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   menajeModal() {
-    if (!this.listgoodObjects) {
+    if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
       return;
     }
@@ -355,7 +359,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
-        this.goodService.update(element.id, element).subscribe({
+        this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
               this.message(
@@ -398,7 +402,7 @@ export class AssetsComponent extends BasePage implements OnInit {
               reject('El registro del bien del domicilio no se guardo!');
             }
 
-            if (data.id != null) {
+            if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
@@ -436,8 +440,9 @@ export class AssetsComponent extends BasePage implements OnInit {
   deleteGood() {
     for (let i = 0; i < this.listgoodObjects.length; i++) {
       const element = this.listgoodObjects[i];
-      this.goodService.remove(element.id).subscribe({
-        next: resp => {
+      let goodRemove = { id: element.id, goodId: element.goodId };
+      this.goodService.removeGood(goodRemove).subscribe({
+        next: (resp: any) => {
           if (resp.statusCode === 200) {
             this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
             this.closeCreateGoodWIndows();

@@ -58,15 +58,15 @@ export class DetailAssetsTabComponentComponent
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
-  @Input() detailAssets: ModelForm<any>; // bienes
-  @Input() domicilieObject: IDomicilies; //
+  @Input() detailAssets: ModelForm<any>; // bienes ModelForm
+  @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodRealState>; // bien del inmueble
+  goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
@@ -126,9 +126,10 @@ export class DetailAssetsTabComponentComponent
   parameterSubBrandsService = inject(ParameterSubBrandsService);
   menageService = inject(MenageService);
 
-  isDisabled: boolean = true;
+  isDisabled: boolean = true; //desabilita el campo domicilio
   menajeSelected: any;
   isSaveMenaje: boolean = false;
+  disableDuplicity: boolean = false; //para verificar cumplimientos = false
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {
     super();
@@ -138,18 +139,19 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
       console.log(changes['detailAssets'].currentValue);
     }
-
-    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
-      (data: any) => {
-        if (data) {
-          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
-          this.displayTypeTapInformation(Number(data));
-        } else {
-          //limpia los tabs de los bienes
-          this.displayTypeTapInformation(data);
+    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+      if (this.detailAssets.controls['addressId'].value) {
+        this.addressId = this.detailAssets.controls['addressId'].value;
+        this.getGoodDomicilie(this.addressId);
+      }
+      if (this.typeDoc === 'verify-compliance') {
+        this.detailAssets.disable();
+        this.disableDuplicity = true;
+        if (this.goodDomicilieForm !== undefined) {
+          this.goodDomicilieForm.disable();
         }
       }
-    );
+    }
   }
 
   ngOnInit(): void {
@@ -344,11 +346,6 @@ export class DetailAssetsTabComponentComponent
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
-
-    if (this.detailAssets.controls['addressId'].value) {
-      this.addressId = this.detailAssets.controls['addressId'].value;
-      this.getGoodDomicilie(this.addressId);
-    }
   }
 
   //formulario del inmueble
@@ -535,7 +532,7 @@ export class DetailAssetsTabComponentComponent
   initInputs(): void {
     //control de disable de pantalla
     if (this.typeDoc === 'verify-compliance') {
-      this.assetsForm.disable();
+      this.detailAssets.disable();
     } else if (this.typeDoc === 'classify-assets') {
       this.assetsForm.disable();
       this.assetsForm.controls['physicalState'].enable();
@@ -712,6 +709,7 @@ export class DetailAssetsTabComponentComponent
 
   saveDomicilieGood(domicilie: IDomicilies) {
     return new Promise((resolve, reject) => {
+      domicilie.id = Number(domicilie.id);
       this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
         next: (data: any) => {
           if (data.statusCode != null) {
@@ -786,8 +784,15 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getGoodDomicilie(addressId: number) {
-    this.goodDomicilie.getById(addressId).subscribe({
+  getGoodDomicilie(addressId: any) {
+    let address = null;
+    if (addressId.id != null) {
+      address = addressId.id;
+    } else {
+      address = addressId;
+    }
+
+    this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
@@ -798,6 +803,18 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+          this.displayTypeTapInformation(Number(data));
+        } else {
+          //limpia los tabs de los bienes
+          this.displayTypeTapInformation(data);
+        }
+      }
+    );
+
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
@@ -880,7 +897,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: IDomicilies) {
-    this.detailAssets.controls['addressId'].setValue(domicilie.id);
+    this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
     this.domicileForm.patchValue(domicilie);

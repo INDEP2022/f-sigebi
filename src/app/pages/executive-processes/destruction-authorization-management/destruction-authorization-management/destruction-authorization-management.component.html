@@ -22,17 +22,6 @@
               type="text"
               class="form-control"
               formControlName="keysProceedings" />
-            <!-- <ngx-select
-                  [searchOnInit]="true"
-                  [form]="form"
-                  (fetchItems)="getProceedings($event)"
-                  [data]="proceedings"
-                  value="keysProceedings"
-                  bindLabel="keysProceedings"
-                  label="Oficio de Solicitud"
-                  [control]="'keysProceedings'"
-                  (change)="onValuesChange($event)">
-                </ngx-select>  -->
           </form-field>
         </div>
         <div class="col-md-2">
@@ -95,7 +84,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-2" *ngIf="form.get('id').value !== null">
+        <div class="col-md-2">
           <button
             class="btn btn-sm btn-primary active"
             [disabled]="!form.valid"

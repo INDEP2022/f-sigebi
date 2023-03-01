@@ -37,7 +37,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: {
@@ -63,8 +63,40 @@ export class PageSetupComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(pageSetup: IConfigvtadmun) {
+  openForm(pageSetup?: IConfigvtadmun) {
     this.openModal({ pageSetup });
+  }
+
+  confirmDelete(pageSetup: IConfigvtadmun) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.remove(pageSetup);
+      }
+    });
+  }
+
+  remove(pageSetup: IConfigvtadmun) {
+    this.loading = true;
+    const { idColumn, idTable } = pageSetup;
+    this.configvtadmunService.remove({ idColumn, idTable }).subscribe({
+      next: () => {
+        this.loading = false;
+        this.onLoadToast('success', 'Registro eliminado', '');
+        this.getData();
+      },
+      error: () => {
+        this.loading = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al eliminar el registro'
+        );
+      },
+    });
   }
 
   onVisualizaChange(checkboxEl: CheckboxElementComponent<IConfigvtadmun>) {
@@ -81,7 +113,6 @@ export class PageSetupComponent extends BasePage implements OnInit {
   }
 
   openModal(context?: Partial<PageSetupModalComponent>) {
-    console.log(context);
     const modalRef = this.modalService.show(PageSetupModalComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',

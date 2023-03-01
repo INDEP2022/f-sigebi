@@ -156,6 +156,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
 
   confirm() {
     this.form.get('id').enable();
+    this.loading = true;
     if (this.form.value) {
       if (this.edit) {
         this.courtServ.updateCourt(this.form.value).subscribe({
@@ -167,10 +168,13 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         });
       } else {
         this.courtServ.create(this.form.value).subscribe({
-          next: () => (
-            this.onLoadToast('success', 'Juzgado', 'Se ha guardado'),
-            this.clean()
-          ),
+          next: data => {
+            this.onLoadToast('success', 'Juzgado', 'Se ha guardado');
+            this.form.patchValue(data);
+            this.isPresent = true;
+            this.idCourt = data.id;
+            this.loading = false;
+          },
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
       }
@@ -202,8 +206,10 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   clean() {
     this.form.reset();
     this.edit = false;
+    this.loading = false;
     this.isPresent = false;
     this.dataCourtCity = {} as IListResponse<TableCity>;
+    this.form.get('id').disable();
   }
 
   openModalCity() {

@@ -21,7 +21,7 @@ export class GoodDomiciliesService extends HttpService {
 
   getById(id: string | number) {
     const route = `${GoodEndpoints.Domicilies}/${id}`;
-    return this.get<IListResponse<IDomicilies>>(route);
+    return this.get<IDomicilies>(route);
   }
 
   create(domicilie: IDomicilies) {

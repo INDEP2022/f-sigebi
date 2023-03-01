@@ -325,7 +325,7 @@ const routes: Routes = [
       (await import('./parameter-maintenance/parameter-maintenance.module'))
         .ParameterMaintenanceModule,
     data: {
-      title: 'Mantenimiento de Parametros',
+      title: 'Mantenimiento de parámetros',
     },
   },
   {
