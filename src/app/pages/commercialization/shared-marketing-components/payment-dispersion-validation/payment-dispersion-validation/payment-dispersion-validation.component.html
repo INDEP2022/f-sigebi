@@ -9,15 +9,17 @@
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="form.get('id')" label="Evento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="id" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('address')" label="address">
-            <ng-select formControlName="address" [searchable]="false" class="form-control" [clearable]="false">
+            <ng-select
+              formControlName="address"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              [readonly]="true">
               <ng-option value="M">Mueble</ng-option>
               <ng-option value="I">Inmueble</ng-option>
             </ng-select>
@@ -25,11 +27,18 @@
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('processKey')" label="Proceso">
-            <input type="text" class="form-control" formControlName="processKey" readonly/>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processKey"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid" (click)="getEventByID()">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getEventByID()">
             Buscar
           </button>
         </div>
@@ -44,7 +53,7 @@
       <div class="ch-content">
         <h5 class="title">Lotes participantes en el evento</h5>
         <div class="row justify-content-end pt-3 mr-3">
-          <app-columns-select [(settings)]="settingsLotes"></app-columns-select>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>
@@ -55,14 +64,15 @@
         </div>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="lotByEvent">
-          </ng2-smart-table>
-        </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="lotByEvent"
+          (userRowSelect)="rowsSelected($event)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
     <div footer>
       <button

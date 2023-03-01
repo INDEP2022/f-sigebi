@@ -35,6 +35,7 @@ import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedien
 })
 export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   @Input() searchFileForm: FormGroup;
+  @Input() requestForm: any;
   searchForm: ModelForm<IRequest>;
   authorities = new DefaultSelect();
   regionalsDelegations = new DefaultSelect();
@@ -115,7 +116,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   newExpedient() {
-    this.openModal(AssociateFileComponent);
+    this.openModal(AssociateFileComponent, this.requestForm);
   }
 
   showDocsEst() {
@@ -273,10 +274,10 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  openModal(component: any) {
+  openModal(component: any, parameters?: any) {
     let config: ModalOptions = {
       initialState: {
-        parameter: '',
+        parameter: parameters,
         callback: (next: boolean) => {
           //if(next) this.getExample();
         },

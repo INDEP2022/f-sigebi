@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, tap, throwError } from 'rxjs';
 import { ConfigvtadmunService } from 'src/app/core/services/ms-parametercomer/configvtadmun.service';
@@ -12,12 +12,14 @@ import { PageSetupForm } from '../utils/page-setup-form';
   styles: [],
 })
 export class PageSetupModalComponent extends BasePage implements OnInit {
-  form: FormGroup = this.fb.group(new PageSetupForm());
-  @Input() pageSetup: any;
-  title: string = 'Campos para Tablas y columnas"';
+  form = this.fb.group(new PageSetupForm());
+  pageSetup: any;
+  title: string = 'Campos para Tablas y columnas';
   edit: boolean = false;
   @Output() refresh = new EventEmitter<true>();
-
+  get controls() {
+    return this.form.controls;
+  }
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -29,7 +31,11 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     if (this.pageSetup) {
       this.edit = true;
+      this.controls.idTable.disable();
+      this.controls.idColumn.disable();
       this.form.patchValue(this.pageSetup);
+    } else {
+      this.controls.visualiza.setValue('1');
     }
   }
 
@@ -38,9 +44,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
   }
 
   save() {
-    console.log('llego');
     if (!this.form.valid) {
-      console.log('form no valido');
       this.form.markAllAsTouched();
       return;
     }
@@ -63,6 +67,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
       }),
       tap(() => {
         this.loading = false;
+        this.onLoadToast('success', 'Registro guardado', '');
         this.refresh.emit(true);
         this.modalRef.hide();
       })
@@ -81,6 +86,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
       }),
       tap(() => {
         this.loading = false;
+        this.onLoadToast('success', 'Registro actualizado', '');
         this.refresh.emit(true);
         this.modalRef.hide();
       })

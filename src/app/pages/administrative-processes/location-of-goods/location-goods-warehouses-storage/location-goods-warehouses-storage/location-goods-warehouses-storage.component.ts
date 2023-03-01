@@ -232,7 +232,7 @@ export class LocationGoodsWarehousesStorageComponent
     console.log(this.good);
     if (this.validarGood()) return;
     console.log('nuevo -->', this.good);
-    this.goodServices.update(this.good.id, this.good).subscribe({
+    this.goodServices.update(this.good).subscribe({
       next: response => {
         console.log(response);
         this.onLoadToast(

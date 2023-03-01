@@ -1,17 +1,17 @@
 import { SaeInputComponent } from './sae-input/sae-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
-  gestion: {
+  id: {
     title: 'Gestion',
     type: 'string',
     sort: false,
   },
-  descripEstateTransfe: {
+  goodDescription: {
     title: 'Descripción de Bien Transferente',
     type: 'string',
     sort: false,
   },
-  descriptionEstateSAE: {
+  descriptionGoodSae: {
     title: 'Descripción Bien SAE',
     type: 'custom',
     class: 'custom-field',
@@ -20,17 +20,17 @@ export const DETAIL_ESTATE_COLUMNS = {
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
-  typeEstate: {
+  goodTypeName: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
-  quantityTransfe: {
+  quantity: {
     title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
-  measureUnit: {
+  unitMeasure: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
@@ -40,22 +40,22 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  physicalState: {
+  physicstateName: {
     title: 'Estado Fisico',
     type: 'string',
     sort: false,
   },
-  stateConservation: {
+  stateConservationName: {
     title: 'Estado de Concervación',
     type: 'string',
     sort: false,
   },
-  destinyLigie: {
+  destinyName: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  transferDestina: {
+  transferentDestinyName: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

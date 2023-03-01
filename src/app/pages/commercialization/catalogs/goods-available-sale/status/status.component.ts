@@ -78,7 +78,7 @@ export class StatusComponent extends BasePage implements OnInit {
 
   onSaveConfirm(event: any) {
     event.confirm.resolve();
-    this.goodService.update(event.data.id, event.newData).subscribe();
+    this.goodService.update(event.newData).subscribe();
     this.onLoadToast('success', 'Elemento Actualizado', '');
   }
 

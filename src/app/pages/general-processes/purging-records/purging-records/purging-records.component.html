@@ -16,6 +16,7 @@
                   type="button"
                   (confirm)="updateExpedient()"
                   *ngIf="originExpedient"
+                  [loading]="loadingExpedient"
                   text="Actualizar expediente"
                   loadingText="Actualizando epxediente"></confirm-button>
               </div>

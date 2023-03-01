@@ -419,50 +419,51 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.inicioProceso = true;
       this.DeclarationsValidationMassive.common_general.proceso =
         this.assetsForm.get('actionType').value;
+      this.processValidFilePgr(0, this.tableSource[0]);
       from(this.tableSource)
         .pipe(
           switchMap(async (row: any, count: number) => {
-            // Mensaje de proceso de validación actual
-            this.DeclarationsValidationMassive.message_progress =
-              VALIDATION_PROCESS_MESSAGE(count + 1);
-            // if (count <= 5) {
-            this.resetValidationDataPreload();
-            let error: any[] = [[], []];
-            // Indice actual del contador
-            this.DeclarationsValidationMassive.common_general.count = count;
-            let data: any = row;
-            this.infoDataValidation = {
-              error: error,
-              opcion: this.target.value,
-              subOpcion: this.proceso,
-              dataRow: data,
-              contadorRegistro: count,
-              objInsertResponse: null,
-              validLastRequest: false,
-            };
-            // Procesos comunes
-            // --- PROCESO 1
-            // --- PROCESO 2
-            // --- PROCESO 3
-            // --- PROCESO 4
-            if (
-              this.proceso == 1 ||
-              this.proceso == 2 ||
-              this.proceso == 3 ||
-              this.proceso == 4
-            ) {
-              // Mensaje de proceso de validación actual
-              this.DeclarationsValidationMassive.message_progress =
-                'Validando la unidad de medida.';
-              console.log(this.DeclarationsValidationMassive.message_progress);
-              // Validar Unidad
-              if (!data.unidad) {
-                error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
-              }
-              // Validar Estatus
-              // if (data.status) {
-              this.validStatusColumna(this.infoDataValidation);
-            }
+            // // Mensaje de proceso de validación actual
+            // this.DeclarationsValidationMassive.message_progress =
+            //   VALIDATION_PROCESS_MESSAGE(count + 1);
+            // // if (count <= 5) {
+            // this.resetValidationDataPreload();
+            // let error: any[] = [[], []];
+            // // Indice actual del contador
+            // this.DeclarationsValidationMassive.common_general.count = count;
+            // let data: any = row;
+            // this.infoDataValidation = {
+            //   error: error,
+            //   opcion: this.target.value,
+            //   subOpcion: this.proceso,
+            //   dataRow: data,
+            //   contadorRegistro: count,
+            //   objInsertResponse: null,
+            //   validLastRequest: false,
+            // };
+            // // Procesos comunes
+            // // --- PROCESO 1
+            // // --- PROCESO 2
+            // // --- PROCESO 3
+            // // --- PROCESO 4
+            // if (
+            //   this.proceso == 1 ||
+            //   this.proceso == 2 ||
+            //   this.proceso == 3 ||
+            //   this.proceso == 4
+            // ) {
+            //   // Mensaje de proceso de validación actual
+            //   this.DeclarationsValidationMassive.message_progress =
+            //     'Validando la unidad de medida.';
+            //   console.log(this.DeclarationsValidationMassive.message_progress);
+            //   // Validar Unidad
+            //   if (!data.unidad) {
+            //     error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
+            //   }
+            //   // Validar Estatus
+            //   // if (data.status) {
+            //   this.validStatusColumna(this.infoDataValidation);
+            // }
           })
         )
         .subscribe(val => {
@@ -474,6 +475,50 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           console.log(val);
           // this.validDataUploadMassive();
         });
+    }
+  }
+
+  processValidFilePgr(count: number = 0, row: any) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      VALIDATION_PROCESS_MESSAGE(count + 1);
+    // if (count <= 5) {
+    this.resetValidationDataPreload();
+    let error: any[] = [[], []];
+    // Indice actual del contador
+    this.DeclarationsValidationMassive.common_general.count = count;
+    let data: any = row;
+    this.infoDataValidation = {
+      error: error,
+      opcion: this.target.value,
+      subOpcion: this.proceso,
+      dataRow: data,
+      contadorRegistro: count,
+      objInsertResponse: null,
+      validLastRequest: false,
+    };
+    // Procesos comunes
+    // --- PROCESO 1
+    // --- PROCESO 2
+    // --- PROCESO 3
+    // --- PROCESO 4
+    if (
+      this.proceso == 1 ||
+      this.proceso == 2 ||
+      this.proceso == 3 ||
+      this.proceso == 4
+    ) {
+      // Mensaje de proceso de validación actual
+      this.DeclarationsValidationMassive.message_progress =
+        'Validando la unidad de medida.';
+      console.log(this.DeclarationsValidationMassive.message_progress);
+      // Validar Unidad
+      if (!data.unidad) {
+        error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
+      }
+      // Validar Estatus
+      // if (data.status) {
+      this.validStatusColumna(this.infoDataValidation);
     }
   }
 
@@ -527,7 +572,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
       'Validando la clasificación del bien.';
-    console.log(this.DeclarationsValidationMassive.message_progress);
+    console.log(
+      this.DeclarationsValidationMassive.message_progress,
+      infoData.dataRow.clasif,
+      infoData.contadorRegistro
+    );
     // Validar Clasificación de bien
     if (infoData.dataRow.clasif) {
       const params: ListParams = {
@@ -538,6 +587,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       params['filter.numClasifGoods'] = '$eq:' + infoData.dataRow.clasif + '';
       await this.goodsBulkService.getGoodssSubtype(params).subscribe({
         next: res => {
+          infoData.validLastRequest = true; // Respuesta correcta
           if (res.data.length == 0) {
             infoData.error = this.agregarError(
               infoData.error,
@@ -576,13 +626,18 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
       'Validando la unidad de medida de acuerdo a la clasificación del bien.';
-    console.log(this.DeclarationsValidationMassive.message_progress);
+    console.log(
+      this.DeclarationsValidationMassive.message_progress,
+      infoData.dataRow.clasif,
+      infoData.contadorRegistro
+    );
     // Validar Unidad de acuerdo al número de Clasificación de bien
     if (infoData.dataRow.clasif) {
       await this.goodsBulkService
         .getUnityByUnityAndClasifGood(infoData.dataRow.clasif)
         .subscribe({
           next: (res: any) => {
+            infoData.validLastRequest = true; // Respuesta correcta
             if (res.minunit != infoData.dataRow.unidad) {
               infoData.error = this.agregarError(
                 infoData.error,
@@ -594,7 +649,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               this.infoDataValidation.error = infoData.error; // Setear error
               infoData.validLastRequest = false; // Respuesta incorrecta
             }
-            infoData.validLastRequest = true; // Respuesta correcta
             if (opcionValid == 'sat') {
               // Se termina el proceso 1 y 3
               if (this.proceso == 1 || this.proceso == 3) {
@@ -902,6 +956,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.DeclarationsValidationMassive.common_general.valid = false;
     // Guardar error y mensaje
     error[0].push(messageError);
+    console.log(error, messageError);
     return error;
   }
 

@@ -14,7 +14,7 @@ export const THIRD_PARTY = {
     type: 'string',
     sort: false,
   },
-}
+};
 
 export const COMISIONESXBIEN = {
   idEvento: {

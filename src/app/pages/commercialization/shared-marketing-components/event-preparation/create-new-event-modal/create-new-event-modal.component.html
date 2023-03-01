@@ -7,20 +7,25 @@
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="eventForm.get('id')" label="No.">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="id" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field [control]="eventForm.get('processKey')" label="Clave">
-            <input type="text" class="form-control" formControlName="processKey" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processKey" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="eventForm.get('tpeventoId')" label="Tipo de Evento">
-            <input type="text" class="form-control" formControlName="tpeventoId" />
+          <form-field
+            [control]="eventForm.get('tpeventoId')"
+            label="Tipo de Evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tpeventoId" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -44,25 +49,43 @@
           </form-field>
         </div>
         <div class="col-md-5">
-          <form-field [control]="eventForm.get('observations')" label="Observaciones">
-            <input type="text" class="form-control" formControlName="observations" />
+          <form-field
+            [control]="eventForm.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field [control]="eventForm.get('username')" label="Usuario">
-            <input type="text" class="form-control" formControlName="username" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="username" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
-          <form-field [control]="eventForm.get('delegationNumber')" label="No. Delegación">
-            <input type="text" class="form-control" formControlName="delegationNumber" />
+          <form-field
+            [control]="eventForm.get('delegationNumber')"
+            label="No. Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationNumber" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="eventForm.get('statusvtaId')" label="Estatus VTA ID">
-            <input type="text" class="form-control" formControlName="statusvtaId" />
+          <form-field
+            [control]="eventForm.get('statusvtaId')"
+            label="Estatus VTA ID">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusvtaId" />
           </form-field>
         </div>
       </div>

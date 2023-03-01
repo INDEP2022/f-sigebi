@@ -39,6 +39,7 @@ export class PurgingRecordsComponent extends BasePage implements OnInit {
   originExpedientExist: boolean = false;
   originExpedient: IExpedient = null;
   targetExpedient: IExpedient = null;
+  loadingExpedient: boolean = false;
 
   get originControls() {
     return this.originForm.controls;
@@ -167,14 +168,33 @@ export class PurgingRecordsComponent extends BasePage implements OnInit {
       this.targetForm.markAllAsTouched();
       return;
     }
-    this.validate();
-    const old = this.originExpedient.id;
-    const _new = this.targetExpedient.id;
-    this.purginRecordsService.updateAll(old, _new).subscribe();
+    const isValid = this.validate();
+    if (isValid) {
+    }
   }
 
   updateExpedient() {
-    // this.expedientService.
+    const { transferNumber } = this.originExpedient;
+    const expedient = { ...this.originForm.value, transferNumber };
+    this.loadingExpedient = true;
+    this.expedientService.update(this.originExpedient.id, expedient).subscribe({
+      next: res => {
+        this.loadingExpedient = false;
+        this.originExpedient = {
+          ...this.originExpedient,
+          ...this.originForm.value,
+        };
+        this.onLoadToast('success', 'Expediente actualizado correctamente', '');
+      },
+      error: error => {
+        this.loadingExpedient = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al actualizar el expediente'
+        );
+      },
+    });
   }
 
   validate() {
@@ -186,11 +206,10 @@ export class PurgingRecordsComponent extends BasePage implements OnInit {
       const isValid = this.validateField(originValue, targetValue);
       if (!isValid) {
         this.showValidationError(keys[index]);
-        return;
+        return false;
       }
     }
-
-    console.log('paso');
+    return true;
   }
 
   showValidationError(key: string) {
