@@ -8,12 +8,15 @@ import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ILot } from 'src/app/core/models/ms-lot/lot.model';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 
 @Component({
   selector: 'app-payment-dispersion-validation',
@@ -25,9 +28,21 @@ export class PaymentDispersionValidationComponent
   implements OnInit
 {
   totalItems: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
+
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
 
   lotByEvent: ILot[] = [];
+  lote: ILot;
+
+  goodList: IGood[]=[];
+
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
+
 
   settingsLotes = {
     ...this.settings,
@@ -52,7 +67,7 @@ export class PaymentDispersionValidationComponent
     private fb: FormBuilder,
     private excelService: ExcelService,
     private comerEventosService: ComerEventosService,
-    private lotService: LotService
+    private lotService: LotService, private goodService:GoodService
   ) {
     super();
 
@@ -131,22 +146,50 @@ export class PaymentDispersionValidationComponent
     });
   }
 
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.goodList = [];
+    this.lote = event.data;
+    this.filterParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodByLotes(this.lote));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodByLotes(this.lote));
+  }
+
+  getGoodByLotes(lote: ILot):void {
+    this.filterParams.getValue().removeAllFilters();
+    this.filterField();
+    this.loading = true;
+    this.goodService.getAllFilter(this.filterParams.getValue().getParams()).subscribe({
+      next: response => {
+        console.log(response);
+        this.goodList = response.data;
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  filterField(){
+    let idLote = this.lote.id;
+    console.log(idLote);
+    this.filterParams.getValue().addFilter('lotNumber', idLote);
+  }
+
   exportAsXLSXLotes(): void {
     this.excelService.exportAsExcelFile(this.lotByEvent, 'lotes_de_evento');
   }
 
-  dataBienes = [
-    {
-      noBien: '78778',
-      descripcion: 'VEHICULO DODGE SUBMARIN',
-      precio: '$42,000.00',
-      iva: '$5,478.26',
-    },
-  ];
+  
 
   exportAsXLSXBienes(): void {
     this.excelService.exportAsExcelFile(this.dataBienes, 'bienes_x_lote');
   }
+
+  dataBienes:any;
 
   dataPagosBanco = [
     {

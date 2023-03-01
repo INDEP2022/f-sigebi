@@ -18,7 +18,7 @@
               formControlName="address"
               [searchable]="false"
               class="form-control"
-              [clearable]="false">
+              [clearable]="false" [readonly]="true">
               <ng-option value="M">Mueble</ng-option>
               <ng-option value="I">Inmueble</ng-option>
             </ng-select>
@@ -52,7 +52,7 @@
       <div class="ch-content">
         <h5 class="title">Lotes participantes en el evento</h5>
         <div class="row justify-content-end pt-3 mr-3">
-          <app-columns-select [(settings)]="settingsLotes"></app-columns-select>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>
@@ -66,7 +66,8 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings"
-          [source]="lotByEvent">
+          [source]="lotByEvent"
+          (userRowSelect)="rowsSelected($event)"> 
         </ng2-smart-table>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
