@@ -88,6 +88,7 @@
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false"
+                ()
                 (change)="filterBank($event)">
                 <ng-option value="BANAMEX">BANAMEX</ng-option>
                 <ng-option value="BANCO SANTANDER">BANCO SANTANDER</ng-option>
@@ -95,6 +96,15 @@
                 <ng-option value="BBVA BANCOMER">BBVA BANCOMER</ng-option>
                 <ng-option value="HSBC">HSBC</ng-option>
               </ng-select>
+              <!-- <ngx-select
+                [form]="consultForm"
+                [data]="goodItems"
+                label="Referencia"
+                value="id"
+                bindLabel="id"
+                (fetchItems)="getGoods($event)"
+                control="id">
+              </ngx-select> -->
             </form-field>
           </div>
           <div class="col-sm-12 col-md-4">
