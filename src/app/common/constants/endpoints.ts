@@ -2,6 +2,7 @@ export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
   Authority = 'catalog/authority',
   appraiser = 'catalog/valuadores',
+  Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
@@ -74,6 +75,7 @@ export enum ENDPOINT_LINKS {
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
   Proeficient = 'catalog/proficient',
+  Protection = 'catalog/protection',
   QAccumulatedGoods = 'catalog/q-accumulated-goods',
   Question = 'catalog/question',
   RAsuntDic = 'catalog/r-asunt-dic',
@@ -131,6 +133,7 @@ export enum ENDPOINT_LINKS {
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',
+  DinamicTable = 'dinamic-tables/get-tvaltable5-by-table',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',

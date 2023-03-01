@@ -3,4 +3,5 @@ export enum EventEndpoints {
   ComerEvents = `comer-events`, // comer_eventos
   ComerTEvents = 'comer-tevents', // comer_tpeventos
   ComerStatusVta = 'comer-statusvta', // comer_satusvta
+  ComerUsuaTxEvent = 'comer-usuatxevent',
 }

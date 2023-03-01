@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
+import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalCatAppraisersComponent } from '../modal-cost-catalog/modal-cat-appraisers.component';
 import { COLUMNS } from './columns';
@@ -15,74 +18,72 @@ import { COLUMNS } from './columns';
 export class CatAppraisersComponent extends BasePage implements OnInit {
   columns: any[] = [];
   dataTable: LocalDataSource = new LocalDataSource();
-  data: any[] = [
-    {
-      noAppraisers: '1',
-      name: 'Juan de Dios Ortega',
-      charge: 'Administrador',
-    },
-    {
-      noAppraisers: '2',
-      name: 'Mayra Fernanda Lucio',
-      charge: 'Contadora',
-    },
-  ];
+  proficient: IListResponse<IProficient> = {} as IListResponse<IProficient>;
+
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private proficientSer: ProeficientService
+  ) {
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
-    this.getPagination();
-    this.searchParams();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getProficient();
+    });
   }
 
-  searchParams() {}
-
-  getCostCatalog() {}
+  private getProficient() {
+    this.loading = true;
+    this.proficientSer.getAll(this.params.getValue()).subscribe({
+      next: resp => {
+        this.proficient = resp;
+        this.loading = false;
+      },
+      error: err => {
+        this.onLoadToast('error', err.error.message, '');
+        this.loading = false;
+      },
+    });
+  }
 
   openModal(context?: Partial<ModalCatAppraisersComponent>) {
-    const modalRef = this.modalService.show(ModalCatAppraisersComponent, {
-      initialState: { ...context },
+    let config: ModalOptions = {
+      initialState: {
+        ...context,
+        callback: (next: boolean) => {
+          if (next) this.getProficient();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getCostCatalog();
-    });
+    };
+    this.modalService.show(ModalCatAppraisersComponent, config);
   }
 
   openForm(allotment?: any) {
     this.openModal({ allotment });
   }
 
-  // getData() {
-  //   this.loading = true;
-  //   this.columns = this.data;
-  //   this.totalItems = this.data.length;
-  //   this.loading = false;
-  // }
-
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
-  }
-
-  getDrawers() {
-    this.loading = true;
-  }
-
-  delete(drawer: any) {
+  delete({ id }: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.proficientSer.remove(id).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.getProficient();
+          },
+          error: err => this.onLoadToast('error', err.error.message, ''),
+        });
       }
     });
   }

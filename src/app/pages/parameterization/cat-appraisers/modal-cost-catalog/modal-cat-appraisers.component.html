@@ -7,16 +7,15 @@
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('name')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              [class.disabled]="edit"
-              formControlName="name" />
+            <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-md-8">
-          <form-field [control]="form.get('charge')" label="Puesto">
-            <input type="text" class="form-control" formControlName="charge" />
+          <form-field [control]="form.get('position')" label="Puesto">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position" />
           </form-field>
         </div>
       </div>
@@ -28,7 +27,8 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="edit ? putCatalog() : postCatalog()"></confirm-button>
+          [loading]="loading"
+          (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

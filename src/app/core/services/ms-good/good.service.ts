@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { EventEmitter, inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
 import { IGood } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 
@@ -11,6 +13,9 @@ import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
   providedIn: 'root',
 })
 export class GoodService extends HttpService {
+  good$ = new EventEmitter<IGood>();
+  private http = inject(HttpClient);
+
   constructor() {
     super();
     this.microservice = GoodEndpoints.Good;
@@ -32,15 +37,25 @@ export class GoodService extends HttpService {
   create(good: IGood) {
     return this.post(GoodEndpoints.Good, good);
   }
+  //
+  update(good: IGood) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
 
-  update(id: string | number, good: IGood) {
-    const route = `${GoodEndpoints.Good}/${id}`;
+  updateWithoutId(good: IGood) {
+    const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
 
   remove(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);
+  }
+
+  removeGood(body: Object) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.delete(route, body);
   }
 
   getByExpedient(
@@ -95,5 +110,9 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.status=PDS`;
     return this.get<IListResponse<IGood>>(route, params);
+  }
+  updateTracked(id: string | number, good: ITrackedGood) {
+    const route = `${GoodEndpoints.Good}/${id}`;
+    return this.put(route, good);
   }
 }

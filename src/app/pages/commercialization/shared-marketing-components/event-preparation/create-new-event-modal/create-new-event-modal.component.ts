@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
@@ -9,7 +11,11 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class CreateNewEventModalComponent implements OnInit {
-  form: FormGroup = new FormGroup({});
+  title: string = 'Eventos';
+  edit: boolean = false;
+
+  eventForm: ModelForm<IComerEvent>;
+  event: IComerEvent;
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {}
 
@@ -18,15 +24,21 @@ export class CreateNewEventModalComponent implements OnInit {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      id_event: [{ value: null, disabled: true }],
-      cve: ['', [Validators.required]],
-      event: ['', [Validators.required]],
-      place: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      observ: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      dateEvent: ['', [Validators.required]],
-      dateClose: ['', [Validators.required]],
+    this.eventForm = this.fb.group({
+      id: [{ value: null, disabled: true }],
+      processKey: [null, []],
+      tpeventoId: [null, []],
+      address: [null, [, Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [, Validators.pattern(STRING_PATTERN)]],
+      eventDate: [null, []],
+      username: [null, []],
+      delegationNumber: [null, []],
+      statusvtaId: [null, []],
     });
+    if (this.event != null) {
+      this.edit = true;
+      this.eventForm.patchValue(this.event);
+    }
   }
 
   close() {

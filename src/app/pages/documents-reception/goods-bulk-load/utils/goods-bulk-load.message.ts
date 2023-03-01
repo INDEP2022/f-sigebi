@@ -24,6 +24,8 @@ const VALIDATION_UPLOAD_GENERATION_EXPEDIENTE_MESSAGE =
 // PROCESOS VALIDACION
 const ERROR_UNIDAD = (unidad: string) =>
   `La cantidad es inválida. En el campo UNIDAD: ${unidad}.`;
+const ERROR_CANTIDAD = (cantidad: string) =>
+  `La cantidad es inválida. En el campo CANTIDAD: ${cantidad}.`;
 const ERROR_ESTATUS = (estatus: string) =>
   `El estatus ${estatus} no existe en el sistema.`;
 // PROCESO 1 Y PROCESO 3
@@ -36,7 +38,7 @@ const ERROR_IDENTIFICADOR_MENAJE = (identificador: string) =>
   `Falta el número de bien padre menaje: ${identificador}.`;
 // PROCESO 4
 const ERROR_TRANSFERENTE = (transferente: string) =>
-  `No existe la transferente, emisora y autoridad para la clave indicada: ${transferente}.`;
+  `No existe el transferente, emisora y autoridad para la clave indicada: ${transferente}.`;
 const ERROR_ATRIBUTE_CLASS_GOOD = (class_good: number) =>
   `El atributo no pudo ser cargado para el clasificador del bien: ${class_good}.`;
 // CARGA PROCESO
@@ -52,6 +54,14 @@ const ERROR_CITY_ASUNTO_SAT = (asunto_sat: string) =>
   `No se encontro la clave de la ciudad filtrada por el asunto SAT: ${asunto_sat}.`;
 const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
   `No se encontro SAT_CVE_UNICA de: ${descripcion}.`;
+const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
+  `No se encontro la institución emisora: ${cveIssuing}.`;
+const ERROR_TRANSFERENTE_PARAMS = (contador: number) =>
+  `${
+    contador == 0
+      ? 'No existe el transferente, emisora y autoridad.'
+      : 'Demasiadas transferentes, emisoras y autoridades coinciden.'
+  }.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -80,4 +90,7 @@ export {
   ERROR_EXPEDIENTE,
   ERROR_CITY_ASUNTO_SAT,
   ERROR_GET_CLAVE_SAT,
+  ERROR_ISSUING_INSTITUTION,
+  ERROR_TRANSFERENTE_PARAMS,
+  ERROR_CANTIDAD,
 };

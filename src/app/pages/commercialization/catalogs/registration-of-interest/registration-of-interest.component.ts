@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { COUNT_TIIE_COLUMNS } from './registration-of-interest-modal/registration-of-interest-columns';
 import { RegistrationOfInterestModalComponent } from './registration-of-interest-modal/registration-of-interest-modal.component';
 @Component({
   selector: 'app-registration-of-interest',
@@ -17,9 +19,8 @@ export class RegistrationOfInterestComponent
   extends BasePage
   implements OnInit
 {
-  tiies: ITiieV1;
-  cats: ITiieV1[] = [];
-  tiiesList: any[];
+  tiie: ITiieV1;
+  tiiesList: ITiieV1[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -31,47 +32,12 @@ export class RegistrationOfInterestComponent
       delete: false,
       position: 'right',
     },
-    columns: {
-      id: {
-        title: 'Id',
-        type: 'number',
-        sort: false,
-      },
-      tiieDays: {
-        title: 'Tiie Days',
-        type: 'number',
-        sort: false,
-      },
-      tiieAverage: {
-        title: 'Tiie Average',
-        type: 'number',
-        sort: false,
-      },
-      tiieMonth: {
-        title: 'Tiie Month',
-        type: 'number',
-        sort: false,
-      },
-      tiieYear: {
-        title: 'Tiie Year',
-        type: 'number',
-        sort: false,
-      },
-      registryDate: {
-        title: 'Registry Date',
-        type: 'string',
-        sort: false,
-      },
-      user: {
-        title: 'User',
-        type: 'string',
-        sort: false,
-      },
-    },
+    columns: { ...COUNT_TIIE_COLUMNS },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data = this.parameterTiieService.getTiie();
+  data = this.tiiesList;
   form: FormGroup;
 
   constructor(
@@ -93,8 +59,6 @@ export class RegistrationOfInterestComponent
     this.parameterTiieService.getAll(this.params.getValue()).subscribe({
       next: data => {
         this.tiiesList = data.data;
-        console.log(this.tiiesList);
-        // this.cats = data;
         this.totalItems = data.count;
         this.loading = false;
       },
@@ -102,8 +66,15 @@ export class RegistrationOfInterestComponent
     });
   }
 
-  openForm(provider?: any) {
-    this.openModal({ provider });
+  openForm(provider?: ITiieV1) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getTiie();
+      },
+    };
+    this.modalService.show(RegistrationOfInterestModalComponent, modalConfig);
   }
 
   openModal(context?: Partial<RegistrationOfInterestModalComponent>) {

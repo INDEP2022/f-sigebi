@@ -97,12 +97,13 @@
       </div>
       <div class="row">
         <div class="col-12 text-center">
-          <button
-            class="btn btn-success active btn-sm ml-3"
+          <confirm-button
+            [type]="'button'"
+            [btnSmall]="true"
             [disabled]="!form.valid"
-            (click)="confirm()">
-            {{ edit ? 'Actualizar' : 'Guardar' }}
-          </button>
+            [loading]="loading"
+            (click)="confirm()"></confirm-button>
+
           <button
             class="btn btn-primary active btn-sm ml-3"
             (click)="openModalCity()"
@@ -124,7 +125,7 @@
             [settings]="settings"
             [source]="dataCourtCity.data"
             (edit)="(null)"
-            (delete)="(null)">
+            (delete)="deleteCity($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
       </div>
@@ -132,11 +133,6 @@
         [filterParams]="filterParams"
         [totalItems]="dataCourtCity.count">
       </app-pagination>
-
-      <!-- <ng2-smart-table [settings]="settings" [source]="dataCourtCity.data" (edit)="openModal()"
-        (delete)="delete($event.data)"></ng2-smart-table>
-      <app-pagination [filterParams]="filterParams" [totalItems]="dataCourtCity.count">
-      </app-pagination> -->
     </div>
   </div>
 </app-card>

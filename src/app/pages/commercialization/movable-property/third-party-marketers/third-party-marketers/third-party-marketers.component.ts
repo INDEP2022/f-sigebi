@@ -122,7 +122,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       .subscribe(() => this.getTypeEvent(this.thirPartys));
   }
 
-  getTypeEvent(thirdParty: IThirdParty) {
+  getTypeEvent(thirdParty?: IThirdParty) {
     this.loading = true;
     this.typeEventXterComerService
       .getById(thirdParty.id)
@@ -155,7 +155,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       .subscribe(() => this.getAmount(this.typeEvents));
   }
 
-  getAmount(typeEvent: ITypeEventXtercomer) {
+  getAmount(typeEvent?: ITypeEventXtercomer) {
     this.loading = true;
     this.comiXThirdService.getById(typeEvent.thirdPartyId).subscribe({
       next: response => {
@@ -172,7 +172,9 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         thirPartys,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getThirdPartyAll();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -184,7 +186,9 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         typeEvents,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getThirdPartyAll();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -196,7 +200,9 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         amounts,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getThirdPartyAll();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

@@ -58,11 +58,11 @@
       </div>
     </form>
     <hr />
-    <div>
+    <div *ngIf="showFoli">
       <app-scanning-foil
         [good]="good"
         [numberFoli]=""
-        (folioUniversal)="changeFoli($event)"></app-scanning-foil>
+        (documentEmmit)="changeFoli($event)"></app-scanning-foil>
     </div>
   </div>
 </app-card>
