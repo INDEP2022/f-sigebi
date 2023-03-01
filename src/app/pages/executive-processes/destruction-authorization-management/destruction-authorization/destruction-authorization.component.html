@@ -1,0 +1,22 @@
+<app-card [header]="true">
+    <div header>
+        <div class="ch-content">
+            <h5 class="title">
+                GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
+            </h5>
+        </div>
+    </div>
+    <div body>
+        <div class="row">
+            <div class="form-material col-md-5">
+                <search-bar [params]="params"></search-bar>
+            </div>
+        </div>
+        <div [class]="loading ? 'table-loading' : ''">
+            <div class="table-responsive">
+                <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="proceedingsList" (edit)="openForm($event.data)"></ng2-smart-table>
+            </div>
+            <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        </div>
+    </div>
+</app-card>

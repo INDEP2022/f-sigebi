@@ -8,6 +8,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
+import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import { ProceedingsDetailDeliveryReceptionService } from './proceedings-detail-delivery-reception.service';
 
@@ -139,7 +140,11 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getProceedingsByKey(
     id: string | number
   ): Observable<IListResponse<IProceedings>> {
-    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.keysProceedings=${id}`;
     return this.get<IListResponse<IProceedings>>(route);
+  }
+
+  getAll3(params?: ListParams | string): Observable<IListResponse<IProccedingsDeliveryReception>> {
+    return this.get<IListResponse<IProccedingsDeliveryReception>>(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
   }
 }
