@@ -38,7 +38,7 @@ export class ProcedureManagementService extends HttpService {
 
   getById(id: number | string): Observable<IProceduremanagement> {
     return this.get(
-      `${ProcedureManagementEndPoints.ProcedureManagement}/id/${id}`
+      `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`
     );
   }
 

@@ -17,8 +17,8 @@ export enum FlyerPersontype {
 
 export interface ITmpGestRegDoc {
   description: null | string;
-  affair: IAffair | string | null;
-  id: number;
+  affair: string | null;
+  id?: number;
   senderExt: null | string;
   affairKey: null | string;
   typeProcedure: null | string;
@@ -40,6 +40,7 @@ export interface ITmpGestRegDoc {
   station: null | string;
   authority: null | string;
   status: null | string;
+  affairDetail: IAffair | null;
 }
 
 export interface INotificationDetailFunctionData {

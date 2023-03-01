@@ -3,14 +3,14 @@
     <div class="d-flex justify-content-between">
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
-        <button
+        <!-- <button
           class="btn btn-secondary btn-sm active mr-2"
           (click)="showTrackRecords()">
           Antecedentes
-        </button>
-        <button class="btn btn-info btn-sm active" (click)="chooseOther()">
+        </button> -->
+        <!-- <button class="btn btn-info btn-sm active" (click)="chooseOther()">
           Seleccionar volante
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -737,7 +737,11 @@
             type="button"
             class="btn btn-primary active"
             (click)="goodsCaptureCheck()"
-            [disabled]="!flyerCopyRecipientForm.valid || procedureBlocked">
+            [disabled]="
+              !flyerCopyRecipientForm.valid ||
+              !documentsReceptionForm.valid ||
+              procedureBlocked
+            ">
             Siguiente
           </button>
         </div>
