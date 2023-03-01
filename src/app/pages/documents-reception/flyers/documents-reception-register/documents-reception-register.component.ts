@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, Observable, takeUntil } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
@@ -55,6 +56,7 @@ import { TmpNotificationService } from 'src/app/core/services/ms-notification/tm
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AppState } from '../../../../app.reducers';
 import { ITempExpedient } from '../../../../core/models/ms-expedient/tmp-expedient.model';
 import { FlyerPersontype } from '../../../../core/models/ms-flier/tmp-doc-reg-management.model';
 import { ICountAffairOptions } from '../../../../core/models/ms-interfacesat/ms-interfacesat.interface';
@@ -69,6 +71,8 @@ import { CatalExpSatService } from '../../../../core/services/ms-interfacesat/ca
 import { SatTransferService } from '../../../../core/services/ms-interfacesat/sat-transfer.service';
 import { MassiveGoodService } from '../../../../core/services/ms-massivegood/massive-good.service';
 import { ProtectionService } from '../../../../core/services/ms-protection/protection.service';
+import { IGlobalVars } from '../../../../shared/global-vars/models/IGlobalVars.model';
+import { GlobalVarsService } from '../../../../shared/global-vars/services/global-vars.service';
 import { DocReceptionTrackRecordsModalComponent } from './components/doc-reception-track-records-modal/doc-reception-track-records-modal.component';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
 import { DOCUMENTS_RECEPTION_TRACK_RECORDS_TEST_DATA } from './constants/documents-reception-register-default-values';
@@ -114,7 +118,7 @@ export class DocumentsReceptionRegisterComponent
     autorityNumber: (value: string) => this.authorityChange(value),
   };
   formData: IDocumentsReceptionData = null;
-  initialCondition: string = 'T';
+  initialCondition: string = 'A';
   pgrInterface: boolean = false;
   satInterface: boolean = false;
   expedientRecord: number = null;
@@ -164,6 +168,7 @@ export class DocumentsReceptionRegisterComponent
     gNoVolante: null,
   };
   pageParams: Partial<IDocReceptionFlyersRegistrationParams>;
+  globalVars: IGlobalVars;
 
   constructor(
     private router: Router,
@@ -198,7 +203,9 @@ export class DocumentsReceptionRegisterComponent
     private institutionService: IssuingInstitutionService,
     private protectionService: ProtectionService,
     private flyerCopiesService: CopiesXFlierService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private store: Store<AppState>,
+    private globalVarsService: GlobalVarsService
   ) {
     super();
     this.pageParams = this.docDataService.flyersRegistrationParams;
@@ -269,10 +276,12 @@ export class DocumentsReceptionRegisterComponent
   }
 
   checkParams() {
+    this.getGlobalVars();
+    this.updateGlobalVars('gCommit', 'S');
     //Parametros para pruebas
     if (this.pageParams == null) {
       this.pageParams = {
-        pGestOk: null,
+        pGestOk: 1,
         pNoVolante: null,
         pSatTipoExp: null,
         pNoTramite: null,
@@ -281,10 +290,10 @@ export class DocumentsReceptionRegisterComponent
       };
     }
     console.log(this.pageParams);
-    //If para pruebas
+    //TODO: Remover if para pruebas
     if (this.docDataService.documentsReceptionRegisterForm != null) {
-      this.globals.gCommit = 'S';
-      this.globals.gOFFCommit = 'S';
+      this.updateGlobalVars('gCommit', 'S');
+      this.updateGlobalVars('gOFFCommit', 'S');
     }
     if (this.globals.gCommit == 'S') {
       if (this.globals.gOFFCommit == 'N') {
@@ -294,6 +303,30 @@ export class DocumentsReceptionRegisterComponent
         this.postGoodsCapture();
       }
     }
+  }
+
+  getGlobalVars() {
+    this.globalVarsService
+      .getGlobalVars$()
+      .subscribe((globalVars: IGlobalVars) => {
+        this.globalVars = globalVars;
+      });
+  }
+
+  updateGlobalVars<ParamKey extends keyof IGlobalVars>(
+    globalVar: ParamKey,
+    value: IGlobalVars[ParamKey]
+  ) {
+    let newState = { ...this.globalVars };
+    newState = {
+      ...this.globalVars,
+      [globalVar]: value,
+    };
+    this.globalVarsService.updateGlobalVars(newState);
+  }
+
+  resetGlobalVars() {
+    this.globalVarsService.resetGlobalVars();
   }
 
   getLoggedUserArea() {
@@ -318,7 +351,7 @@ export class DocumentsReceptionRegisterComponent
       param.addFilter('expSat', this.pageParams.pSatTipoExp);
       this.catExpSatService.getAllWithFilters(param.getParams()).subscribe({
         next: data => {
-          this.globals.pIndicadorSat = data.data[0].indicatorSat;
+          this.updateGlobalVars('pIndicadorSat', data.data[0].indicatorSat);
         },
         error: () => {},
       });
@@ -354,8 +387,7 @@ export class DocumentsReceptionRegisterComponent
       affairSij,
       delegation,
     } = procedure;
-    //TODO: Asignar variable global con Ngrx
-    this.globals.vTipoTramite = typeManagement;
+    this.updateGlobalVars('vTipoTramite', typeManagement);
     if (affairType == 5) {
       this.initialCondition = 'T';
     } else if ([1, 2, 3, 4].includes(affairType)) {
@@ -983,7 +1015,7 @@ export class DocumentsReceptionRegisterComponent
       this.transferentService.getById(notif.endTransferNumber).subscribe({
         next: data => {
           this.formControls.endTransferNumber.setValue(data);
-          this.globals.noTransferente = data.id;
+          this.updateGlobalVars('noTransferente', data.id);
         },
       });
     if (notif.courtNumber != null)
@@ -1401,7 +1433,7 @@ export class DocumentsReceptionRegisterComponent
 
   changeTransferor(event: ITransferente) {
     this.formControls.transference.setValue(event.id);
-    this.globals.noTransferente = event.id;
+    this.updateGlobalVars('noTransferente', event.id);
   }
 
   getCourts(lparams: ListParams) {
@@ -1587,7 +1619,7 @@ export class DocumentsReceptionRegisterComponent
       this.transferentService.getById(key.transfereeNum).subscribe({
         next: data => {
           this.formControls.endTransferNumber.setValue(data);
-          this.globals.noTransferente = data.id;
+          this.updateGlobalVars('noTransferente', data.id);
         },
       });
     if (key.stationNum != null)
@@ -2181,33 +2213,35 @@ export class DocumentsReceptionRegisterComponent
 
   checkGoodsDailyEviction() {
     let goods: IGood[] = [];
+    let goodsStatus: IGood[] = [];
     const params = new FilterParams();
-    params.addFilter('', this.formControls.wheelNumber.value);
+    params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
     this.docRegisterService.getGoods(params.getParams()).subscribe({
       next: data => {
         if (data.data.length > 0) {
           data.data.forEach(g => {
+            goods.push(g);
             if (['VXR', 'ROP', 'STA'].includes(g.status)) {
               this.massiveGoodService
                 .countMassiveGood(Number(g.goodId))
                 .subscribe({
                   next: data => {
                     if (data.data > 0) {
-                      goods.push(g);
+                      goodsStatus.push(g);
                     }
                   },
                   error: () => {},
                 });
             }
           });
-          this.deleteFromMassiveGood(goods);
+          this.massiveGoodCorrections(goods, goodsStatus);
         }
       },
       error: () => {},
     });
   }
 
-  deleteFromMassiveGood(goods: IGood[]) {
+  massiveGoodCorrections(goods: IGood[], goodsStatus: IGood[]) {
     if (
       goods.length > 0 &&
       Number(this.formControls.dailyEviction.value) == 0
@@ -2221,6 +2255,75 @@ export class DocumentsReceptionRegisterComponent
           });
       });
     }
+    if (goods.length > 0) {
+      goods.forEach(g => {
+        const param = new FilterParams();
+        param.addFilter('goodNumber', g.goodId);
+        this.massiveGoodService.getAllWithFilters(param.getParams()).subscribe({
+          next: data => {
+            if (data.data.length > 0) {
+              const body = {
+                daydayEviction: Number(this.formControls.dailyEviction.value),
+                user: this.userId,
+              };
+              this.massiveGoodService.update(data.data[0].id, body).subscribe({
+                next: () => {},
+                error: () => {},
+              });
+            }
+          },
+          error: () => {},
+        });
+      });
+    } else {
+      this.insertMassiveGoods(goodsStatus);
+    }
+    if (this.docDataService.trackRecordGoods.length > 0) {
+      const good = this.docDataService.trackRecordGoods[0].goodId;
+      const params = new FilterParams();
+      params.addFilter('goodId', good);
+      this.docRegisterService.getGoods(params.getParams()).subscribe({
+        next: data => {
+          const goodsToCompare = data.data.filter(
+            g => !['VXR', 'ROP', 'STA'].includes(g.status)
+          );
+          this.massiveGoodService
+            .countMassiveGood(data.data[0].goodId)
+            .subscribe({
+              next: resp => {
+                if (goodsToCompare.length > resp.data) {
+                  const goodsInsert = goodsStatus.filter(
+                    g => !goods.includes(g)
+                  );
+                  if (goodsInsert.length > 0) {
+                    this.insertMassiveGoods(goodsInsert);
+                  }
+                }
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
+    }
+  }
+
+  insertMassiveGoods(goods: IGood[]) {
+    goods.forEach(gi => {
+      const body = {
+        goodNumber: gi.goodId,
+        id: 'Para Comercializar',
+        fileNumber: this.formControls.expedientNumber.value,
+        flyerNumber: this.formControls.wheelNumber.value,
+        user: this.userId,
+        massiveChargeDate: new Date(),
+        daydayEviction: Number(this.formControls.dailyEviction.value),
+      };
+      this.massiveGoodService.create(body).subscribe({
+        next: () => {},
+        error: () => {},
+      });
+    });
   }
 
   goodsCaptureCheck() {
@@ -2235,7 +2338,7 @@ export class DocumentsReceptionRegisterComponent
       this.documentsReceptionForm.value;
     console.log(this.docDataService.documentsReceptionRegisterForm);
     // return;
-    this.globals.bn = 1;
+    this.updateGlobalVars('bn', 1);
     if (this.initialCondition == 'T') {
       if (
         this.globals.pIndicadorSat == 0 &&
@@ -2303,23 +2406,27 @@ export class DocumentsReceptionRegisterComponent
     console.log(trackRecord);
     if (trackRecord) {
       if (this.formControls.expedientNumber.value != null) {
-        this.globals.gNoExpediente = Number(
-          this.formControls.expedientNumber.value
+        this.updateGlobalVars(
+          'gNoExpediente',
+          Number(this.formControls.expedientNumber.value)
         );
       } else if (trackRecord?.expedientNumber) {
-        this.globals.gNoExpediente = trackRecord.expedientNumber;
+        this.updateGlobalVars('gNoExpediente', trackRecord.expedientNumber);
         this.formControls.expedientNumber.setValue(trackRecord.expedientNumber);
       } else if (this.expedientRecord != null) {
-        this.globals.gNoExpediente = this.expedientRecord;
+        this.updateGlobalVars('gNoExpediente', this.expedientRecord);
       }
       if (this.formControls.wheelNumber.value != null) {
-        this.globals.gNoVolante = Number(this.formControls.wheelNumber.value);
+        this.updateGlobalVars(
+          'gNoVolante',
+          Number(this.formControls.wheelNumber.value)
+        );
       } else if (trackRecord?.wheelNumber) {
-        this.globals.gNoVolante = trackRecord.wheelNumber;
+        this.updateGlobalVars('gNoVolante', trackRecord.wheelNumber);
         this.formControls.wheelNumber.setValue(trackRecord.wheelNumber);
       }
-      this.globals.gLastCheck = 1;
-      this.globals.antecede = 1;
+      this.updateGlobalVars('gLastCheck', 1);
+      this.updateGlobalVars('antecede', 1);
       this.startGoodsCapture();
     }
     this.startGoodsCapture();
@@ -2327,12 +2434,12 @@ export class DocumentsReceptionRegisterComponent
 
   startGoodsCapture() {
     if (this.formControls.wheelType.value == 'A') {
-      this.globals.gCreaExpediente = 'N';
+      this.updateGlobalVars('gCreaExpediente', 'N');
     }
     if (this.globals.gNoExpediente == null) {
       this.expedientService.getNextVal().subscribe({
         next: data => {
-          this.globals.gNoExpediente = data.nextval;
+          this.updateGlobalVars('gNoExpediente', data.nextval);
           this.formControls.expedientNumber.setValue(Number(data.nextval));
           console.log(this.globals.gNoExpediente);
         },
@@ -2342,7 +2449,7 @@ export class DocumentsReceptionRegisterComponent
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
           this.formControls.wheelNumber.setValue(data.wheel);
-          this.globals.gNoVolante = data.wheel;
+          this.updateGlobalVars('gNoVolante', data.wheel);
         },
         error: () => {},
       });
@@ -2352,7 +2459,7 @@ export class DocumentsReceptionRegisterComponent
       next: data => {
         const { affair, affairSij, typeManagement, officeNumber } = data;
         this.saveTmpExpedients(affair, affairSij, typeManagement, officeNumber);
-        this.saveTmpnotifications(affairSij);
+        this.saveTmpNotifications(affairSij);
       },
     });
     this.captureGoods();
@@ -2402,7 +2509,7 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
-  saveTmpnotifications(affairSij: number) {
+  saveTmpNotifications(affairSij: number) {
     if (this.formControls.wheelNumber.value != null) {
       this.tmpNotificationService
         .remove(this.formControls.wheelNumber.value)
@@ -2706,13 +2813,13 @@ export class DocumentsReceptionRegisterComponent
   }
 
   endProcess() {
-    //TODO: Limpiar globales usadas con Ngrx
-    this.globals = null;
+    this.resetGlobalVars();
     this.docDataService.flyersRegistrationParams = null;
     this.docDataService.documentsReceptionRegisterForm = null;
     this.docDataService.goodsBulkLoadPgrSaeParams = null;
     this.docDataService.goodsBulkLoadSatSaeParams = null;
     this.docDataService.goodsCaptureTempParams = null;
+    this.docDataService.trackRecordGoods = [];
     this.router.navigateByUrl('pages/general-processes/work-mailbox');
   }
 }

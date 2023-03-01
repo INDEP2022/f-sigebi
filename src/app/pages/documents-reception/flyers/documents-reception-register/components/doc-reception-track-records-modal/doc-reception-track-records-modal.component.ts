@@ -9,6 +9,7 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DocumentsReceptionDataService } from '../../../../../../core/services/document-reception/documents-reception-data.service';
 import { CopiesXFlierService } from '../../../../../../core/services/ms-flier/copies-x-flier.service';
 import {
   DOCUMENTS_RECEPTION_SELECT_TRACK_RECORD_COLUMNS,
@@ -81,7 +82,8 @@ export class DocReceptionTrackRecordsModalComponent
     private fb: FormBuilder,
     private expedientService: ExpedientService,
     private docReceptionService: DocReceptionRegisterService,
-    private flyerService: CopiesXFlierService
+    private flyerService: CopiesXFlierService,
+    private docsDataService: DocumentsReceptionDataService
   ) {
     super();
   }
@@ -178,6 +180,7 @@ export class DocReceptionTrackRecordsModalComponent
 
   confirm() {
     if (!this.rowSelected) return;
+    this.docsDataService.trackRecordGoods = this.goodColumns;
     this.onSelect.emit(this.selectedFlyer);
     this.modalRef.hide();
   }

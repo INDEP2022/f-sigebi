@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDocReceptionFlyersRegistrationParams } from 'src/app/pages/documents-reception/flyers/documents-reception-register/interfaces/documents-reception-register-form';
 import {
   IDocumentsReceptionRegisterForm,
@@ -44,6 +45,8 @@ export class DocumentsReceptionDataService {
   private _documentsReceptionRegisterForm: Partial<IDocumentsReceptionRegisterForm> =
     null;
 
+  private _trackRecordGoods: IGood[] = [];
+
   constructor() {}
 
   get flyersRegistrationParams() {
@@ -67,6 +70,10 @@ export class DocumentsReceptionDataService {
     return { ...this._documentsReceptionRegisterForm };
   }
 
+  get trackRecordGoods() {
+    return { ...this._trackRecordGoods };
+  }
+
   set flyersRegistrationParams(params: IDocReceptionFlyersRegistrationParams) {
     this._flyersRegistrationParams = params;
   }
@@ -87,6 +94,10 @@ export class DocumentsReceptionDataService {
     form: Partial<IDocumentsReceptionRegisterForm>
   ) {
     this._documentsReceptionRegisterForm = form;
+  }
+
+  set trackRecordGoods(goods: IGood[]) {
+    this._trackRecordGoods = goods;
   }
 
   setFlyersRegParam<

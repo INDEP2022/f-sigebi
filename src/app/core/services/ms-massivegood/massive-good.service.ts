@@ -39,7 +39,7 @@ export class MassiveGoodService extends HttpService {
     return this.post(this.route.MassiveChargeGoods, body);
   }
 
-  update(id: string | number, body: IMassiveGood) {
+  update(id: string | number, body: Partial<IMassiveGood>) {
     const route = `${this.route.MassiveChargeGoods}/${id}`;
     return this.put(route, body);
   }

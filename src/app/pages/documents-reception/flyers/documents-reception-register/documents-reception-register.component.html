@@ -70,7 +70,8 @@
                 control="identifier"
                 label="Identificador"
                 [searchOnInit]="true"
-                [readonly]="expedientNumber == null">
+                [readonly]="expedientNumber == null"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
 
@@ -86,19 +87,6 @@
           </div>
 
           <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('subject')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              (fetchItems)="getSubjects($event)"
-              [data]="subjects"
-              value="id"
-              bindLabel="description"
-              control="subject"
-              label="Asunto">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('affair')"
@@ -118,25 +106,6 @@
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('subject')"
-            label="Asunto">
-            <input
-              type="text"
-              formControlName="subject"
-              class="form-control"
-              readonly />
-          </form-field>
-
-          <div class="col-md-2">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="openModalSubjects()">
-              <i class="bx bx-list-plus bx-sm float-icon"></i>
-            </button>
-          </div> -->
           </div>
         </div>
 
@@ -351,16 +320,6 @@
           </div>
 
           <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
-            <!-- <form-field
-            class="col-md-8"
-            [control]="documentsReceptionForm.get('touchPenaltyKey')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="touchPenaltyKey"
-              label="Tipo Juicio">
-            </ngx-select>
-          </form-field> -->
             <form-field
               *ngIf="!pgrInterface && initialCondition == 'T'"
               class="col-md-12"
@@ -467,7 +426,8 @@
                 bindLabel="uniqueCve"
                 control="uniqueKey"
                 label="Clave única 3 niveles"
-                (change)="setUniqueKeyData($event)">
+                (change)="setUniqueKeyData($event)"
+                termMaxLength="5">
               </ngx-select>
             </form-field>
 
@@ -482,7 +442,8 @@
                 control="cityNumber"
                 label="Ciudad"
                 [searchOnInit]="true"
-                (change)="cityChange($event)">
+                (change)="cityChange($event)"
+                termMaxLength="60">
               </ngx-select>
             </form-field>
 
@@ -507,7 +468,8 @@
                 bindLabel="value"
                 control="entFedKey"
                 label="Ent. Fed"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                termMaxLength="80">
               </ngx-select>
             </form-field>
 
@@ -522,7 +484,8 @@
                 control="endTransferNumber"
                 label="Transferente"
                 [searchOnInit]="true"
-                (change)="changeTransferor($event)">
+                (change)="changeTransferor($event)"
+                termMaxLength="200">
               </ngx-select>
             </form-field>
           </div>
@@ -538,7 +501,8 @@
                 bindLabel="stationName"
                 control="stationNumber"
                 label="Emisora"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
 
@@ -553,24 +517,13 @@
                 control="autorityNumber"
                 label="Autoridad"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface">
+                [readonly]="pgrInterface"
+                termMaxLength="400">
               </ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-5" *ngIf="initialCondition != 'T'">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('transference')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="transferors"
-              bindLabel="nameTransferent"
-              control="transference"
-              label="Transferente"
-              [readonly]="true">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('minpubNumber')">
@@ -581,7 +534,8 @@
                 bindLabel="description"
                 control="minpubNumber"
                 [searchOnInit]="true"
-                label="Min. P&uacute;blico">
+                label="Min. P&uacute;blico"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
 
@@ -596,7 +550,8 @@
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface">
+                [readonly]="pgrInterface"
+                termMaxLength="80">
               </ngx-select>
             </form-field>
           </div>
@@ -613,7 +568,8 @@
                 bindLabel="description"
                 control="courtNumber"
                 label="Juzgado"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
           </div>
@@ -629,7 +585,8 @@
                 bindLabel="name"
                 control="indiciadoNumber"
                 [label]="taxpayerLabel"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                termMaxLength="1000">
               </ngx-select>
             </form-field>
 
@@ -643,22 +600,13 @@
                 bindLabel="value"
                 control="viaKey"
                 label="V&iacute;a Recepci&oacute;n"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                termMaxLength="30">
               </ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('destinationArea')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="destinationArea"
-              label="Área Destino">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('destinationArea')"
@@ -680,16 +628,6 @@
             </div>
           </div>
           <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('destinationArea')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="destinationArea"
-              label="Área Destino">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('delegationName')"
@@ -701,15 +639,6 @@
                 readonly />
             </form-field>
 
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('destinationArea')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="destinationArea">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('subDelegationName')"
@@ -733,7 +662,8 @@
                 bindLabel="description"
                 control="estatusTramite"
                 label="Gestión Destino"
-                [searchOnInit]="true">
+                [searchOnInit]="true"
+                termMaxLength="30">
               </ngx-select>
             </form-field>
           </div>
@@ -751,7 +681,8 @@
             bindLabel="user"
             control="copyuser"
             label="En atención"
-            [searchOnInit]="true">
+            [searchOnInit]="true"
+            termMaxLength="30">
           </ngx-select>
         </form-field>
       </form>
@@ -764,7 +695,8 @@
             bindLabel="user"
             control="copyuser"
             label="C.P.P."
-            [searchOnInit]="true">
+            [searchOnInit]="true"
+            termMaxLength="30">
           </ngx-select>
         </form-field>
       </form>
@@ -810,21 +742,6 @@
           </button>
         </div>
       </div>
-      <!-- <div class="col-md-6"></div> -->
-      <!-- <form-field
-        class="col-md-6"
-        [control]="documentsReceptionForm.get('cpp')">
-        <ngx-select
-          [form]="documentsReceptionForm"
-          [data]="identifiers"
-          control="cpp">
-        </ngx-select>
-      </form-field> -->
-      <!-- <div class="col-md-6 text-right">
-        <button class="btn btn-primary active btn-sm mt-3" type="submit">
-          Siguiente
-        </button>
-      </div> -->
     </div>
   </div>
 </app-card>

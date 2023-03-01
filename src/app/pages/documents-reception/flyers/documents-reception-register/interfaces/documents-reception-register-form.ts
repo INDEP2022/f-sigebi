@@ -40,7 +40,10 @@ export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsTo
 export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   wheelType: new FormControl<string>(null, Validators.required),
   identifier: new FormControl<IIdentifier>(null, Validators.required),
-  externalRemitter: new FormControl<string>(null, Validators.required),
+  externalRemitter: new FormControl<string>(null, [
+    Validators.required,
+    Validators.maxLength(60),
+  ]),
   affairKey: new FormControl<string>(null, Validators.required),
   affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null, Validators.required),
@@ -54,16 +57,25 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   addressGeneral: new FormControl<boolean | number>(false),
   stage: new FormControl<string>(null),
   stageName: new FormControl<string>(null),
-  circumstantialRecord: new FormControl<string>(null),
-  preliminaryInquiry: new FormControl<string>(null),
-  criminalCase: new FormControl<string>(null),
+  circumstantialRecord: new FormControl<string>(null, Validators.maxLength(30)),
+  preliminaryInquiry: new FormControl<string>(null, Validators.maxLength(200)),
+  criminalCase: new FormControl<string>(null, Validators.maxLength(40)),
   judgementType: new FormControl<string>(null),
-  protectionKey: new FormControl<string>(null),
-  touchPenaltyKey: new FormControl<string>(null),
-  officeExternalKey: new FormControl<string>(null, Validators.required),
+  protectionKey: new FormControl<string>(null, Validators.maxLength(100)),
+  touchPenaltyKey: new FormControl<string>(null, Validators.maxLength(30)),
+  officeExternalKey: new FormControl<string>(null, [
+    Validators.required,
+    Validators.maxLength(35),
+  ]),
   externalOfficeDate: new FormControl<string | Date>(null, Validators.required),
-  observations: new FormControl<string>(null, Validators.required),
-  expedientTransferenceNumber: new FormControl<string>(null),
+  observations: new FormControl<string>(null, [
+    Validators.required,
+    Validators.maxLength(1000),
+  ]),
+  expedientTransferenceNumber: new FormControl<string>(
+    null,
+    Validators.maxLength(150)
+  ),
   uniqueKey: new FormControl<string | number>(null),
   cityNumber: new FormControl<ICity>(null, Validators.required),
   entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(
