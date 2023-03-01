@@ -21,12 +21,12 @@ export class DelegationService implements ICrudMethods<IDelegation> {
     private zonesRepository: Repository<IZoneGeographic>
   ) {}
 
-  getAll(params?: ListParams | string): Observable<IListResponse<IDelegation>> {
+  getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
   getAllModal(self?: DelegationService, params?: ListParams | string) {
-    return self.getAll(params);
+    return self.delegationRepository.getAllPaginated(self.route, params);
   }
 
   getById(id: string | number): Observable<IDelegation> {

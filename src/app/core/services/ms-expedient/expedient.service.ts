@@ -34,7 +34,7 @@ export class ExpedientService extends HttpService {
     return this.post(this.route.CreateExpedient, body);
   }
 
-  update(id: number, body: Partial<IExpedient>) {
+  update(id: number | string, body: Partial<IExpedient>) {
     return this.post(`${this.route.BasePath}/${id}`, body);
   }
 }
