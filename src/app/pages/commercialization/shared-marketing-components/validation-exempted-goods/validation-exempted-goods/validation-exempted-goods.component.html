@@ -6,17 +6,29 @@
   </div>
 
   <div body>
-    <div [class]="loading ? 'table-loading' : ''">
-      <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="goods"
-          (edit)="openForm($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [filterParams]="filterParams" [filterField]="searchFilter"></search-bar>
       </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <div class="table-responsive">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="goods" (userRowSelect)="rowsSelected($event)"
+            ></ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <div class="row pt-5">
+      <div [class]="loading ? 'table-loading' : ''">
+        <div class="table-responsive">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="proccessList"
+            (edit)="openForm($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
+      </app-pagination>
+    </div>
   </div>
 
   <div footer></div>
