@@ -7,7 +7,7 @@
       <form class="form-material mb-0" [formGroup]="consultForm">
         <div class="row">
           <div class="col-sm-12 col-md-4">
-            <form-field [control]="consultForm.get('id')">
+            <!-- <form-field [control]="consultForm.get('id')">
               <ngx-select
                 [form]="consultForm"
                 [data]="goodItems"
@@ -17,9 +17,13 @@
                 (fetchItems)="getGoods($event)"
                 control="id">
               </ngx-select>
-            </form-field>
+            </form-field> -->
+            <app-goods-shared
+              [form]="consultForm"
+              goodField="id"
+              label="Referencia"></app-goods-shared>
           </div>
-          <div class="col-sm-12 col-md-5">
+          <div class="col-sm-12 col-md-5 mt-3">
             <div class="row">
               <div class="col-6">
                 <form-field
@@ -42,12 +46,13 @@
                     formControlName="endDate"
                     class="form-control"
                     bsDatepicker
-                    [maxDate]="maxDate" />
+                    [maxDate]="maxDate"
+                    [minDate]="consultForm.get('startDate').value" />
                 </form-field>
               </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-3 d-flex justify-content-center">
+          <div class="col-sm-12 col-md-3 mt-3 d-flex justify-content-center">
             <div class="col-sm-12 col-lg-8">
               <button
                 class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
@@ -88,7 +93,6 @@
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false"
-                ()
                 (change)="filterBank($event)">
                 <ng-option value="BANAMEX">BANAMEX</ng-option>
                 <ng-option value="BANCO SANTANDER">BANCO SANTANDER</ng-option>
@@ -96,15 +100,6 @@
                 <ng-option value="BBVA BANCOMER">BBVA BANCOMER</ng-option>
                 <ng-option value="HSBC">HSBC</ng-option>
               </ng-select>
-              <!-- <ngx-select
-                [form]="consultForm"
-                [data]="goodItems"
-                label="Referencia"
-                value="id"
-                bindLabel="id"
-                (fetchItems)="getGoods($event)"
-                control="id">
-              </ngx-select> -->
             </form-field>
           </div>
           <div class="col-sm-12 col-md-4">

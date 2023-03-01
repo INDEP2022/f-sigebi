@@ -138,6 +138,8 @@ export class SirsaePaymentConsultationListComponent
     },
   ];
 
+  // maxDate = new Date();
+
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
@@ -149,7 +151,7 @@ export class SirsaePaymentConsultationListComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoods({ page: 1, text: '' });
+    // this.getGoods({ page: 1, text: '' });
     this.consultSettings.columns = CONSULT_SIRSAE_COLUMNS;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -195,27 +197,27 @@ export class SirsaePaymentConsultationListComponent
     });
   }
 
-  getGoods(params: ListParams) {
-    // if (params.text == '') {
-    //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
-    //   this.goodItems = new DefaultSelect(item[0], 1);
-    // }
-    if (params.text === '') {
-      this.goodService.getAll(params).subscribe(res => {
-        this.goodItems = new DefaultSelect(res.data, 5);
-      });
-      return;
-    } else if (!isNaN(params.text as any)) {
-      this.goodService.getById(params.text).subscribe(res => {
-        this.goodItems = new DefaultSelect([res], 1);
-      });
-      return;
-    }
-    this.goodItems = new DefaultSelect([], 0);
-  }
+  // getGoods(params: ListParams) {
+  //   // if (params.text == '') {
+  //   //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
+  //   // } else {
+  //   //   const id = parseInt(params.text);
+  //   //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
+  //   //   this.goodItems = new DefaultSelect(item[0], 1);
+  //   // }
+  //   if (params.text === '') {
+  //     this.goodService.getAll(params).subscribe(res => {
+  //       this.goodItems = new DefaultSelect(res.data, 5);
+  //     });
+  //     return;
+  //   } else if (!isNaN(params.text as any)) {
+  //     this.goodService.getById(params.text).subscribe(res => {
+  //       this.goodItems = new DefaultSelect([res], 1);
+  //     });
+  //     return;
+  //   }
+  //   this.goodItems = new DefaultSelect([], 0);
+  // }
 
   getBankAccount(params: ListParams) {
     if (params.text) {
