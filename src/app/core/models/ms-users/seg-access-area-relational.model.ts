@@ -7,7 +7,7 @@ export interface IUserAccessAreaRelational {
   delegationNumber: number;
   subdelegationNumber: number;
   departamentNumber: number;
-  user: ISegUsersNonRelational;
+  user: string;
   assigned: string;
   registryNumber: number;
   delegation1Number: number;
@@ -16,4 +16,5 @@ export interface IUserAccessAreaRelational {
   delegation: null | IDelegation;
   subDelegation: null | ISubdelegation;
   departament: null | IDepartment;
+  userDetail: ISegUsersNonRelational;
 }

@@ -18,7 +18,8 @@
               formControlName="address"
               [searchable]="false"
               class="form-control"
-              [clearable]="false" [readonly]="true">
+              [clearable]="false"
+              [readonly]="true">
               <ng-option value="M">Mueble</ng-option>
               <ng-option value="I">Inmueble</ng-option>
             </ng-select>
@@ -67,7 +68,7 @@
           [attr.class]="'table-bordered'"
           [settings]="settings"
           [source]="lotByEvent"
-          (userRowSelect)="rowsSelected($event)"> 
+          (userRowSelect)="rowsSelected($event)">
         </ng2-smart-table>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">

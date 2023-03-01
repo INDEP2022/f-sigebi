@@ -62,8 +62,6 @@ export class SelectListFilteredModalComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData());
     }
-
-    console.log(this.settings);
   }
 
   getData(): void {
@@ -114,7 +112,6 @@ export class SelectListFilteredModalComponent
   }
 
   selectRow(row: any) {
-    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
   }

@@ -13,11 +13,12 @@ import { GOODS_COLUMNS, PROCEEDINGS_COLUMNS } from './columns';
 @Component({
   selector: 'app-destruction-authorization',
   templateUrl: './destruction-authorization.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DestructionAuthorizationComponent extends BasePage implements OnInit {
-
+export class DestructionAuthorizationComponent
+  extends BasePage
+  implements OnInit
+{
   totalItems: number = 0;
   totalItems2: number = 0;
 
@@ -31,8 +32,11 @@ export class DestructionAuthorizationComponent extends BasePage implements OnIni
 
   settings2;
 
-
-  constructor(private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService, private modalService: BsModalService, private goodService: GoodService) {
+  constructor(
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
+    private modalService: BsModalService,
+    private goodService: GoodService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -42,17 +46,17 @@ export class DestructionAuthorizationComponent extends BasePage implements OnIni
         delete: false,
         position: 'right',
       },
-      columns: {...PROCEEDINGS_COLUMNS}
+      columns: { ...PROCEEDINGS_COLUMNS },
     };
 
     this.settings2 = {
       ...this.settings,
       actions: false,
-      columns: {...GOODS_COLUMNS}
+      columns: { ...GOODS_COLUMNS },
     };
   }
 
-  data:any;
+  data: any;
 
   ngOnInit(): void {
     this.params
@@ -65,21 +69,23 @@ export class DestructionAuthorizationComponent extends BasePage implements OnIni
 
   getAllProceeding() {
     this.loading = true;
-    this.proceedingsDeliveryReceptionService.getAll3(this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        this.proceedingsList = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        console.log(error);
-      },
-    });
+    this.proceedingsDeliveryReceptionService
+      .getAll3(this.params.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.proceedingsList = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          console.log(error);
+        },
+      });
   }
 
-  openForm(proceeding?:IProccedingsDeliveryReception){
+  openForm(proceeding?: IProccedingsDeliveryReception) {
     let config: ModalOptions = {
       initialState: {
         proceeding,
@@ -91,7 +97,7 @@ export class DestructionAuthorizationComponent extends BasePage implements OnIni
     this.modalService.show(ProceedingsModalComponent, config);
   }
 
-//Traer bienes con estado PDS
+  //Traer bienes con estado PDS
   getGoodByStatusPDS() {
     this.loading = true;
     this.goodService.getGoodByStatusPDS(this.params2.getValue()).subscribe({
@@ -103,5 +109,4 @@ export class DestructionAuthorizationComponent extends BasePage implements OnIni
       error: error => (this.loading = false),
     });
   }
-
 }
