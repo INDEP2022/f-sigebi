@@ -117,7 +117,9 @@ export class DestructionAuthorizationManagementComponent
   onValuesChange(modelChange: IProccedingsDeliveryReception) {
     this.modelValue = modelChange;
     this.form.controls['id'].setValue(this.modelValue.id);
-    this.form.controls['keysProceedings'].setValue(this.modelValue.keysProceedings);
+    this.form.controls['keysProceedings'].setValue(
+      this.modelValue.keysProceedings
+    );
     this.form.controls['typeProceedings'].setValue(
       this.modelValue.typeProceedings
     );

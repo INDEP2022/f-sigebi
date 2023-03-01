@@ -8,7 +8,11 @@ import { DestructionAuthorizationComponent } from './destruction-authorization/d
 import { ProceedingsModalComponent } from './proceedings-modal/proceedings-modal.component';
 
 @NgModule({
-  declarations: [DestructionAuthorizationManagementComponent, DestructionAuthorizationComponent, ProceedingsModalComponent],
+  declarations: [
+    DestructionAuthorizationManagementComponent,
+    DestructionAuthorizationComponent,
+    ProceedingsModalComponent,
+  ],
   imports: [
     CommonModule,
     DestructionAuthorizationManagementRoutingModule,

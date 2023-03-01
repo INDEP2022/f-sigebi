@@ -41,12 +41,18 @@
           </form-field>
         </div>
         <div class="col-md-1">
-          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid" (click)="getEventByID()" >
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getEventByID()">
             Buscar
           </button>
         </div>
         <div class="col-md-1">
-          <button (click)="cleanForm()" type="button" class="btn btn-sm btn-danger active">
+          <button
+            (click)="cleanForm()"
+            type="button"
+            class="btn btn-sm btn-danger active">
             Limpiar
           </button>
         </div>

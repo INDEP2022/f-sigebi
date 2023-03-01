@@ -6,8 +6,11 @@
     <form class="form-material" [formGroup]="goodForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="goodForm.get('goodNumber')" label="No. Bien" >
-            <input type="text" class="form-control" formControlName="goodNumber">
+          <form-field [control]="goodForm.get('goodNumber')" label="No. Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodNumber" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -23,8 +26,13 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="goodForm.get('registryNumber')" label="No. Registro">
-            <input type="text" class="form-control" formControlName="registryNumber">
+          <form-field
+            [control]="goodForm.get('registryNumber')"
+            label="No. Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>

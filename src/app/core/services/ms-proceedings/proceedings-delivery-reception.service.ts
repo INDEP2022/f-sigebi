@@ -144,7 +144,12 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get<IListResponse<IProceedings>>(route);
   }
 
-  getAll3(params?: ListParams | string): Observable<IListResponse<IProccedingsDeliveryReception>> {
-    return this.get<IListResponse<IProccedingsDeliveryReception>>(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
+  getAll3(
+    params?: ListParams | string
+  ): Observable<IListResponse<IProccedingsDeliveryReception>> {
+    return this.get<IListResponse<IProccedingsDeliveryReception>>(
+      ProceedingsEndpoints.ProceedingsDeliveryReception,
+      params
+    );
   }
 }
