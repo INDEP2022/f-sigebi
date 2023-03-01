@@ -2,7 +2,8 @@
 <div class="md-tabls">
   <tabset #staticTabs>
     <tab heading="Documentos generales">
-      <app-general-documents-form> </app-general-documents-form>
+      <app-general-documents-form [requestForm]="requestForm">
+      </app-general-documents-form>
     </tab>
 
     <tab heading="Documentos de solicitud">

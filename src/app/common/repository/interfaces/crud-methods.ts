@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { ListParams } from './list-params';
+import { FilterParams, ListParams } from './list-params';
 
 export interface IRead<T> {
   getById?(id: number | string): Observable<T>;
@@ -9,7 +9,7 @@ export interface IRead<T> {
     id: number | string,
     params?: ListParams
   ): Observable<IListResponse<T>>;
-  getAll?(params?: ListParams): Observable<IListResponse<T>>;
+  getAll?(params?: ListParams | FilterParams): Observable<IListResponse<T>>;
   getByIds?(ids: Partial<T>): Observable<T>;
   postByIds?(model: T): Observable<IListResponse<T>>;
   postColumns?(model: T): Observable<IListResponse<T>>;

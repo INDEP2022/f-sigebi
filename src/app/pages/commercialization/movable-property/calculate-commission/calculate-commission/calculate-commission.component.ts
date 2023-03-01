@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { THIRD_PARTY } from './caculate-comission-columns';
-import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
 import { IThirdParty } from 'src/app/core/models/ms-thirdparty/third-party.model';
+import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { THIRD_PARTY } from './caculate-comission-columns';
 
 @Component({
   selector: 'app-calculate-commission',
@@ -14,7 +13,6 @@ import { IThirdParty } from 'src/app/core/models/ms-thirdparty/third-party.model
   styles: [],
 })
 export class CalculateCommissionComponent extends BasePage implements OnInit {
-  
   data: any;
 
   totalItems: number = 0;
@@ -25,7 +23,10 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
   settings2;
 
-  constructor(private modalService: BsModalService, private thirdPartyService:ThirdPartyService) {
+  constructor(
+    private modalService: BsModalService,
+    private thirdPartyService: ThirdPartyService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -45,10 +46,10 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     };
   }
 
-  thirdPartysList: IThirdParty[]=[];
+  thirdPartysList: IThirdParty[] = [];
 
   ngOnInit(): void {
-   this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getThirdParty());
   }
@@ -69,6 +70,4 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
       },
     });
   }
-
-
 }

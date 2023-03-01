@@ -29,17 +29,14 @@ export class LayoutsConfigService extends HttpService {
   ): Observable<IListResponse<IComerLayoutsH>> {
     return this.get<IListResponse<IComerLayoutsH>>(this.endpointH, params);
   }
-  getById(id: number) {
-    const route = `${this.endpoint}/${id}`;
-    return this.get(route);
-  }
 
   getByIdH(id: number) {
     const route = `${this.endpointH}/${id}`;
     return this.get(route);
   }
-  create(idLayout: number) {
-    return this.post(this.endpoint, idLayout);
+  create(layout: number) {
+    const route = `${this.endpoint}`;
+    return this.post(route, layout);
   }
 
   update(id: number, tiie: IComerLayouts) {

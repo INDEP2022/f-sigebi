@@ -18,3 +18,22 @@ label {
   padding-left: 1.2%;
   font-size: smaller;
 }
+
+:host ::ng-deep ng2-smart-table {
+  
+  th,ng2-st-checkbox-select-all{
+    text-align: center;
+  }
+
+  .goodDescription {
+    min-width: 27rem;
+  }
+
+  .goodTypeName {
+    min-width: 30rem;
+  }
+
+  .descriptionGoodSae{
+    min-width: 25rem;
+  }
+}

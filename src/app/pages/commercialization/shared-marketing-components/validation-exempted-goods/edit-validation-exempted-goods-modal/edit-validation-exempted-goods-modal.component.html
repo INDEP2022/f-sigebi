@@ -6,7 +6,7 @@
     <form class="form-material" [formGroup]="goodForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="goodForm.get('id')" >
+          <form-field [control]="goodForm.get('id')">
             <ngx-select
               [searchOnInit]="true"
               [form]="goodForm"
@@ -22,7 +22,9 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="goodForm.get('description')" label="Descripción">
+          <form-field
+            [control]="goodForm.get('description')"
+            label="Descripción">
             <input
               type="text"
               class="form-control"
@@ -31,7 +33,10 @@
         </div>
         <div class="col-md-3">
           <form-field [control]="goodForm.get('quantity')" label="Unidad">
-            <input type="text" class="form-control" formControlName="quantity" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="quantity" />
           </form-field>
         </div>
         <div class="col-md-3">

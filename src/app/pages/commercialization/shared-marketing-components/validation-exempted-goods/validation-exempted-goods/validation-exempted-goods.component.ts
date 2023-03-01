@@ -6,11 +6,10 @@ import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './validation-exempted-goods-co
 
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
-import * as XLSX from 'xlsx';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 
 @Component({
   selector: 'app-validation-exempted-goods',
@@ -21,14 +20,17 @@ export class ValidationExemptedGoodsComponent
   extends BasePage
   implements OnInit
 {
-  
   form: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
   goods: IGood[] = [];
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService, private goodService:GoodService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private goodTransAvaService: GoodTransAvaService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -48,9 +50,9 @@ export class ValidationExemptedGoodsComponent
       .subscribe(() => this.getGoods());
   }
 
-  getGoods(){
+  getGoods() {
     this.loading = true;
-    this.goodService.getAll(this.params.getValue()).subscribe({
+    this.goodTransAvaService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.goods = response.data;
         this.totalItems = response.count;
@@ -60,13 +62,13 @@ export class ValidationExemptedGoodsComponent
     });
   }
 
-  openForm(good? : IGood) {
-    console.log("me estoy ejecutando");
+  openForm(good?: IGood) {
+    console.log('me estoy ejecutando');
     let config: ModalOptions = {
       initialState: {
         good,
         callback: (next: boolean) => {
-          if(next) this.getGoods();
+          if (next) this.getGoods();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -74,6 +76,4 @@ export class ValidationExemptedGoodsComponent
     };
     this.modalService.show(EditValidationExemptedGoodsModalComponent, config);
   }
-
-  
 }
