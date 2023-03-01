@@ -29,4 +29,12 @@ export class ExpedientService extends HttpService {
   getNextVal(): Observable<{ nextval: string }> {
     return this.get(this.route.GetNextVal);
   }
+
+  create(body: IExpedient) {
+    return this.post(this.route.CreateExpedient, body);
+  }
+
+  update(id: number, body: Partial<IExpedient>) {
+    return this.post(`${this.route.BasePath}/${id}`, body);
+  }
 }

@@ -19,37 +19,37 @@
 //   typeManagement: number | null;
 // }
 export interface IProceduremanagement {
-  procedureNumber: number;
+  id?: number;
   status: string;
   situation: number;
-  userTurned: string | null;
+  userTurned: string;
   actualDate: Date;
   dailyConsecutiveNumber: number;
   admissionDate: Date;
-  wheelNumber: number | null;
-  expedient: number | null;
-  affair: string | null;
-  affairType: number | null;
-  officeNumber: string | null;
-  classificationDicta: string | null;
-  registerUser: string | null;
-  descentfed: string | null;
-  areaToTurn: string;
-  userToTurn: string;
-  observation: string;
-  observationAdd: string;
-  sheet: number | null;
-  businessDay: number | null;
-  naturalDay: number | null;
-  delegation: number | null;
-  folio: number | null;
-  prioirity: string;
-  serieIfai: string;
-  admissionDateHC: Date;
-  actualDateHC: Date;
-  affairSij: number | null;
-  affairSijp: number | null;
-  typeManagement: number | null;
+  wheelNumber: number;
+  expedient: number;
+  affair: string;
+  affairType: number;
+  officeNumber: string;
+  classificationDicta: string;
+  registerUser: string;
+  descentfed: string;
+  areaToTurn?: string;
+  userToTurn?: string;
+  observation?: string;
+  observationAdd?: string;
+  sheet: number;
+  businessDay?: number;
+  naturalDay?: number;
+  delegation?: number;
+  folio?: number;
+  prioirity?: string;
+  serieIfai?: string;
+  admissionDateHC?: Date;
+  actualDateHC?: Date;
+  affairSij?: number;
+  affairSijp?: number;
+  typeManagement?: number;
 }
 // ManagamentProcessSat
 export interface IManagamentProcessSat {

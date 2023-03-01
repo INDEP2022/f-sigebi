@@ -14,7 +14,7 @@ export interface INotification {
   circumstantialRecord: string;
   preliminaryInquiry: string;
   criminalCase: string;
-  addressee: string;
+  addressee?: string;
   expedientNumber: number;
   crimeKey: string;
   affairKey: string;
@@ -24,7 +24,7 @@ export interface INotification {
   observations: string;
   delegationNumber: number;
   subDelegationNumber: number;
-  institutionNumber: IInstitutionNumber;
+  institutionNumber: IInstitutionNumber | number;
   indiciadoNumber: number;
   delDestinyNumber: number;
   subDelDestinyNumber: number;
@@ -33,10 +33,10 @@ export interface INotification {
   minpubNumber: number | IMinpub;
   cityNumber: number;
   courtNumber: number;
-  registerNumber: number;
+  registerNumber?: number;
   dictumKey: string;
   identifier: string;
-  observationDictum: string;
+  observationDictum?: string;
   wheelStatus: string;
   transference: number;
   expedientTransferenceNumber: string;
@@ -44,23 +44,23 @@ export interface INotification {
   wheelType: string;
   reserved: string;
   entryProcedureDate: Date;
-  userInsert: string;
+  userInsert?: string;
   originNumber: number;
   stationNumber: number;
   autorityNumber: number;
   endTransferNumber: number;
   dailyEviction: number;
-  hcCaptureDate: Date;
-  hcEntryProcedureDate: Date;
-  desKnowingDate: Date;
+  hcCaptureDate?: Date;
+  hcEntryProcedureDate?: Date;
+  desKnowingDate?: Date;
   addressGeneral: number;
-  affair: IAffair;
-  delegation: null | IDelegation;
-  subDelegation: null | ISubdelegation;
-  departament: null | IDepartment;
-  numberProperty: number;
-  notificationDate: any;
-  userCorrectsKey: any;
+  affair?: IAffair | null;
+  delegation?: null | IDelegation;
+  subDelegation?: null | ISubdelegation;
+  departament?: null | IDepartment;
+  numberProperty?: number;
+  notificationDate?: any;
+  userCorrectsKey?: any;
 }
 
 export interface IAffair {
@@ -96,4 +96,20 @@ export interface IInstitutionNumber {
   idCity: number;
   numRegister: string;
   numTransference: string;
+}
+
+export interface INotificationInquiry {
+  protectionKey: string;
+  touchPenaltyKey: string;
+  circumstantialRecord: string;
+  preliminaryInquiry: string;
+  criminalCase: string;
+  entFedKey: string;
+  indiciadoNumber: number;
+  minpubNumber: number;
+  cityNumber: number;
+  courtNumber: number;
+  transference: number;
+  stationNumber: number;
+  autorityNumber: number;
 }

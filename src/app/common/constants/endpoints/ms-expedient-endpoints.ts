@@ -3,7 +3,9 @@ export enum ExpedientEndpoints {
   GetCountByKey = `expedient/get-count-by-id`,
   FindIdentificator = `expedient/find-identificator`,
   GetNextVal = 'expedient/get-nextval',
-  GetTempExpedient = 'expedient/get-temp-expedient',
+  CreateExpedient = `expedient/create-expedient`,
+  // GetTempExpedient = 'expedient/get-temp-expedient',
+  TmpExpedients = 'tmp-expedients',
   CreateTempExpedient = 'expedient/create-temp-expedient',
   DeleteTempExpedient = 'expedient/delete-temp-expedient',
 }

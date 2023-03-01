@@ -12,7 +12,7 @@ import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
-import { IUserAccessAreas } from '../../../../../core/models/ms-users/users-access-areas-model';
+import { IUserAccessAreaRelational } from '../../../../../core/models/ms-users/seg-access-area-relational.model';
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -94,6 +94,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   estatusTramite: new FormControl<IManagementArea>(null, Validators.required),
   goodRelation: new FormControl<string>(null),
   institutionNumber: new FormControl<number>(200, Validators.required),
+  institutionName: new FormControl<string>(null),
   officeNumber: new FormControl<number>(null),
   captureDate: new FormControl<Date>(new Date()),
   wheelStatus: new FormControl<string>(null),
@@ -119,7 +120,7 @@ export interface IDocumentsReceptionData {
   recordId?: string | number;
   identifierExp?: string | number;
   dailyEviction: number;
-  addressGeneral?: boolean | number;
+  addressGeneral: number;
   stage?: string;
   stageName?: string;
   circumstantialRecord: string;
@@ -135,12 +136,15 @@ export interface IDocumentsReceptionData {
   uniqueKey?: string | number;
   cityNumber: number;
   entFedKey: string;
+  entFedDescription: string;
   endTransferNumber: number;
   transference: number;
   courtNumber: number;
+  courtName: string;
   stationNumber: number;
   autorityNumber: number;
   minpubNumber: number;
+  minpubName: string;
   crimeKey: string;
   indiciadoNumber: number;
   indiciadoName: string;
@@ -151,9 +155,10 @@ export interface IDocumentsReceptionData {
   delegationName: string;
   subDelDestinyNumber: number;
   subDelegationName: string;
-  estatusTramite: string | number;
+  estatusTramite: string;
   goodRelation?: string;
   institutionNumber: number;
+  institutionName: string;
   officeNumber: number;
   captureDate: Date;
   wheelStatus: string;
@@ -213,6 +218,7 @@ export interface IDocumentsReceptionRegisterForm {
   estatusTramite: IManagementArea;
   goodRelation: string;
   institutionNumber: number;
+  institutionName: string;
   officeNumber: number;
   captureDate: Date;
   wheelStatus: string;
@@ -226,14 +232,17 @@ export interface IDocumentsReceptionRegisterForm {
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
   copyNumber: new FormControl<string | number>(1, Validators.required),
-  copyuser: new FormControl<IUserAccessAreas>(null, Validators.required),
+  copyuser: new FormControl<IUserAccessAreaRelational>(
+    null,
+    Validators.required
+  ),
   persontype: new FormControl<string>('D', Validators.required),
   flierNumber: new FormControl<string | number>(null),
 };
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
   copyNumber: new FormControl<string | number>(2),
-  copyuser: new FormControl<IUserAccessAreas>(null),
+  copyuser: new FormControl<IUserAccessAreaRelational>(null),
   persontype: new FormControl<string>('C'),
   flierNumber: new FormControl<string | number>(null),
 };

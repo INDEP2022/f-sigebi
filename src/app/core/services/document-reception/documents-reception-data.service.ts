@@ -14,29 +14,32 @@ export class DocumentsReceptionDataService {
   private _flyersRegistrationParams: IDocReceptionFlyersRegistrationParams =
     null;
 
-  private _goodsBulkLoadSatSaeParams: IGoodsBulkLoadSatSaeParams = {
-    asuntoSat: null,
-    pNoExpediente: null,
-    pNoOficio: null,
-    pNoVolante: null,
-    pSatTipoExp: null,
-    pIndicadorSat: null,
-  };
+  private _goodsBulkLoadSatSaeParams: IGoodsBulkLoadSatSaeParams = null;
+  // {
+  //   asuntoSat: null,
+  //   pNoExpediente: null,
+  //   pNoOficio: null,
+  //   pNoVolante: null,
+  //   pSatTipoExp: null,
+  //   pIndicadorSat: null,
+  // };
 
-  private _goodsBulkLoadPgrSaeParams: IGoodsBulkLoadPgrSaeParams = {
-    pNoExpediente: null,
-    pNoVolante: null,
-    pAvPrevia: null,
-  };
+  private _goodsBulkLoadPgrSaeParams: IGoodsBulkLoadPgrSaeParams = null;
+  // {
+  //   pNoExpediente: null,
+  //   pNoVolante: null,
+  //   pAvPrevia: null,
+  // };
 
-  private _goodsCaptureTempParams: IGoodsCaptureTempParams = {
-    iden: null,
-    noTransferente: null,
-    desalojo: null,
-    pNoVolante: null,
-    pNoOficio: null,
-    asuntoSat: null,
-  };
+  private _goodsCaptureTempParams: IGoodsCaptureTempParams = null;
+  // {
+  //   iden: null,
+  //   noTransferente: null,
+  //   desalojo: null,
+  //   pNoVolante: null,
+  //   pNoOficio: null,
+  //   asuntoSat: null,
+  // };
 
   private _documentsReceptionRegisterForm: Partial<IDocumentsReceptionRegisterForm> =
     null;

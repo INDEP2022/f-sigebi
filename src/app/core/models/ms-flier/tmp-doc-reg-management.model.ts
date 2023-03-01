@@ -4,20 +4,20 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 export interface ICopiesxFlier {
   copyNumber: string;
   copyuser: string;
-  persontype: Persontype;
-  flierNumber: string;
+  persontype: FlyerPersontype;
+  flierNumber: number;
   registryNumber?: string;
   notification?: INotification;
 }
 
-enum Persontype {
+export enum FlyerPersontype {
   D = 'D',
   C = 'C',
 }
 
 export interface ITmpGestRegDoc {
   description: null | string;
-  affair: IAffair | null;
+  affair: IAffair | string | null;
   id: number;
   senderExt: null | string;
   affairKey: null | string;

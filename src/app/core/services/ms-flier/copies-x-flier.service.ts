@@ -38,8 +38,8 @@ export class CopiesXFlierService extends HttpService {
     return this.post(this.endpoint, body);
   }
 
-  update(id: string | number, body: ICopiesxFlier) {
-    const route = `${this.endpoint}/${id}`;
+  update(body: ICopiesxFlier) {
+    const route = `${this.endpoint}`;
     return this.put(route, body);
   }
 

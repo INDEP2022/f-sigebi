@@ -5,7 +5,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { INotification } from '../../models/ms-notification/notification.model';
+import {
+  INotification,
+  INotificationInquiry,
+} from '../../models/ms-notification/notification.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +42,41 @@ export class NotificationService extends HttpService {
     notification: Partial<INotification>
   ): Observable<{ statusCode: number; message: string[] }> {
     return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
+  }
+
+  getLastWheelNumber(): Observable<{ wheel: number }> {
+    return this.get<{ wheel: string }>(this.route.LastWheelNumber).pipe(
+      map(resp => {
+        return { wheel: Number(resp.wheel) };
+      })
+    );
+  }
+
+  getDailyConsecutive(
+    delegation: number,
+    subdelegation: number
+  ): Observable<{ consecutivedaily: number }> {
+    return this.get<{ consecutivedaily: string }>(
+      `${this.route.DailyConsecutive}/delegation/${delegation}/subdelegation/${subdelegation}`
+    ).pipe(
+      map(resp => {
+        return { consecutivedaily: Number(resp.consecutivedaily) };
+      })
+    );
+  }
+
+  findTransferentCity(body: {
+    city: number;
+    indiciado: number;
+    transferent: string;
+  }): Observable<IListResponse<INotification>> {
+    return this.post(this.route.FindTransferentCity, body);
+  }
+
+  findCountByInquiry(
+    body: INotificationInquiry
+  ): Observable<IListResponse<INotification>> {
+    return this.post(this.route.FindCountByInquiry, body);
   }
 
   getMaxFlyerByExpedient(

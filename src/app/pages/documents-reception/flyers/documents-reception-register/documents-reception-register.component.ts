@@ -29,6 +29,7 @@ import {
   ITransferingLevelView,
 } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ITmpNotification } from 'src/app/core/models/ms-notification/tmp-notification.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -55,13 +56,19 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ITempExpedient } from '../../../../core/models/ms-expedient/tmp-expedient.model';
+import { FlyerPersontype } from '../../../../core/models/ms-flier/tmp-doc-reg-management.model';
 import { ICountAffairOptions } from '../../../../core/models/ms-interfacesat/ms-interfacesat.interface';
+import { IInstitutionNumber } from '../../../../core/models/ms-notification/notification.model';
 import { IProceduremanagement } from '../../../../core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AuthService } from '../../../../core/services/authentication/auth.service';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
+import { IssuingInstitutionService } from '../../../../core/services/catalogs/issuing-institution.service';
+import { CopiesXFlierService } from '../../../../core/services/ms-flier/copies-x-flier.service';
 import { TmpGestRegDocService } from '../../../../core/services/ms-flier/tmp-gest-reg-doc.service';
 import { CatalExpSatService } from '../../../../core/services/ms-interfacesat/catal-exp-sat.service';
 import { SatTransferService } from '../../../../core/services/ms-interfacesat/sat-transfer.service';
+import { MassiveGoodService } from '../../../../core/services/ms-massivegood/massive-good.service';
+import { ProtectionService } from '../../../../core/services/ms-protection/protection.service';
 import { DocReceptionTrackRecordsModalComponent } from './components/doc-reception-track-records-modal/doc-reception-track-records-modal.component';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
 import { DOCUMENTS_RECEPTION_TRACK_RECORDS_TEST_DATA } from './constants/documents-reception-register-default-values';
@@ -110,10 +117,15 @@ export class DocumentsReceptionRegisterComponent
   initialCondition: string = 'T';
   pgrInterface: boolean = false;
   satInterface: boolean = false;
+  expedientRecord: number = null;
+  // goodRelatedWheelNumber: boolean = false;
   identifier: string = null;
   //TODO: Dejar la delegacion y subdelegacion nulos
   userDelegation: number = 0;
   userSubdelegation: number = 0;
+  userId: string;
+  existingNotification: boolean = false;
+  procedureBlocked: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -182,7 +194,11 @@ export class DocumentsReceptionRegisterComponent
     private tmpGestRegDocService: TmpGestRegDocService,
     private satTransferService: SatTransferService,
     private catExpSatService: CatalExpSatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private institutionService: IssuingInstitutionService,
+    private protectionService: ProtectionService,
+    private flyerCopiesService: CopiesXFlierService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.pageParams = this.docDataService.flyersRegistrationParams;
@@ -247,7 +263,6 @@ export class DocumentsReceptionRegisterComponent
     this.onFormChanges();
     this.getLoggedUserArea();
     this.setInitialConditions();
-    this.setFormLayout();
     this.setDefaultValues();
     this.checkManagementArea();
     console.log(this.docDataService.documentsReceptionRegisterForm);
@@ -283,6 +298,7 @@ export class DocumentsReceptionRegisterComponent
 
   getLoggedUserArea() {
     const token = this.authService.decodeToken();
+    this.userId = token.preferred_username;
     const params = new FilterParams();
     params.addFilter('user', token.preferred_username);
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
@@ -297,13 +313,16 @@ export class DocumentsReceptionRegisterComponent
   }
 
   setInitialConditions() {
-    //TODO: !!Agregar incidencia para consulta.
-    //Obtener el indicador sat para la variable global si la global pSatTipoExp
-    //no es nula.
-    // SELECT INDICADOR_SAT
-    // INTO :GLOBAL.P_INDICADOR_SAT
-    // FROM CATAL_EXP_SAT
-    // WHERE EXP_SAT =:PARAMETER.P_SAT_TIPO_EXP;
+    if (this.pageParams.pSatTipoExp != null) {
+      const param = new FilterParams();
+      param.addFilter('expSat', this.pageParams.pSatTipoExp);
+      this.catExpSatService.getAllWithFilters(param.getParams()).subscribe({
+        next: data => {
+          this.globals.pIndicadorSat = data.data[0].indicatorSat;
+        },
+        error: () => {},
+      });
+    }
     if (this.pageParams.pGestOk === 1 || this.pageParams.pNoVolante !== null) {
       if (this.pageParams.pNoVolante === null) {
         const filters = new FilterParams();
@@ -316,17 +335,14 @@ export class DocumentsReceptionRegisterComponent
             },
           });
       } else {
-        this.useProcedureData();
+        this.initialCondition = 'T';
+        this.formControls.wheelNumber.setValue(this.pageParams.pNoVolante);
       }
     }
   }
 
-  setFormLayout() {}
-
   useProcedureData(procedure?: IProceduremanagement) {
     let volante;
-    //TODO: !!! Registrar incidencia. Se necesita los campo NO_ASUNTO_SIJ, NO_DELEGACION del endpoint
-    // de procedure management
     const {
       descentfed,
       affair,
@@ -335,6 +351,8 @@ export class DocumentsReceptionRegisterComponent
       wheelNumber,
       admissionDate,
       typeManagement,
+      affairSij,
+      delegation,
     } = procedure;
     //TODO: Asignar variable global con Ngrx
     this.globals.vTipoTramite = typeManagement;
@@ -351,7 +369,6 @@ export class DocumentsReceptionRegisterComponent
       volante = wheelNumber;
     }
     if (volante == null) {
-      this.setFormLayout();
       switch (affairType) {
         case 1:
           this.formControls.circumstantialRecord.setValue(affair);
@@ -388,7 +405,6 @@ export class DocumentsReceptionRegisterComponent
           } else if (['AT', 'T'].includes(wheelType)) {
             this.initialCondition = wheelType;
           }
-          this.setFormLayout();
         },
       });
     }
@@ -399,7 +415,13 @@ export class DocumentsReceptionRegisterComponent
         'Tipo de Trámite',
         'Este registro es parte de la interfaz del SAT, en automático se mostrarán los datos correspondientes.'
       );
-      this.fillFormSatPgr(typeManagement, affair, officeNumber);
+      this.fillFormSatPgr(
+        typeManagement,
+        affair,
+        officeNumber,
+        affairSij,
+        delegation
+      );
     } else if (typeManagement == 3) {
       this.formControls.goodRelation.setValue('S');
       this.pgrInterface = true;
@@ -408,7 +430,13 @@ export class DocumentsReceptionRegisterComponent
         'Tipo de Trámite',
         'Este registro es parte de la interfaz del PGR, en automático se mostrarán los datos correspondientes.'
       );
-      this.fillFormSatPgr(typeManagement, affair, officeNumber);
+      this.fillFormSatPgr(
+        typeManagement,
+        affair,
+        officeNumber,
+        affairSij,
+        delegation
+      );
     }
   }
 
@@ -416,20 +444,37 @@ export class DocumentsReceptionRegisterComponent
     typeManagement: number,
     subject: string,
     officeKey: string,
-    folio?: number
+    folio: number,
+    delegation: number
   ) {
     let dele: number = 5;
     let depa: number = 952;
     if (typeManagement == 1) {
       let affairKey;
-      //TODO: Llamar datos de TMP_GEST_REC_DOC
-      // SELECT REMITENTE_EXT, CVE_ASUNTO, FEC_OFICIO_EXTERNO, DESCRIPCION
-      // FROM TMP_GEST_REC_DOC
-      // WHERE NO_ASUNTO_SIJ = FOLIO;
-      // Hacia REMITENTE_EXTERNO, CVE_ASUNTO, FEC_OFICIO_EXTERNO y OBSERVACIONES
+      let param = new FilterParams();
+      if (folio != null) {
+        param.addFilter('affairSijNumber', folio);
+        this.tmpGestRegDocService
+          .getAllWithFilters(param.getParams())
+          .subscribe({
+            next: data => {
+              const { senderExt, affairKey, officeExternalDate, description } =
+                data.data[0];
+              this.formControls.externalRemitter.setValue(senderExt);
+              this.formControls.externalOfficeDate.setValue(officeExternalDate);
+              this.formControls.observations.setValue(description);
+              this.formControls.affairKey.setValue(affairKey);
+              this.affairService.getById(affairKey).subscribe({
+                next: data =>
+                  this.formControls.affair.setValue(data.description),
+              });
+            },
+            error: () => {},
+          });
+      }
       this.formControls.officeExternalKey.setValue(officeKey);
       this.formControls.affair.setValue(affairKey);
-      const param = new FilterParams();
+      param = new FilterParams();
       param.addFilter('description', affairKey, SearchFilter.EQ);
       this.docRegisterService.getAffairsFiltered(param.getParams()).subscribe({
         next: data =>
@@ -450,9 +495,9 @@ export class DocumentsReceptionRegisterComponent
       this.dynamicTablesService.getByTableKeyOtKey(9, 1).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
-      //TODO: Agregar filtro NO_DELEGACION cuando el servicio lo retorne
       param = new FilterParams();
       param.addFilter('id', depa);
+      param.addFilter('numDelegation', delegation);
       this.docRegisterService
         .getDepartamentsFiltered(param.getParams())
         .subscribe({
@@ -481,19 +526,21 @@ export class DocumentsReceptionRegisterComponent
         .subscribe({
           next: data => this.formControls.estatusTramite.setValue(data.data[0]),
         });
-      //TODO: Buscar seg-access-x-areas por el campo positionKey del objeto user
-      // y asignarlo a la forma de usuario destino
-      // SELECT USU.USUARIO,
-      //       USU.NOMBRE
-      // INTO :COPIAS_X_VOLANTE.USUARIO_COPIA,
-      //       :COPIAS_X_VOLANTE.DI_NOMBRE
-      // FROM SEG_USUARIOS USU, SEG_ACCESO_X_AREAS  AXA
-      // WHERE USU.USUARIO   = AXA.USUARIO
-      //   AND AXA.ASIGNADO  = 'S'
-      //   AND AXA.NO_DELEGACION =	DELE
-      //   AND AXA.NO_SUBDELEGACION = 0
-      //   AND USU.CVE_CARGO LIKE 'ATJ%'
-      //   AND ROWNUM = 1;
+      this.docRegisterService.getUserByDelegation(delegation).subscribe({
+        next: data => {
+          const params = new FilterParams();
+          params.addFilter('user', data.user);
+          this.docRegisterService
+            .getUsersSegAreas(params.getParams())
+            .subscribe({
+              next: data => {
+                this.userRecipient.setValue(data.data[0]);
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
     }
     if (typeManagement == 3) {
       this.formControls.wheelType.setValue('P');
@@ -546,8 +593,21 @@ export class DocumentsReceptionRegisterComponent
         .subscribe({
           next: data => this.formControls.estatusTramite.setValue(data.data[0]),
         });
-      //TODO: Buscar seg-access-x-areas por el campo positionKey del objeto user
-      // y asignarlo a la forma de usuario destino
+      this.docRegisterService.getUserByDelegation(delegation).subscribe({
+        next: data => {
+          const params = new FilterParams();
+          params.addFilter('user', data.user);
+          this.docRegisterService
+            .getUsersSegAreas(params.getParams())
+            .subscribe({
+              next: data => {
+                this.userRecipient.setValue(data.data[0]);
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
     }
   }
 
@@ -558,84 +618,42 @@ export class DocumentsReceptionRegisterComponent
   ) {
     let affairKey = 0;
     let param = new FilterParams();
-    //TODO: !!!Incidencia llamar datos de la tabla TMP_GEST_REC_DOC
-    //SELECT T.REMITENTE_EXT,
-    //       T. CVE_ASUNTO,
-    //       T.ASUNTO,
-    //       T.FEC_OFICIO_EXTERNO, --ELIMNADA LA FECHA POR ACUERDO DEL EQUIPO SAT - SAE 29/04/2011 -- OXMI -- SE COLOCA DE NEUVO LA FECHA  DE LACOLUMNA SAT_FEC_TRANS 23/05/2011
-    //       T.DESCRIPCION,
-    //       T.CVE_UNICA,
-    //       V.NO_CIUDAD,
-    //       V.DESC_CIUDAD,
-    //       V.CVE_ENTFED,
-    //       V.DESC_ENTFED,
-    //       V.NO_TRANSFERENTE,
-    //       V.NO_EMISORA,
-    //       V.NO_AUTORIDAD,
-    //       V.DESC_TRANSFERENTE,
-    //       V.DESC_EMISORA,
-    //       V.DESC_AUTORIDAD
-    // FROM TMP_GEST_REC_DOC T, V_TRANSFERENTES_NIVELES V
-    // WHERE  V.CVE_UNICA IN (SELECT CVE_UNICA
-    //                         FROM TMP_GEST_REC_DOC
-    //                         WHERE ASUNTO = V_ASUNTO)
-    // AND T.ASUNTO = V_ASUNTO;
-    // FETCH CU_SAT INTO :BLK_NOTIFICACIONES.REMITENTE_EXTERNO,
-    //                     :BLK_NOTIFICACIONES.CVE_ASUNTO,
-    //                     :BLK_NOTIFICACIONES.NO_EXP_TRANSFERENTES,
-    //                     :BLK_NOTIFICACIONES.FEC_OFICIO_EXTERNO,
-    //                     :BLK_NOTIFICACIONES.OBSERVACIONES,
-    //                     :BLK_NOTIFICACIONES.NO_CVE_UNICA,
-    //                     :BLK_NOTIFICACIONES.NO_CIUDAD,
-    //                     :BLK_NOTIFICACIONES.DI_DSCIUDAD,
-    //                     :BLK_NOTIFICACIONES.CVE_ENTFED,
-    //                     :BLK_NOTIFICACIONES.DESC_ENTFED,
-    //                     :BLK_NOTIFICACIONES.NO_TRANSFERENTE_FINAL,
-    //                     :BLK_NOTIFICACIONES.NO_EMISORA,
-    //                     :BLK_NOTIFICACIONES.NO_AUTORIDAD,
-    //                     :BLK_NOTIFICACIONES.DTRANSFERENTE,
-    //                     :BLK_NOTIFICACIONES.EMISORA,
-    //                     :BLK_NOTIFICACIONES.AUTORIDAD;
-    // Si es PGR se usa el oficio para buscar y se asigna el campo NO_TRANSFERENTE
-    // SELECT  T.REMITENTE_EXT,
-    //                         T. CVE_ASUNTO,
-    //                                  -- T.ASUNTO,
-    //                         T.FEC_OFICIO_EXTERNO, --LA FECHA  DE LACOLUMNA SAT_FEC_TRANS
-    //                         T.DESCRIPCION,
-    //                         T.CVE_UNICA,
-    //                         V.NO_CIUDAD,
-    //                         V.DESC_CIUDAD,
-    //                         V.CVE_ENTFED,
-    //                         V.DESC_ENTFED,
-    //                         V.NO_TRANSFERENTE,
-    //                         V.NO_EMISORA,
-    //                         V.NO_AUTORIDAD,
-    //                         V.DESC_TRANSFERENTE,
-    //                         V.DESC_EMISORA,
-    //                         V.DESC_AUTORIDAD
-    //                    FROM TMP_GEST_REC_DOC T, V_TRANSFERENTES_NIVELES V
-    //                   WHERE V.CVE_UNICA IN (SELECT CVE_UNICA
-    //                                           FROM TMP_GEST_REC_DOC
-    //                                          WHERE NO_OFICIO = V_NO_OFICIO)
-    //                     AND T.NO_OFICIO = V_NO_OFICIO;
-    // 			            FETCH CU_PGR INTO 	:BLK_NOTIFICACIONES.REMITENTE_EXTERNO,
-    // 											:BLK_NOTIFICACIONES.CVE_ASUNTO,
-    // 											--:BLK_NOTIFICACIONES.NO_EXP_TRANSFERENTES,
-    // 											:BLK_NOTIFICACIONES.FEC_OFICIO_EXTERNO, -- FECHA  DE LA COLUMNA SAT_FEC_TRANS
-    // 											:BLK_NOTIFICACIONES.OBSERVACIONES,
-    // 											:BLK_NOTIFICACIONES.NO_CVE_UNICA,
-    // 											:BLK_NOTIFICACIONES.NO_CIUDAD,
-    // 											:BLK_NOTIFICACIONES.DI_DSCIUDAD,
-    // 											:BLK_NOTIFICACIONES.CVE_ENTFED,
-    // 											:BLK_NOTIFICACIONES.DESC_ENTFED,
-    // 											:BLK_NOTIFICACIONES.NO_TRANSFERENTE_FINAL,
-    // 											:BLK_NOTIFICACIONES.NO_EMISORA,
-    // 											:BLK_NOTIFICACIONES.NO_AUTORIDAD,
-    // 											:BLK_NOTIFICACIONES.DTRANSFERENTE,
-    // 											:BLK_NOTIFICACIONES.EMISORA,
-    // 											:BLK_NOTIFICACIONES.AUTORIDAD;
-    // 									:BLK_NOTIFICACIONES.NO_TRANSFERENTE := :BLK_NOTIFICACIONES.NO_TRANSFERENTE_FINAL;
     if (typeManagement == 2) {
+      param.removeAllFilters();
+      param.addFilter('affair', subject);
+      this.tmpGestRegDocService.getAllWithFilters(param.getParams()).subscribe({
+        next: data => {
+          const {
+            senderExt,
+            affairKey,
+            affair,
+            officeExternalDate,
+            description,
+            onlyKey,
+          } = data.data[0];
+          this.formControls.externalRemitter.setValue(senderExt);
+          this.formControls.externalOfficeDate.setValue(officeExternalDate);
+          this.formControls.observations.setValue(description);
+          this.formControls.affairKey.setValue(affairKey);
+          this.formControls.expedientTransferenceNumber.setValue(
+            affair as string
+          );
+          this.affairService.getById(affairKey).subscribe({
+            next: data => this.formControls.affair.setValue(data.description),
+          });
+          const param = new FilterParams();
+          param.addFilter('uniqueCve', Number(onlyKey));
+          this.docRegisterService
+            .getUniqueKeyData(param.getParams())
+            .subscribe({
+              next: data => {
+                this.setUniqueKeyData(data.data[0], true);
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
       param = new FilterParams();
       param.addFilter('id', affairKey, SearchFilter.EQ);
       this.docRegisterService.getAffairsFiltered(param.getParams()).subscribe({
@@ -645,6 +663,37 @@ export class DocumentsReceptionRegisterComponent
       });
     }
     if (typeManagement == 3) {
+      param.removeAllFilters();
+      param.addFilter('officeNumber', officeKey);
+      this.tmpGestRegDocService.getAllWithFilters(param.getParams()).subscribe({
+        next: data => {
+          const {
+            senderExt,
+            affairKey,
+            officeExternalDate,
+            description,
+            onlyKey,
+          } = data.data[0];
+          this.formControls.externalRemitter.setValue(senderExt);
+          this.formControls.externalOfficeDate.setValue(officeExternalDate);
+          this.formControls.observations.setValue(description);
+          this.formControls.affairKey.setValue(affairKey);
+          this.affairService.getById(affairKey).subscribe({
+            next: data => this.formControls.affair.setValue(data.description),
+          });
+          const param = new FilterParams();
+          param.addFilter('uniqueCve', Number(onlyKey));
+          this.docRegisterService
+            .getUniqueKeyData(param.getParams())
+            .subscribe({
+              next: data => {
+                this.setUniqueKeyData(data.data[0], true);
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
       param = new FilterParams();
       param.addFilter('id', affairKey, SearchFilter.EQ);
       this.docRegisterService.getAffairsFiltered(param.getParams()).subscribe({
@@ -756,12 +805,30 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.touchPenaltyKey.clearValidators();
       this.formControls.touchPenaltyKey.updateValueAndValidity();
     }
+    if (type != 'A') {
+      this.checkDailyEviction();
+    }
   }
 
   destinationAreaChange(area: string) {
-    //TODO: Validar si cambia el area que el usuario en atencion este asignado a ella
-    // con el endpoint seg_acceso_x_areas. Query en el trigger POST-CHANGE de NO_DEPTO_DESTINO
-    this.userRecipient.setValue(null);
+    if (this.userRecipient.value.user) {
+      const param = new FilterParams();
+      param.addFilter('user', this.userRecipient.value.user);
+      this.docRegisterService.getUsersSegAreas(param.getParams()).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            if (data.data[0].delegationNumber != this.userDelegation) {
+              this.userRecipient.setValue(null);
+              this.onLoadToast(
+                'warning',
+                'Usuario no asignado',
+                'El usuario no esta asignado a la delegación seleccionada.'
+              );
+            }
+          }
+        },
+      });
+    }
   }
 
   affairChange(affair: string) {
@@ -809,6 +876,29 @@ export class DocumentsReceptionRegisterComponent
     );
   }
 
+  checkDailyEviction() {
+    const param = new FilterParams();
+    if (this.formControls.expedientNumber.value != null) {
+      param.addFilter('fileNumber', this.formControls.expedientNumber.value);
+      this.docRegisterService.getGoods(param.getParams()).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            let goods = [];
+            goods = data.data.filter(
+              g => !['ROP', 'VXR', 'STA'].includes(g.status)
+            );
+            if (goods.length > 0) {
+              if (data) this.formControls.dailyEviction.disable();
+            }
+          } else {
+            this.formControls.dailyEviction.enable();
+          }
+        },
+        error: () => {},
+      });
+    }
+  }
+
   fillForm(notif: INotification) {
     this.documentsReceptionForm.reset();
     // this.documentsReceptionForm.get('flyer').setValue(value);
@@ -832,13 +922,15 @@ export class DocumentsReceptionRegisterComponent
       observations: notif.observations,
       expedientTransferenceNumber: notif.expedientTransferenceNumber,
       transference: notif.transference,
-      institutionNumber: notif.institutionNumber.id,
       officeNumber: notif.officeNumber,
       captureDate: notif.captureDate,
       wheelStatus: notif.wheelStatus,
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.documentsReceptionForm.patchValue({ ...values });
+    if (notif.wheelNumber != null) {
+      this.existingNotification = true;
+    }
     if (notif.dailyEviction == 0) {
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
@@ -859,6 +951,7 @@ export class DocumentsReceptionRegisterComponent
     } else if (notif.wheelStatus == 'ENVIADO') {
       this.procedureStatus = ProcedureStatus.sent;
     }
+    this.checkProcedureBlock();
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
     this.initialCondition = notif.wheelType;
@@ -974,8 +1067,8 @@ export class DocumentsReceptionRegisterComponent
         .getAllFiltered(filterParams.getParams())
         .subscribe({
           next: data => {
-            console.log(data.data[0].procedureNumber);
-            const { status } = data.data[0];
+            console.log(data.data[0].id);
+            const { status, areaToTurn, userToTurn } = data.data[0];
             if (status == 'OPI') {
               this.formControls.wheelStatus.setValue(ProcedureStatus.pending);
               this.procedureStatus = ProcedureStatus.pending;
@@ -983,10 +1076,43 @@ export class DocumentsReceptionRegisterComponent
               this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
               this.procedureStatus = ProcedureStatus.sent;
             }
-            //TODO: Usar el campo AREA_A_TURNAR para obtner la Management Area y el usuario
+            if (areaToTurn != null) {
+              filterParams.removeAllFilters();
+              filterParams.addFilter('id', areaToTurn);
+              this.procedureManageService
+                .getManagementAreasFiltered(filterParams.getParams())
+                .subscribe({
+                  next: data => {
+                    if (data.data.length > 0) {
+                      this.formControls.estatusTramite.setValue(data.data[0]);
+                    }
+                  },
+                  error: () => {},
+                });
+            }
+            if (userToTurn != null) {
+              filterParams.removeAllFilters();
+              filterParams.addFilter('user', userToTurn);
+              this.docRegisterService
+                .getUsersSegAreas(filterParams.getParams())
+                .subscribe({
+                  next: data => {
+                    if (data.data.length > 0) {
+                      this.userRecipient.setValue(data.data[0]);
+                    }
+                  },
+                  error: () => {},
+                });
+            }
           },
         });
     }
+    if (notif.institutionNumber != null) {
+      const institution = notif.institutionNumber as IInstitutionNumber;
+      this.formControls.institutionName.setValue(institution.name);
+      this.formControls.institutionNumber.setValue(institution.id);
+    }
+    this.checkDailyEviction();
     console.log(this.documentsReceptionForm.value);
   }
 
@@ -1037,28 +1163,24 @@ export class DocumentsReceptionRegisterComponent
           this.pageParams.pGestOk == 1 ||
           this.globals.gnuActivaGestion == 1
         ) {
-          //TODO: actualizar el servicio de proceduremanagement para los endpoints
-          // de crud y consumir el update actualizado
-          this.procedureManageService
-            .update(978812, { status: 'OPS' })
-            .subscribe({
-              next: data => {
-                this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
-                this.procedureStatus = ProcedureStatus.sent;
-                this.userRecipient.disable();
-                this.userCpp.disable();
-                this.alert('success', 'Estado actualizado correctamente', '');
-              },
-              error: () =>
-                this.onLoadToast(
-                  'error',
-                  'Error',
-                  'No se pudo enviar el volante'
-                ),
-            });
-          //TODO: Mover request a este if, agregar condicion de parametro al boton
-          // y quitar id estatico
           if (this.pageParams.pNoTramite != null) {
+            this.procedureManageService
+              .update(this.pageParams.pNoTramite, { status: 'OPS' })
+              .subscribe({
+                next: data => {
+                  this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
+                  this.procedureStatus = ProcedureStatus.sent;
+                  this.userRecipient.disable();
+                  this.userCpp.disable();
+                  this.alert('success', 'Estado actualizado correctamente', '');
+                },
+                error: () =>
+                  this.onLoadToast(
+                    'error',
+                    'Error',
+                    'No se pudo enviar el volante'
+                  ),
+              });
           } else {
             this.onLoadToast(
               'warning',
@@ -1078,6 +1200,19 @@ export class DocumentsReceptionRegisterComponent
         }
       }
     });
+  }
+
+  checkProcedureBlock() {
+    this.docRegisterService
+      .getUserOfficePermission({ toolbarUser: this.userId })
+      .subscribe({
+        next: data => {
+          if (data.val_usr == 0) {
+            this.procedureBlocked = true;
+          }
+        },
+        error: () => {},
+      });
   }
 
   viewDocuments() {
@@ -1178,7 +1313,6 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getTransferors(lparams: ListParams) {
-    //TODO: aplicar filterparams para nameTransferent y active (not: 1,2 or null)
     if (this.formControls.wheelType.value != 'P') {
       this.transferentService.getAll(lparams).subscribe({
         next: data => {
@@ -1189,9 +1323,11 @@ export class DocumentsReceptionRegisterComponent
         },
       });
     } else {
-      const params = new FilterParams();
-      params.addFilter('id', '1,3', SearchFilter.IN);
-      this.docRegisterService.getTransferents(params.getParams()).subscribe({
+      const body = {
+        active: ['1', '2'],
+        nameTransferent: lparams.text,
+      };
+      this.docRegisterService.getActiveTransferents(body).subscribe({
         next: data => {
           this.transferors = new DefaultSelect(data.data, data.count);
         },
@@ -1370,12 +1506,7 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
-  checkDesalojo(event: any) {
-    console.log(
-      event,
-      this.documentsReceptionForm.controls['dailyEviction'].value
-    );
-  }
+  checkDesalojo(event: any) {}
 
   openModalAreas() {
     this.openModalSelect(
@@ -1407,17 +1538,6 @@ export class DocumentsReceptionRegisterComponent
       this.selectAffair
     );
   }
-
-  // openModalSelect(context?: Partial<DocumentsReceptionSelectComponent>) {
-  //   const modalRef = this.modalService.show(DocumentsReceptionSelectComponent, {
-  //     initialState: { ...context },
-  //     class: 'modal-lg modal-dialog-centered',
-  //     ignoreBackdropClick: true,
-  //   });
-  //   modalRef.content.onSelect.subscribe(data => {
-  //     if (data) this.selectArea(data);
-  //   });
-  // }
   openModalSelect(
     context?: Partial<SelectListFilteredModalComponent>,
     callback?: Function
@@ -1462,7 +1582,7 @@ export class DocumentsReceptionRegisterComponent
     // this.formControls.stageName.setValue(this.formControls.stage.value);
   }
 
-  setUniqueKeyData(key: ITransferingLevelView) {
+  setUniqueKeyData(key: ITransferingLevelView, full?: boolean) {
     if (key.transfereeNum != null)
       this.transferentService.getById(key.transfereeNum).subscribe({
         next: data => {
@@ -1478,42 +1598,64 @@ export class DocumentsReceptionRegisterComponent
       this.authorityService.getById(key.authorityNum).subscribe({
         next: data => this.formControls.autorityNumber.setValue(data),
       });
+    if (full) {
+      if (key.cityNum != null) {
+        this.cityService.getById(key.cityNum).subscribe({
+          next: data => {
+            this.formControls.cityNumber.setValue(data);
+          },
+          error: () => {},
+        });
+      }
+      if (key.federalEntityCve != null) {
+        this.dynamicTablesService
+          .getByTableKeyOtKey(1, key.federalEntityCve)
+          .subscribe({
+            next: data => {
+              this.formControls.entFedKey.setValue(data.data);
+            },
+          });
+      }
+    }
   }
 
-  // isITablesEntryData(obj: any): obj is ITablesEntryData {
-  //   return (
-  //     'otKey' in obj &&
-  //     'table' in obj &&
-  //     'value' in obj &&
-  //     'abbreviation' in obj
-  //   );
-  // }
-
   prepareFormData() {
-    //TODO: Obtener el numero consecutivo y asignarlo al campo
-    // CONSECUTIVO := FA_CONSECUTIVO_DIARIO (:BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,:BLK_TOOLBAR.TOOLBAR_NO_SUBDELEGACION);
-    // :BLK_NOTIFICACIONES.NO_CONSECUTIVO_DIARIO := CONSECUTIVO;
     let formData = {
       ...this.documentsReceptionForm.value,
       identifier: this.formControls.identifier.value?.id,
       cityNumber: this.formControls.cityNumber.value?.idCity,
       endTransferNumber: this.formControls.endTransferNumber.value?.id,
       courtNumber: this.formControls.courtNumber.value?.id,
+      courtName: this.formControls.courtNumber.value?.description,
       stationNumber: this.formControls.stationNumber.value?.id,
       autorityNumber: Number(
         this.formControls.autorityNumber.value?.idAuthority
       ),
       minpubNumber: this.formControls.minpubNumber.value?.id,
+      minpubName: this.formControls.minpubNumber.value?.description,
       indiciadoNumber: this.formControls.indiciadoNumber.value?.id,
       indiciadoName: this.formControls.indiciadoNumber.value?.name,
       estatusTramite: this.formControls.estatusTramite.value?.id,
       entFedKey: this.formControls.entFedKey.value?.otKey,
+      entFedDescription: this.formControls.entFedKey.value?.value,
       crimeKey: this.formControls.crimeKey.value?.otKey,
       viaKey: this.formControls.viaKey.value?.otKey,
       dailyEviction: Number(this.formControls.dailyEviction.value),
+      addressGeneral: Number(this.formControls.addressGeneral.value),
     };
     if (typeof formData.receiptDate == 'string') {
       formData.receiptDate = new Date(formData.receiptDate);
+    }
+    if (this.formControls.institutionName == null) {
+      this.institutionService
+        .getById(this.formControls.institutionNumber.value)
+        .subscribe({
+          next: data => {
+            this.formControls.institutionName.setValue(data.name);
+            formData.institutionName = data.name;
+          },
+          error: () => {},
+        });
     }
     if (this.formControls.affairKey.value == '50') {
       formData.expedientTransferenceNumber = `${formData.stage} ${formData.expedientTransferenceNumber}`;
@@ -1536,7 +1678,550 @@ export class DocumentsReceptionRegisterComponent
     console.log(this.formData);
   }
 
-  save() {}
+  save() {
+    let expExists: boolean = false;
+    if (this.globals.gNoExpediente != null) {
+      this.formControls.expedientNumber.setValue(
+        Number(this.globals.gNoExpediente)
+      );
+    }
+    this.checkGoodsDailyEviction();
+    if (this.globals.antecede == 1) {
+      this.notificationService.getLastWheelNumber().subscribe({
+        next: data => {
+          this.formControls.wheelNumber.setValue(data.wheel);
+          this.updateROPGoods();
+        },
+        error: () => {},
+      });
+    }
+    if (this.globals.bn == 0) {
+      this.notificationService.getLastWheelNumber().subscribe({
+        next: data => {
+          this.formControls.wheelNumber.setValue(data.wheel);
+        },
+        error: () => {},
+      });
+    }
+    if (this.formControls.wheelNumber.value == null) {
+      this.existingNotification = true;
+      this.notificationService.getLastWheelNumber().subscribe({
+        next: data => {
+          this.formControls.wheelNumber.setValue(data.wheel);
+        },
+        error: err => {
+          this.onLoadToast('error', 'Error', err);
+        },
+      });
+    }
+    this.formControls.consecutiveNumber.setValue(0);
+    let iden = this.formControls.identifier.value.id;
+    if (this.formControls.expedientNumber.value != null) {
+      this.expedientService
+        .getById(this.formControls.expedientNumber.value)
+        .subscribe({
+          next: data => {
+            iden = data.identifier;
+            if (iden != this.formControls.identifier.value.id) {
+              this.identifierService.getById('MIXTO').subscribe({
+                next: data => {
+                  this.formControls.identifier.setValue(data);
+                },
+                error: () => {},
+              });
+            }
+          },
+          error: () => {},
+        });
+    }
+    this.prepareFormData();
+    this.expedientService
+      .getById(this.formControls.expedientNumber.value)
+      .subscribe({
+        next: data => {
+          if (data.id) {
+            this.updateExpedientData();
+          } else {
+            this.createExpedient();
+          }
+        },
+        error: () => {
+          this.createExpedient();
+        },
+      });
+    this.notificationService
+      .getDailyConsecutive(this.userDelegation, this.userSubdelegation)
+      .subscribe({
+        next: data => {
+          this.formControls.consecutiveNumber.setValue(data.consecutivedaily);
+          const params = new FilterParams();
+          params.addFilter(
+            'expedientNumber',
+            this.formControls.expedientNumber.value
+          );
+          this.tmpNotificationService
+            .getAllWithFilters(params.getParams())
+            .subscribe({
+              next: data => {
+                if (data.data.length > 0) {
+                  this.tmpNotificationService.update(data.data[0].wheelNumber, {
+                    ...data.data[0],
+                    consecutiveNumber:
+                      this.formControls.consecutiveNumber.value,
+                  });
+                }
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
+  }
+
+  updateROPGoods() {
+    const params = new FilterParams();
+    params.addFilter('fileNumber', this.formControls.expedientNumber.value);
+    params.addFilter('status', 'ROP');
+    this.docRegisterService.getGoods(params.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          data.data.forEach(g => {
+            const insertRegDate = new Date(g.insertRegDate);
+            const date = new Date();
+            const diff = (date.getTime() - insertRegDate.getTime()) * 1000 * 60;
+            if (diff <= 10) {
+              this.docRegisterService
+                .updateGood({
+                  id: g.id,
+                  goodId: g.goodId,
+                  flyerNumber: this.formControls.wheelNumber.value,
+                })
+                .subscribe({
+                  next: () => {},
+                  error: () => {},
+                });
+            }
+          });
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  updateExpedientData() {
+    //
+    const expedientData = {
+      circumstantialRecord: this.formData.circumstantialRecord,
+      preliminaryInquiry: this.formData.preliminaryInquiry,
+      criminalCase: this.formData.criminalCase,
+      protectionKey: this.formData.protectionKey,
+      keyPenalty: this.formData.touchPenaltyKey,
+      nameInstitution: this.formData.institutionName,
+      courtName: this.formData.courtName,
+      mpName: this.formData.minpubName,
+      indicatedName: this.formData.indiciadoName,
+      courtNumber: this.formData.courtNumber,
+      federalEntityKey: this.formData.entFedKey,
+      crimeKey: this.formData.crimeKey,
+      identifier: this.formData.identifier,
+      expTransferNumber: this.formData.expedientTransferenceNumber,
+      transferNumber: this.formData.endTransferNumber,
+      expedientType: this.formData.wheelType,
+      authorityNumber: this.formData.autorityNumber,
+      stationNumber: this.formData.stationNumber,
+    };
+    this.expedientService
+      .update(this.formControls.expedientNumber.value, expedientData)
+      .subscribe({
+        next: data => {
+          this.saveNotification();
+          this.saveProcedureManagement();
+          this.sendFlyerCopies();
+        },
+        error: () => {
+          // this.saveNotification();
+          // this.saveProcedureManagement();
+          // this.sendFlyerCopies();
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Error al actualizar datos del expediente.'
+          );
+        },
+      });
+  }
+
+  createExpedient() {
+    if (
+      this.formData.protectionKey != null &&
+      ['12', '15'].includes(this.formData.affairKey)
+    ) {
+      const param = new FilterParams();
+      param.addFilter('cveProtection', this.formData.protectionKey);
+      this.protectionService.getAllWithFilters(param.getParams()).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            const body = {
+              ...data.data[0],
+              proceedingsNumber: this.formControls.expedientNumber.value,
+            };
+            this.protectionService.update(data.data[0].id, body).subscribe({
+              next: () => {},
+              error: () => {},
+            });
+          } else {
+            this.insertProtectionKey();
+          }
+        },
+        error: () => {
+          this.insertProtectionKey();
+        },
+      });
+    } else {
+      this.insertProtectionKey();
+    }
+    const expedientData = {
+      id: this.formControls.expedientNumber.value,
+      circumstantialRecord: this.formData.circumstantialRecord,
+      preliminaryInquiry: this.formData.preliminaryInquiry,
+      criminalCase: this.formData.criminalCase,
+      protectionKey: this.formData.protectionKey,
+      keyPenalty: this.formData.touchPenaltyKey,
+      nameInstitution: this.formData.institutionName,
+      courtName: this.formData.courtName,
+      mpName: this.formData.minpubName,
+      indicatedName: this.formData.indiciadoName,
+      courtNumber: this.formData.courtNumber,
+      federalEntityKey: this.formData.entFedKey,
+      crimeKey: this.formData.crimeKey,
+      identifier: this.formData.identifier,
+      transferNumber: this.formData.endTransferNumber,
+      authorityNumber: this.formData.autorityNumber,
+      stationNumber: this.formData.stationNumber,
+      expedientType: this.formData.wheelType,
+      expTransferNumber: this.formData.expedientTransferenceNumber,
+    };
+    this.expedientService.create(expedientData).subscribe({
+      next: () => {
+        this.saveNotification();
+        this.saveProcedureManagement();
+        this.sendFlyerCopies();
+      },
+      error: () => {
+        this.saveNotification();
+        this.saveProcedureManagement();
+        this.sendFlyerCopies();
+      },
+    });
+  }
+
+  insertProtectionKey() {
+    const body = {
+      cveProtection: this.formData.protectionKey,
+      protectionDate: this.formData.externalOfficeDate as Date,
+      protectionType: 'D',
+      courtNumber: this.formData.courtNumber,
+      minpubNumber: this.formData.minpubNumber,
+      delegationNumber: this.userDelegation,
+      subdelegationNumber: this.userDelegation,
+      proceedingsNumber: this.formControls.expedientNumber.value,
+    };
+    this.protectionService.create(body).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  saveProcedureManagement() {
+    if (this.pageParams.pGestOk != 1 || this.globals.gnuActivaGestion != 1) {
+      return;
+    }
+    let affair: string,
+      affairType: number,
+      procedureId: number = 0;
+    if (this.formData.expedientTransferenceNumber != null) {
+      affair = this.formData.expedientTransferenceNumber;
+      affairType = 5;
+    } else if (this.formData.protectionKey != null) {
+      affair = this.formData.protectionKey;
+      affairType = 2;
+    } else if (this.formData.criminalCase != null) {
+      affair = this.formData.criminalCase;
+      affairType = 4;
+    } else if (this.formData.preliminaryInquiry != null) {
+      affair = this.formData.preliminaryInquiry;
+      affairType = 3;
+    } else if (this.formData.circumstantialRecord != null) {
+      affair = this.formData.circumstantialRecord;
+      affairType = 1;
+    }
+    const param = new FilterParams();
+    param.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+    if (this.pageParams.pNoTramite == null) {
+      this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
+        next: data => {
+          if (data.data.length == 0) {
+            this.createProcedureManagement(affair, affairType);
+          }
+        },
+        error: () => {
+          this.createProcedureManagement(affair, affairType);
+        },
+      });
+    } else {
+      procedureId = this.pageParams.pNoTramite;
+    }
+    this.updateProcedureOnSave(procedureId, affair, affairType);
+  }
+
+  updateProcedureOnSave(
+    procedureId: number,
+    affair: string,
+    affairType: number
+  ) {
+    const body = {
+      expedient: this.formControls.expedientNumber.value,
+      wheelNumber: this.formControls.wheelNumber.value,
+      status: 'OPS',
+      affair,
+      affairType,
+      officeNumber: this.formData.officeExternalKey,
+      descentfed: this.formData.entFedDescription,
+      priority: this.formData.priority,
+      userToTurn: this.userRecipient.value.user,
+      areaToTurn: this.formData.estatusTramite,
+    };
+    if (procedureId != null) {
+      //
+    }
+    this.procedureManageService.update(procedureId, body).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+    const param = new FilterParams();
+    param.addFilter('fileNumber', this.formControls.expedientNumber.value);
+    this.docRegisterService.getGoods(param.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          const goods = data.data.filter(g => g.flyerNumber == null);
+          if (goods.length > 0) {
+            this.docRegisterService
+              .updateGood({
+                id: goods[0].id,
+                goodId: goods[0].goodId,
+                flyerNumber: this.formControls.wheelNumber.value,
+              })
+              .subscribe({
+                next: () => {},
+                error: () => {},
+              });
+          }
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  createProcedureManagement(affair: string, affairType: number) {
+    const body: IProceduremanagement = {
+      status: 'OPI',
+      situation: 1,
+      userTurned: this.userId,
+      actualDate: new Date(),
+      dailyConsecutiveNumber: 0,
+      admissionDate: new Date(),
+      wheelNumber: null,
+      expedient: null,
+      affair,
+      affairType,
+      officeNumber: this.formData.officeExternalKey,
+      classificationDicta: null,
+      registerUser: this.userId,
+      descentfed: this.formData.entFedDescription,
+      sheet: 0,
+    };
+    this.procedureManageService.create(body).subscribe({
+      next: data => {
+        return this.updateProcedureOnSave(data.id, affair, affairType);
+      },
+      error: () => {
+        return this.updateProcedureOnSave(null, affair, affairType);
+      },
+    });
+  }
+
+  saveNotification() {
+    if (this.existingNotification) {
+      const updateData = {
+        ...this.formData,
+        consecutive: this.formControls.consecutiveNumber.value,
+        wheelNumber: this.formControls.wheelNumber.value,
+        receiptDate: this.formData.receiptDate as Date,
+        externalOfficeDate: this.formData.externalOfficeDate as Date,
+        affair: null as any,
+      };
+      delete updateData.affair;
+      this.notificationService
+        .update(this.formControls.wheelNumber.value, updateData)
+        .subscribe({
+          next: data => {
+            this.alert(
+              'success',
+              'Notificación agregada',
+              `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+            );
+          },
+          error: () => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Hubo un problema al actualizar el volante.'
+            );
+          },
+        });
+    } else {
+      const insertData = {
+        ...this.formData,
+        consecutive: this.formControls.consecutiveNumber.value,
+        wheelNumber: this.formControls.wheelNumber.value,
+        receiptDate: this.formData.receiptDate as Date,
+        externalOfficeDate: this.formData.externalOfficeDate as Date,
+        delegationNumber: this.userDelegation,
+        subDelegationNumber: this.userSubdelegation,
+        affair: null as any,
+      };
+      delete insertData.affair;
+      this.notificationService.create(insertData).subscribe({
+        next: data => {
+          this.alert(
+            'success',
+            'Notificación agregada',
+            `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+          );
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Hubo un problema al actualizar el volante.'
+          );
+        },
+      });
+    }
+  }
+
+  sendFlyerCopies() {
+    const params = new FilterParams();
+    params.addFilter('flierNumber', this.formControls.wheelNumber.value);
+    this.flyerCopiesService.getAllFiltered(params.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          data.data.forEach(flyer => {
+            let body;
+            if (flyer.persontype == 'D') {
+              body = {
+                copyuser: this.userRecipient.value.user,
+                flierNumber: this.formControls.wheelNumber.value,
+                persontype: FlyerPersontype.D,
+                copyNumber:
+                  this.flyerCopyRecipientForm.controls[
+                    'copyNumber'
+                  ].value.toString(),
+              };
+            } else {
+              body = {
+                copyuser: this.userCpp.value.user,
+                flierNumber: this.formControls.wheelNumber.value,
+                persontype: FlyerPersontype.C,
+                copyNumber:
+                  this.flyerCopyCppForm.controls['copyNumber'].value.toString(),
+              };
+            }
+            this.flyerCopiesService.update(body).subscribe({
+              next: data => {},
+              error: () => {},
+            });
+          });
+        } else {
+          this.createFlyerCopies();
+        }
+      },
+      error: () => {
+        this.createFlyerCopies();
+      },
+    });
+  }
+
+  createFlyerCopies() {
+    const recepientData = {
+      copyuser: this.userRecipient.value.user,
+      flierNumber: this.formControls.wheelNumber.value,
+      persontype: FlyerPersontype.D,
+      copyNumber:
+        this.flyerCopyRecipientForm.controls['copyNumber'].value.toString(),
+    };
+    this.flyerCopiesService.create(recepientData).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+    if (this.userCpp.value != null) {
+      const copyData = {
+        copyuser: this.userCpp.value.user,
+        flierNumber: this.formControls.wheelNumber.value,
+        persontype: FlyerPersontype.C,
+        copyNumber:
+          this.flyerCopyCppForm.controls['copyNumber'].value.toString(),
+      };
+      this.flyerCopiesService.create(copyData).subscribe({
+        next: () => {},
+        error: () => {},
+      });
+    }
+  }
+
+  checkGoodsDailyEviction() {
+    let goods: IGood[] = [];
+    const params = new FilterParams();
+    params.addFilter('', this.formControls.wheelNumber.value);
+    this.docRegisterService.getGoods(params.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          data.data.forEach(g => {
+            if (['VXR', 'ROP', 'STA'].includes(g.status)) {
+              this.massiveGoodService
+                .countMassiveGood(Number(g.goodId))
+                .subscribe({
+                  next: data => {
+                    if (data.data > 0) {
+                      goods.push(g);
+                    }
+                  },
+                  error: () => {},
+                });
+            }
+          });
+          this.deleteFromMassiveGood(goods);
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  deleteFromMassiveGood(goods: IGood[]) {
+    if (
+      goods.length > 0 &&
+      Number(this.formControls.dailyEviction.value) == 0
+    ) {
+      goods.forEach(g => {
+        this.massiveGoodService
+          .deleteMassiveGoodComer(Number(g.goodId))
+          .subscribe({
+            next: () => {},
+            error: () => {},
+          });
+      });
+    }
+  }
 
   goodsCaptureCheck() {
     for (const key in this.formControls) {
@@ -1548,86 +2233,69 @@ export class DocumentsReceptionRegisterComponent
     this.prepareFormData();
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
-    // this.docDataService.setDocumentsReceptionRegisterForm(
-    //   this.documentsReceptionForm.value
-    // );
     console.log(this.docDataService.documentsReceptionRegisterForm);
-    return;
-    //TODO: establecer valor variable global con ngrx
+    // return;
     this.globals.bn = 1;
-    //TODO: Usar las consultas de PUP_PREPARA_NOTIFICACIONES para abrir modal de antecedentes
-    let expedientNumber: number;
-    let trackRecords: INotification[] = [];
-    let params = new FilterParams();
-    this.loading = true;
     if (this.initialCondition == 'T') {
-      if (
-        !['1', '5', 1, 5].includes(this.formControls.indiciadoNumber.value.id)
-      ) {
-        params.addFilter(
-          'expedientTransferenceNumber',
-          this.formControls.expedientTransferenceNumber.value
-        );
-        params.addFilter(
-          'indiciadoNumber',
-          this.formControls.indiciadoNumber.value.id
-        );
-        params.addFilter(
-          'cityNumber',
-          this.formControls.cityNumber.value.idCity
-        );
-        this.notificationService.getAllFilter(params.getParams()).subscribe({
-          next: data => {
-            if (data.data.length > 0) {
-              let expedients = data.data.map(n => n.expedientNumber);
-              expedientNumber = Math.max(...expedients);
-            }
-          },
-          error: () => {
-            this.loading = false;
-          },
-        });
-      }
       if (
         this.globals.pIndicadorSat == 0 &&
         this.formControls.expedientTransferenceNumber.value != 'S/N' &&
         !['1', '5', 1, 5].includes(this.formControls.indiciadoNumber.value.id)
       ) {
-        //TODO: Arreglar filtros en una sola consulta para guardar los antecedentes
-        // y pasarlos al modal de antecedentes.
-        // !!!Pasar el max(expediente) al global
-        params.addFilter(
-          'expedientTransferenceNumber',
-          this.formControls.expedientTransferenceNumber.value
-        );
-        params.addFilter(
-          'indiciadoNumber',
-          this.formControls.indiciadoNumber.value.id
-        );
-        params.addFilter(
-          'cityNumber',
-          this.formControls.cityNumber.value.idCity
-        );
-        this.notificationService.getAllFilter(params.getParams()).subscribe({
-          next: data => {
-            if (data.data.length > 0) {
-              trackRecords = data.data;
-              this.showTrackRecords();
-            } else {
+        const transferentData = {
+          city: this.formControls.cityNumber.value.idCity,
+          indiciado: this.formControls.indiciadoNumber.value.id,
+          transferent: this.formControls.expedientTransferenceNumber.value,
+        };
+        this.notificationService
+          .findTransferentCity(transferentData)
+          .subscribe({
+            next: data => {
+              if (data.data.length > 0) {
+                let expedients = data.data.map(n => n.expedientNumber);
+                this.expedientRecord = Math.max(...expedients);
+                this.showTrackRecords(data.data);
+              } else {
+                this.trackRecordsCheck();
+              }
+            },
+            error: () => {
               this.trackRecordsCheck();
-            }
-          },
-          error: () => {
-            this.loading = false;
-            this.trackRecordsCheck();
-          },
-        });
+            },
+          });
+      } else {
+        this.trackRecordsCheck();
       }
     } else {
-      //TODO: Obtener el array de notificaciones con el endpoint y determinar
-      // longitud para llamar a showTrackRecords o captureGoods
-      this.showTrackRecords();
-      this.trackRecordsCheck();
+      const inquiryData = {
+        protectionKey: this.formControls.protectionKey.value,
+        touchPenaltyKey: this.formControls.touchPenaltyKey.value,
+        circumstantialRecord: this.formControls.circumstantialRecord.value,
+        preliminaryInquiry: this.formControls.preliminaryInquiry.value,
+        criminalCase: this.formControls.criminalCase.value,
+        entFedKey: this.formControls.entFedKey.value.toString(),
+        indiciadoNumber: this.formControls.indiciadoNumber.value?.id,
+        minpubNumber: this.formControls.minpubNumber.value?.id,
+        cityNumber: this.formControls.cityNumber.value?.idCity,
+        courtNumber: this.formControls.courtNumber.value?.id,
+        transference: this.formControls.endTransferNumber.value?.id,
+        stationNumber: this.formControls.stationNumber.value?.id,
+        autorityNumber: Number(
+          this.formControls.autorityNumber.value?.idAuthority
+        ),
+      };
+      this.notificationService.findCountByInquiry(inquiryData).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            this.showTrackRecords(data.data);
+          } else {
+            this.trackRecordsCheck();
+          }
+        },
+        error: () => {
+          this.trackRecordsCheck();
+        },
+      });
     }
   }
 
@@ -1641,6 +2309,8 @@ export class DocumentsReceptionRegisterComponent
       } else if (trackRecord?.expedientNumber) {
         this.globals.gNoExpediente = trackRecord.expedientNumber;
         this.formControls.expedientNumber.setValue(trackRecord.expedientNumber);
+      } else if (this.expedientRecord != null) {
+        this.globals.gNoExpediente = this.expedientRecord;
       }
       if (this.formControls.wheelNumber.value != null) {
         this.globals.gNoVolante = Number(this.formControls.wheelNumber.value);
@@ -1652,8 +2322,6 @@ export class DocumentsReceptionRegisterComponent
       this.globals.antecede = 1;
       this.startGoodsCapture();
     }
-    //TODO: Llenar Tmp_Notificaciones y Tmp_Expedientes
-    //TODO: Consultar para decidir si mandar a Captura de Bienes o Captura Masiva
     this.startGoodsCapture();
   }
 
@@ -1670,7 +2338,15 @@ export class DocumentsReceptionRegisterComponent
         },
       });
     }
-    //TODO: Si no hay gNoVolante Obtener el siguiente de nextval
+    if (this.globals.gNoVolante == null) {
+      this.notificationService.getLastWheelNumber().subscribe({
+        next: data => {
+          this.formControls.wheelNumber.setValue(data.wheel);
+          this.globals.gNoVolante = data.wheel;
+        },
+        error: () => {},
+      });
+    }
     this.prepareFormData();
     this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
       next: data => {
@@ -1720,7 +2396,10 @@ export class DocumentsReceptionRegisterComponent
       typeTranssact: typeManagement,
       noOffice: officeNumber,
     };
-    //TODO: Guardar datos en el endpoint de tmp expediente
+    this.tmpExpedientService.create(expedientData).subscribe({
+      next: () => {},
+      error: () => {},
+    });
   }
 
   saveTmpnotifications(affairSij: number) {
@@ -1732,36 +2411,24 @@ export class DocumentsReceptionRegisterComponent
           error: () => {},
         });
     }
-    //TODO: Obtener delegacion y subdelegacion del usuario logeado
     const notificationData: ITmpNotification = {
       ...this.formData,
+      wheelNumber: this.formControls.wheelNumber.value,
       externalOfficeDate: this.formData.externalOfficeDate as Date,
       receiptDate: this.formData.receiptDate as Date,
       hcCaptureDate: new Date(),
       hcEntryProcedureDate: new Date(),
       affairSij,
-      delegationNumber: 0,
-      subDelegationNumber: 0,
+      delegationNumber: this.userDelegation,
+      subDelegationNumber: this.userSubdelegation,
     };
-    //TODO: Guardar datos en tmp_notificacion
+    this.tmpNotificationService.create(notificationData).subscribe({
+      next: () => {},
+      error: () => {},
+    });
   }
 
   captureGoods() {
-    let subject: number = null,
-      expedient: number = null;
-    // const params = new FilterParams();
-    // params.addFilter(
-    //   'expedientNumber',
-    //   this.formControls.expedientNumber.value
-    // );
-    // this.notificationService.getAllFilter(params.getParams()).subscribe({
-    //   next: data => {
-    //     expedient = data.data[0].expedientNumber;
-    //   },
-    //   error: () => {},
-    // });
-    // if (expedient != null) {
-    // }
     if (this.globals.pIndicadorSat == 0) {
       const options: ICountAffairOptions = {
         office: this.formControls.officeExternalKey.value,
@@ -1828,9 +2495,6 @@ export class DocumentsReceptionRegisterComponent
   sentToSatBulkLoad() {
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
-    // this.docDataService.setDocumentsReceptionRegisterForm(
-    //   this.documentsReceptionForm.value
-    // );
     this.docDataService.goodsBulkLoadSatSaeParams = {
       asuntoSat: this.formData.expedientTransferenceNumber,
       pNoExpediente: this.formControls.expedientNumber.value,
@@ -1898,14 +2562,14 @@ export class DocumentsReceptionRegisterComponent
   }
 
   deleteDuplicatedGoods() {
-    //TODO: Usar el query para borrar bienes duplicados
-    //   DELETE bienes bie
-    // WHERE no_expediente = :BLK_NOTIFICACIONES.NO_EXPEDIENTE
-    // AND EXISTS (SELECT 1
-    // FROM	 bienes xxx
-    // WHERE	 xxx.no_bien 				= bie.no_bien_referencia
-    // AND		 xxx.no_expediente 	= bie.no_expediente
-    // AND		 xxx.no_bien 			 <> bie.no_bien);
+    if (this.formControls.expedientNumber.value != null) {
+      this.docRegisterService
+        .deleteGoodByExpedient(this.formControls.expedientNumber.value)
+        .subscribe({
+          next: () => {},
+          error: () => {},
+        });
+    }
     const params = new FilterParams();
     if (this.userDelegation != null && this.userSubdelegation != null) {
       params.addFilter('fileNumber', this.formControls.expedientNumber.value);
@@ -1913,15 +2577,15 @@ export class DocumentsReceptionRegisterComponent
         next: data => {
           if (data.data.length > 0) {
             const body = {
+              id: data.data[0].id,
+              goodId: data.data[0].goodId,
               delegationNumber: this.userDelegation,
               subDelegationNumber: this.userSubdelegation,
             };
-            this.docRegisterService
-              .updateGood(data.data[0].goodId, body)
-              .subscribe({
-                next: () => {},
-                error: () => {},
-              });
+            this.docRegisterService.updateGood(body).subscribe({
+              next: () => {},
+              error: () => {},
+            });
           }
         },
         error: () => {},
@@ -1953,6 +2617,7 @@ export class DocumentsReceptionRegisterComponent
       },
       error: () => {},
     });
+    this.sendFlyerCopies();
   }
 
   updateProcedureManagement() {
@@ -2043,6 +2708,11 @@ export class DocumentsReceptionRegisterComponent
   endProcess() {
     //TODO: Limpiar globales usadas con Ngrx
     this.globals = null;
+    this.docDataService.flyersRegistrationParams = null;
+    this.docDataService.documentsReceptionRegisterForm = null;
+    this.docDataService.goodsBulkLoadPgrSaeParams = null;
+    this.docDataService.goodsBulkLoadSatSaeParams = null;
+    this.docDataService.goodsCaptureTempParams = null;
     this.router.navigateByUrl('pages/general-processes/work-mailbox');
   }
 }

@@ -410,6 +410,7 @@
                 formControlName="externalOfficeDate"
                 class="form-control"
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                [maxDate]="initialDate"
                 bsDatepicker
                 [readonly]="pgrInterface" />
             </form-field>
@@ -780,7 +781,11 @@
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
-            [disabled]="!documentsReceptionForm.valid"
+            [disabled]="
+              !documentsReceptionForm.valid ||
+              !flyerCopyRecipientForm.valid ||
+              procedureBlocked
+            "
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
@@ -800,7 +805,7 @@
             type="button"
             class="btn btn-primary active"
             (click)="goodsCaptureCheck()"
-            [disabled]="!flyerCopyRecipientForm.valid">
+            [disabled]="!flyerCopyRecipientForm.valid || procedureBlocked">
             Siguiente
           </button>
         </div>
