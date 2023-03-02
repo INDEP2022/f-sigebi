@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { IAppraisersGood } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IRequestAppraisal } from 'src/app/core/models/ms-request-appraisal/request-appraisal.model';
@@ -47,6 +48,7 @@ export class ComplementArticleComponent implements OnInit {
   getdictamenPerito: string;
   getdictamenInstitucion: string;
   monedaField = 'moneda';
+  dateVigencia: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -82,7 +84,7 @@ export class ComplementArticleComponent implements OnInit {
       importe: [null, [Validators.required]],
       moneda: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       fechaVigencia: [null, [Validators.required]],
-      fechaAvaluo: [null, [Validators.required]],
+      fechaAvaluo: [null, [Validators.required, maxDate(new Date())]],
       perito: [null, [Validators.required]],
       institucion: [null, [Validators.required]],
       fechaDictamen: [null, [Validators.required]],
@@ -117,19 +119,9 @@ export class ComplementArticleComponent implements OnInit {
   }
 
   validarFechaAvaluo() {
-    const fechaAvaluo = new Date(this.form.get('fechaAvaluo').value);
-    const fechaVigencia = new Date(this.form.get('fechaVigencia').value);
-    if (fechaAvaluo > fechaVigencia) {
-      console.log(
-        'La fecha de avalúo no puede ser mayor que la fecha de vigencia'
-      );
-      return {
-        fechaInvalida: true,
-        message:
-          'La fecha de avalúo no puede ser mayor que la fecha de vigencia',
-      };
-    }
-    return null;
+    this.btnAppraisTab();
+    this.dateVigencia = addDays(this.form.get('fechaAvaluo').value, 1);
+    this.enableButton('fecha-vigencia-input');
   }
 
   //Activar y desactivar Botones
