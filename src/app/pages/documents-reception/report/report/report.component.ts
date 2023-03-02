@@ -85,7 +85,7 @@ export class ReportComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?P_IDENTIFICADOR=${params}`; //window.URL.createObjectURL(blob);
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${params.PN_DELEG}&PN_SUBDEL=${params.PN_SUBDEL}&PF_MES=${params.PF_MES}&PF_ANIO=${params.PF_ANIO}`;
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     setTimeout(() => {
@@ -118,6 +118,12 @@ export class ReportComponent extends BasePage implements OnInit {
   }
 
   Generar() {
+    let params = {
+      PN_DELEG: this.reportForm.controls['delegation'].value,
+      PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
+      PF_MES: this.reportForm.controls['PF_MES'].value,
+      PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
+    };
     const start = new Date(this.reportForm.get('PF_MES').value);
     const end = new Date(this.reportForm.get('PF_ANIO').value);
 
@@ -135,21 +141,27 @@ export class ReportComponent extends BasePage implements OnInit {
         'Fecha final no puede ser menor a fecha de inicio'
       );
     }
+    this.reportService
+      .getRecepcion(
+        params.PN_DELEG,
+        params.PN_SUBDEL,
+        params.PF_MES,
+        params.PF_ANIO
+      )
+      .subscribe({
+        next: (resp: any) => {
+          if (resp.file.base64 !== '') {
+            this.preview(resp.file.base64);
+          } else {
+            this.onLoadToast(
+              'warning',
+              'advertencia',
+              'Sin datos para los rangos de fechas suministrados'
+            );
+          }
 
-    this.reportService.getReport(this.reportForm.value).subscribe({
-      next: (resp: any) => {
-        if (resp.file.base64 !== '') {
-          this.preview(resp.file.base64);
-        } else {
-          this.onLoadToast(
-            'warning',
-            'advertencia',
-            'Sin datos para los rangos de fechas suministrados'
-          );
-        }
-
-        return;
-      },
-    });
+          return;
+        },
+      });
   }
 }

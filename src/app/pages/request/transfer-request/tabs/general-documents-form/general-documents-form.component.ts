@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -19,6 +19,7 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
@@ -34,6 +35,7 @@ import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedien
 })
 export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   @Input() searchFileForm: FormGroup;
+  @Input() requestForm: any;
   searchForm: ModelForm<IRequest>;
   authorities = new DefaultSelect();
   regionalsDelegations = new DefaultSelect();
@@ -89,32 +91,32 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     this.initSearchForm();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
-    this.dynamicFormCall();
+    this.reactiveFormCalls();
   }
 
   initSearchForm() {
     this.searchForm = this.fb.group({
-      id: [null],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       authorityId: [null],
-      typeOfTransfer: [null],
-      recordId: [null],
+      typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      recordId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       indicatedTaxpayer: [null],
-      domainExtinction: [null],
+      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
       regionalDelegationId: [null],
       transferenceFile: [null],
       trialType: [null], //tipo de juicio
       keyStateOfRepublic: [null],
-      trial: [null],
-      previousInquiry: [null],
+      trial: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       transferenceId: [null],
-      lawsuit: [null],
+      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
       stationId: [null],
-      protectNumber: [null],
+      protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
   newExpedient() {
-    this.openModal(AssociateFileComponent);
+    this.openModal(AssociateFileComponent, this.requestForm);
   }
 
   showDocsEst() {
@@ -265,7 +267,6 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   associateRequestAndExpedient(expedient: any) {
-    console.log(expedient);
     var request = { id: this.requestId, recordId: expedient.recordId };
     this.updateStateRequestTab();
     if (this.requestId) {
@@ -273,10 +274,10 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  openModal(component: any) {
+  openModal(component: any, parameters?: any) {
     let config: ModalOptions = {
       initialState: {
-        parameter: '',
+        parameter: parameters,
         callback: (next: boolean) => {
           //if(next) this.getExample();
         },
@@ -291,7 +292,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     });*/
   }
 
-  dynamicFormCall() {
+  reactiveFormCalls() {
     this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
       resp => {
         if (resp) {
@@ -333,7 +334,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        this.requestService.update(this.requestId, request).subscribe({
+        /*this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
               this.onLoadToast(
@@ -347,7 +348,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
               this.updateStateRequestTab();
             }
           },
-        });
+        });*/
       }
     });
   }

@@ -67,7 +67,16 @@ export class SatSubjectsRegisterService {
     return this.satInterfaceService.getVSatTransferencia(params);
   }
 
-  getReport(params: ListParams) {
-    return this.procedureManagementRepository.getReportProcedureManage(params);
+  getReport(params: ListParams, tipoReport: string) {
+    console.log(tipoReport, params);
+    if (tipoReport == 'gestion_sat') {
+      return this.procedureManagementRepository.getReportProcedureManage(
+        params
+      );
+    } else {
+      return this.procedureManagementRepository.getReportTransferenciaSat(
+        params
+      );
+    }
   }
 }

@@ -7,9 +7,9 @@
       <div class="row">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('cve')"
+            [control]="form.get('id')"
             label="Cve del Par&aacute;metro">
-            <input type="text" class="form-control" formControlName="cve" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
@@ -48,7 +48,10 @@
               type="text"
               class="form-control"
               formControlName="startDate"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+              [minDate]="minDate"
+              [maxDate]="maxDate" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -57,7 +60,10 @@
               type="text"
               class="form-control"
               formControlName="endDate"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+              [minDate]="minDate"
+              [maxDate]="maxDate" />
           </form-field>
         </div>
       </div>
@@ -68,11 +74,16 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!form.valid"
-          (click)="confirm()"></confirm-button>
+          [btnSmall]="true"
+          [disabled]="!form.valid || invalidDate"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

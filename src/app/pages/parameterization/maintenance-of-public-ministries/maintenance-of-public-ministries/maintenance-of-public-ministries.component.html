@@ -1,6 +1,15 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Mantenimiento a ministerios p&uacute;blicos</h5>
+    <div class="col-md-5 buttons">
+      <div>
+        <button
+          class="btn btn-primary active btn-sm ml-3"
+          (click)="openModal()">
+          Ministerios
+        </button>
+      </div>
+    </div>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -85,6 +94,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <app-cities-shared
             [form]="form"
+            [cityField]="'idCity'"
             (state)="updateEntity($event)"></app-cities-shared>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
@@ -118,12 +128,14 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-success active"
-          (click)="saved()"
-          [disabled]="!form.valid || loading">
-          Guardar
+        <confirm-button
+          [type]="'button'"
+          [btnSmall]="true"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="clean()">
+          Limpiar
         </button>
       </div>
     </div>

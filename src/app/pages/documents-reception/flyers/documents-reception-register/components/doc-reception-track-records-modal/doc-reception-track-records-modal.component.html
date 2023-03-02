@@ -1,0 +1,101 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccionar {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="trackRecordsForm" class="form-material">
+      <div class="row mt-n5">
+        <div class="col-md-4">
+          <div class="tr-block">
+            <label>Antecedentes</label>
+            <ng-scrollbar track="all" [autoHeightDisabled]="false">
+              <div class="tr-text" [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="trackRecordsTable"
+                  [attr.class]="'table-bordered'"
+                  [settings]="trackRecordSettings"
+                  [source]="trackRecords"
+                  (rowSelect)="selectRow($event)"
+                  (userRowSelect)="(true)">
+                </ng2-smart-table>
+              </div>
+            </ng-scrollbar>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="tr-block">
+            <label>Detalle Expediente</label>
+            <div class="tr-text bg-gray">
+              <ng-scrollbar track="all" [autoHeightDisabled]="false">
+                <p *ngFor="let ex of expedientData" class="ms-2">{{ ex }}</p>
+              </ng-scrollbar>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="tr-block">
+            <label>Detalle Notificaci&oacute;n</label>
+            <div class="tr-text bg-gray">
+              <ng-scrollbar track="all" [autoHeightDisabled]="false">
+                <p *ngFor="let notif of notificationData" class="ms-2">
+                  {{ notif }}
+                </p>
+              </ng-scrollbar>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 mb-3">
+        <div class="col-md-8">
+          <div class="tr-block-bottom">
+            <label>Bienes Asociados al Antecedente</label>
+            <ng-scrollbar track="all" [autoHeightDisabled]="false">
+              <div
+                class="tr-text-bottom"
+                [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="goodsTable"
+                  [attr.class]="'table-bordered'"
+                  [settings]="goodSettings"
+                  [source]="goodColumns"
+                  (rowSelect)="selectGood($event)"
+                  (userRowSelect)="(true)">
+                </ng2-smart-table>
+              </div>
+            </ng-scrollbar>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="tr-block-bottom">
+            <label>Detalle Bienes</label>
+            <div class="tr-text-bottom bg-gray">
+              <ng-scrollbar track="all" [autoHeightDisabled]="false">
+                <p *ngFor="let attr of goodAttributeData" class="ms-2">
+                  {{ attr }}
+                </p>
+              </ng-scrollbar>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!rowSelected"
+          [loading]="loading"
+          text="Seleccionar"
+          loadingText="Cargando"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

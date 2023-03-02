@@ -80,7 +80,7 @@ export const COMMERCIALIZATION_ROUTES = [
             link: '/pages/commercialization/expense-concepts',
           },
           {
-            label: 'Permisos a Eventos',
+            label: 'Delegar Permisos a Eventos',
             link: '/pages/commercialization/events',
           },
           {
@@ -186,7 +186,7 @@ export const COMMERCIALIZATION_ROUTES = [
             link: '/pages/commercialization/expense-concepts',
           },
           {
-            label: 'Permisos a Eventos',
+            label: 'Delegar Permisos a Eventos',
             link: '/pages/commercialization/events',
           },
           {

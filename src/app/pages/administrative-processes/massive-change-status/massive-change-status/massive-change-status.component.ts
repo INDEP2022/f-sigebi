@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodMassiveService } from 'src/app/core/services/ms-good/status-good-massive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { COLUMNS } from './columns';
 
 interface NotData {
@@ -17,7 +20,7 @@ interface NotData {
   reason: string;
 }
 interface IDs {
-  id: number;
+  goodNumber: number;
 }
 @Component({
   selector: 'app-massive-change-status',
@@ -34,6 +37,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   idsNotExist: NotData[] = [];
   showError: boolean = false;
   showStatus: boolean = false;
+  $trackedGoods = this.store.select(getTrackedGoods);
   get goodStatus() {
     return this.form.get('goodStatus');
   }
@@ -46,9 +50,11 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalService,
     private excelService: ExcelService,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private readonly goodMassiveServices: StatusGoodMassiveService,
+    private router: Router,
+    private store: Store
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -57,6 +63,17 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
+    this.$trackedGoods.subscribe({
+      next: response => {
+        if (response !== undefined) {
+          this.loadGood(response);
+        }
+        this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
   }
 
   /**
@@ -84,7 +101,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.ids = this.excelService.getData(binaryExcel);
-      if (this.ids[0].id === undefined) {
+      if (this.ids[0].goodNumber === undefined) {
         this.onLoadToast(
           'error',
           'Ocurrio un error al leer el archivo',
@@ -93,7 +110,6 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         return;
       }
       this.data.load([]);
-      3;
       this.goods = [];
       this.idsNotExist = [];
       this.showError = false;
@@ -112,14 +128,18 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     let count = 0;
     data.forEach(good => {
       count = count + 1;
-      this.goodServices.getById(good.id).subscribe({
+      this.goodServices.getById(good.goodNumber).subscribe({
         next: response => {
           this.goods.push(response);
           this.addStatus();
+          this.validGood(response);
         },
         error: err => {
           if (err.error.message === 'No se encontrarón registros')
-            this.idsNotExist.push({ id: good.id, reason: err.error.message });
+            this.idsNotExist.push({
+              id: good.goodNumber,
+              reason: err.error.message,
+            });
         },
       });
       if (count === data.length) {
@@ -139,12 +159,11 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       return;
     }
     this.goods.forEach(good => {
-      console.log(good);
       good.status = this.goodStatus.value;
       if (this.goodStatus.value === 'CAN') {
         good.observations = `${this.observation.value}. ${good.observations}`;
       }
-      this.goodServices.update(good.id, good).subscribe({
+      this.goodServices.update(good).subscribe({
         next: response => {
           console.log(response);
         },
@@ -162,8 +181,26 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     this.addStatus();
     this.showStatus = true;
   }
-  validGood() {
-    /// validar si puede ser cambiado el status de forma masiva
-    console.log('Validar');
+  validGood(good: IGood) {
+    this.goodMassiveServices.checkStatusMasiv(good.status).subscribe({
+      next: response => {
+        console.log(response);
+      },
+      error: err => {
+        console.log(err);
+        console.log('No entro');
+        this.goods = this.goods.filter(item => item.id != good.id);
+        this.idsNotExist.push({
+          id: good.id,
+          reason: 'No se puede cambiar el Status en esta pantalla',
+        });
+        this.addStatus();
+      },
+    });
+  }
+  goToGoodTracker() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBUBICABIEN' },
+    });
   }
 }

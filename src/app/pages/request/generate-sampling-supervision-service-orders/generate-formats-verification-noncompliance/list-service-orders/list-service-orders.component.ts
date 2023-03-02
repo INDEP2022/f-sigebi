@@ -45,7 +45,9 @@ export class ListServiceOrdersComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.searchForm != undefined) console.log(this.searchForm);
+    if (this.searchForm != undefined) {
+      console.log(this.searchForm);
+    }
   }
 
   rowsSelected(event: any) {

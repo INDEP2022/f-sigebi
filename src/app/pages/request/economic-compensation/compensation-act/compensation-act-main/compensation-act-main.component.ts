@@ -135,7 +135,9 @@ export class CompensationActMainComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+      if (next) {
+        console.log(next);
+      } //this.getCities();
     });
   }
 }

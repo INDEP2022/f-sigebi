@@ -2,13 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IParametersV2 } from 'src/app/core/models/ms-parametergood/parameters.model';
+import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-parameter-form',
@@ -20,13 +17,16 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = 'Parámetro';
   edit: boolean = false;
-  parameter: IParametersV2;
+  parameter: IParameters = {} as IParameters;
+  maxDate = new Date();
+  minDate = new Date('1999/01/01');
+  invalidDate: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalRef,
-    private datePipe: DatePipe,
-    private parameterServ: ParameterCatService
+    private parameterServ: ParameterCatService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -37,12 +37,12 @@ export class ParameterFormComponent extends BasePage implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      cve: [
+      id: [
         null,
         [
           Validators.required,
-          Validators.pattern(KEYGENERATION_PATTERN),
-          Validators.maxLength(10),
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(20),
         ],
       ],
       description: [
@@ -53,51 +53,83 @@ export class ParameterFormComponent extends BasePage implements OnInit {
           Validators.maxLength(60),
         ],
       ],
-      initialValue: [null, [Validators.required, Validators.maxLength(100)]],
-      finalValue: [null, Validators.maxLength(30)],
-      startDate: [null],
+      initialValue: [null, [Validators.required, Validators.maxLength(200)]],
+      finalValue: [null, Validators.maxLength(200)],
+      startDate: [null, Validators.required],
       endDate: [null],
     });
 
-    if (this.parameter?.startDate != null) {
-      this.parameter.startDate = new Date(
-        this.parameter.startDate.toString().split('-').join('/')
-      );
-      //this.datePipe.transform(this.parameter.startDate, 'dd/MM/yyyy', '+0430') as any //'30/12/2014'
-    }
-    if (this.parameter?.endDate != null) {
-      this.parameter.endDate = new Date(
-        this.parameter.endDate.toString().split('-').join('/')
-      );
-      //this.datePipe.transform(this.parameter.endDate, 'dd/MM/yyyy', '+0430') as any //'30/12/2014'
-    }
+    this.form.get('startDate').valueChanges.subscribe({
+      next: () => this.validateDate(),
+    });
+
+    this.form.get('endDate').valueChanges.subscribe({
+      next: () => this.validateDate(),
+    });
+
     this.form.patchValue(this.parameter);
   }
 
+  validateDate() {
+    const dateInit = this.form.get('startDate').value;
+    const dateEnd = this.form.get('endDate').value;
+
+    if (!dateEnd || dateEnd == 'Invalid Date') return;
+
+    const date1 =
+      typeof dateInit == 'string'
+        ? this.dateTimeTypeString(dateInit)
+        : this.dateTimeTypeDate(dateInit);
+    const date2 =
+      typeof dateEnd == 'string'
+        ? this.dateTimeTypeString(dateEnd)
+        : this.dateTimeTypeDate(dateEnd);
+
+    if (date2 < date1) {
+      this.invalidDate = true;
+      this.onLoadToast(
+        'error',
+        'La fecha final debe ser mayor a la de inicio',
+        ''
+      );
+    } else {
+      this.invalidDate = false;
+    }
+  }
+
+  dateTimeTypeString(date: string): number {
+    let time: string = date.split('T')[0].split('-').join('/');
+    return new Date(time).getTime();
+  }
+
+  dateTimeTypeDate(date: Date): number {
+    let time: string = this.datePipe.transform(date, 'yyyy/MM/dd');
+    return new Date(time).getTime();
+  }
+
   confirm() {
+    this.loading = true;
     if (this.form.valid) {
       if (this.edit) {
         this.parameterServ
-          .update(this.form.get('cve').value, this.form.value)
+          .update(this.form.get('id').value, this.form.value)
           .subscribe({
             next: () => this.handleSuccess(),
-            error: err => this.onLoadToast('error', err.error.message, ''),
+            error: err => {
+              this.loading = false;
+              this.onLoadToast('error', err.error.message, '');
+            },
           });
       } else {
         this.parameterServ.create(this.form.value).subscribe({
           next: () => this.handleSuccess(),
-          error: err => this.onLoadToast('error', err.error.message, ''),
+          error: err => {
+            this.loading = false;
+            this.onLoadToast('error', err.error.message, '');
+          },
         });
       }
     }
-  }
-
-  convertDate() {
-    this.datePipe.transform(
-      this.parameter.startDate,
-      'dd/MM/yyyy',
-      '+0430'
-    ) as any;
   }
 
   handleSuccess() {
@@ -106,6 +138,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
       'Parámetro',
       `Ha sido ${this.edit ? 'actualizado' : 'creado'} correctamente`
     );
+    this.loading = false;
     this.modalService.content.callback(true);
     this.modalService.hide();
   }

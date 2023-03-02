@@ -190,7 +190,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/events/events.module'))
         .EventsModule,
-    data: { title: 'Permisos a Eventos' },
+    data: { title: 'Delegar Permisos a Eventos', screen: 'EventsModule' },
   },
   {
     path: 'numeraire-exchange',

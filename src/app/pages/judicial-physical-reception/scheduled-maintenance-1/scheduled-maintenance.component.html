@@ -6,18 +6,15 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col">
-          <!-- <form-field [control]="form.get('tipoEvento')" label="Tipo Evento">
-            <ngx-select
-              control="tipoEvento"
-              [form]="form"
-              [data]="itemsSelect"></ngx-select>
-          </form-field> -->
-          <app-event-type-shared
+          <app-select-form
             [form]="form"
-            eventField="tipoEvento"></app-event-type-shared>
+            formField="tipoEvento"
+            label="Tipo de Evento"
+            [list]="tiposEvento"
+            [(params)]="paramsTypes"></app-select-form>
         </div>
-        <div class="col">
-          <form-field
+
+        <!-- <form-field
             [control]="form.get('fechapageFin')"
             label="Fecha de Pago - Fin">
             <input
@@ -25,55 +22,61 @@
               ngModel
               bsDaterangepicker
               formControlName="fechapageFin" />
-          </form-field>
-        </div>
-        <!-- <div class="col">
-          <form-field [control]="form.get('fechapage')" label="Fecha page">
+          </form-field> -->
+        <div class="col">
+          <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
               class="form-control"
-              formControlName="fechapage" />
+              formControlName="fechaInicio" />
           </form-field>
         </div>
-
         <div class="col">
           <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
             <input
               bsDatepicker
               class="form-control"
+              [minDate]="fechaInicio.value"
               formControlName="fechaFin" />
-          </form-field>
-        </div> -->
-
-        <div class="col">
-          <form-field [control]="form.get('statusEvento')">
-            <ngx-select
-              (fetchItems)="getStatus($event)"
-              control="statusEvento"
-              label="Estatus Evento"
-              [bindLabel]="'description'"
-              value="id"
-              [form]="form"
-              [data]="statusEvent"
-              (change)="onEventsChange($event)">
-            </ngx-select>
           </form-field>
         </div>
         <div class="col">
-          <form-field
-            [control]="form.get('coordRegional')"
-            label="Coord&#46; Regional">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="coordRegional" />
-          </form-field>
+          <app-select-form
+            [form]="form"
+            formField="statusEvento"
+            label="Estatus Evento"
+            [list]="statusList"
+            [(params)]="paramsStatus"></app-select-form>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <button
+            class="btn btn-primary active"
+            type="submit"
+            size="small"
+            (click)="openModalCoordinaciones()">
+            Coord. Regional
+          </button>
+        </div>
+        <div class="col">
+          <app-select-form
+            [form]="form"
+            formField="usuario"
+            label="Usuario"
+            bindLabel="name"
+            [getListObservable]="segUsers"
+            [(paramsFilter)]="paramsUsers"></app-select-form>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <button class="btn btn-primary active" type="submit" size="small">
+          <button
+            class="btn btn-primary active"
+            type="submit"
+            size="small"
+            (click)="getProceedingReception()">
             Refrescar Informaci&oacute;n
           </button>
         </div>
@@ -83,23 +86,38 @@
           </button>
         </div> -->
         <div class="col">
-          <button class="btn btn-primary active" type="submit" size="small">
+          <button
+            class="btn btn-primary active"
+            type="submit"
+            size="small"
+            (click)="openModalActas()">
             Buscar Bien en Acta
           </button>
         </div>
         <div class="col">
-          <button class="btn btn-primary active" type="submit" size="small">
+          <button
+            class="btn btn-primary active"
+            type="submit"
+            size="small"
+            (click)="deleteProgramations()">
             Borrar Programaciones
           </button>
         </div>
       </div>
-
-      <div class="row pt-2 scroll-table mt-5">
-        <ng2-smart-table
-          class="col-md-12"
-          [settings]="settings1"
-          [source]="data"></ng2-smart-table>
+      <div class="row pt-4">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              class="col-md-12"
+              [settings]="settings1"
+              [source]="data"
+              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+          </div>
+        </div>
       </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </form>
   </div>
 </app-card>

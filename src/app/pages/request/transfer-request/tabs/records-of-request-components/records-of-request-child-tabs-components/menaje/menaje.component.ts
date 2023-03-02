@@ -90,9 +90,11 @@ export class MenajeComponent extends BasePage implements OnInit {
       params['filter.id'] = `$eq:${item.id}`;
       this.goodRealState.getAll(params).subscribe({
         next: resp => {
-          if (resp.data.length !== 0) {
-            this.menage.id = item.id;
-            this.menage.description = resp.data[0].description;
+          this.menage = new Manege();
+          var good = resp.data;
+          if (good.length !== 0) {
+            this.menage.id = good[0].id;
+            this.menage.description = good[0].description;
             this.menage.requestId = item.requestId;
             resolve(this.menage);
           } else {
@@ -127,8 +129,8 @@ export class MenajeComponent extends BasePage implements OnInit {
     for (let i = 0; i < this.goodsObject.length; i++) {
       const element = this.goodsObject[i];
       menageList.push({
-        noGoodMenage: element.id, //Good
-        noGood: menage.id, //menaje
+        noGood: menage.id, //bien padre o Bien Inmueble
+        noGoodMenaje: element.id, //Good hijo o Good
         noRegister: null, //no insertar nada
       });
     }

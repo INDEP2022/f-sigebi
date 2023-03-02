@@ -1,3 +1,4 @@
+import { LocalDataSource } from 'ng2-smart-table';
 import { DataSource } from 'ng2-smart-table/lib/lib/data-source/data-source';
 export interface ICreateConfirmEvent<T> {
   newData: T;
@@ -21,4 +22,11 @@ export interface IEditConfirmEvent<T> {
 export interface IConfirm<T> {
   resolve(newData?: T): void;
   reject(): void;
+}
+
+export interface IUserRowSelectEvent<T> {
+  data: T;
+  isSelected: boolean;
+  selected: T[];
+  source: LocalDataSource;
 }

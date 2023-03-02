@@ -3,36 +3,36 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="goodForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('noBien')" label="No. bien">
-            <input type="text" class="form-control" formControlName="noBien" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field [control]="goodForm.get('goodNumber')" label="No. Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="goodNumber" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('unit')" label="Unidad">
-            <input type="text" class="form-control" formControlName="unit" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('proccess')" label="Proceso">
+          <form-field [control]="goodForm.get('process')" label="Proceso">
             <ng-select
-              formControlName="proccess"
+              formControlName="process"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
               <ng-option value="REV">REV</ng-option>
               <ng-option value="COMER">COMER</ng-option>
             </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodForm.get('registryNumber')"
+            label="No. Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>
@@ -42,8 +42,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
-          (click)="close()"></confirm-button>
+          [disabled]="!goodForm.valid"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

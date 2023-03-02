@@ -25,6 +25,10 @@ export class DelegationService implements ICrudMethods<IDelegation> {
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
+  getAllModal(self?: DelegationService, params?: ListParams | string) {
+    return self.delegationRepository.getAllPaginated(self.route, params);
+  }
+
   getById(id: string | number): Observable<IDelegation> {
     return this.delegationRepository.getById(this.route, id);
   }

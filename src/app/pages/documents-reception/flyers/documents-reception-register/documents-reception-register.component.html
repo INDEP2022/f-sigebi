@@ -3,9 +3,14 @@
     <div class="d-flex justify-content-between">
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
-        <button class="btn btn-info btn-sm active" (click)="chooseOther()">
+        <!-- <button
+          class="btn btn-secondary btn-sm active mr-2"
+          (click)="showTrackRecords()">
+          Antecedentes
+        </button> -->
+        <!-- <button class="btn btn-info btn-sm active" (click)="chooseOther()">
           Seleccionar volante
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -63,7 +68,10 @@
                 (fetchItems)="getIdentifiers($event)"
                 bindLabel="description"
                 control="identifier"
-                label="Identificador">
+                label="Identificador"
+                [searchOnInit]="true"
+                [readonly]="expedientNumber == null"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
 
@@ -79,19 +87,6 @@
           </div>
 
           <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('subject')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              (fetchItems)="getSubjects($event)"
-              [data]="subjects"
-              value="id"
-              bindLabel="description"
-              control="subject"
-              label="Asunto">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('affair')"
@@ -111,25 +106,6 @@
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('subject')"
-            label="Asunto">
-            <input
-              type="text"
-              formControlName="subject"
-              class="form-control"
-              readonly />
-          </form-field>
-
-          <div class="col-md-2">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="openModalSubjects()">
-              <i class="bx bx-list-plus bx-sm float-icon"></i>
-            </button>
-          </div> -->
           </div>
         </div>
 
@@ -147,11 +123,16 @@
             </div>
             <div class="col-md-4">
               <button
-                [disabled]="procedureStatus == 'ENVIADO'"
+                [disabled]="procedureStatus == 'ENVIADO' || wheelNumber == null"
                 type="button"
                 class="ml-5 btn btn-warning btn-sm"
                 (click)="sendFlyer()">
-                <i class="bx bxs-lock-alt"></i>
+                <i
+                  class="bx {{
+                    procedureStatus == 'PENDIENTE'
+                      ? 'bxs-lock-open-alt'
+                      : 'bxs-lock-alt'
+                  }}"></i>
               </button>
             </div>
             <div class="col-md-4">
@@ -173,7 +154,12 @@
                 formControlName="receiptDate"
                 class="form-control"
                 [maxDate]="initialDate"
-                bsDatepicker />
+                bsDatepicker
+                [readonly]="
+                  identifier == 'MIXTO' ||
+                  identifier == '4' ||
+                  identifier == '4MT'
+                " />
             </form-field>
 
             <form-field
@@ -229,11 +215,11 @@
 
             <div class="col-md-4">
               <form-field
-                [control]="documentsReceptionForm.get('identifier')"
+                [control]="documentsReceptionForm.get('identifierExp')"
                 label="Ident. Exp">
                 <input
                   type="number"
-                  formControlName="identifier"
+                  formControlName="identifierExp"
                   class="form-control"
                   readonly />
               </form-field>
@@ -244,7 +230,7 @@
       <div class="row">
         <div
           class="col-md-6"
-          *ngIf="affairKey.value == 50 && initialCondition == 'T'">
+          *ngIf="affairKey.value == '50' && initialCondition == 'T'">
           <div class="d-flex">
             <form-radio class="ml-3" label="Primera Etapa">
               <input type="radio" formControlName="stage" value="ETAPA 1" />
@@ -334,16 +320,6 @@
           </div>
 
           <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
-            <!-- <form-field
-            class="col-md-8"
-            [control]="documentsReceptionForm.get('touchPenaltyKey')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="touchPenaltyKey"
-              label="Tipo Juicio">
-            </ngx-select>
-          </form-field> -->
             <form-field
               *ngIf="!pgrInterface && initialCondition == 'T'"
               class="col-md-12"
@@ -379,7 +355,7 @@
               [control]="documentsReceptionForm.get('officeExternalKey')"
               label="No. Oficio">
               <input
-                type="number"
+                type="text"
                 formControlName="officeExternalKey"
                 class="form-control"
                 [readonly]="pgrInterface" />
@@ -392,6 +368,8 @@
               <input
                 formControlName="externalOfficeDate"
                 class="form-control"
+                [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                [maxDate]="initialDate"
                 bsDatepicker
                 [readonly]="pgrInterface" />
             </form-field>
@@ -399,7 +377,7 @@
 
           <div class="row pt-5" *ngIf="initialCondition == 'T'">
             <form-field
-              *ngIf="affairKey.value == 50"
+              *ngIf="affairKey.value == '50'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('stageName')"
               label="">
@@ -442,9 +420,14 @@
               [control]="documentsReceptionForm.get('uniqueKey')">
               <ngx-select
                 [form]="documentsReceptionForm"
-                [data]="identifiers"
+                [data]="uniqueKeys"
+                (fetchItems)="getUniqueKey($event)"
+                value="uniqueCve"
+                bindLabel="uniqueCve"
                 control="uniqueKey"
-                label="Clave única 3 niveles">
+                label="Clave única 3 niveles"
+                (change)="setUniqueKeyData($event)"
+                termMaxLength="5">
               </ngx-select>
             </form-field>
 
@@ -458,7 +441,9 @@
                 bindLabel="nameCity"
                 control="cityNumber"
                 label="Ciudad"
-                (change)="cityChange($event)">
+                [searchOnInit]="true"
+                (change)="cityChange($event)"
+                termMaxLength="60">
               </ngx-select>
             </form-field>
 
@@ -482,7 +467,9 @@
                 (fetchItems)="getFederalEntities($event)"
                 bindLabel="value"
                 control="entFedKey"
-                label="Ent. Fed">
+                label="Ent. Fed"
+                [searchOnInit]="true"
+                termMaxLength="80">
               </ngx-select>
             </form-field>
 
@@ -496,7 +483,9 @@
                 bindLabel="nameTransferent"
                 control="endTransferNumber"
                 label="Transferente"
-                (change)="changeTransferor($event)">
+                [searchOnInit]="true"
+                (change)="changeTransferor($event)"
+                termMaxLength="200">
               </ngx-select>
             </form-field>
           </div>
@@ -511,7 +500,9 @@
                 (fetchItems)="getStations($event)"
                 bindLabel="stationName"
                 control="stationNumber"
-                label="Emisora">
+                label="Emisora"
+                [searchOnInit]="true"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
 
@@ -525,26 +516,15 @@
                 bindLabel="authorityName"
                 control="autorityNumber"
                 label="Autoridad"
-                [readonly]="pgrInterface">
+                [searchOnInit]="true"
+                [readonly]="pgrInterface"
+                termMaxLength="400">
               </ngx-select>
             </form-field>
           </div>
 
-          <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('transference')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="transferors"
-              bindLabel="nameTransferent"
-              control="transference"
-              label="Transferente"
-              [readonly]="true">
-            </ngx-select>
-          </form-field> -->
+          <div class="row pt-5" *ngIf="initialCondition != 'T'">
             <form-field
-              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('minpubNumber')">
               <ngx-select
@@ -553,7 +533,9 @@
                 (fetchItems)="getPublicMinistries($event)"
                 bindLabel="description"
                 control="minpubNumber"
-                label="Min. P&uacute;blico">
+                [searchOnInit]="true"
+                label="Min. P&uacute;blico"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
 
@@ -567,7 +549,9 @@
                 bindLabel="value"
                 control="crimeKey"
                 label="Delito"
-                [readonly]="pgrInterface">
+                [searchOnInit]="true"
+                [readonly]="pgrInterface"
+                termMaxLength="80">
               </ngx-select>
             </form-field>
           </div>
@@ -583,7 +567,9 @@
                 (fetchItems)="getCourts($event)"
                 bindLabel="description"
                 control="courtNumber"
-                label="Juzgado">
+                label="Juzgado"
+                [searchOnInit]="true"
+                termMaxLength="100">
               </ngx-select>
             </form-field>
           </div>
@@ -598,7 +584,9 @@
                 (fetchItems)="getDefendants($event)"
                 bindLabel="name"
                 control="indiciadoNumber"
-                [label]="taxpayerLabel">
+                [label]="taxpayerLabel"
+                [searchOnInit]="true"
+                termMaxLength="1000">
               </ngx-select>
             </form-field>
 
@@ -611,22 +599,14 @@
                 (fetchItems)="getReceptionWays($event)"
                 bindLabel="value"
                 control="viaKey"
-                label="V&iacute;a Recepci&oacute;n">
+                label="V&iacute;a Recepci&oacute;n"
+                [searchOnInit]="true"
+                termMaxLength="30">
               </ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('destinationArea')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="destinationArea"
-              label="Área Destino">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('destinationArea')"
@@ -648,16 +628,6 @@
             </div>
           </div>
           <div class="row pt-5">
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('destinationArea')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="destinationArea"
-              label="Área Destino">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('delegationName')"
@@ -669,15 +639,6 @@
                 readonly />
             </form-field>
 
-            <!-- <form-field
-            class="col-md-6"
-            [control]="documentsReceptionForm.get('destinationArea')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="destinationArea">
-            </ngx-select>
-          </form-field> -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('subDelegationName')"
@@ -700,7 +661,9 @@
                 (fetchItems)="getManagementAreas($event)"
                 bindLabel="description"
                 control="estatusTramite"
-                label="Gestión Destino">
+                label="Gestión Destino"
+                [searchOnInit]="true"
+                termMaxLength="30">
               </ngx-select>
             </form-field>
           </div>
@@ -715,9 +678,11 @@
             [form]="flyerCopyRecipientForm"
             [data]="users"
             (fetchItems)="getUsers($event)"
-            bindLabel="user.name"
+            bindLabel="user"
             control="copyuser"
-            label="En atención">
+            label="En atención"
+            [searchOnInit]="true"
+            termMaxLength="30">
           </ngx-select>
         </form-field>
       </form>
@@ -727,9 +692,11 @@
             [form]="flyerCopyCppForm"
             [data]="usersCopy"
             (fetchItems)="getUsersCopy($event)"
-            bindLabel="user.name"
+            bindLabel="user"
             control="copyuser"
-            label="C.P.P.">
+            label="C.P.P."
+            [searchOnInit]="true"
+            termMaxLength="30">
           </ngx-select>
         </form-field>
       </form>
@@ -746,7 +713,11 @@
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
-            [disabled]="!documentsReceptionForm.valid"
+            [disabled]="
+              !documentsReceptionForm.valid ||
+              !flyerCopyRecipientForm.valid ||
+              procedureBlocked
+            "
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
@@ -765,27 +736,16 @@
           <button
             type="button"
             class="btn btn-primary active"
-            (click)="captureGoods()"
-            [disabled]="!flyerCopyRecipientForm.valid">
+            (click)="goodsCaptureCheck()"
+            [disabled]="
+              !flyerCopyRecipientForm.valid ||
+              !documentsReceptionForm.valid ||
+              procedureBlocked
+            ">
             Siguiente
           </button>
         </div>
       </div>
-      <!-- <div class="col-md-6"></div> -->
-      <!-- <form-field
-        class="col-md-6"
-        [control]="documentsReceptionForm.get('cpp')">
-        <ngx-select
-          [form]="documentsReceptionForm"
-          [data]="identifiers"
-          control="cpp">
-        </ngx-select>
-      </form-field> -->
-      <!-- <div class="col-md-6 text-right">
-        <button class="btn btn-primary active btn-sm mt-3" type="submit">
-          Siguiente
-        </button>
-      </div> -->
     </div>
   </div>
 </app-card>

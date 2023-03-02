@@ -148,7 +148,9 @@ export class DestinationInfoRequestMainComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.onSend.subscribe(next => {
-      if (next) console.log(next);
+      if (next) {
+        console.log(next);
+      }
     });
   }
 
@@ -176,7 +178,9 @@ export class DestinationInfoRequestMainComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next);
+      if (next) {
+        console.log(next);
+      }
     });
   }
 
@@ -187,7 +191,9 @@ export class DestinationInfoRequestMainComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next);
+      if (next) {
+        console.log(next);
+      }
     });
   }
 }

@@ -45,10 +45,9 @@
         control="types"
         label="Tipo"
         [data]="types"
-        value="id"
         bindLabel="nameGoodType"
         (fetchItems)="getTypes($event)"
-        (change)="typesChange()"></ngx-select>
+        (change)="typesChange($event)"></ngx-select>
     </form-field>
 
     <form-field [control]="form.get('subtypes')" class="col-md-3">
@@ -59,10 +58,9 @@
         control="subtypes"
         label="Subtipo"
         [data]="subtypes"
-        value="id"
         bindLabel="nameSubtypeGood"
         (fetchItems)="getSubtypes($event)"
-        (change)="subtypesChange()"></ngx-select>
+        (change)="subtypesChange($event)"></ngx-select>
     </form-field>
 
     <form-field [control]="form.get('ssubtypes')" class="col-md-3">
@@ -73,10 +71,9 @@
         control="ssubtypes"
         label="Ssubtipo"
         [data]="ssubtypes"
-        value="numClasifGoods"
         bindLabel="description"
         (fetchItems)="getSsubtypes($event)"
-        (change)="ssubtypesChange()"></ngx-select>
+        (change)="ssubtypesChange($event)"></ngx-select>
     </form-field>
 
     <form-field [control]="form.get('sssubtypes')" class="col-md-3">
@@ -89,14 +86,16 @@
         [data]="sssubtypes"
         value="numClasifGoods"
         bindLabel="description"
-        (fetchItems)="getSssubtypes($event)"></ngx-select>
+        (fetchItems)="getSssubtypes($event)"
+        (change)="sssubtypesChange($event)"></ngx-select>
     </form-field>
   </div>
 
   <div class="row pt-3">
     <div class="col-md-12">
-      <button class="btn btn-primary active">
-        Buscar <i class="fa fa-search ml-2"></i>
+      <button class="btn btn-primary active" [disabled]="subloading">
+        {{ subloading ? 'Espere un momento ...' : 'Buscar' }}
+        <i class="fa fa-search ml-2"></i>
       </button>
     </div>
   </div>

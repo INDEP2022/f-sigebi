@@ -1,22 +1,22 @@
 export interface IExpedient {
   id: string | number;
-  dateAgreementAssurance: Date;
-  foresight: string;
-  dateForesight: Date;
-  articleValidated: Date;
-  ministerialDate: Date;
-  ministerialActOfFaith: string;
-  date_Dictamines: Date;
-  batteryNumber: string;
-  lockerNumber: string;
-  shelfNumber: string;
-  courtNumber: string;
-  observationsForecast: string;
-  insertedBy: string;
-  observations: string;
-  insertMethod: string;
-  insertDate: Date;
-  receptionDate: Date;
+  dateAgreementAssurance?: Date;
+  foresight?: string;
+  dateForesight?: Date;
+  articleValidated?: Date;
+  ministerialDate?: Date;
+  ministerialActOfFaith?: string;
+  date_Dictamines?: Date;
+  batteryNumber?: string;
+  lockerNumber?: string;
+  shelfNumber?: string;
+  courtNumber: number;
+  observationsForecast?: string;
+  insertedBy?: string;
+  observations?: string;
+  insertMethod?: string;
+  insertDate?: Date;
+  receptionDate?: Date;
   criminalCase: string;
   preliminaryInquiry: string;
   protectionKey: string;
@@ -26,37 +26,37 @@ export interface IExpedient {
   nameInstitution: string;
   courtName: string;
   mpName: string;
-  keySaveValue: string;
+  keySaveValue?: string;
   indicatedName: string;
-  authorityOrdersDictum: string;
-  notificationDate: Date;
-  notifiedTo: string;
-  placeNotification: string;
-  confiscateDictamineDate: Date;
-  dictaminationReturnDate: Date;
-  alienationDate: Date;
+  authorityOrdersDictum?: string;
+  notificationDate?: Date;
+  notifiedTo?: string;
+  placeNotification?: string;
+  confiscateDictamineDate?: Date;
+  dictaminationReturnDate?: Date;
+  alienationDate?: Date;
   federalEntityKey: string;
-  dictaminationDate: Date;
-  registerNumber: string;
-  destructionDate: Date;
-  donationDate: Date;
-  initialAgreementDate: Date;
-  initialAgreement: string;
-  expedientStatus: string;
+  dictaminationDate?: Date;
+  registerNumber?: string;
+  destructionDate?: Date;
+  donationDate?: Date;
+  initialAgreementDate?: Date;
+  initialAgreement?: string;
+  expedientStatus?: string;
   identifier: string;
-  crimeStatus: string;
-  transferNumber: string;
+  crimeStatus?: string;
+  transferNumber: number;
   expTransferNumber: string;
   expedientType: string;
   stationNumber: number | string;
   authorityNumber: number | string;
-  insertionDatehc: Date;
+  insertionDatehc?: Date;
 }
 export interface IExpedientMassiveUpload {
   id: string | number; // NO EXPEDIENTE
   insertedBy: string; // INSERTADO POR
   insertMethod: string; // METODO DE INSERCION
-  insertDate: Date; //  FECHA DE INSERCION
+  insertDate: string | Date; //  FECHA DE INSERCION
   nameInstitution: string; // NOMBRE DE INSTITUCION
   indicatedName: string; // NOMBRE INDICIADO
   federalEntityKey: string; // CLAVE ENTIDAD FEDERATIVA

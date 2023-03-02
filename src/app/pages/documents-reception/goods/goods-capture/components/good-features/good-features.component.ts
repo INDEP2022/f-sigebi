@@ -51,6 +51,9 @@ export class GoodFeaturesComponent
       } else {
         field.removeValidators(Validators.required);
       }
+      if (feature?.length > 0) {
+        field.addValidators(Validators.maxLength(80));
+      }
       field.updateValueAndValidity();
     });
   }

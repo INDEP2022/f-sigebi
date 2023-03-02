@@ -1,0 +1,77 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="amountForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            label="Monto inicial"
+            [control]="amountForm.get('startingAmount')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startingAmount" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="PCT Comisión"
+            [control]="amountForm.get('pctCommission')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="pctCommission" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Monto Final"
+            [control]="amountForm.get('finalAmount')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="finalAmount" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="ID" [control]="amountForm.get('idComiXThird')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idComiXThird" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="ID 3ro comer"
+            [control]="amountForm.get('idThirdParty')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idThirdParty" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="amountForm.invalid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

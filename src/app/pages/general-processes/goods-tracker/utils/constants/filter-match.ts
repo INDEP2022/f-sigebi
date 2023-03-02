@@ -40,15 +40,15 @@ export const FilterMatchTracker: any = {
   criminalCause: null,
   receptionForm: 'dateReceptionPhisical',
   receptionTo: 'dateReceptionPhisical',
-  certificate: null,
-  receptionStatus: null,
+  certificate: 'keyDestMinutes',
+  receptionStatus: 'goodNumber',
   statusChangeFrom: null,
   statusChaangeTo: null,
   eventNum: null,
   historicalProcess: null,
-  transfers: null,
-  transmitters: null,
-  autorities: null,
+  transfers: 'transfereeNumber',
+  transmitters: 'emitter',
+  autorities: 'authority',
   warehouse: 'warehouseNumber',
   cordination: 'adminCoordNumber',
   autorityState: 'stageState',
@@ -68,6 +68,7 @@ export const OperatorValues: any = {
   flyerType: SearchFilter.IN,
   officeDate: SearchFilter.IN,
   protection: SearchFilter.IN,
+  receptionStatus: SearchFilter.IN,
 };
 
 export let TYPES_CLASIF: any[] = [];
@@ -81,6 +82,7 @@ export let PROTECTIONS: any[] = [];
 export let MINPUBS: any[] = [];
 export let EXTERNAL_OFFICE: any[] = [];
 export let CRIMINAL_CASE: any[] = [];
+export let RECEPTION_STATUS: any[] = [];
 export const TrackerValues: any = {
   types: TYPES_CLASIF,
   subtypes: SUBTYPES_CLASIF,
@@ -93,4 +95,5 @@ export const TrackerValues: any = {
   publicMin: MINPUBS,
   extOfficeNum: EXTERNAL_OFFICE,
   criminalCase: CRIMINAL_CASE,
+  receptionStatus: RECEPTION_STATUS,
 };

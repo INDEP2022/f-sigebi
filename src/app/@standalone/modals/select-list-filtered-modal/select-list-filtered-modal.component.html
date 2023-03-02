@@ -3,31 +3,43 @@
     <h5 class="modal-title">Seleccionar {{ title }}</h5>
   </div>
   <div body>
-    <div class="row" *ngIf="filters.length == 0">
+    <div class="row mt-n3" *ngIf="filters.length == 0">
       <div class="form-material col-md-5">
         <search-bar
-          [filterParams]="params"
+          *ngIf="dataObservableFn"
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
+        <search-bar
+          *ngIf="dataObservableListParamsFn"
+          [params]="params"
           [filterField]="searchFilter"></search-bar>
       </div>
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <ng-scrollbar
-          [track]="'horizontal'"
-          [autoHeightDisabled]="false"></ng-scrollbar>
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="events-table"
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="columns"
-            (userRowSelect)="selectRow($event.data)">
-          </ng2-smart-table>
-        </div>
-        <div class="table-padding"></div>
+        <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="events-table"
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="columns"
+              (userRowSelect)="selectRow($event.data)">
+            </ng2-smart-table>
+          </div>
+          <div class="table-padding"></div>
+        </ng-scrollbar>
       </div>
     </div>
-    <app-pagination [filterParams]="params" [totalItems]="totalItems">
+    <app-pagination
+      *ngIf="dataObservableFn"
+      [filterParams]="filterParams"
+      [totalItems]="totalItems">
+    </app-pagination>
+    <app-pagination
+      *ngIf="dataObservableListParamsFn"
+      [params]="params"
+      [totalItems]="totalItems">
     </app-pagination>
   </div>
   <div footer>

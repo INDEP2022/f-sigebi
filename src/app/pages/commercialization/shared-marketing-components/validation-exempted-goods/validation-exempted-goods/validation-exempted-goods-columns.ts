@@ -1,7 +1,6 @@
-export const VALIDATION_EXEMPTED_GOODS_COLUMS = {
-  noBien: {
-    title: 'Bien',
-    width: '25px',
+export const GOODS_COLUMS = {
+  id: {
+    title: 'Unidad',
     type: 'string',
     sort: false,
   },
@@ -10,12 +9,20 @@ export const VALIDATION_EXEMPTED_GOODS_COLUMS = {
     type: 'string',
     sort: false,
   },
-  unit: {
+  quantity: {
     title: 'Unidad',
     type: 'string',
     sort: false,
   },
-  proccess: {
+};
+
+export const PROCCESS_COLUMNS = {
+  goodNumber: {
+    title: 'No Bien',
+    type: 'string',
+    sort: false,
+  },
+  process: {
     title: 'Proceso',
     type: 'string',
     sort: false,
