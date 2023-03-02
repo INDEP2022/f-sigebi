@@ -20,9 +20,9 @@ export class InventoryQueryRepository<T> implements IInventortQueryMethods<T> {
     return this.httpClient.get<IListResponse<T>>(fullRoute, { params });
   }
 
-  getById(route: string, id: string | number): Observable<IListResponse<T>> {
+  getById(route: string, id: string | number): Observable<T> {
     const fullRoute = `${this.ms}${route}${id}`;
-    return this.httpClient.get<IListResponse<T>>(fullRoute);
+    return this.httpClient.get<T>(fullRoute);
   }
 
   update(route: string, id: number | string, formData: Object) {
@@ -37,7 +37,7 @@ export class InventoryQueryRepository<T> implements IInventortQueryMethods<T> {
 
   remove(route: string, id: number | string) {
     const fullRoute = `${this.ms}${route}${id}`;
-    return this.httpClient.delete<IListResponse<T>>(fullRoute);
+    return this.httpClient.delete<T>(fullRoute);
   }
 
   private makeParams(params: ListParams, filter: string): HttpParams {

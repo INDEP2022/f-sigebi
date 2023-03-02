@@ -713,11 +713,7 @@
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
-            [disabled]="
-              !documentsReceptionForm.valid ||
-              !flyerCopyRecipientForm.valid ||
-              procedureBlocked
-            "
+            [disabled]="procedureBlocked"
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
@@ -737,11 +733,7 @@
             type="button"
             class="btn btn-primary active"
             (click)="goodsCaptureCheck()"
-            [disabled]="
-              !flyerCopyRecipientForm.valid ||
-              !documentsReceptionForm.valid ||
-              procedureBlocked
-            ">
+            [disabled]="procedureBlocked">
             Siguiente
           </button>
         </div>
