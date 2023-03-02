@@ -8,6 +8,7 @@ import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.mod
 import { IUpdateProceedings } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from './../../../../core/shared/patterns';
 
 @Component({
   selector: 'form-edit',
@@ -37,12 +38,19 @@ export class FormEditComponent extends BasePage implements OnInit {
   initForm() {
     this.form = this.fb.group({
       id: [null, []],
-      proceedingsCve: [null, [Validators.required]],
+      proceedingsCve: [null, [Validators.required, Validators.maxLength(50)]],
       elaborationDate: [null, []],
-      authorityOrder: [null, [Validators.required]],
+      authorityOrder: [null, [Validators.required, Validators.maxLength(50)]],
       proceedingsType: [null],
-      universalFolio: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
+      universalFolio: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(15),
+        ],
+      ],
+      observations: [null, [Validators.required, Validators.maxLength(1000)]],
     });
   }
 
@@ -70,11 +78,18 @@ export class FormEditComponent extends BasePage implements OnInit {
   }
 
   buildObjectToUpdate() {
+    console.log(this.proceeding);
     let dataToUpdate: any = {};
     console.log(this.proceeding);
     for (let key in this.proceeding) {
       if (key == 'transferNumber') {
-        dataToUpdate[key] = this.proceeding[key].id;
+        if (this.proceeding[key] != null) {
+          console.log(1);
+          dataToUpdate[key] = this.proceeding[key].id;
+        } else {
+          console.log(this.proceeding[key]);
+          dataToUpdate[key] = this.proceeding[key];
+        }
       } else {
         if (key == 'fileNumber') {
           dataToUpdate[key] = this.proceeding[key].filesId;

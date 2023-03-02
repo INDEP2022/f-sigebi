@@ -27,8 +27,12 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ListParams } from './../../../../common/repository/interfaces/list-params';
-import { IParameters } from './../../../../core/models/ms-parametergood/parameters.model';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from './../../../../common/repository/interfaces/list-params';
+import { IGood } from './../../../../core/models/ms-good/good';
 import { IMaximumClosingTime } from './../../../../core/models/ms-proceedings/maximum-closing-time.model';
 import { IUpdateProceedings } from './../../../../core/models/ms-proceedings/update-proceedings.model';
 import { AccountMovements } from './../../../../core/services/ms-account-movements/account-movements.service';
@@ -71,6 +75,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   paramsProceedings = new BehaviorSubject<ListParams>(new ListParams());
   paginatorProceedings: any = {};
   paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   paginatorGoods: any = {};
   totalProceedings: number = 0;
   totalGoods: number = 0;
@@ -218,9 +223,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   getParamCve() {
     this.parametersService.getById('CLASINUMER').subscribe({
-      next: (data: IListResponse<IParameters>) => {
+      next: (data: any) => {
         console.log(data);
-        // this.di_clasif_numerario = data.initialValue;
+        this.di_clasif_numerario = Number(data.initialValue);
       },
       error: error => {
         console.log(error);
@@ -482,7 +487,804 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
                 throw this.verifyError(error, 'Error en Get All Goods');
               });
             console.log(allGoods?.data?.length);
-            for (let i = 0; (i = 2); i++) {
+            console.log(allGoods?.data);
+            //TODO: HACER MAP CON allGoods?.data
+            /*let goods:any = [
+              {
+                "id": 21378,
+                "inventoryNumber": null,
+                "goodId": "192273",
+                "description": "NUMERARIO POR LA CANTIDAD DE $980.00 (NOVECIENTOS OCHENTA PESOS 00/100 M.N.)",
+                "quantity": "1.000",
+                "dateIn": null,
+                "dateOut": null,
+                "expireDate": null,
+                "ubicationType": null,
+                "status": "ABT",
+                "goodCategory": null,
+                "originSignals": null,
+                "registerInscrSol": null,
+                "dateOpinion": null,
+                "proficientOpinion": null,
+                "valuerOpinion": null,
+                "opinion": null,
+                "appraisedValue": "980.00",
+                "drawerNumber": null,
+                "vaultNumber": null,
+                "goodReferenceNumber": "192273",
+                "appraisalCurrencyKey": "MN",
+                "appraisalVigDate": null,
+                "legalDestApprove": null,
+                "legalDestApproveUsr": null,
+                "legalDestApproveDate": null,
+                "complianceLeaveDate": null,
+                "complianceNotifyDate": null,
+                "leaveObservations": null,
+                "judicialLeaveDate": null,
+                "notifyDate": null,
+                "notifyA": null,
+                "placeNotify": null,
+                "discardRevRecDate": null,
+                "resolutionEmissionRecRevDate": null,
+                "admissionAgreementDate": null,
+                "audienceRevRecDate": null,
+                "revRecObservations": null,
+                "leaveCause": null,
+                "resolution": null,
+                "fecUnaffordability": null,
+                "unaffordabilityJudgment": null,
+                "userApproveUse": null,
+                "useApproveDate": null,
+                "useObservations": null,
+                "dateRequestChangeNumerary": null,
+                "numberChangeRequestUser": null,
+                "causeNumberChange": null,
+                "changeRequestNumber": null,
+                "authNumberChangeDate": null,
+                "authChangeNumberUser": null,
+                "authChangeNumber": null,
+                "numberChangeRatifiesDate": null,
+                "numberChangeRatifiesUser": null,
+                "notifyRevRecDate": null,
+                "revRecCause": null,
+                "initialAgreement": null,
+                "observations": null,
+                "fileNumber": "215675",
+                "associatedFileNumber": "215675",
+                "rackNumber": null,
+                "storeNumber": null,
+                "lotNumber": null,
+                "goodClassNumber": 62,
+                "subDelegationNumber": 7,
+                "delegationNumber": 7,
+                "physicalReceptionDate": "2014-08-12T00:00:00.000Z",
+                "statusResourceReview": null,
+                "judicialDate": null,
+                "abandonmentDueDate": null,
+                "destructionApproveDate": null,
+                "destructionApproveUser": null,
+                "observationDestruction": null,
+                "destinyNumber": null,
+                "registryNumber": "2995050",
+                "agreementDate": "2005-02-24T00:00:00.000Z",
+                "state": null,
+                "opinionType": null,
+                "presentationDate": null,
+                "revRecRemedyDate": null,
+                "receptionStatus": null,
+                "promoterUserDecoDevo": null,
+                "scheduledDateDecoDev": null,
+                "goodsPartializationFatherNumber": null,
+                "seraAbnDeclaration": null,
+                "identifier": "ASEG",
+                "siabiInventoryId": null,
+                "cisiPropertyId": null,
+                "siabiInvalidId": null,
+                "tesofeDate": null,
+                "tesofeFolio": null,
+                "situation": null,
+                "labelNumber": "7",
+                "flyerNumber": "798925",
+                "insertRegDate": "2005-05-04T00:00:00.000Z",
+                "visportal": null,
+                "unit": "PIEZA",
+                "referenceValue": null,
+                "insertHcDate": null,
+                "extDomProcess": "ABANDONO",
+                "requestId": null,
+                "goodTypeId": null,
+                "subTypeId": null,
+                "goodStatus": "EN_RECEPCION",
+                "idGoodProperty": null,
+                "requestFolio": null,
+                "type": null,
+                "admissionDate": null,
+                "locationId": null,
+                "uniqueKey": null,
+                "fileeNumber": null,
+                "goodDescription": null,
+                "physicalStatus": null,
+                "unitMeasure": null,
+                "ligieUnit": null,
+                "quantityy": null,
+                "destiny": null,
+                "appraisal": null,
+                "notesTransferringEntity": null,
+                "fractionId": null,
+                "federalEntity": null,
+                "stateConservation": null,
+                "armor": null,
+                "brand": null,
+                "subBrand": null,
+                "model": null,
+                "axesNumber": null,
+                "engineNumber": null,
+                "tuition": null,
+                "serie": null,
+                "chassis": null,
+                "cabin": null,
+                "volume": null,
+                "origin": null,
+                "useType": null,
+                "manufacturingYear": null,
+                "capacity": null,
+                "operationalState": null,
+                "enginesNumber": null,
+                "dgacRegistry": null,
+                "airplaneType": null,
+                "flag": null,
+                "openwork": null,
+                "length": null,
+                "sleeve": null,
+                "shipName": null,
+                "publicRegistry": null,
+                "ships": null,
+                "caratage": null,
+                "material": null,
+                "weight": null,
+                "satFile": null,
+                "satClassificationId": null,
+                "satSubclassificationId": null,
+                "satGuideMaster": null,
+                "satGuideHouse": null,
+                "satDepartureNumber": null,
+                "satAlmAddress": null,
+                "satAlmColony": null,
+                "satAlmCityPopulation": null,
+                "satAlmMunicipalityDelegation": null,
+                "satAlmFederativeEntity": null,
+                "satAddressDelivery": null,
+                "satBreaches": null,
+                "userCreation": null,
+                "creationDate": null,
+                "userModification": null,
+                "modificationDate": null,
+                "ligieSection": null,
+                "ligieChapter": null,
+                "ligieLevel1": null,
+                "ligieLevel2": null,
+                "ligieLevel3": null,
+                "ligieLevel4": null,
+                "satUniqueKey": null,
+                "unfair": null,
+                "platesNumber": null,
+                "clarification": null,
+                "reprogrammationNumber": null,
+                "reasonCancReprog": "1",
+                "storeId": null,
+                "instanceDate": null,
+                "processStatus": "REGISTRO_SOLICITUD",
+                "version": null,
+                "observationss": null,
+                "addressId": null,
+                "compliesNorm": null,
+                "descriptionGoodSae": null,
+                "quantitySae": "1",
+                "saeMeasureUnit": "A",
+                "saePhysicalState": "1",
+                "stateConservationSae": "1",
+                "programmationStatus": "EN_TRANSPORTABLE",
+                "executionStatus": "EN_RECEPCION",
+                "duplicity": null,
+                "duplicatedGood": null,
+                "compensation": null,
+                "validateGood": null,
+                "ebsStatus": null,
+                "concurrentNumber": null,
+                "concurrentMsg": null,
+                "fitCircular": null,
+                "theftReport": null,
+                "transferentDestiny": null,
+                "saeDestiny": "1",
+                "rejectionClarification": null,
+                "goodResdevId": null,
+                "indClarification": "N",
+                "msgSatSae": null,
+                "color": null,
+                "doorsNumber": null,
+                "destinationRedress": null,
+                "val1": "MN",
+                "val2": "980",
+                "val3": null,
+                "val4": "BITAL",
+                "val5": "28-02-2005",
+                "val6": "4024745242",
+                "val7": null,
+                "val8": null,
+                "val9": null,
+                "val10": null,
+                "val11": null,
+                "val12": null,
+                "val13": "0",
+                "val14": "980",
+                "val15": null,
+                "val16": null,
+                "val17": null,
+                "val18": null,
+                "val19": null,
+                "val20": null,
+                "val21": null,
+                "val22": null,
+                "val23": null,
+                "val24": null,
+                "val25": null,
+                "val26": null,
+                "val27": null,
+                "val28": null,
+                "val29": null,
+                "val30": null,
+                "val31": null,
+                "val32": null,
+                "val33": null,
+                "val34": null,
+                "val35": null,
+                "val36": null,
+                "val37": null,
+                "val38": null,
+                "val39": null,
+                "val40": null,
+                "val41": null,
+                "val42": null,
+                "val43": null,
+                "val44": null,
+                "val45": null,
+                "val46": null,
+                "val47": null,
+                "val48": null,
+                "val49": null,
+                "val50": null,
+                "val51": null,
+                "val52": null,
+                "val53": null,
+                "val54": null,
+                "val55": null,
+                "val56": null,
+                "val57": null,
+                "val58": null,
+                "val59": null,
+                "val60": null,
+                "val61": null,
+                "val62": null,
+                "val63": null,
+                "val64": null,
+                "val65": null,
+                "val66": null,
+                "val67": null,
+                "val68": null,
+                "val69": null,
+                "val70": null,
+                "val71": null,
+                "val72": null,
+                "val73": null,
+                "val74": null,
+                "val75": null,
+                "val76": null,
+                "val77": null,
+                "val78": null,
+                "val79": null,
+                "val80": null,
+                "val81": null,
+                "val82": null,
+                "val83": null,
+                "val84": null,
+                "val85": null,
+                "val86": null,
+                "val87": null,
+                "val88": null,
+                "val89": null,
+                "val90": null,
+                "val91": null,
+                "val92": null,
+                "val93": null,
+                "val94": null,
+                "val95": null,
+                "val96": null,
+                "val97": null,
+                "val98": null,
+                "val99": null,
+                "val100": null,
+                "val101": null,
+                "val102": null,
+                "val103": null,
+                "val104": null,
+                "val105": null,
+                "val106": null,
+                "val107": null,
+                "val108": null,
+                "val109": null,
+                "val110": null,
+                "val111": null,
+                "val112": null,
+                "val113": null,
+                "val114": null,
+                "val115": null,
+                "val116": null,
+                "val117": null,
+                "val118": null,
+                "val119": null,
+                "val120": null
+              },
+              {
+                "id": 1182,
+                "inventoryNumber": null,
+                "goodId": "1182",
+                "description": "GRABADORA MARCA MECOA, COLOR ROJA AM, FM, CON UNA BOCINA",
+                "quantity": "1.000",
+                "dateIn": "2000-02-11T00:00:00.000Z",
+                "dateOut": null,
+                "expireDate": null,
+                "ubicationType": "A",
+                "status": "ADE",
+                "goodCategory": null,
+                "originSignals": null,
+                "registerInscrSol": null,
+                "dateOpinion": null,
+                "proficientOpinion": null,
+                "valuerOpinion": null,
+                "opinion": null,
+                "appraisedValue": "25.00",
+                "drawerNumber": null,
+                "vaultNumber": null,
+                "goodReferenceNumber": "1182",
+                "appraisalCurrencyKey": "MN",
+                "appraisalVigDate": null,
+                "legalDestApprove": null,
+                "legalDestApproveUsr": null,
+                "legalDestApproveDate": null,
+                "complianceLeaveDate": null,
+                "complianceNotifyDate": null,
+                "leaveObservations": null,
+                "judicialLeaveDate": null,
+                "notifyDate": null,
+                "notifyA": null,
+                "placeNotify": null,
+                "discardRevRecDate": null,
+                "resolutionEmissionRecRevDate": null,
+                "admissionAgreementDate": null,
+                "audienceRevRecDate": null,
+                "revRecObservations": null,
+                "leaveCause": null,
+                "resolution": null,
+                "fecUnaffordability": null,
+                "unaffordabilityJudgment": null,
+                "userApproveUse": null,
+                "useApproveDate": null,
+                "useObservations": null,
+                "dateRequestChangeNumerary": null,
+                "numberChangeRequestUser": null,
+                "causeNumberChange": null,
+                "changeRequestNumber": null,
+                "authNumberChangeDate": null,
+                "authChangeNumberUser": null,
+                "authChangeNumber": null,
+                "numberChangeRatifiesDate": null,
+                "numberChangeRatifiesUser": null,
+                "notifyRevRecDate": null,
+                "revRecCause": null,
+                "initialAgreement": null,
+                "observations": null,
+                "fileNumber": "789",
+                "associatedFileNumber": "798",
+                "rackNumber": "1",
+                "storeNumber": 321,
+                "lotNumber": "3",
+                "goodClassNumber": 62,
+                "subDelegationNumber": null,
+                "delegationNumber": null,
+                "physicalReceptionDate": "2012-11-15T00:00:00.000Z",
+                "statusResourceReview": null,
+                "judicialDate": null,
+                "abandonmentDueDate": null,
+                "destructionApproveDate": null,
+                "destructionApproveUser": null,
+                "observationDestruction": "DCB/395/2012. 08-10-2012",
+                "destinyNumber": null,
+                "registryNumber": "10716",
+                "agreementDate": null,
+                "state": null,
+                "opinionType": null,
+                "presentationDate": null,
+                "revRecRemedyDate": null,
+                "receptionStatus": null,
+                "promoterUserDecoDevo": null,
+                "scheduledDateDecoDev": null,
+                "goodsPartializationFatherNumber": null,
+                "seraAbnDeclaration": null,
+                "identifier": "ASEG",
+                "siabiInventoryId": null,
+                "cisiPropertyId": null,
+                "siabiInvalidId": null,
+                "tesofeDate": null,
+                "tesofeFolio": null,
+                "situation": null,
+                "labelNumber": "4",
+                "flyerNumber": "7069",
+                "insertRegDate": "2000-02-11T00:00:00.000Z",
+                "visportal": null,
+                "unit": "PIEZA",
+                "referenceValue": null,
+                "insertHcDate": null,
+                "extDomProcess": "ASEGURADO",
+                "requestId": null,
+                "goodTypeId": null,
+                "subTypeId": null,
+                "goodStatus": "EN_RECEPCION",
+                "idGoodProperty": null,
+                "requestFolio": null,
+                "type": null,
+                "admissionDate": null,
+                "locationId": null,
+                "uniqueKey": null,
+                "fileeNumber": null,
+                "goodDescription": null,
+                "physicalStatus": null,
+                "unitMeasure": null,
+                "ligieUnit": null,
+                "quantityy": null,
+                "destiny": null,
+                "appraisal": null,
+                "notesTransferringEntity": null,
+                "fractionId": null,
+                "federalEntity": null,
+                "stateConservation": null,
+                "armor": null,
+                "brand": null,
+                "subBrand": null,
+                "model": null,
+                "axesNumber": null,
+                "engineNumber": null,
+                "tuition": null,
+                "serie": null,
+                "chassis": null,
+                "cabin": null,
+                "volume": null,
+                "origin": null,
+                "useType": null,
+                "manufacturingYear": null,
+                "capacity": null,
+                "operationalState": null,
+                "enginesNumber": null,
+                "dgacRegistry": null,
+                "airplaneType": null,
+                "flag": null,
+                "openwork": null,
+                "length": null,
+                "sleeve": null,
+                "shipName": null,
+                "publicRegistry": null,
+                "ships": null,
+                "caratage": null,
+                "material": null,
+                "weight": null,
+                "satFile": null,
+                "satClassificationId": null,
+                "satSubclassificationId": null,
+                "satGuideMaster": null,
+                "satGuideHouse": null,
+                "satDepartureNumber": null,
+                "satAlmAddress": null,
+                "satAlmColony": null,
+                "satAlmCityPopulation": null,
+                "satAlmMunicipalityDelegation": null,
+                "satAlmFederativeEntity": null,
+                "satAddressDelivery": null,
+                "satBreaches": null,
+                "userCreation": null,
+                "creationDate": null,
+                "userModification": null,
+                "modificationDate": null,
+                "ligieSection": null,
+                "ligieChapter": null,
+                "ligieLevel1": null,
+                "ligieLevel2": null,
+                "ligieLevel3": null,
+                "ligieLevel4": null,
+                "satUniqueKey": null,
+                "unfair": null,
+                "platesNumber": null,
+                "clarification": null,
+                "reprogrammationNumber": null,
+                "reasonCancReprog": "1",
+                "storeId": null,
+                "instanceDate": null,
+                "processStatus": "REGISTRO_SOLICITUD",
+                "version": null,
+                "observationss": null,
+                "addressId": null,
+                "compliesNorm": null,
+                "descriptionGoodSae": null,
+                "quantitySae": "1",
+                "saeMeasureUnit": "A",
+                "saePhysicalState": "1",
+                "stateConservationSae": "1",
+                "programmationStatus": "EN_TRANSPORTABLE",
+                "executionStatus": "EN_RECEPCION",
+                "duplicity": null,
+                "duplicatedGood": null,
+                "compensation": null,
+                "validateGood": null,
+                "ebsStatus": null,
+                "concurrentNumber": null,
+                "concurrentMsg": null,
+                "fitCircular": null,
+                "theftReport": null,
+                "transferentDestiny": null,
+                "saeDestiny": "1",
+                "rejectionClarification": null,
+                "goodResdevId": null,
+                "indClarification": "N",
+                "msgSatSae": null,
+                "color": null,
+                "doorsNumber": null,
+                "destinationRedress": null,
+                "val1": "PIEZA",
+                "val2": "MECAO",
+                "val3": "S/M",
+                "val4": "S/M",
+                "val5": "S/N",
+                "val6": null,
+                "val7": "MALO",
+                "val8": null,
+                "val9": "REGULAR",
+                "val10": null,
+                "val11": null,
+                "val12": null,
+                "val13": null,
+                "val14": null,
+                "val15": null,
+                "val16": null,
+                "val17": null,
+                "val18": null,
+                "val19": null,
+                "val20": null,
+                "val21": null,
+                "val22": null,
+                "val23": null,
+                "val24": null,
+                "val25": null,
+                "val26": null,
+                "val27": null,
+                "val28": null,
+                "val29": null,
+                "val30": null,
+                "val31": null,
+                "val32": null,
+                "val33": null,
+                "val34": null,
+                "val35": null,
+                "val36": null,
+                "val37": null,
+                "val38": null,
+                "val39": null,
+                "val40": null,
+                "val41": null,
+                "val42": null,
+                "val43": null,
+                "val44": null,
+                "val45": null,
+                "val46": null,
+                "val47": null,
+                "val48": null,
+                "val49": null,
+                "val50": null,
+                "val51": null,
+                "val52": null,
+                "val53": null,
+                "val54": null,
+                "val55": null,
+                "val56": null,
+                "val57": null,
+                "val58": null,
+                "val59": null,
+                "val60": null,
+                "val61": null,
+                "val62": null,
+                "val63": null,
+                "val64": null,
+                "val65": null,
+                "val66": null,
+                "val67": null,
+                "val68": null,
+                "val69": null,
+                "val70": null,
+                "val71": null,
+                "val72": null,
+                "val73": null,
+                "val74": null,
+                "val75": null,
+                "val76": null,
+                "val77": null,
+                "val78": null,
+                "val79": null,
+                "val80": null,
+                "val81": null,
+                "val82": null,
+                "val83": null,
+                "val84": null,
+                "val85": null,
+                "val86": null,
+                "val87": null,
+                "val88": null,
+                "val89": null,
+                "val90": null,
+                "val91": null,
+                "val92": null,
+                "val93": null,
+                "val94": null,
+                "val95": null,
+                "val96": null,
+                "val97": null,
+                "val98": null,
+                "val99": null,
+                "val100": null,
+                "val101": null,
+                "val102": null,
+                "val103": null,
+                "val104": null,
+                "val105": null,
+                "val106": null,
+                "val107": null,
+                "val108": null,
+                "val109": null,
+                "val110": null,
+                "val111": null,
+                "val112": null,
+                "val113": null,
+                "val114": null,
+                "val115": null,
+                "val116": null,
+                "val117": null,
+                "val118": null,
+                "val119": null,
+                "val120": null
+              }
+            ];*/
+            let goods = allGoods?.data;
+            const polls = goods.map(async (good: any) => {
+              let goodId = good.numGoodId.goodsID; //good.id
+              console.log(goodId);
+              let finalStatus = await this.getFinalStatus([goodId]);
+              finalStatus = {
+                ...finalStatus,
+                good: good.numGoodId,
+              };
+              return finalStatus;
+            });
+
+            /*const polls =goods.map(async (good:any)=> {
+              console.log(good)
+              let finalStatus = await this.getFinalStatus([good]);
+              finalStatus={
+                ...finalStatus,
+                good:good
+              }
+              return finalStatus
+            });*/
+
+            Promise.allSettled(polls)
+              .then(data => {
+                console.log('promesas resueltas');
+                console.log(data);
+                data.map(async (resp: any) => {
+                  if (
+                    resp.status === 'fulfilled' &&
+                    resp.value.data.length > 0
+                  ) {
+                    //TODO:UPDATE ESTATUS GOOD
+                    let value = resp.value.data[0];
+                    console.log(value);
+                    let good = resp.value.good;
+                    good.status = value.statusfinal;
+                    console.log(good.status);
+                    this.updateGoods(good)
+                      .then(respUG => {
+                        this.udpateHistoryGood(good.id, value.statusfinal)
+                          .then(respUHG => respUG)
+                          .catch(err => {
+                            console.log('No se pudo guardar el historico');
+                            console.log(err);
+                          });
+                      })
+                      .catch(err => {
+                        console.log('No se pudo actualizar el bien');
+                        console.log(err);
+                      });
+                  } else {
+                    //TODO: NOT POSSIBLE...
+                    console.log('Estatus final no disponible');
+                  }
+                });
+
+                const pollsGAM = goods.map(async (good: any) => {
+                  console.log(good);
+                  let _good = good.numGoodId;
+                  let goodId = _good.goodsID;
+                  let clasif_numerario = 'N';
+                  console.log(
+                    this.di_clasif_numerario,
+                    '--',
+                    Number(_good.goodsClassId)
+                  );
+                  //this.di_clasif_numerario
+                  Number(_good.goodsClassId) == this.di_clasif_numerario
+                    ? (clasif_numerario = 'S')
+                    : (clasif_numerario = 'N');
+                  /*if(good.goodClassNumber == this.di_clasif_numerario){
+                    console.log('SI ES NUMERARIO')
+                    clasif_numerario = 'S';
+                  }else{
+                    console.log('NO ES NUMERARIO')
+                    clasif_numerario = 'N';
+                  }*/
+                  //console.log(goodId)
+
+                  let isConcilied = await this.getAccountMovements(goodId);
+                  _good.isNumerary = clasif_numerario;
+                  isConcilied = {
+                    ...isConcilied,
+                    good: _good,
+                  };
+
+                  return isConcilied;
+                });
+
+                Promise.allSettled(pollsGAM).then(dataGAM => {
+                  console.log('promesas GAM CUMPLIDAS');
+                  console.log(dataGAM);
+                  dataGAM.map(async (resp: any) => {
+                    if (resp.status === 'fulfilled' && resp.value.count > 0) {
+                      let goodGAM = resp.value.good;
+                      goodGAM = {
+                        ...goodGAM,
+                        isConcilied: 'S',
+                      };
+                      console.log('BIEN:', Number(goodGAM.goodsID));
+                      console.log('ES CONCILIADO:', goodGAM.isConcilied);
+                      console.log('ES NUMERARIO:', goodGAM.isNumerary);
+                      if (
+                        goodGAM.isConcilied == 'S' &&
+                        goodGAM.isNumerary == 'S'
+                      ) {
+                        //TODO: CAMBIA CATEGORIA
+                        this.updateAccountMovements(Number(goodGAM.goodsID))
+                          .then(data => {
+                            console.log(data);
+                            this.onLoadToast(
+                              'success',
+                              'Categoría Actualizada',
+                              ''
+                            );
+                          })
+                          .catch(err => {
+                            console.log(err);
+                          });
+                      }
+                    }
+                  });
+                });
+              })
+              .catch(err => console.log(err));
+            /*for (let i = 0; (i = 2); i++) {
               console.log(i);
               let statusFinal = await this.getFinalStatus([192273])
                 .then(data => console.log(1))
@@ -503,7 +1305,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
               //   .catch(error => {
               //     throw this.verifyError(error, 'Erorr Update History Good');
               //   });
-            }
+            }*/
             console.log(allGoods);
             // allGoods.data.forEach(
             //   good => {
@@ -538,6 +1340,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   verifyError(error: any, defaultMsg: string) {
+    console.log(error);
     let message: string = '';
     if (error?.status <= 404) {
       message = defaultMsg;
@@ -546,160 +1349,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     }
     return message;
   }
-
-  // initiateProceedingsClose(proceedingNumb: string | number) {
-  //   console.log('Test');
-  //   let withoutReconciling: boolean = false;
-  //   let goodsWithoutReconciling: any[] = [];
-  //   let goodsNumber: any[] = [];
-  //   let maximunClosingTime: any;
-  //   this.getMaximunClosingTime()
-  //     .pipe(
-  //       catchError(err => {
-  //         this.handleError(err, 'No existen bienes.');
-  //         return of(err);
-  //       }),
-  //       tap((maximunClosingTime: any) => {
-  //         console.log(maximunClosingTime?.date);
-  //         if (this.validateClosingDate(maximunClosingTime?.date)) {
-  //           if (this.dataProceedingsSelected.universalFolio != '') {
-  //             console.log('folio');
-  //             this.getScannedDocument()
-  //               .pipe(
-  //                 catchError(err => {
-  //                   this.handleError(err, 'No existen bienesSSSSS.');
-  //                   return of(err);
-  //                 }),
-  //                 switchMap(
-  //                   (data: any) =>
-  //                     this.getTotalReconciledGoods(proceedingNumb).pipe(
-  //                       catchError(err => {
-  //                         this.handleError(err, 'Get Total Reconciled Goods');
-  //                         return of(err);
-  //                       }),
-  //                       tap((data: any) => {
-  //                         console.log(data);
-  //                         if (data.total == this.quantityOfGoods) {
-  //                           console.log('Si se puede Cerrar');
-  //                           let dataToUpdate: any =
-  //                             this.buildObjectToUpdate('CERRADA');
-  //                           this.updateProceeding(dataToUpdate)
-  //                             .pipe(
-  //                               catchError(err => {
-  //                                 this.handleError(
-  //                                   err,
-  //                                   'Ha ocurrido un error al actualizar el acta'
-  //                                 );
-  //                                 return of(err);
-  //                               })
-  //                               // switchMap((data: any) =>
-  //                               //   this.getAllGoods().pipe(
-  //                               //     tap((allGoods: any) => {
-  //                               //       console.log('--->>>>')
-  //                               //       for (let i = 0; (i = 2); i++) {
-  //                               //         let good: any = [];
-  //                               //         if ((i = 0)) good.push(1545);
-  //                               //         else good.push(192273);
-  //                               //         this.getFinalStatus(data)
-  //                               //           .pipe(
-  //                               //             catchError(err => {
-  //                               //               this.handleError(
-  //                               //                 err,
-  //                               //                 'GetFinalStatus'
-  //                               //               );
-  //                               //               return of(err);
-  //                               //             }),
-  //                               //             switchMap((data: IStatus) =>
-  //                               //               this.updateGoods(
-  //                               //                 good[0],
-  //                               //                 data.statusFinal
-  //                               //               ).pipe(
-  //                               //                 tap(data =>
-  //                               //                   console.log(
-  //                               //                     data.data[0].status
-  //                               //                   )
-  //                               //                 ),
-  //                               //                 switchMap(
-  //                               //                   (
-  //                               //                     data: IListResponse<IGood>
-  //                               //                   ) =>
-  //                               //                     this.udpateHistoryGood(
-  //                               //                       good[0],
-  //                               //                       data.data[0].status
-  //                               //                     ).pipe(
-  //                               //                       tap(data =>
-  //                               //                         console.log('FINAL')
-  //                               //                       )
-  //                               //                     )
-  //                               //                 )
-  //                               //               )
-  //                               //             )
-  //                               //           )
-  //                               //           .subscribe();
-  //                               //       }
-  //                               //     })
-  //                               //   )
-  //                               // )
-  //                             )
-  //                             .subscribe();
-  //                         } else {
-  //                           this.onLoadToast(
-  //                             'error',
-  //                             'Error',
-  //                             'No puede cerrar el acta ya que existen bienes sin conciliar'
-  //                           );
-  //                         }
-  //                       })
-  //                     )
-  //                   // this.getAllGoods().pipe(
-  //                   //   tap((data: any) => {
-  //                   //     console.log(data);
-  //                   //     goodsNumber = this.extractNumberOfGoods(data);
-  //                   //     console.log(goodsNumber);
-  //                   //   }),
-  //                   //   switchMap(data =>
-  //                   //     //this.accountMovements.getAll(goodsNumber) //verificar cuales bienes estám conciliados
-  //                   //     this.accountMovements
-  //                   //       .getByFilters({ goods: goodsNumber })
-  //                   //       .pipe(
-  //                   //         //Busca los bienes que no estén conciliados
-  //                   //         tap(data => {
-  //                   //           if (goodsNumber.length != data.data.length) {
-  //                   //             goodsWithoutReconciling =
-  //                   //               this.searchUnreconciledGoods(
-  //                   //                 data.data,
-  //                   //                 goodsNumber
-  //                   //               );
-  //                   //             this.onLoadToast(
-  //                   //               'error',
-  //                   //               'Error',
-  //                   //               'No puede cerrar el acta ya que existen bienes sin conciliar'
-  //                   //             );
-  //                   //           } else {
-  //                   //             this.buildObjectToUpdate('CERRADA');
-  //                   //           }
-  //                   //         })
-  //                   //       )
-  //                   //   )
-  //                   // )
-  //                 )
-  //               )
-  //               .subscribe();
-  //           } else {
-  //             this.onLoadToast('error', 'Error', 'El valor del folio es vacío');
-  //           }
-  //         } else {
-  //           this.onLoadToast(
-  //             'error',
-  //             'Error',
-  //             'El plazo para cerrar actas del mes anterior ha terminado'
-  //           );
-  //         }
-  //         console.log('xxx');
-  //       })
-  //     )
-  //     .subscribe((data: any) => {});
-  // }
 
   getFinalStatus(goodArray: number[]) {
     return firstValueFrom(
@@ -711,16 +1360,14 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     );
   }
 
-  updateGoods(goodNumber: number, status: string) {
-    return firstValueFrom(
-      this.goodService.updateGoodStatus(goodNumber, status)
-    );
+  updateGoods(good: IGood) {
+    return firstValueFrom(this.goodService.updateWithoutId(good));
   }
 
   udpateHistoryGood(goodNumber: number, status: string) {
     let data: IHistoryGood = {
       propertyNum: goodNumber,
-      status,
+      status: status,
       changeDate: new Date(),
       userChange: this.userInfo,
       reasonForChange: 'Automatico',
@@ -777,6 +1424,24 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
         this.proceedingsNumb,
         { limit: this.quantityOfGoods }
       )
+    );
+  }
+
+  getAccountMovements(goodId: number) {
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = 1;
+
+    this.filterParams
+      .getValue()
+      .addFilter('numberGood', goodId, SearchFilter.EQ);
+    return firstValueFrom(
+      this.accountMovements.getAll(this.filterParams.getValue().getParams())
+    );
+  }
+
+  updateAccountMovements(goodId: number) {
+    return firstValueFrom(
+      this.accountMovements.updateAccountMovements(goodId, 'DEVOLUCION')
     );
   }
 

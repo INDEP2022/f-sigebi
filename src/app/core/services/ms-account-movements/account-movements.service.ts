@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountMvmntEndpoints } from 'src/app/common/constants/endpoints/ms-accountmvmnt-endpoint';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAccountMovements } from '../../models/ms-account-movements/account-movements.model';
@@ -18,7 +17,10 @@ export class AccountMovements extends HttpService {
     this.microservice = AccountMvmntEndpoints.BasePath;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<any>> {
+  getAll(params?: string): Observable<IListResponse<any>> {
+    //TODO: UPDATE URL
+    console.log(params);
+    //let route = 'http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements'
     return this.get<IListResponse<any>>(
       AccountMvmntEndpoints.AccountMovements,
       params
@@ -30,5 +32,10 @@ export class AccountMovements extends HttpService {
       AccountMvmntEndpoints.AccountMovements + `/filter-in`,
       filters
     );
+  }
+
+  updateAccountMovements(goodId: number, typeProceeding: string) {
+    let route = `${AccountMvmntEndpoints.AccountMovements}/type-proceeding/${typeProceeding}/good/${goodId}`;
+    return this.put<IListResponse<IAccountMovements>>(route);
   }
 }

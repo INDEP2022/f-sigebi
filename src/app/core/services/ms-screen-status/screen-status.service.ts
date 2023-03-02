@@ -15,7 +15,7 @@ export class ScreenStatusService extends HttpService {
   }
 
   getStatus(filters: { screen: string; goodArray: number[]; action: string }) {
-    return this.get<IListResponse<IStatus>>(
+    return this.post<IListResponse<IStatus>>(
       `${this.endpoint.StatusXScreenAndGoods}`,
       filters
     );
