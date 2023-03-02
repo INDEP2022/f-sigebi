@@ -97,7 +97,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.pgrTransferForm = this.fb.group({
       pgrGoodNumber: [null, [Validators.maxLength(400)]],
       saeGoodNumber: [null, [Validators.maxLength(400)]],
-      estatus: [null, [Validators.maxLength(60)]],
+      status: [null, [Validators.maxLength(60)]],
       office: [null],
       aveprev: [null],
     });
@@ -243,7 +243,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (
       this.pgrTransferForm.get('pgrGoodNumber').value ||
       this.pgrTransferForm.get('saeGoodNumber').value ||
-      this.pgrTransferForm.get('estatus').value
+      this.pgrTransferForm.get('status').value
     ) {
       valid = true;
     } else {
@@ -413,46 +413,6 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       statusProcedure: this.pgrForm.value.processStatus,
     };
 
-    // procedureNumber: number;
-    // no_tramite;
-    // statusProcedure: string;
-    // estatus_tramite;
-    // procedureAdmissionDate: Date;
-    // fec_ingreso_tramite;
-    // whell: number;
-    // no_volante;
-    // proceedingNumber: number;
-    // no_expediente;
-    // issue: string;
-    // asunto;
-    // officeNumber: string;
-    // no_oficio;
-    // delegationNumber: number;
-    // no_delegacion;
-    // turnedUser: string;
-    // usr_turnado;
-
-    /**
- * 
-      from: [null],
-      to: [null],
-      issue: [null, [Validators.maxLength(30)]],
-      delegationNumber: [null],
-      officeNumber: [null, [Validators.maxLength(30)]],
-      processStatus: [null],
-    });
-
-    
-    this.pgrTransferForm = this.fb.group({
-      pgrGoodNumber: [null, [Validators.maxLength(400)]],
-      saeGoodNumber: [null, [Validators.maxLength(400)]],
-      estatus: [null, [Validators.maxLength(60)]],
-      office: [null],
-      aveprev: [null],
-    });
-
- */
-
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
       objParams,
       this.paramsGestionPgr.value,
@@ -468,7 +428,6 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       .getReport(filtrados, 'gestion_pgr')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
             this.downloadFile(
               data.base64,
@@ -481,10 +440,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
               NOT_FOUND_MESSAGE('Gestión Trámites PGR')
             );
           }
-          this.loadingGestionPgr = false;
+          this.downloading = false;
         },
         error: error => {
-          this.loadingGestionPgr = false;
+          this.downloading = false;
           this.errorGet(error);
         },
       });
@@ -493,8 +452,16 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de Transferencia PGR
    */
   getReportTransferenciaPgr() {
+    let objParams: any = {
+      aveprev: this.pgrTransferForm.value.issue,
+      pgrGoodNumber: this.pgrTransferForm.value.pgrGoodNumber,
+      saeGoodNumber: this.pgrTransferForm.value.saeGoodNumber,
+      office: this.pgrTransferForm.value.office,
+      status: this.pgrTransferForm.value.status,
+    };
+
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
-      this.pgrTransferForm.value,
+      objParams,
       this.paramsPgrTransferencia.value,
       this.filtroPaginado,
       'filter',
@@ -502,12 +469,12 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    this.downloadingTransferente = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'transferencia_pgr')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
             this.downloadFile(data.base64, 'Listado_Cves_PGR');
           } else {
@@ -517,10 +484,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
               NOT_FOUND_MESSAGE('Transferencias PGR')
             );
           }
-          this.loadingPgrTransferencia = false;
+          this.downloadingTransferente = false;
         },
         error: error => {
-          this.loadingPgrTransferencia = false;
+          this.downloadingTransferente = false;
           this.errorGet(error);
         },
       });
