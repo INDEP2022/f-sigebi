@@ -43,11 +43,16 @@
       <div class="m-3">
         <confirm-button
           type="button"
+          [btnSmall]="true"
           [disabled]="!form.valid"
-          (click)="saved()"></confirm-button>
+          (confirm)="confirm()"
+          [loading]="loading"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
