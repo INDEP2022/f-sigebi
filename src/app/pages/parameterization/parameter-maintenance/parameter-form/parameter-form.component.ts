@@ -108,18 +108,25 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    this.loading = true;
     if (this.form.valid) {
       if (this.edit) {
         this.parameterServ
           .update(this.form.get('id').value, this.form.value)
           .subscribe({
             next: () => this.handleSuccess(),
-            error: err => this.onLoadToast('error', err.error.message, ''),
+            error: err => {
+              this.loading = false;
+              this.onLoadToast('error', err.error.message, '');
+            },
           });
       } else {
         this.parameterServ.create(this.form.value).subscribe({
           next: () => this.handleSuccess(),
-          error: err => this.onLoadToast('error', err.error.message, ''),
+          error: err => {
+            this.loading = false;
+            this.onLoadToast('error', err.error.message, '');
+          },
         });
       }
     }
@@ -131,6 +138,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
       'Parámetro',
       `Ha sido ${this.edit ? 'actualizado' : 'creado'} correctamente`
     );
+    this.loading = false;
     this.modalService.content.callback(true);
     this.modalService.hide();
   }

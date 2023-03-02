@@ -5,4 +5,5 @@ export enum GoodEndpoints {
   GoodAndDesc = `good/getGoodAndDesc`,
   StatusAndDesc = `good/getDescAndStatus`,
   GoodsTransAva = 'goods-trans-ava',
+  DeleteByExpedient = `good/deleteByExpendient`,
 }

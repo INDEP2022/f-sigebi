@@ -1,12 +1,10 @@
 import {
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import {
@@ -22,6 +20,8 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from './default-select';
+
+type Attr = { [key: string]: string };
 
 @Component({
   selector: 'ngx-select',
@@ -47,11 +47,14 @@ export class SelectComponent<T> implements OnInit {
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
+  @Input() termMaxLength: string = null;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
   totalItems: number = 0;
-  @ViewChild('select') select: ElementRef;
+  inputAttrs: Attr = {
+    maxLength: '',
+  };
   private concat: boolean = false;
   private readonly selectSize: number = SELECT_SIZE;
   constructor() {}
@@ -62,6 +65,7 @@ export class SelectComponent<T> implements OnInit {
       this.fetchItems.emit(params);
     }
     this.onSearch();
+    this.checkMaxAttribute();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -137,5 +141,11 @@ export class SelectComponent<T> implements OnInit {
 
   isRequired() {
     return this.form.get(this.control).hasValidator(Validators.required);
+  }
+
+  checkMaxAttribute() {
+    if (this.termMaxLength != null) {
+      this.inputAttrs['maxLength'] = this.termMaxLength;
+    }
   }
 }

@@ -83,7 +83,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.form.get('delegacionRecibe').value,
         this.form.get('subdelegation').value.id,
         'proceedingkey',
-        params.text
+        params.textx
       )
       .subscribe(
         res => {

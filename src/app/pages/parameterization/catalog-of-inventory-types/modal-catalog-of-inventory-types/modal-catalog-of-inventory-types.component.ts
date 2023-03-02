@@ -53,7 +53,9 @@ export class ModalCatalogOfInventoryTypesComponent
       this.form.patchValue(this.allotment);
     }
   }
-  saved() {
+
+  confirm() {
+    this.loading = true;
     if (this.edit) {
       this.form.get('noTypeInventory')?.enable();
       this.inventoryServ.update(this.id, this.form.value).subscribe({
@@ -61,6 +63,7 @@ export class ModalCatalogOfInventoryTypesComponent
           this.handleSuccess();
         },
         error: err => {
+          this.loading = false;
           this.onLoadToast('error', 'Error', err.error.message);
         },
       });
@@ -70,6 +73,7 @@ export class ModalCatalogOfInventoryTypesComponent
           this.handleSuccess();
         },
         error: err => {
+          this.loading = false;
           this.onLoadToast('error', 'Error', err.error.message);
         },
       });
@@ -80,12 +84,13 @@ export class ModalCatalogOfInventoryTypesComponent
   }
 
   handleSuccess() {
+    this.loading = false;
     this.onLoadToast(
       'success',
       'No Manifestados',
       `Ha sido actualizado correctamente`
     );
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.data.cveTypeInventory);
     this.modalRef.hide();
   }
 }

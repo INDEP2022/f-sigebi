@@ -37,7 +37,7 @@ export interface ITable {
 
 export interface TvalTable1Data {
   otKey: string;
-  table: ITables;
+  table: ITable;
   value: string;
   numRegister: string;
   abbreviation: null;

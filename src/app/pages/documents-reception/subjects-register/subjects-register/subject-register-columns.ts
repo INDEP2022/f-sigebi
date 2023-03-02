@@ -72,7 +72,7 @@ const PGR_TRANSFERS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'SAE Estatus',
     type: 'string',
     sort: false,
