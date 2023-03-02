@@ -13,7 +13,9 @@
   <div body>
     <div class="row">
       <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
+        <search-bar
+          [filterParams]="params"
+          [filterField]="searchFilter"></search-bar>
       </div>
     </div>
     <div class="row pt-4">
@@ -29,7 +31,7 @@
       </div>
     </div>
     <app-pagination
-      [params]="params"
+      [filterParams]="params"
       [totalItems]="contentDocuments.count"></app-pagination>
   </div>
 </app-card>

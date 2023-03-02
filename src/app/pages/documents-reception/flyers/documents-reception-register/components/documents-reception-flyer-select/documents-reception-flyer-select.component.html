@@ -18,11 +18,11 @@
       </form-field>
     </form>
     <div class="row mt-4">
-      <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center flex-wrap">
         <div>
           <button
             class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
-            (click)="simulateOffice()">
+            (click)="simulateOffice('STANDARD')">
             Probar flujo desde buz&oacute;n
           </button>
         </div>
@@ -38,6 +38,20 @@
             class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
             (click)="simulateOffice('SAT')">
             Probar flujo SAT
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('PGR-MAS')">
+            Probar flujo PGR multiples bienes
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('SAT-MAS')">
+            Probar flujo SAT multiples bienes
           </button>
         </div>
       </div>
