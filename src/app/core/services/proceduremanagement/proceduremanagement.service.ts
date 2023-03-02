@@ -98,6 +98,33 @@ export class ProcedureManagementService extends HttpService {
       })
     );
   }
+
+  getReportProcedureManagePgr(
+    params: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    this.microservice = 'massivegood';
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ReportViewsPgr,
+      params
+    ).pipe(
+      tap(() => {
+        this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+      })
+    );
+  }
+  getReportTransferenciaPgr(
+    params: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    this.microservice = 'massivegood';
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ReportTranferenciaPgrViews,
+      params
+    ).pipe(
+      tap(() => {
+        this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+      })
+    );
+  }
   // http://sigebimsqa.indep.gob.mx/massivegood/api/v1/views/file-procedure-mng?limit=11&page=1
   // massivegood/api/v1/views/file-transference-sat
 
