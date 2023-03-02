@@ -33,7 +33,6 @@ export class GoodTransAvaService extends HttpService {
 
   update(model: IGoodsTransAva) {
     const route = `${GoodEndpoints.GoodsTransAva}`;
-    return this.put(route,  model);
+    return this.put(route, model);
   }
-
 }

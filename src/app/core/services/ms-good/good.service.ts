@@ -123,6 +123,4 @@ export class GoodService extends HttpService {
     const route2 = `${GoodEndpoints.Good}?filter.goodId=2203409`;
     return this.get<IListResponse<IGood>>(route2, params);
   }
-
-
 }

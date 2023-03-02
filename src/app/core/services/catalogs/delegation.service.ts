@@ -25,7 +25,7 @@ export class DelegationService implements ICrudMethods<IDelegation> {
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
-  getAllModal(self?: DelegationService, params?: string | ListParams) {
+  getAllModal(self?: DelegationService, params?: ListParams | string) {
     return self.delegationRepository.getAllPaginated(self.route, params);
   }
 
