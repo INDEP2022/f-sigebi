@@ -57,27 +57,30 @@ export class ModalGoodForDonationComponent extends BasePage implements OnInit {
       donation.noLabel = Number(this.form.controls['targetIndicator'].value);
       if (this.edit) {
         this.donationServ.updateDonation(donation, this.id).subscribe({
-          next: resp => {
+          next: () => {
             this.handleSuccess();
           },
-          error: err =>
-            this.onLoadToast('warning', 'Advertencia', err.error.message),
+          error: err => {
+            this.loading = false;
+            this.onLoadToast('error', err.error.message, '');
+          },
         });
       } else {
         this.donationServ.createDonation(donation).subscribe({
-          next: resp => {
-            if (resp.statusCode == 200) {
-              this.handleSuccess();
-            }
+          next: () => {
+            this.handleSuccess();
           },
-          error: err =>
-            this.onLoadToast('warning', 'Advertencia', err.error.message),
+          error: err => {
+            this.loading = false;
+            this.onLoadToast('error', err.error.message, '');
+          },
         });
       }
     }
   }
 
   handleSuccess() {
+    this.loading = false;
     this.onLoadToast(
       'success',
       'Bien donación',

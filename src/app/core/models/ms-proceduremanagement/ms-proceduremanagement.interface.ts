@@ -1,22 +1,55 @@
 // Proceduremanagement
+// export interface IProceduremanagement {
+//   noTramite: number;
+//   estatusTramite: string;
+//   situacionTramite: number;
+//   usrTurnado: string;
+//   fechaRealTramite: Date;
+//   noConsecutivoDiario: number;
+//   fecIngresoTramite: Date;
+//   noVolante: number;
+//   noExpediente: number;
+//   asunto: string | null;
+//   tipoAsunto: number | null;
+//   noOficio: string | null;
+//   clasifDicta: string | null;
+//   usrRegistro: string | null;
+//   descentfed: string | null;
+//   hojas: number | null;
+//   typeManagement: number | null;
+// }
 export interface IProceduremanagement {
-  noTramite: number;
-  estatusTramite: string;
-  situacionTramite: number;
-  usrTurnado: string;
-  fechaRealTramite: Date;
-  noConsecutivoDiario: number;
-  fecIngresoTramite: Date;
-  noVolante: number;
-  noExpediente: number;
-  asunto: string | null;
-  tipoAsunto: number | null;
-  noOficio: string | null;
-  clasifDicta: string | null;
-  usrRegistro: string | null;
-  descentfed: string | null;
-  hojas: number | null;
-  typeManagement: number | null;
+  id?: number;
+  status: string;
+  situation: number;
+  userTurned: string;
+  actualDate: Date;
+  dailyConsecutiveNumber: number;
+  admissionDate: Date;
+  wheelNumber: number;
+  expedient: number;
+  affair: string;
+  affairType: number;
+  officeNumber: string;
+  classificationDicta: string;
+  registerUser: string;
+  descentfed: string;
+  areaToTurn?: string;
+  userToTurn?: string;
+  observation?: string;
+  observationAdd?: string;
+  sheet: number;
+  businessDay?: number;
+  naturalDay?: number;
+  delegation?: number;
+  folio?: number;
+  prioirity?: string;
+  serieIfai?: string;
+  admissionDateHC?: Date;
+  actualDateHC?: Date;
+  affairSij?: number;
+  affairSijp?: number;
+  typeManagement?: number;
 }
 // ManagamentProcessSat
 export interface IManagamentProcessSat {

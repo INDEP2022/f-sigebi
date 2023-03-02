@@ -8,8 +8,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-proceedings-modal',
   templateUrl: './proceedings-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ProceedingsModalComponent extends BasePage implements OnInit {
   title: string = 'Actas';
@@ -18,7 +17,7 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   proceedingForm: ModelForm<IProccedingsDeliveryReception>;
   proceeding: IProccedingsDeliveryReception;
 
-  constructor(private modalRef: BsModalRef, private fb:FormBuilder) {
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
 
@@ -26,16 +25,16 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.proceedingForm = this.fb.group({
-          id: [null, []],
-          keysProceedings: [null, []],
-          elaborationDate: [null, []],
-          datePhysicalReception: [null, []],
-          captureDate: [null, []],
-          statusProceedings: [null, []]
+      id: [null, []],
+      keysProceedings: [null, []],
+      elaborationDate: [null, []],
+      datePhysicalReception: [null, []],
+      captureDate: [null, []],
+      statusProceedings: [null, []],
     });
-    if (this.proceeding != null){
+    if (this.proceeding != null) {
       this.edit = true;
       this.proceedingForm.patchValue(this.proceeding);
     }
@@ -50,11 +49,11 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    console.log("Crear");
+    console.log('Crear');
   }
 
   update() {
-    console.log("Actualizar");
+    console.log('Actualizar');
   }
 
   handleSuccess() {
@@ -64,5 +63,4 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }
