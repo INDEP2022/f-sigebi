@@ -10,11 +10,27 @@
         <search-bar [params]="params"></search-bar>
       </div>
     </div>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <div>
+          <button
+            (click)="openForm1()"
+            class="btn btn-primary active btn-sm ml-3">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
     <div [class]="loading ? 'table-loading' : ''">
       <div class="table-responsive">
         <ng2-smart-table
+          [attr.class]="'table-bordered'"
           [settings]="settings"
-          [source]="thirdPartysList"></ng2-smart-table>
+          [source]="comerComCalculatedList"
+          (edit)="openForm1($event.data)"
+          (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
       </div>
       <app-pagination
         [params]="params"
@@ -30,15 +46,33 @@
     </div>
 
     <div class="row pt-5">
-      <div class="ch-content">
-        <h5 class="title"></h5>
-        <div class="row justify-content-end mr-5">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="ch-content" header>
+        <h5 class="title">Comisiones</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings2"></app-columns-select>
+          <div>
+            <button
+              (click)="openForm2()"
+              class="btn btn-primary active btn-sm ml-3">
+              Nuevo
+            </button>
+          </div>
         </div>
       </div>
       <div class="row pt-3">
-        <ng2-smart-table [settings]="settings" [source]="data">
-        </ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="comerCommissionsList"
+              (edit)="openForm2($event.data)">
+            </ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
+        </div>
       </div>
     </div>
   </div>
