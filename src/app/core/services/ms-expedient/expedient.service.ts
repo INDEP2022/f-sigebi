@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ExpedientEndpoints } from '../../../common/constants/endpoints/ms-expedient-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IExpedient } from '../../models/ms-expedient/expedient';
+import { IIntegratedExpedient } from '../../models/ms-expedient/integrated-expedient.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class ExpedientService extends HttpService {
 
   constructor(private expedientRepository: ExpedientRepository<IExpedient>) {
     super();
-    this.microservice = 'expedient';
+    this.microservice = this.route.Base;
   }
 
   getById(id: string | number): Observable<IExpedient> {
@@ -28,5 +29,12 @@ export class ExpedientService extends HttpService {
 
   update(id: string | number, expedient: any) {
     return this.put(`expedient/${id}`, expedient);
+  }
+
+  getItegratedExpedients(params: _Params) {
+    return this.get<IListResponse<IIntegratedExpedient>>(
+      this.route.GetIntegratedExpedients,
+      params
+    );
   }
 }
