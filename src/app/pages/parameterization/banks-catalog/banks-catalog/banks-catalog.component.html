@@ -136,11 +136,12 @@
             text="Guardar"
             [disabled]="form.invalid"
             [loading]="loading"
-            (confirm)="confirm()">
+            (confirm)="confirm()"
+            [btnSmall]="true">
           </confirm-button>
           <button
             type="button"
-            class="btn btn-primary active ml-3"
+            class="btn btn-primary btn-sm active ml-3"
             (click)="clean()">
             Limpiar
           </button>

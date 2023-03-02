@@ -73,7 +73,6 @@ export class FiltersOfGoodsForDonationComponent
           this.loading = false;
         }
         this.data = response;
-        this.data.count = 4;
       },
       error: err => {
         this.onLoadToast('error', err.error.message, '');

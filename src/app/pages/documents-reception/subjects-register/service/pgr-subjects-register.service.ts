@@ -69,12 +69,12 @@ export class PgrSubjectsRegisterService {
 
   getReport(params: ListParams, tipoReport: string) {
     console.log(tipoReport, params);
-    if (tipoReport == 'gestion_sat') {
-      return this.procedureManagementRepository.getReportProcedureManage(
+    if (tipoReport == 'gestion_pgr') {
+      return this.procedureManagementRepository.getReportProcedureManagePgr(
         params
       );
     } else {
-      return this.procedureManagementRepository.getReportTransferenciaSat(
+      return this.procedureManagementRepository.getReportTransferenciaPgr(
         params
       );
     }

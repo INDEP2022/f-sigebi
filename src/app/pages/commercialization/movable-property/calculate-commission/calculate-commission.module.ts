@@ -6,9 +6,15 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 import { CalculateCommissionRoutingModule } from './calculate-commission-routing.module';
 import { CalculateCommissionComponent } from './calculate-commission/calculate-commission.component';
+import { ComcalculatedModalComponent } from './comcalculated-modal/comcalculated-modal.component';
+import { CommissionsModalComponent } from './commissions-modal/commissions-modal.component';
 
 @NgModule({
-  declarations: [CalculateCommissionComponent],
+  declarations: [
+    CalculateCommissionComponent,
+    ComcalculatedModalComponent,
+    CommissionsModalComponent,
+  ],
   imports: [
     CommonModule,
     CalculateCommissionRoutingModule,

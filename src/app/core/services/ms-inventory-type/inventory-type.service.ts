@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENDPOINT_INVENTORY } from 'src/app/common/constants/endpoints/ms-inventory-query';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { InventoryQueryRepository } from 'src/app/common/repository/repositories/ms-inventory-query-repository';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IInventoryQuery,
@@ -14,6 +14,7 @@ import {
   providedIn: 'root',
 })
 export class InventoryTypeService
+  extends HttpService
   implements ICrudMethods<IInventoryQuery | TypesInventory>
 {
   private readonly route: string = ENDPOINT_INVENTORY.inventory;
@@ -21,13 +22,37 @@ export class InventoryTypeService
 
   constructor(
     private requestRepository: InventoryQueryRepository<IInventoryQuery | any>
-  ) {}
+  ) {
+    super();
+    this.microservice = 'inventoryquery';
+  }
 
-  getAll(
-    params?: ListParams,
-    filter?: string
-  ): Observable<IListResponse<IInventoryQuery | any>> {
-    return this.requestRepository.getAll(this.routeDetail, params, filter);
+  getAllWithFilters(
+    params: _Params
+  ): Observable<IListResponse<TypesInventory>> {
+    return this.get(this.route, params);
+  }
+
+  getInventotyById(id: string | number): Observable<TypesInventory> {
+    return this.requestRepository.getById(this.route, id);
+  }
+
+  createInventory(
+    model: TypesInventory
+  ): Observable<IListResponse<IInventoryQuery | TypesInventory>> {
+    return this.requestRepository.create(this.route, model);
+  }
+
+  updateInventory(id: string, model: TypesInventory) {
+    return this.put(this.route.concat(id), model);
+  }
+
+  removeInventory(id: string | number): Observable<TypesInventory> {
+    return this.requestRepository.remove(this.route, id);
+  }
+
+  getAllWithFiltersDetails(params: _Params) {
+    return this.get(this.routeDetail, params);
   }
 
   createInventoryDetail(
@@ -43,21 +68,7 @@ export class InventoryTypeService
     return this.requestRepository.update(this.routeDetail, id, model);
   }
 
-  delete(
-    id: string | number
-  ): Observable<IListResponse<IInventoryQuery | TypesInventory>> {
+  remove(id: string | number): Observable<IInventoryQuery | TypesInventory> {
     return this.requestRepository.remove(this.routeDetail, id);
-  }
-
-  createInventory(
-    model: TypesInventory
-  ): Observable<IListResponse<IInventoryQuery | TypesInventory>> {
-    return this.requestRepository.create(this.route, model);
-  }
-
-  getInventotyById(
-    id: string | number
-  ): Observable<IListResponse<TypesInventory>> {
-    return this.requestRepository.getById(this.route, id);
   }
 }
