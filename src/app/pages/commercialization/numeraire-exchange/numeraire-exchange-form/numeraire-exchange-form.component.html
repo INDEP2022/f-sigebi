@@ -1,71 +1,16 @@
 <app-card [header]="true">
-  <div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Registro</th>
-          <th>Descripción</th>
-          <th>Importe</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let formExpense of formExpenses.controls">
-          <td>
-            <form-field
-              [control]="formExpense.get('register')"
-              label="Registro">
-              <input
-                type="text"
-                formControlName="register"
-                class="form-control" />
-            </form-field>
-          </td>
-          <td>
-            <form-field
-              [control]="formExpense.get('description')"
-              label="Desripcion">
-              <ng-select class="form-control" formControlName="description">
-                <ng-option
-                  [value]="type.id"
-                  *ngFor="let type of expenseTypeTest"
-                  >{{ type.description }}</ng-option
-                >
-              </ng-select>
-            </form-field>
-          </td>
-          <td>
-            <form-field [control]="formExpense.get('import')" label="Importe">
-              <input
-                type="text"
-                formControlName="import"
-                class="form-control" />
-            </form-field>
-          </td>
-        </tr>
-        <tr *ngFor="let expense of expenses; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ expense.description }}</td>
-          <td>{{ expense.amount | currency }}</td>
-          <td>
-            <button class="btn btn-sm btn-danger" (click)="removeExpense(i)">
-              <i class="bx bx-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
   <div class="ch-content" header>
     <h5 class="title">conversi&oacute;n a numerario</h5>
     <button
       class="btn btn-sm btn-success active font-size-14"
-      (click)="addExpense(dialogExpense)"
+      (click)="openCreateExpense()"
       [disabled]="adding">
       Agregar Registro
     </button>
   </div>
   <div body>
+    <!-- <app-table-expenses></app-table-expenses> -->
+
     <div class="md-tabs mt-n3">
       <tabset>
         <tab heading="Conversión Individual" id="tabIndividualConversion">
@@ -261,12 +206,12 @@
                 [collapse]="!toggleExpenses">
                 <div class="d-flex flex-row-reverse mb-4 mt-0">
                   <div class="">
-                    <!-- <button
+                    <button
                       class="btn btn-sm btn-success active font-size-14"
-                      (click)="openModal(dialogExpense)"
+                      (click)="openCreateExpense()"
                       [disabled]="adding">
                       Agregar Registro
-                    </button> -->
+                    </button>
                   </div>
                 </div>
                 <div class="table-container">
@@ -279,43 +224,7 @@
                       (createConfirm)="addEntry($event)"
                       (editConfirm)="editEntry($event)">
                     </ng2-smart-table> -->
-                    <div>
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Registro</th>
-                            <th>Descripción</th>
-                            <th>Importe</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <!-- <tr>
-                            <th>
-                              <input type="text">
-                            </th>
-                            <th>
-                              <select name="" id=""></select>
-                            </th>
-                            <th>
-                              <input type="text">
-                            </th>
-                          </tr> -->
-                          <tr *ngFor="let expense of expenses; let i = index">
-                            <td>{{ i + 1 }}</td>
-                            <td>{{ expense.description }}</td>
-                            <td>{{ expense.amount | currency }}</td>
-                            <td>
-                              <button
-                                class="btn btn-sm btn-danger"
-                                (click)="removeExpense(i)">
-                                <i class="bx bx-trash"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <app-table-expenses></app-table-expenses>
                   </div>
                 </div>
               </div>
@@ -344,28 +253,25 @@
                     </ngx-select> -->
                     <app-banks-shared
                       [form]="form"
-                      bankField="account"></app-banks-shared>
+                      bankField="account"
+                      (nameBank)="changeBank($event)"></app-banks-shared>
                   </div>
-                  <div
-                    class="col-sm-12 col-md-6"
-                    *ngIf="selectedAccount != null">
+                  <div class="col-sm-12 col-md-6" *ngIf="selectedBank != null">
                     <i
                       class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">
                       Descripci&oacute;n
                     </h5>
                     <p class="text-muted">
-                      {{ selectedAccount.description }}
+                      {{ selectedBank.name }}
                     </p>
                   </div>
-                  <div
-                    class="col-sm-6 col-md-6"
-                    *ngIf="selectedAccount != null">
+                  <div class="col-sm-6 col-md-6" *ngIf="selectedBank != null">
                     <i
                       class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
                     <p class="text-muted">
-                      {{ selectedAccount.cveAccount }}
+                      {{ selectedBank.cveAccount }}
                     </p>
                   </div>
                   <div
@@ -527,7 +433,7 @@
   </div>
 </app-card>
 
-<ng-template #dialogExpense>
+<!-- <ng-template #dialogExpense>
   <div class="modal-header">
     <h4 class="modal-title pull-left">{{ dialogData.title }}</h4>
     <button
@@ -561,4 +467,4 @@
       Cerrar
     </button>
   </div>
-</ng-template>
+</ng-template> -->

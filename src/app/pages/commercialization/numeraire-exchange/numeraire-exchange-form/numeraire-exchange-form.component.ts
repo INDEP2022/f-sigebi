@@ -1,22 +1,16 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+// import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { showToast } from 'src/app/common/helpers/helpers';
+// import { showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { HistoricalGoodSituationComponent } from 'src/app/pages/general-processes/historical-good-situation/historical-good-situation/historical-good-situation.component';
-import { TableSelectComponent } from '../components/table-select/table-select.component';
-import {
-  EXPENSE_COLUMNS,
-  NUMERAIRE_COLUMNS,
-} from './numeraire-exchange-columns';
+import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
 
 @Component({
   selector: 'app-numeraire-exchange-form',
@@ -33,6 +27,7 @@ import {
   ],
 })
 export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
+  @ViewChild(TableExpensesComponent) tableExpense: TableExpensesComponent;
   form: FormGroup = new FormGroup({
     id: new FormControl(null, [Validators.required]),
     salePrice: new FormControl(null, [Validators.required]),
@@ -64,7 +59,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   selectedGood: IGood = null;
-  selectedAccount: any = null;
+  selectedBank: { id: number; name: string };
   // createButton: string =
   //   '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
   // saveButton: string =
@@ -121,13 +116,13 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     actions: false,
   };
-  filterRow: any;
-  addOption: any;
-  addRowElement: any;
-  readOnlyInput: any;
-  cancelBtn: any;
-  cancelEvent: any;
-  expenseColumns: any[] = [];
+  // filterRow: any;
+  // addOption: any;
+  // addRowElement: any;
+  // readOnlyInput: any;
+  // cancelBtn: any;
+  // cancelEvent: any;
+  // expenseColumns: any[] = [];
   numeraireColumns: any[] = [];
   fileName: string = 'Seleccionar archivo';
 
@@ -221,15 +216,16 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   ];
 
   expenses: any[] = [];
-  formExpenses = new FormArray([
-    new FormGroup({
-      register: new FormControl('', [Validators.required]),
-      description: new FormControl('', [Validators.required]),
-      import: new FormControl('', [Validators.required]),
-    }),
-  ]);
+  // formExpenses = new FormArray<FormGroup>([]);
 
-  dialogExpenseRef: BsModalRef<any>;
+  // formExpenseAdd = new FormGroup({
+  //   register: new FormControl('', [Validators.required]),
+  //   description: new FormControl('', [Validators.required]),
+  //   import: new FormControl('', [Validators.required]),
+  // });
+  // isOpenAddExpense = false;
+  // previusValuesExpense
+  // dilogExpenseRef: BsModalRef<any>;
 
   // statusExpense: {
   //   isEdit: boolean,
@@ -242,7 +238,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   constructor(
     // private modalRef: BsModalRef,
-    private modalService: BsModalService,
+    // private modalService: BsModalService,
     // private fb: FormBuilder,
     private excelService: ExcelService // private goodService: GoodService, // private bankAccountService: BankAccountService
   ) {
@@ -250,21 +246,21 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.expenseSettings.columns = EXPENSE_COLUMNS;
-    this.expenseSettings.columns = {
-      ...this.expenseSettings.columns,
-      description: {
-        title: 'Descripción',
-        sort: false,
-        type: 'html',
-        width: '50%',
-        editor: {
-          type: 'custom',
-          component: TableSelectComponent,
-        },
-      },
-    };
-    this.numeraireSettings.columns = NUMERAIRE_COLUMNS;
+    // this.expenseSettings.columns = EXPENSE_COLUMNS;
+    // this.expenseSettings.columns = {
+    //   ...this.expenseSettings.columns,
+    //   description: {
+    //     title: 'Descripción',
+    //     sort: false,
+    //     type: 'html',
+    //     width: '50%',
+    //     editor: {
+    //       type: 'custom',
+    //       component: TableSelectComponent,
+    //     },
+    //   },
+    // };
+    // this.numeraireSettings.columns = NUMERAIRE_COLUMNS;
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(() => this.getSearch());
@@ -382,8 +378,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //   this.banksAccounts = new DefaultSelect([], 0);
   // }
 
-  selectAccount(event: any) {
-    this.selectedAccount = event;
+  changeBank(event: string) {
+    console.log(event);
+    // this.selectedBank = event;
   }
 
   formatCurrency(event: any) {
@@ -417,43 +414,30 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   calculateSaleTax() {
-    let salePrice = this.form.controls['salePrice'].value;
-    let saleTaxPercent = this.form.controls['saleTaxPercent'].value;
-    if (
-      salePrice !== null &&
-      salePrice !== '' &&
-      saleTaxPercent !== null &&
-      saleTaxPercent !== 0 &&
-      saleTaxPercent !== ''
-    ) {
-      salePrice = parseFloat(salePrice);
-      saleTaxPercent = parseFloat(saleTaxPercent);
-      let saleTax = salePrice * (saleTaxPercent / 100);
-      let saleTaxFormat = new Intl.NumberFormat('es-MX', {
-        minimumFractionDigits: 2,
-      }).format(saleTax);
-      this.form.controls['saleTax'].setValue(saleTaxFormat);
+    let { salePrice, saleTaxPercent } = this.form.value;
+    if (!salePrice || !saleTaxPercent) {
+      return;
     }
+    salePrice = parseFloat(salePrice);
+    saleTaxPercent = parseFloat(saleTaxPercent);
+    let saleTax = salePrice * (saleTaxPercent / 100);
+    let saleTaxFormat = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+    }).format(saleTax);
+    this.form.controls['saleTax'].setValue(saleTaxFormat);
   }
 
   calculateCommission() {
-    let commissionPercent = this.form.controls['commissionPercent'].value;
-    let salePrice = this.form.controls['salePrice'].value;
-    if (
-      commissionPercent !== null &&
-      commissionPercent !== 0 &&
-      commissionPercent !== '' &&
-      salePrice !== null &&
-      salePrice !== 0 &&
-      salePrice !== ''
-    ) {
-      commissionPercent = parseFloat(commissionPercent);
-      let commission = salePrice * (commissionPercent / 100);
-      let commissionFormat = new Intl.NumberFormat('es-MX', {
-        minimumFractionDigits: 2,
-      }).format(commission);
-      this.form.controls['commission'].setValue(commissionFormat);
+    let { commissionPercent, salePrice } = this.form.value;
+    if (!commissionPercent || !salePrice) {
+      return;
     }
+    commissionPercent = parseFloat(commissionPercent);
+    let commission = salePrice * (commissionPercent / 100);
+    let commissionFormat = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+    }).format(commission);
+    this.form.controls['commission'].setValue(commissionFormat);
   }
 
   calculateCommissionTax() {
@@ -506,29 +490,29 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //   // this.adding = false;
   // }
 
-  editEntry(event: any) {
-    if (!event.newData.description || event.newData.amount == '') {
-      this.alertTable();
-      return;
-    }
-    event.newData.id = event.newData.description.id;
-    event.newData.description = event.newData.description.description;
-    event.confirm.resolve(event.newData);
-  }
+  // editEntry(event: any) {
+  //   if (!event.newData.description || event.newData.amount == '') {
+  //     this.alertTable();
+  //     return;
+  //   }
+  //   event.newData.id = event.newData.description.id;
+  //   event.newData.description = event.newData.description.description;
+  //   event.confirm.resolve(event.newData);
+  // }
 
-  handleCancel() {
-    this.adding = false;
-    this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-    this.cancelBtn.removeEventListener('click', this.cancelEvent);
-  }
+  // handleCancel() {
+  //   this.adding = false;
+  //   this.cancelBtn = document.querySelectorAll('.cancel').item(0);
+  //   this.cancelBtn.removeEventListener('click', this.cancelEvent);
+  // }
 
-  alertTable() {
-    this.onLoadToast(
-      'error',
-      'Campos incompletos',
-      'Complete todos los campos para agregar un registro'
-    );
-  }
+  // alertTable() {
+  //   this.onLoadToast(
+  //     'error',
+  //     'Campos incompletos',
+  //     'Complete todos los campos para agregar un registro'
+  //   );
+  // }
 
   getFile(event: Event) {
     const files = (event.target as HTMLInputElement).files;
@@ -554,6 +538,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     this.form.controls['expenses'].setValue(this.expenseTestData);
     console.log(this.form.value);
   }
+
   getAttributes() {
     this.loading = true;
     // this.attributes
@@ -569,45 +554,17 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   openForm(attributesFinancialInfo?: any) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      attributesFinancialInfo,
-      callback: (next: boolean) => {
-        if (next) this.getAttributes();
-      },
-    };
-    this.modalService.show(HistoricalGoodSituationComponent, modalConfig);
+    // const modalConfig = MODAL_CONFIG;
+    // modalConfig.initialState = {
+    //   attributesFinancialInfo,
+    //   callback: (next: boolean) => {
+    //     if (next) this.getAttributes();
+    //   },
+    // };
+    // this.modalService.show(HistoricalGoodSituationComponent, modalConfig);
   }
 
-  createOrEditExpense(id?: number): void {
-    this.formExpense.reset();
-    if (id) {
-      const values = this.expenses.find(x => x.id === id);
-      this.formExpense.patchValue(values);
-    }
-  }
-
-  removeExpense(id: number) {
-    this.expenses = this.expenses.filter(expense => expense.id !== id);
-    // this.form.controls['expenses'].setValue(
-    //   this.expenseTestData
-    // );
-  }
-
-  openAddExpense(): void {
-    const formGroup = new FormGroup({});
-    this.formExpenses.push();
-  }
-
-  addExpense(): void {
-    if (this.formExpenses.invalid) {
-      showToast({
-        icon: 'error',
-        title: 'Gasto invalido',
-        text: 'Revise el gasto que va a ingresar unos de sus campos es invalido',
-      });
-      return;
-    }
-    this.expenses.unshift(this.formExpenses.value);
+  openCreateExpense(): void {
+    this.tableExpense.openCreateExpense();
   }
 }
