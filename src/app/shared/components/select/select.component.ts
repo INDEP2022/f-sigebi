@@ -93,7 +93,6 @@ export class SelectComponent<T> implements OnInit {
     } else {
       filterParam.addFilter(this.paramFilter, text ?? '');
     }
-    console.log(filterParam);
     this.fetchByParamsItems.emit(filterParam);
   }
 
@@ -114,7 +113,6 @@ export class SelectComponent<T> implements OnInit {
         distinctUntilChanged(),
         switchMap((text: string) => {
           if (text === null) {
-            console.log('texto nulo');
             return of([]);
           }
           this.page = 1;

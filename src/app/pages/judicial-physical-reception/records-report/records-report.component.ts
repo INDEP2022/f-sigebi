@@ -76,12 +76,14 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     }
   }
 
-  getInitialProceedings(params: ListParams) {
+  getInitialProceedings(params: any) {
+    console.log(params);
     this.serviceProcVal
       .getProceedingsByDelAndSub(
         this.form.get('delegacionRecibe').value,
         this.form.get('subdelegation').value.id,
-        params
+        'proceedingkey',
+        params.text
       )
       .subscribe(
         res => {
@@ -99,6 +101,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       .getProceedingsByDelAndSub(
         this.form.get('delegacionRecibe').value,
         this.form.get('subdelegation').value.id,
+        'proceedingkey',
         params
       )
       .subscribe(

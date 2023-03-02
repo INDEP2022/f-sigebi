@@ -113,23 +113,9 @@
                   </div>
 
                   <div class="row">
-                    <!-- <form-field [control]="form.get('moneda')" label="Moneda">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="moneda" />
-                    </form-field> -->
-                    <form-field [control]="form.get('moneda')">
-                      <ngx-select
-                        (fetchItems)="getCurrency($event)"
-                        label="Moneda"
-                        bindLabel="otValue01"
-                        value="otKey1"
-                        control="moneda"
-                        [form]="form"
-                        [data]="currencySelect"
-                        (change)="btnAppraisTab()"></ngx-select>
-                    </form-field>
+                    <app-currency-shared
+                      [currencyField]="monedaField"
+                      [form]="form"></app-currency-shared>
                   </div>
 
                   <div class="row">
@@ -152,7 +138,7 @@
                         bsDatepicker
                         class="form-control"
                         formControlName="fechaAvaluo"
-                        (ngModelChange)="btnAppraisTab()" />
+                        (ngModelChange)="validarFechaAvaluo()" />
                     </form-field>
                   </div>
 
