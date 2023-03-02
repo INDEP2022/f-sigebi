@@ -1,11 +1,11 @@
 import { Location } from '@angular/common';
-import { Component,OnInit } from '@angular/core';
-import { FormBuilder,FormControl,Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
-FilterParams,
-ListParams
+  FilterParams,
+  ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -107,8 +107,16 @@ export class DocumentsReceptionFlyerSelectComponent
     this.procedureManageService.getAllFiltered(params.getParams()).subscribe({
       next: data => {
         console.log(data);
-        const idx = Math.floor(Math.random() * 10);
-        const proc = data.data[idx];
+        let idx = Math.floor(Math.random() * 10);
+        let proc;
+        if (!['SAT', 'PGR'].includes(type)) {
+          while ([2, 3, '2', '3'].includes(data.data[idx].typeManagement)) {
+            idx = idx = Math.floor(Math.random() * 10);
+          }
+          proc = data.data[idx];
+        } else {
+          proc = data.data[idx];
+        }
         let satIndicator = 0;
         if (type == '2') satIndicator = 1;
         let wheelNumber = proc.wheelNumber;
