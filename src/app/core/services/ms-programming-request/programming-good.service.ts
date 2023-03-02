@@ -29,6 +29,11 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     );
   }
 
+  updateProgramming(id: number | string, formData: Object) {
+    const route = `${this.route}/programming/${id}`;
+    return this.httpClient.put(`${environment.API_URL}/${route}`, formData);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

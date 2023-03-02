@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { addDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -16,7 +17,10 @@ import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
-import { IGoodProgrammingSelect } from 'src/app/core/models/good-programming/good-programming';
+import {
+  IGoodProgramming,
+  IGoodProgrammingSelect,
+} from 'src/app/core/models/good-programming/good-programming';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -24,7 +28,9 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
@@ -45,7 +51,6 @@ import {
   SettingUserTable,
   settingWarehouse,
 } from './settings-tables';
-
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
@@ -77,12 +82,13 @@ export class PerformProgrammingFormComponent
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén SAT(0)`;
+  idProgramming: number = 0;
   idAuthority: string = '';
   idState: string = '';
   idTrans: number = 0;
   idStation: number = 0;
   idTypeRelevant: number = 0;
-  showForm: boolean = true;
+  showForm: boolean = false;
   showUbication: boolean = false;
   showSelectTransferent: boolean = false;
   showSelectStation: boolean = false;
@@ -125,7 +131,10 @@ export class PerformProgrammingFormComponent
     private typeRelevantService: TypeRelevantService,
     private warehouseService: WarehouseService,
     private authorityService: AuthorityService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private activatedRoute: ActivatedRoute,
+    private programmingService: ProgrammingRequestService,
+    private goodService: GoodService
   ) {
     super();
 
@@ -147,6 +156,10 @@ export class PerformProgrammingFormComponent
         },
       },
     };
+
+    this.idProgramming = this.activatedRoute.snapshot.paramMap.get(
+      'id'
+    ) as unknown as number;
   }
 
   ngOnInit(): void {
@@ -180,7 +193,10 @@ export class PerformProgrammingFormComponent
   prepareForm() {
     const fiveDays = addDays(new Date(), 5);
     this.performForm = this.fb.group({
-      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      emailTransfer: [
+        null,
+        [Validators.required, Validators.pattern(EMAIL_PATTERN)],
+      ],
       address: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -189,14 +205,13 @@ export class PerformProgrammingFormComponent
       startDate: [null, [Validators.required, minDate(new Date())]],
       endDate: [null, [Validators.required, minDate(new Date(fiveDays))]],
       observation: [null, [Validators.pattern(STRING_PATTERN)]],
-      regionalDelegation: [null, [Validators.required]],
-      state: [null, [Validators.required]],
-      transferent: [null, [Validators.required]],
-      station: [null, [Validators.required]],
-      authority: [null, [Validators.required]],
-      typeRelevant: [null, [Validators.required]],
-      warehouse: [null],
-      userId: [null],
+      regionalDelegationNumber: [null, [Validators.required]],
+      stateKey: [null, [Validators.required]],
+      tranferId: [null, [Validators.required]],
+      stationId: [null, [Validators.required]],
+      autorityId: [null, [Validators.required]],
+      typeRelevantId: [null, [Validators.required]],
+      storeId: [null],
     });
   }
 
@@ -443,39 +458,36 @@ export class PerformProgrammingFormComponent
 
   getProgGoods() {
     this.loadingGoods = true;
-    if (!this.dataSearch) {
-      console.log('filtros', this.dataSearch);
-      const filterColumns: Object = {
-        regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
-        station: Number(this.idStation),
-        authority: Number(this.idAuthority),
-        relevantType: Number(this.idTypeRelevant),
-      };
+    const filterColumns: Object = {
+      regionalDelegation: Number(this.regionalDelegationUser.id),
+      transferent: Number(this.idTrans),
+      relevantType: Number(this.idTypeRelevant),
+      statusGood: 'APROBADO',
+    };
 
+    this.goodsQueryService
+      .postGoodsProgramming(this.params.getValue(), filterColumns)
+      .subscribe({
+        next: response => {
+          const filterData = response.data.map(items => {
+            if (items.physicalState == 1) {
+              items.physicalState = 'BUENO';
+              return items;
+            } else if (items.physicalState == 2) {
+              items.physicalState = 'MALO';
+              return items;
+            }
+          });
+
+          console.log(filterData);
+          this.estatesList.load(filterData);
+          this.totalItems = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => (this.loadingGoods = false),
+      });
+    /*if (!this.dataSearch) {
       console.log('fddd', filterColumns);
-      this.goodsQueryService
-        .postGoodsProgramming(this.params.getValue(), filterColumns)
-        .subscribe({
-          next: response => {
-            console.log(response.data);
-            const filterData = response.data.map(items => {
-              if (items.physicalState == 1) {
-                items.physicalState = 'BUENO';
-                return items;
-              } else if (items.physicalState == 2) {
-                items.physicalState = 'MALO';
-                return items;
-              }
-            });
-
-            this.estatesList.load(filterData);
-            this.totalItems = response.count;
-            this.loadingGoods = false;
-            this.loadGoods = true;
-          },
-          error: error => (this.loadingGoods = false),
-        });
     } else {
       console.log('filtros', this.dataSearch);
       const filterColumns: Object = {
@@ -490,7 +502,6 @@ export class PerformProgrammingFormComponent
         aliasWarehouse: 'Alias Almacen',
       };
 
-      console.log('fddd', filterColumns);
       this.goodsQueryService
         .postGoodsProgramming(this.params.getValue(), filterColumns)
         .subscribe({
@@ -513,12 +524,27 @@ export class PerformProgrammingFormComponent
           },
           error: error => (this.loadingGoods = false),
         });
-    }
+    } */
   }
 
   sendTransportable() {
     if (this.goodSelect.length) {
-      if (this.goodsTranportables.count() == 0) {
+      this.goodSelect.map((item: any) => {
+        const formData: Object = {
+          programmingId: this.idProgramming,
+          creationUser: 'aigebi admon',
+          creationDate: new Date(),
+          modificationUser: 'aigebi admon',
+          modificationDate: new Date(),
+          goodId: item.googId,
+          version: '1',
+          status: 'EN_TRANSPORTABLE',
+        };
+      });
+
+      this.getGoodsProgTrans();
+      this.changeStatusGoodTrans();
+      /*if (this.goodsTranportables.count() == 0) {
         this.goodsTranportables.load(this.goodSelect);
         this.headingTransportable = `Transportables(${this.goodSelect.length})`;
         this.onLoadToast(
@@ -541,10 +567,58 @@ export class PerformProgrammingFormComponent
             this.removeGoodsSelected(this.goodSelect);
           });
         });
-      }
+      } */
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
+  }
+
+  /*------------Change status good ------------------*/
+  changeStatusGoodTrans() {
+    console.log('cambiar status good', this.goodSelect);
+    this.goodSelect.map((item: any) => {
+      console.log('goodNumber', item.goodNumber);
+      console.log('idgood', item.googId);
+      const formData: Object = {
+        id: Number(item.goodNumber),
+        goodId: item.googId,
+        programmationStatus: 'EN_TRANSPORTABLE',
+      };
+      console.log('data', formData);
+    });
+  }
+
+  /*------------Show goods programming ---------------*/
+  getGoodsProgTrans() {
+    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+      this.idProgramming;
+    this.programmingService
+      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+      .subscribe(data => {
+        this.goodsTranportables.load(data.data);
+        this.getGoodsTransportable(data.data);
+      });
+  }
+
+  /*-------------filter goods by transferent--------------*/
+
+  getGoodsTransportable(data: IGoodProgramming[]) {
+    const filter = data.filter(item => {
+      return item.status == 'EN_TRANSPORTABLE';
+    });
+
+    const infoGood = filter.map(goods => {
+      return goods.view;
+    });
+    this.goodsTranportables.load(infoGood);
+    this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
+    this.removeGoodsProgTrans();
+  }
+
+  /*-------------Remove goods tranportable in show goods programming------------------*/
+  removeGoodsProgTrans() {
+    console.log('goodsAddressView', this.estatesList);
+    console.log('goods transportables', this.goodsTranportables);
   }
 
   sendGuard() {
@@ -696,7 +770,18 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  confirm() {}
+  //Actualizar programación con información de la programación
+  confirm() {
+    this.loading = true;
+    console.log(this.performForm.value);
+    console.log('primeros datos a guardar', this.performForm.value);
+    this.programmingGoodService
+      .updateProgramming(this.idProgramming, this.performForm.value)
+      .subscribe(() => {
+        this.loading = false;
+        this.onLoadToast('success', 'Programacíón guardada correctamente', '');
+      });
+  }
 
   delete(user: any) {
     this.alertQuestion(
@@ -717,3 +802,9 @@ export class PerformProgrammingFormComponent
     this.modalService.hide();
   }
 }
+/*status aprobado
+dr
+trans
+type
+
+programaciones bienes */

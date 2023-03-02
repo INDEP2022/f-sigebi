@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUser } from '../../models/catalogs/user.model';
+import { IGoodProgramming } from '../../models/good-programming/good-programming';
 import { Iprogramming } from '../../models/good-programming/programming';
 import { ICatThirdView } from '../../models/ms-goods-inv/goods-inv.model';
 
@@ -32,6 +33,22 @@ export class ProgrammingRequestService {
       `${environment.API_URL}/${route}?${params}`,
       ids
     );
+  }
+
+  getGoodsProgramming(
+    _params: ListParams
+  ): Observable<IListResponse<IGoodProgramming>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programming-goods`;
+    return this.http.get<IListResponse<IGoodProgramming>>(
+      `${environment.API_URL}${route}`,
+      { params }
+    );
+  }
+
+  createGoodProgramming(formData: Object) {
+    const route = `programminggood/api/v1/programming-goods`;
+    return this.http.post(`${environment.API_URL}${route}`, formData);
   }
 
   postCatThirdView(

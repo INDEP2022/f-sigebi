@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  IGoodProgramming,
+  IGoodProgrammingSelect,
+} from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -17,6 +22,12 @@ import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-pro
 import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
 import { ShowProgrammingComponent } from '../../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
+import {
+  settingGuard,
+  settingTransGoods,
+  settingWarehouse,
+} from '../../perform-programming/perform-programming-form/settings-tables';
+import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
 import { ESTATE_COLUMNS } from '../columns/estate-columns';
 import { USER_COLUMNS } from '../columns/users-columns';
@@ -33,14 +44,36 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     columns: ESTATE_COLUMNS,
   };
 
+  settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+
+  settingGuardGoods = {
+    ...this.settings,
+    ...settingGuard,
+  };
+
+  settingWarehouseGoods = {
+    ...this.settings,
+    ...settingWarehouse,
+  };
+
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  totalItemsTransportable: number = 0;
+  totalItemsWarehouse: number = 0;
   idTransferent: any;
   idStation: any;
   programming: Iprogramming;
   usersData: any[] = [];
   estateData: any[] = [];
   programmingId: number = 0;
+
+  goodsTranportables: LocalDataSource = new LocalDataSource();
+  goodsGuards: LocalDataSource = new LocalDataSource();
+  goodsWarehouse: LocalDataSource = new LocalDataSource();
+
+  headingTransportable: string = `Transportables(0)`;
+  headingGuard: string = `Resguardo(0)`;
+  headingWarehouse: string = `Almacén SAE(0)`;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -64,6 +97,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsersProgramming());
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showGoodProgramming());
   }
 
   getProgrammingId() {
@@ -159,7 +196,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   rejectProgramming() {
     const config = MODAL_CONFIG;
+    let idProgramming = this.programmingId;
     config.initialState = {
+      idProgramming,
       callback: (next: boolean) => {
         if (next) {
         }
@@ -221,5 +260,48 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         ignoreBackdropClick: true,
       }
     );
+  }
+
+  showGoodProgramming() {
+    this.params.getValue()['filter.programmingId'] = this.programmingId;
+    this.programmingService
+      .getGoodsProgramming(this.params.getValue())
+      .subscribe(data => {
+        this.filterStatusTrans(data.data);
+        this.filterStatusWarehouse(data.data);
+      });
+  }
+
+  filterStatusTrans(data: IGoodProgramming[]) {
+    const goodsTrans = data.filter(items => {
+      return items.status == 'EN_TRANSPORTABLE';
+    });
+    this.headingTransportable = `Transportables(${goodsTrans.length})`;
+    const viewGoods = goodsTrans.map(info => {
+      return info.view;
+    });
+    this.goodsTranportables.load(viewGoods);
+    this.totalItemsTransportable = this.goodsTranportables.count();
+  }
+
+  filterStatusWarehouse(data: IGoodProgramming[]) {
+    const goodswarehouse = data.filter(items => {
+      return items.status == 'EN_ALMACÉN';
+    });
+    this.headingWarehouse = `En almacén SAE(${goodswarehouse.length})`;
+    const viewGoods = goodswarehouse.map(info => {
+      return info.view;
+    });
+    this.goodsWarehouse.load(viewGoods);
+    this.totalItemsWarehouse = this.goodsWarehouse.count();
+  }
+
+  showGood(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
 }

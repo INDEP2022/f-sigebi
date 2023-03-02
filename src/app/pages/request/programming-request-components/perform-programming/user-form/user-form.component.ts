@@ -34,7 +34,7 @@ export class UserFormComponent extends BasePage implements OnInit {
     this.userForm = this.fb.group({
       user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
       email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-      charge: [null, [Validators.required]],
+      userCharge: [null, [Validators.required]],
       keyId: [null],
     });
 

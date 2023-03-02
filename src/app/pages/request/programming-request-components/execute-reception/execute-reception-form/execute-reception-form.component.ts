@@ -1,17 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
 import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
-import {
-  IUser,
-  USER_COLUMNS,
-} from '../../acept-programming/columns/users-columns';
+import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { DocumentsListComponent } from '../documents-list/documents-list.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { RECEIPT_COLUMNS } from './columns/minute-columns';
@@ -27,9 +36,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   isDropup = true;
   executeForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
+  paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+  goodsWarehouse: LocalDataSource = new LocalDataSource();
+  ubicationWarehouse: string = '';
   totalItems: number = 0;
-
+  totalItemsGuard: number = 0;
+  totalItemsWarehouse: number = 0;
+  programmingId: number = 0;
+  idTransferent: any;
+  idRegDelegation: any;
+  idTypeRelevat: any;
+  headingGuard: string = `Resguardo(0)`;
+  headingWarehouse: string = `Almacén SAT(0)`;
+  idStation: any;
   settingsTranGoods = {
+    ...this.settings,
+    actions: false,
+    selectMode: 'multi',
+    columns: TRANSPORTABLE_GOODS,
+  };
+
+  settingsGoodsGoods = {
     ...this.settings,
     actions: false,
     selectMode: 'multi',
@@ -49,19 +77,42 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     },
   };
 
-  userData: IUser[] = [];
+  usersData: any[] = [];
   //Cambiar a modelos//
+  guardGoods: LocalDataSource = new LocalDataSource();
   tranGoods = tranGoods;
   receipts = receipts;
-
   search: FormControl = new FormControl({});
-  constructor(private modalService: BsModalService, private fb: FormBuilder) {
+  programming: Iprogramming;
+  constructor(
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private programmingService: ProgrammingRequestService,
+    private regDelegationService: RegionalDelegationService,
+    private transferentService: TransferenteService,
+    private stationService: StationService,
+    private authorityService: AuthorityService,
+    private typeRelevantService: TypeRelevantService,
+    private warehouseService: WarehouseService,
+    private goodsQueryService: GoodsQueryService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false, columns: USER_COLUMNS };
+
+    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
+      'id'
+    ) as unknown as number;
   }
 
   ngOnInit(): void {
+    console.log(this.programmingId);
     this.prepareForm();
+    this.showDataProgramming();
+
+    this.paramsGuard
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsProgramming());
   }
 
   prepareForm() {
@@ -73,6 +124,166 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       stateConservationSae: [null],
       selectColumn: [null],
     });
+  }
+
+  showDataProgramming() {
+    this.programmingService
+      .getProgrammingId(this.programmingId)
+      .subscribe(data => {
+        this.programming = data;
+        this.idRegDelegation = data.regionalDelegationNumber;
+        this.idTypeRelevat = data.typeRelevantId;
+        this.idTransferent = data.tranferId;
+        this.idStation = data.stationId;
+        this.getDataRegionalDelegation(data);
+        this.getTransferent(data);
+        this.getStation(data);
+        this.getAuthority();
+        this.getTypeRelevant();
+        this.getwarehouse();
+        this.getUsersProgramming();
+      });
+  }
+
+  getDataRegionalDelegation(data: Iprogramming) {
+    this.regDelegationService
+      .getById(data.regionalDelegationNumber)
+      .subscribe(data => {
+        this.programming.regionalDelegationNumber = data.description;
+      });
+  }
+
+  getTransferent(data: Iprogramming) {
+    this.transferentService.getById(data.tranferId).subscribe(data => {
+      this.programming.tranferId = data.nameTransferent;
+    });
+  }
+
+  getStation(data: Iprogramming) {
+    this.stationService.getById(data.stationId).subscribe(data => {
+      this.programming.stationId = data.stationName;
+    });
+  }
+
+  getAuthority() {
+    const filterColumns = {
+      idAuthority: Number(this.programming.autorityId),
+      idTransferer: Number(this.idTransferent),
+      idStation: Number(this.idStation),
+    };
+    return this.authorityService.postByIds(filterColumns).subscribe(data => {
+      this.programming.autorityId = data['authorityName'];
+    });
+  }
+
+  getTypeRelevant() {
+    return this.typeRelevantService
+      .getById(this.programming.typeRelevantId)
+      .subscribe(data => {
+        this.programming.typeRelevantId = data.description;
+      });
+  }
+
+  getwarehouse() {
+    return this.warehouseService
+      .getById(this.programming.storeId)
+      .subscribe(data => {
+        this.programming.storeId = data.description;
+        this.ubicationWarehouse = data.ubication;
+      });
+  }
+
+  /*------------- function button to show info programming ---*/
+  getReportGoods() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoodsProgramming());
+  }
+
+  /*----------Show info goods programming --------- */
+  getInfoGoodsProgramming() {
+    const filterColumns: Object = {
+      regionalDelegation: Number(this.idRegDelegation),
+      transferent: Number(this.idTransferent),
+      relevantType: Number(this.idTypeRelevat),
+      statusGood: 'APROBADO',
+    };
+
+    console.log(filterColumns);
+    this.goodsQueryService
+      .postGoodsProgramming(this.params.getValue(), filterColumns)
+      .subscribe({
+        next: response => {
+          console.log(response.data);
+          const filterData = response.data.map(items => {
+            if (items.physicalState == 1) {
+              items.physicalState = 'BUENO';
+              return items;
+            } else if (items.physicalState == 2) {
+              items.physicalState = 'MALO';
+              return items;
+            }
+          });
+
+          console.log('bienes a programar', filterData);
+        },
+        error: error => (this.loading = false),
+      });
+  }
+  /*----------show goods transportable, guard and warehouse-------------*/
+
+  getGoodsProgramming() {
+    this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
+    this.programmingService
+      .getGoodsProgramming(this.paramsGuard.getValue())
+      .subscribe(data => {
+        //this.getGoodsGuards(data.data);
+        this.getGoodsWarehouse(data.data);
+      });
+  }
+
+  /*------------------ Goods in guard ---------------------------*/
+  /*getGoodsGuards(data: IGoodProgramming[]) {
+    const filter = data.filter(item => {
+      return item.status == 'EN_RESGUARDO';
+    });
+
+    const infoGood = filter.map(goods => {
+      return goods.view;
+    });
+    this.guardGoods.load(infoGood);
+    console.log('guards goods', this.guardGoods);
+    this.headingGuard = `Resguardo(${this.guardGoods.count()})`;
+  } */
+
+  /*-----------------Goods in warehouse---------------------------*/
+  getGoodsWarehouse(data: IGoodProgramming[]) {
+    const filter = data.filter(item => {
+      return item.status == 'EN_ALMACÉN';
+    });
+
+    const infoGood = filter.map(goods => {
+      return goods.view;
+    });
+    this.goodsWarehouse.load(infoGood);
+    this.totalItemsWarehouse = this.goodsWarehouse.count();
+    this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+  }
+
+  getUsersProgramming() {
+    this.loading = true;
+    const ids = {
+      programmingId: this.programmingId,
+    };
+    this.programmingService
+      .getUsersProgramming(this.params.getValue(), ids)
+      .subscribe({
+        next: response => {
+          this.usersData = [response];
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
   uploadDocuments() {
