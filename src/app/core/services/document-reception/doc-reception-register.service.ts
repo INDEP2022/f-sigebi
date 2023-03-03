@@ -20,13 +20,14 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { ConvertiongoodEndpoints } from '../../../common/constants/endpoints/ms-convertiongood-endpoints';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
+import { DelegationService } from '../catalogs/delegation.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocReceptionRegisterService extends HttpService {
   microsevice: string = '';
-  constructor() {
+  constructor(private delegationService: DelegationService) {
     super();
   }
 
