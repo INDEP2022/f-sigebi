@@ -6,13 +6,17 @@
     <form class="form-material" [formGroup]="proceedingForm">
       <div class="row">
         <div class="col-md-2">
-          <form-field label="id" [control]="proceedingForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
+          <form-field label="No." [control]="proceedingForm.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            label="Clave oficio"
+            label="Oficio de solicitud"
             [control]="proceedingForm.get('keysProceedings')">
             <input
               type="text"
@@ -22,22 +26,32 @@
         </div>
         <div class="col-md-3">
           <form-field
-            label="Fecha elaboración"
-            [control]="proceedingForm.get('elaborationDate')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="elaborationDate" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
             label="Fecha recepción"
             [control]="proceedingForm.get('datePhysicalReception')">
             <input
               type="text"
               class="form-control"
-              formControlName="datePhysicalReception" />
+              formControlName="datePhysicalReception"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha elaboración"
+            [control]="proceedingForm.get('elaborationDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborationDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
       </div>
@@ -49,7 +63,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="captureDate" />
+              formControlName="captureDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-3">

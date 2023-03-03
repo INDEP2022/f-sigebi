@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-proceedings-modal',
@@ -17,6 +18,8 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   proceedingForm: ModelForm<IProccedingsDeliveryReception>;
   proceeding: IProccedingsDeliveryReception;
 
+  today: Date;
+
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -28,9 +31,12 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.proceedingForm = this.fb.group({
       id: [null, []],
-      keysProceedings: [null, []],
-      elaborationDate: [null, []],
+      keysProceedings: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       datePhysicalReception: [null, []],
+      elaborationDate: [null, [Validators.required]],
       captureDate: [null, []],
       statusProceedings: [null, []],
     });

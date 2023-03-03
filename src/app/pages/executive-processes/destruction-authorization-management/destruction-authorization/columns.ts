@@ -25,6 +25,24 @@ export const PROCEEDINGS_COLUMNS = {
   },
 };
 
+export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
+  numberGood: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  good: {
+    title: 'Descripción',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+  },
+  amount: {
+    title: 'Cantidad',
+    sort: false,
+  },
+};
+
 export const GOODS_COLUMNS = {
   id: {
     title: 'No. Bien',
@@ -45,6 +63,13 @@ export const GOODS_COLUMNS = {
   requestFolio: {
     title: 'Of. Sol.',
     type: 'string',
+    sort: false,
+  },
+};
+
+export const DICTATION_COLUMNS = {
+  passOfficeArmy: {
+    title: 'Clave oficio armada',
     sort: false,
   },
 };
