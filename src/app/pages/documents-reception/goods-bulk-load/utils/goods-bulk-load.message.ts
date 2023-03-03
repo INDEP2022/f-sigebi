@@ -28,6 +28,8 @@ const ERROR_CANTIDAD = (cantidad: string) =>
   `La cantidad es inválida. En el campo CANTIDAD: ${cantidad}.`;
 const ERROR_ESTATUS = (estatus: string) =>
   `El estatus ${estatus} no existe en el sistema.`;
+const ERROR_ESTATUS_GENERAL = (numero_registro: number) =>
+  `No se realizo la inserción del bien con la posición "${numero_registro}" debido a que no se permiten inserciones con estatus diferente de "ROP" .`;
 // PROCESO 1 Y PROCESO 3
 const ERROR_CLASS_GOOD = (class_good: number) =>
   `El número de clasificación del bien ${class_good} no existe en el sistema.`;
@@ -62,6 +64,16 @@ const ERROR_TRANSFERENTE_PARAMS = (contador: number) =>
       ? 'No existe el transferente, emisora y autoridad.'
       : 'Demasiadas transferentes, emisoras y autoridades coinciden.'
   }.`;
+// PROCESO GENERAL
+const ERROR_EXPEDIENTE_IDENTIFICADOR = (identificador: string) =>
+  `El identificador correcto es: ${identificador}.`;
+const ERROR_EXPEDIENTE_TRANSFERENTE_INDICIADO_CITY = (
+  expediente: string,
+  volante: string
+) =>
+  `Se encontró repetido el expediente ('${expediente}') en el volante : '${volante}'.`;
+const ERROR_INDICATOR = (indicado: string) =>
+  `El indicado ${indicado} no existe en el sistema.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -93,4 +105,8 @@ export {
   ERROR_ISSUING_INSTITUTION,
   ERROR_TRANSFERENTE_PARAMS,
   ERROR_CANTIDAD,
+  ERROR_ESTATUS_GENERAL,
+  ERROR_EXPEDIENTE_IDENTIFICADOR,
+  ERROR_EXPEDIENTE_TRANSFERENTE_INDICIADO_CITY,
+  ERROR_INDICATOR,
 };

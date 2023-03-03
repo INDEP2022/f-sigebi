@@ -79,7 +79,8 @@
                   type="checkbox"
                   [ngModelOptions]="{ standalone: true }"
                   [(ngModel)]="duplicity"
-                  (change)="modifyResponse($event)" />
+                  (change)="modifyResponse($event)"
+                  [disabled]="disableDuplicity" />
               </form-check>
             </div>
             <div class="col-md-3">

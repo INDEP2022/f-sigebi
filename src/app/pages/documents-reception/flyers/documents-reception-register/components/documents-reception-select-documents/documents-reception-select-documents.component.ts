@@ -6,11 +6,11 @@ import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-documents-reception-select',
-  templateUrl: './documents-reception-select.component.html',
+  selector: 'app-documents-reception-select-documents',
+  templateUrl: './documents-reception-select-documents.component.html',
   styles: [],
 })
-export class DocumentsReceptionSelectComponent
+export class DocumentsReceptionSelectDocumentsComponent
   extends BasePage
   implements OnInit
 {

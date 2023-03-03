@@ -1,4 +1,5 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { EventEmitter, inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -13,6 +14,8 @@ import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 })
 export class GoodService extends HttpService {
   good$ = new EventEmitter<IGood>();
+  private http = inject(HttpClient);
+
   constructor() {
     super();
     this.microservice = GoodEndpoints.Good;
@@ -34,15 +37,30 @@ export class GoodService extends HttpService {
   create(good: IGood) {
     return this.post(GoodEndpoints.Good, good);
   }
-
+  //
   update(good: IGood) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
 
+  updateWithoutId(good: IGood) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
+
+  updateGoodStatus(goodNumber: number | string, status: string) {
+    const route = `${GoodEndpoints.Good}/updateGoodStatus/${goodNumber}/${status}`;
+    return this.put(route);
+  }
+
   remove(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);
+  }
+
+  removeGood(body: Object) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.delete(route, body);
   }
 
   getByExpedient(
@@ -88,6 +106,7 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}/getGoodBySafe`;
     console.log(route);
+
     return this.post<IListResponse<IGood>>(route, body);
   }
 
@@ -100,5 +119,13 @@ export class GoodService extends HttpService {
   updateTracked(id: string | number, good: ITrackedGood) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.put(route, good);
+  }
+
+  getExemptedGoods(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}?filter.extDomProcess=TRANSFERENTE`;
+    const route2 = `${GoodEndpoints.Good}?filter.goodId=2203409`;
+    return this.get<IListResponse<IGood>>(route2, params);
   }
 }

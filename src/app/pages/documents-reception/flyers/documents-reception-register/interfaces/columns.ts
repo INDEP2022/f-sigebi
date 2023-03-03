@@ -1,5 +1,5 @@
 export const DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS = {
-  numDelegation: {
+  delegation: {
     title: 'Nombre Delegación',
     type: 'string',
     sort: false,
@@ -45,6 +45,42 @@ export const DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS = {
   },
   clv: {
     title: 'Relación Bienes.',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const DOCUMENTS_RECEPTION_SELECT_TRACK_RECORD_COLUMNS = {
+  expedientNumber: {
+    title: 'Expediente',
+    type: 'number',
+    sort: false,
+  },
+  wheelNumber: {
+    title: 'Volante',
+    type: 'number',
+    sort: false,
+  },
+};
+
+export const DOCUMENTS_RECEPTION_SELECT_TRACK_RECORD_GOODS_COLUMNS = {
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  id: {
+    title: 'No Bien',
+    type: 'number',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
     type: 'string',
     sort: false,
   },

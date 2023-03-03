@@ -18,4 +18,10 @@ export class DynamicCatalogService {
       params
     );
   }
+  getCurrency(id: string | number, params: ListParams) {
+    return this.expedientRepository.getAllPaginated(
+      this.route + '/get-tvaltable5-by-table/' + id,
+      params
+    );
+  }
 }

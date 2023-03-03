@@ -27,8 +27,16 @@ export class ExpedientService extends HttpService {
     return this.get<IListResponse<IExpedient>>('expedient', params);
   }
 
-  update(id: string | number, expedient: any) {
-    return this.put(`expedient/${id}`, expedient);
+  getNextVal(): Observable<{ nextval: string }> {
+    return this.get(this.route.GetNextVal);
+  }
+
+  create(body: IExpedient): Observable<IExpedient> {
+    return this.post(this.route.CreateExpedient, body);
+  }
+
+  update(id: number | string, body: Partial<IExpedient>) {
+    return this.post(`${this.route.BasePath}/${id}`, body);
   }
 
   getItegratedExpedients(params: _Params) {

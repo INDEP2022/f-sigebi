@@ -20,6 +20,7 @@ import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefg
 import { IManagamentProcessPgr } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { PgrSubjectsRegisterService } from '../service/pgr-subjects-register.service';
 import {
+  DOWNLOAD_PROCESS,
   ERROR_EXPORT,
   ERROR_FORM,
   ERROR_FORM_FECHA,
@@ -63,6 +64,11 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   // Filtro de paginado
   filtroPaginado: string[] = ['page', 'limit'];
   INFO_DOWNLOAD = INFO_DOWNLOAD;
+  DOWNLOAD_PROCESS = DOWNLOAD_PROCESS;
+  base64Preview = '';
+  maxLimitReport = 20000;
+  downloading: boolean = false;
+  downloadingTransferente: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -91,7 +97,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.pgrTransferForm = this.fb.group({
       pgrGoodNumber: [null, [Validators.maxLength(400)]],
       saeGoodNumber: [null, [Validators.maxLength(400)]],
-      estatus: [null, [Validators.maxLength(60)]],
+      status: [null, [Validators.maxLength(60)]],
       office: [null],
       aveprev: [null],
     });
@@ -237,7 +243,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (
       this.pgrTransferForm.get('pgrGoodNumber').value ||
       this.pgrTransferForm.get('saeGoodNumber').value ||
-      this.pgrTransferForm.get('estatus').value
+      this.pgrTransferForm.get('status').value
     ) {
       valid = true;
     } else {
@@ -398,23 +404,35 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de Gestion de Tramites
    */
   getReportTramitePgr() {
+    let objParams: any = {
+      from: this.pgrForm.value.from,
+      to: this.pgrForm.value.to,
+      issue: this.pgrForm.value.issue,
+      delegationNumber: this.pgrForm.value.delegationNumber,
+      officeNumber: this.pgrForm.value.officeNumber,
+      statusProcedure: this.pgrForm.value.processStatus,
+    };
+
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
-      this.pgrForm.value,
+      objParams,
       this.paramsGestionPgr.value,
       this.filtroPaginado,
       'filter',
-      'processEntryDate'
+      'procedureAdmissionDate'
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    this.downloading = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'gestion_pgr')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
-            this.downloadFile(data.base64, 'Reporte_Tramite_PGR');
+            this.downloadFile(
+              data.base64,
+              `GestionSat__Listado_Tramites_PGR${new Date().getTime()}`
+            );
           } else {
             this.onLoadToast(
               'warning',
@@ -422,10 +440,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
               NOT_FOUND_MESSAGE('Gestión Trámites PGR')
             );
           }
-          this.loadingGestionPgr = false;
+          this.downloading = false;
         },
         error: error => {
-          this.loadingGestionPgr = false;
+          this.downloading = false;
           this.errorGet(error);
         },
       });
@@ -434,8 +452,16 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de Transferencia PGR
    */
   getReportTransferenciaPgr() {
+    let objParams: any = {
+      aveprev: this.pgrTransferForm.value.issue,
+      pgrGoodNumber: this.pgrTransferForm.value.pgrGoodNumber,
+      saeGoodNumber: this.pgrTransferForm.value.saeGoodNumber,
+      office: this.pgrTransferForm.value.office,
+      status: this.pgrTransferForm.value.status,
+    };
+
     let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
-      this.pgrTransferForm.value,
+      objParams,
       this.paramsPgrTransferencia.value,
       this.filtroPaginado,
       'filter',
@@ -443,12 +469,12 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = 0; // Valor de cero para obtener todos los resultados
+    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    this.downloadingTransferente = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'transferencia_pgr')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
             this.downloadFile(data.base64, 'Listado_Cves_PGR');
           } else {
@@ -458,10 +484,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
               NOT_FOUND_MESSAGE('Transferencias PGR')
             );
           }
-          this.loadingPgrTransferencia = false;
+          this.downloadingTransferente = false;
         },
         error: error => {
-          this.loadingPgrTransferencia = false;
+          this.downloadingTransferente = false;
           this.errorGet(error);
         },
       });

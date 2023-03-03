@@ -1,11 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IThirdParty } from 'src/app/core/models/ms-thirdparty/third-party.model';
-import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
+import { IComerEvent2 } from 'src/app/core/models/ms-event/event.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import {
+  IComerComCalculated,
+  IComerCommissionsPerGood,
+  IThirdParty,
+} from 'src/app/core/models/ms-thirdparty/third-party.model';
+import { ComerComCalculatedService } from 'src/app/core/services/ms-thirdparty/comer-comcalculated';
+import { ComerCommissionsPerGoodService } from 'src/app/core/services/ms-thirdparty/comer-commissions-per-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { THIRD_PARTY } from './caculate-comission-columns';
+import { ComcalculatedModalComponent } from '../comcalculated-modal/comcalculated-modal.component';
+import { CommissionsModalComponent } from '../commissions-modal/commissions-modal.component';
+import {
+  COMCALCULATED_COLUMS,
+  COMISIONESXBIEN_COLUMNS,
+} from './caculate-comission-columns';
 
 @Component({
   selector: 'app-calculate-commission',
@@ -22,16 +34,30 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   settings2;
+  comerComCalculatedList: IComerComCalculated[] = [];
+  comerComCalculated: IComerComCalculated;
+
+  comerCommissionsList: IComerCommissionsPerGood[] = [];
+
+  thirdParty: IThirdParty;
+  good: IGood;
+  event: IComerEvent2;
 
   constructor(
     private modalService: BsModalService,
-    private thirdPartyService: ThirdPartyService
+    private comerComCalculatedService: ComerComCalculatedService,
+    private comerCommissionsPerGoodService: ComerCommissionsPerGoodService
   ) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: { ...THIRD_PARTY },
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...COMCALCULATED_COLUMS },
     };
 
     this.settings2 = {
@@ -42,25 +68,23 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
         delete: false,
         position: 'right',
       },
-      columns: { ...THIRD_PARTY },
+      columns: { ...COMISIONESXBIEN_COLUMNS },
     };
   }
-
-  thirdPartysList: IThirdParty[] = [];
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getThirdParty());
+      .subscribe(() => this.getComCalculated());
   }
 
-  getThirdParty() {
+  getComCalculated() {
     this.loading = true;
 
-    this.thirdPartyService.getAll(this.params.getValue()).subscribe({
+    this.comerComCalculatedService.getAll(this.params.getValue()).subscribe({
       next: response => {
         console.log(response);
-        this.thirdPartysList = response.data;
+        this.comerComCalculatedList = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -69,5 +93,61 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
         console.log(error);
       },
     });
+  }
+
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.comerCommissionsList = [];
+    this.comerComCalculated = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getComPerGood(this.comerComCalculated));
+  }
+
+  openForm1(calculated?: IComerComCalculated) {
+    const idT = { ...this.thirdParty };
+    let config: ModalOptions = {
+      initialState: {
+        calculated,
+        idT,
+        callback: (next: boolean) => {
+          if (next) this.getComCalculated();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ComcalculatedModalComponent, config);
+  }
+
+  getComPerGood(comerComCalculated: IComerComCalculated): void {
+    this.loading = true;
+    this.comerCommissionsPerGoodService
+      .getFilter(comerComCalculated.comCalculatedId, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.comerCommissionsList = response.data;
+          this.totalItems2 = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
+  }
+
+  openForm2(commissions?: IComerCommissionsPerGood) {
+    const idEvent = { ...this.event };
+    const idGood = { ...this.good };
+    let config: ModalOptions = {
+      initialState: {
+        commissions,
+        idEvent,
+        idGood,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CommissionsModalComponent, config);
   }
 }

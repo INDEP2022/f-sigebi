@@ -5,6 +5,6 @@ export interface IHistoryGood {
   userChange: string;
   statusChangeProgram: string;
   reasonForChange: string;
-  registryNum: string | number;
-  extDomProcess: string;
+  registryNum?: string | number;
+  extDomProcess?: string;
 }
