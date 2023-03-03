@@ -83,7 +83,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
-  transference: new FormControl<number>(null, Validators.required),
+  transference: new FormControl<number>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null, Validators.required),
   autorityNumber: new FormControl<IAuthority>(null, Validators.required),
