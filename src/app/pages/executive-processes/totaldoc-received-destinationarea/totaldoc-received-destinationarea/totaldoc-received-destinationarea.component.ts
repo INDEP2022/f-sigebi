@@ -84,7 +84,7 @@ export class TotaldocReceivedDestinationareaComponent
   }
 
   onValuesChange(areaChange: IDepartment) {
-    this.idDel = areaChange.numDelegation as IDelegation;
+    this.idDel = areaChange.delegation as IDelegation;
     this.idSub = areaChange.numSubDelegation as ISubdelegation;
     console.log(areaChange);
     this.areaValue = areaChange;

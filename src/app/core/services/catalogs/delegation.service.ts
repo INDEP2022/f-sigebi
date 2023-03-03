@@ -17,6 +17,7 @@ export class DelegationService implements ICrudMethods<IDelegation> {
   private readonly zonesRoute = ENDPOINT_LINKS.ZoneGeographic;
   constructor(
     private delegationRepository: Repository<IDelegation>,
+
     private statesRepository: Repository<IStateOfRepublic>,
     private zonesRepository: Repository<IZoneGeographic>
   ) {}
@@ -25,8 +26,8 @@ export class DelegationService implements ICrudMethods<IDelegation> {
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
-  getAllModal(self?: DelegationService, params?: ListParams | string) {
-    return self.delegationRepository.getAllPaginated(self.route, params);
+  getAllModal(self?: DelegationService, params?: ListParams) {
+    return self.getAll(params);
   }
 
   getById(id: string | number): Observable<IDelegation> {
