@@ -23,11 +23,11 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getProceedingsByDelAndSub(
     delegation: string | number,
     subdelegation: string | number,
-    params?: ListParams
+    filter: string,
+    dataFilter: any
   ): Observable<IListResponse<IValidations>> {
     return this.get<IListResponse<IValidations>>(
-      `${this.endpoint}/find/delegation/${delegation}/subdelegation/${subdelegation}`,
-      params
+      `${this.endpoint}/find/delegation/${delegation}/subdelegation/${subdelegation}?filter.${filter}=${dataFilter}`
     );
   }
 
