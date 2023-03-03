@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { switchMap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
 import { SearchFractionComponent } from './components/search-fraction/search-fraction.component';
@@ -30,7 +31,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     goodsCaptureService: GoodsCaptureService,
     activatedRoute: ActivatedRoute,
     router: Router,
-    menageService: MenageService
+    menageService: MenageService,
+    drDataService: DocumentsReceptionDataService
   ) {
     super(
       fb,
@@ -38,7 +40,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       goodsCaptureService,
       activatedRoute,
       router,
-      menageService
+      menageService,
+      drDataService
     );
   }
 

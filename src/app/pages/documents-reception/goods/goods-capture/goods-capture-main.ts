@@ -19,6 +19,7 @@ import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model'
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ITypesByClasification } from 'src/app/core/models/catalogs/types-by-clasification';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -59,8 +60,8 @@ export class GoodsCaptureMain extends BasePage {
     // transferId: null,
     // recordId: null,
     // ? Entra a this.validateSat()
-    satSubject: '2012/157',
-    pOfficeNumber: '800-51-00-02-01-2012-2184',
+    satSubject: null,
+    pOfficeNumber: null,
     // ? Entra a this.fillData()
     // satSubject: 'PD7500140022',
     // pOfficeNumber: '800-45-00-02-01-2014-3783',
@@ -69,28 +70,28 @@ export class GoodsCaptureMain extends BasePage {
   counter: number = 0;
   goodFeatures: any[] = [];
   global: IGlobalGoodsCapture = {
-    gNoExpediente: 497938,
-    gRastBien: 1,
+    gNoExpediente: null,
+    gRastBien: null,
     gRastBienExpedienteRel: null,
     gRastBienRel: null,
     gRastDescripcionBien: null,
-    gRastTipo: 5,
-    gRastSubtipo: 17,
-    gRastSsubtipo: 1,
-    gRastSssubtipo: 1,
+    gRastTipo: null,
+    gRastSubtipo: null,
+    gRastSsubtipo: null,
+    gRastSssubtipo: null,
     gCreaExpediente: null,
     gClasifNumber: null,
     vPgrOficio: null,
-    gCommit: 'N',
-    gFlag: 0,
+    gCommit: null,
+    gFlag: null,
     val1: null,
     val2: null,
     val3: null,
     val4: null,
-    contador: 0,
+    contador: null,
     gnuActivaGestion: null,
     pIndicadorSat: null,
-    noTransferente: 583,
+    noTransferente: null,
   };
   txtNoClasifBien: string = null;
   SAT_RECORD: number;
@@ -124,11 +125,16 @@ export class GoodsCaptureMain extends BasePage {
     public goodsCaptureService: GoodsCaptureService,
     private activatedRoute: ActivatedRoute,
     public router: Router,
-    public menageService: MenageService
+    public menageService: MenageService,
+    public drDataService: DocumentsReceptionDataService
   ) {
     super();
     const paramsMap = this.activatedRoute.snapshot.queryParamMap;
+
     this.params.origin = paramsMap.get('origin');
+    const frParams = this.drDataService.goodsCaptureTempParams;
+    this.params.iden = frParams.iden;
+    console.log(frParams);
   }
 
   get formControls() {

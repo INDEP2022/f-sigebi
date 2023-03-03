@@ -8,23 +8,23 @@ const routes: Routes = [
   //     (await import('./example/example.module')).ExampleModule,
   //   data: { title: 'Ejemplo' },
   // },
-  // {
-  //   path: 'request',
-  //   loadChildren: async () =>
-  //     (await import('./request/request.module')).RequestModule,
-  //   data: { title: 'Request' },
-  // },
+  {
+    path: 'request',
+    loadChildren: async () =>
+      (await import('./request/request.module')).RequestModule,
+    data: { title: 'Request' },
+  },
   // {
   //   path: 'catalogs',
   //   loadChildren: async () =>
   //     (await import('./catalogs/catalogs.module')).CatalogModule,
   // },
-  // {
-  //   path: 'documents-reception',
-  //   loadChildren: async () =>
-  //     (await import('./documents-reception/documents-reception.module'))
-  //       .DocumentsReceptionModule,
-  // },
+  {
+    path: 'documents-reception',
+    loadChildren: async () =>
+      (await import('./documents-reception/documents-reception.module'))
+        .DocumentsReceptionModule,
+  },
   // {
   //   path: 'administrative-processes',
   //   loadChildren: async () =>
@@ -95,12 +95,12 @@ const routes: Routes = [
   //     ).JudicialPhysicalReceptionModule,
   // },
 
-  // {
-  //   path: 'general-processes',
-  //   loadChildren: async () =>
-  //     (await import('./general-processes/general-processes.module'))
-  //       .GeneralProcessesModule,
-  // },
+  {
+    path: 'general-processes',
+    loadChildren: async () =>
+      (await import('./general-processes/general-processes.module'))
+        .GeneralProcessesModule,
+  },
 
   // {
   //   path: 'parameterization',
