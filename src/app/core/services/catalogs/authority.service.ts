@@ -55,7 +55,7 @@ export class AuthorityService
     );
   }
 
-  getAllFilter(params?: _Params) {
+  getAllFilter(params?: _Params): Observable<IListResponse<IAuthority>> {
     return this.get('authority', params);
   }
 
