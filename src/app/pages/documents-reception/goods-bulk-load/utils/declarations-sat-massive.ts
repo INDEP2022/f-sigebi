@@ -5,6 +5,7 @@ export class DeclarationsSatSaeMassive {
 }
 export const COMMON_VALIDATORS = {
   total_errores: 0,
+  registro_errores: 0,
   valid: false,
   count: 0,
   total: 0,

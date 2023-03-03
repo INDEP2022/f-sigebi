@@ -2,16 +2,7 @@
   <div class="ch-content" header>
     <div class="d-flex justify-content-between">
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
-      <div>
-        <!-- <button
-          class="btn btn-secondary btn-sm active mr-2"
-          (click)="showTrackRecords()">
-          Antecedentes
-        </button> -->
-        <!-- <button class="btn btn-info btn-sm active" (click)="chooseOther()">
-          Seleccionar volante
-        </button> -->
-      </div>
+      <div></div>
     </div>
   </div>
 
@@ -139,6 +130,7 @@
               <button
                 type="button"
                 class="ml-5 btn btn-secondary active btn-sm"
+                [disabled]="!canViewDocuments"
                 (click)="viewDocuments()">
                 <i class="bx bx-file"></i>
               </button>
@@ -729,13 +721,12 @@
             pgrInterface ||
             satInterface
           ">
-          <button
-            type="button"
-            class="btn btn-primary active"
-            (click)="goodsCaptureCheck()"
-            [disabled]="procedureBlocked">
-            Siguiente
-          </button>
+          <confirm-button
+            text="Siguiente"
+            loadingText="Cargando"
+            [disabled]="procedureBlocked"
+            [loading]="loading"
+            (confirm)="goodsCaptureCheck()"></confirm-button>
         </div>
       </div>
     </div>
