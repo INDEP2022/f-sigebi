@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'search-bar-simple',
@@ -17,8 +17,8 @@ import { FormControl } from '@angular/forms';
       </div>
       <div>
         <button
-          [disabled]="!getValue()"
-          type="submit"
+          [disabled]="search.invalid"
+          type="button"
           (click)="searchTerm()"
           class="btn btn-primary btn-sm active ml-1">
           <i class="fa fa-search"></i
@@ -40,8 +40,7 @@ export class SearchBarSimpleComponent implements OnInit {
   @Input() valueBut?: string = '';
   @Output() eventEmit = new EventEmitter<string>();
   term: string = '';
-
-  search: FormControl = new FormControl();
+  search: FormControl = new FormControl(null, [Validators.required]);
   constructor() {}
 
   ngOnInit(): void {}

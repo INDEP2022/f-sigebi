@@ -87,7 +87,6 @@ import {
   DOC_RECEPT_REG_FIELDS_TO_LISTEN,
   IDocReceptionFlyersRegistrationParams,
   IDocumentsReceptionData,
-  IGlobalFlyerRegistration,
   ProcedureStatus,
   TaxpayerLabel,
 } from './interfaces/documents-reception-register-form';
@@ -149,25 +148,25 @@ export class DocumentsReceptionRegisterComponent
   uniqueKeys = new DefaultSelect<ITransferingLevelView>();
   users = new DefaultSelect<IUser>();
   usersCopy = new DefaultSelect<IUser>();
-  globals: IGlobalFlyerRegistration = {
-    gNoExpediente: null,
-    noVolante: null,
-    bn: 0,
-    gCreaExpediente: 'S',
-    gstMensajeGuarda: '',
-    gnuActivaGestion: 1,
-    antecede: 0,
-    pSatTipoExp: null,
-    pIndicadorSat: null,
-    gLastCheck: null,
-    vTipoTramite: null,
-    gCommit: null,
-    gOFFCommit: null,
-    noTransferente: null,
-    gNoVolante: null,
-  };
+  // globals: IGlobalFlyerRegistration = {
+  //   gNoExpediente: null,
+  //   noVolante: null,
+  //   bn: 0,
+  //   gCreaExpediente: 'S',
+  //   gstMensajeGuarda: '',
+  //   gnuActivaGestion: 1,
+  //   antecede: 0,
+  //   pSatTipoExp: null,
+  //   pIndicadorSat: null,
+  //   gLastCheck: null,
+  //   vTipoTramite: null,
+  //   gCommit: null,
+  //   gOFFCommit: null,
+  //   noTransferente: null,
+  //   gNoVolante: null,
+  // };
   pageParams: IDocReceptionFlyersRegistrationParams = null;
-  globalVars: IGlobalVars;
+  globals: IGlobalVars;
 
   constructor(
     private router: Router,
@@ -260,7 +259,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   get userCpp() {
-    return this.flyerCopyRecipientForm.controls['copyuser'];
+    return this.flyerCopyCppForm.controls['copyuser'];
   }
 
   ngOnInit(): void {
@@ -320,7 +319,8 @@ export class DocumentsReceptionRegisterComponent
     this.globalVarsService
       .getGlobalVars$()
       .subscribe((globalVars: IGlobalVars) => {
-        this.globalVars = globalVars;
+        this.globals = globalVars;
+        console.log(this.globals);
       });
   }
 
@@ -328,9 +328,9 @@ export class DocumentsReceptionRegisterComponent
     globalVar: ParamKey,
     value: IGlobalVars[ParamKey]
   ) {
-    let newState = { ...this.globalVars };
+    let newState = { ...this.globals };
     newState = {
-      ...this.globalVars,
+      ...this.globals,
       [globalVar]: value,
     };
     this.globalVarsService.updateGlobalVars(newState);
@@ -373,9 +373,6 @@ export class DocumentsReceptionRegisterComponent
         this.pageParams.pNoVolante !== undefined)
     ) {
       if (this.pageParams.pNoVolante === null) {
-        // const filters = new FilterParams();
-        // filters.addFilter('id', this.pageParams.pNoTramite);
-        // console.log(filters.getParams());
         this.procedureManageService
           .getById(this.pageParams.pNoTramite)
           .subscribe({
@@ -478,7 +475,8 @@ export class DocumentsReceptionRegisterComponent
       );
     } else if (typeManagement == 3) {
       this.formControls.goodRelation.setValue('S');
-      this.pgrInterface = true;
+      //TODO: Comentado para pruebas, descomentar al tener el buzon de tramites listo
+      // this.pgrInterface = true;
       this.alert(
         'info',
         'Tipo de Trámite',
@@ -562,7 +560,7 @@ export class DocumentsReceptionRegisterComponent
               this.formControls.destinationArea.setValue(
                 data.data[0].description
               );
-              const delegation = data.data[0].numDelegation as IDelegation;
+              const delegation = data.data[0].delegation as IDelegation;
               this.formControls.delDestinyNumber.setValue(delegation.id);
               this.formControls.delegationName.setValue(delegation.description);
               const subdelegation = data.data[0]
@@ -623,7 +621,7 @@ export class DocumentsReceptionRegisterComponent
               this.formControls.destinationArea.setValue(
                 data.data[0].description
               );
-              const delegation = data.data[0].numDelegation as IDelegation;
+              const delegation = data.data[0].delegation as IDelegation;
               this.formControls.delDestinyNumber.setValue(delegation.id);
               this.formControls.delegationName.setValue(delegation.description);
               const subdelegation = data.data[0]
@@ -640,8 +638,12 @@ export class DocumentsReceptionRegisterComponent
       this.interfacefgrService
         .getPgrTransferFiltered(param.getParams())
         .subscribe({
-          next: data =>
-            this.formControls.criminalCase.setValue(data.data[0].pgrOffice),
+          next: data => {
+            if (this.formControls.criminalCase.value == null) {
+              this.formControls.criminalCase.setValue(data.data[0].pgrOffice);
+            }
+          },
+          error: () => {},
         });
       param = new FilterParams();
       param.addFilter('id', 'DJ');
@@ -687,17 +689,27 @@ export class DocumentsReceptionRegisterComponent
             description,
             onlyKey,
           } = data.data[0];
-          this.formControls.externalRemitter.setValue(senderExt);
-          this.formControls.externalOfficeDate.setValue(officeExternalDate);
-          this.formControls.observations.setValue(description);
-          this.formControls.affairKey.setValue(affairKey);
-          this.formControls.expedientTransferenceNumber.setValue(
-            affair as string
-          );
-          this.affairService.getById(affairKey).subscribe({
-            next: data => this.formControls.affair.setValue(data.description),
-            error: () => {},
-          });
+          if (this.formControls.externalRemitter.value == null) {
+            this.formControls.externalRemitter.setValue(senderExt);
+          }
+          if (this.formControls.externalOfficeDate.value == null) {
+            this.formControls.externalOfficeDate.setValue(officeExternalDate);
+          }
+          if (this.formControls.observations.value == null) {
+            this.formControls.observations.setValue(description);
+          }
+          if (this.formControls.affairKey.value == null) {
+            this.formControls.affairKey.setValue(affairKey);
+            this.affairService.getById(affairKey).subscribe({
+              next: data => this.formControls.affair.setValue(data.description),
+              error: () => {},
+            });
+          }
+          if (this.formControls.expedientTransferenceNumber.value == null) {
+            this.formControls.expedientTransferenceNumber.setValue(
+              affair as string
+            );
+          }
           const param = new FilterParams();
           param.addFilter('uniqueCve', Number(onlyKey));
           this.docRegisterService
@@ -725,14 +737,22 @@ export class DocumentsReceptionRegisterComponent
             description,
             onlyKey,
           } = data.data[0];
-          this.formControls.externalRemitter.setValue(senderExt);
-          this.formControls.externalOfficeDate.setValue(officeExternalDate);
-          this.formControls.observations.setValue(description);
-          this.formControls.affairKey.setValue(affairKey);
-          this.affairService.getById(affairKey).subscribe({
-            next: data => this.formControls.affair.setValue(data.description),
-            error: () => {},
-          });
+          if (this.formControls.externalRemitter.value == null) {
+            this.formControls.externalRemitter.setValue(senderExt);
+          }
+          if (this.formControls.externalOfficeDate.value == null) {
+            this.formControls.externalOfficeDate.setValue(officeExternalDate);
+          }
+          if (this.formControls.observations.value == null) {
+            this.formControls.observations.setValue(description);
+          }
+          if (this.formControls.affairKey.value == null) {
+            this.formControls.affairKey.setValue(affairKey);
+            this.affairService.getById(affairKey).subscribe({
+              next: data => this.formControls.affair.setValue(data.description),
+              error: () => {},
+            });
+          }
           const param = new FilterParams();
           param.addFilter('uniqueCve', Number(onlyKey));
           this.docRegisterService
@@ -804,6 +824,7 @@ export class DocumentsReceptionRegisterComponent
 
   wheelTypeChange(type: string) {
     this.affairKey.setValue(null);
+    this.formControls.identifier.setValue(null);
     this.formControls.affair.setValue(null);
     this.formControls.endTransferNumber.setValue(null);
     this.getTransferors({ page: 1, text: '' });
@@ -973,9 +994,6 @@ export class DocumentsReceptionRegisterComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.documentsReceptionForm.patchValue({ ...values });
-    if (notif.wheelNumber != null) {
-      this.existingNotification = true;
-    }
     if (notif.dailyEviction == 0) {
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
@@ -1175,6 +1193,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   showTrackRecords(trackRecords: INotification[]) {
+    this.loading = false;
     this.openModalTrackRecords({
       trackRecords: trackRecords,
     });
@@ -1427,13 +1446,13 @@ export class DocumentsReceptionRegisterComponent
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
       params.addFilter('description', lparams.text, SearchFilter.LIKE);
-    if (this.cityNumber.value != null)
-      params.addFilter('idCity', this.cityNumber.value.idCity);
-    if (this.delDestinyNumber.value != null)
-      params.addFilter('noDelegation', this.delDestinyNumber.value);
-    if (this.subDelDestinyNumber.value != null)
-      params.addFilter('noSubDelegation', this.subDelDestinyNumber.value);
-    // console.log(params.getParams());
+    //TODO: Filtros comentados para prubeas
+    // if (this.cityNumber.value != null)
+    //   params.addFilter('idCity', this.cityNumber.value.idCity);
+    // if (this.delDestinyNumber.value != null)
+    //   params.addFilter('noDelegation', this.delDestinyNumber.value);
+    // if (this.subDelDestinyNumber.value != null)
+    //   params.addFilter('noSubDelegation', this.subDelDestinyNumber.value);
     this.docRegisterService.getPublicMinistries(params.getParams()).subscribe({
       next: data => {
         this.publicMinistries = new DefaultSelect(data.data, data.count);
@@ -1598,7 +1617,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   selectArea(areaData: IDepartment, self: DocumentsReceptionRegisterComponent) {
-    const delegation = areaData.numDelegation as IDelegation;
+    const delegation = areaData.delegation as IDelegation;
     const subdelegation = areaData.numSubDelegation as ISubdelegation;
     self.formControls.departamentDestinyNumber.setValue(areaData.id);
     self.formControls.destinationArea.setValue(areaData.description);
@@ -1728,7 +1747,33 @@ export class DocumentsReceptionRegisterComponent
   }
 
   save() {
-    let expExists: boolean = false;
+    for (const key in this.formControls) {
+      const control = this.documentsReceptionForm.get(key);
+      if (control.errors != null) {
+        console.log(key, control.errors);
+      }
+    }
+    if (this.documentsReceptionForm.invalid) {
+      this.documentsReceptionForm.markAllAsTouched();
+      this.documentsReceptionForm.updateValueAndValidity();
+      this.onLoadToast(
+        'warning',
+        'Campos Faltantes',
+        'Complete todos los campos requeridos.'
+      );
+      return;
+    }
+    if (this.flyerCopyRecipientForm.invalid) {
+      this.flyerCopyRecipientForm.markAllAsTouched();
+      this.flyerCopyRecipientForm.updateValueAndValidity();
+      this.onLoadToast(
+        'warning',
+        'Campos Faltantes',
+        'Complete todos los campos requeridos.'
+      );
+      return;
+    }
+    this.loading = true;
     if (this.globals.gNoExpediente != null) {
       this.formControls.expedientNumber.setValue(
         Number(this.globals.gNoExpediente)
@@ -1738,7 +1783,7 @@ export class DocumentsReceptionRegisterComponent
     if (this.globals.antecede == 1) {
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
-          this.formControls.wheelNumber.setValue(data.wheel);
+          this.formControls.wheelNumber.setValue(data.nextval);
           this.updateROPGoods();
         },
         error: () => {},
@@ -1747,19 +1792,19 @@ export class DocumentsReceptionRegisterComponent
     if (this.globals.bn == 0) {
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
-          this.formControls.wheelNumber.setValue(data.wheel);
+          this.formControls.wheelNumber.setValue(data.nextval);
         },
         error: () => {},
       });
     }
     if (this.formControls.wheelNumber.value == null) {
-      this.existingNotification = true;
+      this.existingNotification = false;
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
-          this.formControls.wheelNumber.setValue(data.wheel);
+          this.formControls.wheelNumber.setValue(data.nextval);
         },
         error: err => {
-          this.onLoadToast('error', 'Error', err);
+          // this.onLoadToast('error', 'Error', err);
         },
       });
     }
@@ -1794,7 +1839,8 @@ export class DocumentsReceptionRegisterComponent
             this.createExpedient();
           }
         },
-        error: () => {
+        error: err => {
+          console.log(err);
           this.createExpedient();
         },
       });
@@ -1820,10 +1866,15 @@ export class DocumentsReceptionRegisterComponent
                   });
                 }
               },
-              error: () => {},
+              error: err => {
+                console.log(err);
+                this.loading = false;
+              },
             });
         },
-        error: () => {},
+        error: err => {
+          console.log(err);
+        },
       });
   }
 
@@ -1853,11 +1904,14 @@ export class DocumentsReceptionRegisterComponent
           });
         }
       },
-      error: () => {},
+      error: err => {
+        console.log(err);
+      },
     });
   }
 
   updateExpedientData() {
+    this.loading = true;
     const expedientData = {
       circumstantialRecord: this.formData.circumstantialRecord,
       preliminaryInquiry: this.formData.preliminaryInquiry,
@@ -1884,12 +1938,11 @@ export class DocumentsReceptionRegisterComponent
         next: data => {
           this.saveNotification();
           this.saveProcedureManagement();
-          this.sendFlyerCopies();
         },
-        error: () => {
-          // this.saveNotification();
-          // this.saveProcedureManagement();
-          // this.sendFlyerCopies();
+        error: err => {
+          console.log(err);
+          console.log(expedientData);
+          this.loading = false;
           this.onLoadToast(
             'error',
             'Error',
@@ -1900,6 +1953,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   createExpedient() {
+    this.loading = true;
     if (
       this.formData.protectionKey != null &&
       ['12', '15'].includes(this.formData.affairKey)
@@ -1915,7 +1969,9 @@ export class DocumentsReceptionRegisterComponent
             };
             this.protectionService.update(data.data[0].id, body).subscribe({
               next: () => {},
-              error: () => {},
+              error: err => {
+                console.log(err);
+              },
             });
           } else {
             this.insertProtectionKey();
@@ -1928,6 +1984,29 @@ export class DocumentsReceptionRegisterComponent
     } else {
       this.insertProtectionKey();
     }
+    if (this.formControls.expedientNumber.value == null) {
+      this.expedientService.getNextVal().subscribe({
+        next: data => {
+          console.log(data);
+          this.formControls.expedientNumber.setValue(Number(data.nextval));
+          this.addExpedient();
+        },
+        error: err => {
+          console.log(err);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Error al actualizar datos del expediente.'
+          );
+        },
+      });
+    } else {
+      this.addExpedient();
+    }
+  }
+
+  addExpedient() {
+    console.log(this.formControls.expedientNumber.value);
     const expedientData = {
       id: this.formControls.expedientNumber.value,
       circumstantialRecord: this.formData.circumstantialRecord,
@@ -1950,15 +2029,21 @@ export class DocumentsReceptionRegisterComponent
       expTransferNumber: this.formData.expedientTransferenceNumber,
     };
     this.expedientService.create(expedientData).subscribe({
-      next: () => {
+      next: data => {
+        this.formControls.expedientNumber.setValue(Number(data.id));
+        console.log(data.id, this.formControls.expedientNumber.value);
         this.saveNotification();
         this.saveProcedureManagement();
-        this.sendFlyerCopies();
       },
-      error: () => {
-        this.saveNotification();
-        this.saveProcedureManagement();
-        this.sendFlyerCopies();
+      error: err => {
+        console.log(err);
+        console.log(expedientData);
+        this.loading = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Error al guardar datos del expediente.'
+        );
       },
     });
   }
@@ -1976,7 +2061,9 @@ export class DocumentsReceptionRegisterComponent
     };
     this.protectionService.create(body).subscribe({
       next: () => {},
-      error: () => {},
+      error: err => {
+        console.log(err);
+      },
     });
   }
 
@@ -2012,7 +2099,8 @@ export class DocumentsReceptionRegisterComponent
             this.createProcedureManagement(affair, affairType);
           }
         },
-        error: () => {
+        error: err => {
+          console.log(err);
           this.createProcedureManagement(affair, affairType);
         },
       });
@@ -2027,6 +2115,7 @@ export class DocumentsReceptionRegisterComponent
     affair: string,
     affairType: number
   ) {
+    this.loading = true;
     const body = {
       expedient: this.formControls.expedientNumber.value,
       wheelNumber: this.formControls.wheelNumber.value,
@@ -2044,7 +2133,10 @@ export class DocumentsReceptionRegisterComponent
     }
     this.procedureManageService.update(procedureId, body).subscribe({
       next: () => {},
-      error: () => {},
+      error: err => {
+        console.log(err);
+        this.loading = false;
+      },
     });
     const param = new FilterParams();
     param.addFilter('fileNumber', this.formControls.expedientNumber.value);
@@ -2092,14 +2184,41 @@ export class DocumentsReceptionRegisterComponent
       next: data => {
         return this.updateProcedureOnSave(data.id, affair, affairType);
       },
-      error: () => {
+      error: err => {
+        console.log(err);
+        this.loading = false;
         return this.updateProcedureOnSave(null, affair, affairType);
       },
     });
   }
 
   saveNotification() {
+    this.loading = true;
+    const param = new FilterParams();
+    param.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+    this.notificationService.getAllFilter(param.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        if (data.count > 0) {
+          this.existingNotification = true;
+        } else {
+          this.existingNotification = false;
+        }
+        this.handleNotification();
+      },
+      error: err => {
+        console.log(err);
+        this.existingNotification = false;
+        this.handleNotification();
+      },
+    });
+  }
+
+  handleNotification() {
+    console.log('Notificacion');
+    this.loading = true;
     if (this.existingNotification) {
+      console.log('Notificacion update');
       const updateData = {
         ...this.formData,
         consecutive: this.formControls.consecutiveNumber.value,
@@ -2113,13 +2232,18 @@ export class DocumentsReceptionRegisterComponent
         .update(this.formControls.wheelNumber.value, updateData)
         .subscribe({
           next: data => {
+            this.sendFlyerCopies();
+            this.loading = false;
             this.alert(
               'success',
               'Notificación agregada',
               `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
             );
           },
-          error: () => {
+          error: err => {
+            console.log(err);
+            console.log(updateData);
+            this.loading = false;
             this.onLoadToast(
               'error',
               'Error',
@@ -2128,37 +2252,77 @@ export class DocumentsReceptionRegisterComponent
           },
         });
     } else {
-      const insertData = {
-        ...this.formData,
-        consecutive: this.formControls.consecutiveNumber.value,
-        wheelNumber: this.formControls.wheelNumber.value,
-        receiptDate: this.formData.receiptDate as Date,
-        externalOfficeDate: this.formData.externalOfficeDate as Date,
-        delegationNumber: this.userDelegation,
-        subDelegationNumber: this.userSubdelegation,
-        affair: null as any,
-      };
-      delete insertData.affair;
-      this.notificationService.create(insertData).subscribe({
-        next: data => {
-          this.alert(
-            'success',
-            'Notificación agregada',
-            `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
-          );
-        },
-        error: () => {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Hubo un problema al actualizar el volante.'
-          );
-        },
-      });
+      if (this.formControls.wheelNumber.value == null) {
+        this.notificationService.getLastWheelNumber().subscribe({
+          next: data => {
+            this.formControls.wheelNumber.setValue(data.nextval);
+            this.addNotification();
+          },
+          error: err => {
+            console.log(err);
+            this.loading = false;
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Hubo un problema al crear el volante.'
+            );
+          },
+        });
+      } else {
+        this.addNotification();
+      }
     }
   }
 
+  addNotification() {
+    const insertData = {
+      ...this.formData,
+      consecutive: this.formControls.consecutiveNumber.value,
+      wheelNumber: this.formControls.wheelNumber.value,
+      receiptDate: this.formData.receiptDate as Date,
+      externalOfficeDate: this.formData.externalOfficeDate as Date,
+      delegationNumber: this.userDelegation,
+      subDelegationNumber: this.userSubdelegation,
+      affair: null as any,
+    };
+    delete insertData.affair;
+    this.notificationService.create(insertData).subscribe({
+      next: data => {
+        console.log(data.wheelNumber);
+        this.formControls.wheelNumber.setValue(data.wheelNumber);
+        this.updateGlobalVars('noVolante', data.wheelNumber);
+        this.sendFlyerCopies();
+        this.loading = false;
+        this.alert(
+          'success',
+          'Notificación agregada',
+          `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+        );
+      },
+      error: err => {
+        console.log(err);
+        console.log(insertData);
+        this.loading = false;
+        if (err.message.includes('not_2_jxc_fk')) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'El juzgado no concuerda con la ciudad seleccionada.'
+          );
+        } else {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Hubo un problema al crear el volante.'
+          );
+        }
+      },
+    });
+  }
+
   sendFlyerCopies() {
+    console.log(this.userRecipient.value);
+    console.log(this.userCpp.value);
     const params = new FilterParams();
     params.addFilter('flierNumber', this.formControls.wheelNumber.value);
     this.flyerCopiesService.getAllFiltered(params.getParams()).subscribe({
@@ -2187,14 +2351,17 @@ export class DocumentsReceptionRegisterComponent
             }
             this.flyerCopiesService.update(body).subscribe({
               next: data => {},
-              error: () => {},
+              error: err => {
+                console.log(err);
+              },
             });
           });
         } else {
           this.createFlyerCopies();
         }
       },
-      error: () => {
+      error: err => {
+        console.log(err);
         this.createFlyerCopies();
       },
     });
@@ -2210,7 +2377,10 @@ export class DocumentsReceptionRegisterComponent
     };
     this.flyerCopiesService.create(recepientData).subscribe({
       next: () => {},
-      error: () => {},
+      error: err => {
+        console.log(err);
+        console.log(recepientData);
+      },
     });
     if (this.userCpp.value != null) {
       const copyData = {
@@ -2222,7 +2392,10 @@ export class DocumentsReceptionRegisterComponent
       };
       this.flyerCopiesService.create(copyData).subscribe({
         next: () => {},
-        error: () => {},
+        error: err => {
+          console.log(err);
+          console.log(copyData);
+        },
       });
     }
   }
@@ -2349,11 +2522,31 @@ export class DocumentsReceptionRegisterComponent
         console.log(key, control.errors);
       }
     }
+    if (this.documentsReceptionForm.invalid) {
+      this.documentsReceptionForm.markAllAsTouched();
+      this.documentsReceptionForm.updateValueAndValidity();
+      this.onLoadToast(
+        'warning',
+        'Campos Faltantes',
+        'Complete todos los campos requeridos.'
+      );
+      return;
+    }
+    if (this.flyerCopyRecipientForm.invalid) {
+      this.flyerCopyRecipientForm.markAllAsTouched();
+      this.flyerCopyRecipientForm.updateValueAndValidity();
+      this.onLoadToast(
+        'warning',
+        'Campos Faltantes',
+        'Complete todos los campos requeridos.'
+      );
+      return;
+    }
+    this.loading = true;
     this.prepareFormData();
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
     console.log(this.docDataService.documentsReceptionRegisterForm);
-    // return;
     this.updateGlobalVars('bn', 1);
     if (this.initialCondition == 'T') {
       if (
@@ -2378,7 +2571,8 @@ export class DocumentsReceptionRegisterComponent
                 this.trackRecordsCheck();
               }
             },
-            error: () => {
+            error: err => {
+              console.log(err);
               this.trackRecordsCheck();
             },
           });
@@ -2411,7 +2605,8 @@ export class DocumentsReceptionRegisterComponent
             this.trackRecordsCheck();
           }
         },
-        error: () => {
+        error: err => {
+          console.log(err);
           this.trackRecordsCheck();
         },
       });
@@ -2420,25 +2615,14 @@ export class DocumentsReceptionRegisterComponent
 
   trackRecordsCheck(trackRecord?: INotification) {
     console.log(trackRecord);
+    this.loading = true;
     if (trackRecord) {
-      if (this.formControls.expedientNumber.value != null) {
-        this.updateGlobalVars(
-          'gNoExpediente',
-          Number(this.formControls.expedientNumber.value)
-        );
-      } else if (trackRecord?.expedientNumber) {
+      if (trackRecord?.expedientNumber) {
         this.updateGlobalVars('gNoExpediente', trackRecord.expedientNumber);
         this.formControls.expedientNumber.setValue(trackRecord.expedientNumber);
-      } else if (this.expedientRecord != null) {
-        this.updateGlobalVars('gNoExpediente', this.expedientRecord);
       }
-      if (this.formControls.wheelNumber.value != null) {
-        this.updateGlobalVars(
-          'gNoVolante',
-          Number(this.formControls.wheelNumber.value)
-        );
-      } else if (trackRecord?.wheelNumber) {
-        this.updateGlobalVars('gNoVolante', trackRecord.wheelNumber);
+      if (trackRecord?.wheelNumber) {
+        this.updateGlobalVars('gNoVolante', Number(trackRecord.wheelNumber));
         this.formControls.wheelNumber.setValue(trackRecord.wheelNumber);
       }
       this.updateGlobalVars('gLastCheck', 1);
@@ -2452,33 +2636,17 @@ export class DocumentsReceptionRegisterComponent
     if (this.formControls.wheelType.value == 'A') {
       this.updateGlobalVars('gCreaExpediente', 'N');
     }
-    if (this.globals.gNoExpediente == null) {
-      this.expedientService.getNextVal().subscribe({
-        next: data => {
-          this.updateGlobalVars('gNoExpediente', data.nextval);
-          this.formControls.expedientNumber.setValue(Number(data.nextval));
-          console.log(this.globals.gNoExpediente);
-        },
-      });
-    }
-    if (this.globals.gNoVolante == null) {
-      this.notificationService.getLastWheelNumber().subscribe({
-        next: data => {
-          this.formControls.wheelNumber.setValue(data.wheel);
-          this.updateGlobalVars('gNoVolante', data.wheel);
-        },
-        error: () => {},
-      });
-    }
-    this.prepareFormData();
     this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
       next: data => {
         const { affair, affairSij, typeManagement, officeNumber } = data;
         this.saveTmpExpedients(affair, affairSij, typeManagement, officeNumber);
         this.saveTmpNotifications(affairSij);
+        this.captureGoods();
+      },
+      error: () => {
+        this.captureGoods();
       },
     });
-    this.captureGoods();
   }
 
   saveTmpExpedients(
@@ -2489,83 +2657,140 @@ export class DocumentsReceptionRegisterComponent
   ) {
     if (this.formControls.expedientNumber.value != null) {
       this.tmpExpedientService
-        .remove(this.formControls.expedientNumber.value)
+        .getById(this.formControls.expedientNumber.value)
         .subscribe({
-          next: () => {},
+          next: () => {
+            this.tmpExpedientService
+              .remove(this.formControls.expedientNumber.value)
+              .subscribe({
+                next: () => {},
+                error: err => {
+                  console.log(err);
+                },
+              });
+          },
           error: () => {},
         });
     }
-    const expedientData: ITempExpedient = {
-      id: Number(this.globals.gNoExpediente),
-      circumstantialRecord: this.formData.circumstantialRecord,
-      preliminaryInquiry: this.formData.preliminaryInquiry,
-      criminalCase: this.formData.criminalCase,
-      protectionKey: this.formData.protectionKey,
-      keyPenalty: this.formData.touchPenaltyKey,
-      indicatedName: this.formData.indiciadoName,
-      courtNumber: this.formData.courtNumber,
-      federalEntityKey: this.formData.entFedKey,
-      crimeKey: this.formData.crimeKey,
-      identifier: this.formData.identifier,
-      transferNumber: this.formData.endTransferNumber,
-      authorityNumber: this.formData.autorityNumber,
-      stationNumber: this.formData.stationNumber,
-      expedientType: this.formData.wheelType,
-      expTransferNumber: this.formData.expedientTransferenceNumber,
-      observations: this.formData.observations,
-      insertDate: this.formData.captureDate,
-      subject: affair,
-      noSubjectSij: affairSij,
-      typeTranssact: typeManagement,
-      noOffice: officeNumber,
-    };
-    this.tmpExpedientService.create(expedientData).subscribe({
-      next: () => {},
-      error: () => {},
-    });
+    if (this.formControls.expedientNumber.value == null) {
+      this.expedientService.getNextVal().subscribe({
+        next: data => {
+          console.log(data);
+          this.formControls.expedientNumber.setValue(Number(data.nextval));
+          const expedientData: ITempExpedient = {
+            id: this.formControls.expedientNumber.value,
+            circumstantialRecord: this.formData.circumstantialRecord,
+            preliminaryInquiry: this.formData.preliminaryInquiry,
+            criminalCase: this.formData.criminalCase,
+            protectionKey: this.formData.protectionKey,
+            keyPenalty: this.formData.touchPenaltyKey,
+            indicatedName: this.formData.indiciadoName,
+            courtNumber: this.formData.courtNumber,
+            federalEntityKey: this.formData.entFedKey,
+            crimeKey: this.formData.crimeKey,
+            identifier: this.formData.identifier,
+            transferNumber: this.formData.endTransferNumber,
+            authorityNumber: this.formData.autorityNumber,
+            stationNumber: this.formData.stationNumber,
+            expedientType: this.formData.wheelType,
+            expTransferNumber: this.formData.expedientTransferenceNumber,
+            observations: this.formData.observations,
+            insertDate: this.formData.captureDate,
+            subject: affair,
+            noSubjectSij: affairSij,
+            typeTranssact: typeManagement,
+            noOffice: officeNumber,
+          };
+          console.log(this.formControls.expedientNumber.value);
+          this.tmpExpedientService.create(expedientData).subscribe({
+            next: () => {},
+            error: err => {
+              this.loading = false;
+              console.log(expedientData);
+              console.log(err);
+            },
+          });
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    }
   }
 
   saveTmpNotifications(affairSij: number) {
     if (this.formControls.wheelNumber.value != null) {
       this.tmpNotificationService
-        .remove(this.formControls.wheelNumber.value)
+        .getById(this.formControls.wheelNumber.value)
         .subscribe({
-          next: () => {},
+          next: data => {
+            this.tmpNotificationService
+              .remove(this.formControls.wheelNumber.value)
+              .subscribe({
+                next: () => {},
+                error: err => {
+                  console.log(err);
+                },
+              });
+          },
           error: () => {},
         });
     }
-    const notificationData: ITmpNotification = {
-      ...this.formData,
-      wheelNumber: this.formControls.wheelNumber.value,
-      externalOfficeDate: this.formData.externalOfficeDate as Date,
-      receiptDate: this.formData.receiptDate as Date,
-      hcCaptureDate: new Date(),
-      hcEntryProcedureDate: new Date(),
-      affairSij,
-      delegationNumber: this.userDelegation,
-      subDelegationNumber: this.userSubdelegation,
-    };
-    this.tmpNotificationService.create(notificationData).subscribe({
-      next: () => {},
-      error: () => {},
-    });
+    if (this.formControls.wheelNumber.value == null) {
+      this.notificationService.getLastWheelNumber().subscribe({
+        next: data => {
+          console.log(data);
+          this.formControls.wheelNumber.setValue(data.nextval);
+          const notificationData: ITmpNotification = {
+            ...this.formData,
+            wheelNumber: this.formControls.wheelNumber.value,
+            externalOfficeDate: this.formData.externalOfficeDate as Date,
+            receiptDate: this.formData.receiptDate as Date,
+            hcCaptureDate: new Date(),
+            hcEntryProcedureDate: new Date(),
+            affairSij,
+            delegationNumber: this.userDelegation,
+            subDelegationNumber: this.userSubdelegation,
+          };
+          console.log(this.formControls.wheelNumber.value);
+          this.tmpNotificationService.create(notificationData).subscribe({
+            next: () => {},
+            error: err => {
+              this.loading = false;
+              console.log(notificationData);
+              console.log(err);
+            },
+          });
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    }
   }
 
   captureGoods() {
-    if (this.globals.pIndicadorSat == 0) {
+    console.log('Revision');
+    console.log(this.globals.pIndicadorSat);
+    this.loading = true;
+    if ([0, '0'].includes(this.globals.pIndicadorSat)) {
+      console.log('SAT 0');
       const options: ICountAffairOptions = {
         office: this.formControls.officeExternalKey.value,
         expedient: this.formControls.expedientTransferenceNumber.value,
       };
       this.satTransferService.getCountAffair(options).subscribe({
         next: data => {
+          console.log(data);
           if (data.count > 1) {
             this.sentToSatBulkLoad();
-          } else if (data.count == 1) {
+          } else if (data.count <= 1) {
             this.sendToGoodsCapture();
           }
         },
-        error: () => {
+        error: err => {
+          console.log(err);
+          this.sendToGoodsCapture();
           this.onLoadToast(
             'error',
             'Error',
@@ -2573,19 +2798,23 @@ export class DocumentsReceptionRegisterComponent
           );
         },
       });
-    } else if (this.globals.pIndicadorSat == 1) {
+    } else if ([1, '1'].includes(this.globals.pIndicadorSat)) {
+      console.log('SAT 1');
       const options: ICountAffairOptions = {
         office: this.formControls.officeExternalKey.value,
       };
       this.satTransferService.getCountAffair(options).subscribe({
         next: data => {
+          console.log(data);
           if (data.count > 1) {
             this.sentToSatBulkLoad();
-          } else if (data.count == 1) {
+          } else if (data.count <= 1) {
             this.sendToGoodsCapture();
           }
         },
-        error: () => {
+        error: err => {
+          console.log(err);
+          this.sendToGoodsCapture();
           this.onLoadToast(
             'error',
             'Error',
@@ -2594,24 +2823,34 @@ export class DocumentsReceptionRegisterComponent
         },
       });
     } else if (this.globals.vTipoTramite == 3) {
+      const param = new FilterParams();
+      param.addFilter(
+        'pgrOffice',
+        this.formData.officeExternalKey,
+        SearchFilter.LIKE
+      );
       this.interfacefgrService
-        .getCountAffair(this.formData.officeExternalKey)
+        .getPgrTransferFiltered(param.getParams())
         .subscribe({
           next: data => {
             if (data.count > 1) {
               this.sendToPgrBulkLoad();
-            } else if (data.count == 1) {
+            } else if (data.count <= 1) {
               this.sendToGoodsCapture(true);
             }
           },
-          error: () => {
+          error: err => {
+            console.log(err);
+            this.sendToGoodsCapture();
             this.onLoadToast(
               'error',
               'Error',
-              'Error al buscar el oficio del SAT'
+              'Error al buscar el oficio del PGR'
             );
           },
         });
+    } else {
+      this.sendToGoodsCapture();
     }
   }
 
@@ -2627,6 +2866,7 @@ export class DocumentsReceptionRegisterComponent
       pIndicadorSat: this.pageParams.pIndicadorSat,
     };
     console.log(this.docDataService.goodsBulkLoadSatSaeParams);
+    this.loading = false;
     this.alert(
       'info',
       'Información',
@@ -2647,6 +2887,7 @@ export class DocumentsReceptionRegisterComponent
       pAvPrevia: this.formData.preliminaryInquiry,
     };
     console.log(this.docDataService.goodsBulkLoadPgrSaeParams);
+    this.loading = false;
     this.alert(
       'info',
       'Información',
@@ -2656,6 +2897,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   sendToGoodsCapture(pgr?: boolean) {
+    console.log('Goods Capture');
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
     // this.docDataService.setDocumentsReceptionRegisterForm(
@@ -2681,6 +2923,7 @@ export class DocumentsReceptionRegisterComponent
       };
     }
     console.log(this.docDataService.goodsCaptureTempParams);
+    this.loading = false;
     this.router.navigateByUrl('pages/documents-reception/goods-capture');
   }
 

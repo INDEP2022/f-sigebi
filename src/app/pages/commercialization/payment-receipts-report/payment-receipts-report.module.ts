@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { DepartmentsSharedComponent } from 'src/app/@standalone/shared-forms/departments-shared/departments-shared.component';
+import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PaymentReceiptsReportRoutingModule } from './payment-receipts-report-routing.module';
 import { PaymentReceiptsReportComponent } from './payment-receipts-report/payment-receipts-report.component';
@@ -14,6 +15,7 @@ import { PaymentReceiptsReportComponent } from './payment-receipts-report/paymen
     SharedModule,
     DelegationSharedComponent,
     DepartmentsSharedComponent,
+    GoodsTypesSharedComponent,
   ],
 })
 export class PaymentReceiptsReportModule {}

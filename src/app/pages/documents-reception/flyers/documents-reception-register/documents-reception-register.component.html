@@ -713,11 +713,7 @@
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
-            [disabled]="
-              !documentsReceptionForm.valid ||
-              !flyerCopyRecipientForm.valid ||
-              procedureBlocked
-            "
+            [disabled]="procedureBlocked"
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
@@ -733,17 +729,19 @@
             pgrInterface ||
             satInterface
           ">
-          <button
+          <!-- <button
             type="button"
             class="btn btn-primary active"
             (click)="goodsCaptureCheck()"
-            [disabled]="
-              !flyerCopyRecipientForm.valid ||
-              !documentsReceptionForm.valid ||
-              procedureBlocked
-            ">
+            [disabled]="procedureBlocked">
             Siguiente
-          </button>
+          </button> -->
+          <confirm-button
+            text="Siguiente"
+            loadingText="Cargando"
+            [disabled]="procedureBlocked"
+            [loading]="loading"
+            (confirm)="goodsCaptureCheck()"></confirm-button>
         </div>
       </div>
     </div>
