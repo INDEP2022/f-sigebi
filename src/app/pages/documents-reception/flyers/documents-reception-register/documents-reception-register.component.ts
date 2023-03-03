@@ -3028,7 +3028,8 @@ export class DocumentsReceptionRegisterComponent
     if (pgr) {
       this.docDataService.goodsCaptureTempParams = {
         iden: this.formData.identifier,
-        noTransferente: this.pageParams.noTransferente,
+        // noTransferente: this.pageParams.noTransferente,
+        noTransferente: this.formData.endTransferNumber,
         desalojo: this.formData.dailyEviction,
         pNoVolante: null,
         pNoOficio: null,
@@ -3037,7 +3038,8 @@ export class DocumentsReceptionRegisterComponent
     } else {
       this.docDataService.goodsCaptureTempParams = {
         iden: this.formData.identifier,
-        noTransferente: this.pageParams.noTransferente,
+        // noTransferente: this.pageParams.noTransferente,
+        noTransferente: this.formData.endTransferNumber,
         desalojo: this.formData.dailyEviction,
         pNoVolante: this.formControls.wheelNumber.value,
         pNoOficio: this.formData.officeExternalKey,
