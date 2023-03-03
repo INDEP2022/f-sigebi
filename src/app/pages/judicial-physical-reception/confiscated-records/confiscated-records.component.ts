@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { WarehouseFilterService } from 'src/app/core/services/ms-warehouse-filter/warehouse-filter.service';
@@ -111,13 +112,15 @@ export class ConfiscatedRecordsComponent implements OnInit {
   records: string[] = ['A', 'NA', 'D', 'NS'];
   itemsSelect = new DefaultSelect();
   warehouseSelect = new DefaultSelect();
+  transferSelect = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
     private render: Renderer2,
     private serviceWarehouse: WarehouseFilterService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceTransferente: TransferenteService
   ) {}
 
   ngOnInit(): void {
@@ -192,7 +195,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
 
   toggleByLength(idBtn: string, data: string) {
     const btn = document.getElementById(idBtn);
-    if (this.form.get(data).value.length != 0) {
+    if (this.form.get(data).value != null) {
       this.render.removeClass(btn, 'disabled');
       this.render.addClass(btn, 'enabled');
     } else {
@@ -215,6 +218,27 @@ export class ConfiscatedRecordsComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  getTransferentData(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
+    this.serviceTransferente
+      .getAllWithFilter(paramsF.getParams())
+      .subscribe((res: any) => {
+        console.log(res.data);
+        const uniqueArray = res.data.filter(
+          (product: any, index: any, self: any) =>
+            index ===
+            self.findIndex(
+              (p: any) =>
+                p.keyTransferent === product.keyTransferent &&
+                p.indcap != 'E' &&
+                p.id == 1
+            )
+        );
+        this.transferSelect = new DefaultSelect(uniqueArray);
+      });
   }
 
   //

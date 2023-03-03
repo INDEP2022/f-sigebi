@@ -72,13 +72,20 @@
               </form-field>
             </div>
 
-            <div class="col">
-              <form-field [control]="form.get('transfer')" label="Transfer">
-                <input
+            <div class="col-md-2">
+              <form-field [control]="form.get('transfer')">
+                <ngx-select
+                  (fetchItems)="getTransferentData($event)"
+                  control="transfer"
+                  label="Transfer"
+                  bindLabel="keyTransferent"
+                  [data]="transferSelect"
+                  [form]="form"></ngx-select>
+                <!-- <input
                   type="number"
                   class="form-control"
                   formControlName="transfer"
-                  (ngModelChange)="fillActTwo()" />
+                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
