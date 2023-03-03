@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-disposal-record-report',
   templateUrl: './disposal-record-report.component.html',
@@ -16,7 +17,8 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   maxDate: Date;
   minDate: Date;
 
-  pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
+  pdfurl =
+    'https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing';
 
   constructor(
     private fb: FormBuilder,
@@ -36,10 +38,13 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      noFile: [null, [Validators.required]],
+      // noFile: [null],
       PN_EXPINI: [null, [Validators.required]],
       PN_EXPFIN: [null, [Validators.required]],
-      noActa: [null, [Validators.required]],
+      noActa: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       PF_ELABIN: [null, [Validators.required]],
       PF_ELABFIN: [null, [Validators.required]],
       PN_ACTAINI: [null, [Validators.required]],
@@ -57,7 +62,62 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       PF_ELABFIN: this.form.controls['PF_ELABFIN'].value,
       PN_ACTAINI: this.form.controls['PN_ACTAINI'].value,
       PN_ACTAFIN: this.form.controls['PN_ACTAFIN'].value,
+      // noFile: this.form.controls['noFile'].value,
     };
+
+    console.log(params);
+    const startEx = new Date(this.form.get('PN_EXPINI').value);
+    const endEx = new Date(this.form.get('PN_EXPFIN').value);
+
+    const startAc = new Date(this.form.get('PN_ACTAINI').value);
+    const endAc = new Date(this.form.get('PN_ACTAFIN').value);
+
+    const startEl = new Date(this.form.get('PF_ELABIN').value);
+    const endEl = new Date(this.form.get('PF_ELABFIN').value);
+
+    if (endEx < startEx) {
+      this.onLoadToast(
+        'warning',
+        'advertencia',
+        'fecha final de expediente debe ser mayor a la fecha inicial'
+      );
+      return;
+    }
+
+    if (endAc < startAc) {
+      this.onLoadToast(
+        'warning',
+        'advertencia',
+        'fecha final de acta debe ser mayor a la fecha inicial'
+      );
+      return;
+    }
+
+    if (endEl < startEl) {
+      this.onLoadToast(
+        'warning',
+        'advertencia',
+        'fecha final de elaboración debe ser mayor a la fecha inicial'
+      );
+      return;
+    }
+
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERDESACTAENAJEN.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${paramsPN_SUBDELEGACION}&PN_EXPINI=${params.PN_EXPINI}&PN_EXPFIN=${params.PN_EXPFIN}&PC_ACTA=${params.PC_ACTA}&PF_ELABIN=${params.PF_ELABIN}&PF_ELABFIN=${params.PF_ELABFIN}&PN_ACTAINI=${params.PN_ACTAINI}&PN_ACTAFIN=${params.PN_ACTAFIN}&PN_ACTAFIN=${params.PN_ACTAFIN}`;
+    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    window.open(pdfurl, 'FGERDESACTAENAJEN.pdf');
+    setTimeout(() => {
+      this.onLoadToast('success', 'Reporte generado', '');
+    }, 2000);
+
+    this.loading = false;
+    this.cleanForm();
+  }
+
+  cleanForm(): void {
+    this.form.reset();
   }
 
   openPrevPdf() {

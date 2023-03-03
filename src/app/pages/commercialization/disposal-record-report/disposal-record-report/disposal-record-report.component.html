@@ -7,15 +7,11 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
-          <app-delegation-shared [form]="form"></app-delegation-shared>
-        </div>
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field [control]="form.get('noFile')" label="No. Expediente">
             <input type="text" class="form-control" formControlName="noFile" />
           </form-field>
-        </div>
-
+        </div> -->
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_EXPINI')"
@@ -26,7 +22,6 @@
               bsDatepicker />
           </form-field>
         </div>
-
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_EXPFIN')"
@@ -37,9 +32,6 @@
               bsDatepicker />
           </form-field>
         </div>
-      </div>
-
-      <div class="row">
         <div class="col-md-3">
           <form-field [control]="form.get('noActa')" label="No. Acta">
             <input type="text" class="form-control" formControlName="noActa" />
@@ -55,7 +47,11 @@
               bsDatepicker />
           </form-field>
         </div>
-
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <app-delegation-shared [form]="form"></app-delegation-shared>
+        </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_ACTAFIN')"
@@ -66,7 +62,6 @@
               bsDatepicker />
           </form-field>
         </div>
-
         <div class="col-md-3">
           <form-field
             [control]="form.get('PF_ELABIN')"
@@ -77,13 +72,12 @@
               bsDatepicker />
           </form-field>
         </div>
-
         <div class="col-md-3">
           <form-field
             [control]="form.get('PF_ELABFIN')"
             label="Fecha final de elaboración">
             <input
-              formControlName="'PF_ELABFIN"
+              formControlName="PF_ELABFIN"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -94,12 +88,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
         <button
-          type="submit"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
-          (click)="openPrevPdf()">
-          Imprimir
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
         </button>
       </div>
     </div>
