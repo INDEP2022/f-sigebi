@@ -50,6 +50,7 @@ export class GoodSssubtypeService
   }
 
   getByManyIds(body: any, params?: ListParams) {
+    console.log(body);
     const route = 'good-sssubtype/search-by-type';
     return this.post<IListResponse<IGoodSssubtype>>(route, body, params);
   }

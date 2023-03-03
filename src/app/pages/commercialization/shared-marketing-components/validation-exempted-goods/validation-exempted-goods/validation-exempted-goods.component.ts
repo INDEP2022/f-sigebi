@@ -1,12 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { EditValidationExemptedGoodsModalComponent } from '../edit-validation-exempted-goods-modal/edit-validation-exempted-goods-modal.component';
-import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './validation-exempted-goods-columns';
+import {
+  GOODS_COLUMS,
+  PROCCESS_COLUMNS,
+} from './validation-exempted-goods-columns';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
-import * as XLSX from 'xlsx';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 
 @Component({
   selector: 'app-validation-exempted-goods',
@@ -17,17 +31,40 @@ export class ValidationExemptedGoodsComponent
   extends BasePage
   implements OnInit
 {
-  ExcelData: any;
-  CsvData: any;
-
   form: FormGroup = new FormGroup({});
 
-  columns: any[] = [];
   totalItems: number = 0;
+  totalItems2: number = 0;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+
+  proccessList: IGoodsTransAva[] = [];
+  process: IGoodsTransAva;
+
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
+
+  goods: IGood[] = [];
+
+  settings2;
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private goodTransAvaService: GoodTransAvaService,
+    private goodService: GoodService
+  ) {
     super();
+    this.searchFilter = { field: 'description', operator: SearchFilter.ILIKE };
+
     this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...GOODS_COLUMS },
+    };
+
+    this.settings2 = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
@@ -35,70 +72,89 @@ export class ValidationExemptedGoodsComponent
         edit: true,
         delete: false,
       },
-      columns: { ...VALIDATION_EXEMPTED_GOODS_COLUMS },
+      columns: { ...PROCCESS_COLUMNS },
     };
   }
 
-  ngOnInit(): void {}
-
-  data = [
-    {
-      noBien: '791',
-      description:
-        'FREIGHTLINER 1987 AZUL 453BK6 SPF CON CAJA REFRIGERADA CON THERMOKING 1FUEYB',
-      unit: 'UNIDAD',
-      proccess: 'REV',
-    },
-    {
-      noBien: '1773',
-      description: 'CARGADOR DE LA MARCA CANON, AL PARECER PARA CACULADORA',
-      unit: 'PIEZA',
-      proccess: 'COMER',
-    },
-    {
-      noBien: '10230',
-      description: 'SEMIREMOLQUE TIPO CAJA CERRADA',
-      unit: 'PIEZA',
-      proccess: 'REV',
-    },
-  ];
-
-  ReadExcel(event: any) {
-    let file = event.target.files[0];
-
-    let fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
-
-    fileReader.onload = e => {
-      var workbook = XLSX.read(fileReader.result, { type: 'binary' });
-      var sheetNames = workbook.SheetNames;
-      this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      console.log(this.data);
-    };
+  ngOnInit(): void {
+    this.filterParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoods());
   }
 
-  getData() {
+  getGoods() {
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    this.filterParams.getValue().removeAllFilters();
+    this.goodService
+      .getExemptedGoods(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          this.goods = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
-  openModal(context?: Partial<EditValidationExemptedGoodsModalComponent>) {
-    const modalRef = this.modalService.show(
-      EditValidationExemptedGoodsModalComponent,
-      {
-        initialState: { ...context },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.proccessList = [];
+    this.process = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProccess(this.process));
+  }
+
+  getProccess(goods: IGood): void {
+    this.loading = true;
+    console.log('Dato que selecciona', goods.id);
+    this.goodTransAvaService
+      .getById(goods.id, this.params2.getValue())
+      .pipe(
+        map((data2: any) => {
+          let list: IListResponse<IGoodsTransAva> =
+            {} as IListResponse<IGoodsTransAva>;
+          const array2: IGoodsTransAva[] = [{ ...data2 }];
+          list.data = array2;
+          return list;
+        })
+      )
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.proccessList = response.data;
+          this.totalItems2 = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
+  }
+
+  /*getGoods2(){
+    this.loading = true;
+    this.goodTransAvaService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.goods = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
     });
-  }
+  }*/
 
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
+  openForm(good?: IGood) {
+    console.log('me estoy ejecutando');
+    let config: ModalOptions = {
+      initialState: {
+        good,
+        callback: (next: boolean) => {
+          if (next) this.getGoods();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(EditValidationExemptedGoodsModalComponent, config);
   }
 }

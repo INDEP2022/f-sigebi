@@ -16,14 +16,14 @@
           <form-radio label="T.E" class="radio-inline">
             <input
               type="radio"
-              formControlName="radio"
+              formControlName="typeUser"
               value="T.E"
               (change)="selectTypeUser($event)" />
           </form-radio>
           <form-radio label="SAE" class="radio-inline">
             <input
               type="radio"
-              formControlName="radio"
+              formControlName="typeUser"
               value="indep"
               (change)="selectTypeUser($event)" />
           </form-radio>
@@ -34,8 +34,11 @@
         <label class="control-label col-sm-2">Selecciona usuario&#58;</label>
 
         <div class="col-sm-7">
-          <form-field [control]="scheduleForm.get('user')">
-            <input type="text" class="form-control" formControlName="user" />
+          <form-field [control]="scheduleForm.get('creationUser')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="creationUser" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -67,6 +70,8 @@
         <confirm-button
           [disabled]="!scheduleForm.valid"
           [loading]="loading"
+          [text]="'Turnar'"
+          [loadingText]="'Turnando'"
           [btnSmall]="true"
           (confirm)="confirm()"></confirm-button>
       </div>

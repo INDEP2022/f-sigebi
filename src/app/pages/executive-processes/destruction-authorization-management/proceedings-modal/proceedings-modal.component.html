@@ -1,0 +1,82 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="proceedingForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="id" [control]="proceedingForm.get('id')">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Clave oficio"
+            [control]="proceedingForm.get('keysProceedings')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keysProceedings" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha elaboración"
+            [control]="proceedingForm.get('elaborationDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborationDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha recepción"
+            [control]="proceedingForm.get('datePhysicalReception')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="datePhysicalReception" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Captura"
+            [control]="proceedingForm.get('captureDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="captureDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado"
+            [control]="proceedingForm.get('statusProceedings')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusProceedings" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

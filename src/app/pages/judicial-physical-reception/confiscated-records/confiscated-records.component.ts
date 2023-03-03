@@ -1,6 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { WarehouseFilterService } from 'src/app/core/services/ms-warehouse-filter/warehouse-filter.service';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -19,7 +29,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
       row.data.status ? 'available' : 'not-available',
     actions: false,
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
         type: 'number',
         sort: false,
@@ -29,17 +39,17 @@ export class ConfiscatedRecordsComponent implements OnInit {
         type: 'string',
         sort: false,
       },
-      proceso: {
+      extDomProcess: {
         title: 'Proceso',
         type: 'string',
         sort: false,
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
         type: 'number',
         sort: false,
       },
-      unidad: {
+      unit: {
         title: 'Unidad',
         type: 'string',
         sort: false,
@@ -58,7 +68,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
     actions: false,
     mode: 'external',
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
         type: 'number',
         sort: false,
@@ -68,7 +78,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
         type: 'number',
         sort: false,
       },
-      descripcion: {
+      description: {
         title: 'Descripción',
         type: 'string',
         sort: false,
@@ -78,12 +88,12 @@ export class ConfiscatedRecordsComponent implements OnInit {
         type: 'string',
         sort: false,
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
         type: 'number',
         sort: false,
       },
-      unidad: {
+      unit: {
         title: 'Unidad',
         type: 'string',
         sort: false,
@@ -93,14 +103,28 @@ export class ConfiscatedRecordsComponent implements OnInit {
   };
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
+  dataGoods = new LocalDataSource();
+  dataGoodApraiser = new LocalDataSource();
+  selectData: any[];
+  goodData: any[] = [];
   form: FormGroup;
   records: string[] = ['A', 'NA', 'D', 'NS'];
   itemsSelect = new DefaultSelect();
+  warehouseSelect = new DefaultSelect();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private serviceGood: GoodService,
+    private render: Renderer2,
+    private serviceWarehouse: WarehouseFilterService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService
+  ) {}
 
   ngOnInit(): void {
+    moment.locale('es');
     this.prepareForm();
+    this.form.get('year').setValue(moment(new Date()).format('YYYY'));
+    this.form.get('mes').setValue(moment(new Date()).format('MM'));
   }
 
   prepareForm() {
@@ -163,11 +187,124 @@ export class ConfiscatedRecordsComponent implements OnInit {
       ],
     });
   }
+
+  //Enable and disabled buttons
+
+  toggleByLength(idBtn: string, data: string) {
+    const btn = document.getElementById(idBtn);
+    if (this.form.get(data).value.length != 0) {
+      this.render.removeClass(btn, 'disabled');
+      this.render.addClass(btn, 'enabled');
+    } else {
+      this.render.removeClass(btn, 'enabled');
+      this.render.addClass(btn, 'disabled');
+    }
+  }
+
+  //Catalogs
+
+  getWarehouses(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('description', params.text, SearchFilter.ILIKE);
+    this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
+      res => {
+        this.warehouseSelect = new DefaultSelect(res.data, res.count);
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //
+
+  getGoodsByExpedient() {
+    this.serviceGood
+      .getByExpedient(this.form.get('expediente').value, {
+        text: '?expedient=',
+      })
+      .subscribe({
+        next: (res: any) => {
+          this.dataGoods.load(res.data);
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+      });
+  }
+
+  //"Acta 2"
+
+  fillActTwo() {
+    const nameAct =
+      (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
+      '/' +
+      (this.form.get('transfer').value != null
+        ? this.form.get('transfer').value
+        : '') +
+      '/' +
+      (this.form.get('ident').value != null
+        ? this.form.get('ident').value
+        : '') +
+      '/' +
+      (this.form.get('recibe').value != null
+        ? this.form.get('recibe').value
+        : '') +
+      '/' +
+      (this.form.get('admin').value != null
+        ? this.form.get('admin').value
+        : '') +
+      '/' +
+      (this.form.get('folio').value != null
+        ? this.form.get('folio').value
+        : '') +
+      '/' +
+      (this.form.get('year').value != null ? this.form.get('year').value : '') +
+      '/' +
+      (this.form.get('mes').value != null ? this.form.get('mes').value : '');
+    this.form.get('acta2').setValue(nameAct);
+  }
+
+  searchKeyProceeding() {
+    const acta2Input = this.form.get('folio');
+    if (
+      this.form.get('acta').value != null &&
+      this.form.get('transfer').value != null &&
+      this.form.get('ident').value != null &&
+      this.form.get('recibe') != null &&
+      this.form.get('admin').value != null &&
+      this.form.get('folio').value != null
+    ) {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res);
+          console.log('existe');
+        },
+        err => {
+          console.log('No existe');
+        }
+      );
+    }
+  }
+
+  selectRow(e: any) {
+    const { data } = e;
+    this.selectData = data;
+  }
+
+  pushData() {
+    this.goodData.push(this.selectData);
+    this.dataGoodApraiser.load(this.goodData);
+    console.log(this.dataGoodApraiser);
+  }
 }
 
 const EXAMPLE_DATA = [
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -176,7 +313,7 @@ const EXAMPLE_DATA = [
     status: false,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -185,7 +322,7 @@ const EXAMPLE_DATA = [
     status: true,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -194,7 +331,7 @@ const EXAMPLE_DATA = [
     status: true,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -203,7 +340,7 @@ const EXAMPLE_DATA = [
     status: true,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -212,7 +349,7 @@ const EXAMPLE_DATA = [
     status: true,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -221,7 +358,7 @@ const EXAMPLE_DATA = [
     status: false,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -230,7 +367,7 @@ const EXAMPLE_DATA = [
     status: false,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -239,7 +376,7 @@ const EXAMPLE_DATA = [
     status: true,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,
@@ -248,7 +385,7 @@ const EXAMPLE_DATA = [
     status: false,
   },
   {
-    noBien: 123,
+    goodId: 123,
     description: 'INMUEBLE UBICADO EN CALLE',
     proceso: 'ASEGURADO',
     cantidad: 1,

@@ -268,6 +268,21 @@ export class HomeComponent extends BasePage implements OnInit {
           RAST_EXPEDIENTE: 'NEW RAST_EXPEDIENTE',
           RAST_DESCRIPCION_BIEN: 'NEW RAST_DESCRIPCION_BIEN',
           RAST_TIPO: 'NEW RAST_TIPO',
+          gNoExpediente: null,
+          noVolante: null,
+          bn: null,
+          gCreaExpediente: null,
+          gstMensajeGuarda: null,
+          gnuActivaGestion: 1,
+          antecede: null,
+          pSatTipoExp: null,
+          pIndicadorSat: null,
+          gLastCheck: null,
+          vTipoTramite: null,
+          gCommit: null,
+          gOFFCommit: null,
+          noTransferente: null,
+          gNoVolante: null,
         };
 
         this.globalVarsService.updateGlobalVars(newState);

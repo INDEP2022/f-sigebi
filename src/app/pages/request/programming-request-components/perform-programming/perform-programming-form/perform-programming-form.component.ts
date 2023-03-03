@@ -14,7 +14,9 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { IGoodProgrammingSelect } from 'src/app/core/models/good-programming/good-programming';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -25,17 +27,24 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ProgrammingGoodService } from '../../../../../core/services/ms-programming-request/programming-good.service';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
-import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
-import { ProgrammingGoodService } from '../../service/programming-good.service';
-import { ProgrammingRequestService } from '../../service/programming-request.service';
+import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
+import { WarehouseSelectFormComponent } from '../warehouse-select-form/warehouse-select-form.component';
+import {
+  settingGuard,
+  settingTransGoods,
+  SettingUserTable,
+  settingWarehouse,
+} from './settings-tables';
 
 @Component({
   selector: 'app-perform-programming-form',
@@ -46,68 +55,12 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
-  settingUser = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      position: 'right',
-      delete: true,
-    },
-    columns: USER_COLUMNS,
-  };
-
-  settingsTransportableGoods = {
-    ...this.settings,
-    actions: {
-      ...this.settings.actions,
-      delete: false,
-      edit: false,
-      columnTitle: 'Acciones',
-      position: 'right',
-    },
-    delete: {
-      ...this.settings.delete,
-      confirmDelete: true,
-    },
-    columns: ESTATE_COLUMNS,
-  };
-
-  settingGuardGoods = {
-    ...this.settings,
-    actions: {
-      edit: false,
-      delete: false,
-      columnTitle: 'Acciones',
-      position: 'right',
-    },
-    edit: {
-      editButtonContent: '<i class="fa fa-eye"></i>',
-    },
-    columns: ESTATE_COLUMNS,
-  };
-
-  settingWarehouseGoods = {
-    ...this.settings,
-    actions: {
-      edit: false,
-      delete: false,
-      columnTitle: 'Acciones',
-      position: 'right',
-    },
-    edit: {
-      editButtonContent: '<i class="fa fa-eye"></i>',
-    },
-    columns: ESTATE_COLUMNS,
-  };
-
-  estates: any[] = [];
   estatesList: LocalDataSource = new LocalDataSource();
-  goodSelect: any[] = [];
-  goodsTranportables: any[] = [];
-  goodsGuards: any[] = [];
-  goodsWarehouse: any[] = [];
-
-  usersData: any[] = [];
+  goodSelect: IGoodProgrammingSelect[] = [];
+  goodsTranportables: LocalDataSource = new LocalDataSource();
+  goodsGuards: LocalDataSource = new LocalDataSource();
+  goodsWarehouse: LocalDataSource = new LocalDataSource();
+  usersToProgramming: LocalDataSource = new LocalDataSource();
   dataSearch: IEstateSearch;
   regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
@@ -146,11 +99,24 @@ export class PerformProgrammingFormComponent
   totalItemsWarehouseGoods: number = 0;
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
+  loadGoods: boolean = false;
+  settingUser = { ...this.settings, ...SettingUserTable };
+
+  settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+
+  settingGuardGoods = {
+    ...this.settings,
+    ...settingGuard,
+  };
+
+  settingWarehouseGoods = {
+    ...this.settings,
+    ...settingWarehouse,
+  };
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private programmingRequestService: ProgrammingRequestService,
     private programmingGoodService: ProgrammingGoodService,
     private stationService: StationService,
     private regionalDelegationService: RegionalDelegationService,
@@ -166,8 +132,20 @@ export class PerformProgrammingFormComponent
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: ESTATE_COLUMNS,
-      selectMode: 'multi',
+      columns: {
+        ...ESTATE_COLUMNS,
+        name: {
+          title: 'Selección bienes',
+          sort: false,
+          position: 'right',
+          type: 'custom',
+          valuePrepareFunction: (user: any, row: any) =>
+            this.isGoodSelected(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodChange(instance),
+        },
+      },
     };
   }
 
@@ -175,6 +153,28 @@ export class PerformProgrammingFormComponent
     this.prepareForm();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
+  }
+
+  isGoodSelected(good: any) {
+    const exist = this.goodSelect.find(_good => _good.idGood == good.idGood);
+    if (!exist) return false;
+    return true;
+  }
+  onGoodChange(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.sendGood(data.row, data.toggle),
+    });
+  }
+
+  sendGood(good: any, selected: boolean) {
+    if (selected) {
+      this.goodSelect.push(good);
+      console.log('fdgfdg', this.goodSelect);
+    } else {
+      this.goodSelect = this.goodSelect.filter(
+        _good => _good.idGood != _good.idGood
+      );
+    }
   }
 
   prepareForm() {
@@ -227,8 +227,16 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: any) => {
-        if (data) {
+      callback: (data: IUser, create: boolean) => {
+        if (data && create) {
+          this.usersToProgramming.getElements().then(item => {
+            item.push(data);
+            this.usersToProgramming.load(item);
+          });
+        } else {
+          this.usersToProgramming.find(userData).then((item: IUser) => {
+            this.usersToProgramming.update(item, data);
+          });
         }
       },
     };
@@ -236,13 +244,43 @@ export class PerformProgrammingFormComponent
     const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
+  newWarehouse() {
+    if (this.regionalDelegationUser) {
+      const regDelData = this.regionalDelegationUser;
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        regDelData,
+        callback: (next: boolean) => {},
+      };
+
+      const constShowWarehouse = this.modalService.show(
+        WarehouseFormComponent,
+        config
+      );
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Para crear un almacén necesitas seleccionar una delegación regional'
+      );
+    }
+  }
+
   listUsers() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
+    const usersSelected = this.usersToProgramming;
     config.initialState = {
+      usersSelected,
       callback: (data: any) => {
-        if (data) {
-          this.usersData = userData;
+        if (data && this.usersToProgramming.count() == 0) {
+          this.usersToProgramming.load(data);
+          this.onLoadToast(
+            'success',
+            'Correcto',
+            'Úsuario(s) agregado(s) correctamente'
+          );
+        } else if (data && this.usersToProgramming.count() >= 0) {
+          this.concatUsers(data);
         }
       },
     };
@@ -250,18 +288,18 @@ export class PerformProgrammingFormComponent
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
 
-  newWarehouse() {
-    const regDelData = this.regionalDelegationUser;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      regDelData,
-      callback: (next: boolean) => {},
-    };
-
-    const constShowWarehouse = this.modalService.show(
-      WarehouseFormComponent,
-      config
-    );
+  concatUsers(users: IUser[]) {
+    this.usersToProgramming.getElements().then(items => {
+      users.map(item => {
+        items.push(item);
+        this.usersToProgramming.load(items);
+        this.onLoadToast(
+          'success',
+          'Correcto',
+          'Úsuario(s) agregado(s) correctamente'
+        );
+      });
+    });
   }
 
   estateSearch() {
@@ -272,7 +310,7 @@ export class PerformProgrammingFormComponent
       callback: (data: IEstateSearch) => {
         if (data) {
           this.dataSearch = data;
-          this.initializeParamsTrans();
+          this.showGoodsProgramming();
         }
       },
     };
@@ -283,8 +321,10 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  showGoods() {
-    this.initializeParamsTrans();
+  showGoodsProgramming() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProgGoods());
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
@@ -329,7 +369,7 @@ export class PerformProgrammingFormComponent
   getTransferentSelect(params?: ListParams) {
     if (this.idState) {
       this.showSelectTransferent = true;
-      const type = 'TE';
+      const type = 'TLP';
       const state = Number(this.idState);
       this.transferentService
         .getByTypeUserIdState(params, state, type)
@@ -369,6 +409,7 @@ export class PerformProgrammingFormComponent
 
       this.authorityService.postByColumns(params, columns).subscribe(data => {
         this.authorities = new DefaultSelect(data.data, data.count);
+
         this.showSelectAuthority = true;
       });
     }
@@ -400,72 +441,259 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  initializeParamsTrans() {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getProgGoods());
-  }
-
   getProgGoods() {
-    const filterColumns: Object = {
-      /*regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.idTrans), */
-    };
     this.loadingGoods = true;
-    this.goodsQueryService
-      .postGoodsProgramming(this.params.getValue(), filterColumns)
-      .subscribe({
-        next: response => {
-          this.estatesList.load(response.data);
-          this.totalItems = response.count;
-          this.loadingGoods = false;
-        },
-        error: error => (this.loadingGoods = false),
-      });
-  }
+    if (!this.dataSearch) {
+      console.log('filtros', this.dataSearch);
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        station: Number(this.idStation),
+        authority: Number(this.idAuthority),
+        relevantType: Number(this.idTypeRelevant),
+      };
 
-  goodsSelect(event: any) {
-    this.goodSelect = event.selected;
+      console.log('fddd', filterColumns);
+      this.goodsQueryService
+        .postGoodsProgramming(this.params.getValue(), filterColumns)
+        .subscribe({
+          next: response => {
+            console.log(response.data);
+            const filterData = response.data.map(items => {
+              if (items.physicalState == 1) {
+                items.physicalState = 'BUENO';
+                return items;
+              } else if (items.physicalState == 2) {
+                items.physicalState = 'MALO';
+                return items;
+              }
+            });
+
+            this.estatesList.load(filterData);
+            this.totalItems = response.count;
+            this.loadingGoods = false;
+            this.loadGoods = true;
+          },
+          error: error => (this.loadingGoods = false),
+        });
+    } else {
+      console.log('filtros', this.dataSearch);
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        station: Number(this.idStation),
+        authority: Number(this.idAuthority),
+        relevantType: Number(this.idTypeRelevant),
+        stateKey: Number(this.dataSearch.state),
+        municipality: 'Municipio',
+        locality: 'CVE Localidad',
+        aliasWarehouse: 'Alias Almacen',
+      };
+
+      console.log('fddd', filterColumns);
+      this.goodsQueryService
+        .postGoodsProgramming(this.params.getValue(), filterColumns)
+        .subscribe({
+          next: response => {
+            console.log(response.data);
+            const filterData = response.data.map(items => {
+              if (items.physicalState == 1) {
+                items.physicalState = 'BUENO';
+                return items;
+              } else if (items.physicalState == 2) {
+                items.physicalState = 'MALO';
+                return items;
+              }
+            });
+
+            this.estatesList.load(filterData);
+            this.totalItems = response.count;
+            this.loadingGoods = false;
+            this.loadGoods = true;
+          },
+          error: error => (this.loadingGoods = false),
+        });
+    }
   }
 
   sendTransportable() {
-    if (this.goodSelect.length == 0) {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    if (this.goodSelect.length) {
+      if (this.goodsTranportables.count() == 0) {
+        this.goodsTranportables.load(this.goodSelect);
+        this.headingTransportable = `Transportables(${this.goodSelect.length})`;
+        this.onLoadToast(
+          'success',
+          'Correcto',
+          'Bienes movidos a transportable'
+        );
+        this.removeGoodsSelected(this.goodSelect);
+      } else {
+        this.goodsTranportables.getElements().then(data => {
+          this.goodSelect.map(items => {
+            data.push(items);
+            this.goodsTranportables.load(data);
+            this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+            this.onLoadToast(
+              'success',
+              'Correcto',
+              'Bienes movidos a transportable'
+            );
+            this.removeGoodsSelected(this.goodSelect);
+          });
+        });
+      }
     } else {
-      this.headingTransportable = `Transportables(${this.goodSelect.length})`;
-      this.goodsTranportables = this.goodSelect;
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
   sendGuard() {
-    if (this.goodSelect.length == 0) {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    if (this.goodSelect.length) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      const idTransferent = this.idTrans;
+      config.initialState = {
+        idTransferent,
+        callback: (data: any) => {
+          if (data) this.addGoodsGuards();
+        },
+      };
+
+      this.modalService.show(WarehouseSelectFormComponent, config);
     } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    }
+  }
+
+  addGoodsGuards() {
+    if (this.goodsGuards.count() == 0) {
       this.headingGuard = `Resguardo(${this.goodSelect.length})`;
-      this.goodsGuards = this.goodSelect;
+      this.goodsGuards.load(this.goodSelect);
+      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+      this.removeGoodsSelected(this.goodSelect);
+    } else {
+      this.goodsGuards.getElements().then(data => {
+        this.goodSelect.map(items => {
+          data.push(items);
+          this.goodsGuards.load(data);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+          this.onLoadToast('success', 'Correcto', 'Bienes movidos a Resguardo');
+          this.removeGoodsSelected(this.goodSelect);
+        });
+      });
     }
   }
 
   sendWarehouse() {
-    if (this.goodSelect.length == 0) {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    if (this.goodSelect.length) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      const idTransferent = this.idTrans;
+      config.initialState = {
+        idTransferent,
+        callback: (data: any) => {
+          if (data) this.addGoodsWarehouse();
+        },
+      };
+
+      this.modalService.show(WarehouseSelectFormComponent, config);
     } else {
-      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
-      this.goodsWarehouse = this.goodSelect;
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
-  showGood() {}
-
-  removeGood(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+  addGoodsWarehouse() {
+    if (this.goodsWarehouse.count() == 0) {
+      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
+      this.goodsWarehouse.load(this.goodSelect);
+      this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
+      this.removeGoodsSelected(this.goodSelect);
+    } else {
+      this.goodsWarehouse.getElements().then(data => {
+        this.goodSelect.map(items => {
+          data.push(items);
+          this.goodsWarehouse.load(data);
+          this.headingWarehouse = `Almacén SAT(${this.goodsWarehouse.count()})`;
+          this.onLoadToast(
+            'success',
+            'Correcto',
+            'Bienes movidos a almacén SAT'
+          );
+          this.removeGoodsSelected(this.goodSelect);
+        });
+      });
+    }
   }
 
-  onDeleteConfirm(event: any) {
-    console.log('Evento', event);
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+  removeGoodsSelected(items: IGoodProgrammingSelect[]) {
+    this.totalItems = this.totalItems - items.length;
+    items.map(items => {
+      this.estatesList.remove(items).then(data => {});
+    });
+  }
+
+  showGood(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+
+  removeGoodTrans(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsTranportables.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+          this.totalItems = this.totalItems + 1;
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
+  }
+
+  removeGoodGuard(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsGuards.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+          this.totalItems = this.totalItems + 1;
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
+  }
+
+  removeGoodWarehouse(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsWarehouse.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.headingWarehouse = `Almacén SAT(${this.goodsWarehouse.count()})`;
+          this.totalItems = this.totalItems + 1;
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
   }
 
   confirm() {}
@@ -473,12 +701,14 @@ export class PerformProgrammingFormComponent
   delete(user: any) {
     this.alertQuestion(
       'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Confirmación',
+      '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecuta el servicio//
-        this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+        this.usersToProgramming.remove(user).then(() => {
+          this.usersToProgramming.refresh();
+          this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+        });
       }
     });
   }

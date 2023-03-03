@@ -91,7 +91,9 @@ export class AnalysisResultMainComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next);
+      if (next) {
+        console.log(next);
+      }
     });
   }
 
@@ -106,7 +108,9 @@ export class AnalysisResultMainComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
-      if (data) console.log(data);
+      if (data) {
+        console.log(data);
+      }
     });
   }
 

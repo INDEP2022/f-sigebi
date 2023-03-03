@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -11,8 +12,13 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IAuthorityIssuingParams } from 'src/app/core/models/catalogs/authority.model';
+import { IExpedientMassiveUpload } from 'src/app/core/models/ms-expedient/expedient';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
+import { IMassiveParams } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import {
   GOODS_BULK_LOAD_ACTIONS,
   GOODS_BULK_LOAD_TARGETS,
@@ -24,11 +30,19 @@ import { GoodsBulkLoadService } from '../services/goods-bulk-load.table';
 import { DeclarationsSatSaeMassive } from '../utils/declarations-sat-massive';
 import {
   ERROR_ATRIBUTE_CLASS_GOOD,
+  ERROR_CANTIDAD,
+  ERROR_CITY_ASUNTO_SAT,
   ERROR_CLASS_GOOD,
   ERROR_ESTATUS,
+  ERROR_ESTATUS_GENERAL,
+  ERROR_EXPEDIENTE,
   ERROR_EXPORT,
+  ERROR_GET_CLAVE_SAT,
+  ERROR_GOOD_INMUEBLE,
   ERROR_IDENTIFICADOR_MENAJE,
+  ERROR_ISSUING_INSTITUTION,
   ERROR_TRANSFERENTE,
+  ERROR_TRANSFERENTE_PARAMS,
   ERROR_UNIDAD,
   ERROR_UNITY_CLASS_GOOD,
   FORM_ACTION_TYPE_NULL,
@@ -39,8 +53,21 @@ import {
   VALIDATION_END_MESSAGE,
   VALIDATION_PROCESS_MESSAGE,
   VALIDATION_START_MESSAGE,
+  VALIDATION_UPDATE_PROCESS_MESSAGE,
+  VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE,
+  VALIDATION_UPLOAD_START_MESSAGE,
 } from '../utils/goods-bulk-load.message';
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
+
+interface IValidInfoData {
+  error: any; // Arreglo de errores encontrados
+  opcion: string; // Opcion de la carga masiva
+  subOpcion: number; // Opción seleccionada de la carga masiva
+  dataRow: any; // Data del registro actual del excel
+  contadorRegistro: number; // Contador del registro actual
+  objInsertResponse?: any; // Objeto para agregar las respuestas de las consultas al responder
+  validLastRequest?: boolean; // Bandera para validar si la respuesta anterior obtuvo respuesta correcta
+}
 
 @Component({
   selector: 'app-goods-bulk-load',
@@ -57,6 +84,10 @@ import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 })
 export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   DeclarationsSatSaeMassive: DeclarationsSatSaeMassive;
+  //Validaciones archivo
+  DeclarationsValidationMassive: DeclarationsSatSaeMassive;
+  //Validaciones carga de registros
+  DeclarationsUploadValidationMassive: DeclarationsSatSaeMassive;
   assetsForm: FormGroup;
   tableSource: previewData[] = [];
   actions = GOODS_BULK_LOAD_ACTIONS.general;
@@ -67,11 +98,37 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   listError: any[] = []; // Guardar lista de errores del proceso
+  proceso: number = 0;
+  inicioProceso: boolean = false;
+  paramsGeneral: IMassiveParams = {
+    p_no_oficio: '',
+    p_no_volante: '',
+    p_no_expediente: '',
+    p_sat_tipo_exp: '',
+    asunto_sat: '',
+    p_indicador_sat: '',
+    p_av_previa: '',
+    iden: '',
+    no_transferente: '',
+    desalojo: '',
+  };
+  infoDataValidation: IValidInfoData = {
+    error: null,
+    opcion: null,
+    subOpcion: null,
+    dataRow: null,
+    contadorRegistro: null,
+    objInsertResponse: null,
+    validLastRequest: false,
+  };
 
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
-    private goodsBulkService: GoodsBulkLoadService
+    private goodsBulkService: GoodsBulkLoadService,
+    private authService: AuthService,
+    private globalVarsService: GlobalVarsService,
+    private datePipe: DatePipe
   ) {
     super();
     const _settings = { columns: GOODS_BULK_LOAD_COLUMNS, actions: false };
@@ -79,6 +136,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.globalVarsService.loadGlobalVars();
+    let tk = this.authService.decodeToken();
+    console.log(tk);
+    let gv = this.globalVarsService.getGlobalVars$();
+    console.log(gv);
     this.prepareForm();
   }
 
@@ -90,6 +152,30 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       desalojo: [false, [Validators.required]],
       idCarga: [null],
     });
+  }
+
+  resetProcess() {
+    this.listError = [];
+    // this.startVariables();
+    this.DeclarationsSatSaeMassive = null;
+    this.assetsForm.reset();
+    this.targetChange();
+    this.inicioProceso = false;
+    this.resetValidationDataPreload();
+    this.startVariables(); // Reset proceso carga masiva
+  }
+
+  resetValidationDataPreload() {
+    // Resetear la info del registro actual
+    this.infoDataValidation = {
+      error: null,
+      opcion: null,
+      subOpcion: null,
+      dataRow: null,
+      contadorRegistro: null,
+      objInsertResponse: null,
+      validLastRequest: false,
+    };
   }
 
   save() {
@@ -115,16 +201,18 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       let preloadFile = this.excelService.getData<previewData | any>(
         binaryExcel
       );
-      preloadFile.forEach((data: any) => {
-        let objReplace: any = {};
-        for (const key in data) {
-          if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (key) {
-              objReplace[key.toLowerCase()] = data[key];
+      preloadFile.forEach((data: any, count: number) => {
+        if (count < 6) {
+          let objReplace: any = {};
+          for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+              if (key) {
+                objReplace[key.toLowerCase()] = data[key];
+              }
             }
           }
+          this.tableSource.push(objReplace);
         }
-        this.tableSource.push(objReplace);
       });
       let obj: any = {};
       let object: any = this.tableSource[0];
@@ -165,17 +253,31 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   /**
    * Inicializar variables del proceso de carga masiva
    */
-  startVariables() {
-    this.DeclarationsSatSaeMassive = new DeclarationsSatSaeMassive();
-    this.DeclarationsSatSaeMassive.common_general = {
-      total_errores: 0,
-      valid: false,
-      count: 0,
-      total: 0,
-      proceso: '',
-    };
-    this.DeclarationsSatSaeMassive.data_error = [];
-    this.DeclarationsSatSaeMassive.message_progress = '';
+  startVariables(opcion: boolean = false) {
+    if (opcion == true) {
+      this.DeclarationsUploadValidationMassive =
+        new DeclarationsSatSaeMassive();
+      this.DeclarationsUploadValidationMassive.common_general = {
+        total_errores: 0,
+        valid: false,
+        count: 0,
+        total: 0,
+        proceso: '',
+      };
+      this.DeclarationsUploadValidationMassive.data_error = [];
+      this.DeclarationsUploadValidationMassive.message_progress = '';
+    } else {
+      this.DeclarationsValidationMassive = new DeclarationsSatSaeMassive();
+      this.DeclarationsValidationMassive.common_general = {
+        total_errores: 0,
+        valid: false,
+        count: 0,
+        total: 0,
+        proceso: '',
+      };
+      this.DeclarationsValidationMassive.data_error = [];
+      this.DeclarationsValidationMassive.message_progress = '';
+    }
   }
 
   /**
@@ -188,13 +290,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     if (this.target.value == 'sat') {
       console.log('SAT');
-      this.validatorSatMassive();
+      this.validatorPreloadMassiveSat();
     } else if (this.target.value == 'pgr') {
       console.log('PGR');
-      this.validatorPgrMassive();
+      this.validatorPreloadMassivePgr();
     } else if (this.target.value == 'general') {
       console.log('GENERAL');
-      this.validatorGeneralMassive();
+      // this.validatorPreloadMassiveSat();
+      // this.validatorGeneralMassive();
     }
   }
 
@@ -273,31 +376,30 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   /**
-   * Proceso de validación de carga masiva para la opción SAT
+   * Proceso de validación de carga masiva para la opción SAT_SAE
    */
-  validatorSatMassive() {
-    console.log('SAT VALID');
+  validatorPreloadMassiveSat() {
     if (this.validIdCarga() && this.validActionType()) {
       this.startVariables();
-      let proceso = 0;
+      this.proceso = 0;
       if (
         GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
         this.assetsForm.get('actionType').value
       ) {
         // --- PROCESO 1
-        proceso = 1;
+        this.proceso = 1;
       } else if (
         GOODS_BULK_LOAD_ACTIONS.sat[1].value ==
         this.assetsForm.get('actionType').value
       ) {
         // --- PROCESO 2
-        proceso = 2;
+        this.proceso = 2;
       } else if (
         GOODS_BULK_LOAD_ACTIONS.sat[2].value ==
         this.assetsForm.get('actionType').value
       ) {
         // --- PROCESO 3
-        proceso = 3;
+        this.proceso = 3;
       } else if (
         GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
           this.assetsForm.get('actionType').value &&
@@ -305,223 +407,536 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.assetsForm.get('inmuebles').value
       ) {
         // --- PROCESO 4
-        proceso = 4;
+        this.proceso = 4;
       }
       // Total de registros
-      this.DeclarationsSatSaeMassive.common_general.total =
+      this.DeclarationsValidationMassive.common_general.total =
         this.tableSource.length;
       // Inicia proceso de validación
-      this.DeclarationsSatSaeMassive.message_progress =
+      this.DeclarationsValidationMassive.message_progress =
         VALIDATION_START_MESSAGE;
+      // Setear arreglo de lista de errores
       this.listError = [];
-      this.DeclarationsSatSaeMassive.common_general.proceso =
+      // Se inicia proceso de carga masiva
+      this.inicioProceso = true;
+      this.DeclarationsValidationMassive.common_general.proceso =
         this.assetsForm.get('actionType').value;
-      from(this.tableSource)
-        .pipe(
-          switchMap(async (row: any, count: number) => {
-            // Mensaje de proceso de validación actual
-            this.DeclarationsSatSaeMassive.message_progress =
-              VALIDATION_PROCESS_MESSAGE(count + 1);
-            // if (count <= 5) {
-            let error: any[] = [[], []];
-            // Indice actual del contador
-            this.DeclarationsSatSaeMassive.common_general.count = count;
-            let data: any = row;
-            // Procesos comunes
-            // --- PROCESO 1
-            // --- PROCESO 2
-            // --- PROCESO 3
-            // --- PROCESO 4
-            if (proceso == 1 || proceso == 2 || proceso == 3 || proceso == 4) {
-              // Validar Unidad
-              if (!data.unidad) {
-                error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
-              }
-              // Validar Estatus
-              if (data.status) {
-                await this.goodsBulkService
-                  .getGoodStatus(data.status)
-                  .subscribe({
-                    next: res => res,
-                    error: err => {
-                      error = this.agregarError(
-                        error,
-                        ERROR_ESTATUS(data.status)
-                      );
-                    },
-                  });
-              } else {
-                error = this.agregarError(error, ERROR_ESTATUS(data.status));
-              }
-              // Validar Clasificación de bien
-              // #### Falta que filtre por numero clasificacion bien HALLAZGO 231
-              if (data.clasif) {
-                const params: ListParams = {
-                  page: this.params.getValue().page,
-                  limit: this.params.getValue().limit,
-                };
-                this.params.getValue().getParams();
-                params['filter.numClasifGoods'] = '$eq:' + data.clasif + '';
-                await this.goodsBulkService.getGoodssSubtype(params).subscribe({
-                  next: res => res,
-                  error: err => {
-                    error = this.agregarError(
-                      error,
-                      ERROR_CLASS_GOOD(data.clasif)
-                    );
-                  },
-                });
-              } else {
-                error = this.agregarError(error, ERROR_CLASS_GOOD(data.clasif));
-              }
-              // Validar Unidad de acuerdo al número de Clasificación de bien
-              if (data.clasif) {
-                await this.goodsBulkService
-                  .getUnityByUnityAndClasifGood(data.clasif)
-                  .subscribe({
-                    next: (res: any) => {
-                      if (res.minunit != data.unidad) {
-                        error = this.agregarError(
-                          error,
-                          ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
-                        );
-                      }
-                    },
-                    error: err => {
-                      error = this.agregarError(
-                        error,
-                        ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
-                      );
-                    },
-                  });
-              } else {
-                error = this.agregarError(
-                  error,
-                  ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
-                );
-              }
-            }
-            // --- PROCESO 2
-            if (proceso == 2) {
-              // Validar Identificador padre de menaje
-              if (!data.identificador) {
-                error = this.agregarError(
-                  error,
-                  ERROR_IDENTIFICADOR_MENAJE(data.identificador)
-                );
-              }
-            }
-            // --- PROCESO 4
-            if (proceso == 4) {
-              // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
-              // #### HALLAZGO 290
-              if (data.transferente > 10000) {
-                const params: ListParams = {
-                  page: this.params.getValue().page,
-                  limit: this.params.getValue().limit,
-                };
-                this.params.getValue().getParams();
-                params['filter.idAuthorityIssuerTransferor'] =
-                  '$eq:' + data.transferente + '';
-                await this.goodsBulkService
-                  .getNumberTransferenteAuthority(data.transferente)
-                  .subscribe({
-                    next: res => res,
-                    error: err => {
-                      error = this.agregarError(
-                        error,
-                        ERROR_TRANSFERENTE(data.transferente)
-                      );
-                    },
-                  });
-              }
-              // Opción del check para sólo autos
-              if (this.assetsForm.get('cars').value) {
-                const params: ListParams = {
-                  page: this.params.getValue().page,
-                  limit: this.params.getValue().limit,
-                };
-                this.params.getValue().getParams();
-                params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
-                await this.goodsBulkService
-                  .getAtributeClassificationGood(data.clasif)
-                  .subscribe({
-                    next: res => {
-                      console.log(res);
-                      if (res.data) {
-                        this.validateAttributeClassificationgood(
-                          res.data,
-                          SAT_SAE_MUEBLES_PROCESO_4
-                        );
-                      }
-                    },
-                    error: err => {
-                      error = this.agregarError(
-                        error,
-                        ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
-                      );
-                    },
-                  });
-              }
-              // Opción del check para sólo inmuebles
-              if (this.assetsForm.get('inmuebles').value) {
-                const params: ListParams = {
-                  page: this.params.getValue().page,
-                  limit: this.params.getValue().limit,
-                };
-                this.params.getValue().getParams();
-                params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
-                await this.goodsBulkService
-                  .getAtributeClassificationGood(data.clasif)
-                  .subscribe({
-                    next: res => {
-                      console.log(res);
-                      if (res.data) {
-                        this.validateAttributeClassificationgood(
-                          res.data,
-                          SAT_SAE_INMUEBLES_PROCESO_4
-                        );
-                      }
-                    },
-                    error: err => {
-                      error = this.agregarError(
-                        error,
-                        ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
-                      );
-                    },
-                  });
-              }
-            }
-            error[1].push(row);
-            // let obj: any = {};
-            // obj = { ...row };
-            // for (let index = 0; index < error[0].length; index++) {
-            //   obj['errores'] = obj['errores'] + ' --- ' + error[0][index];
-            //   console.log(error[0][index], obj);
-            // }
-            // this.listError.push(obj);
-            // console.log(obj, error, this.listError);
-            this.DeclarationsSatSaeMassive.data_error.push(error);
-            // }
-          })
-        )
-        .subscribe(val => {
-          // Fin del proceso de validación
-          this.DeclarationsSatSaeMassive.message_progress =
-            VALIDATION_END_MESSAGE;
-          console.log(this.DeclarationsSatSaeMassive, this.listError);
-          console.log(val);
+      this.processValidFileSat(0, this.tableSource[0]);
+    }
+  }
+
+  processValidFileSat(count: number = 0, row: any) {
+    console.log(row);
+    // if (count <= 5) {
+    this.resetValidationDataPreload();
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      VALIDATION_PROCESS_MESSAGE(count + 1);
+    let error: any[] = [[], []];
+    // Indice actual del contador
+    this.DeclarationsValidationMassive.common_general.count = count;
+    let data: any = row;
+    this.infoDataValidation = {
+      error: error,
+      opcion: this.target.value,
+      subOpcion: this.proceso,
+      dataRow: data,
+      contadorRegistro: count,
+      objInsertResponse: null,
+      validLastRequest: false,
+    };
+    // Procesos comunes
+    // --- PROCESO 1
+    // --- PROCESO 2
+    // --- PROCESO 3
+    // --- PROCESO 4
+    if (
+      this.proceso == 1 ||
+      this.proceso == 2 ||
+      this.proceso == 3 ||
+      this.proceso == 4
+    ) {
+      // Mensaje de proceso de validación actual
+      this.DeclarationsValidationMassive.message_progress =
+        'Validando la unidad de medida.';
+      console.log(this.DeclarationsValidationMassive.message_progress);
+      // Validar Unidad
+      if (!data.unidad) {
+        error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
+      }
+      // Validar Estatus
+      // if (data.status) {
+      this.validStatusColumna(this.infoDataValidation);
+    }
+  }
+
+  /**
+   * Funciones para validar el proceso de SAT_SAE
+   */
+
+  async validStatusColumna(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando el Estatus.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    // Validar Estatus
+    if (infoData.dataRow.status) {
+      await this.goodsBulkService
+        .getGoodStatus(infoData.dataRow.status)
+        .subscribe({
+          next: res => {
+            console.log(res);
+            infoData.validLastRequest = true; // Respuesta correcta
+            this.validClasificationGood(infoData, opcionValid);
+          },
+          error: err => {
+            infoData.error = this.agregarError(
+              infoData.error,
+              ERROR_ESTATUS(infoData.dataRow.status)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            this.validClasificationGood(infoData, opcionValid);
+          },
         });
+    } else {
+      infoData.error = this.agregarError(
+        infoData.error,
+        ERROR_ESTATUS(infoData.dataRow.status)
+      );
+      this.infoDataValidation.error = infoData.error; // Setear error
+      infoData.validLastRequest = false; // Respuesta incorrecta
+      this.validClasificationGood(infoData, opcionValid);
+    }
+  }
+
+  async validClasificationGood(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando la clasificación del bien.';
+    console.log(
+      this.DeclarationsValidationMassive.message_progress,
+      infoData.dataRow.clasif,
+      infoData.contadorRegistro
+    );
+    // Validar Clasificación de bien
+    if (infoData.dataRow.clasif) {
+      const params: ListParams = {
+        page: this.params.getValue().page,
+        limit: this.params.getValue().limit,
+      };
+      this.params.getValue().getParams();
+      params['filter.numClasifGoods'] = '$eq:' + infoData.dataRow.clasif + '';
+      await this.goodsBulkService.getGoodssSubtype(params).subscribe({
+        next: res => {
+          infoData.validLastRequest = true; // Respuesta correcta
+          if (res.data.length == 0) {
+            infoData.error = this.agregarError(
+              infoData.error,
+              ERROR_CLASS_GOOD(infoData.dataRow.clasif)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+          }
+          this.validUnityByClasificationGood(infoData, opcionValid);
+        },
+        error: err => {
+          infoData.error = this.agregarError(
+            infoData.error,
+            ERROR_CLASS_GOOD(infoData.dataRow.clasif)
+          );
+          this.infoDataValidation.error = infoData.error; // Setear error
+          infoData.validLastRequest = false; // Respuesta incorrecta
+          this.validUnityByClasificationGood(infoData, opcionValid);
+        },
+      });
+    } else {
+      infoData.error = this.agregarError(
+        infoData.error,
+        ERROR_CLASS_GOOD(infoData.dataRow.clasif)
+      );
+      this.infoDataValidation.error = infoData.error; // Setear error
+      infoData.validLastRequest = false; // Respuesta incorrecta
+      this.validUnityByClasificationGood(infoData, opcionValid);
+    }
+  }
+
+  async validUnityByClasificationGood(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando la unidad de medida de acuerdo a la clasificación del bien.';
+    console.log(
+      this.DeclarationsValidationMassive.message_progress,
+      infoData.dataRow.clasif,
+      infoData.contadorRegistro
+    );
+    // Validar Unidad de acuerdo al número de Clasificación de bien
+    if (infoData.dataRow.clasif) {
+      await this.goodsBulkService
+        .getUnityByUnityAndClasifGood(infoData.dataRow.clasif)
+        .subscribe({
+          next: (res: any) => {
+            infoData.validLastRequest = true; // Respuesta correcta
+            if (res.minunit != infoData.dataRow.unidad) {
+              infoData.error = this.agregarError(
+                infoData.error,
+                ERROR_UNITY_CLASS_GOOD(
+                  infoData.dataRow.unidad,
+                  infoData.dataRow.clasif
+                )
+              );
+              this.infoDataValidation.error = infoData.error; // Setear error
+              infoData.validLastRequest = false; // Respuesta incorrecta
+            }
+            if (opcionValid == 'sat') {
+              // Se termina el proceso 1 y 3
+              if (this.proceso == 1 || this.proceso == 3) {
+                this.processEndSat(infoData);
+              } else {
+                this.proceso2Sat(infoData);
+              }
+            } else if (opcionValid == 'pgr') {
+              if (
+                !this.assetsForm.get('cars').value &&
+                !this.assetsForm.get('inmuebles').value
+              ) {
+                this.processEndPgr(infoData);
+              }
+              if (this.assetsForm.get('cars').value) {
+                // Validar para muebles
+                if (this.assetsForm.get('cars').value) {
+                  this.validMuebleSat(infoData, opcionValid);
+                }
+                // Validar para inmuebles
+                if (this.assetsForm.get('inmuebles').value) {
+                  this.validInmuebleSat(infoData, opcionValid);
+                }
+              }
+            } else {
+            }
+          },
+          error: err => {
+            infoData.error = this.agregarError(
+              infoData.error,
+              ERROR_UNITY_CLASS_GOOD(
+                infoData.dataRow.unidad,
+                infoData.dataRow.clasif
+              )
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            if (opcionValid == 'sat') {
+              // Se termina el proceso 1 y 3
+              if (this.proceso == 1 || this.proceso == 3) {
+                this.processEndSat(infoData);
+              } else {
+                this.proceso2Sat(infoData);
+              }
+            } else if (opcionValid == 'pgr') {
+              if (
+                !this.assetsForm.get('cars').value &&
+                !this.assetsForm.get('inmuebles').value
+              ) {
+                this.processEndPgr(infoData);
+              }
+              // Validar para muebles
+              if (this.assetsForm.get('cars').value) {
+                this.validMuebleSat(infoData, opcionValid);
+              }
+              // Validar para inmuebles
+              if (this.assetsForm.get('inmuebles').value) {
+                this.validInmuebleSat(infoData, opcionValid);
+              }
+            } else {
+            }
+          },
+        });
+    } else {
+      infoData.error = this.agregarError(
+        infoData.error,
+        ERROR_UNITY_CLASS_GOOD(infoData.dataRow.unidad, infoData.dataRow.clasif)
+      );
+      this.infoDataValidation.error = infoData.error; // Setear error
+      infoData.validLastRequest = false; // Respuesta incorrecta
+      if (opcionValid == 'sat') {
+        // Se termina el proceso 1 y 3
+        if (this.proceso == 1 || this.proceso == 3) {
+          this.processEndSat(infoData);
+        } else {
+          this.proceso2Sat(infoData);
+        }
+      } else if (opcionValid == 'pgr') {
+        if (
+          !this.assetsForm.get('cars').value &&
+          !this.assetsForm.get('inmuebles').value
+        ) {
+          this.processEndPgr(infoData);
+        }
+        // Validar para muebles
+        if (this.assetsForm.get('cars').value) {
+          this.validMuebleSat(infoData, opcionValid);
+        }
+        // Validar para inmuebles
+        if (this.assetsForm.get('inmuebles').value) {
+          this.validInmuebleSat(infoData, opcionValid);
+        }
+      } else {
+      }
+    }
+  }
+
+  proceso2Sat(infoData: IValidInfoData) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando el identificador.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    // Validar el proceso 2 para SAT
+    // Validar Identificador padre de menaje
+    if (!infoData.dataRow.identificador) {
+      infoData.error = this.agregarError(
+        infoData.error,
+        ERROR_IDENTIFICADOR_MENAJE(infoData.dataRow.identificador)
+      );
+    }
+    // Se termina el proceso 2
+    if (this.proceso == 2) {
+      this.processEndSat(infoData);
+    } else {
+      // Continuar a validar el proceso 4
+      this.validTransferente(infoData);
+    }
+  }
+
+  async validTransferente(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando el transferente.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
+    if (infoData.dataRow.transferente > 10000) {
+      const params: ListParams = {
+        page: this.params.getValue().page,
+        limit: this.params.getValue().limit,
+      };
+      this.params.getValue().getParams();
+      params['filter.idAuthorityIssuerTransferor'] =
+        '$eq:' + infoData.dataRow.transferente + '';
+      await this.goodsBulkService
+        .getNumberTransferenteAuthority(infoData.dataRow.transferente)
+        .subscribe({
+          next: res => {
+            if (res.data.length == 0) {
+              infoData.error = this.agregarError(
+                infoData.error,
+                ERROR_TRANSFERENTE(infoData.dataRow.transferente)
+              );
+              this.infoDataValidation.error = infoData.error; // Setear error
+              infoData.validLastRequest = false; // Respuesta incorrecta
+            }
+            // Validar para muebles
+            if (this.assetsForm.get('cars').value) {
+              this.validMuebleSat(infoData, opcionValid);
+            }
+            // Validar para inmuebles
+            if (this.assetsForm.get('inmuebles').value) {
+              this.validInmuebleSat(infoData, opcionValid);
+            }
+          },
+          error: err => {
+            infoData.error = this.agregarError(
+              infoData.error,
+              ERROR_TRANSFERENTE(infoData.dataRow.transferente)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            // Validar para muebles
+            if (this.assetsForm.get('cars').value) {
+              this.validMuebleSat(infoData, opcionValid);
+            }
+            // Validar para inmuebles
+            if (this.assetsForm.get('inmuebles').value) {
+              this.validInmuebleSat(infoData, opcionValid);
+            }
+          },
+        });
+    } else {
+      this.infoDataValidation.error = infoData.error; // Setear error
+      infoData.validLastRequest = false; // Respuesta incorrecta
+      // Validar para muebles
+      if (this.assetsForm.get('cars').value) {
+        this.validMuebleSat(infoData, opcionValid);
+      }
+      // Validar para inmuebles
+      if (this.assetsForm.get('inmuebles').value) {
+        this.validInmuebleSat(infoData, opcionValid);
+      }
+    }
+  }
+
+  async validMuebleSat(infoData: IValidInfoData, opcionValid: string = 'sat') {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando los datos requeridos para el mueble.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    // Opción del check para sólo autos
+    const params: ListParams = {
+      page: this.params.getValue().page,
+      limit: this.params.getValue().limit,
+    };
+    this.params.getValue().getParams();
+    params['filter.classifGoodNumber'] = '$eq:' + infoData.dataRow.clasif + '';
+    await this.goodsBulkService
+      .getAtributeClassificationGood(infoData.dataRow.clasif)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          if (res.data) {
+            let dataResponse = this.validateAttributeClassificationgood(
+              res.data,
+              SAT_SAE_MUEBLES_PROCESO_4
+            );
+            console.log('VALIDAR MUEBLES CLASIF GOOD', dataResponse);
+            this.processEndSat(infoData);
+          }
+        },
+        error: err => {
+          infoData.error = this.agregarError(
+            infoData.error,
+            ERROR_ATRIBUTE_CLASS_GOOD(infoData.dataRow.clasif)
+          );
+          this.infoDataValidation.error = infoData.error; // Setear error
+          infoData.validLastRequest = false; // Respuesta incorrecta
+          this.processEndSat(infoData);
+        },
+      });
+  }
+
+  async validInmuebleSat(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando los datos requeridos para el inmueble.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    const params: ListParams = {
+      page: this.params.getValue().page,
+      limit: this.params.getValue().limit,
+    };
+    this.params.getValue().getParams();
+    params['filter.classifGoodNumber'] = '$eq:' + infoData.dataRow.clasif + '';
+    await this.goodsBulkService
+      .getAtributeClassificationGood(infoData.dataRow.clasif)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          if (res.data) {
+            let dataResponse = this.validateAttributeClassificationgood(
+              res.data,
+              SAT_SAE_INMUEBLES_PROCESO_4
+            );
+            console.log('VALIDAR INMUEBLES CLASIF GOOD', dataResponse);
+            this.processEndSat(infoData);
+          }
+        },
+        error: err => {
+          infoData.error = this.agregarError(
+            infoData.error,
+            ERROR_ATRIBUTE_CLASS_GOOD(infoData.dataRow.clasif)
+          );
+          this.infoDataValidation.error = infoData.error; // Setear error
+          infoData.validLastRequest = false; // Respuesta incorrecta
+          this.processEndSat(infoData);
+        },
+      });
+  }
+
+  processEndSat(infoData: IValidInfoData) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Se termino el proceso para el registro: "' +
+      (infoData.contadorRegistro + 1) +
+      '".';
+    infoData.error[1].push(infoData.dataRow);
+    this.DeclarationsValidationMassive.data_error.push(infoData.error);
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    if (this.tableSource.length == infoData.contadorRegistro + 1) {
+      // Mensaje de proceso de validación actual
+      this.DeclarationsValidationMassive.message_progress =
+        VALIDATION_END_MESSAGE;
+    } else {
+      // Fin del proceso para validar la carga SAT
+      this.processValidFileSat(
+        infoData.contadorRegistro + 1,
+        this.tableSource[infoData.contadorRegistro + 1]
+      ); // CONTINUAR PROCESO
+    }
+  }
+
+  processEndGeneral(infoData: IValidInfoData) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Se termino el proceso para el registro: "' +
+      (infoData.contadorRegistro + 1) +
+      '".';
+    infoData.error[1].push(infoData.dataRow);
+    this.DeclarationsValidationMassive.data_error.push(infoData.error);
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    if (this.tableSource.length == infoData.contadorRegistro + 1) {
+      // Mensaje de proceso de validación actual
+      this.DeclarationsValidationMassive.message_progress =
+        VALIDATION_END_MESSAGE;
+    } else {
+      // Fin del proceso para validar la carga GENERAL
+      this.processValidFileGeneral(
+        infoData.contadorRegistro + 1,
+        this.tableSource[infoData.contadorRegistro + 1]
+      ); // CONTINUAR PROCESO
+    }
+  }
+
+  processEndPgr(infoData: IValidInfoData) {
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Se termino el proceso para el registro: "' +
+      (infoData.contadorRegistro + 1) +
+      '".';
+    infoData.error[1].push(infoData.dataRow);
+    this.DeclarationsValidationMassive.data_error.push(infoData.error);
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    if (this.tableSource.length == infoData.contadorRegistro + 1) {
+      // Mensaje de proceso de validación actual
+      this.DeclarationsValidationMassive.message_progress =
+        VALIDATION_END_MESSAGE;
+    } else {
+      // Fin del proceso para validar la carga PGR
+      this.processValidFilePgr(
+        infoData.contadorRegistro + 1,
+        this.tableSource[infoData.contadorRegistro + 1]
+      ); // CONTINUAR PROCESO
     }
   }
 
   agregarError(error: any[], messageError: string) {
     // Agregar contador de error
-    this.DeclarationsSatSaeMassive.common_general.total_errores++;
+    this.DeclarationsValidationMassive.common_general.total_errores++;
     // Cambiar validador de proceso
-    this.DeclarationsSatSaeMassive.common_general.valid = false;
+    this.DeclarationsValidationMassive.common_general.valid = false;
     // Guardar error y mensaje
     error[0].push(messageError);
+    console.log(error, messageError);
     return error;
   }
 
@@ -531,7 +946,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   validateAttributeClassificationgood(
     dataResponse: IAttribClassifGoods[],
-    listCompare: any
+    listCompare: any,
+    opcionValid: string = 'sat'
   ) {
     let likeVar = 0;
     let equalVar = 0;
@@ -544,8 +960,17 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           index++
         ) {
           const element = listCompare.listSearchExist[index];
-          if (element == info.attribute) {
-            likeVar = 1;
+          if (opcionValid == 'sat') {
+            if (element == 'NUMERO INTERIOR') {
+            } else {
+              if (element == info.attribute) {
+                likeVar = 1;
+              }
+            }
+          } else if (opcionValid == 'pgr') {
+            if (element == info.attribute) {
+              likeVar = 1;
+            }
           }
         }
         for (
@@ -554,33 +979,208 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           index++
         ) {
           const element = listCompare.listEqualExist[index];
-          if (element == info.attribute) {
-            equalVar = 1;
+          if (opcionValid == 'sat') {
+            if (element == 'CODIGO POSTAL') {
+            } else {
+              if (element == info.attribute) {
+                equalVar = 1;
+              }
+            }
+          } else if (opcionValid == 'pgr') {
+            if (element == info.attribute) {
+              equalVar = 1;
+            }
           }
         }
       }
     }
     console.log(likeVar, equalVar);
-  }
-
-  validatorPgrMassive() {
-    console.log('PGR VALID');
-  }
-  validatorGeneralMassive() {
-    console.log('GENERAL VALID');
+    return { likeVar: likeVar, equalVar: equalVar };
   }
 
   /**
-   * Exportar a XLSX
+   * Funciones para validar el proceso de SAT_SAE
+   */
+
+  /**
+   * Proceso de validación de carga masiva para la opción PGR_SAE
+   */
+
+  /**
+   * Proceso de validación de carga masiva para la opción PGR
+   */
+  validatorPreloadMassivePgr() {
+    if (this.validIdCarga() && this.validActionType()) {
+      this.startVariables();
+      this.proceso = 0;
+      // Total de registros
+      this.DeclarationsValidationMassive.common_general.total =
+        this.tableSource.length;
+      // Inicia proceso de validación
+      this.DeclarationsValidationMassive.message_progress =
+        VALIDATION_START_MESSAGE;
+      // Setear arreglo de lista de errores
+      this.listError = [];
+      // Se inicia proceso de carga masiva
+      this.inicioProceso = true;
+      this.DeclarationsValidationMassive.common_general.proceso =
+        this.assetsForm.get('actionType').value;
+      this.processValidFilePgr(0, this.tableSource[0]);
+    }
+  }
+
+  processValidFilePgr(count: number = 0, row: any) {
+    console.log(row);
+    this.resetValidationDataPreload();
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      VALIDATION_PROCESS_MESSAGE(count + 1);
+    // if (count <= 5) {
+    this.resetValidationDataPreload();
+    let error: any[] = [[], []];
+    // Indice actual del contador
+    this.DeclarationsValidationMassive.common_general.count = count;
+    let data: any = row;
+    this.infoDataValidation = {
+      error: error,
+      opcion: this.target.value,
+      subOpcion: this.proceso,
+      dataRow: data,
+      contadorRegistro: count,
+      objInsertResponse: null,
+      validLastRequest: false,
+    };
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Validando la cantidad.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    // Validar Cantidad
+    if (!data.cantidad) {
+      error = this.agregarError(error, ERROR_CANTIDAD(data.cantidad));
+    }
+    // Validar Estatus
+    this.validStatusColumna(this.infoDataValidation, 'pgr');
+  }
+
+  /**
+   * Proceso de validación de carga masiva para la opción PGR_SAE
+   */
+
+  /**
+   * Proceso de validación de carga masiva para la opción GENERAL
+   */
+  /**
+   * Proceso de validación de carga masiva para la opción SAT_SAE
+   */
+  validatorPreloadMassiveGeneral() {
+    if (this.validIdCarga() && this.validActionType()) {
+      this.startVariables();
+      this.proceso = 0;
+      if (
+        GOODS_BULK_LOAD_ACTIONS.general[0].value ==
+        this.assetsForm.get('actionType').value
+      ) {
+        // --- PROCESO 1
+        this.proceso = 1;
+      } else if (
+        GOODS_BULK_LOAD_ACTIONS.general[1].value ==
+        this.assetsForm.get('actionType').value
+      ) {
+        // --- PROCESO 2
+        this.proceso = 2;
+      } else if (
+        GOODS_BULK_LOAD_ACTIONS.general[2].value ==
+        this.assetsForm.get('actionType').value
+      ) {
+        // --- PROCESO 3
+        this.proceso = 3;
+      } else if (
+        GOODS_BULK_LOAD_ACTIONS.general[0].value ==
+          this.assetsForm.get('actionType').value &&
+        this.assetsForm.get('cars').value &&
+        this.assetsForm.get('inmuebles').value
+      ) {
+        // --- PROCESO 4
+        this.proceso = 4;
+      }
+      // Total de registros
+      this.DeclarationsValidationMassive.common_general.total =
+        this.tableSource.length;
+      // Inicia proceso de validación
+      this.DeclarationsValidationMassive.message_progress =
+        VALIDATION_START_MESSAGE;
+      // Setear arreglo de lista de errores
+      this.listError = [];
+      // Se inicia proceso de carga masiva
+      this.inicioProceso = true;
+      this.DeclarationsValidationMassive.common_general.proceso =
+        this.assetsForm.get('actionType').value;
+      this.processValidFileGeneral(0, this.tableSource[0]);
+    }
+  }
+
+  processValidFileGeneral(count: number = 0, row: any) {
+    console.log(row);
+    // if (count <= 5) {
+    this.resetValidationDataPreload();
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      VALIDATION_PROCESS_MESSAGE(count + 1);
+    let error: any[] = [[], []];
+    // Indice actual del contador
+    this.DeclarationsValidationMassive.common_general.count = count;
+    let data: any = row;
+    this.infoDataValidation = {
+      error: error,
+      opcion: this.target.value,
+      subOpcion: this.proceso,
+      dataRow: data,
+      contadorRegistro: count,
+      objInsertResponse: null,
+      validLastRequest: false,
+    };
+    // Procesos comunes
+    // --- PROCESO 1
+    // --- PROCESO 2
+    // --- PROCESO 3
+    // --- PROCESO 4
+    if (
+      this.proceso == 1 ||
+      this.proceso == 2 ||
+      this.proceso == 3 ||
+      this.proceso == 4
+    ) {
+      // Mensaje de proceso de validación actual
+      this.DeclarationsValidationMassive.message_progress =
+        'Validando el estatus.';
+      console.log(this.DeclarationsValidationMassive.message_progress);
+      // Validar Estatus
+      if (data.status != 'ROP' && this.proceso == 1) {
+        error = this.agregarError(error, ERROR_ESTATUS_GENERAL(count + 1));
+        this.processEndGeneral(this.infoDataValidation);
+      } else {
+        // VOY EN LA CANTIDAD DEL PROCESO 1
+        // Validar Estatus
+        this.validStatusColumna(this.infoDataValidation);
+      }
+    }
+  }
+
+  /**
+   * Proceso de validación de carga masiva para la opción GENERAL
+   */
+
+  /**
+   * Exportar a XLSX errores encontrados
    */
   exportXlsx() {
     let errores = [];
     for (
       let index = 0;
-      index < this.DeclarationsSatSaeMassive.data_error.length;
+      index < this.DeclarationsValidationMassive.data_error.length;
       index++
     ) {
-      const element = this.DeclarationsSatSaeMassive.data_error[index];
+      const element = this.DeclarationsValidationMassive.data_error[index];
       let obj: any = { ...element[1][0] };
       obj['errores'] = '';
       for (let indice = 0; indice < element[0].length; indice++) {
@@ -597,8 +1197,302 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     // El type no es necesario ya que por defecto toma 'xlsx'
     this.excelService.export(errores, {
       filename: `errores_${
-        this.DeclarationsSatSaeMassive.common_general.proceso
+        this.DeclarationsValidationMassive.common_general.proceso
       }${new Date().getTime()}`,
     });
+  }
+
+  /**
+   * Validar los registros de los archivos cargados y subir los datos al servidor
+   */
+
+  /**
+   * Validar los registros a subir al sistema antes de cargar la información
+   */
+  validDataUploadMassive() {
+    this.startVariables(true);
+    // Inicia proceso de validación para carga
+    this.DeclarationsUploadValidationMassive.message_progress =
+      VALIDATION_UPLOAD_START_MESSAGE;
+    this.paramsGeneral = {
+      p_no_oficio: 'OPD/GUANAJUATO/12960/2022',
+      p_no_volante: '1558111',
+      p_no_expediente: '110-02-00-00-00-2016-1212',
+      p_sat_tipo_exp: '',
+      asunto_sat: 'AVV070110777',
+      p_indicador_sat: '',
+      p_av_previa: '',
+      iden: '',
+      no_transferente: '',
+      desalojo: '',
+    };
+    from(this.tableSource)
+      .pipe(
+        switchMap(async (row: any, count: number) => {
+          // Mensaje de proceso de validación actual
+          this.DeclarationsUploadValidationMassive.message_progress =
+            VALIDATION_UPDATE_PROCESS_MESSAGE(count + 1);
+          // if (count <= 5) {
+          let error: any[] = [[], []];
+          // Indice actual del contador
+          this.DeclarationsUploadValidationMassive.common_general.count = count;
+          let data: any = row;
+          let no_ciudad: any = null;
+          let otclave_federative_entity: any = null;
+          let name_institution: string = '';
+          let no_emisora: any = null;
+          let no_autoridad: any = null;
+          let manualvar_no_transferente: string = '120';
+          if (count <= 5) {
+            // Validacion 5 registros
+            // Validar menaje de acuerdo al identificador
+            if (this.proceso == 2 && this.assetsForm.get('inmuebles').value) {
+              if (!data.transferente) {
+                error = this.agregarErrorUploadValidation(
+                  error,
+                  ERROR_GOOD_INMUEBLE(data.transferente)
+                );
+              } else {
+                await this.goodsBulkService
+                  .getGoodById(data.transferente)
+                  .subscribe({
+                    next: res => res,
+                    error: err => {
+                      error = this.agregarErrorUploadValidation(
+                        error,
+                        ERROR_GOOD_INMUEBLE(data.transferente)
+                      );
+                    },
+                  });
+              }
+            } // Validar menaje de acuerdo al identificador
+            // #### REVISAR EL MS PARA OBTENER CVE_UNICA
+            if (
+              this.assetsForm.get('inmuebles').value ||
+              this.assetsForm.get('cars').value
+            ) {
+              // Parametros para buscar la clave SAT
+              let objParams = {
+                officeKey: this.paramsGeneral.p_no_oficio,
+                asunto: this.paramsGeneral.asunto_sat,
+                saeIdTransferencia: '56136', //data.transferente,
+              };
+              if (data.transferente == null) {
+                await this.goodsBulkService.getSatKey(objParams).subscribe({
+                  next: res => res,
+                  error: err => {
+                    error = this.agregarErrorUploadValidation(
+                      error,
+                      ERROR_GET_CLAVE_SAT(data.transferente)
+                    );
+                  },
+                });
+              }
+            }
+            // PROCESO --- 4
+            // GENERACION DE VOLANTES
+            if (this.proceso == 4) {
+              // COL1 es la descripcion en el archivo
+              if (data.descripcion != null && data.descripcion == '') {
+                // Obtener la clave de la ciudad apartir de la clave Asunto SAT
+                await this.goodsBulkService
+                  .searchCityByAsuntoSat(this.paramsGeneral.asunto_sat)
+                  .subscribe({
+                    next: res => (no_ciudad = res.no_ciudad),
+                    error: err => {
+                      error = this.agregarErrorUploadValidation(
+                        error,
+                        ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+                      );
+                    },
+                  });
+                // CREANDO EXPEDIENTE
+                if (data.descripcion) {
+                  // Inicia proceso de validación para carga
+                  this.DeclarationsUploadValidationMassive.message_progress =
+                    VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE;
+                  // Obtener las instituciones emisoras por numero de institucion (200)
+                  await this.goodsBulkService
+                    .getIssuingInstitutionById('200')
+                    .subscribe({
+                      next: res => {
+                        name_institution = res.authorityName;
+                      },
+                      error: err => {
+                        error = this.agregarErrorUploadValidation(
+                          error,
+                          ERROR_ISSUING_INSTITUTION('200')
+                        );
+                      },
+                    });
+                  let issuingParams: IAuthorityIssuingParams = {
+                    expedientSat: this.paramsGeneral.p_no_expediente,
+                    transferent: parseInt(manualvar_no_transferente),
+                    city: 266,
+                  };
+                  // Obtener institucion emisora EMISORA Y AUTORIDAD
+                  await this.goodsBulkService
+                    .getIssuingInstitutionByParams(issuingParams)
+                    .subscribe({
+                      next: res => {
+                        console.log('emisora autoridad', res);
+
+                        if (res.length == 1) {
+                          no_autoridad = res[0].no_autoridad; // SET AUTORIDAD
+                          no_emisora = res[0].no_emisora; // SET EMISORA
+                        } else {
+                          error = this.agregarErrorUploadValidation(
+                            error,
+                            ERROR_TRANSFERENTE_PARAMS(1)
+                          );
+                        }
+                      },
+                      error: err => {
+                        error = this.agregarErrorUploadValidation(
+                          error,
+                          ERROR_TRANSFERENTE_PARAMS(0)
+                        );
+                      },
+                    });
+                  // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
+                  await this.goodsBulkService
+                    .getEntityFederativeByAsuntoSat(
+                      this.paramsGeneral.asunto_sat
+                    )
+                    .subscribe({
+                      next: res => (otclave_federative_entity = res.otclave),
+                      error: err => {
+                        error = this.agregarErrorUploadValidation(
+                          error,
+                          ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+                        );
+                      },
+                    });
+                }
+
+                if (data.expediente) {
+                  const paramsAuth: ListParams = {
+                    page: this.params.getValue().page,
+                    limit: this.params.getValue().limit,
+                  };
+                  paramsAuth['filter.idAuthorityIssuerTransferor'] =
+                    '$eq:' + manualvar_no_transferente + '';
+                  // Obtener institucion emisora de acuerdo al id 200
+                  await this.goodsBulkService
+                    .getNumberTransferenteAuthority(paramsAuth)
+                    .subscribe({
+                      next: async res => {
+                        console.log('emisora de acuerdo al id 200', res);
+                        if (res.data.length > 0) {
+                        } else if (res.data.length == 0) {
+                          let dataExtra = {
+                            nameInstitution: res.data[0].authorityName, // Institucion emisora nombre
+                            federalEntityKey: otclave_federative_entity, // Entidad federativa
+                            identifier: data.identificador, // Identificador
+                            transferNumber: data.transferente, // Transferente
+                            authorityNumber: no_autoridad, // Numero de autoridad
+                            emisoraInstitution: no_emisora, // NUMERO DE EMISORA
+                          };
+                          this.validExpedientExist(data, error, dataExtra);
+                        }
+                      },
+                      error: err => {
+                        error = this.agregarErrorUploadValidation(
+                          error,
+                          ERROR_TRANSFERENTE(data.transferente)
+                        );
+                      },
+                    });
+                }
+              }
+            }
+          } // Validacion 5 registros
+
+          // Errores encontrados
+          // error[1].push(row);
+          if (this.DeclarationsUploadValidationMassive.data_error[count]) {
+            // Insertar errores encontrados a los anteriores
+            this.DeclarationsUploadValidationMassive.data_error[
+              count
+            ][0].splice(
+              this.DeclarationsUploadValidationMassive.data_error[count][0],
+              ...error[0]
+            );
+          }
+        })
+      )
+      .subscribe(val => {
+        // Fin del proceso de validación
+        this.DeclarationsUploadValidationMassive.message_progress =
+          VALIDATION_END_MESSAGE;
+        // this.DeclarationsUploadValidationMassive =
+        //   this.DeclarationsSatSaeMassive;
+        console.log(this.DeclarationsUploadValidationMassive, this.listError);
+        console.log(val);
+      });
+  }
+
+  agregarErrorUploadValidation(error: any[], messageError: string) {
+    // Agregar contador de error
+    this.DeclarationsUploadValidationMassive.common_general.total_errores++;
+    // Cambiar validador de proceso
+    this.DeclarationsUploadValidationMassive.common_general.valid = false;
+    // Guardar error y mensaje
+    error[0].push(messageError);
+    return error;
+  }
+
+  async validExpedientExist(data: any, error: any[], dataExtra: any) {
+    // Validar si existe un expediente
+    await this.goodsBulkService.getExpedientById(data.expediente).subscribe({
+      next: res => {
+        let dateNowParse = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+        console.log(res);
+        let expediente: IExpedientMassiveUpload = {
+          id: this.paramsGeneral.p_no_expediente, // NO EXPEDIENTE FROM PARAMS
+          insertedBy: 'USER', // USUARIO SETEADO MANUALMENTE
+          insertMethod: 'CARGA MASIVA VOLANTES', // TIPO DE CARGA MASIVA
+          insertDate: dateNowParse, // FECHA ACTUAL PARA CARGAR
+          nameInstitution: dataExtra.nameInstitution, // NOMBRE DE LA INSTITUCION EMISORA
+          indicatedName: null, // SE PASA EL VALOR EN NULL
+          federalEntityKey: dataExtra.federalEntityKey, // ENTIDAD FEDERATIVA CLAVE
+          identifier: dataExtra.identificador, // IDENTIFICADOR
+          transferNumber: dataExtra.transferNumber, // NUMERO DE TRANSFERENTE
+          expTransferNumber: data.expediente, // EXPEDIENTE TRANSFER NUMBER
+          expedientType: 'T', // TIPO DE EXPEDIENTE
+          authorityNumber: dataExtra.authorityNumber, // NUMERO DE AUTORIDAD
+          stationNumber: '', // NUMERO EMISORA
+        };
+        if (!res) {
+          this.saveExpedient(expediente);
+        }
+      },
+      error: err => {
+        error = this.agregarErrorUploadValidation(
+          error,
+          ERROR_EXPEDIENTE(data.expediente)
+        );
+      },
+    });
+  }
+
+  saveExpedient(expediente: IExpedientMassiveUpload) {
+    console.log(expediente);
+    // await this.goodsBulkService
+    //   .getExpedientById(data.expediente)
+    //   .subscribe({
+    //     next: res => {
+    //       console.log(res);
+    //       if (!res) {
+
+    //       }
+    //     },
+    //     error: err => {
+    //       error = this.agregarError(
+    //         error,
+    //         ERROR_EXPEDIENTE(data.expediente)
+    //       );
+    //     },
+    //   });
   }
 }

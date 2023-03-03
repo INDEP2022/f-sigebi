@@ -4,6 +4,7 @@
       <div class="mr-auto p-2">
         <h5 class="title">{{ title }}</h5>
       </div>
+
       <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
         <button
           type="button"
@@ -19,6 +20,14 @@
           class="btn btn-primary btn-sm active"
           (click)="signDictum()">
           <i class="bx bxs-pencil"></i> Firmar Dictamen
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active"
+          (click)="finish()">
+          <i class="bx bxs-right-arrow-square"></i> Finalizar
         </button>
       </div>
       <div class="p-2">
@@ -55,7 +64,7 @@
                   <label for="">Fecha de Solicitud&#58;</label>
                   {{
                     registRequestForm.get('applicationDate').value
-                      | date : 'dd/MM/yyyy'
+                      | date: 'dd/MM/yyyy'
                   }}
                 </div>
               </div>
@@ -127,7 +136,7 @@
         </app-card>
 
         <div class="row pt-2">
-          <tabset class="md-tabs">
+          <tabset class="md-tabs" #staticTabs>
             <tab heading="{{ tab1 }}" id="tab1">
               <!-- Registro de Solicitudes o bines -->
               <app-request-record-tab
@@ -135,15 +144,16 @@
                 [requestForm]="registRequestForm"></app-request-record-tab>
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
-              <app-request-detail-tab
-                *ngIf="
-                  complianceVerifi ||
+              <!--//en caso de que no funciones el === false ///
+                complianceVerifi ||
                   classifyAssets ||
                   validateDocument ||
                   notifyClarifiOrImpropriety ||
                   approvalProcess
-                "
-                [dataObject]="object"></app-request-detail-tab>
+              -->
+              <app-request-detail-tab
+                *ngIf="requestRegistration === false"
+                [requestForm]="registRequestForm"></app-request-detail-tab>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">
@@ -156,12 +166,12 @@
               <app-verify-compliance-tab
                 *ngIf="complianceVerifi"
                 [typeDoc]="'verify-compliance'"
-                [dataObject]="object"></app-verify-compliance-tab>
+                [requestObject]="requestData"></app-verify-compliance-tab>
               <!-- fin -->
               <!-- clasificacion de bienes -->
               <app-classification-assets-tab
                 *ngIf="classifyAssets"
-                [dataObject]="object"
+                [requestObject]="requestData"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->
@@ -196,9 +206,12 @@
             </tab>
             <tab
               heading="{{ tab4 }}"
-              *ngIf="requestRegistration || approvalProcess">
+              *ngIf="(requestRegistration || approvalProcess) && !isExpedient">
               <app-registration-request-form
-                *ngIf="requestRegistration"></app-registration-request-form>
+                *ngIf="requestRegistration"
+                [requestForm]="
+                  registRequestForm
+                "></app-registration-request-form>
               <!-- Aprovacion de de solicitudes -->
               <app-classification-assets-tab
                 *ngIf="approvalProcess"

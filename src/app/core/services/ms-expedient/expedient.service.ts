@@ -25,4 +25,16 @@ export class ExpedientService extends HttpService {
   getAllFilter(params: _Params) {
     return this.get<IListResponse<IExpedient>>('expedient', params);
   }
+
+  getNextVal(): Observable<{ nextval: string }> {
+    return this.get(this.route.GetNextVal);
+  }
+
+  create(body: IExpedient) {
+    return this.post(this.route.CreateExpedient, body);
+  }
+
+  update(id: number | string, body: Partial<IExpedient>) {
+    return this.post(`${this.route.BasePath}/${id}`, body);
+  }
 }

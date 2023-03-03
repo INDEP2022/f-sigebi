@@ -17,16 +17,27 @@
     </div>
     <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-4">
-        <div class="col-md-1">
-          <span style="line-height: 2">Prioridad</span>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="requestForm.get('urgentPriority')">
+        <div class="col-md-3">
+          <form-check label="Prioridad" for="urgentPriority">
             <input
+              id="urgentPriority"
               type="checkbox"
-              formControlName="urgentPriority"
-              aria-label=""
-              id="priority" />
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="priority"
+              (change)="changePriority($event)" />
+          </form-check>
+        </div>
+        <div class="col-md-3" *ngIf="priorityString === 'Y'">
+          <form-field
+            [control]="requestForm.get('priorityDate')"
+            label="Fecha de Prioridad">
+            <input
+              type="text"
+              class="form-control"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [bsValue]="bsPriorityDate"
+              (bsValueChange)="changePriorityDateEvent($event)" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -227,6 +238,16 @@
         </div>-->
         <div class="col-md-3">
           <form-field
+            [control]="requestForm.get('trialType')"
+            label="Tipo Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="trialType" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
             [control]="requestForm.get('transferEntNotes')"
             label="Notas Entidad Transferente">
             <input
@@ -235,7 +256,7 @@
               formControlName="transferEntNotes" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field
             [control]="requestForm.get('observations')"
             label="Observaciones">
@@ -244,6 +265,52 @@
               id="observations"
               formControlName="observations">
             </textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('previousInquiry')"
+            label="Averiguacion Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="previousInquiry" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('circumstantialRecord')"
+            label="Acta Circunstancial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="circumstantialRecord" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('lawsuit')"
+            label="Acta Circunstancial">
+            <input type="text" class="form-control" formControlName="lawsuit" />
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('tocaPenal')"
+            label="Toca Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tocaPenal" />
           </form-field>
         </div>
       </div>

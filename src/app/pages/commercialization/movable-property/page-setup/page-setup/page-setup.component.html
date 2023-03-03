@@ -18,9 +18,20 @@
         Nuevo
       </button>
     </div>
-    <ng2-smart-table
-      [settings]="settings"
-      [source]="data"
-      (edit)="openForm($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <div [ngClass]="{ 'table-loading': loading }">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="confirmDelete($event.data)"></ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
   </div>
 </app-card>

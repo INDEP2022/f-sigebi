@@ -151,6 +151,10 @@ export const PARAMETERIZATION_ROUTES = [
       },
       //Félix
       {
+        label: 'Catálogo de separadores a documentos',
+        link: '/pages/parameterization/cat-of-separators-documents',
+      },
+      {
         label: 'Valores',
         link: '/pages/parameterization/values',
       },
@@ -182,6 +186,14 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Tiempo Máximo Para Cierre Actas Devolución',
         link: '/pages/parameterization/maximum-times',
+      },
+      {
+        label: 'Catálogo de peritos',
+        link: '/pages/parameterization/cat-appraisers',
+      },
+      {
+        label: 'Catálogo de tipos de bienes',
+        link: '/pages/parameterization/cat-types-of-goods',
       },
     ],
   },

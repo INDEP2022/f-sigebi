@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
@@ -10,16 +9,18 @@ import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-deleg
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
+import { ICatThirdView } from 'src/app/core/models/ms-goods-inv/goods-inv.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { responsableUser, typeTercero } from './warehouse-data';
+import { responsableUser } from './warehouse-data';
 
 @Component({
   selector: 'app-warehouse-form',
@@ -30,7 +31,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   regDelData: IRegionalDelegation;
   warehouseForm: FormGroup = new FormGroup({});
   responsiblesUsers = new DefaultSelect(responsableUser);
-  typeTercero = new DefaultSelect(typeTercero);
+  typeTercero = new DefaultSelect<ICatThirdView>();
   states = new DefaultSelect<IStateOfRepublic>();
   municipalities = new DefaultSelect<IMunicipality>();
   cities = new DefaultSelect<ICity>();
@@ -47,13 +48,13 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private router: Router,
     private municipalityService: MunicipalityService,
     private typeWarehouseService: TypeWarehouseService,
     private cityService: CityService,
     private localityService: LocalityService,
     private goodsQueryService: GoodsQueryService,
-    private stateService: DelegationStateService
+    private stateService: DelegationStateService,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
   }
@@ -62,36 +63,43 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getStateSelect(new ListParams());
     this.getTypeWarehouseSelect(new ListParams());
+    this.getTypeTerceroSelect(new ListParams());
   }
 
   //Verificar typeTercero//
   prepareForm() {
     this.warehouseForm = this.fb.group({
-      nameWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       responsibleUser: [null],
-      numberRegister: [null],
-      typeTercero: [null],
-      regionalDelegation: [
+      numberRegister: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      typeTercero: [null, [Validators.required]],
+      responsibleDelegation: [
         this.regDelData.description,
         [Validators.pattern(STRING_PATTERN)],
       ],
       managedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      state: [null],
-      municipality: [null],
-      city: [null],
-      locality: [null],
-      zipCode: [null],
-      street: [null],
+      stateCode: [null, [Validators.required]],
+      municipalityCode: [null, [Validators.required]],
+      cityCode: [null, [Validators.required]],
+      localityCode: [null, [Validators.required]],
+      zipCode: [null, [Validators.required]],
+      street: [null, [Validators.pattern(STRING_PATTERN)]],
       numberOutside: [null],
-      typeWarehouse: [null],
-      numberManagement: [null],
+      type: [null],
+      numberManagement: [null, [Validators.pattern(STRING_PATTERN)]],
       locator: [null],
-      contractNumber: [null],
+      contractNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       siabWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
       startOperation: [null],
       endOperation: [null],
-      latitude: [null, [Validators.pattern(STRING_PATTERN)]],
-      longitude: [null, [Validators.pattern(STRING_PATTERN)]],
+      latitude: [null, [Validators.pattern(DOUBLE_PATTERN)]],
+      longitude: [null, [Validators.pattern(DOUBLE_PATTERN)]],
     });
   }
   confirm() {
@@ -101,7 +109,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       '¿Estas seguro de crear almacén?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        console.log(this.warehouseForm.value);
         this.onLoadToast('success', 'Almacén creado correctamente', '');
         this.close();
       }
@@ -110,7 +118,17 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getResponsibleUserSelect(responsibleUser: ListParams) {}
 
-  getTypeTerceroSelect(typeTercero: ListParams) {}
+  getTypeTerceroSelect(params: ListParams) {
+    params.page = 0;
+    const language = {
+      language: 'US',
+    };
+    this.programmingService
+      .postCatThirdView(params, language)
+      .subscribe(data => {
+        this.typeTercero = new DefaultSelect(data.data, data.count);
+      });
+  }
 
   //Revisar error //
   getStateSelect(params?: ListParams) {
@@ -155,7 +173,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   municipalitySelect(item: IMunicipality) {
-    console.log('municipio', item);
     this.municipalityId = item.idMunicipality;
     this.getLocalitySelect(new ListParams());
   }
@@ -172,7 +189,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   localitySelect(item: ILocality) {
-    console.log('localidad', item);
     this.localityId = item.id;
     this.getZipCodeSelect(new ListParams());
   }
@@ -184,7 +200,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       params['filter.keyTownship'] = this.municipalityId;
       params['filter.keySettlement'] = this.localityId;
       this.goodsQueryService.getZipCode(params).subscribe(data => {
-        console.log('codigos postales', data);
         this.zipCode = new DefaultSelect(data.data, data.count);
       });
     }

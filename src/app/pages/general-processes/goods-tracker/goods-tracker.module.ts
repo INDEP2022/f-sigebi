@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { StoreModule } from '@ngrx/store';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -18,7 +19,7 @@ import { TransferAutorityFilterComponent } from './components/transfer-autority-
 import { ViewPhotosComponent } from './components/view-photos/view-photos.component';
 import { GoodsTrackerRoutingModule } from './goods-tracker-routing.module';
 import { GoodsTrackerComponent } from './goods-tracker/goods-tracker.component';
-
+import { trackedGoodsReducer } from './store/goods-tracker.reducer';
 @NgModule({
   declarations: [
     GoodsTrackerComponent,
@@ -42,6 +43,7 @@ import { GoodsTrackerComponent } from './goods-tracker/goods-tracker.component';
     CarouselModule,
     AccordionModule,
     SelectFractionComponent,
+    StoreModule.forFeature('trackedGoods', trackedGoodsReducer),
   ],
 })
 export class GoodsTrackerModule {}

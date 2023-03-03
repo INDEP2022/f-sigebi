@@ -4,4 +4,6 @@ export enum ParameterGoodEndpoints {
   TDescAtrib = 'tdescatrib',
   GetAttribById = 'tdescatrib/find-by-table',
   Parameters = 'Parameters',
+  ParameterMaintenace = 'parametergood/parameters',
+  CategorzacionAutomNumerario = 'categorzacion-autom-numerario',
 }

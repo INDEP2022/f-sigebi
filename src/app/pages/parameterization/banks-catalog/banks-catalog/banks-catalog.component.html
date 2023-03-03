@@ -1,22 +1,42 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">CAT&Aacute;LOGO DE BANCOS</h5>
+    <div class="buttons">
+      <button class="btn btn-primary active btn-sm ml-3" (click)="openModal()">
+        CUENTAS BANCARIAS
+      </button>
+    </div>
   </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="d-flex justify-content-center">
-          <div class="col-md-6 col-sm-12 col-xs-12">
-            <app-banks-shared [form]="form"></app-banks-shared>
-          </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <app-banks-shared
+            [labelName]="'Clave Banco'"
+            [form]="form"
+            [bankField]="'cveBank'"
+            (nameBank)="
+              form.get('nameBank').patchValue($event)
+            "></app-banks-shared>
+        </div>
+        <div class="col-md-9 col-sm-12 col-xs-12 pt-3">
+          <form-field [control]="form.get('nameBank')" label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameBank" />
+          </form-field>
         </div>
       </div>
       <hr />
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('account')" label="Cuenta">
-            <input type="text" class="form-control" formControlName="account" />
+          <form-field [control]="form.get('cveAccount')" label="Cuenta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveAccount" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -31,49 +51,44 @@
         </div>
       </div>
       <div class="row mt-2">
-        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('currency')" label="Moneda">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="currency" />
-          </form-field>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <app-currency-shared [form]="form"></app-currency-shared>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field
             [control]="form.get('accountType')"
             label="Tipo de cuenta">
             <select class="form-control" formControlName="accountType">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">CONCENTRADORA</option>
-              <option [value]="2">ACEGURADA</option>
-              <option [value]="3">DEVOLUCIONES</option>
+              <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
+              <option [value]="'ASEGURADA'">ASEGURADA</option>
+              <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
             </select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <app-delegation-shared
             [form]="form"
+            [delegationField]="'delegationNumber'"
             [showSubdelegation]="false"></app-delegation-shared>
         </div>
       </div>
       <hr />
-      <div class="row pl-4 mb-3">
-        Si hay traspasos entre cuentas ind&iacute;quelo aqu&iacute;&#58;
+      <div class="row mb-3">
+        <strong
+          >Si hay traspasos entre cuentas ind&iacute;quelo
+          aqu&iacute;&#58;</strong
+        >
       </div>
       <div class="row mt-2">
-        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field
-            [control]="form.get('accountTransferred')"
-            label="Cuenta a traspasar">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="accountTransferred" />
-          </form-field>
-        </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <app-banks-shared [form]="form"></app-banks-shared>
+          <app-account-banks-shared
+            [form]="form"
+            (properties)="setProperties($event)"></app-account-banks-shared>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('bank_I')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank_I" />
+          </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="form.get('square_I')" label="Plaza">
@@ -87,7 +102,10 @@
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('branch_I')" label="Sucursal">
-            <input type="text" class="form-control" formControlName="branch" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="branch_I" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -95,18 +113,17 @@
             <input
               type="text"
               class="form-control"
-              formControlName="currency" />
+              formControlName="currency_I" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('accountType_I')"
             label="Tipo de cuenta">
-            <select class="form-control" formControlName="accountType">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">CONCENTRADORA</option>
-              <option [value]="2">ACEGURADA</option>
-              <option [value]="3">DEVOLUCIONES</option>
+            <select class="form-control" formControlName="accountType_I">
+              <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
+              <option [value]="'ASEGURADA'">ASEGURADA</option>
+              <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
             </select>
           </form-field>
         </div>
@@ -115,7 +132,19 @@
     <div class="row">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="submit" class="btn btn-primary active">Guardar</button>
+          <confirm-button
+            text="Guardar"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="confirm()"
+            [btnSmall]="true">
+          </confirm-button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="clean()">
+            Limpiar
+          </button>
         </div>
       </div>
     </div>

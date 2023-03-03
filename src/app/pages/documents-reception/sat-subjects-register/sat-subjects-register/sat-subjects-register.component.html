@@ -80,14 +80,17 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <button type="submit" class="btn btn-primary active btn-sm">
+          <button
+            [disabled]="downloading"
+            type="submit"
+            class="btn btn-primary active btn-sm">
             Consultar
           </button>
         </div>
       </div>
       <hr class="row" />
       <div class="row pb-3">
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="listGestionSat.length > 0">
           <div class="alert alert-info">
             {{
               INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
@@ -97,18 +100,27 @@
         <div class="col-md-12">
           <app-columns-select
             [(settings)]="mailboxSettings"></app-columns-select>
-          <!-- <button
-            type="button"
-            class="ml-2 mr-2 btn btn-success btn-sm"
-            [disabled]="true">
-            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
-          </button> -->
-          <button
-            type="button"
-            class="ml-2 mr-2 btn btn-success btn-sm"
-            (click)="exportXlsx('gestion', listGestionSat)">
-            Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
-          </button>
+          <ng-container *ngIf="listGestionSat.length > 0">
+            <button
+              [disabled]="downloading"
+              type="button"
+              class="ml-2 mr-2 btn btn-success btn-sm"
+              (click)="getReportTramiteSat()">
+              Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+            </button>
+            <button
+              [disabled]="downloading"
+              type="button"
+              class="ml-2 mr-2 btn btn-success btn-sm"
+              (click)="exportXlsx('gestion', listGestionSat)">
+              Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
+            </button>
+          </ng-container>
+        </div>
+        <div class="col-md-12" *ngIf="downloading">
+          <div class="alert alert-warning">
+            {{ DOWNLOAD_PROCESS }}
+          </div>
         </div>
       </div>
       <div class="row" style="max-height: 600px; overflow-y: scroll">
@@ -163,21 +175,24 @@
 
         <form-field
           [control]="satTransferForm.get('satHouseGuide')"
-          label="SAT Gu&iacute;ahouse"
+          label="SAT Gu&iacute;a House"
           class="col-md-3">
           <input class="form-control" formControlName="satHouseGuide" />
         </form-field>
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <button type="submit" class="btn btn-primary active btn-sm">
+          <button
+            [disabled]="downloadingTransferente"
+            type="submit"
+            class="btn btn-primary active btn-sm">
             Consultar
           </button>
         </div>
       </div>
       <hr class="row" />
       <div class="row pb-3">
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="listSatTransferencia.length > 0">
           <div class="alert alert-info">
             {{
               INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
@@ -187,18 +202,28 @@
         <div class="col-md-12">
           <app-columns-select
             [(settings)]="transfersSettings"></app-columns-select>
-          <!-- <button
-            type="button"
-            class="ml-2 mr-2 btn btn-success btn-sm"
-            (click)="getReportTramiteSat()">
-            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
-          </button> -->
-          <button
-            type="button"
-            class="ml-2 mr-2 btn btn-success btn-sm"
-            (click)="exportXlsx('transferencia', listSatTransferencia)">
-            Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
-          </button>
+          <ng-container *ngIf="listSatTransferencia.length > 0">
+            <button
+              [disabled]="downloadingTransferente"
+              type="button"
+              class="ml-2 mr-2 btn btn-success btn-sm"
+              (click)="getReportTransferenciaSat(true)">
+              Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+            </button>
+            <button
+              [disabled]="downloadingTransferente"
+              type="button"
+              class="ml-2 mr-2 btn btn-success btn-sm"
+              (click)="getReportTransferenciaSat()">
+              <!-- (click)="exportXlsx('transferencia', listSatTransferencia)"> -->
+              Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
+            </button>
+          </ng-container>
+        </div>
+        <div class="col-md-12" *ngIf="downloadingTransferente">
+          <div class="alert alert-warning">
+            {{ DOWNLOAD_PROCESS }}
+          </div>
         </div>
       </div>
       <div class="row" style="max-height: 600px; overflow-y: scroll">

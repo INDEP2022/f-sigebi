@@ -31,6 +31,7 @@ import { AssetsComponent } from './tabs/records-of-request-components/assets/ass
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 import { RequestRecordTabComponent } from './tabs/records-of-request-components/request-record-tab/request-record-tab.component';
+import { AssociateFieldComponent } from './tabs/registration-request-form/actions/associate-field/associate-field.component';
 import { RegistrationRequestFormComponent } from './tabs/registration-request-form/registration-request-form.component';
 import { RequestDocumentFormComponent } from './tabs/request-document-form/request-document-form.component';
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
@@ -69,6 +70,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     RefuseClarificationModalComponent,
     ApprovalAssetsTabsComponent,
     GenerateDictumComponent,
+    AssociateFieldComponent,
   ],
   imports: [
     CommonModule,

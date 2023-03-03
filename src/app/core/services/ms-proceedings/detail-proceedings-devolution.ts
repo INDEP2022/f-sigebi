@@ -3,7 +3,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ProceedingsEndpoints } from './../../../common/constants/endpoints/ms-proceedings-endpoints';
-import { IDetailProceedingsDevolution } from './../../models/ms-proceedings/detail-proceedings-devolution.model';
+import { IDetailProceedingsDevolution2 } from './../../models/ms-proceedings/detail-proceedings2-devolution.model';
+import { ITotalReconciledGoods } from './../../models/ms-proceedings/total-reconciled-goods.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +16,19 @@ export class DetailProceedingsDevolutionService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
-  getDetailProceedingsDevolutionByExpedient(
-    fileNumber: string | number,
+  getDetailProceedingsDevolutionByProceedingsNumb(
+    proceedingsNumb: string | number,
     params?: ListParams
   ) {
-    return this.get<IListResponse<IDetailProceedingsDevolution>>(
-      `${this.endpoint}?filter.good.fileId=${fileNumber}`
+    return this.get<IListResponse<IDetailProceedingsDevolution2>>(
+      `${this.endpoint}?filter.numGoodProceedingsId=${proceedingsNumb}`,
+      params
+    );
+  }
+
+  getTotalReconciledGoods(proceedingId: string | number) {
+    return this.get<IListResponse<ITotalReconciledGoods>>(
+      `${this.endpoint}/get-total-movement-accounts-by-proceeding/${proceedingId}`
     );
   }
 }
