@@ -1,6 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   DOUBLE_PATTERN,
@@ -18,9 +21,11 @@ import { PAY_RECEIPT_REPORT_COLUMNS } from './payment-receipts-report-columns';
 export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   total: number = 0;
-
+  goodList: any;
+  dataGood: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() onConfirm = new EventEmitter<any>();
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
     this.settings = {
       ...this.settings,
@@ -31,6 +36,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareform();
+    this.getGood();
   }
 
   private prepareform() {
@@ -65,7 +71,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       price: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
       remBalance: [null, [Validators.pattern(DOUBLE_PATTERN)]],
       iva: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
-      total: [null, [Validators.pattern(DOUBLE_PATTERN)]],
+      total: [null],
       receivedAmount: [
         null,
         [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
@@ -147,7 +153,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
     };
 
     //this.showSearch = true;
-    console.log(params);
+    // console.log(params);
     const start = new Date(this.form.get('date').value);
     const end = new Date(this.form.get('fechaEvento').value);
 
@@ -162,7 +168,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'Fecha emisión no puede ser menor a fecha de evento'
+        'fecha de evento no puede ser menor a Fecha emisión'
       );
       return;
     }
@@ -170,7 +176,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${params.PN_DELEG}&PN_SUBDEL=${params.PN_SUBDEL}&PF_MES=${params.PF_MES}&PF_ANIO=${params.PF_ANIO}`;
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCOMERRECIBOS.pdf?PN_DELEG=${params.PN_DELEG}&DESTYPE=${params.DESTYPE}&ID_RECIBOPAGO=${params.ID_RECIBOPAGO}&FECHA_EMISION=${params.FECHA_EMISION}&RECIBIMOS_DE=${params.RECIBIMOS_DE}&DOMICILIO=${params.DOMICILIO}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PRECIO_VENTA=${params.PRECIO_VENTA}&IVA=${params.IVA}&TOTAL=${params.TOTAL}&CANTIDAD_RECIBIDA=${params.CANTIDAD_RECIBIDA}&SALDO_RESTANTE=${params.SALDO_RESTANTE}&PORC_APPIVA=${params.PORC_APPIVA}&PORC_NOAPPIVA=${params.PORC_NOAPPIVA}&CVE_TRANSF=${params.CVE_TRANSF}&DESC_EVENTO=${params.DESC_EVENTO}&ETIQUETA_PROC=${params.ETIQUETA_PROC}&CVE_PROCESO=${params.CVE_PROCESO}&FEC_EVENTO=${params.FEC_EVENTO}&ID_LOTE=${params.ID_LOTE}&ENTREGA_INM=${params.ENTREGA_INM}&OBSERVACIONES=${params.OBSERVACIONES}&NOTARIO_NOM=${params.NOTARIO_NOM}&NOTARIO_NUM=${params.NOTARIO_NUM}&NOTARIO_DOM=${params.NOTARIO_DOM}&NOTARIO_TEL=${params.NOTARIO_TEL}&PENA=${params.PENA}&APODERADO_LEGAL=${params.APODERADO_LEGAL}&RECIBI=${params.RECIBI}`;
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RCOMERRECIBOS.pdf');
     setTimeout(() => {
@@ -211,6 +217,18 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       this.form.controls['remBalance'].setValue(remFormat);
       this.form.controls['NoAppIva'].setValue(noAppIva);
     }
+  }
+  getGood() {
+    this.loading = true;
+    this.reportService.getGood().subscribe({
+      next: data => {
+        this.goodList = data;
+        this.dataGood = this.goodList.data;
+        console.log(this.goodList.data);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

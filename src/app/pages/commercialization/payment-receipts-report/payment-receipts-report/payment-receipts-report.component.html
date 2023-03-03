@@ -140,6 +140,19 @@
                   readonly />
               </form-field>
             </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('remBalance')"
+                label="Saldo restante">
+                <input
+                  style="font-weight: bold"
+                  type="text"
+                  class="form-control"
+                  value="$saldo"
+                  formControlName="remBalance"
+                  readonly />
+              </form-field>
+            </div>
           </div>
         </div>
         <div class="col-md-6 alert alert-info">
@@ -185,28 +198,12 @@
               <div class="table-responsive">
                 <ng2-smart-table
                   [settings]="settings"
-                  [source]="data"></ng2-smart-table>
-                <!-- <app-goods-types-shared [subTypeShow]="false" [ssubTypeShow]="false"
+                  [source]="dataGood"></ng2-smart-table>
+                <!-- <app-goods-types-shared [subTypeShow]="true" [ssubTypeShow]="false"
                   [sssubTypeShow]="false"></app-goods-types-shared> -->
               </div>
             </div>
             <!--  -->
-
-            <div class="row pt-5">
-              <div class="col-md-4">
-                <form-field
-                  [control]="form.get('remBalance')"
-                  label="Saldo restante">
-                  <input
-                    style="font-weight: bold"
-                    type="text"
-                    class="form-control"
-                    value="$saldo"
-                    formControlName="remBalance"
-                    readonly />
-                </form-field>
-              </div>
-            </div>
           </div>
         </div>
       </div>
