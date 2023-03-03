@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -11,6 +12,7 @@ import {
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PAY_RECEIPT_REPORT_COLUMNS } from './payment-receipts-report-columns';
 
 @Component({
@@ -24,6 +26,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   goodList: any;
   dataGood: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  select = new DefaultSelect<IDepartment>();
   @Output() onConfirm = new EventEmitter<any>();
   constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
@@ -37,6 +40,12 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareform();
     this.getGood();
+  }
+  get departament() {
+    return this.form.get('departament');
+  }
+  get subdelegation() {
+    return this.form.get('subdelegation');
   }
 
   private prepareform() {
@@ -71,7 +80,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       price: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
       remBalance: [null, [Validators.pattern(DOUBLE_PATTERN)]],
       iva: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
-      total: [null],
+      total: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
       receivedAmount: [
         null,
         [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
@@ -114,6 +123,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       department: [null],
+      subdelegation: [null],
     });
   }
 
@@ -153,7 +163,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
     };
 
     //this.showSearch = true;
-    // console.log(params);
+    console.log(params);
     const start = new Date(this.form.get('date').value);
     const end = new Date(this.form.get('fechaEvento').value);
 
@@ -195,13 +205,11 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
 
   priceTotal(x: any) {
     // this.form.value.price = this.form.controls['price'].value;
-    let appIva = this.form.value.iva / 100;
-    let noAppIva = this.form.value.NoAppIva / 100;
-    let total = this.form.value.price * appIva + this.form.value.price;
-    let remBalance = this.form.value.receivedAmount - total - noAppIva;
 
-    console.log(remBalance);
-
+    let noAppIva = (this.form.value.price * this.form.value.NoAppIva) / 100;
+    let appIva = (this.form.value.price * this.form.value.iva) / 100;
+    let total = Number(this.form.value.price) + Number(appIva);
+    let remBalance = this.form.value.receivedAmount - total;
     if (
       this.form.value.price !== null &&
       this.form.value.price !== 0 &&
@@ -224,7 +232,6 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       next: data => {
         this.goodList = data;
         this.dataGood = this.goodList.data;
-        console.log(this.goodList.data);
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -238,19 +245,4 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
     this.onConfirm.emit(true);
     // this.getListBien();
   }
-
-  data = [
-    {
-      noGood: 12,
-      typeUbi: 'Tipo 01',
-    },
-    {
-      noGood: 21,
-      typeUbi: 'Tipo 42',
-    },
-    {
-      noGood: 43,
-      typeUbi: 'Tipo 234',
-    },
-  ];
 }
