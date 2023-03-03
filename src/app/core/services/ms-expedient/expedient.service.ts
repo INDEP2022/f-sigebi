@@ -30,7 +30,7 @@ export class ExpedientService extends HttpService {
     return this.get(this.route.GetNextVal);
   }
 
-  create(body: IExpedient) {
+  create(body: IExpedient): Observable<IExpedient> {
     return this.post(this.route.CreateExpedient, body);
   }
 

@@ -18,15 +18,18 @@ import {
 } from 'src/app/core/models/catalogs/transferente.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ConvertiongoodEndpoints } from '../../../common/constants/endpoints/ms-convertiongood-endpoints';
+import { DocumentsEndpoints } from '../../../common/constants/endpoints/ms-documents-endpoints';
+import { IDocuments } from '../../models/ms-documents/documents';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
+import { DelegationService } from '../catalogs/delegation.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocReceptionRegisterService extends HttpService {
   microsevice: string = '';
-  constructor() {
+  constructor(private delegationService: DelegationService) {
     super();
   }
 
@@ -192,5 +195,20 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get(`${UserEndpoints.GetUserName}/${delegation}`).pipe(
       tap(() => (this.microservice = ''))
     );
+  }
+
+  getDocuments(
+    self?: DocReceptionRegisterService,
+    params?: string
+  ): Observable<IListResponse<IDocuments>> {
+    self.microservice = DocumentsEndpoints.Documents;
+    return self
+      .get<IListResponse<IDocuments>>(DocumentsEndpoints.Documents, params)
+      .pipe(
+        tap(resp => {
+          this.microservice = '';
+          console.log(params, resp);
+        })
+      );
   }
 }

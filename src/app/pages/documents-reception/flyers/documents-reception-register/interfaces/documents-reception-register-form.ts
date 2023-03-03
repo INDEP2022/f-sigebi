@@ -13,6 +13,7 @@ import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../../../../core/models/ms-users/seg-access-area-relational.model';
+import { STRING_PATTERN } from '../../../../../core/shared/patterns';
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -43,6 +44,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   externalRemitter: new FormControl<string>(null, [
     Validators.required,
     Validators.maxLength(60),
+    Validators.pattern(STRING_PATTERN),
   ]),
   affairKey: new FormControl<string>(null, Validators.required),
   affair: new FormControl<string | number>(null, Validators.required),
@@ -57,20 +59,37 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   addressGeneral: new FormControl<boolean | number>(false),
   stage: new FormControl<string>(null),
   stageName: new FormControl<string>(null),
-  circumstantialRecord: new FormControl<string>(null, Validators.maxLength(30)),
-  preliminaryInquiry: new FormControl<string>(null, Validators.maxLength(200)),
-  criminalCase: new FormControl<string>(null, Validators.maxLength(40)),
+  circumstantialRecord: new FormControl<string>(null, [
+    Validators.maxLength(30),
+    Validators.pattern(STRING_PATTERN),
+  ]),
+  preliminaryInquiry: new FormControl<string>(null, [
+    Validators.maxLength(200),
+    Validators.pattern(STRING_PATTERN),
+  ]),
+  criminalCase: new FormControl<string>(null, [
+    Validators.maxLength(40),
+    Validators.pattern(STRING_PATTERN),
+  ]),
   judgementType: new FormControl<string>(null),
-  protectionKey: new FormControl<string>(null, Validators.maxLength(100)),
-  touchPenaltyKey: new FormControl<string>(null, Validators.maxLength(30)),
+  protectionKey: new FormControl<string>(null, [
+    Validators.maxLength(100),
+    Validators.pattern(STRING_PATTERN),
+  ]),
+  touchPenaltyKey: new FormControl<string>(null, [
+    Validators.maxLength(30),
+    Validators.pattern(STRING_PATTERN),
+  ]),
   officeExternalKey: new FormControl<string>(null, [
     Validators.required,
     Validators.maxLength(35),
+    Validators.pattern(STRING_PATTERN),
   ]),
   externalOfficeDate: new FormControl<string | Date>(null, Validators.required),
   observations: new FormControl<string>(null, [
     Validators.required,
     Validators.maxLength(1000),
+    Validators.pattern(STRING_PATTERN),
   ]),
   expedientTransferenceNumber: new FormControl<string>(
     null,
@@ -83,7 +102,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
-  transference: new FormControl<number>(null, Validators.required),
+  transference: new FormControl<number>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null, Validators.required),
   autorityNumber: new FormControl<IAuthority>(null, Validators.required),

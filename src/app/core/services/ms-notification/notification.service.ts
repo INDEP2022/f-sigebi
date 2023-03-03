@@ -44,10 +44,10 @@ export class NotificationService extends HttpService {
     return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
   }
 
-  getLastWheelNumber(): Observable<{ wheel: number }> {
-    return this.get<{ wheel: string }>(this.route.LastWheelNumber).pipe(
+  getLastWheelNumber(): Observable<{ nextval: number }> {
+    return this.get<{ nextval: string }>(this.route.LastWheelNumber).pipe(
       map(resp => {
-        return { wheel: Number(resp.wheel) };
+        return { nextval: Number(resp.nextval) };
       })
     );
   }
