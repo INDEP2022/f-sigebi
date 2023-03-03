@@ -73,13 +73,74 @@
                 [form]="form"></app-delegation-shared>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-4">
               <form-field [control]="form.get('cp')" label="CP">
                 <input type="text" class="form-control" formControlName="cp" />
               </form-field>
             </div>
           </div>
           <hr />
+
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('receivedAmount')"
+                label="Cant. Recibida">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="receivedAmount" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('price')"
+                label="Precio de venta del inmueble">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="price" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="form.get('iva')" label="IVA">
+                <input type="text" class="form-control" formControlName="iva" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('NoAppIva')"
+                label="% del valor del Inmueble, exento del I.V.A.">
+                <input
+                  type="text"
+                  class="form-control"
+                  (keyup)="priceTotal($event)"
+                  formControlName="NoAppIva" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('appIva')"
+                label="% del Valor del Inmueble, más el 100% del I.V.A.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="appIva"
+                  readonly />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="form.get('total')" label="Total">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="total"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
         </div>
         <div class="col-md-6 alert alert-info">
           <div class="row">
@@ -119,79 +180,25 @@
                   formControlName="transferee" />
               </form-field>
             </div>
+            <!-- table -->
             <div class="row pt-5">
               <div class="table-responsive">
                 <ng2-smart-table
                   [settings]="settings"
                   [source]="data"></ng2-smart-table>
+                <!-- <app-goods-types-shared [subTypeShow]="false" [ssubTypeShow]="false"
+                  [sssubTypeShow]="false"></app-goods-types-shared> -->
               </div>
             </div>
-            <div class="row pt-5">
-              <div class="col-md-3">
-                <form-field
-                  [control]="form.get('receivedAmount')"
-                  label="Cant. Recibida">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="receivedAmount" />
-                </form-field>
-              </div>
-              <div class="col-md-3">
-                <form-field
-                  [control]="form.get('price')"
-                  label="Precio de venta del inmueble">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="price" />
-                </form-field>
-              </div>
-              <div class="col-md-3">
-                <form-field [control]="form.get('iva')" label="IVA">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="iva" />
-                </form-field>
-              </div>
-              <div class="col-md-3">
-                <form-field
-                  [control]="form.get('NoAppIva')"
-                  label="% del valor del Inmueble, exento del I.V.A.">
-                  <input
-                    type="text"
-                    class="form-control"
-                    (keyup)="priceTotal($event)"
-                    formControlName="NoAppIva" />
-                </form-field>
-              </div>
-              <div class="col-md-3">
-                <form-field
-                  [control]="form.get('appIva')"
-                  label="% del Valor del Inmueble, más el 100% del I.V.A.">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="appIva"
-                    readonly />
-                </form-field>
-              </div>
-              <div class="col-md-3">
-                <form-field [control]="form.get('total')" label="Total">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="total"
-                    readonly />
-                </form-field>
-              </div>
+            <!--  -->
 
-              <div class="col-md-3">
+            <div class="row pt-5">
+              <div class="col-md-4">
                 <form-field
                   [control]="form.get('remBalance')"
                   label="Saldo restante">
                   <input
+                    style="font-weight: bold"
                     type="text"
                     class="form-control"
                     value="$saldo"

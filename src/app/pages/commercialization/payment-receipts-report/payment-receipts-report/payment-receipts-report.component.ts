@@ -114,7 +114,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   confirm(): void {
     let params = {
       DESTYPE: this.form.controls['idEvent'].value,
-      ID_RECIBOPAGO: this.form.controls['id'].value,
+      ID_RECIBOPAGO: this.form.controls['idEvent'].value,
       FECHA_EMISION: this.form.controls['date'].value,
       RECIBIMOS_DE: this.form.controls['idEvent'].value,
       DOMICILIO: this.form.controls['domicile'].value,
@@ -148,8 +148,8 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
 
     //this.showSearch = true;
     console.log(params);
-    const start = new Date(this.form.get('FECHA_EMISION').value);
-    const end = new Date(this.form.get('FEC_EVENTO').value);
+    const start = new Date(this.form.get('date').value);
+    const end = new Date(this.form.get('fechaEvento').value);
 
     const startTemp = `${start.getFullYear()}-0${
       start.getUTCMonth() + 1
@@ -190,9 +190,9 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   priceTotal(x: any) {
     // this.form.value.price = this.form.controls['price'].value;
     let appIva = this.form.value.iva / 100;
+    let noAppIva = this.form.value.NoAppIva / 100;
     let total = this.form.value.price * appIva + this.form.value.price;
-    let remBalance =
-      this.form.value.receivedAmount - total - this.form.value.NoAppIva;
+    let remBalance = this.form.value.receivedAmount - total - noAppIva;
 
     console.log(remBalance);
 
@@ -202,20 +202,14 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       this.form.value.iva !== null &&
       this.form.value.iva !== 0
     ) {
-      // let remFormat = new Intl.NumberFormat('es-MX', {
-      //   minimumFractionDigits: 2,
-      // }).format(remBalance);
+      let remFormat = new Intl.NumberFormat('es-MX', {
+        minimumFractionDigits: 2,
+      }).format(remBalance);
 
       this.form.controls['total'].setValue(total);
       this.form.controls['appIva'].setValue(appIva);
-      this.form.controls['remBalance'].setValue(remBalance);
-
-      // commissionPercent = parseFloat(commissionPercent);
-      // let commission = price * (commissionPercent / 100);
-
-      // this.numeraireExchangeForm.controls['commission'].setValue(
-      //   commissionFormat
-      // );
+      this.form.controls['remBalance'].setValue(remFormat);
+      this.form.controls['NoAppIva'].setValue(noAppIva);
     }
   }
 
