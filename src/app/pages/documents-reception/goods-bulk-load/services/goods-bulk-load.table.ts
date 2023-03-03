@@ -6,12 +6,15 @@ import { HttpClient } from '@angular/common/http';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IAuthorityIssuingParams } from 'src/app/core/models/catalogs/authority.model';
 import { IDinamicQueryParams } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
+import { INotificationTransferentIndiciadoCityGetData } from 'src/app/core/models/ms-notification/notification.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { IndicatorDeadlineService } from 'src/app/core/services/catalogs/indicator-deadline.service';
 import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
 @Injectable({
@@ -26,7 +29,9 @@ export class GoodsBulkLoadService {
     private authorityService: AuthorityService,
     private issuingInstitutionService: IssuingInstitutionService,
     private expedientService: ExpedientService,
-    private satInterfaceService: SatInterfaceService
+    private satInterfaceService: SatInterfaceService,
+    private notificationService: NotificationService,
+    private indicatorDeadlineService: IndicatorDeadlineService
   ) {}
 
   /**
@@ -76,6 +81,17 @@ export class GoodsBulkLoadService {
     return this.authorityService.getCityByAsuntoSat(asuntoSat);
   }
 
+  /**
+   * Obtener las notificaciones de acuerdo al transferente, indiciado y la ciudad
+   */
+  getNotificacionesByTransferentIndiciadoCity(
+    body: INotificationTransferentIndiciadoCityGetData | any
+  ) {
+    return this.notificationService.getNotificacionesByTransferentIndiciadoCity(
+      body
+    );
+  }
+
   getIssuingInstitutionById(idInstitution: string) {
     return this.authorityService.getById(idInstitution);
   }
@@ -98,5 +114,8 @@ export class GoodsBulkLoadService {
   }
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);
+  }
+  getIndicatorById(idIndicator: string) {
+    return this.indicatorDeadlineService.getById(idIndicator);
   }
 }
