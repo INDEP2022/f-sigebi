@@ -413,51 +413,67 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     return true;
   }
 
-  calculateSaleTax() {
-    let { salePrice, saleTaxPercent } = this.form.value;
-    if (!salePrice || !saleTaxPercent) {
+  calculateSaleTax(): void {
+    // let { salePrice, saleTaxPercent } = this.form.value;
+    // if (!salePrice || !saleTaxPercent) {
+    //   return;
+    // }
+    // salePrice = parseFloat(salePrice);
+    // saleTaxPercent = parseFloat(saleTaxPercent);
+    // let saleTax = salePrice * (saleTaxPercent / 100);
+    // let saleTaxFormat = new Intl.NumberFormat('es-MX', {
+    //   minimumFractionDigits: 2,
+    // }).format(saleTax);
+    // this.form.controls['saleTax'].setValue(saleTaxFormat);
+    this.calculeTax('salePrice', 'saleTaxPercent', 'saleTax');
+  }
+
+  calculeTax(
+    namePrice1: string,
+    namePrice2: string,
+    formControlName: string
+  ): void {
+    let { [namePrice1]: price1, [namePrice2]: price2 } = this.form.value;
+    if (!price1 || !price2) {
       return;
     }
-    salePrice = parseFloat(salePrice);
-    saleTaxPercent = parseFloat(saleTaxPercent);
-    let saleTax = salePrice * (saleTaxPercent / 100);
-    let saleTaxFormat = new Intl.NumberFormat('es-MX', {
+    price1 = parseFloat(price1);
+    price2 = parseFloat(price2);
+    let tax = price1 * (price2 / 100);
+    let taxFormat = new Intl.NumberFormat('es-MX', {
       minimumFractionDigits: 2,
-    }).format(saleTax);
-    this.form.controls['saleTax'].setValue(saleTaxFormat);
+    }).format(tax);
+
+    this.form.controls[formControlName].setValue(taxFormat);
   }
 
   calculateCommission() {
-    let { commissionPercent, salePrice } = this.form.value;
-    if (!commissionPercent || !salePrice) {
-      return;
-    }
-    commissionPercent = parseFloat(commissionPercent);
-    let commission = salePrice * (commissionPercent / 100);
-    let commissionFormat = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-    }).format(commission);
-    this.form.controls['commission'].setValue(commissionFormat);
+    // let { commissionPercent, salePrice } = this.form.value;
+    // if (!commissionPercent || !salePrice) {
+    //   return;
+    // }
+    // commissionPercent = parseFloat(commissionPercent);
+    // let commission = salePrice * (commissionPercent / 100);
+    // let commissionFormat = new Intl.NumberFormat('es-MX', {
+    //   minimumFractionDigits: 2,
+    // }).format(commission);
+    // this.form.controls['commission'].setValue(commissionFormat);
+    this.calculeTax('salePrice', 'commissionPercent', 'commission');
   }
 
   calculateCommissionTax() {
-    let commissionTaxPercent = this.form.controls['commissionTaxPercent'].value;
-    let commission = this.form.controls['commission'].value;
-    if (
-      commissionTaxPercent !== null &&
-      commissionTaxPercent !== 0 &&
-      commissionTaxPercent !== '' &&
-      commission !== null &&
-      commission !== 0 &&
-      commission !== ''
-    ) {
-      commissionTaxPercent = parseFloat(commissionTaxPercent);
-      let commissionTax = commission * (commissionTaxPercent / 100);
-      let commissionTaxFormat = new Intl.NumberFormat('es-MX', {
-        minimumFractionDigits: 2,
-      }).format(commissionTax);
-      this.form.controls['commissionTax'].setValue(commissionTaxFormat);
-    }
+    // let commissionTaxPercent = this.form.controls['commissionTaxPercent'].value;
+    // let commission = this.form.controls['commission'].value;
+    // if (!commissionTaxPercent || !commission) {
+    //   return;
+    // }
+    // commissionTaxPercent = parseFloat(commissionTaxPercent);
+    // let commissionTax = commission * (commissionTaxPercent / 100);
+    // let commissionTaxFormat = new Intl.NumberFormat('es-MX', {
+    //   minimumFractionDigits: 2,
+    // }).format(commissionTax);
+    // this.form.controls['commissionTax'].setValue(commissionTaxFormat);
+    this.calculeTax('commission', 'commissionTaxPercent', 'commissionTax');
   }
 
   // addRow() {

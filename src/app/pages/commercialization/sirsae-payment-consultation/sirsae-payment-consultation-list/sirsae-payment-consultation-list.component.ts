@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { InterfacesirsaeService as InterfaceSirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from './../../../../shared/components/select/default-select';
 import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
@@ -23,8 +30,16 @@ export class SirsaePaymentConsultationListComponent
   // Usando tipo any hasta tener disponibles los servicios de la api
   params = new BehaviorSubject<ListParams>(new ListParams());
   goodSelected: boolean = false;
-  consultForm: FormGroup = new FormGroup({});
-  filterForm: FormGroup = new FormGroup({});
+  consultForm: FormGroup = new FormGroup({
+    id: new FormControl(null, [Validators.required]),
+    startDate: new FormControl(null, [Validators.required]),
+    endDate: new FormControl(null, [Validators.required]),
+  });
+  filterForm: FormGroup = new FormGroup({
+    bank: new FormControl(null),
+    status: new FormControl(null),
+  });
+
   columns: any[] = [];
   totalItems: number = 0;
   goodItems = new DefaultSelect();
@@ -138,44 +153,54 @@ export class SirsaePaymentConsultationListComponent
     },
   ];
 
+  statusesMov: { id: number; statusDescription: string }[] = [];
+
   constructor(
     private fb: FormBuilder,
-    private goodService: GoodService,
-    private bankAccountService: BankAccountService
+    private interfaceSirsae: InterfaceSirsaeService // private goodService: GoodService, // private bankAccountService: BankAccountService
   ) {
     super();
     this.tableSource = new LocalDataSource(this.columns);
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.getGoods({ page: 1, text: '' });
+    // this.prepareForm();
+    this.getStatusesMov();
     this.consultSettings.columns = CONSULT_SIRSAE_COLUMNS;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSearch());
   }
 
-  subscribeBankAccountInput() {
-    // this.input$
-    //   .pipe(
-    //     debounceTime(200),
-    //     distinctUntilChanged(),
-    //     switchMap((text: string) => {
-    //     })
-    //   )
-    //   .subscribe();
+  getStatusesMov(): void {
+    this.interfaceSirsae
+      .getStatusesMov({ limit: 100, page: 1 })
+      .subscribe(res => {
+        console.log(res);
+        this.statusesMov = res.data;
+      });
   }
 
-  bankAccountObservable(params: { [key: string]: string }): Observable<any> {
-    if (!params) {
-      return this.bankAccountService.getAll({});
-    }
-    if (!isNaN(params as any)) {
-      return this.bankAccountService.getById(params);
-    }
-    return this.bankAccountService.getAll({});
-  }
+  // subscribeBankAccountInput() {
+  //   // this.input$
+  //   //   .pipe(
+  //   //     debounceTime(200),
+  //   //     distinctUntilChanged(),
+  //   //     switchMap((text: string) => {
+  //   //     })
+  //   //   )
+  //   //   .subscribe();
+  // }
+
+  // bankAccountObservable(params: { [key: string]: string }): Observable<any> {
+  //   if (!params) {
+  //     return this.bankAccountService.getAll({});
+  //   }
+  //   if (!isNaN(params as any)) {
+  //     return this.bankAccountService.getById(params);
+  //   }
+  //   return this.bankAccountService.getAll({});
+  // }
 
   getSearch() {
     this.loading = true;
@@ -183,51 +208,51 @@ export class SirsaePaymentConsultationListComponent
     this.loading = false;
   }
 
-  private prepareForm(): void {
-    this.consultForm = this.fb.group({
-      id: [null, [Validators.required]],
-      startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required]],
-    });
-    this.filterForm = this.fb.group({
-      bank: [null],
-      status: [null],
-    });
-  }
+  // private prepareForm(): void {
+  //   this.consultForm = this.fb.group({
+  //     id: [null, [Validators.required]],
+  //     startDate: [null, [Validators.required]],
+  //     endDate: [null, [Validators.required]],
+  //   });
+  //   this.filterForm = this.fb.group({
+  //     bank: [null],
+  //     status: [null],
+  //   });
+  // }
 
-  getGoods(params: ListParams) {
-    // if (params.text == '') {
-    //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
-    //   this.goodItems = new DefaultSelect(item[0], 1);
-    // }
-    if (params.text === '') {
-      this.goodService.getAll(params).subscribe(res => {
-        this.goodItems = new DefaultSelect(res.data, 5);
-      });
-      return;
-    } else if (!isNaN(params.text as any)) {
-      this.goodService.getById(params.text).subscribe(res => {
-        this.goodItems = new DefaultSelect([res], 1);
-      });
-      return;
-    }
-    this.goodItems = new DefaultSelect([], 0);
-  }
+  // getGoods(params: ListParams) {
+  //   // if (params.text == '') {
+  //   //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
+  //   // } else {
+  //   //   const id = parseInt(params.text);
+  //   //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
+  //   //   this.goodItems = new DefaultSelect(item[0], 1);
+  //   // }
+  //   if (params.text === '') {
+  //     this.goodService.getAll(params).subscribe(res => {
+  //       this.goodItems = new DefaultSelect(res.data, 5);
+  //     });
+  //     return;
+  //   } else if (!isNaN(params.text as any)) {
+  //     this.goodService.getById(params.text).subscribe(res => {
+  //       this.goodItems = new DefaultSelect([res], 1);
+  //     });
+  //     return;
+  //   }
+  //   this.goodItems = new DefaultSelect([], 0);
+  // }
 
-  getBankAccount(params: ListParams) {
-    if (params.text) {
-      this.bankAccountService.getAll(params).subscribe(res => {
-        // this.bankAccountItems = new DefaultSelect(res.data, 5);
-      });
-    }
-  }
+  // getBankAccount(params: ListParams) {
+  //   if (params.text) {
+  //     this.bankAccountService.getAll(params).subscribe(res => {
+  //       // this.bankAccountItems = new DefaultSelect(res.data, 5);
+  //     });
+  //   }
+  // }
 
-  filterBank(query: string) {
-    this.addFilter(query, 'bank');
-  }
+  // filterBank(query: string) {
+  //   this.addFilter(query, 'bank');
+  // }
 
   filterStatus(query: string) {
     this.addFilter(query, 'status');
@@ -278,6 +303,11 @@ export class SirsaePaymentConsultationListComponent
     this.loading = false;
   }
 
+  generateParams(): void {
+    const filters = new FilterParams();
+    SearchFilter;
+    filters.addFilter('id', this.consultForm.value.id);
+  }
   getData() {
     return this.paymentTestData;
   }

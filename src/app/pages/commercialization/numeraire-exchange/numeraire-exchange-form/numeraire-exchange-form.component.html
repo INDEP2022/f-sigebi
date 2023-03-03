@@ -107,7 +107,7 @@
                       formControlName="salePrice"
                       (blur)="formatCurrency($event)"
                       (keypress)="validateCurrency($event)"
-                      (input)="calculateSaleTax()" />
+                      (keyup)="calculateSaleTax()" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-4">
@@ -266,7 +266,7 @@
                       {{ selectedBank.name }}
                     </p>
                   </div>
-                  <div class="col-sm-6 col-md-6" *ngIf="selectedBank != null">
+                  <!-- <div class="col-sm-6 col-md-6" *ngIf="selectedBank != null">
                     <i
                       class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
@@ -283,7 +283,7 @@
                     <p class="text-muted">
                       {{ selectedAccount.cveCurrency }}
                     </p>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>

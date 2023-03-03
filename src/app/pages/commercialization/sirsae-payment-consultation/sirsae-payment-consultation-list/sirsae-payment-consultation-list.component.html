@@ -7,7 +7,7 @@
       <form class="form-material mb-0" [formGroup]="consultForm">
         <div class="row">
           <div class="col-sm-12 col-md-4">
-            <form-field [control]="consultForm.get('id')">
+            <!-- <form-field [control]="consultForm.get('id')">
               <ngx-select
                 [form]="consultForm"
                 [data]="goodItems"
@@ -17,11 +17,14 @@
                 (fetchItems)="getGoods($event)"
                 control="id">
               </ngx-select>
-            </form-field>
+            </form-field> -->
+            <app-goods-shared
+              [form]="consultForm"
+              goodField="id"></app-goods-shared>
           </div>
           <div class="col-sm-12 col-md-5">
             <div class="row">
-              <div class="col-6">
+              <div class="col-6 mt-3">
                 <form-field
                   [control]="consultForm.get('startDate')"
                   label="Fecha page">
@@ -33,7 +36,7 @@
                     [maxDate]="maxDate" />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-3">
                 <form-field
                   [control]="consultForm.get('endDate')"
                   label="Fecha Fin">
@@ -42,7 +45,8 @@
                     formControlName="endDate"
                     class="form-control"
                     bsDatepicker
-                    [maxDate]="maxDate" />
+                    [maxDate]="maxDate"
+                    [minDate]="consultForm.get('startDate').value" />
                 </form-field>
               </div>
             </div>
@@ -82,20 +86,22 @@
           [isAnimated]="true"
           [collapse]="!toggleFilter">
           <div class="col-sm-12 col-md-4">
-            <form-field [control]="filterForm.get('bank')" label="Banco">
-              <ng-select
+            <form-field [control]="filterForm.get('bank')">
+              <!-- <ng-select
                 formControlName="bank"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false"
-                ()
                 (change)="filterBank($event)">
                 <ng-option value="BANAMEX">BANAMEX</ng-option>
                 <ng-option value="BANCO SANTANDER">BANCO SANTANDER</ng-option>
                 <ng-option value="BANORTE">BANORTE</ng-option>
                 <ng-option value="BBVA BANCOMER">BBVA BANCOMER</ng-option>
                 <ng-option value="HSBC">HSBC</ng-option>
-              </ng-select>
+              </ng-select> -->
+              <app-banks-shared
+                [form]="filterForm"
+                bankField="bank"></app-banks-shared>
               <!-- <ngx-select
                 [form]="consultForm"
                 [data]="goodItems"
@@ -107,19 +113,19 @@
               </ngx-select> -->
             </form-field>
           </div>
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-4 mt-3">
             <form-field
               [control]="filterForm.get('status')"
               label="Estatus Mov.">
               <ng-select
                 formControlName="status"
+                [items]="statusesMov"
+                bindLabel="statusDescription"
+                bindValue="id"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false"
                 (change)="filterStatus($event)">
-                <ng-option value="0">Pagado</ng-option>
-                <ng-option value="1">Cheque salvo buen cobro</ng-option>
-                <ng-option value="2">Cheque devuelto</ng-option>
               </ng-select>
             </form-field>
           </div>
