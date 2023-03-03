@@ -3,6 +3,11 @@ export const PROCEEDINGS_RECORD_COLUMNS = {
     title: 'Número de Acta',
     sort: false,
   },
+  proceedingStatus: {
+    title: 'Estatus',
+    sort: false,
+    // hide: true,
+  },
   proceedingsCve: {
     title: 'Acta/Oficio',
     sort: false,
