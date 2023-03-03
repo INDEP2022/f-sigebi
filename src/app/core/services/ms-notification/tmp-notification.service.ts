@@ -47,7 +47,7 @@ export class TmpNotificationService extends HttpService {
   }
 
   remove(id: string | number) {
-    const route = `${this.route.TmpNotification}/${id}`;
+    const route = `${this.route.TmpNotification}/wheel-number/${id}`;
     return this.delete(route);
   }
 }
