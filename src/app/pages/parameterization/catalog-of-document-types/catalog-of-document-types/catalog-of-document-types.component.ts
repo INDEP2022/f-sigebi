@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { TypesDocuments } from 'src/app/core/models/ms-documents/documents-type';
 import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
@@ -19,7 +23,8 @@ export class CatalogOfDocumentTypesComponent
 {
   columns: any[] = [];
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
   contentDocuments: IListResponse<TypesDocuments> =
     {} as IListResponse<TypesDocuments>;
 
@@ -47,6 +52,7 @@ export class CatalogOfDocumentTypesComponent
         },
       },
     };
+    this.searchFilter = { field: 'description', operator: SearchFilter.ILIKE };
   }
 
   ngOnInit(): void {
@@ -71,16 +77,18 @@ export class CatalogOfDocumentTypesComponent
 
   getPagination() {
     this.loading = true;
-    this.documentsServ.getAll(this.params.getValue()).subscribe({
-      next: resp => {
-        this.contentDocuments = resp;
-        this.loading = false;
-      },
-      error: error => (
-        this.onLoadToast('error', error.error.message, ''),
-        (this.loading = false)
-      ),
-    });
+    this.documentsServ
+      .getAllWidthFilters(this.params.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.contentDocuments = resp;
+          this.loading = false;
+        },
+        error: error => (
+          this.onLoadToast('error', error.error.message, ''),
+          (this.loading = false)
+        ),
+      });
   }
 
   deleteDocument(id: string) {
@@ -90,7 +98,7 @@ export class CatalogOfDocumentTypesComponent
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.documentsServ.delete(id).subscribe({
+        this.documentsServ.remove(id).subscribe({
           next: () => (
             this.onLoadToast('success', 'Eliminado correctamente', ''),
             this.getPagination()

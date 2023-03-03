@@ -20,6 +20,7 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   }
 
   getByFilters(route: string) {
+    console.log('1');
     const fullRoute = `${this.ms}${route}`;
     return this.httpClient.get<IListResponse<T>>(fullRoute);
   }

@@ -30,4 +30,21 @@ export class GlobalVarsService {
   public getGlobalVars$(): Observable<IGlobalVars> {
     return this.store.select(GlobalVarsSelectors.getGlobalVars);
   }
+
+  public updateSingleGlobal<ParamKey extends keyof IGlobalVars>(
+    globalVar: ParamKey,
+    value: IGlobalVars[ParamKey],
+    globalVars: IGlobalVars
+  ) {
+    let newState = { ...globalVars };
+    newState = {
+      ...newState,
+      [globalVar]: value,
+    };
+    this.store.dispatch(
+      GlobalVarsActions.setGlobalVars({
+        updateGlobalVars: { ...newState },
+      })
+    );
+  }
 }

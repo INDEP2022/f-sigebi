@@ -8,7 +8,7 @@ export interface IRead<T> {
     params?: ListParams,
     filter?: string
   ): Observable<IListResponse<T>>;
-  getById?(route: string, id: number | string): Observable<IListResponse<T>>;
+  getById?(route: string, id: number | string): Observable<T>;
 }
 
 export interface IWrite<T> {
@@ -18,7 +18,7 @@ export interface IWrite<T> {
     id: number | string,
     model: T
   ): Observable<IListResponse<T>>;
-  remove?(route: string, id: number | string): Observable<IListResponse<T>>;
+  remove?(route: string, id: number | string): Observable<T>;
 }
 
 export interface IInventortQueryMethods<T> extends IWrite<T>, IRead<T> {}

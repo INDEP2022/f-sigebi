@@ -31,14 +31,16 @@
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('address')" label="Área">
-            <input
+            <ng-select
               formControlName="address"
-              type="text"
               class="form-control"
-              readonly />
+              [readonly]="true">
+              <ng-option value="M">Muebles</ng-option>
+              <ng-option value="I">Inmuebles</ng-option>
+            </ng-select>
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
           <button
             class="btn btn-sm btn-primary active"
             [disabled]="!form.valid"
@@ -46,11 +48,19 @@
             Buscar
           </button>
         </div>
+        <div class="col-md-1">
+          <button
+            (click)="cleanForm()"
+            type="button"
+            class="btn btn-sm btn-danger active">
+            Limpiar
+          </button>
+        </div>
       </div>
     </form>
     <div class="row pt-4" *ngIf="form.get('processKey').value !== null">
       <div class="ch-content" header>
-        <h5 class="title">Tabla</h5>
+        <h5 class="title">Usuarios por eventos</h5>
         <div class="col-md-5 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
           <div>

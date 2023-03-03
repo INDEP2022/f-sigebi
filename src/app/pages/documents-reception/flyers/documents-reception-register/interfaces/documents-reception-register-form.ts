@@ -12,7 +12,7 @@ import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
-import { IUserAccessAreas } from '../../../../../core/models/ms-users/users-access-areas-model';
+import { IUserAccessAreaRelational } from '../../../../../core/models/ms-users/seg-access-area-relational.model';
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -40,35 +40,42 @@ export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsTo
 export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   wheelType: new FormControl<string>(null, Validators.required),
   identifier: new FormControl<IIdentifier>(null, Validators.required),
-  externalRemitter: new FormControl<string | number>(null, Validators.required),
-  affairKey: new FormControl<string | number>(null, Validators.required),
+  externalRemitter: new FormControl<string>(null, [
+    Validators.required,
+    Validators.maxLength(60),
+  ]),
+  affairKey: new FormControl<string>(null, Validators.required),
   affair: new FormControl<string | number>(null, Validators.required),
-  receiptDate: new FormControl<string | number | Date>(
-    null,
-    Validators.required
-  ),
-  priority: new FormControl<string | number>(null, Validators.required),
-  wheelNumber: new FormControl<string | number>(null),
-  consecutiveNumber: new FormControl<string | number>(null),
-  expedientNumber: new FormControl<string | number>(null),
+  receiptDate: new FormControl<string | Date>(null, Validators.required),
+  priority: new FormControl<string>(null, Validators.required),
+  wheelNumber: new FormControl<number>(null),
+  consecutiveNumber: new FormControl<number>(null),
+  expedientNumber: new FormControl<number>(null),
   recordId: new FormControl<string | number>(null),
-  dailyEviction: new FormControl<boolean | number>(false),
+  identifierExp: new FormControl<string | number>(null),
+  dailyEviction: new FormControl<boolean>(false),
   addressGeneral: new FormControl<boolean | number>(false),
-  stage: new FormControl<string>(null, Validators.required),
+  stage: new FormControl<string>(null),
   stageName: new FormControl<string>(null),
-  circumstantialRecord: new FormControl<string | number>(null),
-  preliminaryInquiry: new FormControl<string | number>(null),
-  criminalCase: new FormControl<string | number>(null),
+  circumstantialRecord: new FormControl<string>(null, Validators.maxLength(30)),
+  preliminaryInquiry: new FormControl<string>(null, Validators.maxLength(200)),
+  criminalCase: new FormControl<string>(null, Validators.maxLength(40)),
   judgementType: new FormControl<string>(null),
-  protectionKey: new FormControl<string | number>(null),
-  touchPenaltyKey: new FormControl<string | number>(null),
-  officeExternalKey: new FormControl<string>(null, Validators.required),
-  externalOfficeDate: new FormControl<string | number | Date>(
+  protectionKey: new FormControl<string>(null, Validators.maxLength(100)),
+  touchPenaltyKey: new FormControl<string>(null, Validators.maxLength(30)),
+  officeExternalKey: new FormControl<string>(null, [
+    Validators.required,
+    Validators.maxLength(35),
+  ]),
+  externalOfficeDate: new FormControl<string | Date>(null, Validators.required),
+  observations: new FormControl<string>(null, [
+    Validators.required,
+    Validators.maxLength(1000),
+  ]),
+  expedientTransferenceNumber: new FormControl<string>(
     null,
-    Validators.required
+    Validators.maxLength(150)
   ),
-  observations: new FormControl<string | number>(null, Validators.required),
-  expedientTransferenceNumber: new FormControl<string | number>(null),
   uniqueKey: new FormControl<string | number>(null),
   cityNumber: new FormControl<ICity>(null, Validators.required),
   entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(
@@ -76,7 +83,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
-  transference: new FormControl<string | number>(null, Validators.required),
+  transference: new FormControl<number>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null, Validators.required),
   autorityNumber: new FormControl<IAuthority>(null, Validators.required),
@@ -91,41 +98,163 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   destinationArea: new FormControl<string | number>(null, Validators.required),
-  departamentDestinyNumber: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
-  delegationNumber: new FormControl<string | number>(null, Validators.required),
+  departamentDestinyNumber: new FormControl<number>(null, Validators.required),
+  delDestinyNumber: new FormControl<number>(null, Validators.required),
   delegationName: new FormControl<string>(null, Validators.required),
-  subDelegationNumber: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
+  subDelDestinyNumber: new FormControl<number>(null, Validators.required),
   subDelegationName: new FormControl<string>(null, Validators.required),
-  estatusTramite: new FormControl<IManagementArea>(null),
+  estatusTramite: new FormControl<IManagementArea>(null, Validators.required),
   goodRelation: new FormControl<string>(null),
-  institutionNumber: new FormControl<string | number>(200, Validators.required),
-  officeNumber: new FormControl<string | number>(null),
-  captureDate: new FormControl<string | number | Date>(null),
+  institutionNumber: new FormControl<number>(200, Validators.required),
+  institutionName: new FormControl<string>(null),
+  officeNumber: new FormControl<number>(null),
+  captureDate: new FormControl<Date>(new Date()),
   wheelStatus: new FormControl<string>(null),
-  entryProcedureDate: new FormControl<string | number | Date>(new Date()),
-  registerNumber: new FormControl<string | number>(null),
-  originNumber: new FormControl<string | number>(null),
-  dictumKey: new FormControl<string | number>(null),
+  entryProcedureDate: new FormControl<Date>(new Date()),
+  registerNumber: new FormControl<number>(null),
+  originNumber: new FormControl<number>(null),
+  dictumKey: new FormControl<string>(null),
   reserved: new FormControl<string>(null),
   autoscan: new FormControl<string>(null),
 };
 
+export interface IDocumentsReceptionData {
+  wheelType: string;
+  identifier: string;
+  externalRemitter: string;
+  affairKey: string;
+  affair: string | number;
+  receiptDate: string | Date;
+  priority: string;
+  wheelNumber: number;
+  consecutiveNumber: number;
+  expedientNumber: number;
+  recordId?: string | number;
+  identifierExp?: string | number;
+  dailyEviction: number;
+  addressGeneral: number;
+  stage?: string;
+  stageName?: string;
+  circumstantialRecord: string;
+  preliminaryInquiry: string;
+  criminalCase: string;
+  judgementType: string;
+  protectionKey: string;
+  touchPenaltyKey: string;
+  officeExternalKey: string;
+  externalOfficeDate: string | Date;
+  observations: string;
+  expedientTransferenceNumber: string;
+  uniqueKey?: string | number;
+  cityNumber: number;
+  entFedKey: string;
+  entFedDescription: string;
+  endTransferNumber: number;
+  transference: number;
+  courtNumber: number;
+  courtName: string;
+  stationNumber: number;
+  autorityNumber: number;
+  minpubNumber: number;
+  minpubName: string;
+  crimeKey: string;
+  indiciadoNumber: number;
+  indiciadoName: string;
+  viaKey: string;
+  destinationArea: string | number;
+  departamentDestinyNumber: number;
+  delDestinyNumber: number;
+  delegationName: string;
+  subDelDestinyNumber: number;
+  subDelegationName: string;
+  estatusTramite: string;
+  goodRelation?: string;
+  institutionNumber: number;
+  institutionName: string;
+  officeNumber: number;
+  captureDate: Date;
+  wheelStatus: string;
+  entryProcedureDate: Date;
+  registerNumber?: number;
+  originNumber: number;
+  dictumKey: string;
+  reserved: string;
+  autoscan?: string;
+}
+
+export interface IDocumentsReceptionRegisterForm {
+  wheelType: string;
+  identifier: IIdentifier;
+  externalRemitter: string;
+  affairKey: string;
+  affair: string | number;
+  receiptDate: string | Date;
+  priority: string;
+  wheelNumber: number;
+  consecutiveNumber: number;
+  expedientNumber: number;
+  recordId: string | number;
+  identifierExp: string | number;
+  dailyEviction: boolean;
+  addressGeneral: boolean | number;
+  stage: string;
+  stageName: string;
+  circumstantialRecord: string;
+  preliminaryInquiry: string;
+  criminalCase: string;
+  judgementType: string;
+  protectionKey: string;
+  touchPenaltyKey: string;
+  officeExternalKey: string;
+  externalOfficeDate: string | Date;
+  observations: string;
+  expedientTransferenceNumber: string;
+  uniqueKey: string | number;
+  cityNumber: ICity;
+  entFedKey: TvalTable1Data | ITablesEntryData;
+  endTransferNumber: ITransferente;
+  transference: number;
+  courtNumber: ICourt;
+  stationNumber: IStation;
+  autorityNumber: IAuthority;
+  minpubNumber: IMinpub;
+  crimeKey: TvalTable1Data | ITablesEntryData;
+  indiciadoNumber: IIndiciados;
+  viaKey: TvalTable1Data | ITablesEntryData;
+  destinationArea: string | number;
+  departamentDestinyNumber: number;
+  delDestinyNumber: number;
+  delegationName: string;
+  subDelDestinyNumber: number;
+  subDelegationName: string;
+  estatusTramite: IManagementArea;
+  goodRelation: string;
+  institutionNumber: number;
+  institutionName: string;
+  officeNumber: number;
+  captureDate: Date;
+  wheelStatus: string;
+  entryProcedureDate: Date;
+  registerNumber: number;
+  originNumber: number;
+  dictumKey: string;
+  reserved: string;
+  autoscan: string;
+}
+
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
   copyNumber: new FormControl<string | number>(1, Validators.required),
-  copyuser: new FormControl<IUserAccessAreas>(null, Validators.required),
+  copyuser: new FormControl<IUserAccessAreaRelational>(
+    null,
+    Validators.required
+  ),
   persontype: new FormControl<string>('D', Validators.required),
   flierNumber: new FormControl<string | number>(null),
 };
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
   copyNumber: new FormControl<string | number>(2),
-  copyuser: new FormControl<IUserAccessAreas>(null),
+  copyuser: new FormControl<IUserAccessAreaRelational>(null),
   persontype: new FormControl<string>('C'),
   flierNumber: new FormControl<string | number>(null),
 };
@@ -148,7 +277,7 @@ export enum ProcedureStatus {
 }
 
 export interface IGlobalFlyerRegistration {
-  gNoExpediente: number | null; //Puede ser null porque el endpoint no deberia requerirlo para crear expediente
+  gNoExpediente: number | string | null; //Puede ser null porque el endpoint no deberia requerirlo para crear expediente
   noVolante: number | null;
   bn: number | null;
   gCreaExpediente: string | null;
@@ -162,15 +291,38 @@ export interface IGlobalFlyerRegistration {
   gCommit: string | number;
   gOFFCommit: string | number;
   noTransferente: string | number;
+  gNoVolante: string | number;
 }
 
 export interface IDocReceptionFlyersRegistrationParams {
-  pGestOk: number | null;
-  pNoVolante: number | null;
-  pSatTipoExp: string | null; //No necesario si existe global
-  pNoTramite: number | null;
+  pGestOk: number;
+  pNoVolante: number;
+  pSatTipoExp: string; //No necesario si existe global
+  pNoTramite: number;
+  noTransferente: number;
+  pIndicadorSat: number;
 }
 
-export type FlyersRegistrationParamName = Partial<
-  keyof IDocReceptionFlyersRegistrationParams
->;
+export interface IGoodsBulkLoadSatSaeParams {
+  asuntoSat: string;
+  pNoExpediente: number;
+  pNoOficio: string;
+  pNoVolante: number;
+  pSatTipoExp: string;
+  pIndicadorSat: number;
+}
+
+export interface IGoodsBulkLoadPgrSaeParams {
+  pNoExpediente: number;
+  pNoVolante: number;
+  pAvPrevia: string;
+}
+
+export interface IGoodsCaptureTempParams {
+  iden: string;
+  noTransferente: number;
+  desalojo: number;
+  pNoVolante: number;
+  pNoOficio: string;
+  asuntoSat: string;
+}

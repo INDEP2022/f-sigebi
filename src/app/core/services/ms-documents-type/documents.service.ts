@@ -20,10 +20,7 @@ export class DocumentsService implements ICrudMethods<IDocument> {
     return this.requestRepository.getAll(this.route, params);
   }
 
-  getByFilters(
-    filters: any,
-    params?: ListParams
-  ): Observable<IListResponse<IDocument>> {
+  getByFilters(filters: any): Observable<IListResponse<IDocument>> {
     let filtersUrl: string = '?';
     let i = 0;
     for (let property in filters) {
@@ -36,7 +33,6 @@ export class DocumentsService implements ICrudMethods<IDocument> {
     }
     console.log(filtersUrl);
     filtersUrl = this.route + filtersUrl;
-    console.log(filtersUrl);
     return this.requestRepository.getByFilters(filtersUrl);
   }
 

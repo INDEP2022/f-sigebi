@@ -48,6 +48,11 @@ export class GoodService extends HttpService {
     return this.put(route, good);
   }
 
+  updateGoodStatus(goodNumber: number | string, status: string) {
+    const route = `${GoodEndpoints.Good}/updateGoodStatus/${goodNumber}/${status}`;
+    return this.put(route);
+  }
+
   remove(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);
@@ -114,5 +119,13 @@ export class GoodService extends HttpService {
   updateTracked(id: string | number, good: ITrackedGood) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.put(route, good);
+  }
+
+  getExemptedGoods(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}?filter.extDomProcess=TRANSFERENTE`;
+    const route2 = `${GoodEndpoints.Good}?filter.goodId=2203409`;
+    return this.get<IListResponse<IGood>>(route2, params);
   }
 }
