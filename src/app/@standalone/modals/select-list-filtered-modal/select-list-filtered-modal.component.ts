@@ -82,6 +82,7 @@ export class SelectListFilteredModalComponent
           this.loading = false;
         },
         error: err => {
+          console.log(err);
           this.loading = false;
           this.onLoadToast('error', 'Error', err);
         },

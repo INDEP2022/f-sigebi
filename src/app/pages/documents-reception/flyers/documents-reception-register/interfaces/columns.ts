@@ -85,3 +85,21 @@ export const DOCUMENTS_RECEPTION_SELECT_TRACK_RECORD_GOODS_COLUMNS = {
     sort: false,
   },
 };
+
+export const DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS = {
+  id: {
+    title: 'Folio Universal',
+    type: 'number',
+    sort: false,
+  },
+  sheets: {
+    title: 'Hojas',
+    type: 'number',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción Documento',
+    type: 'string',
+    sort: false,
+  },
+};

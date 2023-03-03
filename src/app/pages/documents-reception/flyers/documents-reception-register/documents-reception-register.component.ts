@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, Observable, takeUntil } from 'rxjs';
-import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -57,6 +56,7 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AppState } from '../../../../app.reducers';
+import { IDocuments } from '../../../../core/models/ms-documents/documents';
 import { ITempExpedient } from '../../../../core/models/ms-expedient/tmp-expedient.model';
 import { FlyerPersontype } from '../../../../core/models/ms-flier/tmp-doc-reg-management.model';
 import { ICountAffairOptions } from '../../../../core/models/ms-interfacesat/ms-interfacesat.interface';
@@ -65,6 +65,7 @@ import { IProceduremanagement } from '../../../../core/models/ms-proceduremanage
 import { AuthService } from '../../../../core/services/authentication/auth.service';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
 import { IssuingInstitutionService } from '../../../../core/services/catalogs/issuing-institution.service';
+import { DocumentsService } from '../../../../core/services/ms-documents/documents.service';
 import { CopiesXFlierService } from '../../../../core/services/ms-flier/copies-x-flier.service';
 import { TmpGestRegDocService } from '../../../../core/services/ms-flier/tmp-gest-reg-doc.service';
 import { CatalExpSatService } from '../../../../core/services/ms-interfacesat/catal-exp-sat.service';
@@ -78,6 +79,7 @@ import { DocumentsReceptionFlyerSelectComponent } from './components/documents-r
 import {
   DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS,
   DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS,
+  DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS,
 } from './interfaces/columns';
 import {
   DocuentsReceptionRegisterFormChanges,
@@ -120,7 +122,7 @@ export class DocumentsReceptionRegisterComponent
   pgrInterface: boolean = false;
   satInterface: boolean = false;
   expedientRecord: number = null;
-  // goodRelatedWheelNumber: boolean = false;
+  canViewDocuments = false;
   identifier: string = null;
   //TODO: Dejar la delegacion y subdelegacion nulos
   userDelegation: number = 0;
@@ -202,6 +204,7 @@ export class DocumentsReceptionRegisterComponent
     private protectionService: ProtectionService,
     private flyerCopiesService: CopiesXFlierService,
     private massiveGoodService: MassiveGoodService,
+    private documentsService: DocumentsService,
     private store: Store<AppState>,
     private globalVarsService: GlobalVarsService
   ) {
@@ -814,7 +817,9 @@ export class DocumentsReceptionRegisterComponent
     // if (identifier.includes('4') || identifier === 'MIXTO')
     //   this.formControls.receiptDate.disable();
     // else this.formControls.receiptDate.enable();
-    this.identifier = this.formControls.identifier.value.id;
+    if (this.formControls.identifier.value != null) {
+      this.identifier = this.formControls.identifier.value.id;
+    }
     let initialDate;
     if (['MIXTO', '4', '4MT'].includes(this.identifier)) {
       initialDate = this.parseDatepickerFormat(this.initialDate);
@@ -877,7 +882,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   destinationAreaChange(area: string) {
-    if (this.userRecipient.value.user) {
+    if (this.userRecipient.value?.user) {
       const param = new FilterParams();
       param.addFilter('user', this.userRecipient.value.user);
       this.docRegisterService.getUsersSegAreas(param.getParams()).subscribe({
@@ -937,9 +942,11 @@ export class DocumentsReceptionRegisterComponent
   }
 
   authorityChange(authority: string) {
-    this.formControls.originNumber.setValue(
-      Number(this.formControls.autorityNumber.value.idAuthority)
-    );
+    if (this.formControls.autorityNumber.value != null) {
+      this.formControls.originNumber.setValue(
+        Number(this.formControls.autorityNumber.value.idAuthority)
+      );
+    }
   }
 
   checkDailyEviction() {
@@ -1057,10 +1064,17 @@ export class DocumentsReceptionRegisterComponent
       this.stationService.getById(notif.stationNumber).subscribe({
         next: data => this.formControls.stationNumber.setValue(data),
       });
-    if (notif.autorityNumber != null)
-      this.authorityService.getById(notif.autorityNumber).subscribe({
-        next: data => this.formControls.autorityNumber.setValue(data),
+    if (notif.autorityNumber != null) {
+      filterParams.addFilter('idAuthority', notif.autorityNumber);
+      this.authorityService.getAllFilter(filterParams.getParams()).subscribe({
+        next: data => {
+          if (data.count > 0) {
+            this.formControls.autorityNumber.setValue(data.data[0]);
+          }
+        },
+        error: () => {},
       });
+    }
     if (notif.minpubNumber != null) {
       const minpub = notif.minpubNumber as IMinpub;
       this.minpubService.getById(minpub.id).subscribe({
@@ -1124,6 +1138,7 @@ export class DocumentsReceptionRegisterComponent
       }
     }
     if (notif.wheelNumber != null && notif.expedientNumber != null) {
+      filterParams.removeAllFilters();
       filterParams.addFilter('noExpediente', notif.expedientNumber);
       filterParams.addFilter('noVolante', notif.wheelNumber);
       this.procedureManageService
@@ -1174,6 +1189,9 @@ export class DocumentsReceptionRegisterComponent
       const institution = notif.institutionNumber as IInstitutionNumber;
       this.formControls.institutionName.setValue(institution.name);
       this.formControls.institutionNumber.setValue(institution.id);
+    }
+    if (this.wheelNumber.value != null) {
+      this.canViewDocuments = true;
     }
     this.checkDailyEviction();
     console.log(this.documentsReceptionForm.value);
@@ -1280,8 +1298,88 @@ export class DocumentsReceptionRegisterComponent
   }
 
   viewDocuments() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(DocumentsListComponent, modalConfig);
+    // const modalConfig = MODAL_CONFIG;
+    // this.modalService.show(DocumentsListComponent, modalConfig);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.wheelNumber.value);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        const documents = data.data;
+        if (data.count == 1) {
+          if (documents[0].associateUniversalFolio) {
+            this.onLoadToast(
+              'info',
+              'Enlace no disponible',
+              'El enlace al documento no se encuentra disponible'
+            );
+          } else {
+            this.onLoadToast(
+              'info',
+              'No disponible',
+              'No tiene documentos digitalizados.'
+            );
+          }
+        } else if (data.count > 1) {
+          this.openModalDocuments();
+        } else {
+          this.onLoadToast(
+            'info',
+            'No disponible',
+            'No tiene documentos digitalizados.'
+          );
+        }
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'No se encontraron documentos asociados.'
+        );
+      },
+    });
+  }
+
+  openModalDocuments() {
+    this.openModalSelect(
+      {
+        title: 'Folios Relacionados al Expediente',
+        columnsType: { ...DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS },
+        service: this.docRegisterService,
+        dataObservableFn: this.docRegisterService.getDocuments,
+        filters: [
+          {
+            field: 'flyerNumber',
+            value: this.wheelNumber.value,
+          },
+          {
+            field: 'scanStatus',
+            value: 'ESCANEADO',
+          },
+        ],
+      },
+      this.selectDocument
+    );
+  }
+
+  selectDocument(
+    document: IDocuments,
+    self: DocumentsReceptionRegisterComponent
+  ) {
+    if (document) {
+      console.log(document);
+      self.documentMessage();
+    }
+  }
+
+  documentMessage() {
+    this.onLoadToast(
+      'info',
+      'Enlace no disponible',
+      'El enlace al documento no se encuentra disponible'
+    );
   }
 
   chooseOther() {
@@ -1464,8 +1562,10 @@ export class DocumentsReceptionRegisterComponent
   }
 
   changeTransferor(event: ITransferente) {
-    this.formControls.transference.setValue(event.id);
-    this.updateGlobalVars('noTransferente', event.id);
+    if (event?.id) {
+      this.formControls.transference.setValue(event.id);
+      this.updateGlobalVars('noTransferente', event.id);
+    }
   }
 
   getCourts(lparams: ListParams) {
@@ -1602,6 +1702,7 @@ export class DocumentsReceptionRegisterComponent
       this.selectAffair
     );
   }
+
   openModalSelect(
     context?: Partial<SelectListFilteredModalComponent>,
     callback?: Function
@@ -1660,11 +1761,18 @@ export class DocumentsReceptionRegisterComponent
         next: data => this.formControls.stationNumber.setValue(data),
         error: () => {},
       });
-    if (key.authorityNum != null)
-      this.authorityService.getById(key.authorityNum).subscribe({
-        next: data => this.formControls.autorityNumber.setValue(data),
+    if (key.authorityNum != null) {
+      const param = new FilterParams();
+      param.addFilter('idAuthority', key.authorityNum);
+      this.authorityService.getAllFilter(param.getParams()).subscribe({
+        next: data => {
+          if (data.count > 0) {
+            this.formControls.autorityNumber.setValue(data.data[0]);
+          }
+        },
         error: () => {},
       });
+    }
     if (full) {
       if (key.cityNum != null) {
         this.cityService.getById(key.cityNum).subscribe({
@@ -2866,34 +2974,48 @@ export class DocumentsReceptionRegisterComponent
       pIndicadorSat: this.pageParams.pIndicadorSat,
     };
     console.log(this.docDataService.goodsBulkLoadSatSaeParams);
+    const officeExternalKey = encodeURIComponent(
+      this.formData.officeExternalKey
+    );
+    const expedientTransferenceNumber = encodeURIComponent(
+      this.formData.expedientTransferenceNumber
+    );
+    const route = `/sat/${expedientTransferenceNumber}/${this.formControls.expedientNumber.value}/${officeExternalKey}/${this.formControls.wheelNumber.value}/${this.pageParams.pSatTipoExp}/${this.pageParams.pIndicadorSat}`;
+    console.log(`pages/documents-reception/goods-bulk-load${route}`);
     this.loading = false;
     this.alert(
       'info',
       'Información',
       'El asunto registrado por el SAT contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
     );
-    this.router.navigateByUrl('pages/documents-reception/goods-bulk-load');
+    this.router.navigateByUrl(
+      `pages/documents-reception/goods-bulk-load${route}`
+    );
   }
 
   sendToPgrBulkLoad() {
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
-    // this.docDataService.setDocumentsReceptionRegisterForm(
-    //   this.documentsReceptionForm.value
-    // );
     this.docDataService.goodsBulkLoadPgrSaeParams = {
       pNoExpediente: this.formControls.expedientNumber.value,
       pNoVolante: this.formControls.wheelNumber.value,
       pAvPrevia: this.formData.preliminaryInquiry,
     };
     console.log(this.docDataService.goodsBulkLoadPgrSaeParams);
+    const preliminaryInquiry = encodeURIComponent(
+      this.formData.preliminaryInquiry
+    );
+    const route = `/pgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
+    console.log(`pages/documents-reception/goods-bulk-load${route}`);
     this.loading = false;
     this.alert(
       'info',
       'Información',
       'El asunto registrado por la PGR contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
     );
-    this.router.navigateByUrl('pages/documents-reception/goods-bulk-load');
+    this.router.navigateByUrl(
+      `pages/documents-reception/goods-bulk-load${route}`
+    );
   }
 
   sendToGoodsCapture(pgr?: boolean) {
