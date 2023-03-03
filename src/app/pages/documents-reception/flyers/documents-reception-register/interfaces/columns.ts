@@ -1,5 +1,5 @@
 export const DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS = {
-  numDelegation: {
+  delegation: {
     title: 'Nombre Delegación',
     type: 'string',
     sort: false,
