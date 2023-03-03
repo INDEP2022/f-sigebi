@@ -31,8 +31,8 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
 
-  @Input() labelDelegation: string = 'Delegaci&oacute;n';
-  @Input() labelSubdelegation: string = 'Sub Delegaci&oacute;n';
+  @Input() labelDelegation: string = 'Delegación';
+  @Input() labelSubdelegation: string = 'Sub Delegación';
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
