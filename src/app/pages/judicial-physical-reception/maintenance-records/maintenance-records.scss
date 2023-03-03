@@ -29,3 +29,22 @@
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
 }
+
+:host ::ng-deep app-card {
+  .card .card-header {
+    height: auto !important;
+    h5 {
+      margin-top: 0px;
+      &:after {
+        height: 50px !important;
+        top: -15px !important;
+      }
+    }
+  }
+}
+
+:host ::ng-deep app-pagination {
+  .paginator-page-size {
+    display: none;
+  }
+}

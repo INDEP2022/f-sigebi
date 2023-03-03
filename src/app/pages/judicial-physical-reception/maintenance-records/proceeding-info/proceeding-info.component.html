@@ -1,9 +1,17 @@
 <form class="form-material" [formGroup]="form">
   <div class="row border border-dark">
-    <h5 class="title">Informaci&oacute;n del Acta</h5>
-    <div class="col-md-6 mt-5">
+    <div class="header-proceeding-info">
+      <h5 class="title">Informaci&oacute;n del Acta</h5>
+      <button
+        [class]="loading ? 'disabled' : ''"
+        class="btn btn-sm btn-danger"
+        (click)="filter()">
+        <i class="bx bx-search float-icon"></i> Filtrar
+      </button>
+    </div>
+    <div class="col-md-6 mt-5 section">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('numActa')" label="No&#46; Acta">
             <input
               type="number"
@@ -11,7 +19,7 @@
               formControlName="numActa" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('numFile')" label="No Expediente">
             <input
               type="number"
@@ -19,14 +27,25 @@
               formControlName="numFile" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <app-select-form
+            [form]="form"
+            formField="statusActa"
+            label="Status Acta"
+            [haveTodos]="false"
+            [clearable]="false"
+            [list]="statusList"></app-select-form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <form-field [control]="form.get('cveActa')" label="Cve Acta">
             <input type="text" class="form-control" formControlName="cveActa" />
           </form-field>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('tipoActa')" label="Tipo Acta">
             <input
               type="text"
@@ -34,7 +53,7 @@
               formControlName="tipoActa" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('labelActa')" label="Etiqueta">
             <input
               type="text"
@@ -42,7 +61,7 @@
               formControlName="labelActa" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('receiptKey')"
             label="Clave Del Recibe">
@@ -51,15 +70,6 @@
               class="form-control"
               formControlName="receiptKey" />
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <app-select-form
-            [form]="form"
-            formField="statusActa"
-            label="Status Acta"
-            [haveTodos]="false"
-            [clearable]="false"
-            [list]="statusList"></app-select-form>
         </div>
       </div>
       <div class="row">

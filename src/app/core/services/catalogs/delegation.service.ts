@@ -8,6 +8,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegation } from '../../models/catalogs/delegation.model';
 import { IStateOfRepublic } from '../../models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from '../../models/catalogs/zone-geographic.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,12 +22,12 @@ export class DelegationService implements ICrudMethods<IDelegation> {
     private zonesRepository: Repository<IZoneGeographic>
   ) {}
 
-  getAll(params?: ListParams | string): Observable<IListResponse<IDelegation>> {
+  getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
-  getAllModal(self?: DelegationService, params?: ListParams | string) {
-    return self.getAll(params);
+  getAllModal(self?: DelegationService, params?: string | ListParams) {
+    return self.delegationRepository.getAllPaginated(self.route, params);
   }
 
   getById(id: string | number): Observable<IDelegation> {

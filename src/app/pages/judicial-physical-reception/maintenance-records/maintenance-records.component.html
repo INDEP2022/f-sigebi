@@ -1,13 +1,18 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Mantenimiento de Actas</h5>
-    <!-- <app-pagination
+    <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination> -->
+      [totalItems]="totalItems"></app-pagination>
   </div>
 
   <div body>
-    <app-proceeding-info></app-proceeding-info>
+    <div>
+      <app-proceeding-info
+        [info]="infoForm"
+        (filterEvent)="getData($event)"></app-proceeding-info>
+    </div>
+
     <!-- <div class="row border border-dark">
         <h5 class="title">Agregar Nuevo Bien</h5>
         <div class="col-md-4 mt-5">

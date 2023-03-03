@@ -4,6 +4,8 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import {
+  IDeleted,
+  INotDeleted,
   IProceedingByGood,
   ProceedingsDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -54,6 +56,38 @@ export class ScheduledMaintenanceComponent
     console.log(this.settings1);
   }
 
+  private showMessageProceedingsRemoved(
+    removeds: string[],
+    notRemoveds: string[]
+  ) {
+    let proceedings = '';
+    if (removeds.length > 0) {
+      removeds.forEach((selected, index) => {
+        proceedings +=
+          selected + (index < this.selecteds.length - 1 ? ',' : '');
+      });
+      this.onLoadToast(
+        'success',
+        'Exito',
+        `Se eliminaron las actas N° ${proceedings} ` +
+          this.showMessageProceedingsNotRemoved(notRemoveds)
+      );
+    }
+  }
+
+  private showMessageProceedingsNotRemoved(notRemoveds: string[]) {
+    let proceedingsNotRemoveds = '';
+    if (notRemoveds.length > 0) {
+      notRemoveds.forEach((selected, index) => {
+        proceedingsNotRemoveds +=
+          selected + (index < this.selecteds.length - 1 ? ',' : '');
+      });
+      return `pero no se pudieron eliminar las actas N° ${proceedingsNotRemoveds} porque tienen detalles de acta`;
+    } else {
+      return '';
+    }
+  }
+
   deleteProgramations() {
     console.log(this.selecteds);
     this.alertQuestion(
@@ -64,19 +98,24 @@ export class ScheduledMaintenanceComponent
       if (question.isConfirmed) {
         this.service.deleteMasive(this.selecteds).subscribe({
           next: response => {
-            let actas = '';
-            this.selecteds.forEach((selected, index) => {
-              actas +=
-                selected.id + (index < this.selecteds.length - 1 ? ',' : '');
+            console.log(response);
+            const removeds: string[] = [];
+            const notRemoveds: string[] = [];
+            response.forEach(item => {
+              const { deleted } = item as IDeleted;
+              const { error } = item as INotDeleted;
+              if (deleted) {
+                removeds.push(deleted);
+              }
+              if (error) {
+                notRemoveds.push(error);
+              }
             });
-            this.onLoadToast(
-              'success',
-              'Exito',
-              `Se eliminaron las actas N° ${actas}`
-            );
-            this.getProceedingReception();
+            this.showMessageProceedingsRemoved(removeds, notRemoveds);
+            this.getData();
           },
           error: err => {
+            console.log(err);
             let actas = '';
             this.selecteds.forEach((selected, index) => {
               actas +=
@@ -113,7 +152,7 @@ export class ScheduledMaintenanceComponent
         this.service.deleteById(item).subscribe({
           next: response => {
             console.log(response);
-            this.getProceedingReception();
+            this.getData();
             this.onLoadToast(
               'success',
               'Exito',
@@ -122,11 +161,11 @@ export class ScheduledMaintenanceComponent
           },
           error: err => {
             console.log(err);
-            this.onLoadToast(
-              'error',
-              'ERROR',
-              `No se pudo eliminar el Acta N° ${item.id}`
-            );
+            let message = `No se pudo eliminar el Acta N° ${item.id}`;
+            if (err.error.message.includes('detalle_acta_ent_recep')) {
+              message = message + ` porque tiene detalles de acta`;
+            }
+            this.onLoadToast('error', 'ERROR', message);
           },
         });
       }

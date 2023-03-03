@@ -6,13 +6,18 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { RangePickerModalComponent } from 'src/app/@standalone/modals/range-picker-modal/range-picker-modal.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodsByProceeding } from 'src/app/core/models/ms-indicator-goods/ms-indicator-goods-interface';
+import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { firstFormatDate } from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
+import {
+  IDeleted,
+  INotDeleted,
+} from './../../../../core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { TypeEvents } from './../../scheduled-maintenance/interfaces/typeEvents';
-import { dataDummy, settingKeysProceedings, settingsGoods } from './const';
-import { IscheduleMaintenanceDetail } from './interfaces';
+import { settingKeysProceedings, settingsGoods } from './const';
 
 @Component({
   selector: 'app-scheduled-maintenance-detail',
@@ -32,27 +37,52 @@ export class ScheduledMaintenanceDetailComponent
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
+  elementToExport: any[];
   datepicker: any;
   source: LocalDataSource;
   paramsStatus: ListParams = new ListParams();
-  data: IscheduleMaintenanceDetail[] = [];
+  data: IGoodsByProceeding[] = [];
   tiposEvento = TypeEvents;
   paramsTypes: ListParams = new ListParams();
   totalItems: number = 0;
-  selecteds: IscheduleMaintenanceDetail[];
+  selecteds: IGoodsByProceeding[];
+  selectedsForUpdate: IGoodsByProceeding[] = [];
   settingKeysProceedings = settingKeysProceedings;
   settingsGoods = settingsGoods;
+  loadingExcel = false;
+  flagDownload = false;
   constructor(
     private location: Location,
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private service: ProceedingsDetailDeliveryReceptionService
+    private service: MsIndicatorGoodsService,
+    private detailService: ProceedingsDetailDeliveryReceptionService
   ) {
     super();
     this.prepareForm();
     this.statusActa.valueChanges.subscribe(x => {
       console.log(x);
       this.updateSettingsKeysProceedings(x);
+      this.updateSettingsGoods(x);
+      if (x === 'CERRADA') {
+        if (this.selectedsForUpdate.length > 0) {
+          this.detailService
+            .updateMasive(this.selectedsForUpdate, this.actaId)
+            .subscribe(x => {
+              let goods = '';
+              this.selectedsForUpdate.forEach((selected, index) => {
+                goods +=
+                  selected.no_bien +
+                  (index < this.selecteds.length - 1 ? ',' : '');
+              });
+              this.onLoadToast(
+                'success',
+                'Exito',
+                `Se actualizaron los bienes N° ${goods} `
+              );
+            });
+        }
+      }
     });
   }
 
@@ -64,6 +94,14 @@ export class ScheduledMaintenanceDetailComponent
     return this.statusActa ? this.statusActa.value : 'CERRADA';
   }
 
+  get claveActa() {
+    return this.form.get('claveActa') ? this.form.get('claveActa').value : '';
+  }
+
+  get actaId() {
+    return this.form.get('acta') ? this.form.get('acta').value : '';
+  }
+
   private updateSettingsKeysProceedings(value = this.statusActaValue) {
     this.settingKeysProceedings = {
       ...this.settingKeysProceedings,
@@ -72,7 +110,7 @@ export class ScheduledMaintenanceDetailComponent
         edit: value !== 'CERRADA',
       },
     };
-    this.updateTableKeysProceedings(this.form.get('claveActa').value);
+    this.updateTableKeysProceedings(this.claveActa);
   }
 
   private updateTableKeysProceedings(keysProceedings: string) {
@@ -83,6 +121,18 @@ export class ScheduledMaintenanceDetailComponent
     });
     keys.push(key);
     this.source = new LocalDataSource(keys);
+  }
+
+  private updateSettingsGoods(value = this.statusActaValue) {
+    this.settingsGoods = {
+      ...this.settingsGoods,
+      actions: {
+        ...this.settingsGoods.actions,
+        edit: value !== 'CERRADA',
+        delete: value !== 'CERRADA',
+      },
+    };
+    this.data = [...this.data];
   }
 
   private prepareForm() {
@@ -98,14 +148,54 @@ export class ScheduledMaintenanceDetailComponent
     });
     this.updateSettingsKeysProceedings();
     this.updateTableKeysProceedings(acta.keysProceedings);
+    this.updateSettingsGoods();
+  }
+
+  nameExcel() {
+    return (
+      'Reporte Mantenimiento de Acta Entrega Recepción_' +
+      this.claveActa +
+      '.xlsx'
+    );
+  }
+
+  exportExcel() {
+    this.loadingExcel = true;
+    this.service.getExcel(this.form.value).subscribe(x => {
+      this.elementToExport = x;
+      this.flagDownload = !this.flagDownload;
+      console.log(x);
+      this.loadingExcel = false;
+    });
   }
 
   return() {
     this.location.back();
   }
+
+  private fillSelectedsForUpdate(
+    newData: IGoodsByProceeding,
+    data: IGoodsByProceeding
+  ) {
+    if (
+      newData.fec_aprobacion_x_admon !== data.fec_aprobacion_x_admon ||
+      newData.fec_indica_usuario_aprobacion !==
+        data.fec_indica_usuario_aprobacion
+    ) {
+      let index = this.selectedsForUpdate.findIndex(
+        x => x.no_bien === newData.no_bien
+      );
+      if (index === -1) {
+        this.selectedsForUpdate.push(newData);
+      } else {
+        this.selectedsForUpdate[index] = newData;
+      }
+    }
+  }
+
   updateGoodsRow(event: any) {
     console.log(event);
-    let { newData, confirm } = event;
+    let { newData, confirm, data } = event;
     if (
       !newData.fec_aprobacion_x_admon ||
       !newData.fec_indica_usuario_aprobacion
@@ -122,6 +212,7 @@ export class ScheduledMaintenanceDetailComponent
       this.alertTableRangeError();
       return;
     }
+    this.fillSelectedsForUpdate(newData, data);
     confirm.resolve(newData);
   }
 
@@ -169,16 +260,58 @@ export class ScheduledMaintenanceDetailComponent
   ngOnInit(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       // console.log(x);
-      this.getData(params);
+      this.getData();
     });
   }
 
-  getData(params: ListParams) {
-    this.data = dataDummy.slice(
-      (params.page - 1) * params.limit,
-      params.page * params.limit
-    );
-    this.totalItems = dataDummy.length;
+  getData() {
+    const idActa = this.actaId;
+    console.log(idActa);
+    console.log(new Date());
+    console.log(new Date().toISOString());
+    let params = this.params.getValue();
+    if (idActa && idActa.length > 0) {
+      this.service.getGoodsByProceeding(idActa).subscribe({
+        next: response => {
+          this.data = [...response.data].slice(
+            (params.page - 1) * params.limit,
+            params.page * params.limit
+          );
+          this.totalItems = response.data.length;
+        },
+        error: err => {
+          this.data = [];
+          this.totalItems = 0;
+        },
+      });
+    }
+  }
+
+  private showMessageGoodsNotRemoved(notRemoveds: string[]) {
+    let goods = '';
+    if (notRemoveds.length > 0) {
+      notRemoveds.forEach((selected, index) => {
+        goods += selected + (index < this.selecteds.length - 1 ? ',' : '');
+      });
+      return `pero no se pudieron los bienes N° ${goods}`;
+    } else {
+      return '';
+    }
+  }
+
+  private showMessageGoodsRemoved(removeds: string[], notRemoveds: string[]) {
+    let goods = '';
+    if (removeds.length > 0) {
+      removeds.forEach((selected, index) => {
+        goods += selected + (index < this.selecteds.length - 1 ? ',' : '');
+      });
+      this.onLoadToast(
+        'success',
+        'Exito',
+        `Se eliminaron los bienes N° ${goods} ` +
+          this.showMessageGoodsNotRemoved(notRemoveds)
+      );
+    }
   }
 
   deleteGoods() {
@@ -188,20 +321,23 @@ export class ScheduledMaintenanceDetailComponent
       'Desea eliminar estos registros?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.service.deleteMasive(this.selecteds).subscribe({
+        this.detailService.deleteMasive(this.selecteds, this.actaId).subscribe({
           next: response => {
-            let bienes = '';
-            this.selecteds.forEach((selected, index) => {
-              bienes +=
-                selected.no_bien +
-                (index < this.selecteds.length - 1 ? ',' : '');
+            console.log(response);
+            const removeds: string[] = [];
+            const notRemoveds: string[] = [];
+            response.forEach(item => {
+              const { deleted } = item as IDeleted;
+              const { error } = item as INotDeleted;
+              if (deleted) {
+                removeds.push(deleted);
+              }
+              if (error) {
+                notRemoveds.push(error);
+              }
             });
-            this.onLoadToast(
-              'success',
-              'Exito',
-              `Se eliminaron los bienes N° ${bienes}`
-            );
-            // this.getData();
+            this.showMessageGoodsRemoved(removeds, notRemoveds);
+            this.getData();
           },
           error: err => {
             let bienes = '';
@@ -241,6 +377,7 @@ export class ScheduledMaintenanceDetailComponent
             };
           }),
         ];
+        this.selectedsForUpdate = [...this.data];
         // this.service.updateMasive(this.data).subscribe({
         //   next: response => {
         //     this.getData();
@@ -258,36 +395,36 @@ export class ScheduledMaintenanceDetailComponent
     });
   }
 
-  rowsSelected(event: { selected: IscheduleMaintenanceDetail[] }) {
+  rowsSelected(event: { selected: IGoodsByProceeding[] }) {
     this.selecteds = event.selected;
   }
 
-  showDeleteAlert(item: IscheduleMaintenanceDetail) {
+  showDeleteAlert(item: IGoodsByProceeding) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        // this.service.deleteById(item).subscribe({
-        //   next: response => {
-        //     console.log(response);
-        //     this.getData(null);
-        //     this.onLoadToast(
-        //       'success',
-        //       'Exito',
-        //       `Se elimino el bien N° ${item.no_bien}`
-        //     );
-        //   },
-        //   error: err => {
-        //     console.log(err);
-        //     this.onLoadToast(
-        //       'error',
-        //       'ERROR',
-        //       `No se pudo eliminar el bien N° ${item.no_bien}`
-        //     );
-        //   },
-        // });
+        this.detailService.deleteById(+item.no_bien, this.actaId).subscribe({
+          next: response => {
+            console.log(response);
+            this.getData();
+            this.onLoadToast(
+              'success',
+              'Exito',
+              `Se elimino el bien N° ${item.no_bien}`
+            );
+          },
+          error: err => {
+            console.log(err);
+            this.onLoadToast(
+              'error',
+              'ERROR',
+              `No se pudo eliminar el bien N° ${item.no_bien}`
+            );
+          },
+        });
       }
     });
   }

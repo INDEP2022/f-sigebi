@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, map, mergeMap, Observable } from 'rxjs';
+import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -18,6 +18,14 @@ export interface IProceedingByGood {
   programmingtype: string;
 }
 
+export interface IDeleted {
+  deleted: string;
+}
+
+export interface INotDeleted {
+  error: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -33,7 +41,18 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   deleteMasive(selecteds: IProceedingDeliveryReception[]) {
     return forkJoin(
       selecteds.map(selected => {
-        return this.delete(this.endpoint + '/' + selected.id);
+        return this.delete(this.endpoint + '/' + selected.id).pipe(
+          map(item => {
+            return { deleted: selected.id } as IDeleted;
+          }),
+          catchError(err => {
+            if (err.error.message.includes('detalle_acta_ent_recep')) {
+              return of({ error: selected.id } as INotDeleted);
+            } else {
+              return of({ error: null } as INotDeleted);
+            }
+          })
+        );
       })
     );
   }
@@ -42,10 +61,12 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.delete(this.endpoint + '/' + selected.id);
   }
 
-  getExcel(params?: ListParams | string) {
+  getExcel(filterParams?: FilterParams) {
+    const params = new FilterParams(filterParams);
+    params.limit = 10000;
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,
-      params
+      params.getParams()
     ).pipe(
       map(items => {
         const data = items.data;

@@ -114,7 +114,7 @@ export abstract class ScheduledMaintenance extends BasePage {
     this.prepareForm();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
       console.log(x);
-      this.getProceedingReception();
+      this.getData();
     });
   }
 
@@ -253,7 +253,8 @@ export abstract class ScheduledMaintenance extends BasePage {
     return true;
   }
 
-  getProceedingReception() {
+  getData() {
+    this.saveForm();
     if (this.fillParams()) {
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({

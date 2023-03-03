@@ -4,6 +4,7 @@ import { SelectFormComponent } from './../../../@standalone/shared-forms/select-
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ExcelReportComponent } from 'src/app/@standalone/excel-report/excel-report.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CantsComponent } from './scheduled-maintenance-detail/cants/cants.component';
 import { ScheduledMaintenanceDetailComponent } from './scheduled-maintenance-detail/scheduled-maintenance-detail.component';
@@ -23,6 +24,7 @@ import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component
     ModalModule.forChild(),
     TabsModule,
     SelectFormComponent,
+    ExcelReportComponent,
   ],
 })
 export class ScheduledMaintenanceModule {}

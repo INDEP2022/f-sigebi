@@ -1,23 +1,50 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  deliveryReceptionToInfo,
+  IProceedingInfo,
+} from './models/proceeding-info';
 
 @Component({
   selector: 'app-proceeding-info',
   templateUrl: './proceeding-info.component.html',
-  styles: [],
+  styles: [
+    `
+      .header-proceeding-info {
+        display: flex;
+        margin-top: 10px;
+        align-items: center;
+      }
+      button {
+        position: absolute;
+        right: 15px;
+      }
+      .row {
+      }
+    `,
+  ],
 })
 export class ProceedingInfoComponent implements OnInit {
-  @Input()
+  @Input() set info(value: IProceedingDeliveryReception) {
+    if (value) this.form.setValue(deliveryReceptionToInfo(value));
+  }
+  @Input() loading = false;
   form: FormGroup;
   statusList = [
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
+  @Output() filterEvent = new EventEmitter<IProceedingInfo>();
+  constructor(private fb: FormBuilder) {
     this.prepareForm();
+  }
+
+  ngOnInit(): void {}
+
+  filter() {
+    this.filterEvent.emit(this.form.value);
   }
 
   prepareForm() {

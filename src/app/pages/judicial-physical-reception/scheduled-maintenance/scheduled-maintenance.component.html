@@ -105,7 +105,7 @@
             class="btn btn-primary active"
             type="submit"
             size="small"
-            (click)="getProceedingReception()">
+            (click)="getData()">
             Refrescar Informaci&oacute;n
           </button>
         </div>
@@ -123,10 +123,11 @@
             [class]="
               loading || loadingExcel || data.length === 0 ? 'disabled' : ''
             "
-            (click)="fillElementsToExport()">
+            (click)="exportExcel()">
             <app-excel-report
               [elementToExport]="elementToExport"
               [externalClick]="flagDownload"
+              [nameExcel]="'Reporte de Mantenimiento de Programaciones.xslsx'"
               text="Exporta Excel"></app-excel-report>
           </div>
         </div>

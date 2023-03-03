@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
@@ -59,7 +58,7 @@ export class ScheduledMaintenanceComponent
     ];
   }
 
-  fillElementsToExport() {
+  exportExcel() {
     // const data = <IProceedingDeliveryReception[]>this.table.source.data;
     // this.elementToExport = data.map(item => {
     //   return {
@@ -69,9 +68,7 @@ export class ScheduledMaintenanceComponent
     //   };
     // })
     this.loadingExcel = true;
-    const params = new FilterParams(this.filterParams);
-    params.limit = 10000;
-    this.service.getExcel(params.getParams()).subscribe(x => {
+    this.service.getExcel(this.filterParams).subscribe(x => {
       this.elementToExport = x;
       this.flagDownload = !this.flagDownload;
       console.log(x);
