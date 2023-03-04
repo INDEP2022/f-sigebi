@@ -2823,7 +2823,10 @@ export class DocumentsReceptionRegisterComponent
           };
           console.log(this.formControls.expedientNumber.value);
           this.tmpExpedientService.create(expedientData).subscribe({
-            next: () => {},
+            next: data => {
+              this.formControls.expedientNumber.setValue(data.id);
+              this.updateGlobalVars('gNoExpediente', data.id);
+            },
             error: err => {
               this.loading = false;
               console.log(expedientData);
@@ -3059,8 +3062,13 @@ export class DocumentsReceptionRegisterComponent
       };
     }
     console.log(this.docDataService.goodsCaptureTempParams);
+    console.log(this.globals);
     this.loading = false;
-    this.router.navigateByUrl('pages/documents-reception/goods-capture');
+    this.router.navigate(['pages/documents-reception/goods-capture'], {
+      queryParams: {
+        origin: 'FACTOFPREGRECDOCM',
+      },
+    });
   }
 
   deleteDuplicatedGoods() {

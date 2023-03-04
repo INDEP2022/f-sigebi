@@ -4,7 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { switchMap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
 import { SearchFractionComponent } from './components/search-fraction/search-fraction.component';
 import { GoodsCaptureMain } from './goods-capture-main';
@@ -30,7 +32,9 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     goodsCaptureService: GoodsCaptureService,
     activatedRoute: ActivatedRoute,
     router: Router,
-    menageService: MenageService
+    menageService: MenageService,
+    drDataService: DocumentsReceptionDataService,
+    globalVarService: GlobalVarsService
   ) {
     super(
       fb,
@@ -38,7 +42,9 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       goodsCaptureService,
       activatedRoute,
       router,
-      menageService
+      menageService,
+      drDataService,
+      globalVarService
     );
   }
 
@@ -283,7 +289,13 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       this.goodFeatures = [];
       window.scrollTo(0, 0);
     } else {
-      this.router.navigate(['/']);
+      if (this.params.origin === FLYERS_REGISTRATION_CODE) {
+        this.router.navigate([
+          '/pages/documents-reception/flyers-registration',
+        ]);
+      } else {
+        this.router.navigate(['/']);
+      }
     }
   }
 
