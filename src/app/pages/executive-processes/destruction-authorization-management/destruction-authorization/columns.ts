@@ -11,16 +11,34 @@ export const PROCEEDINGS_COLUMNS = {
     title: 'Fecha elaboración',
     sort: false,
   },
-  datePhysicalReception: {
+  /*datePhysicalReception: {
     title: 'Fecha recepción',
     sort: false,
-  },
+  },*/
   captureDate: {
     title: 'Fecha captura',
     sort: false,
   },
   statusProceedings: {
     title: 'Estado',
+    sort: false,
+  },
+};
+
+export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
+  numberGood: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  good: {
+    title: 'Descripción',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+  },
+  amount: {
+    title: 'Cantidad',
     sort: false,
   },
 };
@@ -45,6 +63,23 @@ export const GOODS_COLUMNS = {
   requestFolio: {
     title: 'Of. Sol.',
     type: 'string',
+    sort: false,
+  },
+};
+
+export const DICTATION_COLUMNS = {
+  dictation: {
+    title: 'Clave oficio armada',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.passOfficeArmy;
+    },
+  },
+};
+
+export const ACTA_RECEPTION_COLUMNS = {
+  offices: {
+    title: 'Actas',
     sort: false,
   },
 };
