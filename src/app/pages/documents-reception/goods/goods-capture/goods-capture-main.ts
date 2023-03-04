@@ -9,6 +9,8 @@ import {
   map,
   of,
   switchMap,
+  take,
+  takeUntil,
   tap,
   throwError,
 } from 'rxjs';
@@ -23,6 +25,7 @@ import { DocumentsReceptionDataService } from 'src/app/core/services/document-re
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
 import { GoodsCaptureRecordSelectComponent } from './components/goods-capture-record-select/goods-capture-record-select.component';
 import { IGlobalGoodsCapture } from './interfaces/good-capture-global';
@@ -126,7 +129,8 @@ export class GoodsCaptureMain extends BasePage {
     private activatedRoute: ActivatedRoute,
     public router: Router,
     public menageService: MenageService,
-    public drDataService: DocumentsReceptionDataService
+    public drDataService: DocumentsReceptionDataService,
+    private globalVarService: GlobalVarsService
   ) {
     super();
     const paramsMap = this.activatedRoute.snapshot.queryParamMap;
@@ -134,7 +138,20 @@ export class GoodsCaptureMain extends BasePage {
     this.params.origin = paramsMap.get('origin');
     const frParams = this.drDataService.goodsCaptureTempParams;
     this.params.iden = frParams.iden;
-    console.log(frParams);
+    this.global.noTransferente = frParams.noTransferente;
+    this.params.satSubject = frParams.asuntoSat;
+    this.params.pOfficeNumber = frParams.pNoOficio;
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe), take(1))
+      .subscribe({
+        next: global => {
+          this.global.gNoExpediente = global.gNoExpediente;
+          console.log(this.global.gNoExpediente);
+          this.global.gnuActivaGestion = global.gnuActivaGestion;
+          this.global.pIndicadorSat = global.pIndicadorSat;
+        },
+      });
   }
 
   get formControls() {
@@ -606,7 +623,7 @@ export class GoodsCaptureMain extends BasePage {
       tap(parameter => (this.global.gClasifNumber = parameter.valorInicial)),
       catchError(error => {
         if (error.status === 404) this.showError(NO_PARAMETER_FOUND);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
         return error;
       })
     );
