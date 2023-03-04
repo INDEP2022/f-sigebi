@@ -5,6 +5,8 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { switchMap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
@@ -34,7 +36,9 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     router: Router,
     menageService: MenageService,
     drDataService: DocumentsReceptionDataService,
-    globalVarService: GlobalVarsService
+    globalVarService: GlobalVarsService,
+    private tmpExpedientService: TmpExpedientService,
+    private _expedienService: ExpedientService
   ) {
     super(
       fb,
@@ -272,7 +276,6 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
         'estadoConservacion',
         'noBien',
         'valRef',
-        'identifica',
         'descripcion',
         'almacen',
         'entFed',
@@ -315,6 +318,35 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
 
   createGood() {
     this.loading = true;
+    console.log(this.goodToSave.fileNumber);
+    if (this.params.origin == FLYERS_REGISTRATION_CODE) {
+      this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
+        next: (expedient: any) => {
+          this._expedienService.create(expedient).subscribe({
+            next: () => {
+              this.saveGood();
+            },
+            error: error => {
+              this.onLoadToast(
+                'error',
+                'Error',
+                'Ocurrio un error al guardar el expediente'
+              );
+            },
+          });
+        },
+        error: error => {
+          if (error.status > 0 && error.status >= 404) {
+            this.saveGood();
+          }
+        },
+      });
+    } else {
+      this.saveGood();
+    }
+  }
+
+  saveGood() {
     this.goodsCaptureService.createGood(this.goodToSave).subscribe({
       next: good => {
         this.handleSuccesSave(good);
