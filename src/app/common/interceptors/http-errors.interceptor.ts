@@ -44,7 +44,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     return next.handle(req).pipe(
       map(response => {
         this.getValue();
-        console.log(`ShowError: ${this.showError}`);
         return this.handleSuccess(response);
       }),
       catchError((error: HttpErrorResponse) => {
@@ -60,7 +59,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   resetValue() {
-    console.log('\n\nReestableciendo Valor....\n\n');
     this.showHideErrorInterceptorService.showHideError(true);
   }
 

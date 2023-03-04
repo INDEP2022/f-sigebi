@@ -86,8 +86,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   reconciledAssetsAndNumerary: any[] = [];
   quantityOfGoods: number;
   userInfo: string;
-
-  private route: Router;
+  inputValue: string | number;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -103,7 +102,8 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     private accountMovements: AccountMovements,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private modalService: BsModalService,
-    private token: AuthService
+    private token: AuthService,
+    private route: Router
   ) {
     super();
     this.settings2 = this.settings;
@@ -122,9 +122,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       this.fileNumberRoute = params['fileNumber'];
       console.log(this.fileNumber);
       if (this.fileNumberRoute) {
-        console.log('SIIIII');
-      } else {
-        console.log('NOOOOOO');
+        this.fileNumber = this.fileNumberRoute;
+        this.inputValue = this.fileNumberRoute;
+        this.search(Number(this.fileNumber));
+        console.log(this.fileNumberRoute);
       }
     });
   }
@@ -144,12 +145,40 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getInfoToken();
-    this.getScreenName();
-    this.getParamCve();
+    console.log(this.firsTime);
     this.prepareForm();
     this.initPaginatorProceedings();
     this.initPaginatorGoods();
+    this.getParams();
+    this.getInfoToken();
+    this.getScreenName();
+    this.getParamCve();
+  }
+
+  search(
+    fileNumber: string | number,
+    paginatedProceedings?: { page: number; limit: number },
+    paginatedGoods?: { page: number; limit: number }
+  ) {
+    this.dataTable = [];
+    this.proceedingsData = [];
+    this.fileNumber = Number(fileNumber);
+    console.log(this.activatedRoute);
+    this.route.navigate(
+      [
+        '/pages/documents-reception/closing-of-confiscation-and-return-records',
+        `${fileNumber}`,
+      ],
+      {
+        relativeTo: this.activatedRoute,
+      }
+    );
+
+    this.firsTime = true;
+    this.resetGoodsPaginator(paginatedGoods);
+    this.resetProceedingssPaginator(paginatedProceedings);
+    this.cleanForm();
+    this.getInfo(this.fileNumber);
   }
 
   getInfoToken() {
@@ -248,19 +277,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  search(
-    fileNumber: string | number,
-    paginatedProceedings?: { page: number; limit: number },
-    paginatedGoods?: { page: number; limit: number }
-  ) {
-    this.dataTable = [];
-    this.proceedingsData = [];
-    this.fileNumber = Number(fileNumber);
-    this.firsTime = true;
-    this.resetGoodsPaginator(paginatedGoods);
-    this.resetProceedingssPaginator(paginatedProceedings);
-    this.form.reset();
-    this.getInfo(this.fileNumber);
+  cleanForm() {
+    this.form.get('previewFind').setValue('');
+    this.form.get('penaltyCause').setValue('');
   }
 
   initPaginatorProceedings() {
