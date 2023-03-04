@@ -16,6 +16,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { GoodByProceedingsModalComponent } from '../good-by-proceedings-modal/good-by-proceedings-modal.component';
 import { ProceedingsModalComponent } from '../proceedings-modal/proceedings-modal.component';
 import {
+  ACTA_RECEPTION_COLUMNS,
   DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
   DICTATION_COLUMNS,
   GOODS_COLUMNS,
@@ -47,9 +48,12 @@ export class DestructionAuthorizationComponent
   proceedings: IProccedingsDeliveryReception;
 
   detailProceedingsList: IDetailProceedingsDeliveryReception[] = [];
+  detailProceedings: IDetailProceedingsDeliveryReception;
   dictaList: IDictation[] = [];
 
   goodPDS: IGood[] = [];
+
+  goods: IDetailProceedingsDeliveryReception;
 
   settings2;
   settings3;
@@ -60,6 +64,13 @@ export class DestructionAuthorizationComponent
   selectedRow: any = null;
 
   data: LocalDataSource = new LocalDataSource();
+  actaList: any;
+
+  loadingProceedings = this.loading;
+  loadingGoods = this.loading;
+  loadingGoodsByP = this.loading;
+  loadingDictation = this.loading;
+  loadingActReception = this.loading;
 
   constructor(
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
@@ -100,7 +111,7 @@ export class DestructionAuthorizationComponent
       //Actas de recepción
       ...this.settings,
       actions: false,
-      columns: { ...GOODS_COLUMNS },
+      columns: { ...ACTA_RECEPTION_COLUMNS },
     };
 
     this.settings5 = {
@@ -122,7 +133,7 @@ export class DestructionAuthorizationComponent
 
   //Trae todas las actas/Oficios
   getAllProceeding() {
-    this.loading = true;
+    this.loadingProceedings = true;
     this.proceedingsDeliveryReceptionService
       .getAll3(this.params.getValue())
       .subscribe({
@@ -147,10 +158,10 @@ export class DestructionAuthorizationComponent
           console.log(response);
           this.data.load(data);
           this.totalItems = response.count;
-          this.loading = false;
+          this.loadingProceedings = false;
         },
         error: error => {
-          this.loading = false;
+          this.loadingProceedings = false;
           console.log(error);
         },
       });
@@ -181,7 +192,7 @@ export class DestructionAuthorizationComponent
 
   //Consulta los bienes relacionados con el id del acta seleccionada en la tabla
   getGoodsByProceedings(proceedings: IProccedingsDeliveryReception): void {
-    this.loading = true;
+    this.loadingGoodsByP = true;
     this.detailProceeDelRecService
       .getGoodsByProceedings(proceedings.id, this.params2.getValue())
       .subscribe({
@@ -189,13 +200,10 @@ export class DestructionAuthorizationComponent
           console.log(response);
           this.detailProceedingsList = response.data;
           this.totalItems2 = response.count;
-          this.loading = false;
+          this.loadingGoodsByP = false;
         },
-        error: error => (this.loading = false),
+        error: error => (this.loadingGoodsByP = false),
       });
-    this.params4
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDictationbyGood());
   }
 
   openForm2(
@@ -212,29 +220,46 @@ export class DestructionAuthorizationComponent
     this.modalService.show(GoodByProceedingsModalComponent, config);
   }
 
+  //Método seleccionar columna bien para mostrar dictamen y acta recepcional
+  rowsSelected2(event: any) {
+    this.totalItems5 = 0;
+    this.dictaList = [];
+    this.detailProceedings = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDictationbyGood(this.detailProceedings));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDictationbyGood(this.detailProceedings));
+  }
+
+  //Trae las dictaminaciones relacionadas al bien generado por no. de acta
+  getDictationbyGood(
+    detailProceedings: IDetailProceedingsDeliveryReception
+  ): void {
+    this.loadingDictation = true;
+    this.dictationService
+      .getDictationByGood(detailProceedings.numberGood)
+      .subscribe({
+        next: response => {
+          this.dictaList = response.data;
+          this.totalItems5 = response.count;
+          this.loadingDictation = false;
+        },
+        error: error => (this.loadingDictation = false),
+      });
+  }
+
   //Trae todos los bienes con estado PDS
   getGoodByStatusPDS() {
-    this.loading = true;
+    this.loadingGoods = true;
     this.goodService.getGoodByStatusPDS(this.params3.getValue()).subscribe({
       next: response => {
         this.goodPDS = response.data;
         this.totalItems3 = response.count;
-        this.loading = false;
+        this.loadingGoods = false;
       },
-      error: error => (this.loading = false),
-    });
-  }
-
-  //Trae las dictaminaciones relacionadas al bien generado por no. de acta
-  getDictationbyGood(): void {
-    this.loading = true;
-    this.dictationService.getAll(this.params5.getValue()).subscribe({
-      next: response => {
-        this.dictaList = response.data;
-        this.totalItems5 = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
+      error: error => (this.loadingGoods = false),
     });
   }
 

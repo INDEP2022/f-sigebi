@@ -20,4 +20,10 @@ export class DictationService extends HttpService {
       params
     );
   }
+
+  getDictationByGood(id: string | number) {
+    const filter = `?page=1&filters[0]={"property":"no_bien","comparison":"EQUAL","value":"3182885"}`;
+    const route = `${DictationEndpoints.DictationXGood1}?page=1&filters[0]={"property":"no_bien","comparison":"EQUAL","value":"${id}"}`;
+    return this.get(route);
+  }
 }

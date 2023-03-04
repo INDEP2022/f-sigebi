@@ -11,10 +11,10 @@ export const PROCEEDINGS_COLUMNS = {
     title: 'Fecha elaboración',
     sort: false,
   },
-  datePhysicalReception: {
+  /*datePhysicalReception: {
     title: 'Fecha recepción',
     sort: false,
-  },
+  },*/
   captureDate: {
     title: 'Fecha captura',
     sort: false,
@@ -68,8 +68,18 @@ export const GOODS_COLUMNS = {
 };
 
 export const DICTATION_COLUMNS = {
-  passOfficeArmy: {
+  dictation: {
     title: 'Clave oficio armada',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.passOfficeArmy;
+    },
+  },
+};
+
+export const ACTA_RECEPTION_COLUMNS = {
+  offices: {
+    title: 'Actas',
     sort: false,
   },
 };

@@ -75,10 +75,34 @@
           <form-field
             label="Estado"
             [control]="proceedingForm.get('statusProceedings')">
+            <ng-select
+              formControlName="statusProceedings"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="CERRADA">CERRADA</ng-option>
+              <ng-option value="ABIERTA">ABIERTA</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Folio Universal"
+            [control]="proceedingForm.get('universalFolio')">
             <input
               type="text"
               class="form-control"
-              formControlName="statusProceedings" />
+              formControlName="universalFolio" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Observaciones"
+            [control]="proceedingForm.get('observation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observation" />
           </form-field>
         </div>
       </div>

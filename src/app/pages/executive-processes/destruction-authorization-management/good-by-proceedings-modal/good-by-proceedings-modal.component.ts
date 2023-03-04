@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -14,11 +17,22 @@ export class GoodByProceedingsModalComponent
   title: string = 'BIENES POR ACTA';
   edit: boolean = false;
 
-  constructor(private modalRef: BsModalRef) {
+  detailProceedingsForm: ModelForm<IDetailProceedingsDeliveryReception>;
+  detailProceedings: IDetailProceedingsDeliveryReception;
+
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  private prepareForm() {
+    this.detailProceedingsForm = this.fb.group({
+      numberGood: [null, [Validators.required]],
+    });
+  }
 
   close() {
     this.modalRef.hide();

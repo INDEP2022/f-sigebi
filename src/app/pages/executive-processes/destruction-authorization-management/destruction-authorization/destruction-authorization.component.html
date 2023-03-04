@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      <div [class]="loading ? 'table-loading' : ''">
+      <div [class]="loadingProceedings ? 'table-loading' : ''">
         <div class="table-responsive">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
@@ -40,13 +40,66 @@
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
       </div>
+      <hr />
     </div>
-    <div class="row">
+    <div class="row" *ngIf="rowSelected">
+      <div class="col-md-3">
+        <div class="mt-4">
+          <h5 class="font-size-14">Folio de escaneo:</h5>
+          <p class="text-muted mb-0">
+            {{ selectedRow?.universalFolio }}
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-primary active">
+            solicitud <i class="fa fa-print"></i>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-primary active">
+            Escaneo <i class="fa fa-print"></i>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-primary active">
+            imprimir <i class="fa fa-print"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mt-4">
+          <h5 class="font-size-14">Observaciones:</h5>
+          <p class="text-muted mb-0">
+            {{ selectedRow?.observations }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <hr />
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">ACTAS DE RECEPCIÓN</h5>
+        </div>
+        <div [class]="loadingActReception ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings4"
+              [source]="actaList"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params5"
+            [totalItems]="totalItems4"></app-pagination>
+        </div>
+      </div>
       <div class="col-md-6">
         <div class="ch-content" header>
           <h5 class="title">DICTAMINACIONES</h5>
         </div>
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loadingDictation ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
@@ -58,15 +111,14 @@
             [totalItems]="totalItems5"></app-pagination>
         </div>
       </div>
-      <div class="col-md-6"></div>
     </div>
-    <div>
+    <div class="row pt-5">
       <div class="col-md-6">
         <div class="row pt-5">
           <div class="ch-content" header>
             <h5 class="title">Todos los Bienes en estado PDS</h5>
           </div>
-          <div [class]="loading ? 'table-loading' : ''">
+          <div [class]="loadingGoods ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
@@ -94,12 +146,13 @@
               </div>
             </div>
           </div>
-          <div [class]="loading ? 'table-loading' : ''">
+          <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
-                [source]="detailProceedingsList"></ng2-smart-table>
+                [source]="detailProceedingsList"
+                (userRowSelect)="rowsSelected2($event)"></ng2-smart-table>
             </div>
             <app-pagination
               [params]="params2"

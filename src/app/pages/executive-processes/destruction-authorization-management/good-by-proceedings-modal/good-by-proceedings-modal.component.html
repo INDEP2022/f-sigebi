@@ -3,6 +3,21 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
+    <div class="row">
+      <form class="form-material" [formGroup]="detailProceedingsForm">
+        <div class="col-md-4">
+          <form-field
+            label="No. Bien"
+            [control]="detailProceedingsForm.get('numberGood')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood" />
+          </form-field>
+        </div>
+      </form>
+    </div>
+
     <div class="row pt-5">
       <div class="d-flex justify-content-center">
         <div class="m-3">
@@ -18,6 +33,7 @@
       </div>
     </div>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
