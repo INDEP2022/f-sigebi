@@ -147,9 +147,19 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getAll3(
     params?: ListParams | string
   ): Observable<IListResponse<IProccedingsDeliveryReception>> {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.typeProceedings=RGA`;
     return this.get<IListResponse<IProccedingsDeliveryReception>>(
-      ProceedingsEndpoints.ProceedingsDeliveryReception,
+      route,
       params
     );
+  }
+
+  create(model: IProccedingsDeliveryReception) {
+    return this.post(ProceedingsEndpoints.ProceedingsDeliveryReception, model);
+  }
+
+  update(id: string | number, model: IProccedingsDeliveryReception) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.put(route, model);
   }
 }
