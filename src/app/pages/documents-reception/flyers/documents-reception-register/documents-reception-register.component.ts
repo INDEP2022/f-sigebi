@@ -3064,7 +3064,11 @@ export class DocumentsReceptionRegisterComponent
     console.log(this.docDataService.goodsCaptureTempParams);
     console.log(this.globals);
     this.loading = false;
-    this.router.navigateByUrl('pages/documents-reception/goods-capture');
+    this.router.navigate(['pages/documents-reception/goods-capture'], {
+      queryParams: {
+        origin: 'FACTOFPREGRECDOCM',
+      },
+    });
   }
 
   deleteDuplicatedGoods() {
