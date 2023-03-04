@@ -11,6 +11,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
@@ -206,7 +207,8 @@ export class DocumentsReceptionRegisterComponent
     private massiveGoodService: MassiveGoodService,
     private documentsService: DocumentsService,
     private store: Store<AppState>,
-    private globalVarsService: GlobalVarsService
+    private globalVarsService: GlobalVarsService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
     super();
     if (this.docDataService.flyersRegistrationParams != null)
@@ -266,6 +268,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   ngOnInit(): void {
+    this.showHideErrorInterceptorService.showHideError(false);
     this.checkParams();
     this.onFormChanges();
     this.getLoggedUserArea();
@@ -2688,6 +2691,14 @@ export class DocumentsReceptionRegisterComponent
         this.trackRecordsCheck();
       }
     } else {
+      let minpubNumber: number | string = '';
+      if (this.formControls.minpubNumber.value?.id) {
+        minpubNumber = this.formControls.minpubNumber.value?.id;
+      }
+      let courtNumber: number | string = '';
+      if (this.formControls.courtNumber.value?.id) {
+        courtNumber = this.formControls.courtNumber.value?.id;
+      }
       const inquiryData = {
         protectionKey: this.formControls.protectionKey.value,
         touchPenaltyKey: this.formControls.touchPenaltyKey.value,
@@ -2696,9 +2707,9 @@ export class DocumentsReceptionRegisterComponent
         criminalCase: this.formControls.criminalCase.value,
         entFedKey: this.formControls.entFedKey.value.toString(),
         indiciadoNumber: this.formControls.indiciadoNumber.value?.id,
-        minpubNumber: this.formControls.minpubNumber.value?.id,
+        minpubNumber: minpubNumber,
         cityNumber: this.formControls.cityNumber.value?.idCity,
-        courtNumber: this.formControls.courtNumber.value?.id,
+        courtNumber: courtNumber,
         transference: this.formControls.endTransferNumber.value?.id,
         stationNumber: this.formControls.stationNumber.value?.id,
         autorityNumber: Number(
@@ -2715,6 +2726,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: err => {
           console.log(err);
+          console.log(inquiryData);
           this.trackRecordsCheck();
         },
       });
@@ -2811,7 +2823,10 @@ export class DocumentsReceptionRegisterComponent
           };
           console.log(this.formControls.expedientNumber.value);
           this.tmpExpedientService.create(expedientData).subscribe({
-            next: () => {},
+            next: data => {
+              this.formControls.expedientNumber.setValue(data.id);
+              this.updateGlobalVars('gNoExpediente', data.id);
+            },
             error: err => {
               this.loading = false;
               console.log(expedientData);
@@ -3028,7 +3043,8 @@ export class DocumentsReceptionRegisterComponent
     if (pgr) {
       this.docDataService.goodsCaptureTempParams = {
         iden: this.formData.identifier,
-        noTransferente: this.pageParams.noTransferente,
+        // noTransferente: this.pageParams.noTransferente,
+        noTransferente: this.formData.endTransferNumber,
         desalojo: this.formData.dailyEviction,
         pNoVolante: null,
         pNoOficio: null,
@@ -3037,7 +3053,8 @@ export class DocumentsReceptionRegisterComponent
     } else {
       this.docDataService.goodsCaptureTempParams = {
         iden: this.formData.identifier,
-        noTransferente: this.pageParams.noTransferente,
+        // noTransferente: this.pageParams.noTransferente,
+        noTransferente: this.formData.endTransferNumber,
         desalojo: this.formData.dailyEviction,
         pNoVolante: this.formControls.wheelNumber.value,
         pNoOficio: this.formData.officeExternalKey,
@@ -3045,6 +3062,7 @@ export class DocumentsReceptionRegisterComponent
       };
     }
     console.log(this.docDataService.goodsCaptureTempParams);
+    console.log(this.globals);
     this.loading = false;
     this.router.navigateByUrl('pages/documents-reception/goods-capture');
   }

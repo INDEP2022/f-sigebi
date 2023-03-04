@@ -37,7 +37,7 @@ export class TmpExpedientService extends HttpService {
     return this.get(route);
   }
 
-  create(body: ITempExpedient) {
+  create(body: ITempExpedient): Observable<ITempExpedient> {
     return this.post(this.route.TmpExpedients, body);
   }
 
