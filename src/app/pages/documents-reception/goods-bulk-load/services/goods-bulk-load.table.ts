@@ -115,6 +115,9 @@ export class GoodsBulkLoadService {
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);
   }
+  createExpedient(expedient: any) {
+    return this.expedientService.create(expedient);
+  }
   getIndicatorById(idIndicator: string) {
     return this.indicatorDeadlineService.getById(idIndicator);
   }

@@ -1452,39 +1452,33 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * Validar los registros de los archivos cargados y subir los datos al servidor
    */
 
-  async validGoodById(infoData: IValidInfoData, opcionValid: string = 'sat') {
+  async getGoodById(infoData: IValidInfoData, opcionValid: string = 'sat') {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
       'Validando el número de bien.';
     console.log(this.DeclarationsValidationMassive.message_progress);
-    infoData.validLastRequest = true; // Respuesta correcta
-    if (!infoData.dataRow.transferente) {
-      infoData.error = this.agregarErrorUploadValidation(
-        infoData.error,
-        ERROR_GOOD_INMUEBLE(infoData.dataRow.transferente)
-      );
-      this.infoDataValidation.error = infoData.error; // Setear error
-      infoData.validLastRequest = false; // Respuesta
-      this.searchSatUniqueKey(infoData, opcionValid); // Buscar clave sat
-    } else {
-      await this.goodsBulkService
-        .getGoodById(infoData.dataRow.transferente)
-        .subscribe({
-          next: res => {
-            console.log(res);
-            this.searchSatUniqueKey(infoData, opcionValid); // Buscar clave sat
-          },
-          error: err => {
-            infoData.error = this.agregarErrorUploadValidation(
-              infoData.error,
-              ERROR_GOOD_INMUEBLE(infoData.dataRow.transferente)
-            );
-            this.infoDataValidation.error = infoData.error; // Setear error
-            infoData.validLastRequest = false; // Respuesta
-            this.searchSatUniqueKey(infoData, opcionValid); // Buscar clave sat
-          },
-        });
-    }
+    await this.goodsBulkService
+      .getGoodById(infoData.dataRow.identificador)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          infoData.objInsertResponse['vNO_SUBDELEGACION'] =
+            res.subDelegationNumber;
+          infoData.objInsertResponse['vNO_DELEGACION'] = res.delegationNumber;
+          infoData.objInsertResponse['vNO_ETIQUETA'] = res.labelNumber;
+          // BUSCAR CLAVE UNICA
+          this.searchSatUniqueKey(infoData, opcionValid); // Buscar clave sat
+        },
+        error: err => {
+          infoData.error = this.agregarErrorUploadValidation(
+            infoData.error,
+            ERROR_GOOD_INMUEBLE(infoData.dataRow.transferente)
+          );
+          this.infoDataValidation.error = infoData.error; // Setear error
+          infoData.validLastRequest = false; // Respuesta
+          this.searchSatUniqueKey(infoData, opcionValid); // Buscar clave sat
+        },
+      });
   }
 
   async createGood(infoData: IValidInfoData, opcionValid: string = 'sat') {
@@ -1514,7 +1508,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.DeclarationsValidationMassive.message_progress =
       'Buscando la clave sat.';
     console.log(this.DeclarationsValidationMassive.message_progress);
-    infoData.validLastRequest = true; // Respuesta correcta
     // Parametros para buscar la clave SAT
     let objParams = {
       officeKey: this.paramsGeneral.p_no_oficio,
@@ -1544,15 +1537,93 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     infoData: IValidInfoData,
     opcionValid: string = 'sat'
   ) {
-    // Obtener la clave de la ciudad apartir de la clave Asunto SAT
+    // Mensaje de proceso de validación actual
+    this.DeclarationsValidationMassive.message_progress =
+      'Creacion del expediente.';
+    console.log(this.DeclarationsValidationMassive.message_progress);
+    // Creacion del bien
+    if (infoData.dataRow.descripcion) {
+      // Obtener la clave de la ciudad apartir de la clave Asunto SAT
+      await this.goodsBulkService
+        .searchCityByAsuntoSat(this.paramsGeneral.asunto_sat)
+        .subscribe({
+          next: res => {
+            infoData.objInsertResponse.no_ciudad = res.no_ciudad;
+            this.getInstitucionesEmisoras(infoData, opcionValid);
+          },
+          error: err => {
+            infoData.error = this.agregarErrorUploadValidation(
+              infoData.error,
+              ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            this.getInstitucionesEmisoras(infoData, opcionValid);
+          },
+        });
+    } else {
+    }
+  }
+
+  async getInstitucionesEmisoras(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Inicia proceso de validación para carga
+    this.DeclarationsUploadValidationMassive.message_progress =
+      VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE;
+    // Obtener las instituciones emisoras por numero de institucion (200)
+    await this.goodsBulkService.getIssuingInstitutionById('200').subscribe({
+      next: res => {
+        infoData.objInsertResponse['LST_NOMBRE_INTITUCION'] = res.authorityName;
+        this.getEmisoraAutoridad(infoData, opcionValid);
+      },
+      error: err => {
+        infoData.error = this.agregarErrorUploadValidation(
+          infoData.error,
+          ERROR_ISSUING_INSTITUTION('200')
+        );
+        this.infoDataValidation.error = infoData.error; // Setear error
+        infoData.validLastRequest = false; // Respuesta incorrecta
+        this.getEmisoraAutoridad(infoData, opcionValid);
+      },
+    });
+  }
+
+  async getEmisoraAutoridad(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    let issuingParams: IAuthorityIssuingParams = {
+      expedientSat: this.paramsGeneral.p_no_expediente,
+      transferent: parseInt(
+        infoData.objInsertResponse.manualvar_no_transferente
+      ),
+      city: infoData.objInsertResponse.no_ciudad,
+    };
+    // Obtener institucion emisora EMISORA Y AUTORIDAD
     await this.goodsBulkService
-      .searchCityByAsuntoSat(this.paramsGeneral.asunto_sat)
+      .getIssuingInstitutionByParams(issuingParams)
       .subscribe({
-        next: res => (infoData.objInsertResponse.no_ciudad = res.no_ciudad),
+        next: res => {
+          console.log('emisora autoridad', res);
+
+          if (res.length == 1) {
+            infoData.objInsertResponse.no_autoridad = res[0].no_autoridad; // SET AUTORIDAD
+            infoData.objInsertResponse.no_emisora = res[0].no_emisora; // SET EMISORA
+          } else {
+            infoData.error = this.agregarErrorUploadValidation(
+              infoData.error,
+              ERROR_TRANSFERENTE_PARAMS(1)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+          }
+        },
         error: err => {
           infoData.error = this.agregarErrorUploadValidation(
             infoData.error,
-            ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+            ERROR_TRANSFERENTE_PARAMS(0)
           );
           this.infoDataValidation.error = infoData.error; // Setear error
           infoData.validLastRequest = false; // Respuesta incorrecta
@@ -1560,16 +1631,97 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       });
   }
 
+  async getOTClaveEnt(infoData: IValidInfoData, opcionValid: string = 'sat') {
+    // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
+    await this.goodsBulkService
+      .getEntityFederativeByAsuntoSat(this.paramsGeneral.asunto_sat)
+      .subscribe({
+        next: res => {
+          infoData.objInsertResponse.otclave_federative_entity = res.otclave;
+        },
+        error: err => {
+          infoData.error = this.agregarErrorUploadValidation(
+            infoData.error,
+            ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+          );
+        },
+      });
+  }
+
+  async asociarVolanteExpediente(
+    infoData: IValidInfoData,
+    opcionValid: string = 'sat'
+  ) {
+    // Obtener expediente y validar si existe
+    await this.goodsBulkService
+      .getEntityFederativeByAsuntoSat(this.paramsGeneral.asunto_sat)
+      .subscribe({
+        next: res => {
+          // Continuar sin crear expediente
+        },
+        error: err => {
+          // Crear expediente
+          this.validExpedient(infoData, opcionValid);
+        },
+      });
+  }
+
+  async validExpedient(infoData: IValidInfoData, opcionValid: string = 'sat') {
+    // Validar si existe un expediente
+    await this.goodsBulkService
+      .getExpedientById(this.paramsGeneral.p_no_expediente)
+      .subscribe({
+        next: res => {
+          let dateNowParse = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+          console.log(res);
+          if (!res) {
+            this.insertExpedient(infoData, opcionValid);
+          }
+        },
+        error: err => {
+          infoData.error = this.agregarErrorUploadValidation(
+            infoData.error,
+            ERROR_EXPEDIENTE(infoData.dataRow.expediente)
+          );
+        },
+      });
+  }
+
+  async insertExpedient(infoData: IValidInfoData, opcionValid: string = 'sat') {
+    let dateNowParse = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    let expedienteData: IExpedientMassiveUpload = {
+      id: this.paramsGeneral.p_no_expediente, // NO EXPEDIENTE FROM PARAMS
+      insertedBy: 'USER', // USUARIO SETEADO MANUALMENTE
+      insertMethod: 'CARGA MASIVA VOLANTES', // TIPO DE CARGA MASIVA
+      insertDate: dateNowParse, // FECHA ACTUAL PARA CARGAR
+      nameInstitution: infoData.objInsertResponse.LST_NOMBRE_INSTITUCION, // NOMBRE DE LA INSTITUCION EMISORA
+      indicatedName: null, // SE PASA EL VALOR EN NULL
+      federalEntityKey: infoData.objInsertResponse.otclave_federative_entity, // ENTIDAD FEDERATIVA CLAVE
+      identifier: infoData.dataRow.identificador, // IDENTIFICADOR
+      transferNumber: infoData.dataRow.transferente, // NUMERO DE TRANSFERENTE
+      expTransferNumber: infoData.dataRow.expediente, // EXPEDIENTE TRANSFER NUMBER
+      expedientType: 'T', // TIPO DE EXPEDIENTE
+      authorityNumber: infoData.objInsertResponse.no_autoridad, // NUMERO DE AUTORIDAD
+      stationNumber: infoData.objInsertResponse.no_emisora, // NUMERO EMISORA
+    };
+    // Validar si existe un expediente
+    await this.goodsBulkService.createExpedient(expedienteData).subscribe({
+      next: res => {
+        console.log(res);
+      },
+      error: err => {
+        infoData.error = this.agregarErrorUploadValidation(
+          infoData.error,
+          ERROR_EXPEDIENTE(infoData.dataRow.expediente)
+        );
+      },
+    });
+  }
+
   /**
    * Validar el proceso de carga masiva SAT para subir los datos
    */
   validDataUploadSAT(count: number = 0, row: any) {
-    // Si el asunto_sat existe en parametros
-    if (this.paramsGeneral.asunto_sat) {
-      // EXISTE ASUNTO SAT
-    } else {
-      // NO EXISTE ASUNTO SAT
-    }
     // Mensaje de proceso de validación actual
     this.DeclarationsUploadValidationMassive.message_progress =
       VALIDATION_UPDATE_PROCESS_MESSAGE(count + 1);
@@ -1594,6 +1746,16 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       },
       validLastRequest: false,
     };
+    // Si el asunto_sat existe en parametros
+    if (this.paramsGeneral.asunto_sat) {
+      // EXISTE ASUNTO SAT
+      if (this.proceso == 2) {
+        this.getGoodById(this.infoDataValidation, 'sat');
+      } else {
+      }
+    } else {
+      // NO EXISTE ASUNTO SAT
+    }
 
     if (this.proceso == 1) {
     } else if (this.proceso == 2) {
@@ -1690,80 +1852,79 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             if (this.proceso == 4) {
               // COL1 es la descripcion en el archivo
               if (data.descripcion != null && data.descripcion == '') {
-                // Obtener la clave de la ciudad apartir de la clave Asunto SAT
-                await this.goodsBulkService
-                  .searchCityByAsuntoSat(this.paramsGeneral.asunto_sat)
-                  .subscribe({
-                    next: res => (no_ciudad = res.no_ciudad),
-                    error: err => {
-                      error = this.agregarErrorUploadValidation(
-                        error,
-                        ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
-                      );
-                    },
-                  });
+                // // Obtener la clave de la ciudad apartir de la clave Asunto SAT
+                // await this.goodsBulkService
+                //   .searchCityByAsuntoSat(this.paramsGeneral.asunto_sat)
+                //   .subscribe({
+                //     next: res => (no_ciudad = res.no_ciudad),
+                //     error: err => {
+                //       error = this.agregarErrorUploadValidation(
+                //         error,
+                //         ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+                //       );
+                //     },
+                //   });
                 // CREANDO EXPEDIENTE
                 if (data.descripcion) {
-                  // Inicia proceso de validación para carga
-                  this.DeclarationsUploadValidationMassive.message_progress =
-                    VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE;
-                  // Obtener las instituciones emisoras por numero de institucion (200)
-                  await this.goodsBulkService
-                    .getIssuingInstitutionById('200')
-                    .subscribe({
-                      next: res => {
-                        name_institution = res.authorityName;
-                      },
-                      error: err => {
-                        error = this.agregarErrorUploadValidation(
-                          error,
-                          ERROR_ISSUING_INSTITUTION('200')
-                        );
-                      },
-                    });
-                  let issuingParams: IAuthorityIssuingParams = {
-                    expedientSat: this.paramsGeneral.p_no_expediente,
-                    transferent: parseInt(manualvar_no_transferente),
-                    city: 266,
-                  };
-                  // Obtener institucion emisora EMISORA Y AUTORIDAD
-                  await this.goodsBulkService
-                    .getIssuingInstitutionByParams(issuingParams)
-                    .subscribe({
-                      next: res => {
-                        console.log('emisora autoridad', res);
-
-                        if (res.length == 1) {
-                          no_autoridad = res[0].no_autoridad; // SET AUTORIDAD
-                          no_emisora = res[0].no_emisora; // SET EMISORA
-                        } else {
-                          error = this.agregarErrorUploadValidation(
-                            error,
-                            ERROR_TRANSFERENTE_PARAMS(1)
-                          );
-                        }
-                      },
-                      error: err => {
-                        error = this.agregarErrorUploadValidation(
-                          error,
-                          ERROR_TRANSFERENTE_PARAMS(0)
-                        );
-                      },
-                    });
-                  // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
-                  await this.goodsBulkService
-                    .getEntityFederativeByAsuntoSat(
-                      this.paramsGeneral.asunto_sat
-                    )
-                    .subscribe({
-                      next: res => (otclave_federative_entity = res.otclave),
-                      error: err => {
-                        error = this.agregarErrorUploadValidation(
-                          error,
-                          ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
-                        );
-                      },
-                    });
+                  // // Inicia proceso de validación para carga
+                  // this.DeclarationsUploadValidationMassive.message_progress =
+                  //   VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE;
+                  // // Obtener las instituciones emisoras por numero de institucion (200)
+                  // await this.goodsBulkService
+                  //   .getIssuingInstitutionById('200')
+                  //   .subscribe({
+                  //     next: res => {
+                  //       name_institution = res.authorityName;
+                  //     },
+                  //     error: err => {
+                  //       error = this.agregarErrorUploadValidation(
+                  //         error,
+                  //         ERROR_ISSUING_INSTITUTION('200')
+                  //       );
+                  //     },
+                  //   });
+                  // let issuingParams: IAuthorityIssuingParams = {
+                  //   expedientSat: this.paramsGeneral.p_no_expediente,
+                  //   transferent: parseInt(manualvar_no_transferente),
+                  //   city: 266,
+                  // };
+                  // // Obtener institucion emisora EMISORA Y AUTORIDAD
+                  // await this.goodsBulkService
+                  //   .getIssuingInstitutionByParams(issuingParams)
+                  //   .subscribe({
+                  //     next: res => {
+                  //       console.log('emisora autoridad', res);
+                  //       if (res.length == 1) {
+                  //         no_autoridad = res[0].no_autoridad; // SET AUTORIDAD
+                  //         no_emisora = res[0].no_emisora; // SET EMISORA
+                  //       } else {
+                  //         error = this.agregarErrorUploadValidation(
+                  //           error,
+                  //           ERROR_TRANSFERENTE_PARAMS(1)
+                  //         );
+                  //       }
+                  //     },
+                  //     error: err => {
+                  //       error = this.agregarErrorUploadValidation(
+                  //         error,
+                  //         ERROR_TRANSFERENTE_PARAMS(0)
+                  //       );
+                  //     },
+                  //   });
+                  // // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
+                  // await this.goodsBulkService
+                  //   .getEntityFederativeByAsuntoSat(
+                  //     this.paramsGeneral.asunto_sat
+                  //   )
+                  //   .subscribe({
+                  //     next: res => (otclave_federative_entity = res.otclave),
+                  //     error: err => {
+                  //       error = this.agregarErrorUploadValidation(
+                  //         error,
+                  //         ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+                  //       );
+                  //     },
+                  //   });
                 }
 
                 if (data.expediente) {
