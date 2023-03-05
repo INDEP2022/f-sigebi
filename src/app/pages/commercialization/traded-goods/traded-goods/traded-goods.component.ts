@@ -74,9 +74,9 @@ export class TradedGoodsComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERDESBIECOMERCI.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${params.PN_SUBDELEGACION}&TIPO=${params.TIPO}&PF_FECINI=${params.PF_FECINI}&PF_FECFIN=${params.PF_FECFIN}`;
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERDESLICITXBIEN.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${params.PN_SUBDELEGACION}&TIPO=${params.TIPO}&PF_FECINI=${params.PF_FECINI}&PF_FECFIN=${params.PF_FECFIN}`;
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, 'RGERDESBIECOMERCI.pdf');
+    window.open(pdfurl, 'FGERDESLICITXBIEN.pdf');
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
