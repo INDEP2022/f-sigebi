@@ -13,7 +13,7 @@ import { FormControl, Validators } from '@angular/forms';
           class="form-control"
           [formControl]="search"
           [placeholder]="placeholder"
-          [(ngModel)]="term" />
+          [(ngModel)]="inputValue" />
       </div>
       <div>
         <button
@@ -38,19 +38,20 @@ export class SearchBarSimpleComponent implements OnInit {
   @Input() label?: string = 'Buscar:';
   @Input() placeholder?: string = 'Placeholder...';
   @Input() valueBut?: string = '';
-  @Output() eventEmit = new EventEmitter<string>();
-  term: string = '';
+  @Input() inputValue?: string | number;
+  @Output() eventEmit = new EventEmitter<string | number>();
+  // term: string = '';
   search: FormControl = new FormControl(null, [Validators.required]);
   constructor() {}
 
   ngOnInit(): void {}
 
-  getValue() {
-    if (this.term == '') return false;
-    return true;
-  }
+  // getValue() {
+  //   if (this.term == '') return false;
+  //   return true;
+  // }
 
   searchTerm() {
-    this.eventEmit.emit(this.term);
+    this.eventEmit.emit(this.inputValue);
   }
 }

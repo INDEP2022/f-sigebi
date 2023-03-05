@@ -10,7 +10,8 @@
           <search-bar-simple
             (eventEmit)="search($event)"
             [label]="''"
-            [placeholder]="'N&uacute;mero de expediente'">
+            [placeholder]="'N&uacute;mero de expediente'"
+            [inputValue]="inputValue">
           </search-bar-simple>
         </div>
         <div class="col-md-3">
@@ -52,46 +53,25 @@
       </div>
     </form>
     <div *ngIf="flag">
-      <div class="row pr-4 pl-4">
-        <div class="col-md-6 text-left">
-          <span
-            class=""
-            [ngClass]="{
-              'text-black': statusAct === 'ABIERTA',
-              'txt-primary': statusAct === 'CERRADA'
-            }">
-            {{ statusAct }}
-          </span>
+      <div class="row pr-4 pl-4 justify-content-end">
+        <div class="col-md-3 text-right pr-0" *ngIf="selectedProceedings">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="closeProceedings()">
+            Cerrar Acta
+          </button>
         </div>
-        <div class="col-md-6" *ngIf="statusAct === 'ABIERTA'">
-          <div class="row justify-content-end">
-            <!-- <div class="col-auto">
-              <button
-                class="btn btn-primary btn-sm active"
-                (click)="update()"
-                [disabled]="form.invalid">
-                Actualizar
-              </button>
-            </div> -->
-            <div class="col-auto" *ngIf="selectedProceedings">
-              <button
-                class="btn btn-primary btn-sm active"
-                (click)="closeProceedings()">
-                Cerrar Acta
-              </button>
-            </div>
-            <div class="col-auto">
-              <button
-                class="btn btn-primary btn-sm active"
-                [routerLink]="[
-                  '/pages/documents-reception/records-validation',
-                  proceedingsNumb,
-                  proceedingsKey
-                ]">
-                Validadores de Acta
-              </button>
-            </div>
-          </div>
+        <div class="col-md-3 text-right pr-0">
+          <button
+            class="btn btn-primary btn-sm active"
+            [routerLink]="[
+              '/pages/documents-reception/records-validation',
+              fileNumber,
+              proceedingsNumb,
+              proceedingsKey
+            ]">
+            Validadores de Acta
+          </button>
         </div>
       </div>
 

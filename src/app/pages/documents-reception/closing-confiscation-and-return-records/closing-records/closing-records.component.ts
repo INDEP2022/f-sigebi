@@ -32,6 +32,7 @@ import {
   ListParams,
   SearchFilter,
 } from './../../../../common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from './../../../../common/services/show-hide-error-interceptor.service';
 import { IGood } from './../../../../core/models/ms-good/good';
 import { IMaximumClosingTime } from './../../../../core/models/ms-proceedings/maximum-closing-time.model';
 import { IUpdateProceedings } from './../../../../core/models/ms-proceedings/update-proceedings.model';
@@ -65,6 +66,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   dataResp: IProceedings;
   dataTable: any[] = [];
   fileNumber: number;
+  fileNumberRoute: number;
   proceedingsNumb: number;
   proceedingsKey: string;
   di_clasif_numerario: number;
@@ -84,8 +86,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   reconciledAssetsAndNumerary: any[] = [];
   quantityOfGoods: number;
   userInfo: string;
-
-  private route: Router;
+  inputValue: string | number;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -99,8 +100,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private historyGood: HistoryGoodService,
     private accountMovements: AccountMovements,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private modalService: BsModalService,
-    private token: AuthService
+    private token: AuthService,
+    private route: Router
   ) {
     super();
     this.settings2 = this.settings;
@@ -112,6 +115,19 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       columns: GOODS_RECORDS_COLUMNS,
     };
     // this.settings2.actions.delete = true;
+  }
+
+  getParams() {
+    this.activatedRoute.params.subscribe(params => {
+      this.fileNumberRoute = params['fileNumber'];
+      console.log(this.fileNumber);
+      if (this.fileNumberRoute) {
+        this.fileNumber = this.fileNumberRoute;
+        this.inputValue = this.fileNumberRoute;
+        this.search(Number(this.fileNumber));
+        console.log(this.fileNumberRoute);
+      }
+    });
   }
 
   get proceedingsCve() {
@@ -129,12 +145,40 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getInfoToken();
-    this.getScreenName();
-    this.getParamCve();
+    console.log(this.firsTime);
     this.prepareForm();
     this.initPaginatorProceedings();
     this.initPaginatorGoods();
+    this.getParams();
+    this.getInfoToken();
+    this.getScreenName();
+    this.getParamCve();
+  }
+
+  search(
+    fileNumber: string | number,
+    paginatedProceedings?: { page: number; limit: number },
+    paginatedGoods?: { page: number; limit: number }
+  ) {
+    this.dataTable = [];
+    this.proceedingsData = [];
+    this.fileNumber = Number(fileNumber);
+    console.log(this.activatedRoute);
+    this.route.navigate(
+      [
+        '/pages/documents-reception/closing-of-confiscation-and-return-records',
+        `${fileNumber}`,
+      ],
+      {
+        relativeTo: this.activatedRoute,
+      }
+    );
+
+    this.firsTime = true;
+    this.resetGoodsPaginator(paginatedGoods);
+    this.resetProceedingssPaginator(paginatedProceedings);
+    this.cleanForm();
+    this.getInfo(this.fileNumber);
   }
 
   getInfoToken() {
@@ -233,15 +277,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  search(fileNumber: string | number) {
-    this.dataTable = [];
-    this.proceedingsData = [];
-    this.fileNumber = Number(fileNumber);
-    this.firsTime = true;
-    this.resetGoodsPaginator();
-    this.resetProceedingssPaginator();
-    this.form.reset();
-    this.getInfo(this.fileNumber);
+  cleanForm() {
+    this.form.get('previewFind').setValue('');
+    this.form.get('penaltyCause').setValue('');
   }
 
   initPaginatorProceedings() {
@@ -275,12 +313,12 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  resetGoodsPaginator() {
-    this.paramsGoods.next({ page: 1, limit: 10 });
+  resetGoodsPaginator(paginated = { page: 1, limit: 10 }) {
+    this.paramsGoods.next(paginated);
   }
 
-  resetProceedingssPaginator() {
-    this.paramsProceedings.next({ page: 1, limit: 10 });
+  resetProceedingssPaginator(paginated = { page: 1, limit: 10 }) {
+    this.paramsProceedings.next(paginated);
   }
 
   selectProceedings(row: any) {
@@ -452,39 +490,58 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     }
   }
 
+  reloadPage(
+    fileNumber: number,
+    paginatedProceedings: { page: number; limit: number },
+    paginatedGoods: { page: number; limit: number }
+  ) {
+    this.search(fileNumber, paginatedProceedings, this.paginatorGoods);
+  }
+
   async test() {
-    let errorMessage: string = '';
+    let proceedingUpdated: boolean = false;
     try {
       let maximunClosingTime: any = await this.getMaximunClosingTime();
       if (this.validateClosingDate(maximunClosingTime?.date)) {
         if (this.dataProceedingsSelected.universalFolio != '') {
           let scanned: any = await this.getScannedDocument()
-            .then(data => {
-              console.log('then getScannedDocument');
-              // throw 'ERORR';
-            })
+            .then(data => {})
             .catch(error => {
-              throw this.verifyError(error, 'Error GetScannedDocument');
+              throw this.verifyError(
+                error,
+                'Ha ocurrido un error al verificar el estatus de escaneo'
+              );
             });
-          console.log('2222');
           let totalReconciledGoods: any = await this.getTotalReconciledGoods(
             this.proceedingsNumb
           )
             .then()
             .catch(error => {
-              throw this.verifyError(error, 'Error Get Total Reconciled Goods');
+              throw this.verifyError(
+                error,
+                'Ha ocurrido un error al verificar la cantidad'
+              );
             });
           if (totalReconciledGoods.total == this.quantityOfGoods) {
             let dataToUpdate: any = this.buildObjectToUpdate('CERRADA');
             await this.updateProceeding(dataToUpdate)
-              .then()
+              .then(data => {
+                proceedingUpdated = true;
+                console.log(`Acta actualizada: ${proceedingUpdated}`);
+              })
               .catch(error => {
-                throw this.verifyError(error, 'Error al actualizar el acta');
+                throw this.verifyError(
+                  error,
+                  'Ha ocurrido un erorr al actualizar el acta'
+                );
               });
             let allGoods: any = await this.getAllGoods()
               .then()
               .catch(error => {
-                throw this.verifyError(error, 'Error en Get All Goods');
+                throw this.verifyError(
+                  error,
+                  'Ha ocurrido un error al obtener los bienes'
+                );
               });
             console.log(allGoods?.data?.length);
             console.log(allGoods?.data);
@@ -1216,6 +1273,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
                 });
 
                 const pollsGAM = goods.map(async (good: any) => {
+                  console.log('POLLSGAM');
                   console.log(good);
                   let _good = good.numGoodId;
                   let goodId = _good.goodsID;
@@ -1284,6 +1342,29 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
                 });
               })
               .catch(err => console.log(err));
+            console.log('\n\nFinal');
+            if (proceedingUpdated) {
+              this.onLoadToast(
+                'success',
+                'Acta actualizada',
+                'El acta ha sido actualizada exitosamente'
+              );
+              let paginatedProceedings: any;
+              let paginatedGoods: any;
+              this.paramsProceedings.subscribe(data => {
+                console.log(`Paginado Actas: ${data}`);
+                paginatedProceedings = data;
+              });
+              this.paramsGoods.subscribe(data => {
+                console.log(`Paginado Bienes: ${data}`);
+                paginatedGoods = data;
+              });
+              this.reloadPage(
+                this.fileNumber,
+                paginatedProceedings,
+                paginatedGoods
+              );
+            }
             /*for (let i = 0; (i = 2); i++) {
               console.log(i);
               let statusFinal = await this.getFinalStatus([192273])
@@ -1351,6 +1432,8 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   getFinalStatus(goodArray: number[]) {
+    console.log('GET FINAL STATUS');
+    this.showHideErrorInterceptorService.showHideError(false);
     return firstValueFrom(
       this.screenStatusService.getStatus({
         screen: 'FACTREFACTACIEDEV',
