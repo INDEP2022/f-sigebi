@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Reporte de Cartas de Liberacion</h5>
   </div>
@@ -25,18 +25,6 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <confirm-button
-            text="Imprimir"
-            [loading]="loading"
-            [disabled]="form.invalid"
-            (confirm)="confirm()"></confirm-button>
-          <!--<button class="btn btn-primary btn-sm active">Imprimir</button>-->
-        </div>
-      </div>
-      <hr class="row" />
-
-      <div class="row">
-        <div class="col-md-4">
           <form-field [control]="form.get('oficio')" label="Oficio">
             <input
               type="text"
@@ -45,6 +33,10 @@
               placeholder="Oficio" />
           </form-field>
         </div>
+      </div>
+      <hr class="row" />
+
+      <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('diridoA')" label="Dirido A">
             <input
@@ -63,9 +55,6 @@
               placeholder="Puesto" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row mt-5">
         <div class="col-md-4">
           <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
             <textarea
@@ -75,6 +64,8 @@
           </form-field>
         </div>
       </div>
+
+      <div class="row mt-5"></div>
 
       <div class="row">
         <div class="col-md-4">
@@ -124,10 +115,7 @@
               placeholder="Fecha Factura" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-4">
           <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
             <textarea
               rows="2"
@@ -167,5 +155,24 @@
         </div>
       </div>
     </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [loading]="loading"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>
