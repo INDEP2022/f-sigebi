@@ -4,6 +4,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { GoodsTendersRoutingModule } from './goods-tenders-routing.module';
 import { GoodsTendersComponent } from './goods-tenders/goods-tenders.component';
 
@@ -13,6 +14,7 @@ import { GoodsTendersComponent } from './goods-tenders/goods-tenders.component';
     CommonModule,
     GoodsTendersRoutingModule,
     SharedModule,
+    DelegationSharedComponent,
     ModalModule.forChild(),
   ],
 })
