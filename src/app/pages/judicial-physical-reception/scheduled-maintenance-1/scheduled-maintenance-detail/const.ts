@@ -112,31 +112,6 @@ export const settingsGoods = {
       sort: false,
       editable: false,
     },
-    descripcion: {
-      title: 'Descripción del bien',
-      // type: 'custom',
-      sort: false,
-      editable: false,
-      // renderComponent: TextAreaRenderComponent,
-    },
-    tipo_bien: {
-      title: 'Tipo Bien',
-      type: 'string',
-      sort: false,
-      editable: false,
-    },
-    no_expediente: {
-      title: 'Expediente',
-      type: 'number',
-      sort: false,
-      editable: false,
-    },
-    cantidad: {
-      title: 'Cantidad',
-      type: 'number',
-      sort: false,
-      editable: false,
-    },
     fec_aprobacion_x_admon: {
       title: 'Inicio',
       sort: false,
@@ -153,6 +128,32 @@ export const settingsGoods = {
         component: DatePickerComponent,
       },
     },
+    tipo_bien: {
+      title: 'Tipo Bien',
+      type: 'string',
+      sort: false,
+      editable: false,
+    },
+    descripcion: {
+      title: 'Descripción del bien',
+      // type: 'custom',
+      sort: false,
+      editable: false,
+      // renderComponent: TextAreaRenderComponent,
+    },
+    no_expediente: {
+      title: 'Expediente',
+      type: 'number',
+      sort: false,
+      editable: false,
+    },
+    cantidad: {
+      title: 'Cantidad',
+      type: 'number',
+      sort: false,
+      editable: false,
+    },
+
     destino: {
       title: 'Indi Dest',
       type: 'string',
