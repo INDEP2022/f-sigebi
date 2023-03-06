@@ -15,6 +15,8 @@ export interface IReport {
   styleUrls: ['release-letter-report.component.scss'],
 })
 export class ReleaseLetterReportComponent extends BasePage implements OnInit {
+  goodList: any;
+  dataGood: any;
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -27,6 +29,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+  settings2 = {
+    ...this.settings,
+    actions: false,
+    columns: { ...RELEASE_REPORT_COLUMNS },
+  };
 
   data = EXAMPLE_DATA;
   form: FormGroup;
@@ -37,6 +44,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getGood();
   }
 
   prepareForm() {
@@ -139,6 +147,18 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       },
     });
   }
+  getGood() {
+    this.loading = true;
+    this.reportService.getGood().subscribe({
+      next: data => {
+        this.goodList = data;
+        this.dataGood = this.goodList.data;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
   cleanForm(): void {
     this.form.reset();
   }
@@ -156,6 +176,21 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     }
   }
 }
+
+export const RELEASE_REPORT_COLUMNS = {
+  id: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción del Bien',
+    sort: false,
+  },
+  numRegister: {
+    title: 'Numero de registro',
+    sort: false,
+  },
+};
 
 const EXAMPLE_DATA = [
   {

@@ -125,6 +125,16 @@ const routes: Routes = [
         )
       ).ClosingConfiscationAndReturnRecordsModule,
   },
+  {
+    path: 'closing-of-confiscation-and-return-records/:fileNumber',
+    data: { screen: 'FACTREFACTACIEDEV', title: 'Cierre de Actas de Decomiso' },
+    loadChildren: async () =>
+      (
+        await import(
+          './closing-confiscation-and-return-records/closing-confiscation-and-return-records.module'
+        )
+      ).ClosingConfiscationAndReturnRecordsModule,
+  },
   /*{
     path: 'records-inventory',
     data: { screen: 'FACTREFINVXEXPEDI', title: 'Inventario por Expediente' },
@@ -140,7 +150,7 @@ const routes: Routes = [
         .GoodsForecastModule,
   },
   {
-    path: 'records-validation/:proceedingsNumb/:proceedingsCve',
+    path: 'records-validation/:fileNumber/:proceedingsNumb/:proceedingsCve',
     data: { screen: 'FVERIFACTA', title: 'Validación de Actas' },
     loadChildren: async () =>
       (await import('./records-validation/records-validation.module'))

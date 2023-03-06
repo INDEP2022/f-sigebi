@@ -35,6 +35,7 @@ import { SearchBarFilter } from '../../../common/repository/interfaces/search-ba
 export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() params: BehaviorSubject<ListParams>;
   @Input() filterParams: BehaviorSubject<FilterParams>;
+  @Input() id: BehaviorSubject<string>;
   @Input() placeholder?: string = 'Buscar...';
   @Input() label?: string = 'Buscar:';
   @Input() filterField?: SearchBarFilter | null = null;
@@ -61,6 +62,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (this.filterParams) {
       const filterParams = this.filterParams.getValue();
       filterParams.search = text;
+    }
+    if (this.id) {
+      this.id.next(text);
     }
     if (this.params) {
       const params = this.params.getValue();

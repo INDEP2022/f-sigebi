@@ -1,156 +1,171 @@
-<div class="row">
-  <form class="form-material" [formGroup]="form">
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Seleccionar Evento</h5>
-    </div>
-    <div class="col-md-3">
+<form [formGroup]="form" class="form-material" (submit)="getData()">
+  <div class="row">
+    <form-field
+      class="col-md-2"
+      [control]="form.get('goodNumber')"
+      label="No. SIAB">
+      <input
+        type="number"
+        formControlName="goodNumber"
+        (change)="getGood()"
+        class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-4" [control]="goodControl" label="">
+      <input type="text" [formControl]="goodControl" class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-2" [control]="form.get('eventId')" label="Evento">
+      <input
+        type="number"
+        formControlName="eventId"
+        class="form-control"
+        (change)="getEvent()" />
+    </form-field>
+
+    <form-field class="col-md-4" [control]="eventControl" label="">
+      <input type="text" [formControl]="eventControl" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field class="col-md-3" [control]="form.get('rfc')" label="RFC">
+      <input type="text" formControlName="rfc" class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-3" [control]="form.get('ref')" label="Referencia">
+      <input type="text" formControlName="ref" class="form-control" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('expedientNumber')"
+      label="Expediente">
+      <input
+        type="number"
+        formControlName="expedientNumber"
+        class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-3" [control]="form.get('lot')" label="Lote">
+      <input type="number" formControlName="lot" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field class="col-md-4" [control]="form.get('mandate')">
       <ngx-select
         [form]="form"
-        [data]="goodItems"
-        value="id"
-        bindLabel="id"
-        (fetchItems)="getGoods($event)"
-        (change)="selectGood($event)"
-        control="id">
-      </ngx-select>
-    </div>
-  </form>
-</div>
-<div class="row" *ngIf="selectedGood != null">
-  <div class="col-md-2">
-    <h5 class="font-size-14 d-inline">Tipo de vento</h5>
-    <p class="text-muted">{{ selectedGood.evento }}</p>
-    <!-- <form-field [control]="form.get('tpEvent')" label="Tipo de Evento">
-          <input type="text" class="form-control" formControlName="tpEvent" />
-        </form-field> -->
-  </div>
-  <div class="col-md-2">
-    <h5 class="font-size-14 d-inline">id Siab</h5>
-    <p class="text-muted">{{ selectedGood.noSiab }}</p>
-    <!-- <form-field [control]="form.get('idSiab')" label="Id Siab">
-        <input type="text" class="form-control" formControlName="idSiab" />
-      </form-field> -->
-  </div>
-  <div class="col-md-2">
-    <h5 class="font-size-14 d-inline">Expediente</h5>
-    <p class="text-muted">{{ selectedGood.expediente }}</p>
-    <!-- <form-field [control]="form.get('idFile')" label="Expediente">
-        <input type="text" class="form-control" formControlName="idFile" />
-      </form-field> -->
-  </div>
-  <div class="col-md-2">
-    <h5 class="font-size-14 d-inline">Transferente</h5>
-    <p class="text-muted">{{ selectedGood.idTrans }}</p>
-    <!-- <form-field [control]="form.get('idTrans')" label="Transferente">
-        <input type="text" class="form-control" formControlName="idTrans" />
-      </form-field> -->
-  </div>
-  <div class="col-md-2">
-    <h5 class="font-size-14 d-inline">No. Serie</h5>
-    <p class="text-muted">{{ selectedGood.idSerie }}</p>
-    <!-- <form-field [control]="form.get('idSerie')" label="No. Serie">
-        <input type="text" class="form-control" formControlName="idSerie" />
-      </form-field> -->
-  </div>
-  <div class="col-md-2">
-    <h5 class="font-size-14 d-inline">Lote</h5>
-    <p class="text-muted">{{ selectedGood.lote }}</p>
-    <!-- <form-field [control]="form.get('allotment')" label="Lote">
-        <input type="text" class="form-control" formControlName="allotment" />
-      </form-field> -->
-  </div>
-  <div class="row pt-5">
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">coordinaci&oacute;n</h5>
-      <p class="text-muted">{{ selectedGood.coordcapt }}</p>
-      <!-- <form-field [control]="form.get('coordcapt')" label="Coordinación">
-          <input type="text" class="form-control" formControlName="coordcapt" />
-        </form-field> -->
-    </div>
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">RFC</h5>
-      <p class="text-muted">{{ selectedGood.rfc }}</p>
-      <!-- <form-field [control]="form.get('rfc')" label="RFC">
-          <input type="text" class="form-control" formControlName="rfc" />
-        </form-field> -->
-    </div>
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Cliente</h5>
-      <p class="text-muted">{{ selectedGood.client }}</p>
-      <!-- <form-field [control]="form.get('client')" label="Cliente">
-          <input type="text" class="form-control" formControlName="client" />
-        </form-field> -->
-    </div>
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Precio</h5>
-      <p class="text-muted">{{ selectedGood.price }}</p>
-      <!-- <form-field [control]="form.get('price')" label="Precio">
-          <input type="text" class="form-control" formControlName="price" />
-        </form-field> -->
-    </div>
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Orden entrada</h5>
-      <p class="text-muted">{{ selectedGood.entryOrder }}</p>
-      <!-- <form-field [control]="form.get('entryOrder')">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="entryOrder" />
-        </form-field> -->
-    </div>
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Referencia</h5>
-      <p class="text-muted">{{ selectedGood.reference }}</p>
-      <!-- <form-field [control]="form.get('reference')" label="Referencia">
-          <input type="text" class="form-control" formControlName="reference" />
-        </form-field> -->
-    </div>
-  </div>
-  <div class="row pt-5">
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Fecha de evento</h5>
-      <p class="text-muted">{{ selectedGood.dateFromEvent }}</p>
-      <!-- <form-field
-          [control]="form.get('dateFromEvent')"
-          label="De fecha evento">
-          <input
-            type="text"
-            placeholder=""
-            class="form-control"
-            bsDatepicker
-            formControlName="dateFromEvent"
-            [bsConfig]="{ isAnimated: true }" />
-        </form-field> -->
-    </div>
-    <div class="col-md-2">
-      <h5 class="font-size-14 mb-2 d-inline">A fecha evento</h5>
-      <p class="text-muted">{{ selectedGood.dateToEvent }}</p>
-      <!-- <form-field [control]="form.get('dateToEvent')" label="A fecha evento">
-          <input
-            type="text"
-            placeholder=""
-            class="form-control"
-            bsDatepicker
-            formControlName="dateToEvent"
-            [bsConfig]="{ isAnimated: true }" />
-        </form-field> -->
-    </div>
-  </div>
-</div>
-<!--
-    <div class="col-md-2">
-      <button type="button" class="btn btn-sm btn-primary active">
-        Ejecutar Consulta
-      </button>
-    </div>
-    <div class="col-md-2">
-      <button type="button" class="btn btn-sm btn-primary active">
-        Limpiar Consulta
-      </button>
-    </div>
-  </div> -->
+        label="Transferente"
+        [data]="transferents"
+        (fetchItems)="getTransferent($event)"
+        value="cvman"
+        bindLabel="nameTransferent"
+        control="mandate"
+        [searchOnInit]="true"></ngx-select>
+    </form-field>
 
-<div class="row" *ngIf="selectedGood != null">
+    <form-field class="col-md-4" [control]="form.get('eventTp')">
+      <ngx-select
+        [form]="form"
+        label="Tipo Evento"
+        control="eventTp"
+        [data]="eventTypes"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getEventTypes($event)"
+        [searchOnInit]="true"></ngx-select>
+    </form-field>
+
+    <form-field class="col-md-4" [control]="form.get('regc')">
+      <ngx-select
+        [form]="form"
+        label="Coord. Capt."
+        control="regc"
+        [data]="delegations"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getDelegations($event)"
+        [searchOnInit]="true"></ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      class="col-md-3"
+      [control]="form.get('serieNumber')"
+      label="No. Serie">
+      <input type="text" formControlName="serieNumber" class="form-control" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('invoice')"
+      label="Factura">
+      <input type="text" formControlName="invoice" class="form-control" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('oi')"
+      label="Orden Ingreso">
+      <input type="number" formControlName="oi" class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-3" [control]="form.get('price')" label="Precio">
+      <input type="number" formControlName="price" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      class="col-md-3"
+      [control]="form.get('dateInit')"
+      label="De Fecha Evento">
+      <input
+        type="text"
+        formControlName="dateInit"
+        class="form-control"
+        (bsValueChange)="fromDateChange($event)"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('dateFinal')"
+      label="A Fecha Evento">
+      <input
+        type="text"
+        (bsValueChange)="toDateChange($event)"
+        formControlName="dateFinal"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 d-flex">
+      <div>
+        <confirm-button
+          [loading]="loading"
+          text="Ejecutar consutla"
+          [btnSmall]="true"
+          loadingText="Obteniendo datos"></confirm-button>
+      </div>
+      <div class="ml-3">
+        <button
+          [disabled]="loading"
+          class="btn btn-danger btn-sm active"
+          type="button"
+          (click)="resetForm()">
+          Limpiar Consulta
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="row">
   <div class="ch-content">
     <h5 class="title">Datos</h5>
     <div class="row justify-content-end mr-3">
@@ -158,14 +173,10 @@
     </div>
   </div>
   <div class="row pt-3">
-    <ng2-smart-table [settings]="settings" [source]="datatable">
-    </ng2-smart-table>
+    <ng2-smart-table [settings]="settings"> </ng2-smart-table>
   </div>
   <div class="col-md-2 mt-4">
-    <button
-      type="button"
-      class="btn btn-success btn-sm active"
-      (click)="exportAsXLSX()">
+    <button type="button" class="btn btn-success btn-sm active">
       Exportar a Excel
     </button>
   </div>

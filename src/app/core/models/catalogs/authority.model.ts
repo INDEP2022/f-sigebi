@@ -20,9 +20,10 @@ export interface INoCityByAsuntoSAT {
   no_ciudad: string;
 }
 export interface IAuthorityIssuingParams {
-  expedientSat: string;
+  expedientSat?: string;
   transferent: number;
   city: number;
+  office?: string;
 }
 export interface IAuthorityIssuingResponse {
   no_emisora: string;

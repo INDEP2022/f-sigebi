@@ -60,21 +60,46 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true, type);
     this.modalRef.hide();
   }
+
   deleteType(type: TypesInventory) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.inventoryServ.removeInventory(type.cveTypeInventory).subscribe({
-          next: () => {
-            this.onLoadToast('success', 'Ha sido eliminado', '');
-            this.getInventory();
-          },
-          error: err => this.onLoadToast('error', err.error.message, ''),
-        });
-      }
+    const filters = this.params.getValue();
+    filters.removeAllFilters();
+    filters.addFilter(
+      'cveTypeInventory',
+      type.cveTypeInventory,
+      SearchFilter.EQ
+    );
+
+    this.inventoryServ.getAllWithFiltersDetails(filters.getParams()).subscribe({
+      next: () => {
+        this.onLoadToast(
+          'error',
+          'Debe eliminar los detalles de tipo inventario primero',
+          ''
+        );
+      },
+      error: err => {
+        if (err.status === 400) {
+          this.alertQuestion(
+            'warning',
+            'Eliminar',
+            'Desea eliminar este registro?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.inventoryServ
+                .removeInventory(type.cveTypeInventory)
+                .subscribe({
+                  next: () => {
+                    this.onLoadToast('success', 'Ha sido eliminado', '');
+                    this.getInventory();
+                  },
+                  error: err =>
+                    this.onLoadToast('error', err.error.message, ''),
+                });
+            }
+          });
+        }
+      },
     });
   }
 

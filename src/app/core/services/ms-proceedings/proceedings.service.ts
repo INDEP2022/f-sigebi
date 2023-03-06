@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -12,9 +12,11 @@ import { IUpdateProceedings } from './../../models/ms-proceedings/update-proceed
 })
 export class ProceedingsService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProeedingsDevolution;
+  showErrorObs = new BehaviorSubject<boolean>(true);
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
+    console.log(' PROCEEDINGS SERVICE CONSTRUCTOR');
   }
 
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {

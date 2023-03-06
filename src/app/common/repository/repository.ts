@@ -220,6 +220,15 @@ export class Repository<T> implements IRepository<T> {
       `${fullRoute}/${id}`
     );
   }
+  getOTClaveEntityFederativeByAvePrevia(
+    route: string,
+    id: number | string
+  ): Observable<IOTClaveEntityFederativeByAsuntoSAT> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IOTClaveEntityFederativeByAsuntoSAT>(
+      `${fullRoute}/${id}`
+    );
+  }
   getAuthorityIssuingByParams(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
 
