@@ -115,6 +115,7 @@ export class SelectListFilteredModalComponent
   }
 
   selectEvent(event: any) {
+    console.log(event);
     if (this.settings.selectMode === 'multi') {
       this.selectRow(event.selected);
     } else {
@@ -122,7 +123,8 @@ export class SelectListFilteredModalComponent
     }
   }
 
-  selectRow(row: any) {
+  private selectRow(row: any) {
+    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
   }

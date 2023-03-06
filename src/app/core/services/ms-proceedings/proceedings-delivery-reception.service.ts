@@ -91,7 +91,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
                         ESTATUS: detail.good.status,
                         DESCRIPCION: detail.good.description,
                         'TIPO BIEN': detail.good.goodsCategory,
-                        EXPEDIENTE: item.numFile.filesId,
+                        EXPEDIENTE: item.numFile,
                         EVENTO: detail.numberProceedings,
                         CANTIDAD: detail.amount,
                         FEC_RECEPCION: detail.approvedXAdmon,
@@ -134,30 +134,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       this.endpoint,
       params
     );
-    // .pipe(
-    //   map(items => {
-    //     return {
-    //       ...items,
-    //       data: items.data.map(item => {
-    //         const nameArray = item.elaborateDetail
-    //           ? item.elaborateDetail['name']
-    //             ? item.elaborateDetail['name'].split(' ')
-    //             : []
-    //           : [];
-    //         let ingreso = '';
-    //         nameArray.forEach(text => {
-    //           ingreso += text.substring(0, 2)
-    //             ? text.substring(0, 2)
-    //             : text.substring(0, 1) ?? '';
-    //         });
-    //         return {
-    //           ...item,
-    //           ingreso,
-    //         };
-    //       }),
-    //     };
-    //   })
-    // );
+  }
+
+  update(item: IProceedingDeliveryReception) {
+    return this.put<IListResponse<IProceedingDeliveryReception>>(
+      this.endpoint + '/' + item.id,
+      { item }
+    );
   }
 
   getAll2(self?: ProceedingsDeliveryReceptionService, params?: string) {

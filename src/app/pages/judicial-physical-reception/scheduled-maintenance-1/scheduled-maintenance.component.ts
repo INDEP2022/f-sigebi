@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import {
   IDeleted,
   INotDeleted,
@@ -10,10 +9,10 @@ import {
   ProceedingsDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ACTAS_BY_GOOD_COLUMNS } from './../scheduled-maintenance/interfaces/columns';
 
 import { Router } from '@angular/router';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ScheduledMaintenance } from '../scheduled-maintenance/scheduled-maintenance';
 
@@ -22,7 +21,7 @@ import { ScheduledMaintenance } from '../scheduled-maintenance/scheduled-mainten
   templateUrl: './scheduled-maintenance.component.html',
   styleUrls: [
     'scheduled-maintenance.scss',
-    './schedule-maintenance.component.scss',
+    './scheduled-maintenance.component.scss',
   ],
 })
 export class ScheduledMaintenanceComponent
@@ -31,29 +30,19 @@ export class ScheduledMaintenanceComponent
 {
   selecteds: IProceedingDeliveryReception[];
   constructor(
+    private modalService: BsModalService,
     protected override fb: FormBuilder,
-    protected override modalService: BsModalService,
-    protected override delegationService: DelegationService,
     protected override service: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
-    protected override userService: UsersService,
     private router: Router
   ) {
-    super(
-      fb,
-      modalService,
-      delegationService,
-      service,
-      detailService,
-      userService,
-      'filtersActa'
-    );
+    super(fb, service, detailService, 'filtersActa');
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
       actions: { ...this.settings1.actions, delete: true },
     };
-    console.log(this.settings1);
+    // console.log(this.settings1);
   }
 
   private showMessageProceedingsRemoved(
@@ -191,6 +180,20 @@ export class ScheduledMaintenanceComponent
     );
   }
 
+  openModalSelect(
+    context?: Partial<SelectListFilteredModalComponent>,
+    callback?: Function
+  ) {
+    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) callback(data, this);
+    });
+  }
+
   selectActa(acta: IProceedingByGood, self: ScheduledMaintenanceComponent) {
     const filterParams = new FilterParams();
     filterParams.addFilter('id', acta.proceedingnumber);
@@ -212,42 +215,3 @@ export class ScheduledMaintenanceComponent
 
   fillElementsToExport() {}
 }
-
-const EXAMPLE_DATA = [
-  {
-    progRecepcionEntrega: '123',
-    Fechacaptura: new Date(),
-    ingreso: 'ejemplo',
-    estatusEvento: 'ingresado',
-  },
-  {
-    progRecepcionEntrega: '123',
-    Fechacaptura: new Date(),
-    ingreso: 'ejemplo',
-    estatusEvento: 'no ingresado',
-  },
-  {
-    progRecepcionEntrega: '123',
-    Fechacaptura: new Date(),
-    ingreso: 'ejemplo',
-    estatusEvento: 'ingresado',
-  },
-  {
-    progRecepcionEntrega: '123',
-    Fechacaptura: new Date(),
-    ingreso: 'ejemplo',
-    estatusEvento: 'no ingresado',
-  },
-  {
-    progRecepcionEntrega: '123',
-    Fechacaptura: new Date(),
-    ingreso: 'ejemplo',
-    estatusEvento: 'ingresado',
-  },
-  {
-    progRecepcionEntrega: '123',
-    Fechacaptura: new Date(),
-    ingreso: 'ejemplo',
-    estatusEvento: 'no ingresado',
-  },
-];

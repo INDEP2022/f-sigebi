@@ -45,6 +45,6 @@
 
 :host ::ng-deep app-pagination {
   .paginator-page-size {
-    display: none;
+    display: none !important;
   }
 }

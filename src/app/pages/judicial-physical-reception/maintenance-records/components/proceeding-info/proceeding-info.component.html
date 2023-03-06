@@ -1,22 +1,26 @@
 <form class="form-material" [formGroup]="form">
   <div class="row border border-dark">
-    <div class="header-proceeding-info">
-      <h5 class="title">Informaci&oacute;n del Acta</h5>
-      <button
-        [class]="loading ? 'disabled' : ''"
-        class="btn btn-sm btn-danger"
-        (click)="filter()">
-        <i class="bx bx-search float-icon"></i> Filtrar
-      </button>
+    <div class="row header-proceeding-info">
+      <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
+      <div class="col-md-6 buttons">
+        <div class="col-md-6">
+          <app-clean-filters-shared [form]="form"></app-clean-filters-shared>
+        </div>
+        <div class="col-md-6">
+          <button
+            [class]="loading ? 'disabled' : ''"
+            class="btn btn-sm btn-danger"
+            (click)="filter()">
+            <i class="bx bx-search float-icon"></i> Filtrar
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="col-md-6 mt-5 section">
-      <div class="row">
+    <div class="col-md-6 mt-5">
+      <div class="row mb-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('numActa')" label="No&#46; Acta">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numActa" />
+          <form-field [control]="form.get('id')" label="No&#46; Acta">
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -28,40 +32,22 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <app-select-form
-            [form]="form"
-            formField="statusActa"
-            label="Status Acta"
-            [haveTodos]="false"
-            [clearable]="false"
-            [list]="statusList"></app-select-form>
+          <form-field [control]="form.get('statusActa')" label="Estatus Acta">
+            <select class="form-control" formControlName="statusActa">
+              <option value="Abierta">Abierta</option>
+              <option value="Cerrada">Cerrada</option>
+              <option value="Todos">Todos</option>
+            </select>
+          </form-field>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
+      <div class="row mb-4">
+        <div class="col-md-9">
           <form-field [control]="form.get('cveActa')" label="Cve Acta">
             <input type="text" class="form-control" formControlName="cveActa" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('tipoActa')" label="Tipo Acta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="tipoActa" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('labelActa')" label="Etiqueta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="labelActa" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="form.get('receiptKey')"
             label="Clave Del Recibe">
@@ -72,23 +58,39 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <app-proceeding-types-shared
+            [form]="form"
+            formField="tipoActa"
+            label="Tipo Acta"></app-proceeding-types-shared>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('labelActa')" label="Etiqueta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="labelActa" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3">
         <form-field [control]="form.get('address')" label="Direcci&oacute;n">
           <textarea
-            rows="4"
+            rows="5"
             class="form-control"
             formControlName="address"></textarea>
         </form-field>
       </div>
-      <div class="row">
+      <div class="row" style="margin-bottom: 1.25rem">
         <form-field [control]="form.get('observations')" label="Observaciones">
           <textarea
-            rows="4"
+            rows="5"
             class="form-control"
             formControlName="observations"></textarea>
         </form-field>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-6">
           <form-field [control]="form.get('numDelegation1')" label="Recibe">
             <input
@@ -108,7 +110,7 @@
       </div>
     </div>
     <div class="col-md-6 mt-5">
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-6">
           <form-field
             [control]="form.get('elaborationDate')"
@@ -128,7 +130,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-6">
           <form-field
             [control]="form.get('datePhysicalReception')"
@@ -150,7 +152,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-6">
           <form-field
             [control]="form.get('dateElaborationReceipt')"
@@ -172,7 +174,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-6">
           <form-field
             [control]="form.get('dateDeliveryGood')"
@@ -194,7 +196,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-6">
           <form-field [control]="form.get('captureDate')" label="Fecha Captura">
             <input
@@ -214,12 +216,12 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <form-field [control]="form.get('witness1')" label="Testigo 1">
           <input type="text" class="form-control" formControlName="witness1" />
         </form-field>
       </div>
-      <div class="row">
+      <div class="row mb-4">
         <form-field [control]="form.get('witness2')" label="Testigo 2">
           <input type="text" class="form-control" formControlName="witness2" />
         </form-field>
@@ -236,5 +238,4 @@
       </div>
     </div>
   </div>
-  <hr class="row" />
 </form>

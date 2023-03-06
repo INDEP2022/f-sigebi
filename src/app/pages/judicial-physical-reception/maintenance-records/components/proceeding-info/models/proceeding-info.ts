@@ -32,7 +32,7 @@ export function deliveryReceptionToInfo(
 ): IProceedingInfo {
   return {
     id: +item.id,
-    numFile: item.numFile.filesId,
+    numFile: item.numFile,
     cveActa: item.keysProceedings,
     tipoActa: item.typeProceedings,
     labelActa: item.label,

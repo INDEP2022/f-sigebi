@@ -11,7 +11,7 @@ import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IProceedingInfo } from './proceeding-info/models/proceeding-info';
+import { IProceedingInfo } from './components/proceeding-info/models/proceeding-info';
 
 @Component({
   selector: 'app-maintenance-records',
@@ -83,7 +83,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     // this.prepareForm();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       // console.log(x);
-      // this.getData(this.formValue);
+      this.getData(this.formValue);
     });
   }
 
@@ -114,6 +114,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   }
 
   private fillParams(form: IProceedingInfo) {
+    // debugger;
     if (!form) return false;
     this.formValue = form;
     this.filterParams = new FilterParams();

@@ -8,7 +8,7 @@ export interface IProceedingDeliveryReception {
   statusProceedings: string;
   elaborate: string;
   elaborateDetail: { [key: string]: null | string };
-  numFile: NumFile;
+  numFile: number;
   witness1: string;
   witness2: string;
   typeProceedings: string;

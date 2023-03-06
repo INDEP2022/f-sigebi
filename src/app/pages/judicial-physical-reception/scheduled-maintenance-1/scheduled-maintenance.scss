@@ -1,8 +1,3 @@
-.scroll-table {
-  height: 250px;
-  overflow-y: auto;
-}
-
 .scroll-table::-webkit-scrollbar {
   width: 20px;
 }
@@ -33,16 +28,60 @@
 ng2-smart-table {
   padding: 0px;
 }
+.list-group {
+  overflow: auto;
+  height: 45px;
+}
+.list-group .list-group-item:last-child {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
 
-.first {
-  grid-area: first;
+.table-container {
+  margin-right: 14px;
+  .table-responsive {
+    padding: 0px;
+    margin-left: 15px;
+  }
+  @media screen and (max-width: 767px) {
+    .table-responsive {
+      padding: 0px;
+    }
+  }
 }
-.second {
-  grid-area: second;
+
+:host ::ng-deep app-clean-filters-shared {
+  text-align: right;
+  position: absolute;
+  top: 12px;
+  @media (max-width: 576px) {
+    position: relative;
+    top: -10px;
+    > div {
+      padding: 0px;
+    }
+  }
 }
-.third {
-  grid-area: third;
-}
-.four {
-  grid-area: four;
+
+.action-buttons {
+  > div {
+    margin-top: 1rem;
+    padding: 0px;
+    &:nth-child(2) {
+      text-align: center;
+      padding: 0px;
+    }
+    &:last-child {
+      text-align: right;
+      padding: 0px;
+    }
+  }
+  @media (max-width: 576px) {
+    > div {
+      text-align: center !important;
+    }
+    ::ng-deep button {
+      width: 100%;
+    }
+  }
 }

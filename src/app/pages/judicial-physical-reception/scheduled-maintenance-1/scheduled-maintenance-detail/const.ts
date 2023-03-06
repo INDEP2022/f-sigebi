@@ -1,5 +1,4 @@
 import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
-import { TextAreaRenderComponent } from 'src/app/shared/render-components/text-area-render/text-area-render.component';
 
 export const columnsKeysProceddings = {
   0: {
@@ -73,7 +72,7 @@ export const settingsGoods = {
   },
   selectedRowIndex: -1,
   sort: false,
-  hideSubHeader: false,
+  hideSubHeader: true,
   mode: 'inline',
   selectMode: 'multi',
   noDataMessage: 'No se encontrarón registros',
@@ -85,7 +84,7 @@ export const settingsGoods = {
   },
   actions: {
     columnTitle: 'Acciones',
-    position: 'left',
+    position: 'right',
     add: false,
     edit: true,
     delete: true,
@@ -115,10 +114,10 @@ export const settingsGoods = {
     },
     descripcion: {
       title: 'Descripción del bien',
-      type: 'custom',
+      // type: 'custom',
       sort: false,
       editable: false,
-      renderComponent: TextAreaRenderComponent,
+      // renderComponent: TextAreaRenderComponent,
     },
     tipo_bien: {
       title: 'Tipo Bien',

@@ -1,15 +1,14 @@
+<button class="btn btn-sm btn-return" (click)="return()">
+  <i class="bx bx-chevron-left float-icon"></i> Regresar
+</button>
+
 <app-card [header]="true">
   <div class="ch-content" header>
-    <div>
-      <button class="btn btn-sm btn-return" (click)="return()">
-        <i class="bx bx-chevron-left float-icon"></i>
-      </button>
-      <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
-    </div>
+    <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row mr-0">
         <div class="col-md-2">
           <app-select-form
             [form]="form"
@@ -44,18 +43,15 @@
         </div>
 
         <div class="col-md-6">
-          <app-select-form
+          <app-proceeding-types-shared
             [form]="form"
-            formField="tipoEvento"
-            label="Tipo de Evento"
-            [list]="tiposEvento"
-            [haveTodos]="false"
-            [clearable]="false"
-            [(params)]="paramsTypes"
-            [readonly]="true"></app-select-form>
+            [readonly]="true"></app-proceeding-types-shared>
         </div>
       </div>
-      <div class="row">
+      <app-key-proceedings-form
+        [form]="form"
+        [statusActaValue]="statusActaValue"></app-key-proceedings-form>
+      <!-- <div class="row mr-0">
         <div class="col-md-12 table-responsive mt-3">
           <ng2-smart-table
             *ngIf="source"
@@ -65,8 +61,7 @@
             (editConfirm)="updateKeysProcedding($event)"></ng2-smart-table>
         </div>
       </div>
-
-      <div class="row actions">
+      <div class="row actions mr-0">
         <div class="col-md-8 mt-5">
           <div>
             <form-field [control]="form.get('claveActa')" label="Clave Acta">
@@ -77,75 +72,67 @@
             </form-field>
           </div>
         </div>
-        <div class="col-md-4 mt-5 tracker">
-          <button
-            [class]="statusActaValue === 'CERRADA' ? 'disabled' : ''"
-            class="btn btn-primary active"
-            type="submit"
-            size="small">
-            Rastreador
-          </button>
+      </div> -->
+      <div class="action-buttons mr-4">
+        <div class="col-md-4">
+          <app-goodtracker-button
+            [statusActaValue]="statusActaValue"
+            [data]="data"></app-goodtracker-button>
         </div>
-      </div>
-
-      <div class="finalActions">
-        <div class="mt-3 deleteGoods">
+        <div class="col-md-4">
           <button
             [class]="statusActaValue === 'CERRADA' ? 'disabled' : ''"
-            class="btn btn-primary active"
-            type="submit"
-            size="small"
-            (click)="deleteGoods()">
-            Eliminar bienes
-          </button>
-        </div>
-        <div class="mt-3 updateGoods">
-          <button
-            [class]="statusActaValue === 'CERRADA' ? 'disabled' : ''"
-            class="btn btn-primary active"
+            class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="updateGoods()">
+            <i class="bx bx-pencil float-icon"></i>
             Editar bienes
           </button>
         </div>
-        <div class="mt-3 excelExport">
-          <!-- <button class="btn btn-primary active" type="submit" size="small">
-            Exportar Excel
-          </button> -->
-          <div
-            [class]="
-              loading || loadingExcel || data.length === 0 ? 'disabled' : ''
-            "
-            (click)="exportExcel()">
-            <app-excel-report
-              [elementToExport]="elementToExport"
-              [externalClick]="flagDownload"
-              [nameExcel]="nameExcel()"
-              text="Exportar Excel"></app-excel-report>
-          </div>
+        <div class="col-md-4">
+          <app-massive-delete-button
+            [statusActaValue]="statusActaValue"
+            [actaId]="actaId"
+            [selecteds]="selecteds"
+            (finishDelete)="getData()">
+          </app-massive-delete-button>
         </div>
       </div>
-
-      <div class="row pt-4" style="margin-right: 0px">
-        <div class="col-md-12 table-responsive">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              class="col-md-12"
-              [settings]="settingsGoods"
-              [source]="data"
-              (userRowSelect)="rowsSelected($event)"
-              (editConfirm)="updateGoodsRow($event)"
-              (deleteConfirm)="showDeleteAlert($event.data)"></ng2-smart-table>
-          </div>
-        </div>
-      </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
-
-      <hr class="row" />
-      <app-cants></app-cants>
     </form>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bienes</h5>
+    <div class="buttons mt-2">
+      <app-columns-select [(settings)]="settingsGoods"></app-columns-select>
+      <app-excel-button
+        [form]="form"
+        [loading]="loading"
+        [goodsCant]="data.length"></app-excel-button>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4 table-container" style="margin-right: 0px">
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            class="col-md-12"
+            [settings]="settingsGoods"
+            [source]="data"
+            (userRowSelect)="rowsSelected($event)"
+            (editConfirm)="updateGoodsRow($event)"
+            (deleteConfirm)="showDeleteAlert($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+
+    <hr class="row" />
+    <app-cants></app-cants>
   </div>
 </app-card>

@@ -52,7 +52,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
   }
   @Output() paramsChange = new EventEmitter<ListParams>();
   _paramsFilter: FilterParams;
-  _params: ListParams;
+  _params: ListParams = new ListParams();
   data: DefaultSelect = new DefaultSelect();
 
   get select() {

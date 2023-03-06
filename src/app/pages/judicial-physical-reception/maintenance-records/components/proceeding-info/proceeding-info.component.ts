@@ -13,15 +13,18 @@ import {
   styles: [
     `
       .header-proceeding-info {
-        display: flex;
         margin-top: 10px;
         align-items: center;
+        padding-right: 0px;
       }
-      button {
-        position: absolute;
-        right: 15px;
-      }
-      .row {
+      .buttons {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0px;
+        > div {
+          text-align: right;
+          padding: 0px;
+        }
       }
     `,
   ],
@@ -32,10 +35,6 @@ export class ProceedingInfoComponent implements OnInit {
   }
   @Input() loading = false;
   form: FormGroup;
-  statusList = [
-    { id: 'ABIERTA', description: 'Abierto' },
-    { id: 'CERRADA', description: 'Cerrado' },
-  ];
   @Output() filterEvent = new EventEmitter<IProceedingInfo>();
   constructor(private fb: FormBuilder) {
     this.prepareForm();
@@ -49,7 +48,7 @@ export class ProceedingInfoComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      numActa: [null],
+      id: [null],
       numFile: [null],
       cveActa: [null],
       tipoActa: [null],

@@ -5,7 +5,7 @@
     text-align: center;
   }
   .descripcion {
-    min-width: 200px;
+    min-width: 250px;
   }
   // .ng2-smart-actions {
   //   position: absolute;
@@ -24,38 +24,14 @@
   padding-left: 0px;
   left: -10px;
   position: relative;
+  display: flex;
+  align-items: center;
+  top: -20px;
   > i {
     font-size: 35px;
   }
   &:hover {
     color: #9d2449;
-  }
-}
-
-// .actions {
-//   display: flex;
-//   align-items: center;
-//   .deleteGoods {
-//     grid-area: deleteGoods;
-//   }
-//   .keysProceedings {
-//     grid-area: keysProceedings;
-//   }
-//   .excelExport {
-//     grid-area: excelExport;
-//   }
-//   @media (max-width: 768px) {
-//     display: grid;
-//     grid-template-areas:
-//       'keysProceedings keysProceedings'
-//       'deleteGoods excelExport';
-//   }
-// }
-
-.tracker {
-  text-align: right;
-  @media (max-width: 768px) {
-    text-align: center;
   }
 }
 
@@ -66,23 +42,3 @@
 .updateGoods {
   text-align: center;
 }
-
-.finalActions {
-  overflow: auto;
-  display: flex;
-  justify-content: space-between;
-  > div {
-    &:not(:last-child) {
-      margin-right: 10px;
-    }
-  }
-}
-
-// .excelExport,
-// .deleteGoods {
-//   @media (max-width: 576px) {
-//     > button {
-//       font-size: 13px;
-//     }
-//   }
-// }

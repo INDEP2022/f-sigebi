@@ -1,21 +1,19 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Mantenimiento de Programaciones</h5>
-    <button class="btn btn-sm btn-danger" (click)="cleanFilters()">
-      <i class="bx bx-brush float-icon"></i> Limpiar Filtros
-    </button>
   </div>
   <div body>
+    <div class="row mb-5">
+      <app-clean-filters-shared
+        [form]="form"
+        formStorage="filtersActa"></app-clean-filters-shared>
+    </div>
+
     <form class="form-material" [formGroup]="form">
-      <div class="row controlsActas">
-        <div class="col">
-          <app-select-form
-            [form]="form"
-            formField="tipoEvento"
-            label="Tipo de Evento"
-            [list]="tiposEvento"
-            [haveTodos]="false"
-            [(params)]="paramsTypes"></app-select-form>
+      <div class="row">
+        <div class="col-md-6">
+          <app-proceeding-types-shared
+            [form]="form"></app-proceeding-types-shared>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
@@ -43,88 +41,49 @@
             [(params)]="paramsStatus"></app-select-form>
         </div>
       </div>
-      <div class="row mt-3 mb-3">
-        <div class="col-md-6" style="padding: 0; display: flex">
-          <form-field
-            class="col-xs-10"
-            [control]="form.get('coordRegional')"
-            label="Coord. Regional">
-            <textarea
-              rows="2"
-              formControlName="coordRegional"
-              class="form-control"
-              readonly></textarea>
-          </form-field>
-
-          <div class="col-xs-2">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="openModalCoordinaciones()">
-              <i class="bx bx-list-plus bx-sm float-icon"></i>
-            </button>
-          </div>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <app-regional-coord-shared [form]="form"></app-regional-coord-shared>
         </div>
-        <div class="col-md-6" style="padding: 0; display: flex">
-          <form-field
-            class="col-xs-10"
-            [control]="form.get('usuario')"
-            label="Usuario">
-            <input
-              type="text"
-              formControlName="usuario"
-              class="form-control"
-              readonly />
-          </form-field>
-
-          <div class="col-xs-2">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="openModalUsuarios()">
-              <i class="bx bx-list-plus bx-sm float-icon"></i>
-            </button>
-          </div>
-          <!-- <app-select-form
-            [form]="form"
-            formField="usuario"
-            label="Usuario"
-            bindLabel="id"
-            [getListObservable]="segUsers"
-            [(paramsFilter)]="paramsUsers"></app-select-form> -->
+        <div class="col-md-6">
+          <app-elaborate-users-shared
+            [form]="form"></app-elaborate-users-shared>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col">
+      <div class="action-buttons">
+        <div class="col-md-4">
           <button
-            class="btn btn-primary active"
+            class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="getData()">
+            <i class="bx bx-loader float-icon"></i>
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col">
+        <div class="col-md-4">
           <button
-            class="btn btn-primary active"
+            class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="openModalActas()">
+            <i class="bx bx-search float-icon"></i>
             Buscar Bien en Acta
           </button>
         </div>
-        <div class="col">
+        <div class="col-md-4">
           <button
-            class="btn btn-primary active"
+            class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="deleteProgramations()">
+            <i class="bx bx-trash float-icon"></i>
             Borrar Programaciones
           </button>
         </div>
       </div>
-      <div class="row pt-4">
+      <div class="row pt-4 table-container">
         <div class="col-md-12 table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
@@ -137,6 +96,7 @@
           </div>
         </div>
       </div>
+
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
