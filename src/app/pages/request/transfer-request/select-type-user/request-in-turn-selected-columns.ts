@@ -10,7 +10,7 @@ export const TURN_SELECTED_COLUMNS = {
     sort: false,
   },
   employeeType: {
-    title: 'Tipo Empleado',
+    title: 'Typo Usuario',
     type: 'string',
     sort: false,
   },

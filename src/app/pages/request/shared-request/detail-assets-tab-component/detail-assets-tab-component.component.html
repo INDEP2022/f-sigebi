@@ -116,7 +116,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <form-field
                 [control]="detailAssets.get('useType')"
                 label="Tipo de Uso">
@@ -498,6 +498,9 @@
       </ng-template>
       <form [formGroup]="detailAssets" class="form-material">
         <div class="vehicleDateSheet">
+          <p class="msg-required">
+            Los campos con <span>*</span> son requeridos
+          </p>
           <div class="row pt-5">
             <div class="col-md-4">
               <ngx-select
@@ -520,9 +523,6 @@
                 bindLabel="idSubBrand"></ngx-select>
             </div>
             <div class="col-md-2">
-              <!--  <form-check label="Blindaje" for="Blindaje">
-                <input id="armor" type="checkbox" formControlName="armor" />
-              </form-check> -->
               <form-check label="Blindaje" for="armor">
                 <input
                   id="armor"
@@ -630,16 +630,26 @@
                 <input
                   id="fitCircular"
                   type="checkbox"
-                  formControlName="fitCircular" />
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="circulate"
+                  (change)="handleCirculateEvent($event)" />
               </form-check>
             </div>
             <div class="col-md-4">
-              <form-check label="Cuenta con Reporte de Robo" for="theftReport">
+              <form-check label="Cuenta con reporte de robos" for="theftReport">
+                <input
+                  id="theftReport"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="theftReport"
+                  (change)="handleTheftReportEvent($event)" />
+              </form-check>
+              <!-- <form-check label="Cuenta con Reporte de Robo" for="theftReport">
                 <input
                   id="theftReport"
                   type="checkbox"
                   formControlName="theftReport" />
-              </form-check>
+              </form-check> -->
             </div>
           </div>
         </div>
@@ -652,6 +662,9 @@
       </ng-template>
       <form [formGroup]="detailAssets" class="form-material">
         <div class="boatInformation">
+          <p class="msg-required">
+            Los campos con <span>*</span> son requeridos
+          </p>
           <div class="row pt-5">
             <div class="col-md-2">
               <form-check label="Blindaje" for="armor">
@@ -849,6 +862,9 @@
       </ng-template>
       <form [formGroup]="detailAssets" class="form-material">
         <div class="jewelInformation">
+          <p class="msg-required">
+            Los campos con <span>*</span> son requeridos
+          </p>
           <div class="row pt-4">
             <div class="col-md-3">
               <form-field
@@ -891,6 +907,9 @@
       </ng-template>
       <form [formGroup]="detailAssets" class="form-material">
         <div class="aircraftInformation">
+          <p class="msg-required">
+            Los campos con <span>*</span> son requeridos
+          </p>
           <div class="row pt-5">
             <div class="col-md-2">
               <form-check label="Blindaje" for="armor">
@@ -1248,7 +1267,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-2">
+            <div class="col-md-3">
               <form-field
                 [control]="goodDomicilieForm.get('espPark')"
                 label="Espacio de Estacionamiento">
@@ -1256,6 +1275,16 @@
                   type="number"
                   class="form-control"
                   formControlName="espPark" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('forProblems')"
+                label="Problematicas">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="forProblems" />
               </form-field>
             </div>
           </div>
