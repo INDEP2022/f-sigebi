@@ -1,14 +1,27 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { GoodByProceedingsModalComponent } from '../good-by-proceedings-modal/good-by-proceedings-modal.component';
 import { ProceedingsModalComponent } from '../proceedings-modal/proceedings-modal.component';
-import { GOODS_COLUMNS, PROCEEDINGS_COLUMNS } from './columns';
+import {
+  ACTA_RECEPTION_COLUMNS,
+  DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
+  DICTATION_COLUMNS,
+  GOODS_COLUMNS,
+  PROCEEDINGS_COLUMNS,
+} from './columns';
 
 @Component({
   selector: 'app-destruction-authorization',
@@ -21,24 +34,55 @@ export class DestructionAuthorizationComponent
 {
   totalItems: number = 0;
   totalItems2: number = 0;
+  totalItems3: number = 0;
+  totalItems4: number = 0;
+  totalItems5: number = 0;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
+  params5 = new BehaviorSubject<ListParams>(new ListParams());
 
   proceedingsList: IProccedingsDeliveryReception[] = [];
   proceedings: IProccedingsDeliveryReception;
 
+  detailProceedingsList: IDetailProceedingsDeliveryReception[] = [];
+  detailProceedings: IDetailProceedingsDeliveryReception;
+  dictaList: IDictation[] = [];
+
   goodPDS: IGood[] = [];
 
+  goods: IDetailProceedingsDeliveryReception;
+
   settings2;
+  settings3;
+  settings4;
+  settings5;
+
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+
+  data: LocalDataSource = new LocalDataSource();
+  actaList: any;
+
+  loadingProceedings = this.loading;
+  loadingGoods = this.loading;
+  loadingGoodsByP = this.loading;
+  loadingDictation = this.loading;
+  loadingActReception = this.loading;
 
   constructor(
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private modalService: BsModalService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private detailProceeDelRecService: DetailProceeDelRecService,
+    private datePipe: DatePipe,
+    private dictationService: DictationService
   ) {
     super();
     this.settings = {
+      //Actas
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
@@ -50,13 +94,33 @@ export class DestructionAuthorizationComponent
     };
 
     this.settings2 = {
+      //Bienes por actas
+      ...this.settings,
+      actions: false,
+      columns: { ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION },
+    };
+
+    this.settings3 = {
+      //Bienes en estatus PDS
       ...this.settings,
       actions: false,
       columns: { ...GOODS_COLUMNS },
     };
-  }
 
-  data: any;
+    this.settings4 = {
+      //Actas de recepción
+      ...this.settings,
+      actions: false,
+      columns: { ...ACTA_RECEPTION_COLUMNS },
+    };
+
+    this.settings5 = {
+      //dictaminaciones
+      ...this.settings,
+      actions: false,
+      columns: { ...DICTATION_COLUMNS },
+    };
+  }
 
   ngOnInit(): void {
     this.params
@@ -67,25 +131,44 @@ export class DestructionAuthorizationComponent
       .subscribe(() => this.getGoodByStatusPDS());
   }
 
+  //Trae todas las actas/Oficios
   getAllProceeding() {
-    this.loading = true;
+    this.loadingProceedings = true;
     this.proceedingsDeliveryReceptionService
       .getAll3(this.params.getValue())
       .subscribe({
         next: response => {
+          let data = response.data.map(
+            (item: IProccedingsDeliveryReception) => {
+              let date1 = item.elaborationDate;
+              item.elaborationDate = this.datePipe.transform(
+                date1,
+                'dd/MM/yyyy'
+              );
+              let date2 = item.datePhysicalReception;
+              item.datePhysicalReception = this.datePipe.transform(
+                date2,
+                'dd/MM/yyyy'
+              );
+              let date3 = item.captureDate;
+              item.captureDate = this.datePipe.transform(date3, 'dd/MM/yyyy');
+              return item;
+            }
+          );
           console.log(response);
-          this.proceedingsList = response.data;
+          this.data.load(data);
           this.totalItems = response.count;
-          this.loading = false;
+          this.loadingProceedings = false;
         },
         error: error => {
-          this.loading = false;
+          this.loadingProceedings = false;
           console.log(error);
         },
       });
   }
 
-  openForm(proceeding?: IProccedingsDeliveryReception) {
+  //Para agregar nueva acta/oficio
+  openForm1(proceeding?: IProccedingsDeliveryReception) {
     let config: ModalOptions = {
       initialState: {
         proceeding,
@@ -97,16 +180,93 @@ export class DestructionAuthorizationComponent
     this.modalService.show(ProceedingsModalComponent, config);
   }
 
-  //Traer bienes con estado PDS
+  //Seleccionar una fila de la tabla para ver sus bienes relacionados
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.detailProceedingsList = [];
+    this.proceedings = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByProceedings(this.proceedings));
+  }
+
+  //Consulta los bienes relacionados con el id del acta seleccionada en la tabla
+  getGoodsByProceedings(proceedings: IProccedingsDeliveryReception): void {
+    this.loadingGoodsByP = true;
+    this.detailProceeDelRecService
+      .getGoodsByProceedings(proceedings.id, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.detailProceedingsList = response.data;
+          this.totalItems2 = response.count;
+          this.loadingGoodsByP = false;
+        },
+        error: error => (this.loadingGoodsByP = false),
+      });
+  }
+
+  openForm2(
+    detailProceedingsDeliveryReception?: IDetailProceedingsDeliveryReception
+  ) {
+    let config: ModalOptions = {
+      initialState: {
+        detailProceedingsDeliveryReception,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GoodByProceedingsModalComponent, config);
+  }
+
+  //Método seleccionar columna bien para mostrar dictamen y acta recepcional
+  rowsSelected2(event: any) {
+    this.totalItems5 = 0;
+    this.dictaList = [];
+    this.detailProceedings = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDictationbyGood(this.detailProceedings));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDictationbyGood(this.detailProceedings));
+  }
+
+  //Trae las dictaminaciones relacionadas al bien generado por no. de acta
+  getDictationbyGood(
+    detailProceedings: IDetailProceedingsDeliveryReception
+  ): void {
+    this.loadingDictation = true;
+    this.dictationService
+      .getDictationByGood(detailProceedings.numberGood)
+      .subscribe({
+        next: response => {
+          this.dictaList = response.data;
+          this.totalItems5 = response.count;
+          this.loadingDictation = false;
+        },
+        error: error => (this.loadingDictation = false),
+      });
+  }
+
+  //Trae todos los bienes con estado PDS
   getGoodByStatusPDS() {
-    this.loading = true;
-    this.goodService.getGoodByStatusPDS(this.params2.getValue()).subscribe({
+    this.loadingGoods = true;
+    this.goodService.getGoodByStatusPDS(this.params3.getValue()).subscribe({
       next: response => {
         this.goodPDS = response.data;
-        this.totalItems2 = response.count;
-        this.loading = false;
+        this.totalItems3 = response.count;
+        this.loadingGoods = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.loadingGoods = false),
     });
+  }
+
+  //Muestra información de la fila seleccionada de actas/oficios
+  selectRow(row?: any) {
+    console.log('columna seleccionada', row);
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 }

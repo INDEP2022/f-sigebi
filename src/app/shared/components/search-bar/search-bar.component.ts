@@ -73,7 +73,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     } else {
       const filterParams = this.filterParams.getValue();
       filterParams.page = 1;
-      if (text != '' && this.filterField) {
+      if (this.filterField) {
         filterParams.removeAllFilters();
         filterParams.addFilter(
           this.filterField.field,
