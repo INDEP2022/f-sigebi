@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { WarehouseFilterService } from 'src/app/core/services/ms-warehouse-filter/warehouse-filter.service';
 import {
@@ -120,7 +121,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
     private render: Renderer2,
     private serviceWarehouse: WarehouseFilterService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
-    private serviceTransferente: TransferenteService
+    private serviceTransferente: TransferenteService,
+    private serviceNoty: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -204,6 +206,25 @@ export class ConfiscatedRecordsComponent implements OnInit {
     }
   }
 
+  disabledElement(elmt: string) {
+    const element = this.form.get(elmt);
+    this.render.addClass(element, 'disabled');
+  }
+
+  //Conditional functions
+
+  verifyDateAndFill() {
+    let fecElab = new Date(this.form.get('fecElab').value);
+    let fecReception = this.form.get('fecReception').value;
+    /*    if (this.form.get('fecElab').value = !null) {
+      console.log(format(fecElab, 'dd-mm-yyyy'));
+    } else if (fecReception != null) {
+      fecReception = fecElab;
+    } */
+    console.log(this.form.get('fecElab').value);
+    console.log(this.form.get('fecReception').value);
+  }
+
   //Catalogs
 
   getWarehouses(params: ListParams) {
@@ -221,24 +242,37 @@ export class ConfiscatedRecordsComponent implements OnInit {
   }
 
   getTransferentData(params: ListParams) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
-    this.serviceTransferente
-      .getAllWithFilter(paramsF.getParams())
-      .subscribe((res: any) => {
-        console.log(res.data);
-        const uniqueArray = res.data.filter(
-          (product: any, index: any, self: any) =>
-            index ===
-            self.findIndex(
-              (p: any) =>
-                p.keyTransferent === product.keyTransferent &&
-                p.indcap != 'E' &&
-                p.id == 1
-            )
-        );
-        this.transferSelect = new DefaultSelect(uniqueArray);
-      });
+    const filterNoty = new FilterParams();
+    let codeNoty: number;
+    filterNoty.addFilter('expedientNumber', this.form.get('expediente').value);
+    this.serviceNoty.getAllFilter(filterNoty.getParams()).subscribe(res => {
+      const uniqueArray = res.data.filter(
+        (product: any, index: any, self: any) =>
+          index ===
+          self.findIndex(
+            (p: any) => p.endTransferNumber === product.endTransferNumber
+          )
+      );
+      codeNoty = uniqueArray[0]['endTransferNumber'];
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
+      this.serviceTransferente
+        .getAllWithFilter(paramsF.getParams())
+        .subscribe((res: any) => {
+          const uniqueArray = res.data.filter(
+            (product: any, index: any, self: any) =>
+              index ===
+              self.findIndex(
+                (p: any) =>
+                  p.keyTransferent === product.keyTransferent &&
+                  p.indcap != 'E' &&
+                  p.id == codeNoty
+              )
+          );
+          this.transferSelect = new DefaultSelect(uniqueArray);
+        });
+    });
+    /* */
   }
 
   //

@@ -233,6 +233,7 @@
                 [control]="form.get('fecElab')"
                 label="Fecha Elaboraci&oacute;n">
                 <input
+                  (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
                   class="form-control"
                   formControlName="fecElab" />
