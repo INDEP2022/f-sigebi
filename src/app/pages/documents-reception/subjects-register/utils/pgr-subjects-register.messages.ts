@@ -14,7 +14,8 @@ const ERROR_EXPORT = 'No existen registros para exportar.';
 const ERROR_FORM_FECHA =
   'La fecha de inicio debe ser menor o igual a la fecha final.';
 const INFO_DOWNLOAD = (buttonName: string, buttonNameAll: string) =>
-  `Para descargar únicamente los registros mostrados en la tabla da clic en "${buttonName}"`; // y para exportar todos los registros de la búsqueda da clic en "${buttonNameAll}"`;
+  `Para descargar únicamente los registros mostrados en la tabla da clic en "${buttonName}" y para exportar hasta 20 000 (Veinte Mil) registros de la búsqueda da clic en "${buttonNameAll}"`;
+const DOWNLOAD_PROCESS = 'Espere un momento... Descargando su reporte.';
 
 export {
   ERROR_INTERNET,
@@ -27,4 +28,5 @@ export {
   ERROR_FORM_SEARCH_OFICIO_PGR,
   ERROR_FORM_SEARCH_AVERIGUACION_PREVIA,
   ERROR_FORM_NOT_INSERT,
+  DOWNLOAD_PROCESS,
 };

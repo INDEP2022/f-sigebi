@@ -4,9 +4,17 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DestructionAuthorizationManagementRoutingModule } from './destruction-authorization-management-routing.module';
 import { DestructionAuthorizationManagementComponent } from './destruction-authorization-management/destruction-authorization-management.component';
+import { DestructionAuthorizationComponent } from './destruction-authorization/destruction-authorization.component';
+import { GoodByProceedingsModalComponent } from './good-by-proceedings-modal/good-by-proceedings-modal.component';
+import { ProceedingsModalComponent } from './proceedings-modal/proceedings-modal.component';
 
 @NgModule({
-  declarations: [DestructionAuthorizationManagementComponent],
+  declarations: [
+    DestructionAuthorizationManagementComponent,
+    DestructionAuthorizationComponent,
+    ProceedingsModalComponent,
+    GoodByProceedingsModalComponent,
+  ],
   imports: [
     CommonModule,
     DestructionAuthorizationManagementRoutingModule,

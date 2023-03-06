@@ -55,7 +55,7 @@ export class AuthorityService
     );
   }
 
-  getAllFilter(params?: _Params) {
+  getAllFilter(params?: _Params): Observable<IListResponse<IAuthority>> {
     return this.get('authority', params);
   }
 
@@ -97,6 +97,12 @@ export class AuthorityService
   getAuthorityIssuingByParams(body: IAuthorityIssuingParams | any) {
     return this.authorityRepository.getAuthorityIssuingByParams(
       'catalog/api/v1/authority/authority-and-station?limit=10&page=1',
+      body
+    );
+  }
+  getAuthorityIssuingByAverPrevia(body: IAuthorityIssuingParams | any) {
+    return this.authorityRepository.getAuthorityIssuingByParams(
+      'catalog/api/v1/authority/authority-and-station?limit=1&page=1',
       body
     );
   }

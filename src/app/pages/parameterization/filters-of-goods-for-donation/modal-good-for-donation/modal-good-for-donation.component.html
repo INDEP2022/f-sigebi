@@ -20,10 +20,15 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="createDonation()"></confirm-button>
+          [loading]="loading"
+          [btnSmall]="true"
+          (confirm)="createDonation()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

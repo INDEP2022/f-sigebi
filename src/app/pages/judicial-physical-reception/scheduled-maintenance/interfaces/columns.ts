@@ -1,27 +1,18 @@
 export const ACTAS_BY_GOOD_COLUMNS = {
-  acta: {
+  proceedingkey: {
     title: 'Programa de Recepción/Entrega',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.description;
-    },
   },
-  status: {
+  proceedingstatus: {
     title: 'Estatus',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.description;
-    },
   },
-  typeActa: {
+  programmingtype: {
     title: 'Tipo Programación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.description;
-    },
   },
 };
 
@@ -33,6 +24,19 @@ export const COORDINATIONS_COLUMNS = {
   },
   description: {
     title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const USUARIOS_COLUMNS = {
+  id: {
+    title: 'ID',
+    type: 'string',
+    sort: false,
+  },
+  name: {
+    title: 'Nombre',
     type: 'string',
     sort: false,
   },

@@ -28,7 +28,7 @@ export class ComerEventosService extends HttpService {
 
   getById(id: string | number) {
     const route = `${this.endpoint}/${id}`;
-    return this.get(route);
+    return this.get<IComerEvent>(route);
   }
 
   create(comerEvent: IComerEvent) {

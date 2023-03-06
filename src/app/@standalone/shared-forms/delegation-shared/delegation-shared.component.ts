@@ -5,7 +5,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
 import { BehaviorSubject } from 'rxjs';
 //Params
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -14,6 +17,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 
 @Component({
   selector: 'app-delegation-shared',
@@ -27,6 +31,9 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
 
+  @Input() labelDelegation: string = 'Delegación';
+  @Input() labelSubdelegation: string = 'Sub Delegación';
+
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
   @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
@@ -34,6 +41,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
+  phaseEdo: number;
 
   get delegation() {
     return this.form.get(this.delegationField);
@@ -44,7 +52,8 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
 
   constructor(
     private service: DelegationService,
-    private serviceSubDeleg: SubdelegationService
+    private serviceSubDeleg: SubdelegationService,
+    private printFlyersService: PrintFlyersService
   ) {
     super();
   }
@@ -70,22 +79,45 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   getSubDelegations(params: ListParams) {
-    this.serviceSubDeleg.getAll(params).subscribe(
-      (data: any) => {
-        this.subdelegations = new DefaultSelect(data.data, data.count);
-      },
-      err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
+    if (this.showDelegation) {
+      const paramsF = new FilterParams();
+      paramsF.addFilter(
+        'delegationNumber',
+        this.form.get(this.delegationField).value
+      );
 
-        this.onLoadToast('error', 'Error', error);
-      },
-      () => {}
-    );
+      this.printFlyersService.getSubdelegations(paramsF.getParams()).subscribe({
+        next: data => {
+          this.subdelegations = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+
+          this.onLoadToast('error', 'Error', error);
+        },
+      });
+    } else {
+      this.serviceSubDeleg.getAll(params).subscribe(
+        res => {
+          this.subdelegations = new DefaultSelect(res.data, res.count);
+        },
+        err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+
+          this.onLoadToast('error', 'Error', error);
+        }
+      );
+    }
   }
 
   onDelegationsChange(type: any) {

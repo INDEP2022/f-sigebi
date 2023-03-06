@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Reporte de Cartas de Responsabilidad</h5>
   </div>
@@ -24,18 +24,6 @@
               placeholder="Lote" />
           </form-field>
         </div>
-
-        <div class="col-md-4">
-          <confirm-button
-            text="Imprimir"
-            [loading]="loading"
-            [disabled]="form.invalid"
-            (confirm)="confirm()"></confirm-button>
-        </div>
-      </div>
-
-      <hr class="row" />
-      <div class="row">
         <div class="col-md-4">
           <form-field
             [control]="form.get('adjudicatorio')"
@@ -47,6 +35,10 @@
               placeholder="Adjudicatorio" />
           </form-field>
         </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('domicilio')" label="Domicilio">
             <input
@@ -65,15 +57,6 @@
               placeholder="Colonia" />
           </form-field>
         </div>
-
-        <!-- <div class="col-md-4">
-          <form-field [control]="form.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" placeholder="RFC" />
-          </form-field>
-        </div> -->
-      </div>
-
-      <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('delegacion')" label="Delegacion">
             <input
@@ -83,6 +66,14 @@
               placeholder="Delegacion" />
           </form-field>
         </div>
+        <!-- <div class="col-md-4">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" placeholder="RFC" />
+          </form-field>
+        </div> -->
+      </div>
+
+      <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('estado')" label="Estado">
             <input
@@ -101,33 +92,29 @@
               placeholder="CP" />
           </form-field>
         </div>
-      </div>
-
-      <hr class="row" />
-
-      <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
             <textarea
               rows="2"
               class="form-control"
-              formControlName="parrafo1"></textarea>
+              formControlName="parrafo1"
+              placeholder="Parrafo 1"></textarea>
           </form-field>
         </div>
       </div>
-      <hr class="row" />
+
       <div class="row">
         <label for="">Bienes</label>
       </div>
 
       <div class="row pt-2 scroll-table">
         <ng2-smart-table
-          class="col-md-12"
-          [settings]="settings1"
-          [source]="data"></ng2-smart-table>
+          [settings]="setting2"
+          [source]="dataGood"></ng2-smart-table>
       </div>
+      <hr class="row" />
+      <br />
 
-      <hr class="row mt-5" />
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
@@ -147,5 +134,25 @@
         </div>
       </div>
     </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

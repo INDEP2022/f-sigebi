@@ -26,8 +26,6 @@ export class HttpService {
   protected get<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
-
     return this.httpClient.get<T>(`${url}`, { params });
   }
 
@@ -37,7 +35,7 @@ export class HttpService {
     return this.httpClient.post<T>(`${url}`, body, { params });
   }
 
-  protected put<T = any>(route: string, body: {}, _params?: _Params) {
+  protected put<T = any>(route: string, body?: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
     return this.httpClient.put<T>(`${url}`, body, { params });

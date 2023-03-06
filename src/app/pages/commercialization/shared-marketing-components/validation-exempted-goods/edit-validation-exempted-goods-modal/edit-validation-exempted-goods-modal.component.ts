@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -28,7 +27,7 @@ export class EditValidationExemptedGoodsModalComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private goodService: GoodService
+    private goodTransAvaService: GoodTransAvaService
   ) {
     super();
   }
@@ -39,23 +38,15 @@ export class EditValidationExemptedGoodsModalComponent
 
   private prepareForm() {
     this.goodForm = this.fb.group({
-      id: [null, []],
-      description: [null, []],
-      quantity: [null, []],
-
-      proccess: [null, []],
+      goodNumber: [null, []],
+      process: [null, []],
+      registryNumber: [null, []],
     });
     if (this.good != null) {
       this.edit = true;
       console.log(this.good);
       this.goodForm.patchValue(this.good);
     }
-  }
-
-  getGoods(params: ListParams) {
-    this.goodService.getAll(params).subscribe({
-      next: data => (this.goods = new DefaultSelect(data.data, data.count)),
-    });
   }
 
   onValuesChange() {
@@ -77,12 +68,18 @@ export class EditValidationExemptedGoodsModalComponent
 
   create() {
     this.loading = true;
-    this.handleSuccess();
+    this.goodTransAvaService.create(this.goodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
-    this.handleSuccess();
+    this.goodTransAvaService.update(this.goodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

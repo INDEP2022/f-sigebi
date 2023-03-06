@@ -6,49 +6,33 @@
     <form class="form-material" [formGroup]="goodForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="goodForm.get('id')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="goodForm"
-              control="id"
-              [data]="goods"
-              value="id"
-              bindLabel="id"
-              label="No. bien"
-              (fetchItems)="getGoods($event)"
-              (change)="onValuesChange()"
-              [readonly]="true">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="goodForm.get('description')"
-            label="Descripción">
+          <form-field [control]="goodForm.get('goodNumber')" label="No. Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="goodNumber" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="goodForm.get('quantity')" label="Unidad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="quantity" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="goodForm.get('proccess')" label="Proceso">
+          <form-field [control]="goodForm.get('process')" label="Proceso">
             <ng-select
-              formControlName="proccess"
+              formControlName="process"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
               <ng-option value="REV">REV</ng-option>
               <ng-option value="COMER">COMER</ng-option>
             </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodForm.get('registryNumber')"
+            label="No. Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>
@@ -59,7 +43,7 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!goodForm.valid"
-          (click)="close()"></confirm-button>
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

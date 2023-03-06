@@ -29,6 +29,7 @@ export class SelectListFilteredModalComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  id = new BehaviorSubject<string>('0');
   title: string = ''; // Input requerido al llamar el modal
   columnsType: any = {}; // Input requerido al llamar el modal
   service: any; // Input requerido al llamar el modal
@@ -37,6 +38,8 @@ export class SelectListFilteredModalComponent
     self: any,
     params: ListParams
   ) => Observable<any>; // Input requerido al llamar el modal por listParams
+  dataObservableId: (self: any, id: string) => Observable<any>;
+  showError: boolean = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar filtros sin usar busqueda
   @Output() onSelect = new EventEmitter<any>();
@@ -61,9 +64,11 @@ export class SelectListFilteredModalComponent
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData());
+    } else if (this.dataObservableId) {
+      this.id
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
     }
-
-    console.log(this.settings);
   }
 
   getData(): void {
@@ -75,17 +80,21 @@ export class SelectListFilteredModalComponent
         )
       : this.dataObservableListParamsFn
       ? this.dataObservableListParamsFn(this.service, this.params.getValue())
+      : this.dataObservableId
+      ? this.dataObservableId(this.service, this.id.getValue())
       : null;
     if (servicio) {
       servicio.subscribe({
         next: data => {
+          console.log(data);
           this.columns = data.data;
           this.totalItems = data.count;
           this.loading = false;
         },
         error: err => {
+          console.log(err);
           this.loading = false;
-          this.onLoadToast('error', 'Error', err);
+          if (this.showError) this.onLoadToast('error', 'Error', err);
         },
       });
     }
@@ -106,6 +115,7 @@ export class SelectListFilteredModalComponent
   }
 
   selectEvent(event: any) {
+    console.log(event);
     if (this.settings.selectMode === 'multi') {
       this.selectRow(event.selected);
     } else {
@@ -113,7 +123,7 @@ export class SelectListFilteredModalComponent
     }
   }
 
-  selectRow(row: any) {
+  private selectRow(row: any) {
     console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;

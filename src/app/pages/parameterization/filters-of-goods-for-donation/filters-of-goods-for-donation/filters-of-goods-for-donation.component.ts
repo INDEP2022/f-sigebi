@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDonationGood } from 'src/app/core/models/ms-donation/donation.model';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
@@ -20,8 +25,9 @@ export class FiltersOfGoodsForDonationComponent
 {
   columns: any[] = [];
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
   data: IListResponse<IDonationGood> = {} as IListResponse<IDonationGood>;
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
 
   constructor(
     private modalService: BsModalService,
@@ -38,6 +44,7 @@ export class FiltersOfGoodsForDonationComponent
       },
       columns: { ...COLUMNS },
     };
+    this.searchFilter = { field: 'description', operator: SearchFilter.ILIKE };
   }
 
   ngOnInit(): void {
@@ -62,24 +69,25 @@ export class FiltersOfGoodsForDonationComponent
 
   getPagination(params?: ListParams) {
     this.loading = true;
-    this.donationServ.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        if (response.data.length > 0) {
-          response.data.map(donation => {
-            donation.statusDesc = donation.status.description;
-            donation.tagId = donation.tag.id;
-            donation.tagDesc = donation.tag.description;
-          });
+    this.donationServ
+      .getAllWidthFilters(this.params.getValue().getParams())
+      .subscribe({
+        next: response => {
+          if (response.data.length > 0) {
+            response.data.map(donation => {
+              donation.statusDesc = donation.status.description;
+              donation.tagId = donation.tag.id;
+              donation.tagDesc = donation.tag.description;
+            });
+            this.loading = false;
+          }
+          this.data = response;
+        },
+        error: err => {
+          this.onLoadToast('error', err.error.message, '');
           this.loading = false;
-        }
-        this.data = response;
-        this.data.count = 4;
-      },
-      error: err => {
-        this.onLoadToast('error', err.error.message, '');
-        this.loading = false;
-      },
-    });
+        },
+      });
   }
 
   deleteDonation(event: string) {
@@ -90,7 +98,7 @@ export class FiltersOfGoodsForDonationComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.donationServ.delete(event).subscribe({
+        this.donationServ.remove(event).subscribe({
           next: () => {
             this.onLoadToast('success', 'Eliminado correctamente', '');
             this.getPagination();

@@ -3,7 +3,7 @@ import { ISubdelegation } from './subdelegation.model';
 
 export interface IDepartment {
   id?: number;
-  numDelegation: IDelegation | number;
+  numDelegation: number;
   numSubDelegation: ISubdelegation | number;
   dsarea: string;
   description: string;
@@ -13,4 +13,5 @@ export interface IDepartment {
   depend: number;
   depDelegation: number;
   phaseEdo: number;
+  delegation?: IDelegation | null;
 }
