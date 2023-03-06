@@ -4,8 +4,15 @@ import { HttpClient } from '@angular/common/http';
 //params
 //services
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IAuthorityIssuingParams } from 'src/app/core/models/catalogs/authority.model';
-import { IDinamicQueryParams } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
+import { IGood } from 'src/app/core/models/good/good.model';
+import { ITagXClasif } from 'src/app/core/models/ms-classifygood/ms-classifygood.interface';
+import {
+  IDinamicQueryParams,
+  ISatTransfer,
+} from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
+import { IMassiveGood } from 'src/app/core/models/ms-massivegood/massivegood.model';
 import { INotificationTransferentIndiciadoCityGetData } from 'src/app/core/models/ms-notification/notification.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
@@ -13,7 +20,12 @@ import { IndicatorDeadlineService } from 'src/app/core/services/catalogs/indicat
 import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
+import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
@@ -31,7 +43,12 @@ export class GoodsBulkLoadService {
     private expedientService: ExpedientService,
     private satInterfaceService: SatInterfaceService,
     private notificationService: NotificationService,
-    private indicatorDeadlineService: IndicatorDeadlineService
+    private indicatorDeadlineService: IndicatorDeadlineService,
+    private classifyGoodService: ClassifyGoodService,
+    private massiveGoodService: MassiveGoodService,
+    private historyGoodService: HistoryGoodService,
+    private satTransferService: SatTransferService,
+    private interfacefgrService: InterfacefgrService
   ) {}
 
   /**
@@ -77,8 +94,14 @@ export class GoodsBulkLoadService {
    * Obtener la clave de la ciudad apartir de la clave Asunto SAT
    * @param asuntoSat Clave de Asunto SAT
    */
-  searchCityByAsuntoSat(asuntoSat: string) {
-    return this.authorityService.getCityByAsuntoSat(asuntoSat);
+  searchCityByAsuntoSat(asuntoSat: string, opcion: string = 'sat') {
+    if (opcion == 'sat') {
+      return this.authorityService.getCityByAsuntoSat(asuntoSat);
+    } else {
+      return this.interfacefgrService.getCityByAsuntoSat({
+        pgrOffice: asuntoSat,
+      });
+    }
   }
 
   /**
@@ -100,17 +123,30 @@ export class GoodsBulkLoadService {
    * @param params Parametros de tipo @IAuthorityIssuingParams
    * @returns
    */
-  getIssuingInstitutionByParams(params: IAuthorityIssuingParams) {
-    return this.authorityService.getAuthorityIssuingByParams(params);
+  getIssuingInstitutionByParams(
+    params: IAuthorityIssuingParams,
+    opcion: string = 'sat'
+  ) {
+    if (opcion == 'sat') {
+      return this.authorityService.getAuthorityIssuingByParams(params);
+    } else {
+      return this.authorityService.getAuthorityIssuingByAverPrevia(params);
+    }
   }
   /**
    * Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
    * @param asuntoSat Clave de Asunto SAT
    */
-  getEntityFederativeByAsuntoSat(asuntoSat: string) {
-    return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
-      asuntoSat
-    );
+  getEntityFederativeByAsuntoSat(asuntoSat: string, opcion: string = 'sat') {
+    if (opcion == 'sat') {
+      return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
+        asuntoSat
+      );
+    } else {
+      return this.issuingInstitutionService.getOTClaveEntityFederativeByAvePrevia(
+        asuntoSat
+      );
+    }
   }
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);
@@ -120,5 +156,23 @@ export class GoodsBulkLoadService {
   }
   getIndicatorById(idIndicator: string) {
     return this.indicatorDeadlineService.getById(idIndicator);
+  }
+  createGood(good: IGood) {
+    return this.goodService.create(good);
+  }
+  getTagXClasifByCol6Transfer(body: ITagXClasif) {
+    return this.classifyGoodService.getTagXClassif(body);
+  }
+  createMassiveGood(body: IMassiveGood) {
+    return this.massiveGoodService.create(body);
+  }
+  createHistoryGood(body: IHistoryGood) {
+    return this.historyGoodService.create(body);
+  }
+  updateSatTransferencia(id: string | number, body: ISatTransfer) {
+    return this.satTransferService.update(id, body);
+  }
+  getSatTransferencia(cveSat: string) {
+    return this.satTransferService.getById(cveSat);
   }
 }
