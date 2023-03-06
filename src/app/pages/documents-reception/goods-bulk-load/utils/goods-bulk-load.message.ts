@@ -13,6 +13,7 @@ const VALIDATION_START_MESSAGE = 'Iniciando proceso de Validación de Datos...';
 const VALIDATION_PROCESS_MESSAGE = (numero_registro: number) =>
   `Válidando el registro: ${numero_registro}.`;
 const VALIDATION_END_MESSAGE = 'Proceso de Validación de Datos Terminado.';
+const VALIDATION_UPLOAD_END_MESSAGE = 'Proceso de Carga de Datos Terminado.';
 const VALIDATION_UPLOAD_START_MESSAGE =
   'Iniciando proceso de Carga de Datos...';
 const VALIDATION_UPDATE_PROCESS_MESSAGE = (numero_registro: number) =>
@@ -53,7 +54,7 @@ const ERROR_GOOD_INMUEBLE = (good_number: string) =>
 const ERROR_EXPEDIENTE = (expedient: string) =>
   `No se encontro el expediente en el documento: ${expedient}.`;
 const ERROR_CITY_ASUNTO_SAT = (asunto_sat: string) =>
-  `No se encontro la clave de la ciudad filtrada por el asunto SAT: ${asunto_sat}.`;
+  `No se encontro la clave de la ciudad filtrada por el asunto: ${asunto_sat}.`;
 const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
   `No se encontro SAT_CVE_UNICA de: ${descripcion}.`;
 const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
@@ -74,6 +75,7 @@ const ERROR_EXPEDIENTE_TRANSFERENTE_INDICIADO_CITY = (
   `Se encontró repetido el expediente ('${expediente}') en el volante : '${volante}'.`;
 const ERROR_INDICATOR = (indicado: string) =>
   `El indicado ${indicado} no existe en el sistema.`;
+const ERROR_CREATE_EXPEDIENT = `El al crear el expediente.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -109,4 +111,6 @@ export {
   ERROR_EXPEDIENTE_IDENTIFICADOR,
   ERROR_EXPEDIENTE_TRANSFERENTE_INDICIADO_CITY,
   ERROR_INDICATOR,
+  ERROR_CREATE_EXPEDIENT,
+  VALIDATION_UPLOAD_END_MESSAGE,
 };

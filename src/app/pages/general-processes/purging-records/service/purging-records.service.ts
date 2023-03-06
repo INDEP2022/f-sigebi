@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { forkJoin, map, of, switchMap } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -49,7 +49,7 @@ export class PurgingRecordsService {
         return forkJoin(
           response.data.map(good => {
             const { id } = good;
-            return this.goodService.update({ fileNumber: Number(_new) });
+            return of(id);
           })
         );
       })

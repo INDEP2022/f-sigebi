@@ -8,7 +8,7 @@ interface IDepurateBody {
 @Injectable({
   providedIn: 'root',
 })
-export class GoodService extends HttpService {
+export class MassiveExpedientService extends HttpService {
   constructor() {
     super();
     this.microservice = MassiveExpedientEndpoints.Base;
@@ -20,6 +20,6 @@ export class GoodService extends HttpService {
 
   deleteExpedient(expedientNum: string | number) {
     const route = `${MassiveExpedientEndpoints.DeleteExpedient}/${expedientNum}`;
-    // return this.post(route)
+    return this.post(route, {});
   }
 }

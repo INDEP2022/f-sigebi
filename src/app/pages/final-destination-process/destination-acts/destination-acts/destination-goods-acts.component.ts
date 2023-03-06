@@ -77,7 +77,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
 
-  search(term: string) {
+  search(term: string | number) {
     this.response = !this.response;
   }
 

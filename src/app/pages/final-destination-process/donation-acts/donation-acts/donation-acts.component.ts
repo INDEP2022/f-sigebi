@@ -49,7 +49,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
     this.startCalendars();
   }
 
-  search(term: string) {
+  search(term: string | number) {
     this.response = !this.response;
   }
 
