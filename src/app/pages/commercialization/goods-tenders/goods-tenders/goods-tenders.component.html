@@ -7,47 +7,48 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="form.get('delegation')" label="Delegación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
+        <div class="col-md-4">
+          <app-delegation-shared [form]="form"></app-delegation-shared>
         </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('subDelegation')"
-            label="Sub Delegación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subDelegation" />
-          </form-field>
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('noBidding')"
+              label="Número de licitación">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="noBidding" />
+            </form-field>
+            <div class="row pt-3">
+              <form-field [control]="form.get('PF_FECINI')" label="Desde">
+                <input
+                  formControlName="PF_FECINI"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('noBidding')" label="No. Licitación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noBidding" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('rangeDate')"
-            label="Fecha de adjudicación">
-            <input
-              class="form-control"
-              formControlName="rangeDate"
-              ngModel
-              bsDaterangepicker
-              [maxDate]="today"
-              [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY',
-                displayOneMonthRange: true
-              }" />
-          </form-field>
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('description')"
+              label="Descripción de licitación">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="form.get('PF_FECFIN')" label="Hasta">
+              <input
+                formControlName="PF_FECFIN"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>
@@ -55,12 +56,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
         <button
-          type="submit"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
-          (click)="openPrevPdf()">
-          Imprimir
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
         </button>
       </div>
     </div>

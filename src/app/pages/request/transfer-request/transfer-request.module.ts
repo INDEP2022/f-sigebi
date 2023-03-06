@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
+import { SelectTypeUserComponent } from './select-type-user/select-type-user.component';
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
 import { GenerateDictumComponent } from './tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
@@ -71,6 +72,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     ApprovalAssetsTabsComponent,
     GenerateDictumComponent,
     AssociateFieldComponent,
+    SelectTypeUserComponent,
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,51 @@
+<form class="form-material" [formGroup]="form">
+  <div class="row">
+    <div class="col-md-4 p-0">
+      <form-field
+        class="col-xs-10"
+        [control]="form.get('goodId')"
+        label="Agregar Nuevo bien">
+        <input type="number" formControlName="goodId" class="form-control" />
+      </form-field>
+      <div class="col-xs-2 pl-0">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="addGood()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-4 mb-5" style="text-align: center">
+      <button
+        [class]="statusActaValue === 'CERRADA' ? 'disabled' : ''"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="updateGoods()">
+        <i class="bx bx-pencil float-icon"></i>
+        Editar bienes
+      </button>
+    </div>
+    <div class="col-md-4 p-0">
+      <form-field
+        class="col-xs-10"
+        [control]="form.get('action')"
+        label="Acción">
+        <select class="form-control" formControlName="action">
+          <option [value]="null">Seleccione una acción</option>
+          <option [value]="1">Cambio de Acta</option>
+          <option [value]="2">Cambio de Estatus</option>
+        </select>
+      </form-field>
+      <div class="col-xs-2 pl-0">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="openModals()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
