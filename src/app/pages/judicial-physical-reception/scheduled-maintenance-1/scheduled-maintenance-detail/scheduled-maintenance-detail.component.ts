@@ -65,7 +65,7 @@ export class ScheduledMaintenanceDetailComponent
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         let message = '';
-        this.proceedingService.update(detail).subscribe({
+        this.proceedingService.update2(detail).subscribe({
           next: response => {
             this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
           },
@@ -264,19 +264,6 @@ export class ScheduledMaintenanceDetailComponent
           }),
         ];
         this.selectedsForUpdate = [...this.data];
-        // this.service.updateMasive(this.data).subscribe({
-        //   next: response => {
-        //     this.getData();
-        //     this.onLoadToast('success', 'Exito', `Se actualizaron los bienes`);
-        //   },
-        //   error: err => {
-        //     this.onLoadToast(
-        //       'error',
-        //       'ERROR',
-        //       `No se pudieron actualizar los bienes`
-        //     );
-        //   },
-        // });
       }
     });
   }
