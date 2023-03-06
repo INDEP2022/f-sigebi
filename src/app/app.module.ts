@@ -18,6 +18,7 @@ import { FullModule } from './layouts/full/full.module';
 import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
 import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
 import { MailModule } from './pages/parameterization/mail/mail.module';
+
 export function tokenGetter() {
   return localStorage.getItem('token');
 }

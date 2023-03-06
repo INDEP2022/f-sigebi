@@ -47,6 +47,7 @@ export class SelectComponent<T> implements OnInit {
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
+  @Input() clearable = true;
   @Input() termMaxLength: string = null;
   buffer: any[] = [];
   input$ = new Subject<string>();
@@ -97,7 +98,6 @@ export class SelectComponent<T> implements OnInit {
     } else {
       filterParam.addFilter(this.paramFilter, text ?? '');
     }
-    console.log(filterParam);
     this.fetchByParamsItems.emit(filterParam);
   }
 
@@ -118,7 +118,6 @@ export class SelectComponent<T> implements OnInit {
         distinctUntilChanged(),
         switchMap((text: string) => {
           if (text === null) {
-            console.log('texto nulo');
             return of([]);
           }
           this.page = 1;

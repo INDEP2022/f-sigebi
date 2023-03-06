@@ -115,41 +115,21 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
             .toString();
           item['authorityName'] = item.authority.authorityName;
 
-          const delegacionService = this.regionalDelegacionService.getById(
-            item.regionalDelegationId
-          );
+          item['delegationName'] = item.delegation.description;
 
-          const stateOfRepublicService = this.stateOfRepublicService.getById(
-            item.keyStateOfRepublic
-          );
-          const transferenteService = this.transferentService.getById(
-            item.transferenceId
-          );
-          const stationService = this.stationService.getById(item.stationId);
+          item['stateOfRepublicName'] = item.state.descCondition;
+
+          item['transferentName'] = item.transferent.name;
+
+          item['stationName'] = item.emisora.stationName;
 
           const affairService = this.affairService.getById(item.affair);
 
           this.listTable = [];
-          forkJoin([
-            delegacionService,
-            stateOfRepublicService,
-            transferenteService,
-            stationService,
-            affairService,
-          ]).subscribe(
-            ([_delegation, _state, _transferent, _station, _affair]) => {
-              let delegation = _delegation as any;
-              let state = _state as any;
-              let transferent = _transferent as any;
-              let station = _station as any;
-              //let authority = _authority as any;
+          forkJoin([affairService]).subscribe(
+            ([_affair]) => {
               let affair = _affair as any;
 
-              item['delegationName'] = delegation.description;
-              item['stateOfRepublicName'] = state.descCondition;
-              item['transferentName'] = transferent.nameTransferent;
-              item['stationName'] = station.stationName;
-              //item['authorityName'] = authority.authorityName;
               item['affairName'] = affair.description;
             },
             error => {

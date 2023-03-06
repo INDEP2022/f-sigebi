@@ -1,0 +1,21 @@
+<ng-container [formGroup]="form">
+  <div class="row mr-0">
+    <div class="col-md-12 table-responsive mt-3">
+      <ng2-smart-table
+        *ngIf="source"
+        class="col-md-12 p-0"
+        [settings]="settingKeysProceedings"
+        [source]="source"
+        (editConfirm)="updateKeysProcedding($event)"></ng2-smart-table>
+    </div>
+  </div>
+  <div class="row actions mr-0">
+    <div class="col-md-8 mt-5">
+      <div>
+        <form-field [control]="form.get(formField)" label="Clave Acta">
+          <input class="form-control" formControlName="claveActa" readonly />
+        </form-field>
+      </div>
+    </div>
+  </div>
+</ng-container>

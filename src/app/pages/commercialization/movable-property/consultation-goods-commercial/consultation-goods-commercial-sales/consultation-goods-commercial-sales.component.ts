@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -7,7 +7,16 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
 
+import { addDays, subDays } from 'date-fns';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { maxDate, minDate } from 'src/app/common/validations/date.validators';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 
 @Component({
   selector: 'app-consultation-goods-commercial-sales',
@@ -18,14 +27,30 @@ export class ConsultationGoodsCommercialSalesComponent
   extends BasePage
   implements OnInit
 {
-  form: FormGroup = new FormGroup({});
-
+  form = new FormGroup(new CommercialSalesForm());
   params = new BehaviorSubject<ListParams>(new ListParams());
+  goodControl = new FormControl<string>({ value: null, disabled: true });
+  eventControl = new FormControl<string>({ value: null, disabled: true });
   totalItems: number = 0;
   selectedGood: any = null;
-  goodItems = new DefaultSelect();
+  eventTypes = new DefaultSelect();
+  transferents = new DefaultSelect();
+  delegations = new DefaultSelect();
 
-  constructor(private fb: FormBuilder, private excelService: ExcelService) {
+  get controls() {
+    return this.form.controls;
+  }
+
+  constructor(
+    private fb: FormBuilder,
+    private excelService: ExcelService,
+    private comerSaleService: ComerSaleService,
+    private goodService: GoodService,
+    private comerEventService: ComerEventosService,
+    private comerTypeEventService: ComerTpEventosService,
+    private transferentService: TransferenteService,
+    private delegationService: DelegationService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -34,129 +59,140 @@ export class ConsultationGoodsCommercialSalesComponent
     };
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-    this.getGoods({ page: 1, text: '' });
-  }
+  ngOnInit(): void {}
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      id: ['', [Validators.required]],
-      // evento: [null, [Validators.required]],
-      // lote: [null, [Validators.required]],
-      // expediente: [null, [Validators.required]],
-      // noSiab: [null, [Validators.required]],
-      // cantidad: [null, [Validators.required]],
-      // eventoPublico: [null, [Validators.required]],
-      // lotePublico: [null, [Validators.required]],
-      // estatus: [null, [Validators.required]],
-      // idTrans: [null, [Validators.required]],
-      // idSerie: [null, [Validators.required]],
+  getData() {
+    this.loading = true;
+    this.comerSaleService.getGoodSales(this.form.value).subscribe({
+      next: response => {
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
     });
   }
 
-  datatable = [
-    {
-      evento: '1427 - REMESA',
-      lote: '12',
-      expediente: '394029',
-      noSiab: '794676',
-      cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
-      eventoPublico: '1.00',
-      lotePublico: '1491',
-      estatus: 'CNE',
-    },
-    {
-      evento: '1491 - SUBASTA ELECTRÓNICA',
-      lote: '170940',
-      expediente: '394029',
-      noSiab: '794676',
-      cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
-      eventoPublico: '',
-      lotePublico: '',
-      estatus: 'CNE',
-    },
-    {
-      evento: '1491 - SUBASTA ELECTRÓNICA',
-      lote: '170940',
-      expediente: '394029',
-      noSiab: '794676',
-      cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
-      eventoPublico: '',
-      lotePublico: '',
-      estatus: 'CNE',
-    },
-  ];
-
-  data: any = [
-    {
-      id: 1427,
-      noSiab: 987,
-      expediente: 321,
-      idTrans: 147,
-      idSerie: 8452,
-      lote: 32147,
-      evento: 'PREPARACIÓN',
-      coordcapt: 'CDMX',
-      rfc: 'XOXO001122',
-      client: 'MIGUEL',
-      price: '$12,321.00',
-      entryOrder: 'PREPARACIÓN',
-      reference: 'Referencia01',
-      dateFromEvent: '10-10-2020',
-      dateToEvent: '10-10-2022',
-    },
-    {
-      id: 874,
-      noSiab: 15498,
-      expediente: 9842,
-      idTrans: 17963,
-      idSerie: 247,
-      lote: 10,
-      evento: 'SUBASTA',
-      coordcapt: 'HERMOSILLO',
-      rfc: 'XOXO321121',
-      client: 'ARTURO',
-      price: '$410.00',
-      entryOrder: 'SUBASTA02',
-      reference: 'Referencia02',
-      dateFromEvent: '01-02-2010',
-      dateToEvent: '15-08-2015',
-    },
-    {
-      id: 1431,
-      noSiab: 114,
-      expediente: 9014,
-      idTrans: 7401,
-      idSerie: 6021,
-      lote: 90406,
-      evento: 'REMESAS',
-      coordcapt: 'TIJUANA',
-      rfc: 'XOXO310597',
-      client: 'PEDRO',
-      price: '$100,151.00',
-      entryOrder: 'REMESAS3',
-      reference: 'Referencia03',
-      dateFromEvent: '15-06-2018',
-      dateToEvent: '31-05-2020',
-    },
-  ];
-
-  exportAsXLSX(): void {
-    this.excelService.exportAsExcelFile(this.data, 'ventas');
-  }
-
-  getGoods(params: ListParams) {
-    if (params.text == '') {
-      this.goodItems = new DefaultSelect(this.data, 3);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.data.filter((i: any) => i.id == id)];
-      this.goodItems = new DefaultSelect(item[0], 1);
+  getGood() {
+    const goodId = this.controls.goodNumber.value;
+    if (!goodId) {
+      this.resetGoodCtrl();
+      return;
     }
+    this.goodService.getById(goodId).subscribe({
+      next: good => {
+        this.goodControl.setValue(good.description);
+      },
+      error: error => {
+        this.resetGoodCtrl();
+        if (error.status > 0 && error.status <= 404) {
+          this.onLoadToast('error', 'Error', 'El bien no existe');
+        }
+      },
+    });
   }
 
-  selectGood(event: any) {
-    this.selectedGood = event;
+  resetGoodCtrl() {
+    this.goodControl.reset();
+    this.controls.goodNumber.setValue(null);
+  }
+
+  resetEventCtrl() {
+    this.eventControl.reset();
+    this.controls.eventId.setValue(null);
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.resetGoodCtrl();
+    this.resetEventCtrl();
+  }
+
+  getEvent() {
+    const eventId = this.controls.eventId.value;
+    if (!eventId) {
+      this.resetEventCtrl();
+      return;
+    }
+    this.comerEventService.getById(eventId).subscribe({
+      next: event => {
+        this.eventControl.setValue(event.processKey);
+      },
+      error: error => {
+        this.resetEventCtrl();
+        if (error.status > 0 && error.status <= 404) {
+          this.onLoadToast('error', 'Error', 'El evento no existe');
+        }
+      },
+    });
+  }
+
+  getEventTypes(params: ListParams) {
+    this.comerTypeEventService.getAll(params).subscribe({
+      next: response => {
+        this.eventTypes = new DefaultSelect(response.data, response.count);
+      },
+      error: () => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener los tipos de evento'
+        );
+      },
+    });
+  }
+
+  getTransferent(params: ListParams) {
+    this.transferentService.getAll(params).subscribe({
+      next: response => {
+        this.transferents = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        if (error.status > 0 && error.status <= 404) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al obtener los transferentes'
+          );
+        }
+      },
+    });
+  }
+
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: response => {
+        this.delegations = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        if (error.status > 0 && error.status <= 404) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al obtener las delegaciones'
+          );
+        }
+      },
+    });
+  }
+
+  fromDateChange(date: Date) {
+    const toDateCtrl = this.controls.dateFinal;
+    toDateCtrl.clearValidators();
+    if (date) {
+      const min = addDays(date, 1);
+      toDateCtrl.addValidators(minDate(min));
+    }
+    toDateCtrl.updateValueAndValidity();
+  }
+
+  toDateChange(date: Date) {
+    const fromDateCtrl = this.controls.dateInit;
+    fromDateCtrl.clearValidators();
+    if (date) {
+      const min = subDays(date, 1);
+      fromDateCtrl.addValidators(maxDate(min));
+    }
+    fromDateCtrl.updateValueAndValidity();
   }
 }

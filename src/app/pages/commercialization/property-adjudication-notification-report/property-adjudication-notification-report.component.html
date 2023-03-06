@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Reporte De Notificacion De Adjudicacion Inmuebles</h5>
   </div>
@@ -15,17 +15,6 @@
               placeholder="Evento" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <confirm-button
-            text="Imprimir"
-            [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
-        </div>
-      </div>
-      <br /><br />
-      <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('claveOficio')" label="Clave Oficio">
             <input
@@ -44,6 +33,9 @@
               placeholder="Fecha Fallo" />
           </form-field>
         </div>
+      </div>
+      <br /><br />
+      <div class="row">
         <div class="col-md-4">
           <form-field
             [control]="form.get('FechaLimPago')"
@@ -55,50 +47,71 @@
               placeholder="Fecha Limite de Pago" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row">
-        <br /><br />
-        <div class="col">
+        <div class="col-md-4">
           <form-field [control]="form.get('texto1')" label="Texto 1">
             <textarea
               rows="2"
               class="form-control"
-              formControlName="texto1"></textarea>
+              formControlName="texto1"
+              placeholder="texto 1"></textarea>
           </form-field>
         </div>
-        <div class="col">
+        <div class="col-md-4">
           <form-field [control]="form.get('texto2')" label="Texto 2">
             <textarea
               rows="2"
               class="form-control"
-              formControlName="texto2"></textarea>
-          </form-field>
-        </div>
-        <div class="col">
-          <form-field [control]="form.get('texto3')" label="Texto 3">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="texto3"></textarea>
-          </form-field>
-        </div>
-        <div class="col">
-          <form-field [control]="form.get('texto4')" label="Texto 4">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="texto4"></textarea>
+              formControlName="texto2"
+              placeholder="texto 2"></textarea>
           </form-field>
         </div>
       </div>
 
-      <div class="row pt-2 scroll-table justify-content-center">
+      <div class="row">
+        <br /><br />
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('texto3')" label="Texto 3">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="texto3"
+              placeholder="texto 3"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('texto4')" label="Texto 4">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="texto4"
+              placeholder="texto 4"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <br /><br />
+      <!-- 
+   <div class="row pt-2 scroll-table">
         <ng2-smart-table
           class="col-md-12"
-          [settings]="settings4"
-          [source]="data4"></ng2-smart-table>
+          [attr.class]="'table-bordered'"
+          [settings]="settings5"
+          (userRowSelect)="userRowSelect($event)"
+          [source]="layousthList"></ng2-smart-table>
       </div>
+
+ -->
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings4"
+          [source]="dataBatch"></ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
       <br /><br />
 
       <div class="row">
@@ -141,4 +154,31 @@
       </div>
     </form>
   </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
 </app-card>
+<!-- <div class="col-md-4">
+          <confirm-button text="Imprimir" [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
+          </confirm-button>
+        </div> 
+        (userRowSelect)="userRowSelect($event)"
+      
+      -->

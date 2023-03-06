@@ -78,6 +78,7 @@ export const SAT_SAE_INMUEBLES_PROCESO_4: any = {
     'NOMBRE',
     'CALLE',
     'NUMERO EXTERIOR',
+    'NUMERO INTERIOR',
   ],
   listEqualExist: [
     'OFICIO SOLICITUD EN EL RPP',
@@ -91,5 +92,7 @@ export const SAT_SAE_INMUEBLES_PROCESO_4: any = {
     'SUPERFICIE CONSTRUIDA',
     'HABITADO',
     'AGUA',
+    'CODIGO POSTAL',
+    'ENTIDAD FEDERATIVA',
   ],
 };

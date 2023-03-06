@@ -7,6 +7,7 @@ import {
   INoCityByAsuntoSAT,
 } from 'src/app/core/models/catalogs/authority.model';
 import { IOTClaveEntityFederativeByAsuntoSAT } from 'src/app/core/models/catalogs/issuing-institution.model';
+import { INotificationTransferentIndiciadoCity } from 'src/app/core/models/ms-notification/notification.model';
 import { environment } from 'src/environments/environment';
 import { ListParams } from './interfaces/list-params';
 import { IRepository } from './interfaces/repository.interface';
@@ -219,10 +220,27 @@ export class Repository<T> implements IRepository<T> {
       `${fullRoute}/${id}`
     );
   }
+  getOTClaveEntityFederativeByAvePrevia(
+    route: string,
+    id: number | string
+  ): Observable<IOTClaveEntityFederativeByAsuntoSAT> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IOTClaveEntityFederativeByAsuntoSAT>(
+      `${fullRoute}/${id}`
+    );
+  }
   getAuthorityIssuingByParams(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
 
     return this.httpClient.post<IAuthorityIssuingResponse[]>(
+      `${fullRoute}`,
+      formData
+    );
+  }
+  getNotificacionesByTransferentIndiciadoCity(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.post<INotificationTransferentIndiciadoCity[]>(
       `${fullRoute}`,
       formData
     );
