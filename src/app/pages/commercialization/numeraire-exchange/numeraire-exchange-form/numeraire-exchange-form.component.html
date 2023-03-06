@@ -10,7 +10,14 @@
   </div>
   <div body>
     <!-- <app-table-expenses></app-table-expenses> -->
-
+    <!-- formControlName="account" -->
+    <ng-custom-select
+      paramSearch="filter.cveBank"
+      prefixSearch="$ilike"
+      value="accountNumber"
+      path="accountmvmnt/api/v1/bank-account">
+      <ng-template let-item> {{ item.cveBank }} </ng-template>
+    </ng-custom-select>
     <div class="md-tabs mt-n3">
       <tabset>
         <tab heading="Conversión Individual" id="tabIndividualConversion">
