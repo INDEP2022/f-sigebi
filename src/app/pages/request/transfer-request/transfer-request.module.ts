@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
+import { SelectTypeUserComponent } from './select-type-user/select-type-user.component';
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
 import { GenerateDictumComponent } from './tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
@@ -31,12 +32,12 @@ import { AssetsComponent } from './tabs/records-of-request-components/assets/ass
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 import { RequestRecordTabComponent } from './tabs/records-of-request-components/request-record-tab/request-record-tab.component';
+import { AssociateFieldComponent } from './tabs/registration-request-form/actions/associate-field/associate-field.component';
 import { RegistrationRequestFormComponent } from './tabs/registration-request-form/registration-request-form.component';
 import { RequestDocumentFormComponent } from './tabs/request-document-form/request-document-form.component';
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
-import { AssociateFieldComponent } from './tabs/registration-request-form/actions/associate-field/associate-field.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { AssociateFieldComponent } from './tabs/registration-request-form/action
     ApprovalAssetsTabsComponent,
     GenerateDictumComponent,
     AssociateFieldComponent,
+    SelectTypeUserComponent,
   ],
   imports: [
     CommonModule,
