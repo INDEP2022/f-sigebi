@@ -1,31 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ScheduledMaintenance } from './scheduled-maintenance';
 
 @Component({
   selector: 'app-scheduled-maintenance',
   templateUrl: './scheduled-maintenance.component.html',
-  styles: [
-    `
-      ng2-smart-table {
-        padding: 0px;
-      }
-      .list-group {
-        overflow: auto;
-        height: 45px;
-      }
-      .list-group .list-group-item:last-child {
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-      }
-    `,
-  ],
+  styleUrls: ['../scheduled-maintenance-1/scheduled-maintenance.scss'],
 })
 export class ScheduledMaintenanceComponent
   extends ScheduledMaintenance
@@ -35,29 +17,20 @@ export class ScheduledMaintenanceComponent
   flagDownload = false;
   constructor(
     protected override fb: FormBuilder,
-    protected override modalService: BsModalService,
-    protected override delegationService: DelegationService,
     protected override service: ProceedingsDeliveryReceptionService,
-    protected override detailService: ProceedingsDetailDeliveryReceptionService,
-    protected override userService: UsersService
+    protected override detailService: ProceedingsDetailDeliveryReceptionService
   ) {
-    super(
-      fb,
-      modalService,
-      delegationService,
-      service,
-      detailService,
-      userService
-    );
+    super(fb, service, detailService, 'filtersIndica');
+    this.settings1 = { ...this.settings1, actions: null };
     this.tiposEvento = [
       {
-        id: 'RECEPCIÓN FÍSICA',
+        id: 'EVENTREC',
         description: 'RECEPCIÓN FÍSICA',
       },
     ];
   }
 
-  fillElementsToExport() {
+  exportExcel() {
     // const data = <IProceedingDeliveryReception[]>this.table.source.data;
     // this.elementToExport = data.map(item => {
     //   return {
@@ -67,9 +40,7 @@ export class ScheduledMaintenanceComponent
     //   };
     // })
     this.loadingExcel = true;
-    const params = new FilterParams(this.filterParams);
-    params.limit = 10000;
-    this.service.getExcel(params.getParams()).subscribe(x => {
+    this.service.getExcel(this.filterParams).subscribe(x => {
       this.elementToExport = x;
       this.flagDownload = !this.flagDownload;
       console.log(x);

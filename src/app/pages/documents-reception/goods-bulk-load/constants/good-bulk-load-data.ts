@@ -93,5 +93,6 @@ export const SAT_SAE_INMUEBLES_PROCESO_4: any = {
     'HABITADO',
     'AGUA',
     'CODIGO POSTAL',
+    'ENTIDAD FEDERATIVA',
   ],
 };

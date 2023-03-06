@@ -8,6 +8,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegation } from '../../models/catalogs/delegation.model';
 import { IStateOfRepublic } from '../../models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from '../../models/catalogs/zone-geographic.model';
+
 @Injectable({
   providedIn: 'root',
 })

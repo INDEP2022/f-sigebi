@@ -1,4 +1,6 @@
 export enum ExpedientEndpoints {
+  Base = 'expedient',
+  GetIntegratedExpedients = 'integrated-exp',
   BasePath = 'expedient',
   GetCountByKey = `expedient/get-count-by-id`,
   FindIdentificator = `expedient/find-identificator`,
