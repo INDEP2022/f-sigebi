@@ -76,7 +76,7 @@ export class DestructionAuthorizationManagementComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoodByStatusPDS();
+    // this.getGoodByStatusPDS();
   }
 
   private prepareForm() {
@@ -162,11 +162,11 @@ export class DestructionAuthorizationManagementComponent
       );
   }
 
-  //Método para traer los bienes con estatus PDS
+  /*Método para traer los bienes con estatus PDS
 
   getGoodByStatusPDS() {
     this.loading = true;
-    this.goodService.getGoodByStatusPDS(this.params.getValue()).subscribe({
+    this.goodService.getGoodByStatusPDS(this.filterParams.getValue().getParams()).subscribe({
       next: response => {
         this.goodPDS = response.data;
         this.totalItems = response.count;
@@ -174,7 +174,7 @@ export class DestructionAuthorizationManagementComponent
       },
       error: error => (this.loading = false),
     });
-  }
+  }*/
 
   dataActRec = [
     {
