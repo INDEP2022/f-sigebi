@@ -35,9 +35,12 @@ import { SearchBarFilter } from '../../../common/repository/interfaces/search-ba
 export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() params: BehaviorSubject<ListParams>;
   @Input() filterParams: BehaviorSubject<FilterParams>;
+  @Input() id: BehaviorSubject<string>;
   @Input() placeholder?: string = 'Buscar...';
   @Input() label?: string = 'Buscar:';
   @Input() filterField?: SearchBarFilter | null = null;
+  @Input() dynamicFilters?: SearchBarFilter[] = [];
+  @Input() searchFilterCompatible: boolean = true;
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 
@@ -58,9 +61,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   emitEvent(text: string) {
-    if (this.filterParams) {
+    if (this.filterParams && this.searchFilterCompatible) {
       const filterParams = this.filterParams.getValue();
       filterParams.search = text;
+    }
+    if (this.id) {
+      this.id.next(text);
     }
     if (this.params) {
       const params = this.params.getValue();
@@ -69,6 +75,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     } else {
       const filterParams = this.filterParams.getValue();
       filterParams.page = 1;
+      filterParams.limit = 10;
       if (this.filterField) {
         filterParams.removeAllFilters();
         filterParams.addFilter(
@@ -76,6 +83,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           text,
           this.filterField.operator
         );
+      } else if (this.dynamicFilters.length > 0) {
+        this.dynamicFilters.forEach(f => {
+          if (f.value) {
+            filterParams.addFilter(f.field, f.value, f.operator);
+          } else {
+            filterParams.addFilter(f.field, text, f.operator);
+          }
+        });
       }
       this.filterParams.next(filterParams);
     }
