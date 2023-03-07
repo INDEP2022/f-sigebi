@@ -88,7 +88,9 @@ export class DocReceptionTrackRecordsModalComponent
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.trackRecords);
+  }
 
   getGoods(): void {
     this.loading = true;

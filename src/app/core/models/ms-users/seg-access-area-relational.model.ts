@@ -17,4 +17,5 @@ export interface IUserAccessAreaRelational {
   subDelegation: null | ISubdelegation;
   departament: null | IDepartment;
   userDetail: ISegUsersNonRelational;
+  userAndName?: string;
 }

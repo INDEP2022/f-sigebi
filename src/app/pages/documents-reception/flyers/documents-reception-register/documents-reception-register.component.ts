@@ -81,6 +81,7 @@ import {
   DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS,
   DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS,
   DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS,
+  DOCUMENTS_RECEPTION_SELECT_UNIQUE_KEY_COLUMNS,
 } from './interfaces/columns';
 import {
   DocuentsReceptionRegisterFormChanges,
@@ -131,6 +132,7 @@ export class DocumentsReceptionRegisterComponent
   userId: string;
   existingNotification: boolean = false;
   procedureBlocked: boolean = false;
+  changeFlyerOption: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -284,7 +286,7 @@ export class DocumentsReceptionRegisterComponent
           this.pageParams.pNoVolante !== undefined)
       ) {
         this.setInitialConditions();
-      } else {
+      } else if (!this.docDataService.flyerEditMode) {
         this.selectFlyer();
       }
     }
@@ -699,7 +701,9 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.externalRemitter.setValue(senderExt);
           }
           if (this.formControls.externalOfficeDate.value == null) {
-            this.formControls.externalOfficeDate.setValue(officeExternalDate);
+            const officeDate = new Date(officeExternalDate);
+            const officeDateStr = this.parseDatepickerFormat(officeDate);
+            this.formControls.externalOfficeDate.setValue(officeDateStr);
           }
           if (this.formControls.observations.value == null) {
             this.formControls.observations.setValue(description);
@@ -747,7 +751,9 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.externalRemitter.setValue(senderExt);
           }
           if (this.formControls.externalOfficeDate.value == null) {
-            this.formControls.externalOfficeDate.setValue(officeExternalDate);
+            const officeDate = new Date(officeExternalDate);
+            const officeDateStr = this.parseDatepickerFormat(officeDate);
+            this.formControls.externalOfficeDate.setValue(officeDateStr);
           }
           if (this.formControls.observations.value == null) {
             this.formControls.observations.setValue(description);
@@ -976,6 +982,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   fillForm(notif: INotification) {
+    this.docDataService.flyerEditMode = true;
     this.documentsReceptionForm.reset();
     // this.documentsReceptionForm.get('flyer').setValue(value);
     console.log(notif);
@@ -1037,7 +1044,14 @@ export class DocumentsReceptionRegisterComponent
       });
     if (notif.affairKey != null)
       this.affairService.getById(notif.affairKey).subscribe({
-        next: data => this.formControls.affair.setValue(data.description),
+        next: data => {
+          this.formControls.affair.setValue(data.description);
+          let goodRelation: string = 'N';
+          if (data.clv == 'S') {
+            goodRelation = data.clv;
+          }
+          this.formControls.goodRelation.setValue(data.clv);
+        },
       });
     if (notif.cityNumber != null)
       this.cityService.getById(notif.cityNumber).subscribe({
@@ -1150,13 +1164,13 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             console.log(data.data[0].id);
             const { status, areaToTurn, userToTurn } = data.data[0];
-            if (status == 'OPI') {
-              this.formControls.wheelStatus.setValue(ProcedureStatus.pending);
-              this.procedureStatus = ProcedureStatus.pending;
-            } else if (status == 'OPS') {
-              this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
-              this.procedureStatus = ProcedureStatus.sent;
-            }
+            // if (status == 'OPI') {
+            //   this.formControls.wheelStatus.setValue(ProcedureStatus.pending);
+            //   this.procedureStatus = ProcedureStatus.pending;
+            // } else if (status == 'OPS') {
+            //   this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
+            //   this.procedureStatus = ProcedureStatus.sent;
+            // }
             if (areaToTurn != null) {
               filterParams.removeAllFilters();
               filterParams.addFilter('id', areaToTurn);
@@ -1198,9 +1212,11 @@ export class DocumentsReceptionRegisterComponent
     }
     this.checkDailyEviction();
     console.log(this.documentsReceptionForm.value);
+    console.log(this.procedureStatus);
   }
 
   selectFlyer() {
+    this.changeFlyerOption = true;
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
@@ -1293,7 +1309,8 @@ export class DocumentsReceptionRegisterComponent
       .subscribe({
         next: data => {
           if (data.val_usr == 0) {
-            this.procedureBlocked = true;
+            //TODO: Removido para pruebas, habilitar para verificar usuario
+            // this.procedureBlocked = true;
           }
         },
         error: () => {},
@@ -1478,29 +1495,18 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getTransferors(lparams: ListParams) {
-    if (this.formControls.wheelType.value != 'P') {
-      this.transferentService.getAll(lparams).subscribe({
-        next: data => {
-          this.transferors = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.transferors = new DefaultSelect();
-        },
-      });
-    } else {
-      const body = {
-        active: ['1', '2'],
-        nameTransferent: lparams.text,
-      };
-      this.docRegisterService.getActiveTransferents(body).subscribe({
-        next: data => {
-          this.transferors = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.transferors = new DefaultSelect();
-        },
-      });
-    }
+    const body = {
+      active: ['1', '2'],
+      nameTransferent: lparams.text,
+    };
+    this.docRegisterService.getActiveTransferents(body).subscribe({
+      next: data => {
+        this.transferors = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.transferors = new DefaultSelect();
+      },
+    });
   }
 
   getStations(lparams: ListParams) {
@@ -1569,6 +1575,15 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.transference.setValue(event.id);
       this.updateGlobalVars('noTransferente', event.id);
     }
+    this.formControls.stationNumber.setValue(null);
+    this.formControls.autorityNumber.setValue(null);
+    this.getStations({ page: 1, text: '' });
+    this.getAuthorities({ page: 1, text: '' });
+  }
+
+  changeStation(event: IStation) {
+    this.formControls.autorityNumber.setValue(null);
+    this.getAuthorities({ page: 1, text: '' });
   }
 
   getCourts(lparams: ListParams) {
@@ -1700,9 +1715,27 @@ export class DocumentsReceptionRegisterComponent
             field: 'referralNoteType',
             value: this.wheelType.value,
           },
+          {
+            field: 'id',
+          },
         ],
+        searchFilterCompatible: false,
       },
       this.selectAffair
+    );
+  }
+
+  openModalKeys() {
+    this.openModalSelect(
+      {
+        title: 'Clave Única',
+        columnsType: { ...DOCUMENTS_RECEPTION_SELECT_UNIQUE_KEY_COLUMNS },
+        service: this.docRegisterService,
+        dataObservableFn: this.docRegisterService.getUniqueKeyDataModal,
+        searchFilter: { field: 'uniqueCve' },
+        searchFilterCompatible: false,
+      },
+      this.selectUniqueKey
     );
   }
 
@@ -1737,6 +1770,13 @@ export class DocumentsReceptionRegisterComponent
     self.formControls.affairKey.setValue(affair.id.toString());
     self.formControls.affair.setValue(affair.description);
     self.formControls.goodRelation.setValue(affair.clv);
+  }
+
+  selectUniqueKey(
+    key: ITransferingLevelView,
+    self: DocumentsReceptionRegisterComponent
+  ) {
+    self.setUniqueKeyData(key, true);
   }
 
   clearCityState() {
