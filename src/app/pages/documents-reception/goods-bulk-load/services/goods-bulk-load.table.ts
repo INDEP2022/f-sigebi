@@ -13,6 +13,7 @@ import {
   ISatTransfer,
 } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
 import { IMassiveGood } from 'src/app/core/models/ms-massivegood/massivegood.model';
+import { IMenageWrite } from 'src/app/core/models/ms-menage/menage.model';
 import { INotificationTransferentIndiciadoCityGetData } from 'src/app/core/models/ms-notification/notification.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
@@ -26,6 +27,7 @@ import { HistoryGoodService } from 'src/app/core/services/ms-history-good/histor
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
@@ -48,7 +50,8 @@ export class GoodsBulkLoadService {
     private massiveGoodService: MassiveGoodService,
     private historyGoodService: HistoryGoodService,
     private satTransferService: SatTransferService,
-    private interfacefgrService: InterfacefgrService
+    private interfacefgrService: InterfacefgrService,
+    private menageService: MenageService
   ) {}
 
   /**
@@ -113,6 +116,13 @@ export class GoodsBulkLoadService {
     return this.notificationService.getNotificacionesByTransferentIndiciadoCity(
       body
     );
+  }
+
+  /**
+   * Obtener notificaciones por volante
+   */
+  getGetNotificacionByVolante(params: ListParams) {
+    return this.notificationService.getAll(params);
   }
 
   getIssuingInstitutionById(idInstitution: string) {
@@ -180,5 +190,8 @@ export class GoodsBulkLoadService {
   }
   getSatTransferencia(cveSat: string) {
     return this.satTransferService.getById(cveSat);
+  }
+  createMenaje(menaje: IMenageWrite) {
+    return this.menageService.create(menaje);
   }
 }
