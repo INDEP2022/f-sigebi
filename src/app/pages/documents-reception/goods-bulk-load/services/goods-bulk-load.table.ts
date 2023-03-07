@@ -160,6 +160,12 @@ export class GoodsBulkLoadService {
   createGood(good: IGood) {
     return this.goodService.create(good);
   }
+  updateGood(id: string, good: IGood) {
+    return this.goodService.update(id, good);
+  }
+  getUploadGoodIdentificador(id: number) {
+    return this.massiveGoodService.countMassiveGood(id);
+  }
   getTagXClasifByCol6Transfer(body: ITagXClasif) {
     return this.classifyGoodService.getTagXClassif(body);
   }

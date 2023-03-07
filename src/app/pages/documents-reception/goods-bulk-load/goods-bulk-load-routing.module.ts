@@ -17,11 +17,6 @@ const routes: Routes = [
     path: ':tipo/:P_NO_EXPEDIENTE/:P_AV_PREVIA/:P_NO_VOLANTE',
     component: GoodsBulkLoadComponent,
   },
-  {
-    // CARGA MASIVA GENERAL DE BIENES
-    path: ':tipo/:IDEN/:NO_TRANSFERENTE/:NO_VOLANTE/:DESALOJO/:P_NO_OFICIO/:ASUNTO_SAT',
-    component: GoodsBulkLoadComponent,
-  },
 ];
 
 @NgModule({
