@@ -167,9 +167,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll3(
-    params?: ListParams | string
+    params?: string
   ): Observable<IListResponse<IProccedingsDeliveryReception>> {
-    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.typeProceedings=RGA`;
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get<IListResponse<IProccedingsDeliveryReception>>(
       route,
       params
@@ -180,7 +180,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.post(ProceedingsEndpoints.ProceedingsDeliveryReception, model);
   }
 
-  update(id: string | number, model: IProccedingsDeliveryReception) {
+  update2(id: string | number, model: IProccedingsDeliveryReception) {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
     return this.put(route, model);
   }
