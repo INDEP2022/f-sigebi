@@ -136,11 +136,8 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
-  update(item: IProceedingDeliveryReception) {
-    return this.put<IListResponse<IProceedingDeliveryReception>>(
-      this.endpoint + '/' + item.id,
-      { item }
-    );
+  update2(item: IProceedingDeliveryReception) {
+    return this.put(this.endpoint + '/' + item.id, item);
   }
 
   getAll2(self?: ProceedingsDeliveryReceptionService, params?: string) {

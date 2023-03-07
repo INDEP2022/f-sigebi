@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  // {
-  //   path: 'example',
-  //   loadChildren: async () =>
-  //     (await import('./example/example.module')).ExampleModule,
-  //   data: { title: 'Ejemplo' },
-  // },
+  {
+    path: 'example',
+    loadChildren: async () =>
+      (await import('./example/example.module')).ExampleModule,
+    data: { title: 'Ejemplo' },
+  },
   {
     path: 'request',
     loadChildren: async () =>
