@@ -143,6 +143,10 @@ export class GoodsBulkLoadService {
       return this.authorityService.getAuthorityIssuingByAverPrevia(params);
     }
   }
+
+  getEmisoraAutoridadTransferente(params: ListParams) {
+    return this.authorityService.getAll(params);
+  }
   /**
    * Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
    * @param asuntoSat Clave de Asunto SAT
