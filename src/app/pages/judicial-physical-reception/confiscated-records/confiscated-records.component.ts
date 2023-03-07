@@ -1,5 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -114,6 +115,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
   itemsSelect = new DefaultSelect();
   warehouseSelect = new DefaultSelect();
   transferSelect = new DefaultSelect();
+  showFecReception = false;
 
   constructor(
     private fb: FormBuilder,
@@ -207,7 +209,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
   }
 
   disabledElement(elmt: string) {
-    const element = this.form.get(elmt);
+    const element = document.getElementById(elmt);
     this.render.addClass(element, 'disabled');
   }
 
@@ -215,12 +217,18 @@ export class ConfiscatedRecordsComponent implements OnInit {
 
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
-    let fecReception = this.form.get('fecReception').value;
-    /*    if (this.form.get('fecElab').value = !null) {
-      console.log(format(fecElab, 'dd-mm-yyyy'));
-    } else if (fecReception != null) {
-      fecReception = fecElab;
-    } */
+    let fecReception = new Date(this.form.get('fecReception').value);
+    if (this.form.get('fecElab').value != null) {
+      this.form
+        .get('fecReception')
+        .setValue(new Date(format(fecElab, 'dd-MM-yyyy')));
+      this.showFecReception = true;
+    } else {
+      {
+        this.form.get('fecReception').setValue('');
+        this.showFecReception = false;
+      }
+    }
     console.log(this.form.get('fecElab').value);
     console.log(this.form.get('fecReception').value);
   }

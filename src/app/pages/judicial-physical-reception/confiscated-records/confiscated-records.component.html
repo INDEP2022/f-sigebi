@@ -234,19 +234,20 @@
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   (ngModelChange)="verifyDateAndFill()"
+                  id="fecElab"
                   bsDatepicker
                   class="form-control"
                   formControlName="fecElab" />
               </form-field>
             </div>
 
-            <div class="col-md-4">
+            <div *ngIf="showFecReception" class="col-md-4">
               <form-field
                 [control]="form.get('fecReception')"
                 label="Fecha Recepci&oacute;n F&iacute;sica">
                 <input
                   bsDatepicker
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="fecReception" />
               </form-field>
             </div>
