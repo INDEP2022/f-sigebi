@@ -8,7 +8,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
   styles: [],
 })
 export class EmailModalComponent implements OnInit {
-  title: string = 'Lista de distribución de correos';
+  title: string = 'Lista de distribución de correos pendiente';
 
   emailForm: FormGroup = new FormGroup({});
 
