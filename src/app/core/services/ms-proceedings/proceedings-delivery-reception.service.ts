@@ -177,7 +177,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.post(ProceedingsEndpoints.ProceedingsDeliveryReception, model);
   }
 
-  update2(id: string | number, model: IProccedingsDeliveryReception) {
+  update(id: string | number, model: IProccedingsDeliveryReception) {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
     return this.put(route, model);
   }

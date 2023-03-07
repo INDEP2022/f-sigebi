@@ -74,7 +74,7 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.proceedingsDeliveryReceptionService
-      .update2(this.proceeding.id, this.proceedingForm.value)
+      .update(this.proceeding.id, this.proceedingForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
