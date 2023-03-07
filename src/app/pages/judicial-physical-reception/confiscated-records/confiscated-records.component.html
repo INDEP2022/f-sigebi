@@ -62,7 +62,8 @@
             <div class="col">
               <form-field [control]="form.get('acta')" label="Acta 1">
                 <select
-                  class="form-control"
+                  id="acta"
+                  class="form-control disabled"
                   formControlName="acta"
                   (ngModelChange)="fillActTwo()">
                   <option *ngFor="let record of records" [value]="record">
@@ -93,7 +94,7 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="ident"
                   (ngModelChange)="fillActTwo()" />
               </form-field>

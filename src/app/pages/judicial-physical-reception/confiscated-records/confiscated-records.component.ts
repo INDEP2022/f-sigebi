@@ -10,6 +10,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
@@ -111,7 +112,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
   selectData: any[];
   goodData: any[] = [];
   form: FormGroup;
-  records: string[] = ['A', 'NA', 'D', 'NS'];
+  records: string[];
   itemsSelect = new DefaultSelect();
   warehouseSelect = new DefaultSelect();
   transferSelect = new DefaultSelect();
@@ -124,7 +125,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
     private serviceWarehouse: WarehouseFilterService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
     private serviceTransferente: TransferenteService,
-    private serviceNoty: NotificationService
+    private serviceNoty: NotificationService,
+    private serviceExpedient: ExpedientService
   ) {}
 
   ngOnInit(): void {
@@ -213,6 +215,11 @@ export class ConfiscatedRecordsComponent implements OnInit {
     this.render.addClass(element, 'disabled');
   }
 
+  enableElement(elmt: string) {
+    const element = document.getElementById(elmt);
+    this.render.removeClass(element, 'disabled');
+  }
+
   //Conditional functions
 
   verifyDateAndFill() {
@@ -221,7 +228,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
     if (this.form.get('fecElab').value != null) {
       this.form
         .get('fecReception')
-        .setValue(new Date(format(fecElab, 'dd-MM-yyyy')));
+        .setValue(new Date(format(fecElab, 'MM-dd-yyyy')));
       this.showFecReception = true;
     } else {
       {
@@ -229,9 +236,9 @@ export class ConfiscatedRecordsComponent implements OnInit {
         this.showFecReception = false;
       }
     }
-    console.log(this.form.get('fecElab').value);
-    console.log(this.form.get('fecReception').value);
   }
+
+  verifyTransferenteAndAct() {}
 
   //Catalogs
 
@@ -292,7 +299,20 @@ export class ConfiscatedRecordsComponent implements OnInit {
       })
       .subscribe({
         next: (res: any) => {
+          this.form.get('ident').setValue('ADM');
           this.dataGoods.load(res.data);
+          this.serviceExpedient
+            .getById(this.form.get('expediente').value)
+            .subscribe(res => {
+              if (res.expedientType === 'T') {
+                this.records = ['RT'];
+              } else {
+                this.records = ['A', 'NA', 'D', 'NS'];
+              }
+              this.enableElement('acta');
+              console.log(res);
+              console.log(res.expedientType);
+            });
         },
         error: (err: any) => {
           console.error(err);
