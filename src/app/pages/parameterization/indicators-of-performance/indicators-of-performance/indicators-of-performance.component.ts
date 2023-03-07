@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDetailIndParameter } from 'src/app/core/models/catalogs/detail-ind-parameter.model';
+import { IIndicatorsParamenter } from 'src/app/core/models/catalogs/indicators-parameter.model';
+
+import { DetailIndParameterService } from 'src/app/core/services/catalogs/detail-ind-parameter.service';
+import { IndicatorsParameterService } from 'src/app/core/services/catalogs/indicators-parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   INDICATORSOFPERFORMANCE_COLUMNS,
@@ -20,10 +25,18 @@ export class IndicatorsOfPerformanceComponent
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
-  data1: any[] = [];
+  data1: IIndicatorsParamenter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor(private fb: FormBuilder) {
+
+  data2: IDetailIndParameter[] = [];
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems2: number = 0;
+  constructor(
+    private fb: FormBuilder,
+    private indicatorsParameterService: IndicatorsParameterService,
+    private detailIndParameterService: DetailIndParameterService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -33,16 +46,52 @@ export class IndicatorsOfPerformanceComponent
     this.settings2.columns = INDICATORSPERFORMANCE_COLUMNS;
   }
   ngOnInit(): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getValuesAll());
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDetailIndParameterAll());
     this.prepareForm();
   }
   private prepareForm() {
     this.indicatorsOfPerformanceForm = this.fb.group({
-      beginning: [null, Validators.required],
-      limitDays: [null, Validators.required],
-      timeLimit: [null, Validators.required],
-      contractZone: [null, Validators.required],
-      startDate: [null, Validators.required],
-      endDate: [null, Validators.required],
+      initialDate: [null, Validators.required],
+      daysLimNumber: [null, Validators.required],
+      hoursLimNumber: [null, Validators.required],
+      contractZoneKey: [null, Validators.required],
+      initialDDate: [null, Validators.required],
+      endDDate: [null, Validators.required],
+    });
+  }
+  getValuesAll() {
+    this.loading = true;
+    this.indicatorsParameterService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.data1 = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
+    });
+  }
+  getDetailIndParameterAll() {
+    this.loading = true;
+    this.detailIndParameterService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.data2 = response.data;
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
     });
   }
 }
