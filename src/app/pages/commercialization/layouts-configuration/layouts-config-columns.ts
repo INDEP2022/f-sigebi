@@ -177,11 +177,11 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
-  idConsec: {
-    title: 'id',
-    type: 'number',
-    sort: false,
-  },
+  // idConsec: {
+  //   title: 'id',
+  //   type: 'number',
+  //   sort: false,
+  // },
   position: {
     title: 'Posición',
     type: 'number',

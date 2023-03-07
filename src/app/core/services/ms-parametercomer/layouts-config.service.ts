@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { environment } from 'src/environments/environment';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
 import {
   IComerLayouts,
@@ -37,6 +38,10 @@ export class LayoutsConfigService extends HttpService {
   create(layout: number) {
     const route = `${this.endpoint}`;
     return this.post(route, layout);
+  }
+  add(layout: number) {
+    const url = `${environment.API_URL}parametercomer/api/v1/comer-layouts-t`;
+    return this.htpp.post(url, layout);
   }
 
   update(id: number, tiie: IComerLayouts) {

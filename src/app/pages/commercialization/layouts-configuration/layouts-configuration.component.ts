@@ -163,6 +163,25 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
+  onDeleteConfirm(event: any) {
+    console.log('Delete Event In Console');
+    console.log(event);
+    if (window.confirm('Are you sure you want to delete?')) {
+      event.confirm.resolve();
+    } else {
+      event.confirm.reject();
+    }
+  }
+
+  onCreateConfirm(event: any) {
+    console.log('Create Event In Console');
+    console.log(event);
+  }
+
+  onSaveConfirm(event: any) {
+    console.log('Edit Event In Console');
+    console.log(event);
+  }
 
   settings1 = {
     ...TABLE_SETTINGS,
@@ -214,8 +233,23 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
 
   settings6 = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      position: 'left',
+      edit: {
+        confirmSave: true,
+      },
+      delete: {
+        confirmDelete: true,
+        deleteButtonContent: 'Delete data',
+        saveButtonContent: 'save',
+        cancelButtonContent: 'cancel',
+      },
+      add: {
+        confirmCreate: true,
+      },
+    },
     columns: { ...LAYOUTS_COLUMNS6 },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
