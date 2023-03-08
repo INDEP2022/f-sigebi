@@ -688,7 +688,9 @@ export class GoodsCaptureMain extends BasePage {
     return this.goodsCaptureService.getGoodFeatures(clasifNum).pipe(
       tap(response => {
         console.log(response);
-        this.goodFeatures = response.data;
+        this.goodFeatures = response.data.sort(
+          (feat: any, _feat: any) => feat.columnNumber - _feat.columnNumber
+        );
       }),
       catchError(error => {
         this.showError(

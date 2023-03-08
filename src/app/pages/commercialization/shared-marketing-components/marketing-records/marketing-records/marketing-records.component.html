@@ -4,59 +4,95 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div
-          class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-center">
-          <div class="row justify-content-between">
-            <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="col-md-12">
+            <div class="row">
               <form-radio label="Bien">
                 <input
                   type="radio"
                   formControlName="recordCommerType"
-                  value="good" />
+                  value="bie" />
               </form-radio>
             </div>
-            <div class="col-md-6">
+            <div class="row">
               <form-radio label="Portafolio">
                 <input
                   type="radio"
                   formControlName="recordCommerType"
-                  value="attache" />
+                  value="por" />
               </form-radio>
             </div>
           </div>
         </div>
-        <div
-          *ngIf="form.get('recordCommerType').value === 'goodId'"
-          class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
-          <app-goods-shared [form]="form"></app-goods-shared>
-        </div>
-        <div
-          *ngIf="form.get('recordCommerType').value === 'portfolio'"
-          class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
-          <div class="row mb-3 mt-3">
-            <div class="col-md-12">
-              <form-field label="Portafolio" [control]="form.get('portfolio')">
-                <input
-                  class="form-control"
-                  formControlName="portfolio"
-                  type="text" />
-              </form-field>
-            </div>
+        <div class="col-md-9">
+          <div class="row">
+            <form-field
+              *ngIf="formType === 'bie'"
+              class="col-md-3"
+              label="Bien"
+              [control]="form.get('goodId')">
+              <input
+                class="form-control"
+                formControlName="goodId"
+                (change)="goodNumChange()"
+                type="number" />
+            </form-field>
+            <form-field
+              *ngIf="formType === 'por'"
+              class="col-md-3"
+              label="Lote"
+              [control]="form.get('lot')">
+              <input class="form-control" formControlName="lot" type="text" />
+            </form-field>
+            <form-field
+              class="col-md-5"
+              label="Clave Oficio"
+              [control]="form.get('recordKey')">
+              <input
+                class="form-control"
+                formControlName="recordKey"
+                type="text" />
+            </form-field>
+            <form-field
+              class="col-md-4"
+              label="Estatus"
+              [control]="form.get('recordStatus')">
+              <input
+                class="form-control"
+                formControlName="recordStatus"
+                type="text" />
+            </form-field>
           </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3">
-          <div class="row mb-3 mt-3">
-            <div class="col-md-12">
-              <form-field
-                label="Clave Oficio"
-                [control]="form.get('recordKey')">
-                <input
-                  class="form-control"
-                  formControlName="recordKey"
-                  type="text" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field
+              *ngIf="formType === 'por'"
+              class="col-md-4"
+              label="Evento"
+              [control]="form.get('event')">
+              <input class="form-control" formControlName="event" type="text" />
+            </form-field>
+
+            <form-field
+              *ngIf="formType === 'por'"
+              class="col-md-4"
+              label="Portafolio"
+              [control]="form.get('portfolio')">
+              <input
+                class="form-control"
+                formControlName="portfolio"
+                type="text" />
+            </form-field>
+
+            <form-field
+              class="col-md-4"
+              label="No. Gestión"
+              [control]="form.get('gestionNum')">
+              <input
+                class="form-control"
+                formControlName="gestionNum"
+                type="text" />
+            </form-field>
           </div>
         </div>
       </div>
@@ -251,7 +287,7 @@
         <div class="col-lg-3 col-md-3 col-sm-6 col-12">
           <button
             type="button"
-            [disabled]="form.get('recordCommerType').value !== 'goodId'"
+            [disabled]="formType !== 'bie'"
             class="btn btn-secondary btn-sm active w-100">
             Bien Vista Previa
           </button>
@@ -259,7 +295,7 @@
         <div class="col-lg-3 col-md-3 col-sm-6 col-12">
           <button
             type="button"
-            [disabled]="form.get('recordCommerType').value !== 'portfolio'"
+            [disabled]="formType !== 'por'"
             class="btn btn-secondary btn-sm active w-100">
             Pflio. Vista Previa
           </button>
