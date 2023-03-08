@@ -35,6 +35,11 @@ export class LayoutsConfigService extends HttpService {
     const route = `${this.endpointH}/${id}`;
     return this.get(route);
   }
+  getById(params?: ListParams) {
+    const route = `${this.endpoint}}`;
+    return this.get(route, params);
+  }
+
   create(layout: number) {
     const route = `${this.endpoint}`;
     return this.post(route, layout);
@@ -44,19 +49,19 @@ export class LayoutsConfigService extends HttpService {
     return this.htpp.post(url, layout);
   }
 
-  update(id: number, tiie: IComerLayouts) {
-    const route = `${this.endpointH}/${id}`;
-    return this.put(route, tiie);
+  update(layout: IComerLayouts) {
+    const route = `${this.endpoint}`;
+    return this.put(route, layout);
   }
   findOne(id: number) {
     const route = `${this.endpoint}/find-one`;
     return this.post(route, id);
   }
 
-  // remove(id: string | number) {
-  //   const route = `${this.endpoint}/${id}`;
-  //   return this.delete(route);
-  // }
+  remove(id: string | number) {
+    const route = `${this.endpoint}/${id}`;
+    return this.delete(route);
+  }
 
   createH(layout: IComerLayoutsH) {
     return this.post(this.endpointH, layout);
