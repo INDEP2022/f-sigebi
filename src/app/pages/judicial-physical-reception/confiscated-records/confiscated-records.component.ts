@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { format } from 'date-fns';
+import { addDays } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -9,6 +9,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -117,6 +118,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
   warehouseSelect = new DefaultSelect();
   transferSelect = new DefaultSelect();
   showFecReception = false;
+  minDateFecElab = addDays(new Date(), 1);
 
   constructor(
     private fb: FormBuilder,
@@ -134,6 +136,11 @@ export class ConfiscatedRecordsComponent implements OnInit {
     this.prepareForm();
     this.form.get('year').setValue(moment(new Date()).format('YYYY'));
     this.form.get('mes').setValue(moment(new Date()).format('MM'));
+    if (this.form) {
+      this.form
+        .get('transfer')
+        .setValidators([transferenteAndAct('A'), Validators.required]);
+    }
   }
 
   prepareForm() {
@@ -226,10 +233,10 @@ export class ConfiscatedRecordsComponent implements OnInit {
     let fecElab = new Date(this.form.get('fecElab').value);
     let fecReception = new Date(this.form.get('fecReception').value);
     if (this.form.get('fecElab').value != null) {
-      this.form
-        .get('fecReception')
-        .setValue(new Date(format(fecElab, 'MM-dd-yyyy')));
+      this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
+      console.log(this.form.get('fecElab').value);
+      console.log(this.form.get('fecReception').value);
     } else {
       {
         this.form.get('fecReception').setValue('');
@@ -238,7 +245,31 @@ export class ConfiscatedRecordsComponent implements OnInit {
     }
   }
 
-  verifyTransferenteAndAct() {}
+  verifyActAndTransfer() {
+    const transfer = this.form.get('transfer');
+    const acta = this.form.get('acta');
+    if (acta.value != null) {
+      this.enableElement('transfer');
+      if (
+        acta.value === 'A' &&
+        transfer.value != null &&
+        transfer.value.keyTransferent != 'PGR' &&
+        transfer.value.keyTransferent != 'PJF'
+      ) {
+        transfer.setValue(null);
+      }
+    }
+  }
+
+  verifyTransferenteAndAct() {
+    if (this.form.get('acta').value != null) {
+      let actaValue = this.form.get('acta').value;
+      this.form
+        .get('transfer')
+        .setValidators([transferenteAndAct(actaValue), Validators.required]);
+      this.fillActTwo();
+    }
+  }
 
   //Catalogs
 
@@ -310,8 +341,6 @@ export class ConfiscatedRecordsComponent implements OnInit {
                 this.records = ['A', 'NA', 'D', 'NS'];
               }
               this.enableElement('acta');
-              console.log(res);
-              console.log(res.expedientType);
             });
         },
         error: (err: any) => {
@@ -327,7 +356,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value
+        ? this.form.get('transfer').value.keyTransferent
         : '') +
       '/' +
       (this.form.get('ident').value != null
