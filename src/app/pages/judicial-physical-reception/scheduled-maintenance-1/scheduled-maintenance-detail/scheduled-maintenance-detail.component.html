@@ -87,7 +87,7 @@
             size="small"
             (click)="updateGoods()">
             <i class="bx bx-pencil float-icon"></i>
-            Editar bienes
+            Editar fechas
           </button>
         </div>
         <div class="col-md-4">
@@ -107,7 +107,9 @@
   <div class="ch-content" header>
     <h5 class="title">Bienes</h5>
     <div class="buttons mt-2">
-      <app-columns-select [(settings)]="settingsGoods"></app-columns-select>
+      <app-columns-select
+        [(settings)]="settingsGoods"
+        [defaultColumns]="6"></app-columns-select>
       <app-excel-button
         [form]="form"
         [loading]="loading"

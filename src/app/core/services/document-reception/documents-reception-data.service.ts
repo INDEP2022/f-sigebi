@@ -47,6 +47,8 @@ export class DocumentsReceptionDataService {
 
   private _trackRecordGoods: IGood[] = [];
 
+  private _flyerEditMode: boolean = false;
+
   constructor() {}
 
   get flyersRegistrationParams() {
@@ -68,6 +70,10 @@ export class DocumentsReceptionDataService {
   get documentsReceptionRegisterForm() {
     if (this._documentsReceptionRegisterForm === null) return null;
     return { ...this._documentsReceptionRegisterForm };
+  }
+
+  get flyerEditMode() {
+    return this._flyerEditMode;
   }
 
   get trackRecordGoods() {
@@ -98,6 +104,10 @@ export class DocumentsReceptionDataService {
 
   set trackRecordGoods(goods: IGood[]) {
     this._trackRecordGoods = goods;
+  }
+
+  set flyerEditMode(value: boolean) {
+    this._flyerEditMode = value;
   }
 
   setFlyersRegParam<

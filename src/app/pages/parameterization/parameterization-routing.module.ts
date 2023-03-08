@@ -229,7 +229,10 @@ const routes: Routes = [
           './maintenance-of-public-ministries/maintenance-of-public-ministries.module'
         )
       ).MaintenanceOfPublicMinistriesModule,
-    data: { title: 'Mantenimiento a ministerios públicos' },
+    data: {
+      title: 'Mantenimiento a ministerios públicos',
+      screen: 'FCATCATMINPUBLICO',
+    },
   },
   {
     path: 'wareahouse-catalog',
@@ -242,7 +245,7 @@ const routes: Routes = [
     path: 'banks-catalog',
     loadChildren: async () =>
       (await import('./banks-catalog/banks-catalog.module')).BanksCatalogModule,
-    data: { title: 'Catálogo de Bancos' },
+    data: { title: 'Catálogo de Bancos', screen: 'FCATCATMTOBANCOS' },
   },
   {
     path: 'filters-of-goods-for-donation',
@@ -252,14 +255,17 @@ const routes: Routes = [
           './filters-of-goods-for-donation/filters-of-goods-for-donation.module'
         )
       ).FiltersOfGoodsForDonationModule,
-    data: { title: 'Filtros de bienes para donación' },
+    data: {
+      title: 'Filtros de bienes para donación',
+      screen: 'FCATCATMTOFILDONAC',
+    },
   },
   {
     path: 'court-maintenance',
     loadChildren: async () =>
       (await import('./court-maintenance/court-maintenance.module'))
         .CourtMaintenanceModule,
-    data: { title: 'Mantenimiento a juzgados' },
+    data: { title: 'Mantenimiento a juzgados', screen: 'FCATCATMTOJUZGADO' },
   },
   {
     path: 'maintenance-individuals-and-companies',
@@ -271,6 +277,7 @@ const routes: Routes = [
       ).MaintenanceIndividualsAndCompaniesModule,
     data: {
       title: 'Mantenimiento de personas fisicas y morales',
+      screen: 'FCATCATMTOPERSONA',
     },
   },
   {
@@ -326,6 +333,7 @@ const routes: Routes = [
         .ParameterMaintenanceModule,
     data: {
       title: 'Mantenimiento de parámetros',
+      screen: 'FCATCATPARAMETROS',
     },
   },
   {
@@ -338,6 +346,7 @@ const routes: Routes = [
       ).CPMMaximumTimesForAbandonmentModule,
     data: {
       title: 'Tiempos Maximos para abandono',
+      screen: 'FCATCATTIEMPOABAN',
     },
   },
   {
@@ -350,6 +359,7 @@ const routes: Routes = [
       ).CatalogOfDocumentTypesModule,
     data: {
       title: 'Catálogo de tipos de documentos',
+      screen: 'FCATCATTIPOSDOCUM',
     },
   },
   {
@@ -362,6 +372,7 @@ const routes: Routes = [
       ).CatalogOfInventoryTypesModule,
     data: {
       title: 'Catálogo de tipos de inventario',
+      screen: 'FCATCATTIPOSINVEN',
     },
   },
   //Félix

@@ -142,7 +142,17 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get<IListResponse<IUserAccessAreaRelational>>(
       UserEndpoints.SegAccessAreas,
       params
-    ).pipe(tap(() => (this.microservice = '')));
+    ).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(u => {
+            return { ...u, userAndName: `${u.user} - ${u.userDetail.name}` };
+          }),
+        };
+      }),
+      tap(() => (this.microservice = ''))
+    );
   }
 
   getUniqueKeyData(
@@ -154,6 +164,18 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
       tap(() => (this.microservice = ''))
     );
+  }
+
+  getUniqueKeyDataModal(
+    self?: DocReceptionRegisterService,
+    params?: string
+  ): Observable<IListResponse<ITransferingLevelView>> {
+    let partials = ENDPOINT_LINKS.Transferente.split('/');
+    self.microservice = partials[0];
+    const route = `${partials[1]}/transferring-levels-view`;
+    return self
+      .get<IListResponse<ITransferingLevelView>>(route, params)
+      .pipe(tap(() => (self.microservice = '')));
   }
 
   getGoods(params?: string): Observable<IListResponse<IGood>> {
