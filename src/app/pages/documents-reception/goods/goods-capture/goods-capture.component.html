@@ -146,6 +146,7 @@
           <input
             class="form-control"
             type="number"
+            pattern="[0-9]"
             formControlName="cantidad"
             (change)="amountChange()" />
         </form-field>
@@ -217,6 +218,7 @@
           [control]="assetsForm.get('descripcion')"
           label="Descripci&oacute;n">
           <textarea
+            maxlength="1250"
             rows="3"
             class="form-control"
             formControlName="descripcion"></textarea>

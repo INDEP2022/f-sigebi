@@ -65,7 +65,9 @@ export class DocumentsReceptionFlyerSelectComponent
 
   exit() {
     this.modalRef.hide();
-    this.router.navigateByUrl('/');
+    if (!this.docsDataService.flyerEditMode) {
+      this.router.navigateByUrl('/');
+    }
   }
 
   confirm() {

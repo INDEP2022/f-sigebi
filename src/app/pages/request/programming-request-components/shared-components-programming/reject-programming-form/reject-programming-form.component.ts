@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { minDate } from 'src/app/common/validations/date.validators';
@@ -13,10 +14,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class RejectProgrammingFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
+  idProgramming: number = 0;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private programmingService: ProgrammingRequestService
+    private programmingService: ProgrammingRequestService,
+    public router: Router
   ) {
     super();
   }
@@ -36,16 +39,21 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
 
   confirm() {
     const formData = {
-      id: 8409,
+      id: this.idProgramming,
       startDate: this.form.get('startDate').value,
       endDate: this.form.get('endDate').value,
       msgSise: this.form.get('observation').value,
     };
 
     return this.programmingService
-      .updateProgramming(8409, formData)
+      .updateProgramming(this.idProgramming, formData)
       .subscribe(data => {
         console.log('actualizado', data);
+        this.close();
+        this.router.navigate([
+          'pages/request/programming-request/return-to-programming',
+          this.idProgramming,
+        ]);
       });
   }
 

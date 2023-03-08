@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -32,7 +32,8 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     const id = this.activateRoute.snapshot.paramMap.get('id');
@@ -91,5 +92,9 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
         this.flyerForm.controls['minPub'].setValue(this.event.description);
       }
     });
+  }
+
+  returnToFlyers() {
+    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
   }
 }
