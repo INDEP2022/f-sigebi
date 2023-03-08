@@ -14,6 +14,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from '../../../common/repository/interfaces/search-bar-filters';
+import { NUMBERS_PATTERN } from '../../../core/shared/patterns';
 
 @Component({
   selector: 'search-bar',
@@ -25,7 +26,8 @@ import { SearchBarFilter } from '../../../common/repository/interfaces/search-ba
           type="text"
           class="form-control"
           [formControl]="search"
-          [placeholder]="placeholder" />
+          [placeholder]="placeholder"
+          (keydown)="checkText($event)" />
         <span class="form-bar"></span>
       </div>
     </div>
@@ -41,6 +43,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() filterField?: SearchBarFilter | null = null;
   @Input() dynamicFilters?: SearchBarFilter[] = [];
   @Input() searchFilterCompatible: boolean = true;
+  @Input() type: 'text' | 'number' = 'text';
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 
@@ -84,16 +87,34 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           this.filterField.operator
         );
       } else if (this.dynamicFilters.length > 0) {
+        filterParams.removeAllFilters();
         this.dynamicFilters.forEach(f => {
           if (f.value) {
             filterParams.addFilter(f.field, f.value, f.operator);
           } else {
-            filterParams.addFilter(f.field, text, f.operator);
+            if (text != '') {
+              filterParams.addFilter(f.field, text, f.operator);
+            }
           }
         });
       }
       this.filterParams.next(filterParams);
     }
+  }
+
+  checkText(event: KeyboardEvent) {
+    if (this.type == 'number') {
+      const charCode = event.keyCode ? event.keyCode : event.which;
+      if (
+        event.key.match(NUMBERS_PATTERN) ||
+        [8, 37, 38, 39, 40].includes(charCode)
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
   }
 
   ngOnDestroy(): void {

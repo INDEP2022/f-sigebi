@@ -24,6 +24,9 @@
       [placeholder]="placeholder"
       [readonly]="readonly"
       [inputAttrs]="inputAttrs">
+      <ng-template *ngIf="showTooltip" ng-option-tmp let-item="item">
+        <div [title]="item[bindLabel]">{{ item[bindLabel] }}</div>
+      </ng-template>
     </ng-select>
     <span class="form-bar"></span>
     <label class="float-label"

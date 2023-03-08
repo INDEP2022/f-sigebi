@@ -1,23 +1,3 @@
-// Proceduremanagement
-// export interface IProceduremanagement {
-//   noTramite: number;
-//   estatusTramite: string;
-//   situacionTramite: number;
-//   usrTurnado: string;
-//   fechaRealTramite: Date;
-//   noConsecutivoDiario: number;
-//   fecIngresoTramite: Date;
-//   noVolante: number;
-//   noExpediente: number;
-//   asunto: string | null;
-//   tipoAsunto: number | null;
-//   noOficio: string | null;
-//   clasifDicta: string | null;
-//   usrRegistro: string | null;
-//   descentfed: string | null;
-//   hojas: number | null;
-//   typeManagement: number | null;
-// }
 export interface IProceduremanagement {
   id?: number;
   status: string;
@@ -81,4 +61,5 @@ export interface IManagementArea {
   description: string | null;
   screenKey: string | null;
   managementNumber: number | null;
+  nameAndId?: string;
 }

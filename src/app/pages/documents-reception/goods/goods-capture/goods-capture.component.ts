@@ -102,7 +102,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
         },
       });
   }
-   * 
+   *
    */
 
   // ? ---------- La pantalla es llamanda desde el menú
@@ -229,7 +229,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     this.assetsForm.markAllAsTouched();
     this.assetsForm.updateValueAndValidity();
     if (!this.assetsForm.valid) {
-      this.showError('Debes llenar todos los campos obligatorios');
+      this.showError('El formulario no es válido!');
       return;
     }
     this.copyFeatures();
@@ -253,8 +253,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   async askMoreGoods() {
     const response = await this.alertQuestion(
       'success',
-      'Se agrego el bien al expediente',
-      '¿Decea agregar mas bienes?'
+      'Se agregó el bien al expediente',
+      '¿Desea agregar mas bienes?'
     );
     if (response.isConfirmed) {
       const fields = [

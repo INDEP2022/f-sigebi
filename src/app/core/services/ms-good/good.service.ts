@@ -101,13 +101,12 @@ export class GoodService extends HttpService {
     return this.get<any>(route);
   }
   getBySafe(
-    body: Object,
+    id: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}/getGoodBySafe`;
+    const route = `${GoodEndpoints.Good}?filter.vaultNumber=$eq:${id}`;
     console.log(route);
-
-    return this.post<IListResponse<IGood>>(route, body);
+    return this.get<IListResponse<IGood>>(route, params);
   }
 
   getGoodByStatusPDS(
