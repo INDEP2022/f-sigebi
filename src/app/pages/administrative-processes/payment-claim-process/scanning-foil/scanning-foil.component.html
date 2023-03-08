@@ -7,7 +7,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active"
-              (click)="generateFoli()">
+              (click)="question()">
               Generar folio
             </button>
           </div>
@@ -16,7 +16,10 @@
       <div class="col-md-2 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button type="button" class="btn btn-info btn-sm active">
+            <button
+              [disabled]="generateFo"
+              type="button"
+              class="btn btn-info btn-sm active">
               scanner
             </button>
           </div>
@@ -39,7 +42,11 @@
       <div class="col-md-2 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button type="button" class="btn btn-info btn-sm active">
+            <button
+              [disabled]="generateFo"
+              type="button"
+              class="btn btn-info btn-sm active"
+              (click)="generate()">
               Ver folio
             </button>
           </div>
@@ -48,7 +55,10 @@
       <div class="col-md-2 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button type="button" class="btn btn-primary btn-sm active">
+            <button
+              [disabled]="generateFo"
+              type="button"
+              class="btn btn-primary btn-sm active">
               ver scaneo
             </button>
           </div>

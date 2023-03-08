@@ -4,4 +4,5 @@ export interface IIndiciados {
   noRegistration?: number;
   curp: string;
   consecutive: number;
+  nameAndId?: string;
 }
