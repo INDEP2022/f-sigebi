@@ -1,9 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
@@ -44,6 +50,9 @@ export class DestructionAuthorizationComponent
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   params5 = new BehaviorSubject<ListParams>(new ListParams());
 
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
+
   proceedingsList: IProccedingsDeliveryReception[] = [];
   proceedings: IProccedingsDeliveryReception;
 
@@ -72,15 +81,23 @@ export class DestructionAuthorizationComponent
   loadingDictation = this.loading;
   loadingActReception = this.loading;
 
+  show: boolean = false;
+
   constructor(
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private modalService: BsModalService,
     private goodService: GoodService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private datePipe: DatePipe,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private router: Router
   ) {
     super();
+    this.searchFilter = {
+      field: 'keysProceedings',
+      operator: SearchFilter.ILIKE,
+    };
+
     this.settings = {
       //Actas
       ...this.settings,
@@ -123,21 +140,28 @@ export class DestructionAuthorizationComponent
   }
 
   ngOnInit(): void {
-    this.params
+    this.show = true;
+    this.filterParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAllProceeding());
+    /*this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAllProceeding());*/
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodByStatusPDS());
   }
 
   //Trae todas las actas/Oficios
-  getAllProceeding() {
+  getAllProceeding(): void {
+    if (this.show) this.filterParams.getValue().removeAllFilters();
+    this.filterField();
     this.loadingProceedings = true;
     this.proceedingsDeliveryReceptionService
-      .getAll3(this.params.getValue())
+      .getAll3(this.filterParams.getValue().getParams())
       .subscribe({
         next: response => {
+          this.show = false;
           let data = response.data.map(
             (item: IProccedingsDeliveryReception) => {
               let date1 = item.elaborationDate;
@@ -165,6 +189,10 @@ export class DestructionAuthorizationComponent
           console.log(error);
         },
       });
+  }
+
+  filterField() {
+    this.filterParams.getValue().addFilter('typeProceedings', 'RGA');
   }
 
   //Para agregar nueva acta/oficio
@@ -268,5 +296,19 @@ export class DestructionAuthorizationComponent
     console.log('columna seleccionada', row);
     this.selectedRow = row;
     this.rowSelected = true;
+  }
+
+  //msj cuando se presiona el botón de escanear
+  scan() {
+    this.alertQuestion(
+      'question',
+      'Precaución',
+      'Se abrirá la pantalla de escaneo para el folio de escaneo de la solicitud abierta. ¿Deseas continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.alert('success', 'Listo', 'Se redirigió');
+        this.router.navigateByUrl('/pages/general-processes/scan-request/scan');
+      }
+    });
   }
 }
