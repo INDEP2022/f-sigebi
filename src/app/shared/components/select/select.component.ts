@@ -49,6 +49,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() readonly: boolean = false;
   @Input() clearable = true;
   @Input() termMaxLength: string = null;
+  @Input() showTooltip: boolean = false;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
