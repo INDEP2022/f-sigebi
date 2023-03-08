@@ -13,6 +13,7 @@ export interface ICourt {
   numPhone: string;
   circuitCVE: string;
   numRegister: number;
+  nameAndId?: string;
 }
 
 export interface ICourtModel {

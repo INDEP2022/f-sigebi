@@ -50,6 +50,7 @@ export interface IGoodProgramming {
 }
 
 export interface IView {
+  googId: number;
   uniqueKey: string;
 }
 

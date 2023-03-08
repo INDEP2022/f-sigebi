@@ -162,8 +162,8 @@
             [form]="assetsForm"
             control="destino"
             [data]="goodLabels"
-            value="id"
-            bindLabel="description"
+            value="labelNumber"
+            bindLabel="e_descripcion"
             label="Identificador de Destino"></ngx-select>
         </form-field>
       </div>
@@ -217,6 +217,7 @@
           [control]="assetsForm.get('descripcion')"
           label="Descripci&oacute;n">
           <textarea
+            maxlength="1250"
             rows="3"
             class="form-control"
             formControlName="descripcion"></textarea>
