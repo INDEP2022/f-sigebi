@@ -21,6 +21,7 @@ import {
   IGoodProgramming,
   IGoodProgrammingSelect,
 } from 'src/app/core/models/good-programming/good-programming';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -51,6 +52,7 @@ import {
   SettingUserTable,
   settingWarehouse,
 } from './settings-tables';
+
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
@@ -60,6 +62,7 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
+  goodsInfoTrans: any[] = [];
   estatesList: LocalDataSource = new LocalDataSource();
   goodSelect: IGoodProgrammingSelect[] = [];
   goodsTranportables: LocalDataSource = new LocalDataSource();
@@ -67,6 +70,7 @@ export class PerformProgrammingFormComponent
   goodsWarehouse: LocalDataSource = new LocalDataSource();
   usersToProgramming: LocalDataSource = new LocalDataSource();
   dataSearch: IEstateSearch;
+  dataProgramming: Iprogramming;
   regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
@@ -164,8 +168,19 @@ export class PerformProgrammingFormComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getProgrammingData();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
+  }
+
+  //Show programming data
+  getProgrammingData() {
+    this.programmingService
+      .getProgrammingId(this.idProgramming)
+      .subscribe(data => {
+        this.dataProgramming = data;
+        console.log('información de la programación', this.dataProgramming);
+      });
   }
 
   isGoodSelected(good: any) {
@@ -182,7 +197,6 @@ export class PerformProgrammingFormComponent
   sendGood(good: any, selected: boolean) {
     if (selected) {
       this.goodSelect.push(good);
-      console.log('fdgfdg', this.goodSelect);
     } else {
       this.goodSelect = this.goodSelect.filter(
         _good => _good.idGood != _good.idGood
@@ -283,38 +297,47 @@ export class PerformProgrammingFormComponent
 
   listUsers() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    const usersSelected = this.usersToProgramming;
+    const typeUser = this.dataProgramming.typeUser;
     config.initialState = {
-      usersSelected,
+      typeUser,
       callback: (data: any) => {
-        if (data && this.usersToProgramming.count() == 0) {
-          this.usersToProgramming.load(data);
-          this.onLoadToast(
-            'success',
-            'Correcto',
-            'Úsuario(s) agregado(s) correctamente'
-          );
-        } else if (data && this.usersToProgramming.count() >= 0) {
-          this.concatUsers(data);
-        }
+        if (data) this.saveUsersProgramming(data);
       },
     };
 
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
 
-  concatUsers(users: IUser[]) {
-    this.usersToProgramming.getElements().then(items => {
-      users.map(item => {
-        items.push(item);
-        this.usersToProgramming.load(items);
-        this.onLoadToast(
-          'success',
-          'Correcto',
-          'Úsuario(s) agregado(s) correctamente'
-        );
+  saveUsersProgramming(users: any[]) {
+    users.map(info => {
+      let user: Object = {
+        programmingId: this.idProgramming,
+        user: info.firstName,
+        email: info.email,
+        version: 1,
+      };
+      this.programmingService.createUsersProgramming(user).subscribe({
+        next: res => {
+          this.onLoadToast(
+            'success',
+            'Úsuarios agregados a la programación correctamente',
+            ''
+          );
+          this.showUsersProgramming();
+        },
       });
     });
+  }
+
+  //Mostrar lista de uusarios afiliados a la programación
+  showUsersProgramming() {
+    this.paramsUsers.getValue()['filter.programmingId'] = this.idProgramming;
+    this.programmingService
+      .getUsersProgramming(this.paramsUsers.getValue())
+      .subscribe(data => {
+        console.log(data.data);
+        this.usersToProgramming.load(data.data);
+      });
   }
 
   estateSearch() {
@@ -343,6 +366,20 @@ export class PerformProgrammingFormComponent
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
+    //Delegation regional user login //
+    this.programmingService.getUserInfo().subscribe((data: any) => {
+      this.regionalDelegationService
+        .getById(data.department)
+        .subscribe((delegation: IRegionalDelegation) => {
+          console.log('Delegación regional', delegation);
+          this.performForm
+            .get('regionalDelegationNumber')
+            .setValue(delegation.description);
+          this.regionalDelegationUser = delegation;
+          this.getStateSelect(new ListParams());
+        });
+    });
+
     if (params.text) {
       this.regionalDelegationService.search(params).subscribe(data => {
         this.regionalsDelegations = new DefaultSelect(data.data, data.count);
@@ -478,8 +515,6 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-
-          console.log(filterData);
           this.estatesList.load(filterData);
           this.totalItems = response.count;
           this.loadingGoods = false;
@@ -542,8 +577,7 @@ export class PerformProgrammingFormComponent
         };
       });
 
-      this.getGoodsProgTrans();
-      this.changeStatusGoodTrans();
+      this.insertGoodsProgTrans();
       /*if (this.goodsTranportables.count() == 0) {
         this.goodsTranportables.load(this.goodSelect);
         this.headingTransportable = `Transportables(${this.goodSelect.length})`;
@@ -573,19 +607,39 @@ export class PerformProgrammingFormComponent
     }
   }
 
+  /*------Insert goods in goods transportables -----*/
+  insertGoodsProgTrans() {
+    this.goodSelect.map((item: any) => {
+      const formData: Object = {
+        programmingId: this.idProgramming,
+        creationUser: 'aigebi admon',
+        modificationUser: 'aigebi admon',
+        goodId: item.goodNumber,
+        version: '1',
+        status: 'EN_TRANSPORTABLE',
+      };
+      this.programmingGoodService
+        .createGoodsService(formData)
+        .subscribe(() => {});
+    });
+
+    this.changeStatusGoodTrans();
+  }
+
   /*------------Change status good ------------------*/
   changeStatusGoodTrans() {
-    console.log('cambiar status good', this.goodSelect);
     this.goodSelect.map((item: any) => {
-      console.log('goodNumber', item.goodNumber);
-      console.log('idgood', item.googId);
       const formData: Object = {
         id: Number(item.goodNumber),
         goodId: item.googId,
         programmationStatus: 'EN_TRANSPORTABLE',
       };
-      console.log('data', formData);
+
+      this.programmingGoodService
+        .updateGoodByBody(formData)
+        .subscribe(() => {});
     });
+    this.getGoodsProgTrans();
   }
 
   /*------------Show goods programming ---------------*/
@@ -595,32 +649,45 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getGoodsProgramming(this.paramsTransportableGoods.getValue())
       .subscribe(data => {
-        this.goodsTranportables.load(data.data);
         this.getGoodsTransportable(data.data);
       });
   }
 
   /*-------------filter goods by transferent--------------*/
 
-  getGoodsTransportable(data: IGoodProgramming[]) {
-    const filter = data.filter(item => {
+  async getGoodsTransportable(data: IGoodProgramming[]) {
+    const filterTrans = data.filter(item => {
       return item.status == 'EN_TRANSPORTABLE';
     });
 
-    const infoGood = filter.map(goods => {
-      return goods.view;
+    await filterTrans.map((items: any) => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+          console.log('id alamcén', response.storeNumber);
+
+          this.goodsInfoTrans.push(response);
+          this.goodsTranportables.load(this.goodsInfoTrans);
+          this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
+          this.removeGoodsProgTrans();
+        },
+      });
     });
-    this.goodsTranportables.load(infoGood);
-    this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
-    this.removeGoodsProgTrans();
   }
 
-  /*-------------Remove goods tranportable in show goods programming------------------*/
+  /*-------------Remover bienes ya seleccionados------------------*/
   removeGoodsProgTrans() {
     console.log('goodsAddressView', this.estatesList);
     console.log('goods transportables', this.goodsTranportables);
   }
 
+  /*------------ Enviar datos a resguardo ----------------------*/
   sendGuard() {
     if (this.goodSelect.length) {
       let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
@@ -628,7 +695,7 @@ export class PerformProgrammingFormComponent
       config.initialState = {
         idTransferent,
         callback: (data: any) => {
-          if (data) this.addGoodsGuards();
+          if (data) this.addGoodsGuards(data);
         },
       };
 
@@ -638,8 +705,10 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  addGoodsGuards() {
-    if (this.goodsGuards.count() == 0) {
+  addGoodsGuards(data: any) {
+    console.log('Almacén a guardar ', data);
+    console.log('Bienes a insertar', this.goodSelect);
+    /*if (this.goodsGuards.count() == 0) {
       this.headingGuard = `Resguardo(${this.goodSelect.length})`;
       this.goodsGuards.load(this.goodSelect);
       this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
@@ -647,14 +716,14 @@ export class PerformProgrammingFormComponent
     } else {
       this.goodsGuards.getElements().then(data => {
         this.goodSelect.map(items => {
-          data.push(items);
+          data.push(ite s);
           this.goodsGuards.load(data);
           this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
           this.onLoadToast('success', 'Correcto', 'Bienes movidos a Resguardo');
           this.removeGoodsSelected(this.goodSelect);
         });
       });
-    }
+    } */
   }
 
   sendWarehouse() {

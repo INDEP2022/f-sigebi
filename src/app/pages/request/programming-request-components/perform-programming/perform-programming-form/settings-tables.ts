@@ -1,6 +1,6 @@
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
-import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
+import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 
 export const SettingUserTable = {
   actions: {
@@ -8,7 +8,7 @@ export const SettingUserTable = {
     position: 'right',
     delete: true,
   },
-  columns: USER_COLUMNS,
+  columns: USER_COLUMNS_SHOW,
 };
 
 export const settingTransGoods = {

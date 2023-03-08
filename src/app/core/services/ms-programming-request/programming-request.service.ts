@@ -23,15 +23,11 @@ export class ProgrammingRequestService {
     );
   }
 
-  getUsersProgramming(
-    _params: ListParams,
-    ids: Object
-  ): Observable<IListResponse<IUser>> {
+  getUsersProgramming(_params: ListParams): Observable<IListResponse<IUser>> {
     const params = this.makeParams(_params);
-    const route = `programminggood/api/v1/programming-users/find-by-ids`;
-    return this.http.post<IListResponse<IUser>>(
-      `${environment.API_URL}/${route}?${params}`,
-      ids
+    const route = `programminggood/api/v1/programming-users`;
+    return this.http.get<IListResponse<IUser>>(
+      `${environment.API_URL}/${route}?${params}`
     );
   }
 
@@ -61,6 +57,11 @@ export class ProgrammingRequestService {
       `${environment.API_URL}${route}?${params}`,
       language
     );
+  }
+
+  createUsersProgramming(data: Object) {
+    let route = `programminggood/api/v1/programming-users`;
+    return this.http.post(`${environment.API_URL}/${route}`, data);
   }
 
   updateProgramming(id: number, formData: Object) {

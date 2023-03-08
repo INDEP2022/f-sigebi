@@ -298,11 +298,10 @@ export class ReturnToPerformProgrammingFormComponent
 
   getUsersProgramming() {
     this.loading = true;
-    const ids = {
-      programmingId: this.programmingId,
-    };
+    this.params.getValue()['filter.programmingId'] = this.programmingId;
+
     this.programmingService
-      .getUsersProgramming(this.params.getValue(), ids)
+      .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
           console.log('users', response);

@@ -173,11 +173,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   getUsersProgramming() {
     this.loading = true;
-    const ids = {
-      programmingId: this.programmingId,
-    };
+    this.params.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
-      .getUsersProgramming(this.params.getValue(), ids)
+      .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
           this.usersData = [response];

@@ -60,7 +60,7 @@ export const ESTATE_COLUMNS = {
 };
 
 export const ESTATE_COLUMNS_VIEW = {
-  id: {
+  goodId: {
     title: 'No° gestión',
     type: 'string',
     sort: false,
@@ -72,13 +72,13 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  transferentFile: {
+  fileNumber: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
 
-  goodDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
@@ -89,8 +89,8 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  transferenceQuantity: {
-    title: 'Cantidad transferente',
+  quantity: {
+    title: 'Cantidad',
     type: 'string',
     sort: false,
   },
@@ -101,8 +101,8 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  physicalState: {
-    title: 'Estado Físico transferente',
+  saePhysicalState: {
+    title: 'Estado físico transferente',
     type: 'string',
     sort: false,
   },
