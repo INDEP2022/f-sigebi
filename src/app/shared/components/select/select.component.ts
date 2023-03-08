@@ -53,6 +53,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
   @Input() readonly: boolean = false;
   @Input() clearable = true;
   @Input() termMaxLength: string = null;
+  @Input() showTooltip: boolean = false;
   @Input() labelTemplate: TemplateRef<any>;
   @Input() optionTemplate: TemplateRef<any>;
   @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;

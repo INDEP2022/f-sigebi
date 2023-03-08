@@ -1,5 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -8,7 +9,10 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { WarehouseFilterService } from 'src/app/core/services/ms-warehouse-filter/warehouse-filter.service';
 import {
@@ -108,16 +112,21 @@ export class ConfiscatedRecordsComponent implements OnInit {
   selectData: any[];
   goodData: any[] = [];
   form: FormGroup;
-  records: string[] = ['A', 'NA', 'D', 'NS'];
+  records: string[];
   itemsSelect = new DefaultSelect();
   warehouseSelect = new DefaultSelect();
+  transferSelect = new DefaultSelect();
+  showFecReception = false;
 
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
     private render: Renderer2,
     private serviceWarehouse: WarehouseFilterService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceTransferente: TransferenteService,
+    private serviceNoty: NotificationService,
+    private serviceExpedient: ExpedientService
   ) {}
 
   ngOnInit(): void {
@@ -192,7 +201,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
 
   toggleByLength(idBtn: string, data: string) {
     const btn = document.getElementById(idBtn);
-    if (this.form.get(data).value.length != 0) {
+    if (this.form.get(data).value != null) {
       this.render.removeClass(btn, 'disabled');
       this.render.addClass(btn, 'enabled');
     } else {
@@ -200,6 +209,36 @@ export class ConfiscatedRecordsComponent implements OnInit {
       this.render.addClass(btn, 'disabled');
     }
   }
+
+  disabledElement(elmt: string) {
+    const element = document.getElementById(elmt);
+    this.render.addClass(element, 'disabled');
+  }
+
+  enableElement(elmt: string) {
+    const element = document.getElementById(elmt);
+    this.render.removeClass(element, 'disabled');
+  }
+
+  //Conditional functions
+
+  verifyDateAndFill() {
+    let fecElab = new Date(this.form.get('fecElab').value);
+    let fecReception = new Date(this.form.get('fecReception').value);
+    if (this.form.get('fecElab').value != null) {
+      this.form
+        .get('fecReception')
+        .setValue(new Date(format(fecElab, 'MM-dd-yyyy')));
+      this.showFecReception = true;
+    } else {
+      {
+        this.form.get('fecReception').setValue('');
+        this.showFecReception = false;
+      }
+    }
+  }
+
+  verifyTransferenteAndAct() {}
 
   //Catalogs
 
@@ -217,6 +256,40 @@ export class ConfiscatedRecordsComponent implements OnInit {
     );
   }
 
+  getTransferentData(params: ListParams) {
+    const filterNoty = new FilterParams();
+    let codeNoty: number;
+    filterNoty.addFilter('expedientNumber', this.form.get('expediente').value);
+    this.serviceNoty.getAllFilter(filterNoty.getParams()).subscribe(res => {
+      const uniqueArray = res.data.filter(
+        (product: any, index: any, self: any) =>
+          index ===
+          self.findIndex(
+            (p: any) => p.endTransferNumber === product.endTransferNumber
+          )
+      );
+      codeNoty = uniqueArray[0]['endTransferNumber'];
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
+      this.serviceTransferente
+        .getAllWithFilter(paramsF.getParams())
+        .subscribe((res: any) => {
+          const uniqueArray = res.data.filter(
+            (product: any, index: any, self: any) =>
+              index ===
+              self.findIndex(
+                (p: any) =>
+                  p.keyTransferent === product.keyTransferent &&
+                  p.indcap != 'E' &&
+                  p.id == codeNoty
+              )
+          );
+          this.transferSelect = new DefaultSelect(uniqueArray);
+        });
+    });
+    /* */
+  }
+
   //
 
   getGoodsByExpedient() {
@@ -226,7 +299,20 @@ export class ConfiscatedRecordsComponent implements OnInit {
       })
       .subscribe({
         next: (res: any) => {
+          this.form.get('ident').setValue('ADM');
           this.dataGoods.load(res.data);
+          this.serviceExpedient
+            .getById(this.form.get('expediente').value)
+            .subscribe(res => {
+              if (res.expedientType === 'T') {
+                this.records = ['RT'];
+              } else {
+                this.records = ['A', 'NA', 'D', 'NS'];
+              }
+              this.enableElement('acta');
+              console.log(res);
+              console.log(res.expedientType);
+            });
         },
         error: (err: any) => {
           console.error(err);

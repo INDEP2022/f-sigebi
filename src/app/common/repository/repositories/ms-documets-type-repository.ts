@@ -41,7 +41,7 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   }
 
   remove(route: string, id: number | string) {
-    const fullRoute = `${this.ms}${route}${id}`;
+    const fullRoute = `${this.ms}${route}/${id}`;
     return this.httpClient.delete<IListResponse<T>>(fullRoute);
   }
 

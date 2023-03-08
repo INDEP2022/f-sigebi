@@ -167,20 +167,20 @@ export class ComplementArticleComponent implements OnInit {
 
   btnAppraisTab() {
     if (
-      (this.form.get('fechaAvaluo').value == null ||
-        this.form.get('fechaVigencia').value == null ||
-        this.form.get('importe').value == null ||
-        this.form.get('moneda').value == null ||
-        this.form.get('perito').value == null ||
-        this.form.get('institucion').value == null ||
-        this.form.get('fechaAvaluo').value == '' ||
-        this.form.get('fechaVigencia').value == '' ||
-        this.form.get('importe').value == '' ||
-        this.form.get('moneda').value == '' ||
-        this.form.get('perito').value == '' ||
-        this.form.get('institucion').value == '') &&
-      this.idGood != undefined &&
-      this.idGood != null
+      this.form.get('fechaAvaluo').value == null ||
+      this.form.get('fechaVigencia').value == null ||
+      this.form.get('importe').value == null ||
+      this.form.get('moneda').value == null ||
+      this.form.get('perito').value == null ||
+      this.form.get('institucion').value == null ||
+      this.form.get('fechaAvaluo').value == '' ||
+      this.form.get('fechaVigencia').value == '' ||
+      this.form.get('importe').value == '' ||
+      this.form.get('moneda').value == '' ||
+      this.form.get('perito').value == '' ||
+      this.form.get('institucion').value == '' ||
+      this.idGood == undefined ||
+      this.idGood == null
     ) {
       this.disabledButton('apprais-good');
     } else {
