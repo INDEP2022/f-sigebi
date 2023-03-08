@@ -1,5 +1,5 @@
 export const ESTATE_COLUMNS = {
-  idGood: {
+  googId: {
     title: 'No° gestión',
     type: 'string',
     sort: false,
@@ -53,6 +53,61 @@ export const ESTATE_COLUMNS = {
   },
 
   aliasWarehouse: {
+    title: 'Alias almacén',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const ESTATE_COLUMNS_VIEW = {
+  goodId: {
+    title: 'No° gestión',
+    type: 'string',
+    sort: false,
+  },
+
+  uniqueKey: {
+    title: 'Clave única',
+    type: 'string',
+    sort: false,
+  },
+
+  fileNumber: {
+    title: 'Expediente',
+    type: 'string',
+    sort: false,
+  },
+
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+
+  decriptionGoodSae: {
+    title: 'Descripción SAE',
+    type: 'string',
+    sort: false,
+  },
+
+  quantity: {
+    title: 'Cantidad',
+    type: 'string',
+    sort: false,
+  },
+
+  unitMeasure: {
+    title: 'Unidad transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  saePhysicalState: {
+    title: 'Estado físico transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  warehouseCode: {
     title: 'Alias almacén',
     type: 'string',
     sort: false,
