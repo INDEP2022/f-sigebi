@@ -32,6 +32,9 @@ export class IndicatorsOfPerformanceComponent
   data2: IDetailIndParameter[] = [];
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
+  typeItem: any[];
+  typeItem1: any[];
+
   constructor(
     private fb: FormBuilder,
     private indicatorsParameterService: IndicatorsParameterService,
@@ -53,6 +56,14 @@ export class IndicatorsOfPerformanceComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDetailIndParameterAll());
     this.prepareForm();
+    this.typeItem = [
+      { label: 'Fec. Recepción/Escaneo', value: 'FRECEPCION' },
+      { label: 'Fecha de Inicio', value: 'FINICIA' },
+    ];
+    this.typeItem1 = [
+      { label: 'Fec. Término/Desahogo', value: 'FFINALIZA' },
+      { label: 'Fecha de Escaneo', value: 'FESCANEO' },
+    ];
   }
   private prepareForm() {
     this.indicatorsOfPerformanceForm = this.fb.group({
@@ -62,6 +73,7 @@ export class IndicatorsOfPerformanceComponent
       contractZoneKey: [null, Validators.required],
       initialDDate: [null, Validators.required],
       endDDate: [null, Validators.required],
+      indicatorNumber: [null],
     });
   }
   getValuesAll() {
@@ -81,7 +93,7 @@ export class IndicatorsOfPerformanceComponent
   }
   getDetailIndParameterAll() {
     this.loading = true;
-    this.detailIndParameterService.getAll(this.params.getValue()).subscribe({
+    this.detailIndParameterService.getAll(this.params2.getValue()).subscribe({
       next: response => {
         console.log(response);
         this.data2 = response.data;
@@ -93,5 +105,48 @@ export class IndicatorsOfPerformanceComponent
         console.log(error);
       },
     });
+  }
+  rowsSelected(event: any) {
+    console.log(event);
+    this.indicatorsOfPerformanceForm.controls['indicatorNumber'].setValue(
+      event.data.id
+    );
+  }
+  confirm() {
+    console.log(
+      this.indicatorsOfPerformanceForm.controls['indicatorNumber'].value
+    );
+    console.log(this.indicatorsOfPerformanceForm.value);
+    if (
+      this.indicatorsOfPerformanceForm.controls['indicatorNumber'].value != null
+    ) {
+      this.loading = true;
+      console.log(this.indicatorsOfPerformanceForm.value);
+      this.detailIndParameterService
+        .create(this.indicatorsOfPerformanceForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    } else {
+      this.onLoadToast(
+        'warning',
+        'advertencia',
+        'Se debe seleccionar un Indicador'
+      );
+    }
+  }
+  handleSuccess() {
+    const message: string = 'Guardado';
+    this.onLoadToast(
+      'success',
+      'Indicadores de Desempeño',
+      `${message} Correctamente`
+    );
+    this.loading = false;
+    this.indicatorsOfPerformanceForm.reset();
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDetailIndParameterAll());
   }
 }
