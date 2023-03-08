@@ -12,8 +12,10 @@ import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { ITransferingLevelView } from '../../../../../core/models/catalogs/transferente.model';
 import { IUserAccessAreaRelational } from '../../../../../core/models/ms-users/seg-access-area-relational.model';
 import { STRING_PATTERN } from '../../../../../core/shared/patterns';
+
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -95,7 +97,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     null,
     Validators.maxLength(150)
   ),
-  uniqueKey: new FormControl<string | number>(null),
+  uniqueKey: new FormControl<ITransferingLevelView>(null),
   cityNumber: new FormControl<ICity>(null, Validators.required),
   entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(
     null,
@@ -228,7 +230,7 @@ export interface IDocumentsReceptionRegisterForm {
   externalOfficeDate: string | Date;
   observations: string;
   expedientTransferenceNumber: string;
-  uniqueKey: string | number;
+  uniqueKey: ITransferingLevelView;
   cityNumber: ICity;
   entFedKey: TvalTable1Data | ITablesEntryData;
   endTransferNumber: ITransferente;
