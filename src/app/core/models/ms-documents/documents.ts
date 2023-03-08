@@ -26,7 +26,7 @@ export interface IDocuments {
   sendFilekey?: string;
   userResponsibleFile?: string;
   mediumId?: string;
-  associateUniversalFolio?: string;
+  associateUniversalFolio?: string | number;
   dateRegistrationScanningHc?: Date;
   dateRequestScanningHc?: Date;
   goodNumber: string | number;

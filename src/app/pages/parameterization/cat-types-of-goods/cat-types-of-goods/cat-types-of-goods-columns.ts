@@ -1,10 +1,10 @@
 export const TYPE_COLUMNS = {
-  numberType: {
+  id: {
     title: 'No Tipo',
     sort: false,
     filter: false,
   },
-  description: {
+  nameGoodType: {
     title: 'Descripción',
     sort: false,
     filter: false,
@@ -12,19 +12,19 @@ export const TYPE_COLUMNS = {
 };
 
 export const SUBTYPE_COLUMNS = {
-  numberType: {
+  id: {
     title: 'No Subtipo',
     sort: false,
     filter: false,
   },
-  description: {
+  nameSubtypeGood: {
     title: 'Descripción',
     sort: false,
     filter: false,
   },
 };
 export const SUBSUBTYPE_COLUMNS = {
-  numberType: {
+  id: {
     title: 'No Ssubtipo',
     sort: false,
     filter: false,
@@ -36,7 +36,7 @@ export const SUBSUBTYPE_COLUMNS = {
   },
 };
 export const SUBSUBSUBTYPE_COLUMNS = {
-  numberType: {
+  id: {
     title: 'No Ssstipo',
     sort: false,
     filter: false,

@@ -70,6 +70,7 @@ export class GoodByProceedingsModalComponent
     });
   }
 
+  //Al seleccionar un item del select dinámico se autorellenan los inputs siguientes
   onValuesChange(goodChange: IGood) {
     console.log(goodChange);
     this.goodValue = goodChange;
@@ -80,6 +81,7 @@ export class GoodByProceedingsModalComponent
     this.goods = new DefaultSelect();
   }
 
+  //Alerta para indicar que se redirigirá al rastreador de bienes
   tracker() {
     this.alertQuestion(
       'question',
