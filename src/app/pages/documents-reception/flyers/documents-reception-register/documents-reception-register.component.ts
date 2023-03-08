@@ -35,19 +35,12 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { ITmpNotification } from 'src/app/core/models/ms-notification/tmp-notification.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
-import { CityService } from 'src/app/core/services/catalogs/city.service';
-import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
-import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
-import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
-import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
-import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
@@ -133,6 +126,9 @@ export class DocumentsReceptionRegisterComponent
   existingNotification: boolean = false;
   procedureBlocked: boolean = false;
   changeFlyerOption: boolean = false;
+  transferorLoading: boolean = false;
+  stationLoading: boolean = false;
+  populatingForm: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -181,15 +177,7 @@ export class DocumentsReceptionRegisterComponent
     private notificationService: NotificationService,
     private tmpNotificationService: TmpNotificationService,
     private affairService: AffairService,
-    private dynamicTablesService: DynamicTablesService,
-    private cityService: CityService,
-    private transferentService: TransferenteService,
     private docRegisterService: DocReceptionRegisterService,
-    private courtService: CourtService,
-    private defendantService: IndiciadosService,
-    private stationService: StationService,
-    private authorityService: AuthorityService,
-    private minpubService: MinPubService,
     private indiciadosService: IndiciadosService,
     private delegationService: DelegationService,
     private subdelegationService: SubdelegationService,
@@ -261,12 +249,28 @@ export class DocumentsReceptionRegisterComponent
     return this.documentsReceptionForm.controls['subDelDestinyNumber'];
   }
 
+  get departmentName() {
+    return this.documentsReceptionForm.controls['destinationArea'].value;
+  }
+
+  get delegationName() {
+    return this.documentsReceptionForm.controls['delegationName'].value;
+  }
+
+  get subDelegationName() {
+    return this.documentsReceptionForm.controls['subDelegationName'].value;
+  }
+
   get userRecipient() {
     return this.flyerCopyRecipientForm.controls['copyuser'];
   }
 
   get userCpp() {
     return this.flyerCopyCppForm.controls['copyuser'];
+  }
+
+  get flyerEditMode() {
+    return this.docDataService.flyerEditMode;
   }
 
   ngOnInit(): void {
@@ -460,8 +464,8 @@ export class DocumentsReceptionRegisterComponent
         default:
           break;
       }
-      this.dynamicTablesService
-        .getTvalTable1ByTableKey(1, { inicio: 1, text: descentfed })
+      this.docRegisterService
+        .getDynamicTables(1, { inicio: 1, text: descentfed })
         .subscribe({
           next: data => this.formControls.entFedKey.setValue(data.data[0]),
           error: () => {},
@@ -551,7 +555,7 @@ export class DocumentsReceptionRegisterComponent
       });
       this.getFieldsByManagementArea(typeManagement, subject, officeKey);
       this.formControls.officeExternalKey.setValue(officeKey);
-      this.dynamicTablesService.getByTableKeyOtKey(9, 1).subscribe({
+      this.docRegisterService.getByTableKeyOtKey(9, 1).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
       param = new FilterParams();
@@ -582,7 +586,7 @@ export class DocumentsReceptionRegisterComponent
         });
       param = new FilterParams();
       param.addFilter('id', 'DJ');
-      this.procedureManageService
+      this.docRegisterService
         .getManagementAreasFiltered(param.getParams())
         .subscribe({
           next: data => this.formControls.estatusTramite.setValue(data.data[0]),
@@ -613,7 +617,7 @@ export class DocumentsReceptionRegisterComponent
       });
       this.getFieldsByManagementArea(typeManagement, subject, officeKey);
       this.formControls.preliminaryInquiry.setValue(subject);
-      this.dynamicTablesService.getByTableKeyOtKey(9, 16).subscribe({
+      this.docRegisterService.getByTableKeyOtKey(9, 16).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
       param = new FilterParams();
@@ -655,7 +659,7 @@ export class DocumentsReceptionRegisterComponent
         });
       param = new FilterParams();
       param.addFilter('id', 'DJ');
-      this.procedureManageService
+      this.docRegisterService
         .getManagementAreasFiltered(param.getParams())
         .subscribe({
           next: data => this.formControls.estatusTramite.setValue(data.data[0]),
@@ -726,6 +730,7 @@ export class DocumentsReceptionRegisterComponent
             .getUniqueKeyData(param.getParams())
             .subscribe({
               next: data => {
+                this.formControls.uniqueKey.setValue(data.data[0]);
                 this.setUniqueKeyData(data.data[0], true);
               },
               error: () => {},
@@ -771,6 +776,7 @@ export class DocumentsReceptionRegisterComponent
             .getUniqueKeyData(param.getParams())
             .subscribe({
               next: data => {
+                this.formControls.uniqueKey.setValue(data.data[0]);
                 this.setUniqueKeyData(data.data[0], true);
               },
               error: () => {},
@@ -892,22 +898,24 @@ export class DocumentsReceptionRegisterComponent
 
   destinationAreaChange(area: string) {
     if (this.userRecipient.value?.user) {
-      const param = new FilterParams();
-      param.addFilter('user', this.userRecipient.value.user);
-      this.docRegisterService.getUsersSegAreas(param.getParams()).subscribe({
-        next: data => {
-          if (data.data.length > 0) {
-            if (data.data[0].delegationNumber != this.userDelegation) {
-              this.userRecipient.setValue(null);
-              this.onLoadToast(
-                'warning',
-                'Usuario no asignado',
-                'El usuario no esta asignado a la delegación seleccionada.'
-              );
+      if (!this.populatingForm) {
+        const param = new FilterParams();
+        param.addFilter('user', this.userRecipient.value.user);
+        this.docRegisterService.getUsersSegAreas(param.getParams()).subscribe({
+          next: data => {
+            if (data.data.length > 0) {
+              if (data.data[0].delegationNumber != this.userDelegation) {
+                this.userRecipient.setValue(null);
+                this.onLoadToast(
+                  'warning',
+                  'Usuario no asignado',
+                  'El usuario no esta asignado a la delegación seleccionada.'
+                );
+              }
             }
-          }
-        },
-      });
+          },
+        });
+      }
     }
   }
 
@@ -935,12 +943,17 @@ export class DocumentsReceptionRegisterComponent
   }
 
   cityChange(city: ICity) {
-    this.dynamicTablesService
-      .getTvalTable1ByTableKey(1, { inicio: 1, text: city.state.descCondition })
-      .subscribe({
-        next: data => this.entFedKey.setValue(data.data[0]),
-      });
-    this.getPublicMinistries({ page: 1, text: '' });
+    if (city != null && city != undefined) {
+      this.docRegisterService
+        .getDynamicTables(1, {
+          inicio: 1,
+          text: city.state.descCondition,
+        })
+        .subscribe({
+          next: data => this.entFedKey.setValue(data.data[0]),
+        });
+      this.getPublicMinistries({ page: 1, text: '' });
+    }
   }
 
   changeJudgement(judgement: string) {
@@ -984,6 +997,7 @@ export class DocumentsReceptionRegisterComponent
   fillForm(notif: INotification) {
     this.docDataService.flyerEditMode = true;
     this.documentsReceptionForm.reset();
+    this.populatingForm = true;
     // this.documentsReceptionForm.get('flyer').setValue(value);
     console.log(notif);
     const filterParams = new FilterParams();
@@ -1054,62 +1068,62 @@ export class DocumentsReceptionRegisterComponent
         },
       });
     if (notif.cityNumber != null)
-      this.cityService.getById(notif.cityNumber).subscribe({
+      this.docRegisterService.getCity(notif.cityNumber).subscribe({
         next: data => this.formControls.cityNumber.setValue(data),
       });
     if (notif.entFedKey != null) {
-      this.dynamicTablesService
-        .getByTableKeyOtKey(1, notif.entFedKey)
-        .subscribe({
-          next: data => {
-            this.formControls.entFedKey.setValue(data.data);
-          },
-        });
-    }
-    if (notif.endTransferNumber != null)
-      this.transferentService.getById(notif.endTransferNumber).subscribe({
+      this.docRegisterService.getByTableKeyOtKey(1, notif.entFedKey).subscribe({
         next: data => {
-          this.formControls.endTransferNumber.setValue(data);
-          this.updateGlobalVars('noTransferente', data.id);
+          this.formControls.entFedKey.setValue(data.data);
         },
       });
+    }
+    if (notif.endTransferNumber != null)
+      this.docRegisterService
+        .getTransferent(notif.endTransferNumber)
+        .subscribe({
+          next: data => {
+            this.formControls.endTransferNumber.setValue(data);
+            this.updateGlobalVars('noTransferente', data.id);
+          },
+        });
     if (notif.courtNumber != null)
-      this.courtService.getById(notif.courtNumber).subscribe({
+      this.docRegisterService.getCourt(notif.courtNumber).subscribe({
         next: data => this.formControls.courtNumber.setValue(data),
       });
     if (notif.stationNumber != null)
-      this.stationService.getById(notif.stationNumber).subscribe({
+      this.docRegisterService.getStation(notif.stationNumber).subscribe({
         next: data => this.formControls.stationNumber.setValue(data),
       });
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
-      this.authorityService.getAllFilter(filterParams.getParams()).subscribe({
-        next: data => {
-          if (data.count > 0) {
-            this.formControls.autorityNumber.setValue(data.data[0]);
-          }
-        },
-        error: () => {},
-      });
+      this.docRegisterService
+        .getAuthoritiesFilter(filterParams.getParams())
+        .subscribe({
+          next: data => {
+            if (data.count > 0) {
+              this.formControls.autorityNumber.setValue(data.data[0]);
+            }
+          },
+          error: () => {},
+        });
     }
     if (notif.minpubNumber != null) {
       const minpub = notif.minpubNumber as IMinpub;
-      this.minpubService.getById(minpub.id).subscribe({
+      this.docRegisterService.getMinPub(minpub.id).subscribe({
         next: data => this.formControls.minpubNumber.setValue(data),
       });
     }
     if (notif.crimeKey != null)
-      this.dynamicTablesService
-        .getByTableKeyOtKey(2, notif.crimeKey)
-        .subscribe({
-          next: data => this.formControls.crimeKey.setValue(data.data),
-        });
+      this.docRegisterService.getByTableKeyOtKey(2, notif.crimeKey).subscribe({
+        next: data => this.formControls.crimeKey.setValue(data.data),
+      });
     if (notif.indiciadoNumber != null)
       this.indiciadosService.getById(notif.indiciadoNumber).subscribe({
         next: data => this.formControls.indiciadoNumber.setValue(data),
       });
     if (notif.viaKey != null)
-      this.dynamicTablesService.getByTableKeyOtKey(9, notif.viaKey).subscribe({
+      this.docRegisterService.getByTableKeyOtKey(9, notif.viaKey).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
     if (notif.delDestinyNumber != null) {
@@ -1156,8 +1170,8 @@ export class DocumentsReceptionRegisterComponent
     }
     if (notif.wheelNumber != null && notif.expedientNumber != null) {
       filterParams.removeAllFilters();
-      filterParams.addFilter('noExpediente', notif.expedientNumber);
-      filterParams.addFilter('noVolante', notif.wheelNumber);
+      filterParams.addFilter('expedient', notif.expedientNumber);
+      filterParams.addFilter('wheelNumber', notif.wheelNumber);
       this.procedureManageService
         .getAllFiltered(filterParams.getParams())
         .subscribe({
@@ -1174,7 +1188,7 @@ export class DocumentsReceptionRegisterComponent
             if (areaToTurn != null) {
               filterParams.removeAllFilters();
               filterParams.addFilter('id', areaToTurn);
-              this.procedureManageService
+              this.docRegisterService
                 .getManagementAreasFiltered(filterParams.getParams())
                 .subscribe({
                   next: data => {
@@ -1193,6 +1207,7 @@ export class DocumentsReceptionRegisterComponent
                 .subscribe({
                   next: data => {
                     if (data.data.length > 0) {
+                      console.log(data);
                       this.userRecipient.setValue(data.data[0]);
                     }
                   },
@@ -1211,6 +1226,7 @@ export class DocumentsReceptionRegisterComponent
       this.canViewDocuments = true;
     }
     this.checkDailyEviction();
+    this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
     console.log(this.procedureStatus);
   }
@@ -1379,6 +1395,7 @@ export class DocumentsReceptionRegisterComponent
             value: 'ESCANEADO',
           },
         ],
+        selectOnClick: true,
       },
       this.selectDocument
     );
@@ -1491,7 +1508,7 @@ export class DocumentsReceptionRegisterComponent
     id: number | string,
     params: ListParams
   ): Observable<IListResponse<TvalTable1Data>> {
-    return this.dynamicTablesService.getTvalTable1ByTableKey(id, params);
+    return this.docRegisterService.getDynamicTables(id, params);
   }
 
   getTransferors(lparams: ListParams) {
@@ -1499,12 +1516,15 @@ export class DocumentsReceptionRegisterComponent
       active: ['1', '2'],
       nameTransferent: lparams.text,
     };
+    this.transferorLoading = true;
     this.docRegisterService.getActiveTransferents(body).subscribe({
       next: data => {
         this.transferors = new DefaultSelect(data.data, data.count);
+        this.transferorLoading = false;
       },
       error: () => {
         this.transferors = new DefaultSelect();
+        this.transferorLoading = false;
       },
     });
   }
@@ -1517,12 +1537,15 @@ export class DocumentsReceptionRegisterComponent
       params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
     if (this.endTransferNumber.value != null)
       params.addFilter('idTransferent', this.endTransferNumber.value.id);
+    this.stationLoading = true;
     this.docRegisterService.getStations(params.getParams()).subscribe({
       next: data => {
         this.stations = new DefaultSelect(data.data, data.count);
+        this.stationLoading = false;
       },
       error: () => {
         this.stations = new DefaultSelect();
+        this.stationLoading = false;
       },
     });
   }
@@ -1587,7 +1610,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getCourts(lparams: ListParams) {
-    this.courtService.getAll(lparams).subscribe({
+    this.docRegisterService.getCourts(lparams).subscribe({
       next: data => {
         this.courts = new DefaultSelect(data.data, data.count);
       },
@@ -1598,7 +1621,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getDefendants(lparams: ListParams) {
-    this.defendantService.getAll(lparams).subscribe({
+    this.docRegisterService.getDefendants(lparams).subscribe({
       next: data => {
         this.defendants = new DefaultSelect(data.data, data.count);
       },
@@ -1609,7 +1632,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getCities(lparams: ListParams) {
-    this.cityService.getAll(lparams).subscribe({
+    this.docRegisterService.getCities(lparams).subscribe({
       next: data => {
         this.cities = new DefaultSelect(data.data, data.count);
       },
@@ -1625,7 +1648,7 @@ export class DocumentsReceptionRegisterComponent
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
       params.addFilter('description', lparams.text, SearchFilter.LIKE);
-    this.procedureManageService
+    this.docRegisterService
       .getManagementAreasFiltered(params.getParams())
       .subscribe({
         next: data => {
@@ -1698,6 +1721,7 @@ export class DocumentsReceptionRegisterComponent
         service: this.docRegisterService,
         dataObservableFn: this.docRegisterService.getDepartaments,
         searchFilter: { field: 'description', operator: SearchFilter.LIKE },
+        selectOnClick: true,
       },
       this.selectArea
     );
@@ -1720,6 +1744,7 @@ export class DocumentsReceptionRegisterComponent
           },
         ],
         searchFilterCompatible: false,
+        selectOnClick: true,
       },
       this.selectAffair
     );
@@ -1734,6 +1759,7 @@ export class DocumentsReceptionRegisterComponent
         dataObservableFn: this.docRegisterService.getUniqueKeyDataModal,
         searchFilter: { field: 'uniqueCve' },
         searchFilterCompatible: false,
+        selectOnClick: true,
       },
       this.selectUniqueKey
     );
@@ -1776,7 +1802,9 @@ export class DocumentsReceptionRegisterComponent
     key: ITransferingLevelView,
     self: DocumentsReceptionRegisterComponent
   ) {
+    self.formControls.uniqueKey.setValue(key);
     self.setUniqueKeyData(key, true);
+    self.uniqueKeys = new DefaultSelect([key], 1);
   }
 
   clearCityState() {
@@ -1792,7 +1820,7 @@ export class DocumentsReceptionRegisterComponent
 
   setUniqueKeyData(key: ITransferingLevelView, full?: boolean) {
     if (key.transfereeNum != null)
-      this.transferentService.getById(key.transfereeNum).subscribe({
+      this.docRegisterService.getTransferent(key.transfereeNum).subscribe({
         next: data => {
           this.formControls.endTransferNumber.setValue(data);
           this.updateGlobalVars('noTransferente', data.id);
@@ -1800,25 +1828,27 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
     if (key.stationNum != null)
-      this.stationService.getById(key.stationNum).subscribe({
+      this.docRegisterService.getStation(key.stationNum).subscribe({
         next: data => this.formControls.stationNumber.setValue(data),
         error: () => {},
       });
     if (key.authorityNum != null) {
       const param = new FilterParams();
       param.addFilter('idAuthority', key.authorityNum);
-      this.authorityService.getAllFilter(param.getParams()).subscribe({
-        next: data => {
-          if (data.count > 0) {
-            this.formControls.autorityNumber.setValue(data.data[0]);
-          }
-        },
-        error: () => {},
-      });
+      this.docRegisterService
+        .getAuthoritiesFilter(param.getParams())
+        .subscribe({
+          next: data => {
+            if (data.count > 0) {
+              this.formControls.autorityNumber.setValue(data.data[0]);
+            }
+          },
+          error: () => {},
+        });
     }
     if (full) {
       if (key.cityNum != null) {
-        this.cityService.getById(key.cityNum).subscribe({
+        this.docRegisterService.getCity(key.cityNum).subscribe({
           next: data => {
             this.formControls.cityNumber.setValue(data);
           },
@@ -1826,7 +1856,7 @@ export class DocumentsReceptionRegisterComponent
         });
       }
       if (key.federalEntityCve != null) {
-        this.dynamicTablesService
+        this.docRegisterService
           .getByTableKeyOtKey(1, key.federalEntityCve)
           .subscribe({
             next: data => {
@@ -1861,6 +1891,7 @@ export class DocumentsReceptionRegisterComponent
       viaKey: this.formControls.viaKey.value?.otKey,
       dailyEviction: Number(this.formControls.dailyEviction.value),
       addressGeneral: Number(this.formControls.addressGeneral.value),
+      uniqueKey: Number(this.formControls.uniqueKey.value?.uniqueCve),
     };
     if (typeof formData.receiptDate == 'string') {
       formData.receiptDate = new Date(formData.receiptDate);
@@ -1897,22 +1928,34 @@ export class DocumentsReceptionRegisterComponent
     console.log(this.formData);
   }
 
-  save() {
+  checkFormErrors(): boolean {
+    let requiredErrors: number = 0,
+      otherErrors: number = 0;
+    let errors: string[] = [];
     for (const key in this.formControls) {
       const control = this.documentsReceptionForm.get(key);
       if (control.errors != null) {
         console.log(key, control.errors);
+        errors = Object.keys(control.errors);
+        errors.forEach(e => {
+          if (e == 'required') {
+            requiredErrors += 1;
+          } else {
+            otherErrors += 1;
+          }
+        });
       }
     }
+    let errorMsg: string = '';
+    if (requiredErrors > 0) errorMsg = 'Complete todos los campos requeridos.';
+    if (otherErrors > 0) errorMsg = 'Existen campos inválidos';
+    if (requiredErrors > 0 && otherErrors > 0)
+      errorMsg = 'Existen campos faltantes y/o inválidos';
     if (this.documentsReceptionForm.invalid) {
       this.documentsReceptionForm.markAllAsTouched();
       this.documentsReceptionForm.updateValueAndValidity();
-      this.onLoadToast(
-        'warning',
-        'Campos Faltantes',
-        'Complete todos los campos requeridos.'
-      );
-      return;
+      this.onLoadToast('warning', 'Formulario Inválido', errorMsg);
+      return false;
     }
     if (this.flyerCopyRecipientForm.invalid) {
       this.flyerCopyRecipientForm.markAllAsTouched();
@@ -1922,6 +1965,13 @@ export class DocumentsReceptionRegisterComponent
         'Campos Faltantes',
         'Complete todos los campos requeridos.'
       );
+      return false;
+    }
+    return true;
+  }
+
+  save() {
+    if (!this.checkFormErrors()) {
       return;
     }
     this.loading = true;
@@ -2667,30 +2717,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   goodsCaptureCheck() {
-    for (const key in this.formControls) {
-      const control = this.documentsReceptionForm.get(key);
-      if (control.errors != null) {
-        console.log(key, control.errors);
-      }
-    }
-    if (this.documentsReceptionForm.invalid) {
-      this.documentsReceptionForm.markAllAsTouched();
-      this.documentsReceptionForm.updateValueAndValidity();
-      this.onLoadToast(
-        'warning',
-        'Campos Faltantes',
-        'Complete todos los campos requeridos.'
-      );
-      return;
-    }
-    if (this.flyerCopyRecipientForm.invalid) {
-      this.flyerCopyRecipientForm.markAllAsTouched();
-      this.flyerCopyRecipientForm.updateValueAndValidity();
-      this.onLoadToast(
-        'warning',
-        'Campos Faltantes',
-        'Complete todos los campos requeridos.'
-      );
+    if (!this.checkFormErrors()) {
       return;
     }
     this.loading = true;
@@ -2710,6 +2737,7 @@ export class DocumentsReceptionRegisterComponent
           indiciado: this.formControls.indiciadoNumber.value.id,
           transferent: this.formControls.expedientTransferenceNumber.value,
         };
+        console.log(transferentData);
         this.notificationService
           .findTransferentCity(transferentData)
           .subscribe({

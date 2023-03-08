@@ -4,10 +4,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
-
 @Component({
   selector: 'app-search-user-form',
   templateUrl: './search-user-form.component.html',
@@ -17,7 +17,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   usersData: LocalDataSource = new LocalDataSource();
   loadUsersData: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
-  usersSelected: LocalDataSource;
   totalItems: number = 0;
   typeUser: string = '';
   userInfo: any[] = [];
@@ -25,7 +24,8 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   textButton: string = 'Seleccionar';
   constructor(
     private modalRef: BsModalRef,
-    private programmingGoodService: ProgrammingGoodService
+    private programmingGoodService: ProgrammingGoodService,
+    private userProcessService: UserProcessService
   ) {
     super();
     this.settings = {
@@ -62,10 +62,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    /*this.usersSelected.getElements().then(items => {
-      this.itemsInTable = items.length;
-    }); */
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsers());
@@ -73,17 +69,14 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-    //console.log('Tipo de usuario', this.typeUser);
+    console.log('Tipo de usuario', this.typeUser);
     this.params.getValue()['search'] = this.params.getValue().text;
-    this.programmingGoodService
-      .getUsersProgramming(this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.usersData.load(response.data);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-      });
+    this.params.getValue()['filter.employeeType'] = this.typeUser;
+    this.userProcessService.getAll(this.params.getValue()).subscribe(data => {
+      this.usersData.load(data.data);
+      this.totalItems = data.count;
+      this.loading = false;
+    });
   }
 
   sendUser(user: any, selected: boolean) {

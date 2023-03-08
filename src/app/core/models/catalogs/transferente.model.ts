@@ -27,6 +27,7 @@ export interface ITransferente {
   indcap: string;
   active: string;
   risk: string;
+  nameAndId?: string;
 }
 
 export interface ITransferingLevelView {
