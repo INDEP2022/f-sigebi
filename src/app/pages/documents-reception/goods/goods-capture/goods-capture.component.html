@@ -146,7 +146,6 @@
           <input
             class="form-control"
             type="number"
-            pattern="[0-9]"
             formControlName="cantidad"
             (change)="amountChange()" />
         </form-field>
@@ -163,8 +162,8 @@
             [form]="assetsForm"
             control="destino"
             [data]="goodLabels"
-            value="id"
-            bindLabel="description"
+            value="labelNumber"
+            bindLabel="e_descripcion"
             label="Identificador de Destino"></ngx-select>
         </form-field>
       </div>
