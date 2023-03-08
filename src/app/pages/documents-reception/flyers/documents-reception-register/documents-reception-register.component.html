@@ -3,14 +3,12 @@
     <div class="d-flex justify-content-between">
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
-        <!-- <button
-          class="btn btn-secondary btn-sm active mr-2"
-          (click)="showTrackRecords()">
-          Antecedentes
-        </button> -->
-        <!-- <button class="btn btn-info btn-sm active" (click)="chooseOther()">
-          Seleccionar volante
-        </button> -->
+        <button
+          *ngIf="changeFlyerOption"
+          class="btn btn-primary active btn-sm"
+          (click)="chooseOther()">
+          Seleccionar Volante
+        </button>
       </div>
     </div>
   </div>
@@ -139,6 +137,7 @@
               <button
                 type="button"
                 class="ml-5 btn btn-secondary active btn-sm"
+                [disabled]="!canViewDocuments"
                 (click)="viewDocuments()">
                 <i class="bx bx-file"></i>
               </button>
@@ -247,7 +246,7 @@
           <form-check
             *ngIf="initialCondition != 'A'"
             class="col-md-6"
-            label="Desalojov"
+            label="Desalojo"
             for="desalojov-check">
             <input
               id="desalojov-check"
@@ -426,10 +425,19 @@
                 bindLabel="uniqueCve"
                 control="uniqueKey"
                 label="Clave única 3 niveles"
-                (change)="setUniqueKeyData($event)"
+                (change)="setUniqueKeyData($event, true)"
                 termMaxLength="5">
               </ngx-select>
             </form-field>
+
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openModalKeys()">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
+            </div>
 
             <form-field
               class="col-md-6"
@@ -447,14 +455,14 @@
               </ngx-select>
             </form-field>
 
-            <div class="col-md-2">
+            <!-- <div class="col-md-2">
               <button
                 type="button"
                 class="btn btn-secondary btn-sm active"
                 (click)="clearCityState()">
                 <i class="bx bxs-eraser bx-sm float-icon"></i>
               </button>
-            </div>
+            </div> -->
           </div>
 
           <div class="row pt-5">
@@ -502,6 +510,7 @@
                 control="stationNumber"
                 label="Emisora"
                 [searchOnInit]="true"
+                (change)="changeStation($event)"
                 termMaxLength="100">
               </ngx-select>
             </form-field>
@@ -678,7 +687,7 @@
             [form]="flyerCopyRecipientForm"
             [data]="users"
             (fetchItems)="getUsers($event)"
-            bindLabel="user"
+            bindLabel="userAndName"
             control="copyuser"
             label="En atención"
             [searchOnInit]="true"
@@ -692,7 +701,7 @@
             [form]="flyerCopyCppForm"
             [data]="usersCopy"
             (fetchItems)="getUsersCopy($event)"
-            bindLabel="user"
+            bindLabel="userAndName"
             control="copyuser"
             label="C.P.P."
             [searchOnInit]="true"
@@ -729,13 +738,6 @@
             pgrInterface ||
             satInterface
           ">
-          <!-- <button
-            type="button"
-            class="btn btn-primary active"
-            (click)="goodsCaptureCheck()"
-            [disabled]="procedureBlocked">
-            Siguiente
-          </button> -->
           <confirm-button
             text="Siguiente"
             loadingText="Cargando"

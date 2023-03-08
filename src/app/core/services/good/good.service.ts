@@ -72,6 +72,7 @@ export class GoodService implements ICrudMethods<IGood> {
   update(id: string | number, model: IGood): Observable<Object> {
     return this.goodRepository.update('good/good', id, model);
   }
+
   getByExpedientAndStatus(
     expedient: string | number,
     status: string,

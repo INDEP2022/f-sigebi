@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BatchService } from 'src/app/core/services/catalogs/batch.service';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -19,48 +21,25 @@ export class PropertyAdjudicationNotificationReportComponent
   extends BasePage
   implements OnInit
 {
+  batchList: any;
+  desc: any;
+  descType: string;
+  dataBatch: any;
+  totalItems: number = 0;
   form: FormGroup;
-
-  constructor(private fb: FormBuilder) {
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  constructor(
+    private fb: FormBuilder,
+    private batchService: BatchService,
+    private reportService: ReportService
+  ) {
     super();
   }
 
   settings4 = {
     ...TABLE_SETTINGS,
     actions: false,
-    columns: {
-      lotePublico: {
-        title: 'Lote Publico',
-        type: 'string',
-        sort: false,
-      },
-      descripcion: {
-        title: 'Lote Publico',
-        type: 'string',
-        sort: false,
-      },
-      cliente: {
-        title: 'Cliente',
-        type: 'string',
-        sort: false,
-      },
-      noOficio: {
-        title: 'Lote Publico',
-        type: 'string',
-        sort: false,
-      },
-      imprimir: {
-        title: 'Imprimir',
-        sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-          });
-        },
-      },
-    },
+    columns: { ...dataBatchColum },
     noDataMessage: 'No se encontrarón registros',
   };
 
@@ -68,6 +47,7 @@ export class PropertyAdjudicationNotificationReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getBatch();
   }
 
   prepareForm() {
@@ -86,10 +66,33 @@ export class PropertyAdjudicationNotificationReportComponent
       ccp2: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+  userRowSelect(event: any) {
+    this.reportService.getBatch(event.data.description).subscribe({
+      next: data => {
+        this.desc = data;
+        console.log(this.desc);
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  getBatch() {
+    this.loading = true;
+    this.batchService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.batchList = data;
+        this.dataBatch = this.batchList.data;
+        this.totalItems = data.count;
+        console.log(this.dataBatch);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
 
   confirm(): void {
     let params = {
-      DESTYPE: this.form.controls['firmante'].value,
+      DESTYPE: this.descType,
       P_EVENTO: this.form.controls['evento'].value,
     };
 
@@ -171,3 +174,25 @@ const EXAMPLE_DAT4 = [
     noOficio: 1,
   },
 ];
+export const dataBatchColum = {
+  id: {
+    title: 'id Lote',
+    type: 'string',
+    sort: false,
+  },
+  description: {
+    title: 'Description',
+    type: 'string',
+    sort: false,
+  },
+  numRegister: {
+    title: 'Número de registro',
+    type: 'number',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+};

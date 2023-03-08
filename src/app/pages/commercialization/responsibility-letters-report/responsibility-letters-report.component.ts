@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -13,6 +14,8 @@ export class ResponsibilityLettersReportComponent
   extends BasePage
   implements OnInit
 {
+  goodList: any;
+  dataGood: any;
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -25,16 +28,22 @@ export class ResponsibilityLettersReportComponent
     },
     noDataMessage: 'No se encontrarón registros',
   };
+  setting2 = {
+    ...this.settings,
+    actions: false,
+    columns: { ...PAY_RECEIPT_REPORT_COLUMNS },
+  };
 
   data = EXAMPLE_DATA;
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getGood();
   }
 
   prepareForm() {
@@ -56,7 +65,7 @@ export class ResponsibilityLettersReportComponent
       delegacion: [null, [Validators.required]],
       estado: [null, [Validators.required]],
       cp: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      // puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       parrafo1: [null, [Validators.pattern(STRING_PATTERN)]],
       parrafo2: [null, [Validators.pattern(STRING_PATTERN)]],
       parrafo3: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -89,8 +98,8 @@ export class ResponsibilityLettersReportComponent
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
 
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERCARTARESP.pdf?DESTYPE=${params.DESTYPE}&DOMICILIO=${params.DOMICILIO}&ID_LOTE=${params.ID_LOTE}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&PARRAFO2=${params.PARRAFO2}&PARRAFO3=${params.PARRAFO3}`;
-    //const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERCARTARESP.pdf?DESTYPE=${params.DESTYPE}&DOMICILIO=${params.DOMICILIO}&ID_LOTE=${params.ID_LOTE}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&PARRAFO2=${params.PARRAFO2}&PARRAFO3=${params.PARRAFO3}`;
+    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
@@ -101,6 +110,17 @@ export class ResponsibilityLettersReportComponent
   }
   cleanForm(): void {
     this.form.reset();
+  }
+  getGood() {
+    this.loading = true;
+    this.reportService.getGood().subscribe({
+      next: data => {
+        this.goodList = data;
+        this.dataGood = this.goodList.data;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 }
 
@@ -130,3 +150,17 @@ const EXAMPLE_DATA = [
     description: 'Lícito de bienes',
   },
 ];
+export const PAY_RECEIPT_REPORT_COLUMNS = {
+  id: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción del Bien',
+    sort: false,
+  },
+  numRegister: {
+    title: 'Numero de registro',
+    sort: false,
+  },
+};

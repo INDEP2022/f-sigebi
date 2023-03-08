@@ -19,6 +19,7 @@ import { ConsultationGoodsCommercialSalesComponent } from './consultation-goods-
     CommonModule,
     ConsultationGoodsCommercialRoutingModule,
     SharedModule,
+
     BsDatepickerModule,
   ],
   exports: [

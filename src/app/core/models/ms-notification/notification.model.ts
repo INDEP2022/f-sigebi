@@ -106,9 +106,9 @@ export interface INotificationInquiry {
   criminalCase: string;
   entFedKey: string;
   indiciadoNumber: number;
-  minpubNumber: number;
+  minpubNumber: number | string;
   cityNumber: number;
-  courtNumber: number;
+  courtNumber: number | string;
   transference: number;
   stationNumber: number;
   autorityNumber: number;

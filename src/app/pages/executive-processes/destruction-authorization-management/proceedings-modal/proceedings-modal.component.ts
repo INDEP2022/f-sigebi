@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-proceedings-modal',
@@ -17,7 +20,13 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   proceedingForm: ModelForm<IProccedingsDeliveryReception>;
   proceeding: IProccedingsDeliveryReception;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  today: Date;
+
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
+  ) {
     super();
   }
 
@@ -27,12 +36,21 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.proceedingForm = this.fb.group({
-      id: [null, []],
-      keysProceedings: [null, []],
-      elaborationDate: [null, []],
-      datePhysicalReception: [null, []],
-      captureDate: [null, []],
+      id: [null, [Validators.required]],
+      keysProceedings: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      datePhysicalReception: [null, [maxDate(new Date())]],
+      elaborationDate: [null, [Validators.required]],
+      captureDate: [null, [Validators.required]],
       statusProceedings: [null, []],
+      observations: [null, []],
+      universalFolio: [null, []],
+      elaborate: [null, [Validators.required]],
+      numFile: [null, [Validators.required]],
+      typeProceedings: ['RGA', [Validators.required]],
+      numDelegation1: [null, [Validators.required]],
     });
     if (this.proceeding != null) {
       this.edit = true;
@@ -49,11 +67,23 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    console.log('Crear');
+    this.loading = true;
+    this.proceedingsDeliveryReceptionService
+      .create(this.proceedingForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
-    console.log('Actualizar');
+    this.loading = true;
+    this.proceedingsDeliveryReceptionService
+      .update(this.proceeding.id, this.proceedingForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

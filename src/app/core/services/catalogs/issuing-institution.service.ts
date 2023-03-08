@@ -68,4 +68,13 @@ export class IssuingInstitutionService
       id
     );
   }
+  getOTClaveEntityFederativeByAvePrevia(
+    id: string | number
+  ): Observable<IOTClaveEntityFederativeByAsuntoSAT> {
+    const route = `catalog/api/v1/state-of-republic/otclave/`;
+    return this.issuingInstitutionRepository.getOTClaveEntityFederativeByAvePrevia(
+      this.route,
+      id
+    );
+  }
 }

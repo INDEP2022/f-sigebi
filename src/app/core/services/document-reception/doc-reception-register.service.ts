@@ -18,6 +18,8 @@ import {
 } from 'src/app/core/models/catalogs/transferente.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ConvertiongoodEndpoints } from '../../../common/constants/endpoints/ms-convertiongood-endpoints';
+import { DocumentsEndpoints } from '../../../common/constants/endpoints/ms-documents-endpoints';
+import { IDocuments } from '../../models/ms-documents/documents';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 import { DelegationService } from '../catalogs/delegation.service';
@@ -140,7 +142,17 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get<IListResponse<IUserAccessAreaRelational>>(
       UserEndpoints.SegAccessAreas,
       params
-    ).pipe(tap(() => (this.microservice = '')));
+    ).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(u => {
+            return { ...u, userAndName: `${u.user} - ${u.userDetail.name}` };
+          }),
+        };
+      }),
+      tap(() => (this.microservice = ''))
+    );
   }
 
   getUniqueKeyData(
@@ -152,6 +164,18 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
       tap(() => (this.microservice = ''))
     );
+  }
+
+  getUniqueKeyDataModal(
+    self?: DocReceptionRegisterService,
+    params?: string
+  ): Observable<IListResponse<ITransferingLevelView>> {
+    let partials = ENDPOINT_LINKS.Transferente.split('/');
+    self.microservice = partials[0];
+    const route = `${partials[1]}/transferring-levels-view`;
+    return self
+      .get<IListResponse<ITransferingLevelView>>(route, params)
+      .pipe(tap(() => (self.microservice = '')));
   }
 
   getGoods(params?: string): Observable<IListResponse<IGood>> {
@@ -193,5 +217,20 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get(`${UserEndpoints.GetUserName}/${delegation}`).pipe(
       tap(() => (this.microservice = ''))
     );
+  }
+
+  getDocuments(
+    self?: DocReceptionRegisterService,
+    params?: string
+  ): Observable<IListResponse<IDocuments>> {
+    self.microservice = DocumentsEndpoints.Documents;
+    return self
+      .get<IListResponse<IDocuments>>(DocumentsEndpoints.Documents, params)
+      .pipe(
+        tap(resp => {
+          this.microservice = '';
+          console.log(params, resp);
+        })
+      );
   }
 }

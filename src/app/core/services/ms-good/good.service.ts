@@ -112,7 +112,7 @@ export class GoodService extends HttpService {
   getGoodByStatusPDS(
     params?: ListParams | string
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}?filter.status=PDS`;
+    const route = `${GoodEndpoints.Good}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
   updateTracked(id: string | number, good: ITrackedGood) {
@@ -126,5 +126,14 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.Good}?filter.extDomProcess=TRANSFERENTE`;
     const route2 = `${GoodEndpoints.Good}?filter.goodId=2203409`;
     return this.get<IListResponse<IGood>>(route2, params);
+  }
+
+  getGoodByStatusPDSelect(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}?filter.status=PDS`,
+      params
+    );
   }
 }
