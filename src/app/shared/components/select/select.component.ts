@@ -1,12 +1,16 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -28,7 +32,7 @@ type Attr = { [key: string]: string };
   templateUrl: './select.component.html',
   styles: [],
 })
-export class SelectComponent<T> implements OnInit {
+export class SelectComponent<T> implements OnInit, AfterViewInit {
   @Input() form: FormGroup;
   @Input() control: string = '';
   @Input() value: string = '';
@@ -50,6 +54,10 @@ export class SelectComponent<T> implements OnInit {
   @Input() clearable = true;
   @Input() termMaxLength: string = null;
   @Input() showTooltip: boolean = false;
+  @Input() labelTemplate: TemplateRef<any>;
+  @Input() optionTemplate: TemplateRef<any>;
+  @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
+
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
@@ -68,6 +76,16 @@ export class SelectComponent<T> implements OnInit {
     }
     this.onSearch();
     this.checkMaxAttribute();
+  }
+
+  ngAfterViewInit() {
+    if (this.labelTemplate) {
+      this.ngSelect.labelTemplate = this.labelTemplate;
+    }
+
+    if (this.optionTemplate) {
+      this.ngSelect.optionTemplate = this.optionTemplate;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

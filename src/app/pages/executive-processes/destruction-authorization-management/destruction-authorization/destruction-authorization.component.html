@@ -26,6 +26,24 @@
               Nuevo
             </button>
           </div>
+          <div>
+            <button
+              (click)="openEmail()"
+              class="btn btn-primary active btn-sm ml-3"
+              *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
+              Cerrar Acta
+            </button>
+          </div>
+          <div class="ml-3" *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
+            <p class="d-flex justify-content-center">
+              <span class="text-success">ABIERTA</span>
+            </p>
+          </div>
+          <div class="ml-3" *ngIf="selectedRow?.statusProceedings == 'CERRADA'">
+            <p class="d-flex justify-content-center">
+              <span class="text-danger">CERRADA</span>
+            </p>
+          </div>
         </div>
       </div>
       <div [class]="loadingProceedings ? 'table-loading' : ''">
@@ -33,13 +51,13 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data"
+            [source]="proceedingsList"
             (edit)="openForm1($event.data)"
             (userRowSelect)="rowsSelected($event)"
             (rowSelect)="selectRow($event.data)"></ng2-smart-table>
         </div>
         <app-pagination
-          [params]="params"
+          [filterParams]="filterParams"
           [totalItems]="totalItems"></app-pagination>
       </div>
       <hr />
@@ -55,8 +73,8 @@
       </div>
       <div class="col-md-6">
         <div class="col-md-4">
-          <button class="btn btn-sm btn-primary active">
-            solicitud <i class="fa fa-print"></i>
+          <button class="btn btn-sm btn-primary active" (click)="report()">
+            Solicitud <i class="fa fa-print"></i>
           </button>
         </div>
         <div class="col-md-4">
@@ -65,7 +83,7 @@
           </button>
         </div>
         <div class="col-md-4">
-          <button class="btn btn-sm btn-primary active">
+          <button class="btn btn-sm btn-primary active" (click)="report()">
             imprimir <i class="fa fa-print"></i>
           </button>
         </div>
@@ -114,9 +132,17 @@
         </div>
       </div>
     </div>
+    <hr />
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar
+          [filterParams]="filterParams2"
+          [filterField]="searchFilter2"></search-bar>
+      </div>
+    </div>
     <div class="row pt-5">
       <div class="col-md-6">
-        <div class="row pt-5">
+        <div class="row">
           <div class="ch-content" header>
             <h5 class="title">Todos los Bienes en estado PDS</h5>
           </div>
@@ -128,7 +154,7 @@
                 [source]="goodPDS"></ng2-smart-table>
             </div>
             <app-pagination
-              [params]="params3"
+              [filterParams]="filterParams2"
               [totalItems]="totalItems3"></app-pagination>
           </div>
         </div>
@@ -139,10 +165,11 @@
             <h5 class="title">Bienes del acta #{{ selectedRow?.id }}</h5>
             <div class="col-md-5 buttons">
               <app-columns-select [(settings)]="settings2"></app-columns-select>
-              <div>
+              <div *ngIf="rowSelected">
                 <button
                   (click)="openForm2()"
-                  class="btn btn-primary active btn-sm ml-3">
+                  class="btn btn-primary active btn-sm ml-3"
+                  *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
                   Agregar bienes
                 </button>
               </div>
