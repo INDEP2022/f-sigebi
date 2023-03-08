@@ -10,4 +10,5 @@ export interface IStation {
   keyState: number | null;
   version: number | null;
   status: number | null;
+  nameAndId?: string;
 }

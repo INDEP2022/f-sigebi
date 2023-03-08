@@ -5,7 +5,9 @@
   <div body>
     <div class="row">
       <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
+        <search-bar
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
       </div>
     </div>
     <div class="ch-content">
@@ -35,7 +37,7 @@
               <li class="divider dropdown-divider"></li>
               <li role="menuitem">
                 <a class="dropdown-item" (click)="openBlackList()"
-                  >Lista Negra<i class="fa fa-ban text-danger mx-2"></i
+                  >Lista Negraa<i class="fa fa-ban text-danger mx-2"></i
                 ></a>
               </li>
               <li role="menuitem">
@@ -52,29 +54,6 @@
             </ul>
           </div>
         </div>
-        <!-- <div class="col-md-2">
-          <button
-            class="btn btn-success active btn-sm ml-3"
-            (click)="exportAllClients()">
-            Exportar a Excel
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-dark btn-sm active"
-            (click)="openBlackList()">
-            Lista Negra
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-light btn-sm active"
-            (click)="openWhiteList()">
-            Lista Blanca
-          </button>
-        </div>-->
         <app-columns-select [(settings)]="settings"> </app-columns-select>
       </div>
     </div>
@@ -86,7 +65,8 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="customers"
-            (edit)="openFormClients($event.data)">
+            (edit)="openFormClients($event.data)"
+            (userRowSelect)="rowsSelected($event)">
           </ng2-smart-table>
         </div>
       </div>
@@ -102,13 +82,13 @@
     </div>
 
     <div class="ch-content">
-      <h5 class="title">Representantes</h5>
+      <h5 class="title">Representantes por cliente</h5>
       <div class="col-md-8 buttons">
         <div class="col-md-2">
           <button
             class="btn btn-success active btn-sm ml-3"
             (click)="exportAllRepresentative()">
-            Exportar a Excel
+            Exportar todos
           </button>
         </div>
         <app-columns-select [(settings)]="settings2"> </app-columns-select>
@@ -120,7 +100,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="representative"
+            [source]="data"
             (edit)="openFormRepresentative($event.data)">
           </ng2-smart-table>
         </div>

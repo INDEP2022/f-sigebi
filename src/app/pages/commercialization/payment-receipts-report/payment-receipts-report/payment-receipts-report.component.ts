@@ -81,10 +81,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       remBalance: [null, [Validators.pattern(DOUBLE_PATTERN)]],
       iva: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
       total: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
-      receivedAmount: [
-        null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
-      ],
+      receivedAmount: [null, [Validators.required]],
 
       receipt: [null, [Validators.required]],
       date: [null, [Validators.required, maxDate(new Date())]],

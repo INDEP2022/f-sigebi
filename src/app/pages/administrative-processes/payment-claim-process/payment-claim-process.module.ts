@@ -11,6 +11,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { JustificationSharedComponent } from 'src/app/@standalone/shared-forms/justification-shared/justification-shared.component';
 import { PaymentClaimProcessRoutingModule } from './payment-claim-process-routing.module';
 import { ModalJustifier } from './payment-claim-process/modal-justifier.component';
 import { PaymentClaimProcessComponent } from './payment-claim-process/payment-claim-process.component';
@@ -35,6 +36,7 @@ import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
     TabsModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
+    JustificationSharedComponent,
   ],
 })
 export class PaymentClaimProcessModule {}
