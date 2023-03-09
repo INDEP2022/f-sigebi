@@ -41,6 +41,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() placeholder?: string = 'Buscar...';
   @Input() label?: string = 'Buscar:';
   @Input() filterField?: SearchBarFilter | null = null;
+  @Input() haveSearch = true;
   @Input() dynamicFilters?: SearchBarFilter[] = [];
   @Input() searchFilterCompatible: boolean = true;
   @Input() type: 'text' | 'number' = 'text';
@@ -78,6 +79,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     } else {
       const filterParams = this.filterParams.getValue();
       filterParams.page = 1;
+      if (!this.haveSearch) {
+        filterParams.search = '';
+      }
       filterParams.limit = 10;
       if (this.filterField) {
         filterParams.removeAllFilters();
