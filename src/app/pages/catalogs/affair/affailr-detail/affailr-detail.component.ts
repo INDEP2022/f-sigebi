@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-affailr-detail',
@@ -6,7 +7,14 @@ import { Component, OnInit } from '@angular/core';
   styles: [],
 })
 export class AffailrDetailComponent implements OnInit {
-  constructor() {}
+  title: string = 'Asunto';
+  edit: boolean = false;
+
+  constructor(private modalRef: BsModalRef) {}
 
   ngOnInit(): void {}
+
+  close() {
+    this.modalRef.hide();
+  }
 }
