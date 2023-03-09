@@ -91,4 +91,11 @@ export class AuthService {
   setReportFlag(flag: boolean) {
     this.reportAuthFlag = flag;
   }
+
+  getExtTypeUser(sub: string) {
+    const pathExtTypeUser = this.userType.concat(sub);
+    const token = this.accessToken();
+    let headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<any>(pathExtTypeUser, { headers });
+  }
 }
