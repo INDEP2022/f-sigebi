@@ -339,6 +339,19 @@ export const CATALOGS_ROUTES = [
         label: 'Tipo Siniestro',
         link: '/pages/catalogs/type-sinister',
       },
+      //Henry
+      {
+        label: 'Asuntos',
+        link: '/pages/catalogs/affair',
+      },
+      {
+        label: 'Asuntos Jurídicos',
+        link: '/pages/catalogs/legal-affair',
+      },
+      {
+        label: 'Transferentes por estado',
+        link: '/pages/catalogs/transferors',
+      },
     ],
   },
 ];
