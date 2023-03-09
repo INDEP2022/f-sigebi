@@ -68,6 +68,15 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.typeDoctoService.remove(typeDocto.id).subscribe({
+          next: response => {
+            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.getExample();
+          },
+          error: err => {
+            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+          },
+        });
       }
     });
   }
