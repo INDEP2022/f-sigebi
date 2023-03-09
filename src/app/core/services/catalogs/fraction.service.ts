@@ -32,6 +32,10 @@ export class FractionService implements ICrudMethods<IFraction> {
     return this.fractionRepository.update(this.route, id, model);
   }
 
+  newUpdate(model: IFraction): Observable<Object> {
+    return this.fractionRepository.newUpdate(this.route, model);
+  }
+
   remove(id: string | number): Observable<Object> {
     return this.fractionRepository.remove(this.route, id);
   }
