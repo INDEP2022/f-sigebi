@@ -16,14 +16,14 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./request-in-turn/request-in-turn.module'))
         .RequestInTurnModule,
-    data: { title: 'Solicitudes a turno' },
+    data: { title: 'Solicitudes a turno', screen: 'SOLICITUDMASIVA' },
   },
   {
     path: 'list',
     loadChildren: async () =>
       (await import('./view-of-requests/view-of-requests.module'))
         .ViewOfRequestsModule,
-    data: { title: 'Vista de las Solicitudes' },
+    data: { title: 'Vista de las Solicitudes', screen: 'LISTASOLICITUDES' },
   },
   {
     path: 'sampling-assets',
@@ -33,7 +33,7 @@ const routes: Routes = [
           './generate-sampling-supervision/sampling-assets/sampling-assets.module'
         )
       ).SamplingAssetsModule,
-    data: { title: 'Muestreo Bienes' },
+    data: { title: 'Muestreo Bienes', screen: 'MUESTREOBIENES' },
   },
   {
     path: 'verify-noncompliance',

@@ -274,6 +274,12 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     const request = event.data;
+    //si se optiene el nombre por el titulo
+    /*let array1 = request.title.split('(');
+    let array2 = array1[1].split(')');
+    let value = array2[0];
+    console.log(value);*/
+
     switch (event.data.process) {
       case 'SolicitudProgramacion':
         // en el caso de que sea una solicitud de programacion
