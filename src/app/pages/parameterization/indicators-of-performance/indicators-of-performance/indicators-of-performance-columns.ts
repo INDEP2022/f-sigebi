@@ -1,57 +1,62 @@
+import { IProcedureArea } from 'src/app/core/models/catalogs/indicators-parameter.model';
+
 export const INDICATORSOFPERFORMANCE_COLUMNS = {
-  consecutive: {
+  id: {
     title: 'Consecutivo',
     width: '10%',
     sort: false,
   },
-  desciption: {
+  description: {
     title: 'Descripción',
     width: '20%',
     sort: false,
   },
-  processingArea: {
+  procedureArea: {
     title: 'Área de Trámite',
+    valuePrepareFunction: (value: IProcedureArea) => {
+      return value != null ? value.description : '';
+    },
     width: '10%',
     sort: false,
   },
-  tagRecord: {
+  certificateType: {
     title: 'Etiqueta acta',
     width: '10%',
     sort: false,
   },
 };
 export const INDICATORSPERFORMANCE_COLUMNS = {
-  beginning: {
+  indicatorNumber: {
     title: 'page',
     width: '10%',
     sort: false,
   },
-  finished: {
+  initialDate: {
     title: 'Término',
     width: '10%',
     sort: false,
   },
-  limitDays: {
+  daysLimNumber: {
     title: 'Días Límite',
     width: '10%',
     sort: false,
   },
-  timeLimit: {
+  hoursLimNumber: {
     title: 'Hora Límite',
     width: '10%',
     sort: false,
   },
-  contractZone: {
+  contractZoneKey: {
     title: 'Zona Contrato',
     width: '10%',
     sort: false,
   },
-  startDate: {
+  initialDDate: {
     title: 'Fecha Ind.page',
     width: '20%',
     sort: false,
   },
-  endDate: {
+  endDDate: {
     title: 'Fecha Ind.Término',
     width: '20%',
     sort: false,

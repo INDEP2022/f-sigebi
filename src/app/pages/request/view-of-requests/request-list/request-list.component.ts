@@ -46,8 +46,8 @@ var usuario: IRequestList[] = [
     process: 'SolicitudeTransferencia',
   },
   {
-    title: 'Registo de solicitud (programar solicitud) con folio 45010',
-    noRequest: 45010,
+    title: 'Realizar programación con folio: R-METROPOLITANA-PROFECO-8409',
+    noRequest: 8409,
     numTask: 260302,
     noInstance: 820170,
     created: 'tester_nsbxt',
@@ -276,9 +276,9 @@ export class RequestListComponent extends BasePage implements OnInit {
     const request = event.data;
     switch (event.data.process) {
       case 'SolicitudProgramacion':
-        // en el caso de que sea una solicitud de programacion
+        // en el caso de que se retorne una solicitud de programación
         this.router.navigate([
-          'pages/request/perform-programming',
+          'pages/request/programming-request/return-to-programming/:id',
           event.data.noRequest,
         ]);
         break;

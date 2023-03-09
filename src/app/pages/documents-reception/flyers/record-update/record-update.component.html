@@ -1,6 +1,17 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Actualizaci&oacute;n de datos del expediente</h5>
+    <div class="d-flex justify-content-between">
+      <div>
+        <h5 class="title">Actualizaci&oacute;n de datos del expediente</h5>
+      </div>
+      <div>
+        <button
+          class="btn btn-primary active btn-sm"
+          (click)="returnToFlyers()">
+          Registro de Volantes
+        </button>
+      </div>
+    </div>
   </div>
   <div body>
     <form [formGroup]="flyerForm" class="form-material">

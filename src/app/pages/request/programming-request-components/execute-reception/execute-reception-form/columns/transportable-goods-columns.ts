@@ -1,5 +1,5 @@
 export const TRANSPORTABLE_GOODS = {
-  gestionNumber: {
+  id: {
     title: 'No° gestión',
     type: 'string',
     sort: false,
@@ -11,13 +11,13 @@ export const TRANSPORTABLE_GOODS = {
     sort: false,
   },
 
-  record: {
+  fileNumber: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
 
-  descriptionTransferent: {
+  goodDescription: {
     title: 'Descripción transferente',
     sort: false,
   },
@@ -28,7 +28,7 @@ export const TRANSPORTABLE_GOODS = {
     sort: false,
   },
 
-  transerAmount: {
+  transferenceQuantity: {
     title: 'Cantidad transferente',
     type: 'string',
     sort: false,
@@ -46,19 +46,19 @@ export const TRANSPORTABLE_GOODS = {
     sort: false,
   },
 
-  unitMedidSae: {
+  unitMeasure: {
     title: 'Unidad medida SAE',
     type: 'string',
     sort: false,
   },
 
-  stateTransference: {
+  physicalState: {
     title: 'Estado Físico transferente',
     type: 'string',
     sort: false,
   },
 
-  stateSae: {
+  physicalStateSae: {
     title: 'Estado Físico SAE',
     type: 'string',
     sort: false,

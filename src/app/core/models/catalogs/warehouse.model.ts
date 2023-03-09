@@ -1,6 +1,7 @@
 import { ICity } from './city.model';
 import { ILocality } from './locality.model';
 import { IMunicipality } from './municipality.model';
+import { IStateOfRepublic } from './state-of-republic.model';
 
 export interface IWarehouse {
   idWarehouse: number | null;
@@ -8,7 +9,7 @@ export interface IWarehouse {
   ubication: string;
   manager: string;
   registerNumber: number | null;
-  stateCode: number | null;
+  stateCode: IStateOfRepublic;
   cityCode: ICity;
   municipalityCode: IMunicipality;
   localityCode: ILocality;

@@ -118,6 +118,8 @@ export enum ENDPOINT_LINKS {
   TypeServices = 'catalog/type-services',
   Warehouse = 'catalog/warehouse',
   ZipCode = 'catalog/zip-code', //
+  IndicatorsParameter = 'parametergood/indicators-parameter',
+  DetailIndParameter = 'parametergood/detalle-ind-parametro',
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'parametergood/validadores-actas',
   parametergoodCat = 'parametergood/cat-motivosrev',
@@ -134,6 +136,8 @@ export enum ENDPOINT_LINKS {
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',
   DinamicTable = 'dinamic-tables/get-tvaltable5-by-table',
+  DinamicTable1 = 'dinamic-tables/tavaltable1',
+
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',

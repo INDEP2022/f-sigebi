@@ -17,7 +17,21 @@ import { SharedModule } from 'src/app/shared/shared.module';
   standalone: true,
   imports: [CommonModule, SharedModule, NgScrollbarModule],
   templateUrl: './select-list-filtered-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      .heigth-limit {
+        height: 52rem;
+      }
+
+      ng-scrollbar {
+        ::ng-deep {
+          .ng-scroll-viewport {
+            padding-right: 1em;
+          }
+        }
+      }
+    `,
+  ],
 })
 export class SelectListFilteredModalComponent
   extends BasePage
@@ -43,7 +57,9 @@ export class SelectListFilteredModalComponent
   haveSearch = true;
   showError: boolean = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
-  filters: DynamicFilterLike[] = []; // Input opcional para agregar filtros sin usar busqueda
+  filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
+  searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
+  selectOnClick: boolean = false; //Input opcional para seleccionar registro al dar click en la tabla
   @Output() onSelect = new EventEmitter<any>();
 
   constructor(private modalRef: BsModalRef) {
@@ -114,7 +130,8 @@ export class SelectListFilteredModalComponent
     if (this.filters.length > 0) {
       const params = new FilterParams();
       this.filters.forEach(f => {
-        if (f.value !== null) params.addFilter(f.field, f.value, f?.operator);
+        if (f.value !== null && f.value !== undefined)
+          params.addFilter(f.field, f.value, f?.operator);
       });
       this.filterParams.next(params);
     }
@@ -137,6 +154,10 @@ export class SelectListFilteredModalComponent
     console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
+    if (this.selectOnClick) {
+      this.onSelect.emit(this.selectedRow);
+      this.modalRef.hide();
+    }
   }
 
   confirm() {

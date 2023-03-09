@@ -61,12 +61,12 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
           width: '20%',
           sort: false,
         },
-        responsibleDelegation: {
+        manager: {
           title: 'Responsable',
           width: '10%',
           sort: false,
         },
-        manager: {
+        stateCode: {
           title: 'Entidad',
           width: '10%',
           sort: false,
@@ -129,7 +129,7 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
               : null,
             registerNumber: ware.registerNumber,
             responsibleDelegation: ware.responsibleDelegation,
-            stateCode: ware.stateCode,
+            stateCode: ware.stateCode ? ware.stateCode.descCondition : '',
             type: ware.type,
             ubication: ware.ubication,
           };

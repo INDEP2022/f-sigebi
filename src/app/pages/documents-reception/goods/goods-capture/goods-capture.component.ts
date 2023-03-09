@@ -59,7 +59,6 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     this.getInitalParameter().subscribe({
       next: () => this.initialParameterFound(),
     });
-    this.getAllGoodLabels().subscribe();
   }
 
   initialParameterFound() {
@@ -102,7 +101,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
         },
       });
   }
-   * 
+   *
    */
 
   // ? ---------- La pantalla es llamanda desde el menú
@@ -202,6 +201,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
           this.patchSatTransferValue();
           this.getNoms();
           this.getUnitsByClasifNum(clasifNum).subscribe();
+          this.getLabelsByClasifNum(clasifNum).subscribe();
         },
       });
     }
@@ -212,6 +212,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
           this.patchSatTransferValue();
           this.getNoms();
           this.getUnitsByClasifNum(clasifNum).subscribe();
+          this.getLabelsByClasifNum(clasifNum).subscribe();
         },
       });
     }
@@ -220,16 +221,20 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       this.getGoodTypesByClasifNum(clasifNum)
         .pipe(switchMap(() => this.getGoodFeaturesByClasif(clasifNum)))
         .subscribe({
-          next: () => this.getUnitsByClasifNum(clasifNum).subscribe(),
+          next: () => {
+            this.getUnitsByClasifNum(clasifNum).subscribe();
+            this.getLabelsByClasifNum(clasifNum).subscribe();
+          },
         });
     }
   }
 
   save() {
+    console.log(this.assetsForm.controls.cantidad);
     this.assetsForm.markAllAsTouched();
     this.assetsForm.updateValueAndValidity();
     if (!this.assetsForm.valid) {
-      this.showError('Debes llenar todos los campos obligatorios');
+      this.showError('El formulario no es válido!');
       return;
     }
     this.copyFeatures();
@@ -253,8 +258,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   async askMoreGoods() {
     const response = await this.alertQuestion(
       'success',
-      'Se agrego el bien al expediente',
-      '¿Decea agregar mas bienes?'
+      'Se agregó el bien al expediente',
+      '¿Desea agregar mas bienes?'
     );
     if (response.isConfirmed) {
       const fields = [

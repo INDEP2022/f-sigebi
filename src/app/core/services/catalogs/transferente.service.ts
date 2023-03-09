@@ -21,6 +21,10 @@ export class TransferenteService extends HttpService {
     return this.transferenteRepository.getAllPaginated(this.endpoint, params);
   }
 
+  getAllWithFilter(params?: string): Observable<IListResponse<ITransferente>> {
+    return this.transferenteRepository.getAllPaginated(this.endpoint, params);
+  }
+
   getById(id: string | number): Observable<ITransferente> {
     return this.transferenteRepository.getById(this.route, id);
   }
