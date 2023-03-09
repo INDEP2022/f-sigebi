@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
@@ -46,6 +46,14 @@ export class GoodService extends HttpService {
   updateWithoutId(good: IGood) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
+  }
+
+  updateGoodStatusMassive(goodNumbers: number[] | string[], status: string) {
+    return forkJoin(
+      goodNumbers.map(goodNumber => {
+        return this.updateGoodStatus(goodNumber, status);
+      })
+    );
   }
 
   updateGoodStatus(goodNumber: number | string, status: string) {

@@ -22,6 +22,7 @@ import { SELECT_SIZE } from 'src/app/common/constants/select-size';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from './default-select';
 
@@ -49,6 +50,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
   @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
+  @Input() operator = SearchFilter.EQ;
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
   @Input() clearable = true;
@@ -115,7 +117,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
     if (this.paramFilter === 'search') {
       filterParam.search = text ?? '';
     } else {
-      filterParam.addFilter(this.paramFilter, text ?? '');
+      filterParam.addFilter(this.paramFilter, text ?? '', this.operator);
     }
     this.fetchByParamsItems.emit(filterParam);
   }
