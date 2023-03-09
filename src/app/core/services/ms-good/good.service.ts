@@ -144,4 +144,14 @@ export class GoodService extends HttpService {
       params
     );
   }
+
+  getGoodsByExpedientAndStatus(
+    id: number | string,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}?filter.fileNumber=$eq:${id}&filter.status=RGA`,
+      params
+    );
+  }
 }

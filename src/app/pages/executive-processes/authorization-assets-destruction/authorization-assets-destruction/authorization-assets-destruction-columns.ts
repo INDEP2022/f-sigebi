@@ -25,16 +25,17 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
   },
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
   insertRegDate: {
     title: 'Fecha',
     type: 'string',
     sort: false,
   },
-  goodStatus: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
+
   extDomProcess: {
     title: 'Ext. Dom',
     type: 'string',
