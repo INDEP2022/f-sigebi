@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -158,14 +158,13 @@ export class SirsaePaymentConsultationListComponent
 
   constructor(
     private fb: FormBuilder,
-    private interfaceSirsae: InterfaceSirsaeService // private goodService: GoodService, // private bankAccountService: BankAccountService
+    private interfaceSirsaeService: InterfaceSirsaeService // private goodService: GoodService, // private bankAccountService: BankAccountService
   ) {
     super();
     this.tableSource = new LocalDataSource(this.columns);
   }
 
   ngOnInit(): void {
-    // this.prepareForm();
     this.getStatusesMov();
     this.consultSettings.columns = CONSULT_SIRSAE_COLUMNS;
     this.params
@@ -174,7 +173,7 @@ export class SirsaePaymentConsultationListComponent
   }
 
   getStatusesMov(): void {
-    this.interfaceSirsae
+    this.interfaceSirsaeService
       .getStatusesMov({ limit: 100, page: 1 })
       .subscribe(res => {
         console.log(res);
@@ -182,78 +181,11 @@ export class SirsaePaymentConsultationListComponent
       });
   }
 
-  // subscribeBankAccountInput() {
-  //   // this.input$
-  //   //   .pipe(
-  //   //     debounceTime(200),
-  //   //     distinctUntilChanged(),
-  //   //     switchMap((text: string) => {
-  //   //     })
-  //   //   )
-  //   //   .subscribe();
-  // }
-
-  // bankAccountObservable(params: { [key: string]: string }): Observable<any> {
-  //   if (!params) {
-  //     return this.bankAccountService.getAll({});
-  //   }
-  //   if (!isNaN(params as any)) {
-  //     return this.bankAccountService.getById(params);
-  //   }
-  //   return this.bankAccountService.getAll({});
-  // }
-
   getSearch() {
     this.loading = true;
     console.log(this.params.getValue());
     this.loading = false;
   }
-
-  // private prepareForm(): void {
-  //   this.consultForm = this.fb.group({
-  //     id: [null, [Validators.required]],
-  //     startDate: [null, [Validators.required]],
-  //     endDate: [null, [Validators.required]],
-  //   });
-  //   this.filterForm = this.fb.group({
-  //     bank: [null],
-  //     status: [null],
-  //   });
-  // }
-
-  // getGoods(params: ListParams) {
-  //   // if (params.text == '') {
-  //   //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
-  //   // } else {
-  //   //   const id = parseInt(params.text);
-  //   //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
-  //   //   this.goodItems = new DefaultSelect(item[0], 1);
-  //   // }
-  //   if (params.text === '') {
-  //     this.goodService.getAll(params).subscribe(res => {
-  //       this.goodItems = new DefaultSelect(res.data, 5);
-  //     });
-  //     return;
-  //   } else if (!isNaN(params.text as any)) {
-  //     this.goodService.getById(params.text).subscribe(res => {
-  //       this.goodItems = new DefaultSelect([res], 1);
-  //     });
-  //     return;
-  //   }
-  //   this.goodItems = new DefaultSelect([], 0);
-  // }
-
-  // getBankAccount(params: ListParams) {
-  //   if (params.text) {
-  //     this.bankAccountService.getAll(params).subscribe(res => {
-  //       // this.bankAccountItems = new DefaultSelect(res.data, 5);
-  //     });
-  //   }
-  // }
-
-  // filterBank(query: string) {
-  //   this.addFilter(query, 'bank');
-  // }
 
   filterStatus(query: string) {
     this.addFilter(query, 'status');
@@ -290,25 +222,64 @@ export class SirsaePaymentConsultationListComponent
   }
 
   resetFilter() {
-    this.tableSource.reset();
-    this.tableSource.refresh();
+    this.tableSource.empty().then(res => {
+      this.tableSource.refresh();
+    });
+    this.form.reset();
   }
 
   consult() {
     console.log(this.form.value);
+    if (this.tableSource.count() > 0) {
+      this.tableSource.empty().then(res => {
+        this.tableSource.refresh();
+      });
+    }
     this.loading = true;
-    this.columns = this.getData();
-    this.totalItems = this.columns.length;
-    this.tableSource = new LocalDataSource(this.columns);
-    // this.goodSelected = true;
-    this.loading = false;
+    this.interfaceSirsaeService
+      .getAccountDetail(this.generateParams().getParams())
+      .pipe(
+        catchError(() => {
+          this.loading = false;
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: res => {
+          if (!res) {
+            this.tableSource.reset();
+            this.tableSource.refresh();
+            return;
+          }
+          console.log(res);
+          this.columns = res.data;
+          this.totalItems = this.columns.length;
+          this.tableSource = new LocalDataSource(this.columns);
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
 
-  generateParams(): void {
+  generateParams(): FilterParams {
     const filters = new FilterParams();
-    SearchFilter;
-    filters.addFilter('id', this.form.value.id);
+    const { reference, startDate, endDate, bank, status } = this.form.value;
+
+    filters.addFilter('reference', reference, SearchFilter.LIKE);
+    filters.addFilter('startDate', startDate, SearchFilter.GTE);
+    filters.addFilter('endDate', endDate, SearchFilter.LTE);
+
+    if (bank) {
+      filters.addFilter('bank', bank);
+    }
+    if (status) {
+      filters.addFilter('status', status);
+    }
+    return filters;
   }
+
   getData() {
     return this.paymentTestData;
   }

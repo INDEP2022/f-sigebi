@@ -21,7 +21,7 @@
               <div class="col-md-3 col-12">
                 <form-field
                   [control]="form.get('startDate')"
-                  label="Fecha page">
+                  label="Fecha inicio">
                   <input
                     type="text"
                     formControlName="startDate"
@@ -42,13 +42,19 @@
                 </form-field>
               </div>
               <div class="col-12 col-md-6">
-                <form-field [control]="form.get('bank')">
-                  <app-banks-shared
-                    [form]="form"
-                    bankField="bank"></app-banks-shared>
+                <form-field [control]="form.get('bank')" label="Banco">
+                  <ng-custom-select
+                    formControlName="bank"
+                    class="form-control"
+                    path="interfacesirsae/api/v1/banks-sirsae"
+                    paramSearch="name_bank"
+                    prefixSearch="$ilike"
+                    value="id">
+                    <ng-template let-item>{{ item.name_bank }}</ng-template>
+                  </ng-custom-select>
                 </form-field>
               </div>
-              <div class="col-12 col-md-6 mt-3">
+              <div class="col-12 col-md-6">
                 <form-field [control]="form.get('status')" label="Estatus Mov.">
                   <ng-select
                     formControlName="status"
@@ -84,35 +90,6 @@
         </div>
       </form>
     </div>
-    <!-- <div class="row mt-5">
-      <div
-        class="ms-n2 mb-2 pointer"
-        (click)="toggleFilter = !toggleFilter"
-        [attr.aria-expanded]="!toggleFilter"
-        aria-controls="collapseFilter">
-        <i
-          class="bx bx-chevron-down bx-md float-icon-md"
-          [ngClass]="{
-            'rotate-down': toggleFilter,
-            'rotate-up': !toggleFilter
-          }"></i>
-        <h6 class="d-inline">Filtros</h6>
-      </div>
-      <hr class="mw-98" />
-      <form class="form-material mb-0" [formGroup]="form">
-        <div
-          class="row mt-5"
-          id="collapseFilter"
-          [isAnimated]="true"
-          [collapse]="!toggleFilter">
-          <div class="col-sm-12 col-md-4">
-            <button class="btn btn-sm btn-info active" (click)="resetFilter()">
-              Resetear
-            </button>
-          </div>
-        </div>
-      </form>
-    </div> -->
     <div class="mt-5">
       <div class="d-flex justify-content-between">
         <div class="form-material col-md-5">

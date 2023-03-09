@@ -13,8 +13,8 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor,
+  FormsModule,
   NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
 } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import {
@@ -31,7 +31,7 @@ import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, NgSelectModule, CommonModule],
+  imports: [FormsModule, NgSelectModule, CommonModule],
   selector: 'ng-custom-select',
   templateUrl: './custom-select.component.html',
   styles: [],
@@ -54,15 +54,13 @@ export class CustomSelectComponent
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
   @Input() paramSearch: string = 'text';
-  @Input() placeholder: string = 'Search';
+  @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
-
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
   @Input() moreParams: { [key: string]: any } = {};
   @Output() valueChange = new EventEmitter<any>();
   input$ = new Subject<string>();
-  // input$ = new FormControl('');
   items: any[] = [];
   page: number = 1;
   isLoading: boolean = false;
@@ -76,9 +74,10 @@ export class CustomSelectComponent
 
   ngOnInit(): void {
     this.onSearch();
-    // if (this.isLoadInOnInit) {
-    //   this.input$.next('');
-    // }
+    if (this.isLoadInOnInit) {
+      console.log('load');
+      this.input$.next('');
+    }
   }
 
   ngOnDestroy(): void {
@@ -103,12 +102,10 @@ export class CustomSelectComponent
     this.isDisabled = isDisabled;
   }
 
-  onCurrencyChange(event: any) {
-    console.log(event);
-    this.selectedItem = event?.[this.value];
-
-    this.onChange?.(this.selectedItem);
-    this.valueChange.emit(event);
+  onSelectChange(event: any) {
+    const data = this.items.find(item => item[this.value] === event);
+    this.onChange?.(event);
+    this.valueChange.emit(data);
   }
 
   getItemsObservable(text: string = '') {
@@ -147,7 +144,8 @@ export class CustomSelectComponent
     this.getItemsObservable(text).subscribe({
       next: resp => {
         this.isLoading = false;
-        this.items = this.getDataForPath(resp);
+        const items = this.getDataForPath(resp);
+        this.items = [...this.items, ...items];
       },
       error: err => {
         this.isLoading = false;
@@ -163,10 +161,10 @@ export class CustomSelectComponent
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((text: string) => {
-          if (!text) {
-            return of(this.items);
-          }
-          console.log(text);
+          // if (!text) {
+          //   return of(this.items);
+          // }
+          // console.log(text);
           this.page = 1;
           this.isLoading = true;
           return this.getItemsObservable(text);

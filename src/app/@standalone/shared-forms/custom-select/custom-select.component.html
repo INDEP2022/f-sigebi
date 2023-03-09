@@ -1,4 +1,3 @@
-<!-- [clearable]="true" -->
 <ng-select
   #select
   [virtualScroll]="true"
@@ -6,13 +5,14 @@
   notFoundText="No se encontraron elementos"
   typeToSearchText="Escriba 3 o mas caracteres"
   [loading]="isLoading"
-  (change)="onCurrencyChange($event)"
+  (change)="onSelectChange($event)"
   (scrollToEnd)="fetchMore(select.searchTerm)"
   [typeahead]="input$"
   [placeholder]="placeholder"
   [closeOnSelect]="true"
+  [(ngModel)]="selectedItem"
   [hideSelected]="true">
-  <ng-option *ngFor="let item of items" [value]="item">
+  <ng-option *ngFor="let item of items" [value]="item[value]">
     <ng-container
       [ngTemplateOutlet]="template"
       [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
