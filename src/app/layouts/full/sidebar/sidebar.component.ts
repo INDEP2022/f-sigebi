@@ -42,17 +42,17 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    const roles = this.authService.accessRoles();
-    roles.some((rol: any) =>
-      rol.menus.some(
-        (menu: any) => {
-          this.menus.push(menu);
-          console.log(menu);
-        }
-        //menu.screen === screenId &&
-        //menu.permissions[permission] == PERMISSION_ENABLED
-      )
-    );
+    // const roles = this.authService.accessRoles();
+    // roles.some((rol: any) =>
+    //   rol.menus.some(
+    //     (menu: any) => {
+    //       this.menus.push(menu);
+    //       console.log(menu);
+    //     }
+    //     //menu.screen === screenId &&
+    //     //menu.permissions[permission] == PERMISSION_ENABLED
+    //   )
+    // );
     this.initialize();
   }
 
@@ -191,12 +191,13 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
         menu.id = id;
         id++;
       }
-      console.log(this.menus);
-      let exist = this.menus.findIndex(menuCA => menuCA.name == menu.label);
-      console.log(exist);
-      if (exist !== -1) {
-        this.menuItems.push(menu);
-      }
+      this.menuItems.push(menu);
+      // console.log(this.menus);
+      // let exist = this.menus.findIndex(menuCA => menuCA.name == menu.label);
+      // console.log(exist);
+      // if (exist !== -1) {
+      //   this.menuItems.push(menu);
+      // }
     });
   }
   private setParentId(menuItem: IMenuItem, id: number): number {
