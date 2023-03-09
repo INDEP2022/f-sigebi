@@ -45,6 +45,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.fractionForm = this.fb.group({
+      id: [null, [Validators.required]],
       code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       level: [null, [Validators.required]],
       description: [
@@ -83,6 +84,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
+      parentId: [null],
     });
 
     if (this.fraction != null) {
@@ -125,6 +127,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log(this.fractionForm.value);
     this.fractionService.create(this.fractionForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -132,12 +135,11 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    this.fractionService
-      .update(this.fraction.id, this.fractionForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    console.log(this.fractionForm.value);
+    this.fractionService.newUpdate(this.fractionForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   close() {

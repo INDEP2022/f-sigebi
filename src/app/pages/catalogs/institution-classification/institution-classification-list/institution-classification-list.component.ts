@@ -79,6 +79,15 @@ export class InstitutionClassificationListComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        console.log(institution);
+        this.institutionService.remove(institution.id).subscribe(
+          res => {
+            this.getInstitutions();
+          },
+          err => {
+            this.loading = false;
+          }
+        );
       }
     });
   }
