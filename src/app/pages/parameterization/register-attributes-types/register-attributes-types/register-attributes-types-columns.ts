@@ -1,10 +1,10 @@
 export const REGISTER_ATT_TYPES_COLUMNS = {
-  classifGoodNumber: {
+  /*classifGoodNumber: {
     title: 'No. Clasificación Bien',
     sort: false,
-  },
+  },*/
   columnNumber: {
-    title: 'No. Columna',
+    title: 'Clave',
     sort: false,
   },
   attribute: {
@@ -15,13 +15,31 @@ export const REGISTER_ATT_TYPES_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  required: {
-    title: 'Requerido',
-    sort: false,
-  },
   dataType: {
     title: 'Tipo de dato',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'N') return 'Numérico';
+      if (value == 'V') return 'Alfanumérico';
+      if (value == 'D') return 'Fecha';
+      if (value == 'F') return 'Flotante';
+
+      return value;
+    },
+  },
+  tableCd: {
+    title: 'Tabla de soporte',
+    sort: false,
+  },
+  required: {
+    title: 'Requerido',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'N') return 'NO ';
+      if (value == 'S') return 'SI';
+
+      return value;
+    },
   },
   length: {
     title: 'Largo',
@@ -33,10 +51,6 @@ export const REGISTER_ATT_TYPES_COLUMNS = {
   },
   accessKey: {
     title: 'Clave acceso',
-    sort: false,
-  },
-  tableCd: {
-    title: 'Tabla de soporte',
     sort: false,
   },
   typeAct: {

@@ -1,7 +1,9 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">OFICIO DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N</h5>
+      <h5 class="title">
+        OFICIOS DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
+      </h5>
     </div>
   </div>
 
@@ -141,7 +143,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data"
+              [source]="goodsList"
               (userRowSelect)="selectRow($event.data)">
             </ng2-smart-table>
           </div>

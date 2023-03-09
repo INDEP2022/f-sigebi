@@ -33,11 +33,14 @@ export class CatFinancialInformationAttributesComponent
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: 'Acciones',
+        columnTitle: 'Accione',
+        add: true,
         edit: true,
         delete: true,
         position: 'right',
       },
+
+      //hideSubHeader: false,
       columns: { ...FINANCIAL_INFO_ATTR_COLUMNS },
     };
   }
@@ -80,7 +83,7 @@ export class CatFinancialInformationAttributesComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(attributesFinancialInfo.id);
