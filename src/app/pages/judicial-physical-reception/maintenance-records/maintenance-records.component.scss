@@ -43,7 +43,7 @@
   }
 }
 
-:host ::ng-deep app-pagination {
+:host .ch-content ::ng-deep app-pagination {
   .paginator-page-size {
     display: none !important;
   }

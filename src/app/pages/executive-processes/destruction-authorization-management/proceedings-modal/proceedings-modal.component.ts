@@ -36,7 +36,7 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.proceedingForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null, []],
       keysProceedings: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

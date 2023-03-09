@@ -66,7 +66,8 @@ export class LegendsListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(legend.id);
+        console.log(legend);
+        /* this.delete(legend.id); */
         Swal.fire('Borrado', '', 'success');
       }
     });

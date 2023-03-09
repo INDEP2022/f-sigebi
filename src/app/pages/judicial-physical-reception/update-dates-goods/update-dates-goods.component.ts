@@ -15,6 +15,7 @@ import { firstFormatDate } from 'src/app/shared/utils/date';
 export class UpdateDatesGoodsComponent implements OnInit {
   @Input() statusActaValue: string;
   @Input() data: any[];
+  selectedsForUpdate: any[] = [];
   @Output() updateGoodEvent = new EventEmitter();
   constructor(private modalService: BsModalService) {}
 
@@ -33,14 +34,13 @@ export class UpdateDatesGoodsComponent implements OnInit {
           this.data.map(x => {
             return {
               ...x,
-              fec_aprobacion_x_admon: firstFormatDate(new Date(rangoFecha[0])),
-              fec_indica_usuario_aprobacion: firstFormatDate(
+              approvedDateXAdmon: firstFormatDate(new Date(rangoFecha[0])),
+              dateIndicatesUserApproval: firstFormatDate(
                 new Date(rangoFecha[1])
               ),
             };
           })
         );
-        // this.selectedsForUpdate = [...this.data];
       }
     });
   }

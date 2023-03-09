@@ -7,16 +7,20 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
+
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IProceedingInfo } from './components/proceeding-info/models/proceeding-info';
 
 @Component({
   selector: 'app-maintenance-records',
   templateUrl: './maintenance-records.component.html',
-  styleUrls: ['maintenance-records.scss'],
+  styleUrls: ['maintenance-records.component.scss'],
 })
 export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   itemsSelect = new DefaultSelect();
@@ -25,57 +29,85 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   infoForm: IProceedingDeliveryReception;
   formValue: IProceedingInfo;
   filterParams = new FilterParams();
-  // settings = {
-  //   ...TABLE_SETTINGS,
-  //   pager: {
-  //     display: false,
-  //   },
-  //   hideSubHeader: true,
-  //   actions: false,
-  //   selectedRowIndex: -1,
-  //   mode: 'external',
-  //   columns: {
-  //     noBien: {
-  //       title: 'No Bien',
-  //       type: 'string',
-  //       sort: false,
-  //     },
-  //     cantidad: {
-  //       title: 'Cantidad',
-  //       type: Date,
-  //       sort: false,
-  //     },
-  //     descripcion: {
-  //       title: 'Descripcion',
-  //       type: 'string',
-  //       sort: false,
-  //     },
-  //     fechaAprobacion: {
-  //       title: 'Fecha Aprobacion',
-  //       type: Date,
-  //       sort: false,
-  //     },
-  //     usuarioAprobado: {
-  //       title: 'Usuario Aprobado por Admon',
-  //       type: 'string',
-  //       sort: false,
-  //     },
-  //     fechaIndicaAprobacion: {
-  //       title: 'Fecha Indica Usuario Aprobacion',
-  //       type: Date,
-  //       sort: false,
-  //     },
-  //   },
-  //   noDataMessage: 'No se encontrarón registros',
-  // };
 
-  data = EXAMPLE_DATA;
+  data: IDetailProceedingsDeliveryReception[] = [];
+  statusActa = 'CERRADA';
+  goodParams = new ListParams();
+  loadingGoods = true;
+  totalGoods = 0;
 
+  rowsSelected: any[];
   constructor(
     private fb: FormBuilder,
-    private proceedingService: ProceedingsDeliveryReceptionService
+    private proceedingService: ProceedingsDeliveryReceptionService,
+    private detailService: ProceedingsDetailDeliveryReceptionService
   ) {
     super();
+    this.settings = {
+      ...this.settings,
+      selectMode: 'multi',
+      mode: 'inline',
+      edit: {
+        editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+        saveButtonContent:
+          '<i class="fa fa-solid fa-check text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="fa fa-solid fa-ban text-danger mx-2"></i>',
+        confirmSave: true,
+      },
+      columns: {
+        numberGood: {
+          title: 'N° Bien',
+          sort: false,
+          editable: false,
+        },
+        amount: {
+          title: 'Cantidad',
+          sort: false,
+          editable: false,
+        },
+        description: {
+          title: 'Descripción',
+          sort: false,
+          editable: false,
+        },
+        approvedDateXAdmon: {
+          title: 'Fec. Aprobación',
+          sort: false,
+          editable: false,
+        },
+        approvedUserXAdmon: {
+          title: 'Usuario Aprobo por Admon',
+          sort: false,
+          editable: false,
+        },
+        dateIndicatesUserApproval: {
+          title: 'Fec. Indica Usuario Aprobación',
+          sort: false,
+          editable: false,
+        },
+        approvedXAdmon: {
+          title: 'Apr.',
+          sort: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+              data.row.to = data.toggle;
+            });
+          },
+        },
+        received: {
+          title: 'Rec.',
+          sort: false,
+          type: 'custom',
+          editable: false,
+          renderComponent: CheckboxElementComponent,
+        },
+      },
+    };
     this.params.value.limit = 1;
   }
 
@@ -103,11 +135,32 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           this.infoForm = response.data[0];
+          this.statusActa = this.infoForm.statusProceedings;
           this.totalItems = response.count;
           this.loading = false;
+          this.getGoods();
         },
         error: error => {
           this.loading = false;
+        },
+      });
+    }
+  }
+
+  getGoods() {
+    if (this.infoForm && this.infoForm.id) {
+      const filterParams = new FilterParams();
+      filterParams.limit = this.goodParams.limit;
+      filterParams.page = this.goodParams.page;
+      filterParams.addFilter('numberProceedings', this.infoForm.id);
+      this.detailService.getAll3(filterParams.getParams()).subscribe({
+        next: response => {
+          this.data = response.data;
+          this.totalGoods = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => {
+          this.loadingGoods = false;
         },
       });
     }
@@ -151,7 +204,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       return true;
     }
     if (cveActa) {
-      this.filterParams.addFilter('keysProceedings', cveActa);
+      this.filterParams.addFilter('keysProceedings', cveActa.trim());
       return true;
     }
     this.addFilter('numFile', numFile);
@@ -188,7 +241,10 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       comptrollerWitness,
       SearchFilter.ILIKE
     );
-    return true;
+    if (this.filterParams.getFilterParams()) {
+      return true;
+    }
+    return false;
   }
 }
 
