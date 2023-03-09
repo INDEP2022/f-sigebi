@@ -40,6 +40,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   layousthList: IComerLayoutsH[] = [];
   totalItems2: number = 0;
   lay: any;
+  allLayouts: any;
   valid: boolean = false;
   layout: IComerLayouts;
   provider: any;
@@ -94,10 +95,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getByIdH(event.data.id).subscribe({
       next: data => {
         this.idLayout = data.id;
+        this.totalItems = data.count;
         this.layoutDuplicated = event.data;
         console.log(this.idLayout);
-        this.getLayouts();
-        console.log(this.layoutDuplicated);
+        console.log(data);
         this.valid = true;
       },
       error: error => {
@@ -107,6 +108,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   // userRowStructure(event: any) {
   //   this.layoutsConfigService.getById(this.params.getValue()).subscribe({
   //     next: data => {
@@ -206,27 +208,27 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     );
   }
-  // showDeleteAlert(layout: IComerLayouts) {
-  //   this.alertQuestion(
-  //     'warning',
-  //     'Eliminar',
-  //     'Desea eliminar este registro?'
-  //   ).then(question => {
-  //     if (question.isConfirmed) {
-  //       this.layoutsConfigService.remove(layout.idLayout).subscribe({
-  //         next: data => {
-  //           this.loading = false;
-  //           this.onLoadToast('success', 'Detalle de layout eliminado', '');
-  //           this.getLayouts();
-  //         },
-  //         error: error => {
-  //           this.onLoadToast('error', 'No se puede eliminar registro', '');
-  //           this.loading = false;
-  //         },
-  //       });
-  //     }
-  //   });
-  // }
+  showDeleteAlert(layout: IComerLayouts) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.layoutsConfigService.remove(layout.idLayout).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Detalle de layout eliminado', '');
+            this.getLayouts();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.loading = false;
+          },
+        });
+      }
+    });
+  }
   // rowClassFunction({ row }: { row: any; }): any {
   //   console.log("\nRow is ::: ", row.data);
   //   if (row.data == '') {
@@ -290,12 +292,12 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       edit: {
         confirmSave: true,
       },
-      // delete: {
-      //   confirmDelete: true,
-      //   deleteButtonContent: 'Delete data',
-      //   saveButtonContent: 'save',
-      //   cancelButtonContent: 'cancel',
-      // },
+      delete: {
+        confirmDelete: true,
+        deleteButtonContent: 'Delete data',
+        saveButtonContent: 'save',
+        cancelButtonContent: 'cancel',
+      },
       add: {
         confirmCreate: true,
       },

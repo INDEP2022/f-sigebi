@@ -90,21 +90,22 @@ export class LayoutsConfigurationModalComponent
       console.error('Layout no existe');
     }
   }
-
   update() {
     this.alertQuestion(
       'warning',
       'Actualizar',
-      'Desea actualizar este registro?'
+      'Desea actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService.update(this.providerForm.value).subscribe({
-          next: data => this.handleSuccess(),
-          error: error => {
-            this.onLoadToast('error', 'existe', '');
-            this.loading = false;
-          },
-        });
+        this.layoutsConfigService
+          .update(this.provider.id, this.providerForm.value)
+          .subscribe({
+            next: data => this.handleSuccess(),
+            error: error => {
+              this.onLoadToast('error', 'layout', '');
+              this.loading = false;
+            },
+          });
       }
     });
   }

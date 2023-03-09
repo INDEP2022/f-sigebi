@@ -177,16 +177,16 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
-  idLayout: {
-    title: 'Layout',
-    type: 'number',
-    sort: false,
-  },
-  idConsec: {
-    title: 'id',
-    type: 'number',
-    sort: false,
-  },
+  // idLayout: {
+  //   title: 'Layout',
+  //   type: 'number',
+  //   sort: false,
+  // },
+  // idConsec: {
+  //   title: 'id',
+  //   type: 'number',
+  //   sort: false,
+  // },
   position: {
     title: 'Posición',
     type: 'number',
@@ -241,9 +241,47 @@ export const LAYOUTS_COLUMNS6 = {
 
 export const LAYOUTS_COLUMNS56 = {
   idLayout: {
-    title: 'idLayout',
-    type: 'number',
-    sort: false,
+    id: {
+      title: 'Id',
+      type: 'number',
+      sort: false,
+    },
+    descLayout: {
+      title: 'Descripción',
+      type: 'string',
+      sort: false,
+    },
+    screenKey: {
+      title: 'Pantalla',
+      type: 'string',
+      sort: false,
+    },
+    table: {
+      title: 'Tabla o Vista',
+      type: 'string',
+      sort: false,
+    },
+    criterion: {
+      title: 'Filtro de Selección',
+      type: 'string',
+      sort: false,
+    },
+    registryNumber: {
+      title: 'Número de registro',
+      type: 'number',
+      sort: false,
+    },
+    indActive: {
+      title: 'Activo',
+      sort: false,
+      type: 'custom',
+      renderComponent: CheckboxElementComponent,
+      onComponentInitFunction(instance: any) {
+        instance.toggle.subscribe((data: any) => {
+          data.row.to = data.toggle;
+        });
+      },
+    },
   },
   idConsec: {
     title: 'id Consec',

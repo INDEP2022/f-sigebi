@@ -164,7 +164,8 @@
           [attr.class]="'table-bordered'"
           [settings]="settings6"
           [source]="layoutsList"
-          (edit)="openForm($event.data)"></ng2-smart-table>
+          (edit)="openForm($event.data)"
+          (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
       </div>
       <div class="row mt-5 d-flex justify-content-center">
         <app-pagination

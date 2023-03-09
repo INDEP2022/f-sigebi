@@ -49,8 +49,12 @@ export class LayoutsConfigService extends HttpService {
     return this.htpp.post(url, layout);
   }
 
-  update(layout: IComerLayouts) {
-    const route = `${this.endpoint}`;
+  // update(layout: IComerLayouts) {
+  //   const route = `${this.endpoint}`;
+  //   return this.put(route, layout);
+  // }
+  update(id: string | number, layout: IComerLayouts) {
+    const route = `${this.endpoint}/${id}`;
     return this.put(route, layout);
   }
   findOne(id: number) {
