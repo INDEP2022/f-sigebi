@@ -17,11 +17,8 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('personNumber')" label="No Persona">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="personNumber" />
+          <form-field [control]="form.get('id')" label="No Persona">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-10">
