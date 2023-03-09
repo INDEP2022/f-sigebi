@@ -7,6 +7,7 @@ import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.mod
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 import { EventEmitter, Output } from '@angular/core';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
@@ -49,6 +50,7 @@ export class RequestInTurnFormComponent implements OnInit {
   stationService = inject(StationService);
   affairService = inject(AffairService);
   authorityService = inject(AuthorityService);
+  authService = inject(AuthService);
 
   filters: any = [];
 
@@ -91,6 +93,11 @@ export class RequestInTurnFormComponent implements OnInit {
       this.edit = true;
       this.searchForm.patchValue(this.searchForm);
     }
+  }
+
+  getRegionalDelegationId() {
+    const id = this.authService.decodeToken().department;
+    return id;
   }
 
   getTransferente(params?: ListParams) {
@@ -155,8 +162,10 @@ export class RequestInTurnFormComponent implements OnInit {
 
   getFormChanges() {
     var params = new ListParams();
+
     //filtro de la delegacion regional
-    //params['filter.regionalDelegationId'] = `$eq:${1}`;
+    const delegationId = this.getRegionalDelegationId();
+    params['filter.regionalDelegationId'] = `$eq:${delegationId}`;
 
     //filtro estado solicitudes por tunar
     params['filter.requestStatus'] = '$eq:POR_TURNAR';

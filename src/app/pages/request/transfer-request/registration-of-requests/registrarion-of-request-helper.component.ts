@@ -79,7 +79,6 @@ export class RegistrationHelper extends BasePage {
     const priorityDate = request.priorityDate;
 
     //Todo: verificar y obtener documentos de la solicitud
-
     /*if (request.recordId === null) {
       //Verifica si hay expediente
       this.message(
@@ -88,13 +87,8 @@ export class RegistrationHelper extends BasePage {
         'La solicitud no tiene Expediente asociado'
       );
       validoOk = false;
-    }else{
-      validoOk = true;
-    }*/
-
-    //Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-
-    if (urgentPriority === 'Y' && priorityDate === null) {
+    } else */ if (urgentPriority === 'Y' && priorityDate === null) {
+      //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
       this.message(
         'error',
         'Error',
