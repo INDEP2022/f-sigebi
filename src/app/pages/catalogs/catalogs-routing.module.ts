@@ -546,6 +546,25 @@ const routes: Routes = [
         .PaymentConceptModule,
     data: { title: 'Concepto de pagos' },
   },
+  //Henry
+  {
+    path: 'affair',
+    loadChildren: async () =>
+      (await import('./affair/affair.module')).AffairModule,
+    data: { title: 'Asuntos' },
+  },
+  {
+    path: 'legal-affair',
+    loadChildren: async () =>
+      (await import('./legal-affair/legal-affair.module')).LegalAffairModule,
+    data: { title: 'Asuntos Jurídicos' },
+  },
+  {
+    path: 'transferors',
+    loadChildren: async () =>
+      (await import('./transferors/transferors.module')).TransferorsModule,
+    data: { title: 'Transferentes por estado' },
+  },
 ];
 
 @NgModule({
