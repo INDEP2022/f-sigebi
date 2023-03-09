@@ -67,6 +67,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     });
 
     this.form.patchValue(this.parameter);
+    if (this.edit) this.form.get('id').disable();
   }
 
   validateDate() {
@@ -110,6 +111,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     this.loading = true;
     if (this.form.valid) {
       if (this.edit) {
+        this.form.get('id').enable();
         this.parameterServ
           .update(this.form.get('id').value, this.form.value)
           .subscribe({

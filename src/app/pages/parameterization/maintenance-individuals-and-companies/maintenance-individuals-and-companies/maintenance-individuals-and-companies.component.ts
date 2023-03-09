@@ -39,17 +39,18 @@ export class MaintenanceIndividualsAndCompaniesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      personNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+      id: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      personNumber: [null, Validators.pattern(STRING_PATTERN)],
       name: [
         null,
-        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       street: [
         null,
@@ -113,7 +114,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
         null,
         [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
-      keyEntFed: [null],
+      keyEntFed: [null, [Validators.required]],
       typeResponsible: [null],
     });
 
@@ -146,6 +147,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
     if (this.form.valid) {
       this.form.get('typeResponsible').patchValue('D');
       if (this.edit) {
+        this.form.get('id').enable();
         const { id } = this.form.value;
         this.personService.update(id, this.form.value).subscribe({
           next: () => {
@@ -176,6 +178,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
           if (next) {
             this.edit = next;
             this.form.patchValue(data);
+            this.form.get('id').disable();
           }
         },
       },
