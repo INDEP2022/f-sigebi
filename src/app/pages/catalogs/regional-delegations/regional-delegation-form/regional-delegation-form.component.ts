@@ -68,6 +68,7 @@ export class RegionalDelegationFormComponent
 
   create() {
     this.loading = true;
+    console.log(this.regionalDelegationForm.value);
     this.regionalDelegationService
       .create(this.regionalDelegationForm.value)
       .subscribe({

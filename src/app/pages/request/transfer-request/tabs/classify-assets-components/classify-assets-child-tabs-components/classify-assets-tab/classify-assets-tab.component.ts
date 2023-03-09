@@ -116,7 +116,7 @@ export class ClassifyAssetsTabComponent
       appraisal: [null],
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
-      compliesNorm: [null],
+      compliesNorm: ['N'], //cumple norma
       notesTransferringEntity: [null],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
@@ -366,6 +366,16 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  clean() {
+    this.classiGoodsForm.controls['ligieSection'].setValue(null);
+    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+    this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+  }
+
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
@@ -469,6 +479,11 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
+            /* this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -489,6 +504,10 @@ export class ClassifyAssetsTabComponent
           this.setRelevantTypeId(relativeTypeId);
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
+            /* this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -511,8 +530,8 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
         }
       }
@@ -536,7 +555,7 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
         }
       }
@@ -565,12 +584,14 @@ export class ClassifyAssetsTabComponent
     return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
   }
 
+  //inserta en el formulario el id del tipo de bien
   setRelevantTypeId(relativeTypeId: number) {
-    if (this.classiGoodsForm.controls['goodTypeId'].value != null) {
+    if (this.classiGoodsForm.controls['goodTypeId'].value !== relativeTypeId) {
       this.classiGoodsForm.controls['goodTypeId'].setValue(relativeTypeId);
     }
   }
 
+  //registra el fraction id en el formulario
   setFractionId(fractionId: number, fractionCode: string, campo: string) {
     if (fractionCode !== null) {
       if (fractionCode.length >= 8) {
@@ -587,6 +608,7 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  //obtenien la unidad de medida
   getUnidMeasure(value: string) {
     if (value) {
       if (value.length === 8) {

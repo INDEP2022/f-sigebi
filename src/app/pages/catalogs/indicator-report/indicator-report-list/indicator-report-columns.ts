@@ -4,52 +4,52 @@ export const INDICATOR_REPORT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  tipo_servicio: {
+  serviceType: {
     title: 'Tipo Servicio',
     type: 'string',
     sort: false,
   },
-  rango_porcentaje_inicial: {
+  startingPercentageRange: {
     title: 'Rango Porcentaje Inicial',
     type: 'number',
     sort: false,
   },
-  rango_porcentaje_final: {
+  finalPercentageRange: {
     title: 'Rango Porcentaje Final',
     type: 'number',
     sort: false,
   },
-  pena_convencional: {
+  contractualPenalty: {
     title: 'Pena Convencional',
     type: 'number',
     sort: false,
   },
-  no_contrato: {
+  contractNumber: {
     title: 'No Contrato',
     type: 'string',
     sort: false,
   },
-  usuario_creacion: {
+  userCreation: {
     title: 'Usuario Creacion',
     type: 'string',
     sort: false,
   },
-  fecha_creacion: {
+  creationDate: {
     title: 'Fecha Creacion',
     type: 'Date',
     sort: false,
   },
-  usuario_modificacion: {
+  userModification: {
     title: 'Usuario Modificacon',
     type: 'string',
     sort: false,
   },
-  fecha_modificacion: {
+  modificationDate: {
     title: 'Fecha Modificacion',
     type: 'Date',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estado',
     type: 'string',
     sort: false,

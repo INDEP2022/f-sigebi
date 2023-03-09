@@ -20,6 +20,13 @@ export class StatusGoodService extends HttpService {
     return this.get<IListResponse<IStatusGood>>('status-good', params);
   }
 
+  getAllSelf(
+    self: StatusGoodService,
+    params?: string
+  ): Observable<IListResponse<IStatusGood>> {
+    return self.get<IListResponse<IStatusGood>>('status-good', params);
+  }
+
   getLabelsByClasif(clasifNum: string | number) {
     const route = `status-good/getAllTags/${clasifNum}`;
     return this.get<IListResponse<ILabelByClasif>>(route);

@@ -31,8 +31,8 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.zoneGeographicForm = this.fb.group({
-      id_zona_geografica: [null],
-      descripcion: [
+      id: [null],
+      description: [
         null,
         Validators.compose([
           Validators.required,
@@ -40,9 +40,9 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ]),
       ],
-      no_contrato: [null, Validators.compose([Validators.required])],
+      contractNumber: [null, Validators.compose([Validators.required])],
       version: [null, Validators.compose([Validators.required])],
-      tercero_especializado: [
+      thirdPartySpecialized: [
         null,
         Validators.compose([
           Validators.required,
@@ -50,8 +50,8 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ]),
       ],
-      iva: [null, Validators.compose([Validators.required])],
-      estatus: [null, Validators.compose([Validators.required])],
+      vat: [null, Validators.compose([Validators.required])],
+      status: [null, Validators.compose([Validators.required])],
     });
     if (this.zoneGeographic != null) {
       this.edit = true;
@@ -79,10 +79,7 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.zoneGeographicService
-      .update(
-        this.zoneGeographic.id_zona_geografica,
-        this.zoneGeographicForm.getRawValue()
-      )
+      .update(this.zoneGeographic.id, this.zoneGeographicForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

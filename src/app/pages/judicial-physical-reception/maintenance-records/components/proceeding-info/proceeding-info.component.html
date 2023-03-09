@@ -20,7 +20,11 @@
       <div class="row mb-4">
         <div class="col-md-4">
           <form-field [control]="form.get('id')" label="No&#46; Acta">
-            <input type="number" class="form-control" formControlName="id" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -28,14 +32,15 @@
             <input
               type="number"
               class="form-control"
-              formControlName="numFile" />
+              formControlName="numFile"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('statusActa')" label="Estatus Acta">
             <select class="form-control" formControlName="statusActa">
-              <option value="Abierta">Abierta</option>
-              <option value="Cerrada">Cerrada</option>
+              <option value="ABIERTA">Abierta</option>
+              <option value="CERRADA">Cerrada</option>
               <option value="Todos">Todos</option>
             </select>
           </form-field>
@@ -44,7 +49,11 @@
       <div class="row mb-4">
         <div class="col-md-9">
           <form-field [control]="form.get('cveActa')" label="Cve Acta">
-            <input type="text" class="form-control" formControlName="cveActa" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveActa"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -54,7 +63,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="receiptKey" />
+              formControlName="receiptKey"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -70,7 +80,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="labelActa" />
+              formControlName="labelActa"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -79,7 +90,8 @@
           <textarea
             rows="5"
             class="form-control"
-            formControlName="address"></textarea>
+            formControlName="address"
+            [readonly]="loading"></textarea>
         </form-field>
       </div>
       <div class="row" style="margin-bottom: 1.25rem">
@@ -87,7 +99,8 @@
           <textarea
             rows="5"
             class="form-control"
-            formControlName="observations"></textarea>
+            formControlName="observations"
+            [readonly]="loading"></textarea>
         </form-field>
       </div>
       <div class="row mb-4">
@@ -96,7 +109,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numDelegation1" />
+              formControlName="numDelegation1"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -104,7 +118,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numDelegation2" />
+              formControlName="numDelegation2"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -118,7 +133,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="elaborationDate" />
+              formControlName="elaborationDate"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -126,7 +142,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="closeDate" />
+              formControlName="closeDate"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -138,7 +155,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="datePhysicalReception" />
+              formControlName="datePhysicalReception"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -148,7 +166,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="maxDate" />
+              formControlName="maxDate"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -160,7 +179,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="dateElaborationReceipt" />
+              formControlName="dateElaborationReceipt"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -170,7 +190,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="dateCaptureHc" />
+              formControlName="dateCaptureHc"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -182,7 +203,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="dateDeliveryGood" />
+              formControlName="dateDeliveryGood"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -192,7 +214,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="dateCloseHc" />
+              formControlName="dateCloseHc"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
@@ -202,7 +225,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="captureDate" />
+              formControlName="captureDate"
+              [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -212,18 +236,27 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="dateMaxHc" />
+              formControlName="dateMaxHc"
+              [readonly]="loading" />
           </form-field>
         </div>
       </div>
       <div class="row mb-4">
         <form-field [control]="form.get('witness1')" label="Testigo 1">
-          <input type="text" class="form-control" formControlName="witness1" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="witness1"
+            [readonly]="loading" />
         </form-field>
       </div>
       <div class="row mb-4">
         <form-field [control]="form.get('witness2')" label="Testigo 2">
-          <input type="text" class="form-control" formControlName="witness2" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="witness2"
+            [readonly]="loading" />
         </form-field>
       </div>
       <div class="row">
@@ -233,9 +266,12 @@
           <input
             type="text"
             class="form-control"
-            formControlName="comptrollerWitness" />
+            formControlName="comptrollerWitness"
+            [readonly]="loading" />
         </form-field>
       </div>
     </div>
+    <hr />
+    <app-justification [formValue]="form.value"></app-justification>
   </div>
 </form>

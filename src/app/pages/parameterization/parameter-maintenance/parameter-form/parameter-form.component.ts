@@ -18,7 +18,6 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   title: string = 'Parámetro';
   edit: boolean = false;
   parameter: IParameters = {} as IParameters;
-  maxDate = new Date();
   minDate = new Date('1999/01/01');
   invalidDate: boolean = false;
 

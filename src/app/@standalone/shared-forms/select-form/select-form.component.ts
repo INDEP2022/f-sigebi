@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -28,6 +29,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
   @Input() multiple: boolean = false;
   @Input() searchable: boolean = true;
   @Input() paramFilter = 'search';
+  @Input() operator = SearchFilter.EQ;
   @Input() haveTodos = true;
   @Input() readonly: boolean = false;
   @Input() clearable: boolean = true;
