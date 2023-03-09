@@ -82,11 +82,22 @@
         </div>
         <div class="col-md-2">
           <button
-            class="btn btn-sm btn-secondary btn-block active"
+            class="btn btn-sm btn-primary btn-block active"
             [disabled]="!form.valid"
             (click)="getSssubtypeById()">
             Buscar atributos
           </button>
+        </div>
+        <div class="col-md-4">
+          <div class="justify-content-end">
+            <button
+              [disabled]="loading"
+              class="btn btn-danger btn-sm active"
+              type="button"
+              (click)="resetForm()">
+              Limpiar Filtro
+            </button>
+          </div>
         </div>
       </div>
     </form>
@@ -101,7 +112,7 @@
         <h5 class="title"></h5>
         <div class="col-md-5 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
-          <div>
+          <div *ngIf="form.get('attrib').value !== null">
             <button
               (click)="openForm()"
               class="btn btn-primary active btn-sm ml-3">

@@ -1,15 +1,15 @@
 export const ZONEGEOGRAPHIC_COLUMS = {
-  id_zona_geografica: {
+  id: {
     title: 'ID zona geográfica',
     type: 'number',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  no_contrato: {
+  contractNumber: {
     title: 'No de contrato',
     type: 'number',
     sort: false,
@@ -19,17 +19,17 @@ export const ZONEGEOGRAPHIC_COLUMS = {
     type: 'number',
     sort: false,
   },
-  tercero_especializado: {
+  thirdPartySpecialized: {
     title: 'Tercero especializado',
     type: 'string',
     sort: false,
   },
-  iva: {
+  vat: {
     title: 'Iva',
     type: 'number',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     type: 'number',
     sort: false,

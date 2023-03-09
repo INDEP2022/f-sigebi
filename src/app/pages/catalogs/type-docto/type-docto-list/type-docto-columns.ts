@@ -14,7 +14,7 @@ export const TYPEDOCTO_COLUMS = {
     type: 'number',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estado',
     type: 'number',
     sort: false,
