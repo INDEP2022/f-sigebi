@@ -1,7 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { showToast } from 'src/app/common/helpers/helpers';
+import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
+import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 
+interface IExpense {
+  register: string;
+  description: string;
+  descriptionName: string;
+  import: string;
+}
 @Component({
   selector: 'app-table-expenses',
   templateUrl: './table-expenses.component.html',
@@ -24,13 +33,21 @@ import { showToast } from 'src/app/common/helpers/helpers';
   ],
 })
 export class TableExpensesComponent implements OnInit {
-  constructor() {}
+  @ViewChild('dialogExpense') dialogExpenseTemplateRef: TemplateRef<any>;
+  constructor(
+    private spentService: SpentService,
+    private dialogService: BsModalService
+  ) {}
 
-  ngOnInit(): void {}
+  dialogExpenseRef: BsModalRef;
+  ngOnInit(): void {
+    this.getExpenses();
+  }
 
-  formExpenses = new FormArray<FormGroup>([]);
+  expenses: IExpense[] = [];
+  registerEdit: string | null = null;
 
-  formExpenseAdd = new FormGroup({
+  form = new FormGroup({
     register: new FormControl('', [Validators.required]),
     description: new FormControl(null, [Validators.required]),
     descriptionName: new FormControl({ disabled: true, value: null }, [
@@ -39,76 +56,24 @@ export class TableExpensesComponent implements OnInit {
     import: new FormControl('', [Validators.required]),
   });
 
-  previousValuesExpense = new Map<
-    number,
-    {
-      register: string;
-      description: string;
-      import: string;
-    }
-  >();
+  expenseType: ISpentConcept[] = [];
 
-  isOpenAddExpense = false;
-  expenseTypeTest = [
-    {
-      id: 3107,
-      description: 'SERVICIO DE AGUA',
-    },
-    {
-      id: 3201,
-      description: 'ARRENDAMIENTO DE SERVICIO Y LOCALES',
-    },
-    {
-      id: 3305,
-      description: 'CAPACITACIONES',
-    },
-    {
-      id: 3306,
-      description: 'SERVICIOS DE INFORMÁTICA',
-    },
-    {
-      id: 3408,
-      description: 'COMISIONES POR VENTAS',
-    },
-  ];
-
-  addExpense(): void {
-    if (this.formExpenseAdd.invalid) {
-      showToast({
-        icon: 'error',
-        title: 'Gasto invalido',
-        text: 'Revise el gasto que va a ingresar unos de sus campos es invalido',
-      });
-      return;
-    }
-    const formGroup = this.makeInstanceFormGroupExpense();
-    const descriptionName = this.getDescriptionExpense(
-      this.formExpenseAdd.value.description
-    );
-
-    const values = this.formExpenseAdd.value;
-    values.descriptionName = descriptionName;
-    formGroup.patchValue(values);
-
-    formGroup.disable();
-    this.formExpenses.push(formGroup);
-    this.isOpenAddExpense = false;
-  }
-
-  makeInstanceFormGroupExpense(): FormGroup {
-    return new FormGroup({
-      register: new FormControl('', [Validators.required]),
-      description: new FormControl('', [Validators.required]),
-      descriptionName: new FormControl({ disabled: true, value: null }, [
-        Validators.required,
-      ]),
-      import: new FormControl('', [Validators.required]),
+  getExpenses(): void {
+    this.spentService.getExpensesConcept().subscribe(res => {
+      this.expenseType = res.data;
     });
   }
 
-  updateExpense(i: number): void {
-    const formGroup = this.formExpenses.at(i);
-    if (formGroup.invalid) {
+  selectedExpenseType(id: any): void {
+    const data = this.expenseType.find(x => x.id == id);
+    this.form.patchValue({
+      descriptionName: data.description,
+      register: data.registryNumber,
+    });
+  }
+
+  saveExpense(): void {
+    if (this.form.invalid) {
       showToast({
         icon: 'error',
         title: 'Gasto invalido',
@@ -116,37 +81,74 @@ export class TableExpensesComponent implements OnInit {
       });
       return;
     }
-    const descriptionName = this.getDescriptionExpense(
-      formGroup.value.description
+    if (!this.validateNotRepeatRegister()) {
+      return;
+    }
+    const {
+      register,
+      description,
+      descriptionName,
+      import: importValue,
+    } = this.form.getRawValue();
+
+    if (this.registerEdit) {
+      const expense = this.expenses.find(x => x.register == this.registerEdit);
+      expense.register = register;
+      expense.description = description;
+      expense.descriptionName = descriptionName;
+      expense.import = importValue;
+    } else {
+      const expense: IExpense = {
+        register,
+        description,
+        descriptionName: descriptionName,
+        import: importValue,
+      };
+      this.expenses.push(expense);
+    }
+    this.closeDialogExpense();
+  }
+
+  removeExpense(register: any) {
+    const index = this.expenses.findIndex(x => x.register == register);
+    this.expenses.splice(index, 1);
+  }
+
+  openCreateOrEditExpense(id?: any): void {
+    if (id) {
+      this.registerEdit = id;
+      const values = this.expenses.find(x => x.register == id);
+      this.form.patchValue(values);
+    }
+    this.openDialogExpense();
+  }
+
+  openDialogExpense(): void {
+    this.dialogExpenseRef = this.dialogService.show(
+      this.dialogExpenseTemplateRef
     );
-    formGroup.patchValue({ descriptionName });
-    this.formExpenses.at(i).disable();
-    this.previousValuesExpense.delete(i);
   }
 
-  removeExpense(i: number) {
-    this.formExpenses.removeAt(i);
+  closeDialogExpense(): void {
+    this.dialogExpenseRef.hide();
+    this.registerEdit = null;
+    this.form.reset();
   }
 
-  openCreateExpense(): void {
-    this.isOpenAddExpense = true;
-    this.formExpenses.disable();
-    this.formExpenseAdd.reset();
-  }
-
-  openEditExpense(i: number): void {
-    this.isOpenAddExpense = false;
-    this.formExpenses.at(i).enable();
-    this.previousValuesExpense.set(i, this.formExpenses.at(i).value);
-  }
-
-  closeEditExpense(i: number): void {
-    this.formExpenses.at(i).patchValue(this.previousValuesExpense.get(i));
-    this.formExpenses.at(i).disable();
-    this.previousValuesExpense.delete(i);
-  }
-
-  getDescriptionExpense(id: number): string {
-    return this.expenseTypeTest.find(x => x.id == id)?.description;
+  validateNotRepeatRegister(): boolean {
+    const { register } = this.form.value;
+    const expense = this.expenses.find(x => x.register === register);
+    const preExpense = this.expenseType.find(
+      x => x.registryNumber === this.registerEdit
+    );
+    if (expense && preExpense?.registryNumber !== register) {
+      showToast({
+        icon: 'error',
+        title: 'Registro invalido',
+        text: 'El registro ya esta ingresado',
+      });
+      return false;
+    }
+    return true;
   }
 }

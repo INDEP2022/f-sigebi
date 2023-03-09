@@ -20,6 +20,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import {
   catchError,
   debounceTime,
+  distinctUntilChanged,
   map,
   of,
   Subject,
@@ -51,10 +52,14 @@ export class CustomSelectComponent
   @Input() isLoadInOnInit: boolean = true;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
-  @Input() value: string;
+  @Input() value: string = 'id';
   @Input() paramSearch: string = 'text';
   @Input() placeholder: string = 'Search';
   @Input() prefixSearch: string = '';
+
+  @Input() paramPageName: string = 'page';
+  @Input() paramLimitName: string = 'limit';
+  @Input() moreParams: { [key: string]: any } = {};
   @Output() valueChange = new EventEmitter<any>();
   input$ = new Subject<string>();
   // input$ = new FormControl('');
@@ -63,6 +68,9 @@ export class CustomSelectComponent
   isLoading: boolean = false;
   selectedItem: any;
   destroy$: Subject<any> = new Subject<any>();
+  isDisabled = false;
+  onChange?: (item: any) => void;
+  onTouchedCb?: () => void;
 
   constructor(private http: HttpClient) {}
 
@@ -78,8 +86,6 @@ export class CustomSelectComponent
     this.destroy$.unsubscribe();
   }
 
-  onChange?: (item: any) => void;
-
   writeValue(obj: any): void {
     console.log(obj);
     this.selectedItem = obj;
@@ -90,18 +96,18 @@ export class CustomSelectComponent
   }
 
   registerOnTouched(fn: any): void {
-    throw new Error('Method not implemented.');
+    this.onTouchedCb = fn;
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    throw new Error('Method not implemented.');
+    this.isDisabled = isDisabled;
   }
 
   onCurrencyChange(event: any) {
     console.log(event);
     this.selectedItem = event?.[this.value];
 
-    this.onChange?.(event);
+    this.onChange?.(this.selectedItem);
     this.valueChange.emit(event);
   }
 
@@ -110,13 +116,16 @@ export class CustomSelectComponent
       text = `${this.prefixSearch}:${text}`;
     }
     const params = {
-      page: this.page,
-      limit: 10,
+      [this.paramPageName]: this.page,
+      [this.paramLimitName]: 10,
       [this.paramSearch]: text,
+      ...this.moreParams,
     };
-    return this.http.get(`${this.url}/${this.path}`, {
-      params,
-    });
+    return this.http
+      .get(`${this.url}/${this.path}`, {
+        params,
+      })
+      .pipe(catchError(() => of(null)));
   }
 
   getDataForPath(data: any): any[] {
@@ -152,23 +161,26 @@ export class CustomSelectComponent
       .pipe(
         takeUntil(this.destroy$),
         debounceTime(200),
-        // distinctUntilChanged(),
+        distinctUntilChanged(),
         switchMap((text: string) => {
+          if (!text) {
+            return of(this.items);
+          }
           console.log(text);
           this.page = 1;
           this.isLoading = true;
-          // return of(['fer']);
           return this.getItemsObservable(text);
         }),
         map((resp: any) => {
+          if (!resp) {
+            return [];
+          }
           return this.getDataForPath(resp);
-        }),
-        catchError(() => of([]))
+        })
       )
       .subscribe({
         next: resp => {
           this.isLoading = false;
-          console.log(resp);
           this.items = resp;
         },
         error: err => {
