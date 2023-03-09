@@ -196,6 +196,10 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/penalty',
       },
       {
+        label: 'Plazos Indicadores',
+        link: '/pages/catalogs/indicatorDeadlines',
+      },
+      {
         label: 'Indicador Reportes',
         link: '/pages/catalogs/indicatorReport',
       },

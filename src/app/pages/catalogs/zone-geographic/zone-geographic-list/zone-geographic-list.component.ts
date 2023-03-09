@@ -67,7 +67,15 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.zoneGeographicService.remove(zoneGeographic.id).subscribe({
+          next: response => {
+            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.getExample();
+          },
+          error: err => {
+            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+          },
+        });
       }
     });
   }

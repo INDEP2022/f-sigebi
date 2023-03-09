@@ -1,0 +1,71 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Reemplazo de {{ titleColumnToReplace }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-3">
+        <div class="form-material col-md-4">
+          <!-- <form-field [control]="form.get('newValue')" label="">
+            <input class="form-control" formControlName="newValue" />
+          </form-field> -->
+          <app-select-form
+            [form]="form"
+            [formField]="formField"
+            label=""
+            [haveTodos]="false"
+            [value]="idSelect"
+            [bindLabel]="labelSelect"
+            [getListObservable]="getListObservableSelect"
+            [paramFilter]="paramFilter"
+            [operator]="operator"
+            [(paramsFilter)]="paramsControl"></app-select-form>
+        </div>
+        <div class="form-material col-md-8" *ngIf="otherFormField">
+          <form-field
+            [control]="form.get(otherFormField)"
+            [label]="otherFormLabel">
+            <textarea
+              rows="5"
+              class="form-control"
+              [formControlName]="otherFormField"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="events-table"
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data">
+              </ng2-smart-table>
+            </div>
+            <div class="table-padding"></div>
+          </ng-scrollbar>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          text="Actualizar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

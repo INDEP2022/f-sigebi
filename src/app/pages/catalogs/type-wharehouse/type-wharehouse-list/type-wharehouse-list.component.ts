@@ -67,6 +67,15 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.typeWarehouseService.remove(typeWarehouse.id).subscribe({
+          next: response => {
+            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.getExample();
+          },
+          error: err => {
+            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+          },
+        });
         //Ejecutar el servicio
       }
     });

@@ -15,7 +15,7 @@ export const TYPESWHAREHOUSE_COLUMS = {
     type: 'number',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     type: 'number',
     sort: false,

@@ -407,3 +407,14 @@ ng-scrollbar.table-scrollbar {
   pointer-events: none !important;
   opacity: 0.7 !important;
 }
+
+.table-container {
+  margin-right: 14px !important;
+  > div {
+    padding: 0px;
+    margin-left: 15px;
+    ng2-smart-table {
+      padding: 0px;
+    }
+  }
+}
