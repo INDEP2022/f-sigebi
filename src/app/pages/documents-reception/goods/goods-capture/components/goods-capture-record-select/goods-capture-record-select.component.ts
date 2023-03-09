@@ -22,7 +22,7 @@ export class GoodsCaptureRecordSelectComponent
 {
   SAT_RECORD: number;
   form = this.fb.group({
-    recordId: [497938, [Validators.required, Validators.maxLength(11)]],
+    recordId: [null, [Validators.required, Validators.maxLength(11)]],
     esEmpresa: [false],
     noBien: [null, [Validators.maxLength(30)]],
   });

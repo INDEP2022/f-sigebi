@@ -105,6 +105,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   prepareForm(): void {
     this.requestForm = this.fb.group({
+      id: [null],
       applicationDate: [{ value: null, disabled: true }],
       paperNumber: [null, [Validators.required, Validators.maxLength(40)]],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
@@ -211,13 +212,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
       config
     );
     this.bsModalRef.content.event.subscribe((res: any) => {
-      this.userName = res.user;
-      this.requestForm.controls['targetUser'].setValue('OST13227'); //TODO remplazar por el res.id
+      this.userName = res.firstName;
+      this.requestForm.controls['targetUser'].setValue(res.id);
     });
   }
 
-  confirm() {
-    this.requestForm.get('requestStatus').patchValue('A_TURNAR');
+  save() {
+    this.requestForm.get('requestStatus').patchValue('POR_TURNAR');
     this.requestForm.controls['applicationDate'].setValue(
       new Date().toISOString().toString()
     );
@@ -226,7 +227,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestService.create(form).subscribe(
       (data: any) => {
         this.msgModal(
-          'Se guardo la solicitud con el Folio Nº '.concat(data.id),
+          'Se guardo la solicitud con el Folio Nº '.concat(
+            `<strong>${data.id}</strong>`
+          ),
           'Solicitud Guardada',
           'success'
         );
@@ -255,7 +258,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.loading = true;
     let form = this.requestForm.getRawValue();
 
-    this.requestService.create(form).subscribe(
+    let action = null;
+    if (form.id === null) {
+      action = this.requestService.create(form);
+    } else {
+      action = this.requestService.update(form.id, form);
+    }
+
+    action.subscribe(
       (data: any) => {
         this.msgModal(
           'Se turnar la solicitud con el Folio Nº '

@@ -1,8 +1,9 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TURN_SELECTED_COLUMNS } from '../../request-in-turn/request-in-turn-selected/request-in-turn-selected-columns';
 
@@ -35,12 +36,15 @@ var users: any[] = [
 export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   title: string = '¿DESEA TURNAR LA SOLICITUD SELECCIONADA?';
   paragraphs: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   public event: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
   //typeTurn: string;
   request: any;
   user: any;
+  typeUser: string = '';
+  //injections
+  private userProcessService = inject(UserProcessService);
 
   constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
     super();
@@ -55,12 +59,28 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    let typeUser = this.request.requestStatus;
-    this.getAllUsers(typeUser);
+    this.typeUser = this.request.targetUserType;
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getAllUsers();
+    });
   }
 
-  getAllUsers(typeUser: string) {
-    this.paragraphs = users;
+  getAllUsers() {
+    this.loading = true;
+    this.params.value.addFilter('employeeType', this.typeUser);
+    const filter = this.params.getValue().getParams();
+    this.userProcessService.getAll(filter).subscribe({
+      next: resp => {
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
   }
 
   selectedRow(user: any) {

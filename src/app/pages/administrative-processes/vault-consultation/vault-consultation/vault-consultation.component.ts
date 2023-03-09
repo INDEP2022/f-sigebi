@@ -66,7 +66,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
           width: '10%',
           sort: false,
         },
-        entity: {
+        stateCode: {
           title: 'Entidad',
           width: '10%',
           sort: false,
@@ -101,7 +101,21 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     this.safeService.getAll(this.params.getValue()).subscribe({
       next: response => {
         console.log(response);
-        this.vaults = response.data;
+        this.vaults = response.data.map(vault => {
+          return {
+            idSafe: vault.idSafe,
+            description: vault.description,
+            localityCode: vault.localityDetail.nameLocation,
+            cityCode: vault.cityDetail.nameCity,
+            municipalityCode: vault.municipalityDetail.nameMunicipality,
+            registerNumber: vault.registerNumber,
+            responsibleDelegation: vault.manager,
+            stateCode: vault.stateDetail.descCondition,
+            ubication: vault.ubication,
+            cityDetail: null,
+            manager: vault.manager,
+          };
+        });
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -110,8 +124,9 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
   }
 
   select(event: any) {
+    console.log(event.data.idSafe);
     event.data
-      ? this.openModal(event.data.goods)
+      ? this.openModal(event.data.idSafe)
       : this.alert('info', 'Ooop...', 'Esta Bóveda no contiene Bines');
   }
 

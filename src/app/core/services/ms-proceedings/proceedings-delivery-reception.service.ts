@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, map, mergeMap, Observable } from 'rxjs';
+import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -11,6 +11,21 @@ import { IProceedingDeliveryReception } from '../../models/ms-proceedings/procee
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import { ProceedingsDetailDeliveryReceptionService } from './proceedings-detail-delivery-reception.service';
+
+export interface IProceedingByGood {
+  proceedingnumber: string;
+  proceedingkey: string;
+  proceedingstatus: string;
+  programmingtype: string;
+}
+
+export interface IDeleted {
+  deleted: string;
+}
+
+export interface INotDeleted {
+  error: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -27,15 +42,32 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   deleteMasive(selecteds: IProceedingDeliveryReception[]) {
     return forkJoin(
       selecteds.map(selected => {
-        return this.delete(this.endpoint + '/' + selected.id);
+        return this.delete(this.endpoint + '/' + selected.id).pipe(
+          map(item => {
+            return { deleted: selected.id } as IDeleted;
+          }),
+          catchError(err => {
+            if (err.error.message.includes('detalle_acta_ent_recep')) {
+              return of({ error: selected.id } as INotDeleted);
+            } else {
+              return of({ error: null } as INotDeleted);
+            }
+          })
+        );
       })
     );
   }
 
-  getExcel(params?: ListParams | string) {
+  deleteById(selected: IProceedingDeliveryReception) {
+    return this.delete(this.endpoint + '/' + selected.id);
+  }
+
+  getExcel(filterParams?: FilterParams) {
+    const params = new FilterParams(filterParams);
+    params.limit = 10000;
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,
-      params
+      params.getParams()
     ).pipe(
       map(items => {
         const data = items.data;
@@ -59,7 +91,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
                         ESTATUS: detail.good.status,
                         DESCRIPCION: detail.good.description,
                         'TIPO BIEN': detail.good.goodsCategory,
-                        EXPEDIENTE: item.numFile.filesId,
+                        EXPEDIENTE: item.numFile,
                         EVENTO: detail.numberProceedings,
                         CANTIDAD: detail.amount,
                         FEC_RECEPCION: detail.approvedXAdmon,
@@ -89,36 +121,23 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
+  getByGoodId(self?: ProceedingsDeliveryReceptionService, goodId?: string) {
+    return self.get<IListResponse<IProceedingByGood>>(
+      self.endpoint + '/find-good-in-procedings-delivery-reception/' + goodId
+    );
+  }
+
   getAll(
     params?: ListParams | string
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,
       params
-    ).pipe(
-      map(items => {
-        return {
-          ...items,
-          data: items.data.map(item => {
-            const nameArray = item.elaborateDetail
-              ? item.elaborateDetail['name']
-                ? item.elaborateDetail['name'].split(' ')
-                : []
-              : [];
-            let ingreso = '';
-            nameArray.forEach(text => {
-              ingreso += text.substring(0, 2)
-                ? text.substring(0, 2)
-                : text.substring(0, 1) ?? '';
-            });
-            return {
-              ...item,
-              ingreso,
-            };
-          }),
-        };
-      })
     );
+  }
+
+  update2(item: IProceedingDeliveryReception) {
+    return this.put(this.endpoint + '/' + item.id, item);
   }
 
   getAll2(self?: ProceedingsDeliveryReceptionService, params?: string) {
@@ -145,9 +164,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll3(
-    params?: ListParams | string
+    params?: string
   ): Observable<IListResponse<IProccedingsDeliveryReception>> {
-    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.typeProceedings=RGA`;
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get<IListResponse<IProccedingsDeliveryReception>>(
       route,
       params

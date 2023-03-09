@@ -1,33 +1,36 @@
-<form class="form-material" [formGroup]="form">
+<form class="form-material" [formGroup]="form" (submit)="getData()">
   <div class="row pt-5">
     <div class="col-md-2">
-      <form-field [control]="form.get('idSiab')">
+      <form-field [control]="form.get('good')" label="No. Siab">
+        <input type="number" class="form-control" formControlName="good" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('beneficiary')" label="Beneficiario">
+        <input type="text" class="form-control" formControlName="beneficiary" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('mandate')">
         <ngx-select
-          typeToSearchText="Escriba 3 o más caracteres"
-          label="No. Siab"
           [form]="form"
-          control="idSiab">
-        </ngx-select>
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('idben')" label="Beneficiario">
-        <input type="text" class="form-control" formControlName="idben" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('idTrans')">
-        <ngx-select
-          typeToSearchText="Escriba 3 o más caracteres"
           label="Transferente"
-          [form]="form"
-          control="idTrans">
-        </ngx-select>
+          [data]="transferents"
+          (fetchItems)="getTransferent($event)"
+          value="cvman"
+          bindLabel="nameTransferent"
+          control="mandate"
+          [searchOnInit]="true"></ngx-select>
       </form-field>
     </div>
     <div class="col-md-2">
-      <form-field [control]="form.get('payReq')" label="Solicitud de pago">
-        <input type="text" class="form-control" formControlName="payReq" />
+      <form-field
+        [control]="form.get('paymentRequest')"
+        label="Solicitud de pago">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="paymentRequest" />
       </form-field>
     </div>
     <div class="col-md-2">
@@ -36,23 +39,17 @@
       </form-field>
     </div>
     <div class="col-md-2">
-      <form-field [control]="form.get('invoicAmount')" label="Importe Factura">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="invoicAmount" />
+      <form-field [control]="form.get('importeF')" label="Importe Factura">
+        <input type="text" class="form-control" formControlName="importeF" />
       </form-field>
     </div>
   </div>
   <div class="row pt-5">
     <div class="col-md-2">
       <form-field
-        [control]="form.get('customerServiceSheet')"
+        [control]="form.get('folatenclie')"
         label="Folio atención a clientes">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="customerServiceSheet" />
+        <input type="text" class="form-control" formControlName="folatenclie" />
       </form-field>
     </div>
     <div class="col-md-2">
@@ -71,9 +68,53 @@
       </form-field>
     </div>
     <div class="col-md-2">
-      <form-field [control]="form.get('authorizes')" label="Autorizó">
-        <input type="text" class="form-control" formControlName="authorizes" />
+      <form-field [control]="form.get('authority')" label="Autorizó">
+        <input type="text" class="form-control" formControlName="authority" />
       </form-field>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12 d-flex">
+      <div>
+        <confirm-button
+          [loading]="loading"
+          text="Ejecutar consutla"
+          [btnSmall]="true"
+          loadingText="Obteniendo datos"></confirm-button>
+      </div>
+      <div class="ml-3">
+        <button
+          [disabled]="loading"
+          class="btn btn-danger btn-sm active"
+          type="button"
+          (click)="resetForm()">
+          Limpiar Filtro
+        </button>
+      </div>
+    </div>
+  </div>
 </form>
+
+<div class="row">
+  <div class="ch-content">
+    <h5 class="title">Datos</h5>
+    <div class="row justify-content-end mr-3">
+      <div>
+        <button type="button" class="btn btn-success btn-sm active mx-2">
+          Exportar Todo a Excel
+        </button>
+        <button
+          type="button"
+          (click)="exportSelected()"
+          class="btn btn-success btn-sm active mx-2"
+          [disabled]="selectedRows.length === 0">
+          Exportar Seleccionados a Excel
+        </button>
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+  </div>
+</div>

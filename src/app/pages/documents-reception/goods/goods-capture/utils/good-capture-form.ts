@@ -1,6 +1,6 @@
 import { FormControl, Validators } from '@angular/forms';
 import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export class GOOD_CAPTURE_FORM {
   noPartida = new FormControl<string>(null, [
@@ -21,14 +21,21 @@ export class GOOD_CAPTURE_FORM {
   unidadLigie = new FormControl({ value: null, disabled: true });
   unidadMedida = new FormControl(null, [Validators.required]);
   cantidad = new FormControl<number>(null, [
+    // Validators.pattern(NUMBERS_PATTERN),
     Validators.required,
     Validators.min(1),
-    Validators.maxLength(18),
+    Validators.max(999999999999),
   ]);
   destino = new FormControl(null, [Validators.required]);
   estadoConservacion = new FormControl(null);
-  noBien = new FormControl({ value: null, disabled: true });
-  valRef = new FormControl(null, [Validators.min(1), Validators.maxLength(18)]);
+  noBien = new FormControl({ value: null, disabled: true }, [
+    Validators.pattern(NUMBERS_PATTERN),
+  ]);
+  valRef = new FormControl(null, [
+    Validators.min(1),
+    Validators.max(999999999999),
+    Validators.pattern(NUMBERS_PATTERN),
+  ]);
   identifica = new FormControl(null, [Validators.required]);
   descripcion = new FormControl(null, [
     Validators.required,
