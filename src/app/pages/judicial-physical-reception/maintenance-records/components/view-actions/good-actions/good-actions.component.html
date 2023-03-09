@@ -1,36 +1,26 @@
 <form class="form-material" [formGroup]="form">
-  <div class="row" style="align-items: center">
+  <div class="row mr-0">
     <div class="col-md-4 p-0">
-      <form-field
-        class="col-xs-10"
-        [control]="form.get('goodId')"
-        label="Agregar Nuevo bien">
-        <input type="number" formControlName="goodId" class="form-control" />
-      </form-field>
-      <div class="col-xs-2 pl-0">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="addGood()">
-          <i class="bx bx-list-plus bx-sm float-icon"></i>
-        </button>
-      </div>
+      <app-goods-table-shared
+        [form]="form"
+        [disabled]="statusActaValue !== 'ABIERTA'"
+        label="Agregar Nuevo bien"
+        (selectRow)="addGood($event)">
+      </app-goods-table-shared>
     </div>
-    <div class="col-md-4">
-      <button
-        [class]="statusActaValue === 'CERRADA' ? 'disabled' : ''"
-        class="btn btn-primary btn-sm active"
-        type="submit"
-        size="small"
-        (click)="updateGoods()">
-        <i class="bx bx-pencil float-icon"></i>
-        Editar bienes
-      </button>
+    <div class="col-md-4 mb-5" style="text-align: center">
+      <app-update-dates-goods
+        [statusActaValue]="statusActaValue"
+        [data]="data"
+        (updateGoodEvent)="
+          selectedsForUpdate = $event; updateGoods()
+        "></app-update-dates-goods>
     </div>
     <div class="col-md-4 p-0">
       <form-field
         class="col-xs-10"
         [control]="form.get('action')"
+        [class]="statusActaValue !== 'ABIERTA' ? 'disabled' : ''"
         label="Acción">
         <select class="form-control" formControlName="action">
           <option [value]="null">Seleccione una acción</option>
@@ -42,6 +32,11 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
+          [disabled]="
+            form.get('action').value === null ||
+            statusActaValue !== 'ABIERTA' ||
+            rowsSelected.length === 0
+          "
           (click)="openModals()">
           <i class="bx bx-list-plus bx-sm float-icon"></i>
         </button>

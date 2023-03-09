@@ -474,10 +474,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     return new Date(date).toLocaleDateString().toString();
   }
 
-  // update() {
-  //   this.buildObjectToUpdate('CERRADA');
-  // }
-
   closeProceedings() {
     console.log(this.dataProceedingsSelected.id);
     var maximunClosingTime: IMaximumClosingTime;
@@ -485,9 +481,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     if (this.dataProceedingsSelected.proceedingStatus == 'CERRADA') {
       this.onLoadToast('error', 'Error', 'El acta ya se encuentra cerrada');
     } else {
-      // this.getScannedDocument().subscribe(data => console.log(data));
-      // this.initiateProceedingsClose(this.dataProceedingsSelected.id);
-      this.test();
+      this.processCloseProceeding();
     }
   }
 
@@ -499,7 +493,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.search(fileNumber, paginatedProceedings, this.paginatorGoods);
   }
 
-  async test() {
+  async processCloseProceeding() {
     let proceedingUpdated: boolean = false;
     try {
       if (this.dataTable.length > 0) {
@@ -1377,34 +1371,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
                   paginatedGoods
                 );
               }
-              /*for (let i = 0; (i = 2); i++) {
-                console.log(i);
-                let statusFinal = await this.getFinalStatus([192273])
-                  .then(data => console.log(1))
-                  .catch(error => {
-                    console.log('catch 1');
-                    throw this.verifyError(error, 'Erorr Get Final Status');
-                  });
-                // await this.updateGoods(192273, statusFinal.data[0].statusFinal)
-                //   .then()
-                //   .catch(error => {
-                //     throw this.verifyError(error, 'Erorr Update Goods');
-                //   });
-                // await this.udpateHistoryGood(
-                //   192273,
-                //   statusFinal.data[0].statusFinal
-                // )
-                //   .then()
-                //   .catch(error => {
-                //     throw this.verifyError(error, 'Erorr Update History Good');
-                //   });
-              }*/
-              console.log(allGoods);
-              // allGoods.data.forEach(
-              //   good => {
-              //     good.
-              //   }
-              // )
             } else {
               this.onLoadToast(
                 'error',
@@ -1547,89 +1513,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       this.accountMovements.updateAccountMovements(goodId, 'DEVOLUCION')
     );
   }
-
-  // getMaximumClosingTime() {
-  //   this.reconciledAssetsAndNumerary = [];
-  //   this.maximunClosingTimeService.getByProceedingsType('DEV').subscribe({
-  //     //Cambiar por data: IListResponse<IMaximumClosingTime> El endpoint no devuelve un array sino un objeto
-  //     next: (data: any) => {
-  //       this.maximunClosingTime = data?.date;
-  //       if (this.validateClosingDate()) {
-  //         if (this.dataProceedingsSelected.universalFolio != '') {
-  //           this.documentService
-  //             .getByFilters({
-  //               id: this.dataProceedingsSelected.universalFolio,
-  //               scanStatus: 'ESCANEADO',
-  //               numberProceedings: this.fileNumber,
-  //             })
-  //             .subscribe({
-  //               next: data => {
-  //                 //Obtener todos los bienes para verificar si estan conciliados
-  //                 this.detailProceedingsDevolutionService
-  //                   .getDetailProceedingsDevolutionByProceedingsNumb(
-  //                     this.proceedingsNumb
-  //                   )
-  //                   .subscribe({
-  //                     next: data => {
-  //                       let infoGood: any;
-  //                       let goodsNumber: any[] = [];
-  //                       for (let good of data?.data) {
-  //                         if (
-  //                           good.numGoodId.goodsReferenceId ==
-  //                           this.di_clasif_numerario
-  //                         ) {
-  //                           infoGood.numerary = 's';
-  //                         } else {
-  //                           infoGood.numerary = 'n';
-  //                         }
-  //                         (infoGood.goodNumber = good.numGoodId),
-  //                           (infoGood.reconciled = 's'),
-  //                           this.reconciledAssetsAndNumerary.push(infoGood);
-  //                       }
-  //                       console.log(this.reconciledAssetsAndNumerary);
-  //                       if (this.reconciledAssetsAndNumerary.length > 0) {
-  //                         goodsNumber = this.extractNumberOfGoods(
-  //                           this.reconciledAssetsAndNumerary
-  //                         );
-  //                         this.accountMovements.getAll();
-  //                       } else {
-  //                         this.onLoadToast(
-  //                           'error',
-  //                           'Error',
-  //                           'Para cerrar un acta debe contener al menos un bien, favor de registrar éste en la pantalla de actas'
-  //                         );
-  //                       }
-  //                     },
-  //                     error: err => {
-  //                       this.onLoadToast('error', 'Error', err.message);
-  //                     },
-  //                   });
-  //               },
-  //               error: err => {
-  //                 this.onLoadToast(
-  //                   'error',
-  //                   'Error',
-  //                   'Acta con estatus de documento diferente a escaneado'
-  //                 );
-  //                 console.log(err);
-  //               },
-  //             });
-  //         } else {
-  //           this.onLoadToast('error', 'Error', 'El valor del folio es vacío');
-  //         }
-  //       } else {
-  //         this.onLoadToast(
-  //           'error',
-  //           'Error',
-  //           'El plazo para cerrar actas del mes anterior ha caducado.'
-  //         );
-  //       }
-  //     },
-  //     error: err => {
-  //       this.handleError(err, err.msg);
-  //     },
-  //   });
-  // }
 
   extractNumberOfGoods(goods: any) {
     console.log('extractNumberOfGoods');

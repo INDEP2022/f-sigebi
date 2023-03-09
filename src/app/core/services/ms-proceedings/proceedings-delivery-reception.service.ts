@@ -136,11 +136,8 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
-  update(item: IProceedingDeliveryReception) {
-    return this.put<IListResponse<IProceedingDeliveryReception>>(
-      this.endpoint + '/' + item.id,
-      { item }
-    );
+  update2(item: IProceedingDeliveryReception) {
+    return this.put(this.endpoint + '/' + item.id, item);
   }
 
   getAll2(self?: ProceedingsDeliveryReceptionService, params?: string) {
@@ -167,9 +164,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll3(
-    params?: ListParams | string
+    params?: string
   ): Observable<IListResponse<IProccedingsDeliveryReception>> {
-    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.typeProceedings=RGA`;
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get<IListResponse<IProccedingsDeliveryReception>>(
       route,
       params

@@ -24,6 +24,7 @@ export class ElaborateUsersSharedComponent
   @Input() label: string = 'Usuario';
   @Input() formField: string = 'usuario';
   @Input() formFieldName: string = 'userName';
+  @Input() disabled = false;
   constructor(
     protected override modalService: BsModalService,
     private userService: UsersService

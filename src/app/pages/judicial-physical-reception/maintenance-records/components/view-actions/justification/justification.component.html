@@ -15,7 +15,10 @@
     <div class="col-md-6 col-lg-2">
       <app-elaborate-users-shared
         [form]="form"
-        label="Solicita"></app-elaborate-users-shared>
+        label="Solicita"
+        [disabled]="
+          formValue.statusActa !== 'ABIERTA'
+        "></app-elaborate-users-shared>
     </div>
     <div class="col-md-9 col-lg-4">
       <form-field
@@ -24,13 +27,14 @@
         <textarea
           rows="2"
           class="form-control"
-          formControlName="justification"></textarea>
+          formControlName="justification"
+          [readOnly]="formValue.statusActa !== 'ABIERTA'"></textarea>
       </form-field>
     </div>
     <div
       class="col-md-3 col-lg-2"
       style="text-align: right"
-      [class]="loading ? 'disabled' : ''">
+      [class]="loading || form.invalid ? 'disabled' : ''">
       <button
         class="btn btn-primary btn-sm active"
         type="submit"

@@ -688,7 +688,9 @@ export class GoodsCaptureMain extends BasePage {
     return this.goodsCaptureService.getGoodFeatures(clasifNum).pipe(
       tap(response => {
         console.log(response);
-        this.goodFeatures = response.data;
+        this.goodFeatures = response.data.sort(
+          (feat: any, _feat: any) => feat.columnNumber - _feat.columnNumber
+        );
       }),
       catchError(error => {
         this.showError(
@@ -705,14 +707,16 @@ export class GoodsCaptureMain extends BasePage {
       return;
     }
     this.getUnitsByClasifNum(clasifNum, params).subscribe();
+    this.getLabelsByClasifNum(clasifNum).subscribe();
   }
 
   getGoodTypesByClasifNum(clasifNum: number) {
     return this.goodsCaptureService.getTypesByClasification(clasifNum).pipe(
       tap(goodTypes => {
         this.fillGoodTypes(goodTypes);
-        this.getUnitsByClasifNum(clasifNum);
-        this.getGoodFeaturesByClasif(clasifNum);
+        this.getUnitsByClasifNum(clasifNum).subscribe();
+        this.getLabelsByClasifNum(clasifNum).subscribe();
+        this.getGoodFeaturesByClasif(clasifNum).subscribe();
       }),
       catchError(error => {
         if (error.status <= 404) {
@@ -777,8 +781,8 @@ export class GoodsCaptureMain extends BasePage {
     );
   }
 
-  getAllGoodLabels() {
-    return this.goodsCaptureService.getGoodLabels().pipe(
+  getLabelsByClasifNum(clasifNum: string | number) {
+    return this.goodsCaptureService.getLabelsByClasif(clasifNum).pipe(
       tap(response => {
         this.goodLabels = new DefaultSelect(response.data, response.count);
       })
