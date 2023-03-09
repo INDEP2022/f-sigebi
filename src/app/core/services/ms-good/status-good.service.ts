@@ -18,4 +18,11 @@ export class StatusGoodService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IStatusGood>> {
     return this.get<IListResponse<IStatusGood>>('status-good', params);
   }
+
+  getAllSelf(
+    self: StatusGoodService,
+    params?: string
+  ): Observable<IListResponse<IStatusGood>> {
+    return self.get<IListResponse<IStatusGood>>('status-good', params);
+  }
 }

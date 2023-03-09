@@ -39,6 +39,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() placeholder?: string = 'Buscar...';
   @Input() label?: string = 'Buscar:';
   @Input() filterField?: SearchBarFilter | null = null;
+  @Input() haveSearch = true;
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 
@@ -73,6 +74,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     } else {
       const filterParams = this.filterParams.getValue();
       filterParams.page = 1;
+      if (!this.haveSearch) {
+        filterParams.search = '';
+      }
       if (this.filterField) {
         filterParams.removeAllFilters();
         filterParams.addFilter(

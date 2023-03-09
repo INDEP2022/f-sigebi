@@ -4,9 +4,9 @@ export interface IDetailProceedingsDeliveryReception {
   amount: number;
   received: string;
   approvedXAdmon: string;
-  approvedDateXAdmon: Date;
+  approvedDateXAdmon: Date | string;
   approvedUserXAdmon: string;
-  dateIndicatesUserApproval: Date;
+  dateIndicatesUserApproval: Date | string;
   numberRegister: number;
   reviewIndft: number;
   correctIndft: number;
@@ -18,7 +18,7 @@ export interface IDetailProceedingsDeliveryReception {
   idftDateHc: Date;
   packageNumber: number;
   exchangeValue: number;
-  good: any;
-  fileId: string;
-  associatedExpId: string;
+  good?: any;
+  fileId?: string;
+  associatedExpId?: string;
 }

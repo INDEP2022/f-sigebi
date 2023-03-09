@@ -39,6 +39,8 @@ export class SelectListFilteredModalComponent
     params: ListParams
   ) => Observable<any>; // Input requerido al llamar el modal por listParams
   dataObservableId: (self: any, id: string) => Observable<any>;
+  initialCharge = true;
+  haveSearch = true;
   showError: boolean = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar filtros sin usar busqueda
@@ -57,17 +59,25 @@ export class SelectListFilteredModalComponent
     };
     this.addFilters();
     if (this.dataObservableFn) {
-      this.filterParams
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getAndSetInitialCharge();
+      });
     } else if (this.dataObservableListParamsFn) {
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getAndSetInitialCharge();
+      });
     } else if (this.dataObservableId) {
-      this.id
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+      this.id.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getAndSetInitialCharge();
+      });
+    }
+  }
+
+  private getAndSetInitialCharge() {
+    if (this.initialCharge) {
+      this.getData();
+    } else {
+      this.initialCharge = true;
     }
   }
 

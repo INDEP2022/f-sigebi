@@ -1,13 +1,12 @@
 export interface IProceedingDeliveryReception {
   id: string;
-  numberGood?: string;
   keysProceedings: string;
   elaborationDate: string;
   datePhysicalReception: string;
   address: string;
   statusProceedings: string;
   elaborate: string;
-  elaborateDetail: { [key: string]: null | string };
+  elaborateDetail?: { [key: string]: null | string };
   numFile: number;
   witness1: string;
   witness2: string;
@@ -41,7 +40,8 @@ export interface IProceedingDeliveryReception {
   dateMaxHc: string;
   receiveBy: string;
   affair: string;
-  numDelegation: NumDelegation;
+  numDelegation_1?: NumDelegation;
+  numDelegation_2?: NumDelegation;
 }
 
 export interface Identifier {
