@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
@@ -46,6 +46,14 @@ export class GoodService extends HttpService {
   updateWithoutId(good: IGood) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
+  }
+
+  updateGoodStatusMassive(goodNumbers: number[] | string[], status: string) {
+    return forkJoin(
+      goodNumbers.map(goodNumber => {
+        return this.updateGoodStatus(goodNumber, status);
+      })
+    );
   }
 
   updateGoodStatus(goodNumber: number | string, status: string) {
@@ -101,19 +109,18 @@ export class GoodService extends HttpService {
     return this.get<any>(route);
   }
   getBySafe(
-    body: Object,
+    id: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}/getGoodBySafe`;
+    const route = `${GoodEndpoints.Good}?filter.vaultNumber=$eq:${id}`;
     console.log(route);
-
-    return this.post<IListResponse<IGood>>(route, body);
+    return this.get<IListResponse<IGood>>(route, params);
   }
 
   getGoodByStatusPDS(
     params?: ListParams | string
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}?filter.status=PDS`;
+    const route = `${GoodEndpoints.Good}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
   updateTracked(id: string | number, good: ITrackedGood) {
@@ -127,5 +134,14 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.Good}?filter.extDomProcess=TRANSFERENTE`;
     const route2 = `${GoodEndpoints.Good}?filter.goodId=2203409`;
     return this.get<IListResponse<IGood>>(route2, params);
+  }
+
+  getGoodByStatusPDSelect(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}?filter.status=PDS`,
+      params
+    );
   }
 }

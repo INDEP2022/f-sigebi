@@ -9,4 +9,5 @@ export interface ICity {
   noSubDelegation: number;
   legendOffice: string;
   noRegister?: number;
+  nameAndId?: string;
 }

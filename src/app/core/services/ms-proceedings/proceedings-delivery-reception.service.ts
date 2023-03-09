@@ -164,9 +164,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll3(
-    params?: ListParams | string
+    params?: string
   ): Observable<IListResponse<IProccedingsDeliveryReception>> {
-    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?filter.typeProceedings=RGA`;
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get<IListResponse<IProccedingsDeliveryReception>>(
       route,
       params

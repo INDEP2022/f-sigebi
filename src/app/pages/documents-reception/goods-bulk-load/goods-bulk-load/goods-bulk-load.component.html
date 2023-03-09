@@ -119,8 +119,14 @@
 
     <hr class="row" />
 
-    <div class="row mt-3 mb-5" *ngIf="DeclarationsValidationMassive">
+    <div
+      class="row mt-3 mb-5"
+      *ngIf="
+        DeclarationsValidationMassive &&
+        DeclarationsValidationMassive.message_progress != ''
+      ">
       <div class="col-md-12">
+        <h2>Proceso de validación de archivo</h2>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             Proceso actual:
@@ -211,8 +217,14 @@
       </div>
     </div>
 
-    <div class="row mt-5 mb-3" *ngIf="DeclarationsUploadValidationMassive">
+    <div
+      class="row mt-5 mb-3"
+      *ngIf="
+        DeclarationsUploadValidationMassive &&
+        DeclarationsUploadValidationMassive.message_progress != ''
+      ">
       <div class="col-md-12">
+        <h2>Proceso de validación en la carga de datos</h2>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             Proceso actual:

@@ -61,7 +61,8 @@ export class GoodFeaturesComponent
   save() {
     if (!this.goodForm.valid) {
       this.goodForm.markAllAsTouched();
-      this.onLoadToast('error', 'Error', 'Primero completa el formulario');
+      this.onLoadToast('error', 'Error', 'El formulario no es válido');
+      return;
     }
     this.onSave.emit();
   }
