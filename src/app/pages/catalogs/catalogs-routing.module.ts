@@ -449,6 +449,13 @@ const routes: Routes = [
     data: { title: 'Documentos resarcimiento sat' },
   },
   {
+    path: 'indicatorDeadlines',
+    loadChildren: async () =>
+      (await import('./indicator-deadlines/indicator-deadlines.module'))
+        .IndicatorDeadlinesModule,
+    data: { title: 'Plazos de Indicadores' },
+  },
+  {
     path: 'indicatorReport',
     loadChildren: async () =>
       (await import('./indicator-report/indicator-report.module'))

@@ -1,32 +1,22 @@
-export const INDICATOR_REPORT_COLUMNS = {
+export const INDICATOR_DEADLINE_COLUMNS = {
   id: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  serviceType: {
-    title: 'Tipo Servicio',
+  indicator: {
+    title: 'Indicador',
     type: 'string',
     sort: false,
   },
-  startingPercentageRange: {
-    title: 'Rango Porcentaje Inicial',
-    type: 'number',
-    sort: false,
-  },
-  finalPercentageRange: {
-    title: 'Rango Porcentaje Final',
-    type: 'number',
-    sort: false,
-  },
-  contractualPenalty: {
-    title: 'Pena Convencional',
-    type: 'number',
-    sort: false,
-  },
-  contractNumber: {
-    title: 'No Contrato',
+  formula: {
+    title: 'Formula',
     type: 'string',
+    sort: false,
+  },
+  deadline: {
+    title: 'Plazo',
+    type: 'number',
     sort: false,
   },
   userCreation: {
