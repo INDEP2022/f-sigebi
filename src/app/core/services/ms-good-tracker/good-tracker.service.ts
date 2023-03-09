@@ -19,4 +19,13 @@ export class GoodTrackerService extends HttpService {
       params
     );
   }
+  getAllModal(
+    self?: GoodTrackerService,
+    params?: _Params
+  ): Observable<IListResponse<ITrackedGood>> {
+    return self.get<IListResponse<ITrackedGood>>(
+      'trackergood/apps/goodtrackertmp',
+      params
+    );
+  }
 }

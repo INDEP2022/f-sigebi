@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CoverExpedientService } from 'src/app/core/services/ms-cover-expedient/cover-expedient.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -16,7 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class AssociateFileComponent extends BasePage implements OnInit {
   associateFileForm: FormGroup = new FormGroup({});
-  parameter: any;
+  parameter: ModelForm<IRequest>;
   users: any;
   units: any;
   files: any;
@@ -38,7 +41,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private externalExpedientService: CoverExpedientService,
     private transferentService: TransferenteService,
-    private regioinalDelegation: RegionalDelegationService
+    private regioinalDelegation: RegionalDelegationService,
+    private requestService: RequestService
   ) {
     super();
   }
@@ -49,7 +53,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
-    console.log(this.parameter);
+    console.log(this.parameter.getRawValue());
   }
   formsChanges() {
     this.associateFileForm.controls['user'].valueChanges.subscribe(data => {
@@ -104,7 +108,27 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {}
+  confirm() {
+    /*console.log(this.parameter);
+    let request = this.parameter.getRawValue();
+    this.requestService.update(request.id, request).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+    });*/
+    /* const div = document.createElement('div');
+    div.style.cssText = 'width: 200px; height: 200px; background: #09c;';
+    document.body.appendChild(div);
+ */
+  }
+
+  getRequest() {
+    this.requestService.getById(43717).subscribe({
+      next: resp => {
+        return resp;
+      },
+    });
+  }
 
   close() {
     this.modalRef.hide();
