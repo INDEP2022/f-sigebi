@@ -48,14 +48,14 @@ export class RegionalDelegationsListComponent
 
   getRegionalDelegations() {
     this.loading = true;
-    this.regionalDelegationService.getAll(this.params.getValue()).subscribe({
-      next: response => {
+    this.regionalDelegationService.getAll(this.params.getValue()).subscribe(
+      response => {
         this.regionalDelegation = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
-    });
+      error => (this.loading = false)
+    );
   }
 
   openForm(regionalDelegation?: IRegionalDelegation) {
