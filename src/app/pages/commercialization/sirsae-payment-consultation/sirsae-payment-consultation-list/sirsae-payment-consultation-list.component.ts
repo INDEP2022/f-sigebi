@@ -29,16 +29,17 @@ export class SirsaePaymentConsultationListComponent
 {
   // Usando tipo any hasta tener disponibles los servicios de la api
   params = new BehaviorSubject<ListParams>(new ListParams());
-  goodSelected: boolean = false;
-  consultForm: FormGroup = new FormGroup({
-    id: new FormControl(null, [Validators.required]),
+  // goodSelected: boolean = false;
+  form: FormGroup = new FormGroup({
+    reference: new FormControl(null, [Validators.required]),
+    // id: new FormControl(null, [Validators.required]),
     startDate: new FormControl(null, [Validators.required]),
     endDate: new FormControl(null, [Validators.required]),
-  });
-  filterForm: FormGroup = new FormGroup({
     bank: new FormControl(null),
     status: new FormControl(null),
   });
+  // filterForm: FormGroup = new FormGroup({
+  // });
 
   columns: any[] = [];
   totalItems: number = 0;
@@ -52,53 +53,53 @@ export class SirsaePaymentConsultationListComponent
   tableSource: LocalDataSource;
   tableFilters: any[] = [];
 
-  goodTestData: any = [
-    {
-      id: 1,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-      appraisal: 200,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 2,
-      code: 'BIEN',
-      description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
-      appraisal: 500,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 3,
-      code: 'GOOD',
-      description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
-      appraisal: 100,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 4,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
-      appraisal: 700,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 5,
-      code: 'BIEN',
-      description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
-      appraisal: 50,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-  ];
+  // paymentsTestData: any = [
+  //   {
+  //     id: 1,
+  //     code: 'ASEG',
+  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+  //     appraisal: 200,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     code: 'BIEN',
+  //     description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
+  //     appraisal: 500,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     code: 'GOOD',
+  //     description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
+  //     appraisal: 100,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 4,
+  //     code: 'ASEG',
+  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
+  //     appraisal: 700,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 5,
+  //     code: 'BIEN',
+  //     description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
+  //     appraisal: 50,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  // ];
 
   paymentTestData: any = [
     {
@@ -294,19 +295,19 @@ export class SirsaePaymentConsultationListComponent
   }
 
   consult() {
-    console.log(this.consultForm.value);
+    console.log(this.form.value);
     this.loading = true;
     this.columns = this.getData();
     this.totalItems = this.columns.length;
     this.tableSource = new LocalDataSource(this.columns);
-    this.goodSelected = true;
+    // this.goodSelected = true;
     this.loading = false;
   }
 
   generateParams(): void {
     const filters = new FilterParams();
     SearchFilter;
-    filters.addFilter('id', this.consultForm.value.id);
+    filters.addFilter('id', this.form.value.id);
   }
   getData() {
     return this.paymentTestData;
