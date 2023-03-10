@@ -6,16 +6,25 @@
     <form class="form-material" [formGroup]="emailForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field label="Para:" [control]="emailForm.get('emails_send')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="emails_send" />
+          <form-field [control]="emailForm.get('email')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="emailForm"
+              control="email"
+              [data]="users"
+              value="email"
+              bindLabel="email"
+              label="Para: "
+              (fetchItems)="getEmailIndep($event)"
+              (change)="onValuesChange($event)"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field label="Usuario" [control]="emailForm.get('user')">
-            <input type="text" class="form-control" formControlName="user" />
+          <form-field label="Usuario" [control]="emailForm.get('userSirsae')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userSirsae" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -36,8 +45,8 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field label="Email" [control]="emailForm.get('email')">
-            <input type="text" class="form-control" formControlName="email" />
+          <form-field label="Email" [control]="emailForm.get('ccEmail')">
+            <input type="text" class="form-control" formControlName="ccEmail" />
           </form-field>
         </div>
       </div>
@@ -48,8 +57,8 @@
             [control]="emailForm.get('body')">
             <textarea
               class="form-control"
-              type="text"
-              formControlName="body"></textarea>
+              formControlName="body"
+              rows="6"></textarea>
           </form-field>
         </div>
       </div>
