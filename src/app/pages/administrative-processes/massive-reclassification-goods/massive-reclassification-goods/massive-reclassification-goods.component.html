@@ -1,79 +1,69 @@
 <form [formGroup]="form" class="form-material">
-  <app-card [header]="true" [footer]="true">
+  <app-card [header]="true">
     <div class="ch-content" header>
       <h5 class="title">Reclasificación Masiva de bienes</h5>
     </div>
     <div body>
       <div class="row">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <div class="col-md-full col-sm-12 col-xs-12">
             Modo
             <form-radio label="Excluir">
-              <input type="radio" formControlName="mode" value="exclude" />
+              <input
+                type="radio"
+                formControlName="mode"
+                value="E"
+                (click)="formEnable()" />
             </form-radio>
             <form-radio label="Incluir">
               <input
                 type="radio"
                 formControlName="mode"
-                value="include"
-                (change)="inludedRabio()" />
+                value="I"
+                (click)="formEnable()" />
             </form-radio>
           </div>
         </div>
-        <div class="col-md-9 col-sm-12 col-xs-12">
+        <div class="col-md-10 col-sm-12 col-xs-12">
           <div class="row">
-            <div class="col-md-4 col-sm-12 col-xs-12">
-              <form-field
-                [control]="form.get('numberClassificationGood')"
-                label="No de Clasificación de Bien">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="numberClassificationGood" />
-              </form-field>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="form.get('description')"
-                label="Descripción">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="description" />
-              </form-field>
-            </div>
-            <div class="col-md-2 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-center">
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-success btn-sm active"
-                    (click)="openModal()">
-                    mostrar
-                  </button>
-                </div>
-              </div>
+            <div class="col-md-full col-sm-12 col-xs-12">
+              <app-classification-of-goods-shared
+                [form]="form"
+                [patchValue]="true"
+                (descriptionClasification)="
+                  onChage($event)
+                "></app-classification-of-goods-shared>
             </div>
           </div>
           <div class="row mt-5">
-            <div class="col-md-8 col-sm-12 col-xs-12">
-              <form-field
-                [control]="form.get('filterByStatus')"
-                label="Filtro por estatus">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="filterByStatus" />
-              </form-field>
+            <div class="col-md-7 col-sm-12 col-xs-12">
+              <app-goods-status-shared
+                [form]="form"
+                [labelStatus]="'Filtro por estatus'"
+                [multiple]="true"></app-goods-status-shared>
             </div>
-            <div class="col-md-4 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-6 col-xs-6">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
                   <button
+                    [disabled]="classificationOfGoods.value === null"
                     type="button"
-                    class="btn btn-danger btn-sm active"
-                    (click)="listGoods()">
-                    &nbsp; Listar &nbsp;
+                    class="btn btn-success btn-sm active"
+                    (click)="loadGoods()">
+                    Listar
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-6">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    [disabled]="mode.value === null"
+                    type="button"
+                    class="btn btn-success btn-sm active"
+                    (click)="loadGoods()">
+                    Rastrear bienes
                   </button>
                 </div>
               </div>
@@ -81,56 +71,40 @@
           </div>
         </div>
       </div>
-      <div class="row mt-4" *ngIf="included">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="form.get('numberClassificationGoodAlterning')"
-            label="No de Clasificación de Bien ALTERNA">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numberClassificationGoodAlterning" />
-          </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field
-            [control]="form.get('descriptionAlternating')"
-            label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="descriptionAlternating" />
-          </form-field>
-        </div>
-        <div class="col-md-2 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-success btn-sm active"
-                (click)="openModal()">
-                mostrar
-              </button>
-            </div>
-          </div>
+      <div class="row mt-4" *ngIf="mode.value === 'I'">
+        <div class="col-md-full col-sm-12 col-xs-12">
+          <app-classification-of-goods-shared
+            [form]="form"
+            [classificationOfGoodsField]="'classificationGoodAlterning'"
+            (descriptionClasification)="
+              onChageAlterning($event)
+            "></app-classification-of-goods-shared>
         </div>
       </div>
       <hr />
-      <div class="row">
+      <div class="row" *ngIf="mode.value !== null">
         <div class="col-md-9 col-sm-12 col-xs-12">
-          <p>
+          <p *ngIf="mode.value === 'E'">
             Se listan los bienes que posiblemente deberían estar clasificados
-            con el No. de Clasificación de bien indicado, y tienen otro número
-            de clasificación. al presionar "Reclasificar", los bienes checheados
-            serán reclasificados
+            con el No. de Clasificación de Bien indicado, y tienen otro número
+            de clasificación. Al presionar "Reclasificar", los bienes palomeados
+            serán reclasificados con el No. de Clasificación de Bien indicado
+            arriba.
+          </p>
+          <p *ngIf="mode.value === 'I'">
+            Se listan los bienes que están clasificados con el No. de
+            Clasificación de Bien indicado. Al presionar "Reclasificar", los
+            bienes palomeados serán reclasificados con el No. de Clasificación
+            de Bien Alterna.
           </p>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
+                [disabled]="selectedGooods.length === 0"
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary active"
                 (click)="openQuestion()">
                 &nbsp; Reclasificar &nbsp;
               </button>
@@ -161,12 +135,14 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data">
-            </ng2-smart-table>
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="listGood">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
       </div>

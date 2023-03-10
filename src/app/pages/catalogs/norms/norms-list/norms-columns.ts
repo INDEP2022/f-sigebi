@@ -59,14 +59,4 @@ export const NORMS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  version: {
-    title: 'Versión',
-    type: 'number',
-    sort: false,
-  },
-  status: {
-    title: 'Estado',
-    type: 'string',
-    sort: false,
-  },
 };

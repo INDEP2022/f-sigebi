@@ -1,3 +1,5 @@
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const COLUMNS = {
   goodId: {
     title: 'Bien',
@@ -6,6 +8,8 @@ export const COLUMNS = {
   description: {
     title: 'Descripción',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
   },
   amout: {
     title: 'Monto',
@@ -18,11 +22,11 @@ export const COLUMNS = {
 };
 
 export const COLUMNS2 = {
-  key: {
+  cveDocument: {
     title: 'Clave',
     sort: false,
   },
-  document: {
+  description: {
     title: 'Documento',
     sort: false,
   },
