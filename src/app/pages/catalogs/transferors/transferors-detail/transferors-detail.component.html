@@ -3,10 +3,31 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material">
+    <form class="form-material" [formGroup]="transferorsStateForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field></form-field>
+          <form-field label="No." [control]="transferorsStateForm.get('id')">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Clave"
+            [control]="transferorsStateForm.get('keyCode')">
+            <input type="text" class="form-control" formControlName="keyCode" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Nombre"
+            [control]="transferorsStateForm.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Tipo" [control]="transferorsStateForm.get('type')">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
         </div>
       </div>
     </form>

@@ -8,10 +8,20 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
   },
   keyTransferent: {
-    title: 'Calve',
+    title: 'Clave',
     sort: false,
   },
-  userCreation: {
+  typeTransferent: {
+    title: 'Tipo',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'NO') return 'No obligatorio ';
+      if (value == 'CE') return 'Asegurado';
+
+      return value;
+    },
+  },
+  /*userCreation: {
     title: 'Usuario creado',
     sort: false,
   },
@@ -27,10 +37,7 @@ export const TRANSFERENT_COLUMNS = {
     title: 'Fecha actualización',
     sort: false,
   },
-  typeTransferent: {
-    title: 'Tipo',
-    sort: false,
-  },
+ 
   version: {
     title: 'Versión',
     sort: false,
@@ -110,5 +117,5 @@ export const TRANSFERENT_COLUMNS = {
   risk: {
     title: 'Riesgo',
     sort: false,
-  },
+  },*/
 };

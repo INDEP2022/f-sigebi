@@ -3,16 +3,22 @@ export const TRANSFERENT_STATE_COLUMNS = {
     title: 'No.',
     sort: false,
   },
-  keyTransferent: {
+  keyCode: {
     title: 'Clave',
     sort: false,
   },
-  nameTransferent: {
+  name: {
     title: 'Nombre',
     sort: false,
   },
-  typeTransferent: {
+  type: {
     title: 'Tipo',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'NO') return 'No obligatorio ';
+      if (value == 'CE') return 'Asegurado';
+
+      return value;
+    },
   },
 };
