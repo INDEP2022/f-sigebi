@@ -231,12 +231,9 @@ export class ConfiscatedRecordsComponent implements OnInit {
 
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
-    let fecReception = new Date(this.form.get('fecReception').value);
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
-      console.log(this.form.get('fecElab').value);
-      console.log(this.form.get('fecReception').value);
     } else {
       {
         this.form.get('fecReception').setValue('');

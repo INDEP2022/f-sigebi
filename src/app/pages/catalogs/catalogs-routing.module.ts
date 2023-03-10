@@ -372,6 +372,13 @@ const routes: Routes = [
     data: { title: 'Normas' },
   },
   {
+    path: 'indicator-deadlines',
+    loadChildren: async () =>
+      (await import('./indicator-deadlines/indicator-deadlines.module'))
+        .IndicatorDeadlinesModule,
+    data: { title: 'Plazos Indicadores' },
+  },
+  {
     path: 'notary',
     loadChildren: async () =>
       (await import('./notary/notary.module')).NotaryModule,
@@ -447,6 +454,13 @@ const routes: Routes = [
       (await import('./doc-compensation-sat/doc-compensation-sat.module'))
         .DocCompensationSatModule,
     data: { title: 'Documentos resarcimiento sat' },
+  },
+  {
+    path: 'indicatorDeadlines',
+    loadChildren: async () =>
+      (await import('./indicator-deadlines/indicator-deadlines.module'))
+        .IndicatorDeadlinesModule,
+    data: { title: 'Plazos de Indicadores' },
   },
   {
     path: 'indicatorReport',
@@ -538,6 +552,25 @@ const routes: Routes = [
       (await import('./payment-concept/payment-concept.module'))
         .PaymentConceptModule,
     data: { title: 'Concepto de pagos' },
+  },
+  //Henry
+  {
+    path: 'affair',
+    loadChildren: async () =>
+      (await import('./affair/affair.module')).AffairModule,
+    data: { title: 'Asuntos' },
+  },
+  {
+    path: 'legal-affair',
+    loadChildren: async () =>
+      (await import('./legal-affair/legal-affair.module')).LegalAffairModule,
+    data: { title: 'Asuntos Jurídicos' },
+  },
+  {
+    path: 'transferors',
+    loadChildren: async () =>
+      (await import('./transferors/transferors.module')).TransferorsModule,
+    data: { title: 'Transferentes por estado' },
   },
 ];
 

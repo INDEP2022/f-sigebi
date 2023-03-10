@@ -11,7 +11,7 @@
           </form-field>
         </div>
         <div class="col-md-9">
-          <form-field [control]="legendForm.get('legend')" label="Legenda">
+          <form-field [control]="legendForm.get('legend')" label="Leyenda">
             <textarea
               type="text"
               class="form-control"
@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <div class="row pt-5">
+      <!--  <div class="row pt-5">
         <div class="col-md-6">
           <form-field
             [control]="legendForm.get('userCreation')"
@@ -58,6 +58,7 @@
             [control]="legendForm.get('creationDate')"
             label="Fecha de creación">
             <input
+              bsDatePicker
               type="text"
               class="form-control"
               formControlName="creationDate" />
@@ -80,12 +81,13 @@
             [control]="legendForm.get('modificationDate')"
             label="Fecha de modificación">
             <input
+              bsDatePicker
               type="text"
               class="form-control"
               formControlName="modificationDate" />
           </form-field>
-        </div>
-      </div>
+        </div> 
+      </div>-->
     </form>
   </div>
   <div footer>

@@ -32,14 +32,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.clarificationForm = this.fb.group({
-      id: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.minLength(1),
-        ],
-      ],
+      id: [null, [Validators.pattern(STRING_PATTERN), Validators.minLength(1)]],
       clarification: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -54,19 +47,11 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
       ],
       active: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.minLength(1)],
       ],
       version: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.minLength(1)],
       ],
       modificationDate: [null],
       creationUser: [null],
@@ -99,7 +84,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.clarificationService
-      .update(this.clarification.id, this.clarificationForm.value)
+      .newUpdate(this.clarificationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

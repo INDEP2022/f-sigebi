@@ -10,25 +10,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './table-goods.component.html',
-  styles: [
-    `
-      ng2-smart-table {
-        padding: 0px;
-      }
-      .table-container {
-        margin-right: 14px;
-        .table-responsive {
-          padding: 0px;
-          margin-left: 15px;
-        }
-        @media screen and (max-width: 767px) {
-          .table-responsive {
-            padding: 0px;
-          }
-        }
-      }
-    `,
-  ],
+  styles: [``],
 })
 export class TableGoodsComponent extends BasePage implements OnInit {
   @Input()
