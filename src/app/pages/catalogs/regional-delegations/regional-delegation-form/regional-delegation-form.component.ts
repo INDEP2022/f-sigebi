@@ -31,6 +31,9 @@ export class RegionalDelegationFormComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.regionalDelegationForm
+      .get('idGeographicZona')
+      .setValue(this.regionalDelegationForm.get('idGeographicZona').value.id);
   }
 
   private prepareForm() {
@@ -79,6 +82,7 @@ export class RegionalDelegationFormComponent
 
   update() {
     this.loading = true;
+
     this.regionalDelegationService
       .update(this.regionalDelegation.id, this.regionalDelegationForm.value)
       .subscribe({

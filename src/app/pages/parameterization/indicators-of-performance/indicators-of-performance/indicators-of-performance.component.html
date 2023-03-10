@@ -5,14 +5,16 @@
   <div body>
     <div class="row pt-4">
       <h5 class="title">Lista de Indicador</h5>
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data1"
-            (userRowSelect)="rowsSelected($event)">
-          </ng2-smart-table>
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+          </div>
         </div>
       </div>
       <app-pagination
@@ -101,12 +103,14 @@
         <app-columns-select [(settings)]="settings2"></app-columns-select>
       </div>
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="data2">
-          </ng2-smart-table>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+          </div>
         </div>
       </div>
       <app-pagination
