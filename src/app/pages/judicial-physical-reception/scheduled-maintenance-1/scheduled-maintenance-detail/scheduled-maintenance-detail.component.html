@@ -74,12 +74,22 @@
         </div>
       </div> -->
       <div class="action-buttons mr-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
+          <button
+            class="btn btn-primary btn-sm active"
+            type="submit"
+            size="small"
+            (click)="getData()">
+            <i class="bx bx-loader float-icon"></i>
+            Refrescar Informaci&oacute;n
+          </button>
+        </div>
+        <div class="col-md-3 center">
           <app-goodtracker-button
             [statusActaValue]="statusActaValue"
             [data]="data"></app-goodtracker-button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3 center">
           <app-update-dates-goods
             [statusActaValue]="statusActaValue"
             [data]="data"
@@ -87,12 +97,12 @@
               selectedsForUpdate = $event
             "></app-update-dates-goods>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <app-massive-delete-button
             [statusActaValue]="statusActaValue"
             [actaId]="actaId"
             [selecteds]="selecteds"
-            (finishDelete)="getData(params)">
+            (finishDelete)="getData()">
           </app-massive-delete-button>
         </div>
       </div>
@@ -119,7 +129,8 @@
       [data]="data"
       [totalItems]="totalItems"
       [statusActaValue]="statusActaValue"
-      (updateData)="getData($event)"
+      (updateGoodsRow)="updateGoodsRow($event)"
+      (updateData)="this.params = $event; getData()"
       (rowsSelected)="rowsSelected($event)"
       (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
 
