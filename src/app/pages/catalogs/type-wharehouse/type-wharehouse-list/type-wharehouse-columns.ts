@@ -1,6 +1,6 @@
 export const TYPESWHAREHOUSE_COLUMS = {
   id: {
-    title: 'Registro',
+    title: 'ID',
     type: 'number',
     sort: false,
   },

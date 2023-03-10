@@ -53,7 +53,11 @@ export class NormsListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getExample();
+      if (next) {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getExample());
+      }
     });
   }
 
