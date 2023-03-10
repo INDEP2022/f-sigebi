@@ -41,13 +41,22 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.transferentForm = this.fb.group({
       id: [{ value: null, disabled: true }, []],
-      nameTransferent: [null, [Validators.pattern(STRING_PATTERN)]],
-      keyTransferent: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameTransferent: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      keyTransferent: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       userCreation: [{ value: null, disabled: true }, []],
       dateCreation: [{ value: null, disabled: true }, []],
       userUpdate: [{ value: null, disabled: true }, []],
       dateUpdate: [{ value: null, disabled: true }, []],
-      typeTransferent: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTransferent: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
       dateBegOperation: [null, []],
@@ -64,10 +73,10 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
       custodyGuardGoods: [null, [Validators.pattern(STRING_PATTERN)]],
       destinyGoods: [null, [Validators.pattern(STRING_PATTERN)]],
       daysAdminGoods: [null, [Validators.pattern(STRING_PATTERN)]],
-      cvman: [null, [Validators.pattern(STRING_PATTERN)]],
+      /*cvman: [null, [Validators.pattern(STRING_PATTERN)]],
       indcap: [null, [Validators.pattern(STRING_PATTERN)]],
       active: [null, [Validators.pattern(STRING_PATTERN)]],
-      risk: [null, [Validators.pattern(STRING_PATTERN)]],
+      risk: [null, [Validators.pattern(STRING_PATTERN)]],*/
     });
     if (this.transferent != null) {
       this.edit = true;
