@@ -35,3 +35,7 @@
   background: rgb(34, 151, 190) !important;
   border: 1px solid blue;
 }
+
+:host ::ng-deep .hide_edit {
+  display: none;
+}

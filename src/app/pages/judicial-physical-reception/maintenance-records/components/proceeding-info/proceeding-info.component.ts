@@ -31,16 +31,30 @@ import {
 })
 export class ProceedingInfoComponent implements OnInit {
   @Input() set info(value: IProceedingDeliveryReception) {
-    if (value) this.form.setValue(deliveryReceptionToInfo(value));
+    if (value) {
+      this.form.setValue(deliveryReceptionToInfo(value));
+    }
   }
   @Input() loading = false;
   form: FormGroup;
   @Output() filterEvent = new EventEmitter<IProceedingInfo>();
+  @Output() updateStatus = new EventEmitter();
   constructor(private fb: FormBuilder) {
     this.prepareForm();
+    this.form.get('statusActa').valueChanges.subscribe(x => {
+      this.updateStatus.emit(x);
+    });
   }
 
   ngOnInit(): void {}
+
+  get statusActa() {
+    return this.form
+      ? this.form.get('statusActa')
+        ? this.form.get('statusActa').value
+        : 'CERRADA'
+      : 'CERRADA';
+  }
 
   filter() {
     this.filterEvent.emit(this.form.value);
@@ -72,6 +86,21 @@ export class ProceedingInfoComponent implements OnInit {
       witness1: [null],
       witness2: [null],
       comptrollerWitness: [null],
+      elaborate: [null],
+      numRegister: [null],
+      identifier: [null],
+      universalFolio: [null],
+      numeraryFolio: [null],
+      numTransfer: [null],
+      numRequest: [null],
+      indFulfilled: [null],
+      affair: [null],
+      receiveBy: [null],
+      destructionMethod: [null],
+      approvedXAdmon: [null],
+      approvalDateXAdmon: [null],
+      approvalUserXAdmon: [null],
+      idTypeProceedings: [null],
     });
   }
 }

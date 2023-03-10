@@ -7,17 +7,37 @@ export const COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
+  cvEntidad: {
+    title: 'Cv Entidad Federativa',
+    sort: false,
+  },
+  cvEntDescripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
   noDelegation: {
     title: 'No Delegación',
+    sort: false,
+  },
+  cvDelDescripcion: {
+    title: 'Descripción',
     sort: false,
   },
   noSubDelegation: {
     title: 'No Subdelegación',
     sort: false,
   },
+  cvSubDelDescripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
 };
 
 export const COLUMNSLIST = {
+  id: {
+    title: 'No Juzgado',
+    sort: false,
+  },
   description: {
     title: 'Descripción',
     sort: false,

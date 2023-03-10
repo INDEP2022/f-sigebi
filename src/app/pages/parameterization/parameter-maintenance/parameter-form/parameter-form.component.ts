@@ -18,7 +18,6 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   title: string = 'Parámetro';
   edit: boolean = false;
   parameter: IParameters = {} as IParameters;
-  maxDate = new Date();
   minDate = new Date('1999/01/01');
   invalidDate: boolean = false;
 
@@ -68,6 +67,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     });
 
     this.form.patchValue(this.parameter);
+    if (this.edit) this.form.get('id').disable();
   }
 
   validateDate() {
@@ -111,6 +111,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     this.loading = true;
     if (this.form.valid) {
       if (this.edit) {
+        this.form.get('id').enable();
         this.parameterServ
           .update(this.form.get('id').value, this.form.value)
           .subscribe({

@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //Models
 import { IAttributesFinancialInfo } from 'src/app/core/models/catalogs/attributes-financial-info-model';
 //Services
@@ -37,15 +37,6 @@ export class CatFinancialInformationAttributesModalComponent
 
   private prepareForm() {
     this.attributesFinancialInfoForm = this.fb.group({
-      id: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       description: [
         null,
@@ -53,7 +44,6 @@ export class CatFinancialInformationAttributesModalComponent
       ],
       type: [null, [Validators.required]],
       subType: [null, [Validators.required]],
-      registerNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.attributesFinancialInfo != null) {
       this.edit = true;
@@ -89,7 +79,11 @@ export class CatFinancialInformationAttributesModalComponent
       )
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.onLoadToast('info', 'Opss..', 'Dato duplicado');
+          this.loading = false;
+          console.log(error);
+        },
       });
   }
 
