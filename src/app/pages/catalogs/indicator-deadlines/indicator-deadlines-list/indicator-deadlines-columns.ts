@@ -1,6 +1,6 @@
-export const INDICATOR_DEADLINE_COLUMNS = {
+export const INDICATORS_DEADLINES_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Registro',
     type: 'number',
     sort: false,
   },
@@ -16,37 +16,7 @@ export const INDICATOR_DEADLINE_COLUMNS = {
   },
   deadline: {
     title: 'Plazo',
-    type: 'number',
-    sort: false,
-  },
-  userCreation: {
-    title: 'Usuario Creacion',
     type: 'string',
-    sort: false,
-  },
-  creationDate: {
-    title: 'Fecha Creacion',
-    type: 'Date',
-    sort: false,
-  },
-  userModification: {
-    title: 'Usuario Modificacon',
-    type: 'string',
-    sort: false,
-  },
-  modificationDate: {
-    title: 'Fecha Modificacion',
-    type: 'Date',
-    sort: false,
-  },
-  status: {
-    title: 'Estado',
-    type: 'string',
-    sort: false,
-  },
-  version: {
-    title: 'Version',
-    type: 'Date',
     sort: false,
   },
 };

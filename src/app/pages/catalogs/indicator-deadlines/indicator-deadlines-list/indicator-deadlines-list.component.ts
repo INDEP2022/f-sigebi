@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { takeUntil } from 'rxjs/operators';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IIndicatorDeadline } from 'src/app/core/models/catalogs/indicator-deadline.model';
 import { IndicatorDeadlineService } from 'src/app/core/services/catalogs/indicator-deadline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { IndicatorFormComponent } from '../indicator-form/indicator-form.component';
-import { INDICATOR_DEADLINE_COLUMNS } from './indicator-deadlines-columns';
+import { IndicatorDeadlinesFormComponent } from '../indicator-deadlines-form/indicator-deadlines-form.component';
+import { INDICATORS_DEADLINES_COLUMNS } from './indicator-deadlines-columns';
 
 @Component({
   selector: 'app-indicator-deadlines-list',
@@ -18,30 +17,28 @@ export class IndicatorDeadlinesListComponent
   extends BasePage
   implements OnInit
 {
-  data: IIndicatorDeadline[] = [];
+  columns: IIndicatorDeadline[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
   constructor(
-    private service: IndicatorDeadlineService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private indicatorDeadlineService: IndicatorDeadlineService
   ) {
     super();
-    this.settings.columns = INDICATOR_DEADLINE_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.columns = INDICATORS_DEADLINES_COLUMNS;
   }
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+      .subscribe(() => this.getExample());
   }
 
-  getData() {
+  getExample() {
     this.loading = true;
-    this.service.getAll(this.params.getValue()).subscribe({
+    this.indicatorDeadlineService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.data = response.data;
+        this.columns = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -49,37 +46,22 @@ export class IndicatorDeadlinesListComponent
     });
   }
 
-  openForm(value?: IIndicatorDeadline) {
-    let config: ModalOptions = {
-      initialState: {
-        value,
-        callback: (next: boolean) => {
-          if (next) this.getData();
-        },
-      },
+  openModal(context?: Partial<IndicatorDeadlinesFormComponent>) {
+    const modalRef = this.modalService.show(IndicatorDeadlinesFormComponent, {
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    };
-    this.modalService.show(IndicatorFormComponent, config);
-  }
-
-  delete(indicator?: IIndicatorDeadline) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.service.remove(indicator.id).subscribe({
-          next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
-            this.getData();
-          },
-          error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
-          },
-        });
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getExample());
       }
     });
+  }
+
+  openForm(indicatorsDeadlines?: IIndicatorDeadline) {
+    this.openModal({ indicatorsDeadlines });
   }
 }

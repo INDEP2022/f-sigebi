@@ -3,10 +3,10 @@ export interface IIndicatorDeadline {
   indicator: string;
   formula: string;
   deadline: number;
-  userCreation: string;
-  creationDate: Date;
-  userModification: string;
-  modificationDate: Date;
-  status: number;
+  usuario_creacion: string;
+  fecha_creacion: Date;
+  usuario_modificacion: string;
+  fecha_modificacion: Date;
+  estatus: number;
   version: number;
 }

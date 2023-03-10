@@ -50,6 +50,7 @@ export class RegionalDelegationsListComponent
     this.loading = true;
     this.regionalDelegationService.getAll(this.params.getValue()).subscribe(
       response => {
+        console.log(response);
         this.regionalDelegation = response.data;
         this.totalItems = response.count;
         this.loading = false;
