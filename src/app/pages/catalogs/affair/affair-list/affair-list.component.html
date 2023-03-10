@@ -23,7 +23,8 @@
             <ng2-smart-table
               [settings]="settings"
               [source]="affairList"
-              (edit)="openForm($event.data)"></ng2-smart-table>
+              (edit)="openForm($event.data)"
+              (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params"

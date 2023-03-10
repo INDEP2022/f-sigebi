@@ -21,4 +21,17 @@ export class LegalAffairService extends HttpService {
       params
     );
   }
+
+  create(model: ILegalAffair) {
+    return this.post(LegalAffairEndpoints.LegalAffair, model);
+  }
+  //
+  update(model: ILegalAffair) {
+    return this.put(LegalAffairEndpoints.LegalAffair, model);
+  }
+
+  remove(id: string | number) {
+    const route = `${LegalAffairEndpoints.LegalAffair}/${id}`;
+    return this.delete(route);
+  }
 }

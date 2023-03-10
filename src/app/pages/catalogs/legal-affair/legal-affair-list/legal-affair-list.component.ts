@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
 import { LegalAffairService } from 'src/app/core/services/catalogs/legal-affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { LegalAffairDetailComponent } from '../legal-affair-detail/legal-affair-detail.component';
 import { LEGAL_AFFAIR_COLUMNS } from './columns';
 
@@ -64,11 +65,33 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         legalAffair,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getLegalAffairAll();
+          console.log('cerrando');
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(LegalAffairDetailComponent, config);
+  }
+
+  showDeleteAlert(legalAffair?: ILegalAffair) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(legalAffair.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.legalAffairService.remove(id).subscribe({
+      next: () => this.getLegalAffairAll(),
+    });
   }
 }
