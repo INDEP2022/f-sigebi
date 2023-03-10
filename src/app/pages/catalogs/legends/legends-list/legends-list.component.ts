@@ -67,7 +67,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         console.log(legend);
-        /* this.delete(legend.id); */
+        this.delete(legend.id);
         Swal.fire('Borrado', '', 'success');
       }
     });
