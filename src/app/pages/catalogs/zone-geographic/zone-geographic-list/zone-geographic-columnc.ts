@@ -14,11 +14,7 @@ export const ZONEGEOGRAPHIC_COLUMS = {
     type: 'number',
     sort: false,
   },
-  version: {
-    title: 'Versión',
-    type: 'number',
-    sort: false,
-  },
+
   thirdPartySpecialized: {
     title: 'Tercero especializado',
     type: 'string',
@@ -31,6 +27,11 @@ export const ZONEGEOGRAPHIC_COLUMS = {
   },
   status: {
     title: 'Estatus',
+    type: 'number',
+    sort: false,
+  },
+  version: {
+    title: 'Versión',
     type: 'number',
     sort: false,
   },

@@ -1,0 +1,26 @@
+<ng-container [formGroup]="form">
+  <ng-container formArrayName="copies">
+    <ng-container *ngFor="let cppForm of copies.controls; let i = index">
+      <div class="row pt-4" [formGroupName]="i">
+        <cpp-control
+          class="col-md-10"
+          [form]="cppForm"
+          [users]="getDefaultSelect()"
+          [disabled]="disabled"></cpp-control>
+        <div class="col" *ngIf="!disabled">
+          <i
+            *ngIf="copies.length > 1 && cppForm.get('id').value != null"
+            (click)="removeCopy(i)"
+            class="fa fa-trash text-danger mt-4"
+            aria-hidden="true"></i>
+
+          <i
+            *ngIf="i == 0"
+            (click)="addCopy()"
+            class="fa fa-plus text-info ml-5 mt-4"
+            aria-hidden="true"></i>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>

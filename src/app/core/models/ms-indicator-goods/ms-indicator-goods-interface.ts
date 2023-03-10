@@ -10,3 +10,25 @@ export interface IGoodsByProceeding {
   fec_indica_usuario_aprobacion: string;
   destino: string;
 }
+
+export interface IDetailIndicatorGood {
+  actNumber: string;
+  goodNumber: string;
+  amount: string;
+  received: string;
+  approvedXAdmon?: any;
+  approvedXAdmonDate?: any;
+  userApprovedXAdmon?: any;
+  indicatesUserApprovalDate?: any;
+  registryNumber: string;
+  reviewIndft: string;
+  correctIdft: string;
+  userIdft?: any;
+  idftDate?: any;
+  delegationIdftNumber: string;
+  yearIdft: string;
+  monthIdft: string;
+  idftHcDate?: any;
+  packageNumber: string;
+  valChange: string;
+}

@@ -1,5 +1,6 @@
 export enum EIndicatorGoodsEndpoints {
   BasePath = 'indicatorgood',
   Goods = 'good',
-  GoodsByEvent = 'minutesNumber',
+  Detail = 'detail',
+  GoodsByEvent = 'findMinutesNumber',
 }

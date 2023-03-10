@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDepartment } from '../../models/catalogs/department.model';
@@ -21,7 +21,7 @@ export class UsersService extends HttpService {
     this.microservice = UserEndpoints.BasePath;
   }
 
-  getAllSegUsers(_params: ListParams | string) {
+  getAllSegUsers(_params: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
   }
 
