@@ -7,10 +7,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
 import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
 import { MENU } from 'src/app/core/menu';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,11 +31,28 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   private menu: any;
   public menuItems: IMenuItem[] = [];
 
+  menus: any[] = [];
+
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
-  constructor(private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    // const roles = this.authService.accessRoles();
+    // roles.some((rol: any) =>
+    //   rol.menus.some(
+    //     (menu: any) => {
+    //       this.menus.push(menu);
+    //       console.log(menu);
+    //     }
+    //     //menu.screen === screenId &&
+    //     //menu.permissions[permission] == PERMISSION_ENABLED
+    //   )
+    // );
     this.initialize();
   }
 
@@ -165,6 +183,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   private initialize(): void {
     let id = 0;
     MENU.forEach(menu => {
+      console.log(menu);
       if (menu.subItems?.length > 0) {
         menu.id = id;
         id = this.setParentId(menu, menu.id);
@@ -173,6 +192,12 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
         id++;
       }
       this.menuItems.push(menu);
+      // console.log(this.menus);
+      // let exist = this.menus.findIndex(menuCA => menuCA.name == menu.label);
+      // console.log(exist);
+      // if (exist !== -1) {
+      //   this.menuItems.push(menu);
+      // }
     });
   }
   private setParentId(menuItem: IMenuItem, id: number): number {

@@ -45,6 +45,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         this.getAffair(this.requestForm.controls['affair'].value);
       }
 
+      //establece el campo urgente
       if (this.requestForm.controls['urgentPriority'].value) {
         this.priorityString = this.requestForm.controls['urgentPriority'].value;
 
@@ -55,12 +56,14 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         //this.requestForm.controls['urgentPriority'].setValue(this.priority);
       }
 
+      //establece el campo fecha de oficio
       if (this.requestForm.controls['paperDate'].value != null) {
         let date = new Date(this.requestForm.controls['paperDate'].value);
         this.bsPaperValue = date;
         //this.requestForm.controls['paperDate'].setValue(date.toISOString());
       }
 
+      //estable el campo para preguntar en la vista si es del tipo 1 o 3
       if (this.requestForm.controls['transferenceId'].value != null) {
         this.transferenceNumber = Number(
           this.requestForm.controls['transferenceId'].value
@@ -68,6 +71,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       }
     });
 
+    //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
     this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
       if (this.requestForm.controls['priorityDate'].value !== null) {
         const date = new Date(this.requestForm.controls['priorityDate'].value);

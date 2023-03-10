@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  personNumber: {
+  id: {
     title: 'No Persona',
     sort: false,
   },

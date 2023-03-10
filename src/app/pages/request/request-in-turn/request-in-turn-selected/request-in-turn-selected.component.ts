@@ -10,27 +10,6 @@ import { IRequest } from '../../../../core/models/requests/request.model';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 
-var users: any[] = [
-  {
-    id: 1,
-    user: 'Jose',
-    email: 'jose@gmail.com',
-    otro: 'otro dato',
-  },
-  {
-    id: 2,
-    user: 'Mari',
-    email: 'maroa@gmail.com',
-    otro: 'otro dato',
-  },
-  {
-    id: 3,
-    user: 'Noe',
-    email: 'Noe@gmail.com',
-    otro: 'otro dato',
-  },
-];
-
 @Component({
   selector: 'app-request-in-turn-selected',
   templateUrl: './request-in-turn-selected.component.html',
