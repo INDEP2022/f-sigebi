@@ -1,18 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CatTransferentModalComponent } from '../cat-transferent-modal/cat-transferent-modal.component';
-import { TRANSFERENT_COLUMNS } from './transferent-columns';
+import {
+  AUTHORITY_COLUMNS,
+  STATION_COLUMNS,
+  TRANSFERENT_COLUMNS,
+} from './transferent-columns';
 //Models
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 //Services
 import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IAuthority2 } from 'src/app/core/models/catalogs/authority.model';
+import { IStation2 } from 'src/app/core/models/catalogs/station.model';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import Swal from 'sweetalert2';
+import { CatAuthorityModalComponent } from '../cat-authority-modal/cat-authority-modal.component';
+import { CatStationModalComponent } from '../cat-station-modal/cat-station-modal.component';
 
 @Component({
   selector: 'app-cat-transferent',
@@ -20,16 +30,39 @@ import Swal from 'sweetalert2';
   styles: [],
 })
 export class CatTransferentComponent extends BasePage implements OnInit {
-  transferent: ITransferente[] = [];
+  transferentList: ITransferente[] = [];
+  transferents: ITransferente;
+
+  stationList: IStation2[] = [];
+  stations: IStation2;
+
+  authorityList: IAuthority2[] = [];
+  authoritys: IAuthority2;
+
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+
+  totalItems3: number = 0;
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
+
   data: LocalDataSource = new LocalDataSource();
+
+  settings2;
+  settings3;
+
+  loading1 = this.loading;
+  loading2 = this.loading;
+  loading3 = this.loading;
 
   constructor(
     private modalService: BsModalService,
     private transferenteService: TransferenteService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private stationService: StationService,
+    private authorityService: AuthorityService
   ) {
     super();
     this.settings = {
@@ -42,6 +75,28 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       },
       columns: { ...TRANSFERENT_COLUMNS },
     };
+
+    this.settings2 = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        position: 'right',
+      },
+      columns: { ...STATION_COLUMNS },
+    };
+
+    this.settings3 = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        position: 'right',
+      },
+      columns: { ...AUTHORITY_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -50,50 +105,20 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       .subscribe(() => this.getTransferents());
   }
 
-  /*getTransferents(){
-    this.loading = true;
-    this.transferenteService.getAll(this.params.getValue()).subscribe(
-      response => {
-        let data= response.data.map((item: ITransferente)=> {
-
-          let date1 = item.dateCreation;
-          item.dateCreation = this.datePipe.transform(date1, 'dd/MM/yyyy' );
-
-          let date2 = item.dateUpdate;
-          item.dateUpdate = this.datePipe.transform(date2, 'dd/MM/yyyy' );
-
-          let date3 = item.dateBegOperation;
-          item.dateBegOperation = this.datePipe.transform(date3, 'dd/MM/yyyy' );
-
-          let date4 = item.dateFinalOperation;
-          item.dateFinalOperation = this.datePipe.transform(date4, 'dd/MM/yyyy' );
-
-          let date5 = item.dateFormalization;
-          item.dateFormalization = this.datePipe.transform(date5, 'dd/MM/yyyy' );
-
-          let date6 = item.dateAmeding;
-          item.dateAmeding = this.datePipe.transform(date6, 'dd/MM/yyyy' );
-          return item;
-        });
-        this.data.load(data);
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
-  }*/
+  //Trae lista de los transferentes
   getTransferents() {
-    this.loading = true;
+    this.loading1 = true;
     this.transferenteService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.transferent = response.data;
+        this.transferentList = response.data;
         this.totalItems = response.count;
-        this.loading = false;
+        this.loading1 = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.loading1 = false),
     });
   }
 
+  //Modal para editar transferentes
   openForm(transferent?: ITransferente) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -105,6 +130,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.modalService.show(CatTransferentModalComponent, modalConfig);
   }
 
+  //Msj de alerta para borrar transferente
   showDeleteAlert(transferent?: ITransferente) {
     this.alertQuestion(
       'warning',
@@ -118,9 +144,141 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     });
   }
 
+  //método para borrar transferente
   delete(id: number) {
     this.transferenteService.remove(id).subscribe({
       next: () => this.getTransferents(),
+    });
+  }
+
+  //Selecciona fila de tabla de transferente
+  rowsSelected(event: any) {
+    const idTrans = { ...this.transferents };
+    this.totalItems2 = 0;
+    this.stationList = [];
+    this.transferents = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getStationByTransferent(idTrans.id));
+  }
+
+  //trae las emisoras de un transferente seleccionado
+  getStationByTransferent(id?: number) {
+    this.loading2 = true;
+    const idTrans = { ...this.transferents };
+    this.stationService
+      .getStationByTransferent(idTrans.id, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          this.stationList = response.data;
+          this.totalItems2 = response.count;
+          this.loading2 = false;
+        },
+        error: error => (this.loading2 = false),
+      });
+  }
+
+  //Modal para editar las emisoras
+  openForm2(station?: IStation2) {
+    const idTrans = { ...this.transferents };
+    let config: ModalOptions = {
+      initialState: {
+        station,
+        idTrans,
+        callback: (next: boolean) => {
+          console.log('cerrando');
+          if (next) this.getStationByTransferent(idTrans.id);
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CatStationModalComponent, config);
+  }
+
+  //msj de alerta al borrar emisora
+  showDeleteAlert2(station?: IStation2) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete2(station.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //método para borrar emisora
+  delete2(id: number) {
+    this.stationService.remove(id).subscribe({
+      next: () => this.getStationByTransferent(),
+    });
+  }
+
+  //Selecciona fila de tabla de emisoras
+  rowsSelected2(event: any) {
+    const idEmi = { ...this.stations };
+    this.totalItems3 = 0;
+    this.authorityList = [];
+    this.stations = event.data;
+    this.params3
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAuthorityByTransferent(idEmi.id));
+  }
+
+  //Trae lista de autoridades por transferente
+  getAuthorityByTransferent(id?: number) {
+    this.loading3 = true;
+    const idEmi = { ...this.stations };
+    this.authorityService
+      .getAuthorityByTransferent(idEmi.id, this.params3.getValue())
+      .subscribe({
+        next: response => {
+          this.authorityList = response.data;
+          this.totalItems3 = response.count;
+          this.loading3 = false;
+        },
+        error: error => (this.loading3 = false),
+      });
+  }
+
+  // modal para editar autoridades
+  openForm3(authority?: IAuthority2) {
+    const idAuth = { ...this.stations };
+    let config: ModalOptions = {
+      initialState: {
+        authority,
+        idAuth,
+        callback: (next: boolean) => {
+          if (next) this.getAuthorityByTransferent(idAuth.id);
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CatAuthorityModalComponent, config);
+  }
+
+  //msj de alerta para borrar autoridades
+  showDeleteAlert3(authority?: IAuthority2) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete3(authority.idAuthority, authority);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //Método para borrar las autoridades
+  delete3(id?: number, authority?: IAuthority2) {
+    this.authorityService.remove2(id, authority).subscribe({
+      next: () => this.getAuthorityByTransferent(),
     });
   }
 }
