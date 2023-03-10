@@ -12,6 +12,7 @@ import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-transferent',
@@ -36,7 +37,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...TRANSFERENT_COLUMNS },
@@ -102,5 +103,24 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(CatTransferentModalComponent, modalConfig);
+  }
+
+  showDeleteAlert(transferent?: ITransferente) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(transferent.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.transferenteService.remove(id).subscribe({
+      next: () => this.getTransferents(),
+    });
   }
 }

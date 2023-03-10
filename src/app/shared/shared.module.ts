@@ -25,7 +25,9 @@ import { SearchBarSimpleComponent } from './components/search-bar-simple/search-
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { SeeMoreComponent } from './components/see-more/see-more.component';
 import { SelectComponent } from './components/select/select.component';
+import { AutoSizeDirective } from './directives/autosize.directive';
 import { MaxLengthDirective } from './directives/maxlength.directive';
+import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
 import { GlobalVarsModule } from './global-vars/global-vars.module';
@@ -50,6 +52,8 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     CheckboxElementComponent,
     PermissionsDirective,
     MaxLengthDirective,
+    NumbersFilterDirective,
+    AutoSizeDirective,
   ],
   imports: [
     CommonModule,
@@ -90,6 +94,8 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     PermissionsDirective,
     GlobalVarsModule,
     MaxLengthDirective,
+    NumbersFilterDirective,
+    AutoSizeDirective,
   ],
 })
 export class SharedModule {

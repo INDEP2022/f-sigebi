@@ -196,6 +196,10 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/penalty',
       },
       {
+        label: 'Plazos Indicadores',
+        link: '/pages/catalogs/indicatorDeadlines',
+      },
+      {
         label: 'Indicador Reportes',
         link: '/pages/catalogs/indicatorReport',
       },
@@ -230,6 +234,10 @@ export const CATALOGS_ROUTES = [
       {
         label: 'Normas',
         link: '/pages/catalogs/norms',
+      },
+      {
+        label: 'Plazos indicadores',
+        link: '/pages/catalogs/indicator-deadlines',
       },
       {
         label: 'Notarios',
@@ -334,6 +342,19 @@ export const CATALOGS_ROUTES = [
       {
         label: 'Tipo Siniestro',
         link: '/pages/catalogs/type-sinister',
+      },
+      //Henry
+      {
+        label: 'Asuntos',
+        link: '/pages/catalogs/affair',
+      },
+      {
+        label: 'Asuntos Jurídicos',
+        link: '/pages/catalogs/legal-affair',
+      },
+      {
+        label: 'Transferentes por estado',
+        link: '/pages/catalogs/transferors',
       },
     ],
   },

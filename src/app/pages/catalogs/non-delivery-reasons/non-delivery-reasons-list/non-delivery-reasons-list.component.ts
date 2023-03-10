@@ -22,14 +22,13 @@ export class NonDeliveryReasonsListComponent
   columns: INonDeliveryReason[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
   constructor(
     private nonDeliveryReasonsService: NonDeliveryReasonService,
     private modalService: BsModalService
   ) {
     super();
     this.settings.columns = NON_DELIVERY_REASONS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -57,7 +56,11 @@ export class NonDeliveryReasonsListComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getExample();
+      if (next) {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getExample());
+      }
     });
   }
 

@@ -32,13 +32,13 @@ export class MaintenanceDocumentValidatorsModalComponent
   ngOnInit(): void {
     this.prepareForm();
     this.typeItem = [
-      { label: 'DEV', value: 'DEV' },
-      { label: 'DON', value: 'DON' },
-      { label: 'DES', value: 'DES' },
-      { label: 'ABN', value: 'ABN' },
-      { label: 'RESAR', value: 'RESAR' },
-      { label: 'REC/DEC', value: 'RECDEC' },
-      { label: 'CAN/SUS', value: 'CANSUS' },
+      // { label: 'DEV', value: 'DEV' },
+      // { label: 'DON', value: 'DON' },
+      // { label: 'DES', value: 'DES' },
+      // { label: 'ABN', value: 'ABN' },
+      // { label: 'RESAR', value: 'RESAR' },
+      // { label: 'REC/DEC', value: 'RECDEC' },
+      // { label: 'CAN/SUS', value: 'CANSUS' },
     ];
   }
   private prepareForm() {
