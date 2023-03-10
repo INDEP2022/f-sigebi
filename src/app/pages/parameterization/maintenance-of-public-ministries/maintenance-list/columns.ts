@@ -1,4 +1,8 @@
 export const COLUMNS = {
+  id: {
+    title: 'No Ministerio',
+    sort: false,
+  },
   description: {
     title: 'Descripción',
     sort: false,
