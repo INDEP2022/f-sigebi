@@ -21,11 +21,11 @@ export class NormService implements ICrudMethods<INorm> {
     return this.normRepository.getById(this.route, id);
   }
 
-  create(model: INorm): Observable<INorm> {
+  create(model: any): Observable<INorm> {
     return this.normRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: INorm): Observable<Object> {
+  update(id: string | number, model: any): Observable<Object> {
     return this.normRepository.update(this.route, id, model);
   }
 
