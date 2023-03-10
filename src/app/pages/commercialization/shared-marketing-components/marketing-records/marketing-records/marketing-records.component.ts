@@ -5,26 +5,41 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, map, switchMap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  skip,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 
+import { takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { BasePage } from 'src/app/core/shared/base-page';
-//Components
-import { AddDocsComponent } from '../add-docs/add-docs.component';
-import { MarketingRecordsForm } from '../utils/marketing-records-form';
-import { COLUMNS, COLUMNS2 } from './columns';
-//Provisional Data
-import { takeUntil } from 'rxjs';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
+import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodJobManagement } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
+import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { CopiesJobManagementService } from 'src/app/core/services/ms-office-management/copies-job-management.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AddDocsComponent } from '../add-docs/add-docs.component';
+import { CppForm } from '../utils/cpp-form';
+import { MarketingRecordsForm } from '../utils/marketing-records-form';
+import { COLUMNS, COLUMNS2 } from './columns';
 import { DocsData, GoodsData } from './data';
 
 @Component({
@@ -33,26 +48,57 @@ import { DocsData, GoodsData } from './data';
   styles: [],
 })
 export class MarketingRecordsComponent extends BasePage implements OnInit {
+  showJuridic: boolean = false;
+  problematicRadios = new FormControl<1 | 2>(null);
+  officeTypeCtrl = new FormControl<'ENT' | 'ESC'>(null);
   form = new FormGroup(new MarketingRecordsForm());
+  documents: IGoodJobManagement[] = [];
   formCcp: FormGroup = new FormGroup({});
-  /**
-   * Goods
-   * */
-  data: LocalDataSource = new LocalDataSource();
-  goodsData: any[] = GoodsData;
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  // * Documents table & params
+  documentsParams = new BehaviorSubject(new FilterParams());
+  docs: IAttachedDocument[] = [];
+  totalDocuments = 0;
+  // * Goods table & params
+  goodsParams = new BehaviorSubject(new FilterParams());
+  goods: IGood[] = [];
+  totalGoods = 0;
 
-  /**
-   * Docs
-   * */
-  settings2;
-  data2: LocalDataSource = new LocalDataSource();
+  goodsData: any[] = GoodsData;
+
+  cppForm = this.fb.group(new CppForm());
+  copies: any[] = [];
+  disableCpp: boolean = false;
+  docSettings;
   docsData: any[] = DocsData;
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  senders = new DefaultSelect();
+  receivers = new DefaultSelect();
+  cities = new DefaultSelect();
 
   usersCcp: any = [];
+  gParams = {
+    // P_GEST_OK
+    pDestOk: '',
+    //P_NO_TRAMITE
+    pPaperworkNum: '',
+    //TIPO_OF
+    typeOf: '',
+    //SALE
+    sale: '',
+    //DOC
+    doc: '',
+    // BIEN
+    good: '',
+    // VOLANTE
+    flyer: '',
+    // EXPEDIENTE
+    expedient: '',
+    // PLLAMO
+    pllamo: '',
+    // P_DICTAMEN
+    pDictum: '',
+  };
 
   get formType() {
     return this.form.controls.recordCommerType.value;
@@ -68,7 +114,11 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     private goodsJobManagementService: GoodsJobManagementService,
     private mJobManagement: MJobManagementService,
     private showHide: showHideErrorInterceptorService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private attachedDocumentsService: AtachedDocumentsService,
+    private usersService: UsersService,
+    private cityService: CityService,
+    private copiesJobManagement: CopiesJobManagementService
   ) {
     super();
     this.settings = {
@@ -77,7 +127,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       columns: COLUMNS,
     };
 
-    this.settings2 = {
+    this.docSettings = {
       ...this.settings,
       actions: { add: false, delete: true, edit: false },
       columns: COLUMNS2,
@@ -87,7 +137,20 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.onTypeFormChange();
-    this.data.load(this.goodsData);
+    this.documentsParams
+      .pipe(
+        skip(1),
+        takeUntil(this.$unSubscribe),
+        switchMap(params => this.getDocuments(params))
+      )
+      .subscribe();
+    this.goodsParams
+      .pipe(
+        skip(1),
+        takeUntil(this.$unSubscribe),
+        switchMap(params => this.getGoods(params))
+      )
+      .subscribe();
   }
 
   goodNumChange() {
@@ -98,7 +161,6 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.limit = 100;
     params.addFilter('goodNumber', goodId);
-    this.showHide.showHideError(false);
     this.goodService
       .getById(goodId)
       .pipe(
@@ -112,23 +174,228 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             .getAllFiltered(params.getParams())
             .pipe(
               map(response => response.data.map(row => row.managementNumber)),
-              switchMap(ids => this.getMGoods(ids))
+              switchMap(ids => this.getMGoods(ids, 'refersTo', 'OFCOMER'))
             );
         })
       )
       .subscribe({
-        next: response => {
-          console.log(response.count);
-        },
+        next: response =>
+          this.handleDocumentsCount(response.count, response.data),
       });
   }
 
-  getMGoods(ids: string[] | number[]) {
+  handleDocumentsCount(count: number, documents: IMJobManagement[]) {
+    if (count == 2) {
+      this.chooseDocument(documents);
+    }
+  }
+
+  async chooseDocument(documents: IMJobManagement[]) {
+    const delyveryDcocument = documents.find(document =>
+      document.description.includes('/ENT')
+    );
+    const deedDocument = documents.find(document =>
+      document.description.includes('ESCRITURACION/ESC')
+    );
+    console.log({ deedDocument, delyveryDcocument });
+    const result = await this.alertQuestion(
+      'question',
+      'El bien tiene dos oficios, seleccione uno',
+      '',
+      'Entrega',
+      'Escrituracion'
+    );
+    // Entrega
+    if (result.isConfirmed) {
+      this.whenIsDelivery(delyveryDcocument);
+    }
+
+    // Escrituración
+    if (!result.isConfirmed) {
+      this.whenIsDeed(deedDocument);
+    }
+  }
+
+  generalFunctions(document: IMJobManagement) {
+    this.getCopies(document.managementNumber);
+    this.form.patchValue(document);
+    this.getAllData(document);
+    if (document.statusOf == 'ENVIADO') {
+      this.form.disable();
+      this.officeTypeCtrl.disable();
+      this.cppForm.disable();
+      this.disableCpp = true;
+    } else {
+      this.form.enable();
+      this.officeTypeCtrl.enable();
+      this.cppForm.enable();
+      this.disableCpp = false;
+    }
+  }
+
+  getCopies(officeNum: string | number) {
+    this.copiesJobManagement.getCopiesManagement(officeNum).subscribe({
+      next: response => {
+        this.copies = response.data.map(user => {
+          return { id: user.nombre, name: user.nombre };
+        });
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener las copias'
+        );
+      },
+    });
+  }
+
+  whenIsDelivery(document: IMJobManagement) {
+    this.generalFunctions(document);
+
+    this.officeTypeCtrl.setValue('ENT');
+    this.controls.recordCommerType.setValue('bie');
+  }
+
+  whenIsDeed(document: IMJobManagement) {
+    this.generalFunctions(document);
+    this.officeTypeCtrl.setValue('ESC');
+    this.controls.recordCommerType.setValue('bie');
+    console.log(document.problematiclegal);
+    if (document.problematiclegal?.includes('jurídica 3')) {
+      this.problematicRadios.setValue(1);
+    }
+
+    if (document.problematiclegal?.includes('jurídica 4')) {
+      this.problematicRadios.setValue(2);
+    }
+    this.showJuridic = true;
+  }
+
+  getAllData(document: IMJobManagement) {
+    const { managementNumber, sender, addressee, city } = document;
+    const docParams = this.documentsParams.getValue();
+    docParams.removeAllFilters();
+    docParams.addFilter('managementNumber', managementNumber);
+    this.documentsParams.next(docParams);
+
+    const goodParams = this.goodsParams.getValue();
+    goodParams.removeAllFilters();
+    goodParams.addFilter('managementNumber', managementNumber);
+    this.goodsParams.next(goodParams);
+
+    const sendersParams = new FilterParams();
+    sendersParams.search = sender;
+    this.getSenders(sendersParams);
+    const receiverParams = new FilterParams();
+    receiverParams.search = addressee;
+    this.getReceivers(receiverParams);
+
+    this.getCityById(city);
+  }
+
+  getSenders(params: FilterParams) {
+    this.getUsers(params).subscribe({
+      next: response =>
+        (this.senders = new DefaultSelect(response.data, response.count)),
+      error: error =>
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener el Remitente'
+        ),
+    });
+  }
+
+  getCities(params: ListParams) {
+    this.cityService.getAll(params).subscribe({
+      next: response => {
+        this.cities = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener las ciudades'
+        );
+      },
+    });
+  }
+
+  getCityById(cityId: string | number) {
+    this.cityService.getById(cityId).subscribe({
+      next: city => {
+        this.cities = new DefaultSelect([city], 1);
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener la ciudad'
+        );
+      },
+    });
+  }
+
+  getReceivers(params: FilterParams) {
+    this.getUsers(params).subscribe({
+      next: response =>
+        (this.receivers = new DefaultSelect(response.data, response.count)),
+      error: error =>
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener el Destinatario'
+        ),
+    });
+  }
+
+  getUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams());
+  }
+
+  getDocuments(params: FilterParams) {
+    return this.attachedDocumentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al obtener los documentos'
+        );
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.docs = response.data;
+        this.totalDocuments = response.count;
+      })
+    );
+  }
+
+  getGoods(params: FilterParams) {
+    return this.goodsJobManagementService
+      .getAllFiltered(params.getParams())
+      .pipe(
+        catchError(error => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al obtener los bienes'
+          );
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.goods = response.data.map(goodJob => goodJob.goodNumber);
+          this.totalGoods = response.count;
+        })
+      );
+  }
+
+  getMGoods(ids: string[] | number[], filter: string, value: string) {
     const params = new FilterParams();
     params.addFilter('managementNumber', ids.join(','), SearchFilter.IN);
-    params.addFilter('refersTo', 'OFCOMER', SearchFilter.ILIKE);
+    params.addFilter(filter, value, SearchFilter.ILIKE);
     this.showHide.showHideError(false);
-    return this.mJobManagement.getAllFiltered(params.getParams()).pipe();
+    return this.mJobManagement.getAllFiltered(params.getParams());
   }
 
   onTypeFormChange() {
@@ -191,9 +458,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
 
-    modalRef.content.refresh.subscribe((data: any) => {
-      if (data) this.data2.load(data);
-    });
+    modalRef.content.refresh.subscribe((data: any) => {});
   }
 
   delete(event: any) {
@@ -203,9 +468,6 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       'Desea eliminar este documento?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.data2.remove(event.data);
-        this.data2.refresh();
       }
     });
   }
@@ -215,29 +477,17 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   }
 
   resetForm(): void {
-    this.alertQuestion(
-      'warning',
-      'Borrar',
-      'Desea borrar los datos ingresados?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.form.reset();
-        this.formCcp.reset();
-        /***
-         * Users CCopy
-         * */
-        this.usersCcp = [];
-        this.data2.load([]);
-        this.data2.refresh();
-      }
-    });
+    // this.alertQuestion(
+    //   'warning',
+    //   'Borrar',
+    //   'Desea borrar los datos ingresados?'
+    // ).then(question => {
+    //   if (question.isConfirmed) {
+    //   }
+    // });
   }
 
   settingsChange($event: any): void {
     this.settings = $event;
-  }
-
-  settingsChange2($event: any): void {
-    this.settings2 = $event;
   }
 }
