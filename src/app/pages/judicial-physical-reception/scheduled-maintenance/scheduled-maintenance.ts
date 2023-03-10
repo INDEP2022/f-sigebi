@@ -13,7 +13,6 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
-import { TypeEvents } from './interfaces/typeEvents';
 
 @Component({
   template: '',
@@ -63,7 +62,7 @@ export abstract class ScheduledMaintenance extends BasePage {
   totalItems: number = 0;
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
-  tiposEvento = TypeEvents;
+  tiposEvento: { id: string; description: string }[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new FilterParams();
   constructor(
@@ -83,6 +82,11 @@ export abstract class ScheduledMaintenance extends BasePage {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.service.getTypes().subscribe({
+      next: response => {
+        this.tiposEvento = response.data;
+      },
+    });
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
       // console.log(x);
       this.getData();

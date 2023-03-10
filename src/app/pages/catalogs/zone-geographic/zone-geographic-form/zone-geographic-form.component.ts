@@ -41,7 +41,7 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
         ]),
       ],
       contractNumber: [null, Validators.compose([Validators.required])],
-      version: [null, Validators.compose([Validators.required])],
+      version: [null],
       thirdPartySpecialized: [
         null,
         Validators.compose([
