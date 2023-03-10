@@ -372,6 +372,13 @@ const routes: Routes = [
     data: { title: 'Normas' },
   },
   {
+    path: 'indicator-deadlines',
+    loadChildren: async () =>
+      (await import('./indicator-deadlines/indicator-deadlines.module'))
+        .IndicatorDeadlinesModule,
+    data: { title: 'Plazos Indicadores' },
+  },
+  {
     path: 'notary',
     loadChildren: async () =>
       (await import('./notary/notary.module')).NotaryModule,

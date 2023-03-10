@@ -2,30 +2,30 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IIndicatorDeadline } from 'src/app/core/models/catalogs/indicator-deadline.model';
+import { IndicatorDeadlineService } from 'src/app/core/services/catalogs/indicator-deadline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
-import { NormsFormComponent } from '../norms-form/norms-form.component';
-import { INorm } from './../../../../core/models/catalogs/norm.model';
-import { NormService } from './../../../../core/services/catalogs/norm.service';
-import { NORMS_COLUMNS } from './norms-columns';
+import { IndicatorDeadlinesFormComponent } from '../indicator-deadlines-form/indicator-deadlines-form.component';
+import { INDICATORS_DEADLINES_COLUMNS } from './indicator-deadlines-columns';
 
 @Component({
-  selector: 'app-norms-list',
-  templateUrl: './norms-list.component.html',
+  selector: 'app-indicator-deadlines-list',
+  templateUrl: './indicator-deadlines-list.component.html',
   styles: [],
 })
-export class NormsListComponent extends BasePage implements OnInit {
-  columns: INorm[] = [];
+export class IndicatorDeadlinesListComponent
+  extends BasePage
+  implements OnInit
+{
+  columns: IIndicatorDeadline[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
   constructor(
-    private normService: NormService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private indicatorDeadlineService: IndicatorDeadlineService
   ) {
     super();
-    this.settings.columns = NORMS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.columns = INDICATORS_DEADLINES_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -36,7 +36,7 @@ export class NormsListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.normService.getAll(this.params.getValue()).subscribe({
+    this.indicatorDeadlineService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count;
@@ -46,8 +46,8 @@ export class NormsListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<NormsFormComponent>) {
-    const modalRef = this.modalService.show(NormsFormComponent, {
+  openModal(context?: Partial<IndicatorDeadlinesFormComponent>) {
+    const modalRef = this.modalService.show(IndicatorDeadlinesFormComponent, {
       initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -61,19 +61,7 @@ export class NormsListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(norm?: INorm) {
-    this.openModal({ norm });
-  }
-
-  delete(batch: INorm) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-      }
-    });
+  openForm(indicatorsDeadlines?: IIndicatorDeadline) {
+    this.openModal({ indicatorsDeadlines });
   }
 }

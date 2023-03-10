@@ -232,6 +232,10 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/norms',
       },
       {
+        label: 'Plazos indicadores',
+        link: '/pages/catalogs/indicator-deadlines',
+      },
+      {
         label: 'Notarios',
         link: '/pages/catalogs/notary',
       },

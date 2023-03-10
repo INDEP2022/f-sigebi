@@ -8,6 +8,11 @@ export const MAXIMUM_TIMES_COLUMNS = {
   date: {
     title: 'Fecha',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   tmpMax: {
     title: 'Tiempo máximo',

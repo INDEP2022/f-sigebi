@@ -13,12 +13,14 @@
   <div body>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="separatorsDocuments"
-            [attr.class]="'table-bordered'"
-            (edit)="openForm($event.data)"></ng2-smart-table>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="separatorsDocuments"
+              [attr.class]="'table-bordered'"
+              (edit)="openForm($event.data)"></ng2-smart-table>
+          </div>
         </div>
       </div>
     </div>
