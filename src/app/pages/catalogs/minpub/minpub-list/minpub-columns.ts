@@ -4,61 +4,73 @@ export const MINIPUB_COLUMNS = {
     title: 'ID',
     type: 'number',
     sort: false,
+    //filter:false
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
-  responsable: {
+  manager: {
     title: 'Responsable',
     type: 'string',
     sort: false,
   },
-  no_ciudad: {
+  city: {
     title: 'Ciudad',
     type: 'string',
     valuePrepareFunction: (value: ICity) => {
       return value?.nameCity;
     },
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameCity;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  calle: {
+  street: {
     title: 'Dirección',
     type: 'string',
     sort: false,
   },
-  no_interior: {
+  insideNumber: {
     title: 'Número interior',
     type: 'string',
     sort: false,
   },
-  no_exterior: {
+  outNumber: {
     title: 'Número exterior',
     type: 'string',
     sort: false,
   },
-  colonia: {
+  colony: {
     title: 'Colonia',
     type: 'string',
     sort: false,
   },
-  codigo_postal: {
+  zipCode: {
     title: 'Código Postal',
     type: 'number',
     sort: false,
   },
-  deleg_munic: {
+  delegNunic: {
     title: 'Delegación Municipal',
     type: 'string',
     sort: false,
   },
-  telefono: {
+  phone: {
     title: 'Teléfono',
     type: 'number',
     sort: false,
   },
-  no_registro: {
+  registryNumber: {
     title: 'Número registro',
     type: 'number',
     sort: false,
