@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from '../../../../common/repository/interfaces/list-params';
 import { IMinpub } from '../../../../core/models/catalogs/minpub.model';
 import { MinPubService } from '../../../../core/services/catalogs/minpub.service';
 import { MinpubFormComponent } from './../minpub-form/minpub-form.component';
@@ -16,8 +20,11 @@ import { MINIPUB_COLUMNS } from './minpub-columns';
 })
 export class MinpubListComponent extends BasePage implements OnInit {
   columns: IMinpub[] = [];
+  data: LocalDataSource = new LocalDataSource();
+
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
 
   constructor(
     private minpubService: MinPubService,
@@ -26,9 +33,40 @@ export class MinpubListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = MINIPUB_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'city'
+              ? (field = `filter.${filter.field}.nameCity`)
+              : (field = `filter.${filter.field}`);
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getExample();
+        }
+      });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -36,10 +74,18 @@ export class MinpubListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.minpubService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.minpubService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
+
+        this.data.load(this.columns);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
