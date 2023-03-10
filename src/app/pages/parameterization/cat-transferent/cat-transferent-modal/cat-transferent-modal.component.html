@@ -86,10 +86,14 @@
           <form-field
             label="Tipo"
             [control]="transferentForm.get('typeTransferent')">
-            <input
-              type="text"
+            <ng-select
+              formControlName="typeTransferent"
+              [searchable]="false"
               class="form-control"
-              formControlName="typeTransferent" />
+              [clearable]="false">
+              <ng-option value="CE">Asegurado</ng-option>
+              <ng-option value="NO">No Obligatorio</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
@@ -266,7 +270,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <div class="col-md-3">
           <form-field label="CVMAN" [control]="transferentForm.get('cvman')">
             <input type="text" class="form-control" formControlName="cvman" />
@@ -287,7 +291,7 @@
             <input type="text" class="form-control" formControlName="risk" />
           </form-field>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
   <div footer>

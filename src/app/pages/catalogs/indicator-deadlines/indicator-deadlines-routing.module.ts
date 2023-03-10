@@ -3,7 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { IndicatorDeadlinesListComponent } from './indicator-deadlines-list/indicator-deadlines-list.component';
 
 const routes: Routes = [
-  { path: '', component: IndicatorDeadlinesListComponent },
+  {
+    path: '',
+    component: IndicatorDeadlinesListComponent,
+  },
 ];
 
 @NgModule({
