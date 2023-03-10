@@ -42,6 +42,8 @@ export class AuthorizationAssetsDestructionComponent
   rowSelected: boolean = false;
   selectedRow: any = null;
 
+  goodsList: IGood[] = [];
+
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
 
@@ -60,7 +62,7 @@ export class AuthorizationAssetsDestructionComponent
       columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
       mode: '',
       rowClassFunction: (row: any) => {
-        if (row.data.estatus.active === '1') {
+        if (row.data.status === 'RGA') {
           return 'text-success';
         } else {
           return 'text-danger';
@@ -123,27 +125,15 @@ export class AuthorizationAssetsDestructionComponent
       .subscribe(() => this.getGoods(id));
   }
   getGoods(id: string | number): void {
-    this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
-      response => {
-        //console.log(response);
-        let data = response.data.map((item: IGood) => {
-          //console.log(item);
-          item.promoter = item.userPromoterDecoDevo?.id;
-          let dateDecoDev = item.scheduledDateDecoDev;
-          let dateTeso = item.tesofeDate;
-          item.scheduledDateDecoDev = this.datePipe.transform(
-            dateDecoDev,
-            'yyyy-MM-dd'
-          );
-          item.tesofeDate = this.datePipe.transform(dateTeso, 'yyyy-MM-dd');
-          return item;
-        });
-        this.data.load(data);
+    this.goodService.getByExpedient(id, this.params.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.goodsList = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => (this.loading = false),
+    });
   }
 
   settingsChange($event: any): void {

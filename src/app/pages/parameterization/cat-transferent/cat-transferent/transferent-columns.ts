@@ -8,16 +8,31 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
   },
   keyTransferent: {
-    title: 'Calve',
+    title: 'Clave',
     sort: false,
   },
-  userCreation: {
+  typeTransferent: {
+    title: 'Tipo',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'NO') return 'No obligatorio ';
+      if (value == 'CE') return 'Asegurado';
+
+      return value;
+    },
+  },
+  /*userCreation: {
     title: 'Usuario creado',
     sort: false,
   },
   dateCreation: {
     title: 'Fecha creación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   userUpdate: {
     title: 'Usuario actualizado',
@@ -26,11 +41,13 @@ export const TRANSFERENT_COLUMNS = {
   dateUpdate: {
     title: 'Fecha actualización',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
-  typeTransferent: {
-    title: 'Tipo',
-    sort: false,
-  },
+ 
   version: {
     title: 'Versión',
     sort: false,
@@ -42,10 +59,20 @@ export const TRANSFERENT_COLUMNS = {
   dateBegOperation: {
     title: 'Fecha de pago de operación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   dateFinalOperation: {
     title: 'Fecha final de operación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   assignor: {
     title: 'Mandato cedente',
@@ -66,6 +93,11 @@ export const TRANSFERENT_COLUMNS = {
   dateFormalization: {
     title: 'Fecha de formalización',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   entity: {
     title: 'Entidad',
@@ -78,6 +110,11 @@ export const TRANSFERENT_COLUMNS = {
   dateAmeding: {
     title: 'Fecha de convenio modificatorio',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   typeGoods: {
     title: 'Tipo bien',
@@ -110,5 +147,5 @@ export const TRANSFERENT_COLUMNS = {
   risk: {
     title: 'Riesgo',
     sort: false,
-  },
+  },*/
 };

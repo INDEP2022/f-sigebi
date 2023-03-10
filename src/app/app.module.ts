@@ -15,6 +15,9 @@ import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
+import { AffairModule } from './pages/catalogs/affair/affair.module';
+import { LegalAffairModule } from './pages/catalogs/legal-affair/legal-affair.module';
+import { TransferorsModule } from './pages/catalogs/transferors/transferors.module';
 import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
 import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
 import { MailModule } from './pages/parameterization/mail/mail.module';
@@ -49,6 +52,9 @@ export function tokenGetter() {
     MailModule,
     CatTransferentModule,
     AuthorizationKeysModule,
+    AffairModule,
+    LegalAffairModule,
+    TransferorsModule,
   ],
   providers: [
     {
