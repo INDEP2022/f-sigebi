@@ -23,6 +23,16 @@ export const TRANSFERENT_STATE_COLUMNS = {
 
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Select',
+        list: [
+          { value: 'NO', title: 'No obligatorio' },
+          { value: 'CE', title: 'Asegurado' },
+        ],
+      },
+    },
   },
 };
 
