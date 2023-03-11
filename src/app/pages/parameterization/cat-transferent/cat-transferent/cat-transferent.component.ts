@@ -57,6 +57,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   loading2 = this.loading;
   loading3 = this.loading;
 
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+
+  rowSelected2: boolean = false;
+  selectedRow2: any = null;
+
   constructor(
     private modalService: BsModalService,
     private transferenteService: TransferenteService,
@@ -151,6 +157,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     });
   }
 
+  //Muestra información de la fila seleccionada de Transferentes
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
+  }
+
   //Selecciona fila de tabla de transferente
   rowsSelected(event: any) {
     const idTrans = { ...this.transferents };
@@ -228,6 +240,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       .subscribe(() => this.getAuthorityByTransferent(idEmi.id));
   }
 
+  //Muestra información de la fila seleccionada de Emisoras
+  selectRow2(row?: any) {
+    this.selectedRow2 = row;
+    this.rowSelected2 = true;
+  }
+
   //Trae lista de autoridades por transferente
   getAuthorityByTransferent(id?: number) {
     this.loading3 = true;
@@ -280,5 +298,10 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.authorityService.remove2(id, authority).subscribe({
       next: () => this.getAuthorityByTransferent(),
     });
+  }
+
+  resetScreen() {
+    this.rowSelected = false;
+    this.rowSelected2 = false;
   }
 }
