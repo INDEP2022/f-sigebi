@@ -39,6 +39,12 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
+  getTypes() {
+    return this.get<IListResponse<{ id: string; description: string }>>(
+      this.endpoint + '/get-types'
+    );
+  }
+
   deleteMasive(selecteds: IProceedingDeliveryReception[]) {
     return forkJoin(
       selecteds.map(selected => {
