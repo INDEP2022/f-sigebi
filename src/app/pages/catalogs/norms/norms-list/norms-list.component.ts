@@ -73,7 +73,11 @@ export class NormsListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.normService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.normService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
         this.getList();
