@@ -62,3 +62,18 @@ export interface IViewComerAvaluo {
   approved: string;
   observations: string;
 }
+
+export interface IAppraisalMonitor {
+  id: number;
+  requestDate: Date;
+  sourceUser: string;
+  targetUser: string;
+  requestType: string;
+  paid: string;
+  cveCurrencyCost: string;
+  cveCurrencyAppraisal: string;
+  observations: string;
+  noAppraiser: number;
+  noExpert: number;
+  noRegister: number;
+}
