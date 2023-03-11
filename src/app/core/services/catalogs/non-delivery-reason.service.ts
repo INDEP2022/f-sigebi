@@ -29,8 +29,8 @@ export class NonDeliveryReasonService
     return this.nonDeliveryReasonRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: INonDeliveryReason): Observable<Object> {
-    return this.nonDeliveryReasonRepository.update(this.route, id, model);
+  update7(model: INonDeliveryReason): Observable<Object> {
+    return this.nonDeliveryReasonRepository.update7(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

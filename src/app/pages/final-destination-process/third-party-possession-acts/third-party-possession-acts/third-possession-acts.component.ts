@@ -145,7 +145,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     );
   }
 
-  search(term: string) {
+  search(term: string | number) {
     this.response = !this.response;
   }
 

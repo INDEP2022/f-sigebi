@@ -17,15 +17,22 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('personNumber')" label="No Persona">
+          <form-field [control]="form.get('id')" label="No Persona">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field [control]="form.get('personName')" label="Nombre Persona">
             <input
               type="text"
               class="form-control"
-              formControlName="personNumber" />
+              formControlName="personName" />
           </form-field>
         </div>
-        <div class="col-md-10">
-          <form-field [control]="form.get('name')" label="Nombre Completo">
+        <div class="col-md-5">
+          <form-field
+            [control]="form.get('name')"
+            label="Apellido Paterno y Materno">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>

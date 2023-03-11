@@ -1,12 +1,16 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -18,6 +22,7 @@ import { SELECT_SIZE } from 'src/app/common/constants/select-size';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from './default-select';
 
@@ -28,7 +33,7 @@ type Attr = { [key: string]: string };
   templateUrl: './select.component.html',
   styles: [],
 })
-export class SelectComponent<T> implements OnInit {
+export class SelectComponent<T> implements OnInit, AfterViewInit {
   @Input() form: FormGroup;
   @Input() control: string = '';
   @Input() value: string = '';
@@ -45,9 +50,16 @@ export class SelectComponent<T> implements OnInit {
   @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
+  @Input() operator = SearchFilter.EQ;
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
+  @Input() clearable = true;
   @Input() termMaxLength: string = null;
+  @Input() showTooltip: boolean = false;
+  @Input() labelTemplate: TemplateRef<any>;
+  @Input() optionTemplate: TemplateRef<any>;
+  @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
+
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
@@ -66,6 +78,16 @@ export class SelectComponent<T> implements OnInit {
     }
     this.onSearch();
     this.checkMaxAttribute();
+  }
+
+  ngAfterViewInit() {
+    if (this.labelTemplate) {
+      this.ngSelect.labelTemplate = this.labelTemplate;
+    }
+
+    if (this.optionTemplate) {
+      this.ngSelect.optionTemplate = this.optionTemplate;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -95,9 +117,8 @@ export class SelectComponent<T> implements OnInit {
     if (this.paramFilter === 'search') {
       filterParam.search = text ?? '';
     } else {
-      filterParam.addFilter(this.paramFilter, text ?? '');
+      filterParam.addFilter(this.paramFilter, text ?? '', this.operator);
     }
-    console.log(filterParam);
     this.fetchByParamsItems.emit(filterParam);
   }
 
@@ -118,7 +139,6 @@ export class SelectComponent<T> implements OnInit {
         distinctUntilChanged(),
         switchMap((text: string) => {
           if (text === null) {
-            console.log('texto nulo');
             return of([]);
           }
           this.page = 1;

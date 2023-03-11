@@ -5,23 +5,23 @@ export const PARAMETERIZATION_ROUTES = [
     subItems: [
       //Henry
       {
-        label: 'Catálogo de atributos de información financiera',
+        label: 'Atributos de información financiera',
         link: '/pages/parameterization/cat-financial-information-attributes',
       },
       {
-        label: 'Catálogo de indicadores financieros',
+        label: 'Indicadores financieros',
         link: '/pages/parameterization/cat-financial-indicators',
       },
       {
-        label: 'Catálogo de preguntas',
+        label: 'Preguntas',
         link: '/pages/parameterization/question-catalog',
       },
       {
-        label: 'Catálogo de tablas lógicas',
+        label: 'Tablas lógicas',
         link: '/pages/parameterization/logical-tables-register',
       },
       {
-        label: 'Catálogo de asuntos para volantes',
+        label: 'Asuntos para volantes',
         link: '/pages/parameterization/flyer-subject-catalog',
       },
       {
@@ -29,7 +29,7 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/register-attributes-types',
       },
       {
-        label: 'Categoria para numerario efectivo',
+        label: 'Numerario efectivo',
         link: '/pages/parameterization/cat-effective-numeraire',
       },
       {
@@ -41,7 +41,7 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/cat-depository-payment',
       },*/
       {
-        label: 'Mant. a delegaciones y subdelegaciones',
+        label: 'Mant. a Delegaciones y Subdelegaciones',
         link: '/pages/parameterization/maintenance-deleg-subdeleg',
       },
       /*{ REPETIDO EN CATALOGOS
@@ -57,27 +57,27 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/register-keys-logical-tables',
       },
       {
-        label: 'Catálogo de requisitos documentales',
+        label: 'Requisitos documentales',
         link: '/pages/parameterization/cat-doc-require',
       },
       {
-        label: 'Catálogo de Archivo General',
+        label: 'Archivo General',
         link: '/pages/parameterization/general-archive-catalog',
       },
       {
-        label: 'Catálogo de identificador para la unificacion de las dbs',
+        label: 'Identificador para la unificacion de las dbs',
         link: '/pages/parameterization/cat-identifier-uni-dbs',
       },
       {
-        label: 'Catálogo de relación y de asunto dictamen',
+        label: 'Relación y de asunto dictamen',
         link: '/pages/parameterization/cat-relationship-opinion',
       },
       {
-        label: 'Catálogo de Transferentes',
+        label: 'Transferentes',
         link: '/pages/parameterization/cat-transferent',
       },
       {
-        label: 'Matt. Correos',
+        label: 'Mant. Correos',
         link: '/pages/parameterization/mail',
       },
       //Alexander

@@ -13,6 +13,7 @@ import { ExpedientService } from 'src/app/core/services/expedients/expedient.ser
 import { GoodParameterService } from 'src/app/core/services/good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
@@ -101,7 +102,8 @@ export class GoodsCaptureService {
     private satInterfaceService: SatInterfaceService,
     private dynamicCatalogService: DynamicCatalogService,
     private goodsQueryService: GoodsQueryService,
-    private goodLabelService: LabelOkeyService
+    private goodLabelService: LabelOkeyService,
+    private statusGoodService: StatusGoodService
   ) {}
 
   getParamterById(id: string) {
@@ -261,5 +263,9 @@ export class GoodsCaptureService {
 
   updateGood(id: string | number, body: any) {
     return this.goodService.update(id, body);
+  }
+
+  getLabelsByClasif(clasifNum: string | number) {
+    return this.statusGoodService.getLabelsByClasif(clasifNum);
   }
 }

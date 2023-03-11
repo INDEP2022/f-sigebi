@@ -49,10 +49,6 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
         link: '/pages/judicial-physical-reception/scheduled-maintenance-1',
       },
       {
-        label: 'Mantenimiento de Acta Entrega Recepcion',
-        link: '/pages/judicial-physical-reception/scheduled-maintenance-2',
-      },
-      {
         label: 'Mantenimiento de Actas',
         link: '/pages/judicial-physical-reception/maintenance-records',
       },

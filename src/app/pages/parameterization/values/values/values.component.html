@@ -13,13 +13,15 @@
     <div class="row pt-4">
       <div class="col-md-6">
         <h5 class="title">Tabla logica</h5>
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="valuesList"
-            (userRowSelect)="rowsSelected($event)">
-          </ng2-smart-table>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="valuesList"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+          </div>
         </div>
         <app-pagination
           [params]="params"
@@ -27,13 +29,15 @@
       </div>
       <div class="col-md-6">
         <h5 class="title">Valores de atributos</h5>
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="tvalTableList"
-            (edit)="openForm($event.data)">
-          </ng2-smart-table>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="tvalTableList"
+              (edit)="openForm($event.data)">
+            </ng2-smart-table>
+          </div>
         </div>
         <app-pagination
           [params]="params2"

@@ -30,6 +30,7 @@ export class RegionalDelegationsListComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -48,14 +49,15 @@ export class RegionalDelegationsListComponent
 
   getRegionalDelegations() {
     this.loading = true;
-    this.regionalDelegationService.getAll(this.params.getValue()).subscribe({
-      next: response => {
+    this.regionalDelegationService.getAll(this.params.getValue()).subscribe(
+      response => {
+        console.log(response);
         this.regionalDelegation = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
-    });
+      error => (this.loading = false)
+    );
   }
 
   openForm(regionalDelegation?: IRegionalDelegation) {

@@ -44,6 +44,15 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
         this.service.getById(this.City.value).subscribe({
           next: resp => {
             this.cities = new DefaultSelect([resp], 1);
+            if (resp) {
+              const { noDelegation, noSubDelegation, state } = resp;
+              let infoForms = {
+                noDelegation,
+                noSubDelegation,
+                state,
+              };
+              this.state.next(infoForms);
+            }
           },
         });
       }

@@ -39,7 +39,7 @@ export const NORMS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  destination: {
+  name: {
     title: 'Destino',
     type: 'string',
     sort: false,
@@ -56,16 +56,6 @@ export const NORMS_COLUMNS = {
   },
   userModification: {
     title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
-  version: {
-    title: 'Versión',
-    type: 'number',
-    sort: false,
-  },
-  status: {
-    title: 'Estado',
     type: 'string',
     sort: false,
   },

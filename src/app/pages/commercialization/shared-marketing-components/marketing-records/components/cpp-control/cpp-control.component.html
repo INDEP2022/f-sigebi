@@ -1,0 +1,14 @@
+<ng-container [formGroup]="form">
+  <form-field [control]="form.get('id')">
+    <ngx-select
+      (fetchByParamsItems)="getUsers($event)"
+      [data]="users"
+      [form]="form"
+      value="id"
+      bindLabel="name"
+      [searchOnInit]="true"
+      label="C.P.P."
+      control="id">
+    </ngx-select>
+  </form-field>
+</ng-container>

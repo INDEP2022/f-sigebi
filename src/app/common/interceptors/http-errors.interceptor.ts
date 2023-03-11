@@ -9,6 +9,8 @@ import {
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { showHideErrorInterceptorService } from './../services/show-hide-error-interceptor.service';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 
 interface BaseResponse {
@@ -27,7 +29,11 @@ interface Data {
   providedIn: 'root',
 })
 export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
-  constructor(private router: Router) {
+  showError: boolean;
+  constructor(
+    private router: Router,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService
+  ) {
     super();
   }
 
@@ -37,13 +43,23 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       map(response => {
+        this.getValue();
         return this.handleSuccess(response);
       }),
       catchError((error: HttpErrorResponse) => {
         this.handleError(error);
+        this.resetValue();
         return throwError(() => error);
       })
     );
+  }
+
+  getValue() {
+    this.showError = this.showHideErrorInterceptorService.getValue();
+  }
+
+  resetValue() {
+    this.showHideErrorInterceptorService.showHideError(true);
   }
 
   handleError(error: HttpErrorResponse) {
@@ -60,7 +76,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.onLoadToast('error', 'Error', 'Unable to connect to server');
       return;
     }
-    if (status === 400) {
+    if (status === 400 && this.showError) {
       this.onLoadToast('warning', 'advertencia', message);
       return;
     }

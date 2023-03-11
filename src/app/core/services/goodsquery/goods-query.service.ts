@@ -139,6 +139,14 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
+    const route = `goodsquery/api/v1/views/cat-store-view`;
+    const params = this.makeParams(_params);
+    return this.httpClient.get<IListResponse<any>>(
+      `${environment.API_URL}${route}?${params}`
+    );
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

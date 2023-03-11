@@ -1,5 +1,5 @@
 export const DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS = {
-  numDelegation: {
+  delegation: {
     title: 'Nombre Delegación',
     type: 'string',
     sort: false,
@@ -81,6 +81,82 @@ export const DOCUMENTS_RECEPTION_SELECT_TRACK_RECORD_GOODS_COLUMNS = {
   },
   quantity: {
     title: 'Cantidad',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS = {
+  id: {
+    title: 'Folio Universal',
+    type: 'number',
+    sort: false,
+  },
+  sheets: {
+    title: 'Hojas',
+    type: 'number',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción Documento',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const DOCUMENTS_RECEPTION_SELECT_UNIQUE_KEY_COLUMNS = {
+  uniqueCve: {
+    title: 'Clave Única',
+    type: 'number',
+    sort: false,
+  },
+  transfereeNum: {
+    title: 'No. Transfer.',
+    type: 'number',
+    sort: false,
+  },
+  transfereeDesc: {
+    title: 'Desc. Transferente',
+    type: 'string',
+    sort: false,
+  },
+  stationNum: {
+    title: 'No. Emisora.',
+    type: 'number',
+    sort: false,
+  },
+  stationDesc: {
+    title: 'Desc. Emisora',
+    type: 'string',
+    sort: false,
+  },
+  authorityNum: {
+    title: 'No. Autoridad.',
+    type: 'number',
+    sort: false,
+  },
+  authorityDesc: {
+    title: 'Desc. Autoridad',
+    type: 'string',
+    sort: false,
+  },
+  cityNum: {
+    title: 'No. Ciudad.',
+    type: 'number',
+    sort: false,
+  },
+  cityDesc: {
+    title: 'Desc. Ciudad',
+    type: 'string',
+    sort: false,
+  },
+  federalEntityCve: {
+    title: 'No. Entidad Federal.',
+    type: 'number',
+    sort: false,
+  },
+  federalEntityDesc: {
+    title: 'Desc. Entidad Federal',
     type: 'string',
     sort: false,
   },
