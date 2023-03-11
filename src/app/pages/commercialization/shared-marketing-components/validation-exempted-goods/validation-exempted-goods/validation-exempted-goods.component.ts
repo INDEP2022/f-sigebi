@@ -2,19 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { EditValidationExemptedGoodsModalComponent } from '../edit-validation-exempted-goods-modal/edit-validation-exempted-goods-modal.component';
-import { GOODS_COLUMS, PROCCESS_COLUMNS} from './validation-exempted-goods-columns';
+import {
+  GOODS_COLUMS,
+  PROCCESS_COLUMNS,
+} from './validation-exempted-goods-columns';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
-import * as XLSX from 'xlsx';
 import { BehaviorSubject, map, takeUntil } from 'rxjs';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 
 @Component({
   selector: 'app-validation-exempted-goods',
@@ -33,8 +39,8 @@ export class ValidationExemptedGoodsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  proccessList: IGoodsTransAva[]=[];
-  process:IGoodsTransAva;
+  proccessList: IGoodsTransAva[] = [];
+  process: IGoodsTransAva;
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
@@ -43,10 +49,15 @@ export class ValidationExemptedGoodsComponent
 
   settings2;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService, private goodTransAvaService: GoodTransAvaService, private goodService:GoodService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private goodTransAvaService: GoodTransAvaService,
+    private goodService: GoodService
+  ) {
     super();
     this.searchFilter = { field: 'description', operator: SearchFilter.ILIKE };
-    
+
     this.settings = {
       ...this.settings,
       actions: false,
@@ -69,20 +80,21 @@ export class ValidationExemptedGoodsComponent
     this.filterParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods());
-    
   }
 
   getGoods() {
     this.loading = true;
     this.filterParams.getValue().removeAllFilters();
-    this.goodService.getExemptedGoods(this.filterParams.getValue().getParams()).subscribe({
-      next: response => {
-        this.goods = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+    this.goodService
+      .getExemptedGoods(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          this.goods = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
   rowsSelected(event: any) {
@@ -94,15 +106,16 @@ export class ValidationExemptedGoodsComponent
       .subscribe(() => this.getProccess(this.process));
   }
 
-  getProccess(goods:IGood):void{
+  getProccess(goods: IGood): void {
     this.loading = true;
-    console.log("Dato que selecciona", goods.id);
+    console.log('Dato que selecciona', goods.id);
     this.goodTransAvaService
       .getById(goods.id, this.params2.getValue())
       .pipe(
-        map((data2:any) => {
-          let list: IListResponse<IGoodsTransAva> = {} as IListResponse<IGoodsTransAva>;
-          const array2: IGoodsTransAva[] = [{...data2}];
+        map((data2: any) => {
+          let list: IListResponse<IGoodsTransAva> =
+            {} as IListResponse<IGoodsTransAva>;
+          const array2: IGoodsTransAva[] = [{ ...data2 }];
           list.data = array2;
           return list;
         })
@@ -118,8 +131,6 @@ export class ValidationExemptedGoodsComponent
       });
   }
 
-
-
   /*getGoods2(){
     this.loading = true;
     this.goodTransAvaService.getAll(this.params.getValue()).subscribe({
@@ -131,8 +142,6 @@ export class ValidationExemptedGoodsComponent
       error: error => (this.loading = false),
     });
   }*/
-
-  
 
   openForm(good?: IGood) {
     console.log('me estoy ejecutando');

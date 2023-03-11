@@ -32,10 +32,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       cveBank: [null, [Validators.required]],
-      nameBank: [
-        { value: null, disabled: true },
-        Validators.pattern(STRING_PATTERN),
-      ],
+      nameBank: [null, Validators.pattern(STRING_PATTERN)],
       accountNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       cveAccount: [
         null,

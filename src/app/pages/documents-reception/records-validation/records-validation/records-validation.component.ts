@@ -13,6 +13,7 @@ import { RECORDS_VALDIATION_COLUMNS } from './records-validation-columns';
 })
 export class RecordsValidationComponent extends BasePage implements OnInit {
   form: FormGroup;
+  fileNumber: number;
   proceedingsNumb: number;
   proceedingsCve: string;
   dataTable: any[] = [];
@@ -41,6 +42,8 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
 
   getParams() {
     this.activatedRoute.params.subscribe(params => {
+      this.fileNumber = params['fileNumber'];
+      console.log(this.fileNumber);
       this.proceedingsNumb = params['proceedingsNumb'];
       this.proceedingsCve = params['proceedingsCve'];
     });
@@ -91,5 +94,9 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
     });
+  }
+
+  OnDestroy() {
+    console.log('Saliendo');
   }
 }

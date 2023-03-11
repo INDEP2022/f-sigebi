@@ -15,10 +15,12 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="typeSettings"
-            [source]="dataType"
+            [source]="paragraphs"
             (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
             (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
       <div class="col-md-6">
@@ -30,10 +32,12 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="subTypeSettings"
-            [source]="dataSubType"
+            [source]="paragraphs1"
             (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+            (editConfirm)="onSaveConfirm1($event)"></ng2-smart-table>
+          <app-pagination
+            [params]="params1"
+            [totalItems]="totalItems1"></app-pagination>
         </div>
       </div>
     </div>
@@ -47,10 +51,12 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="subsubTypeSettings"
-            [source]="dataSubsubType"
+            [source]="paragraphs2"
             (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+            (editConfirm)="onSaveConfirm2($event)"></ng2-smart-table>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
         </div>
       </div>
       <div class="col-md-6">
@@ -62,10 +68,12 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="subsubsubTypeSettings"
-            [source]="datasubsubsubType"
+            [source]="paragraphs3"
             (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+            (editConfirm)="onSaveConfirm3($event)"></ng2-smart-table>
+          <app-pagination
+            [params]="params3"
+            [totalItems]="totalItems3"></app-pagination>
         </div>
       </div>
     </div>

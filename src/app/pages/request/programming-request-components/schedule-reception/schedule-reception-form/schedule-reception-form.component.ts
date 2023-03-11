@@ -20,7 +20,7 @@ export class ScheduleReceptionFormComponent implements OnInit {
   users = new DefaultSelect(userData);
   date = new Date();
   nameUser: string = '';
-  typeUser: string = 'T.E';
+  typeUser: string = 'INDEP';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -42,7 +42,7 @@ export class ScheduleReceptionFormComponent implements OnInit {
 
   prepareForm() {
     this.scheduleForm = this.fb.group({
-      typeUser: ['T.E'],
+      typeUser: ['INDEP', [Validators.required]],
       creationUser: [null, [Validators.required]],
     });
   }
@@ -68,7 +68,7 @@ export class ScheduleReceptionFormComponent implements OnInit {
       callback: (data: any) => {
         if (data) {
           data.map((item: any) => {
-            this.scheduleForm.get('creationUser').setValue(item.user);
+            this.scheduleForm.get('creationUser').setValue(item.firstName);
           });
         }
       },

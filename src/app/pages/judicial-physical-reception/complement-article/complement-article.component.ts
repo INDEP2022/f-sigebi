@@ -1,12 +1,14 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { IAppraisersGood } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IRequestAppraisal } from 'src/app/core/models/ms-request-appraisal/request-appraisal.model';
@@ -41,10 +43,12 @@ export class ComplementArticleComponent implements OnInit {
   getnotifyDate: string | Date;
   getnotifyA: string;
   getplaceNotify: string;
-  getfechaDictamen: string;
+  getfechaDictamen: Date | string;
   getdictamenPerenidad: string;
   getdictamenPerito: string;
   getdictamenInstitucion: string;
+  monedaField = 'moneda';
+  dateVigencia: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -80,7 +84,7 @@ export class ComplementArticleComponent implements OnInit {
       importe: [null, [Validators.required]],
       moneda: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       fechaVigencia: [null, [Validators.required]],
-      fechaAvaluo: [null, [Validators.required]],
+      fechaAvaluo: [null, [Validators.required, maxDate(new Date())]],
       perito: [null, [Validators.required]],
       institucion: [null, [Validators.required]],
       fechaDictamen: [null, [Validators.required]],
@@ -112,6 +116,12 @@ export class ComplementArticleComponent implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  validarFechaAvaluo() {
+    this.btnAppraisTab();
+    this.dateVigencia = addDays(this.form.get('fechaAvaluo').value, 1);
+    this.enableButton('fecha-vigencia-input');
   }
 
   //Activar y desactivar Botones
@@ -168,7 +178,9 @@ export class ComplementArticleComponent implements OnInit {
       this.form.get('importe').value == '' ||
       this.form.get('moneda').value == '' ||
       this.form.get('perito').value == '' ||
-      this.form.get('institucion').value == ''
+      this.form.get('institucion').value == '' ||
+      this.idGood == undefined ||
+      this.idGood == null
     ) {
       this.disabledButton('apprais-good');
     } else {
@@ -215,6 +227,8 @@ export class ComplementArticleComponent implements OnInit {
   //Catalogos
 
   getCurrency(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('otValue01', params.text, SearchFilter.ILIKE);
     this.serviceDynamicCat.getCurrency(3, params).subscribe(
       res => {
         this.currencySelect = new DefaultSelect(res.data, res.count);
@@ -333,17 +347,15 @@ export class ComplementArticleComponent implements OnInit {
   }
 
   updateOpinion() {
-    const formatString = 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(]z[)]';
-    const opinionData = {
-      dateOpinion: moment(this.form.get('fechaDictamen').value).format(
-        formatString
-      ),
-      proficientOpinion: this.form.get('dictamenPerito').value.name,
-      valuerOpinion: this.form.get('dictamenInstitucion').value.description,
+    const opinionData: IGood = {
+      id: parseInt(this.idGood.toString()),
+      goodId: parseInt(this.idGood.toString()),
+      dateOpinion: this.form.get('fechaDictamen').value,
+      proficientOpinion: this.form.get('dictamenPerito').value,
+      valuerOpinion: this.form.get('dictamenInstitucion').value,
       opinion: this.form.get('dictamenPerenidad').value,
     };
-
-    /*  this.serviceGood.update(this.idGood, opinionData).subscribe(
+    this.serviceGood.updateWithoutId(opinionData).subscribe(
       res => {
         console.log('Modificado');
         this.disabledButton('opinion');
@@ -355,17 +367,18 @@ export class ComplementArticleComponent implements OnInit {
       err => {
         console.log(err);
       }
-    ); */
+    );
   }
 
   updateNotify() {
     const notifyData = {
       id: parseInt(this.idGood.toString()),
       goodId: parseInt(this.idGood.toString()),
-      notifyDate: this.form.get('fechaAseg').value,
-      notifyA: this.form.get('notificado').value,
-      placeNotify: this.form.get('lugar').value,
+      notifyDate: new Date(this.form.get('fechaAseg').value),
+      notifyA: this.form.get('notificado').value.trim(),
+      placeNotify: this.form.get('lugar').value.trim(),
     };
+    console.log(notifyData);
     this.serviceGood.updateWithoutId(notifyData).subscribe(
       res => {
         console.log('Modificado');
@@ -389,7 +402,6 @@ export class ComplementArticleComponent implements OnInit {
       this.serviceAppraiser
         .getAppraisalGood(paramsF.getParams())
         .subscribe(res => {
-          console.log(res);
           this.dataApprasialGood = res.data;
           this.enableButton('apprasial-history');
         });
@@ -403,44 +415,44 @@ export class ComplementArticleComponent implements OnInit {
       effectiveDate: this.form.get('fechaVigencia').value,
       valueAppraisal: this.form.get('importe').value,
       noRequest: '1234',
-      requestXAppraisal: {
-        cveCurrencyAppraisal: this.form.get('moneda').value,
-        noExpert: this.form.get('perito').value.id,
-        noAppraiser: this.form.get('institucion').value.id,
-      },
     };
 
     const rxa: IRequestAppraisal = {
       requestDate: format(new Date(), 'yyyy-MM-dd'),
       requestType: 'E',
       cveCurrencyAppraisal: this.form.get('moneda').value,
+      cveCurrencyCost: this.form.get('moneda').value,
+      noExpert: this.form.get('perito').value.id,
+      noAppraiser: this.form.get('institucion').value.id,
     };
-
-    console.log(dataAG);
-    this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(res => {
-      const id = JSON.parse(JSON.stringify(res)).id;
-      dataAG.noRequest = id;
-      console.log(dataAG);
-      /* this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
-          res => {
-            console.log(res);
-            this.getAppraisalGood();
-            this.form.get('fechaAvaluo').setValue('');
-            this.form.get('fechaVigencia').setValue('');
-            this.form.get('importe').setValue('');
-            this.form.get('moneda').setValue('');
-            this.form.get('perito').setValue('');
-            this.form.get('institucion').setValue('');
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      },
-      err => {
-        console.log(err);
-      }
-    );  */
-    });
+    if (
+      this.form.get('fechaAvaluo').value > this.form.get('fechaVigencia').value
+    ) {
+    } else {
+      this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(
+        res => {
+          const id = JSON.parse(JSON.stringify(res)).id;
+          dataAG.noRequest = id;
+          this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
+            res => {
+              console.log(res);
+              this.getAppraisalGood();
+              this.form.get('fechaAvaluo').setValue('');
+              this.form.get('fechaVigencia').setValue('');
+              this.form.get('importe').setValue('');
+              this.form.get('moneda').setValue('');
+              this.form.get('perito').setValue('');
+              this.form.get('institucion').setValue('');
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 }

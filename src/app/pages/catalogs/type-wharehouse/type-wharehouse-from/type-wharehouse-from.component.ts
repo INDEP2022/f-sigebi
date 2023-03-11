@@ -41,7 +41,7 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
         ]),
       ],
       version: [null, Validators.compose([Validators.required])],
-      estatus: [null, Validators.compose([Validators.required])],
+      status: [null, Validators.compose([Validators.required])],
     });
     if (this.typeWarehouse != null) {
       this.edit = true;

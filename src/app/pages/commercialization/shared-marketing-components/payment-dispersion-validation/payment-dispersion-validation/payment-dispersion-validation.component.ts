@@ -8,15 +8,18 @@ import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { ILot } from 'src/app/core/models/ms-lot/lot.model';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 
 @Component({
   selector: 'app-payment-dispersion-validation',
@@ -38,11 +41,10 @@ export class PaymentDispersionValidationComponent
   lotByEvent: ILot[] = [];
   lote: ILot;
 
-  goodList: IGood[]=[];
+  goodList: IGood[] = [];
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
-
 
   settingsLotes = {
     ...this.settings,
@@ -67,7 +69,8 @@ export class PaymentDispersionValidationComponent
     private fb: FormBuilder,
     private excelService: ExcelService,
     private comerEventosService: ComerEventosService,
-    private lotService: LotService, private goodService:GoodService
+    private lotService: LotService,
+    private goodService: GoodService
   ) {
     super();
 
@@ -158,22 +161,24 @@ export class PaymentDispersionValidationComponent
       .subscribe(() => this.getGoodByLotes(this.lote));
   }
 
-  getGoodByLotes(lote: ILot):void {
+  getGoodByLotes(lote: ILot): void {
     this.filterParams.getValue().removeAllFilters();
     this.filterField();
     this.loading = true;
-    this.goodService.getAllFilter(this.filterParams.getValue().getParams()).subscribe({
-      next: response => {
-        console.log(response);
-        this.goodList = response.data;
-        this.totalItems2 = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+    this.goodService
+      .getAllFilter(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.goodList = response.data;
+          this.totalItems2 = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
-  filterField(){
+  filterField() {
     let idLote = this.lote.id;
     console.log(idLote);
     this.filterParams.getValue().addFilter('lotNumber', idLote);
@@ -183,13 +188,11 @@ export class PaymentDispersionValidationComponent
     this.excelService.exportAsExcelFile(this.lotByEvent, 'lotes_de_evento');
   }
 
-  
-
   exportAsXLSXBienes(): void {
     this.excelService.exportAsExcelFile(this.dataBienes, 'bienes_x_lote');
   }
 
-  dataBienes:any;
+  dataBienes: any;
 
   dataPagosBanco = [
     {

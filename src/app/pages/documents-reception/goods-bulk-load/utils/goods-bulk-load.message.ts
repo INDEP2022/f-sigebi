@@ -13,6 +13,7 @@ const VALIDATION_START_MESSAGE = 'Iniciando proceso de Validación de Datos...';
 const VALIDATION_PROCESS_MESSAGE = (numero_registro: number) =>
   `Válidando el registro: ${numero_registro}.`;
 const VALIDATION_END_MESSAGE = 'Proceso de Validación de Datos Terminado.';
+const VALIDATION_UPLOAD_END_MESSAGE = 'Proceso de Carga de Datos Terminado.';
 const VALIDATION_UPLOAD_START_MESSAGE =
   'Iniciando proceso de Carga de Datos...';
 const VALIDATION_UPDATE_PROCESS_MESSAGE = (numero_registro: number) =>
@@ -28,6 +29,8 @@ const ERROR_CANTIDAD = (cantidad: string) =>
   `La cantidad es inválida. En el campo CANTIDAD: ${cantidad}.`;
 const ERROR_ESTATUS = (estatus: string) =>
   `El estatus ${estatus} no existe en el sistema.`;
+const ERROR_ESTATUS_GENERAL = (numero_registro: number) =>
+  `No se realizo la inserción del bien con la posición "${numero_registro}" debido a que no se permiten inserciones con estatus diferente de "ROP" .`;
 // PROCESO 1 Y PROCESO 3
 const ERROR_CLASS_GOOD = (class_good: number) =>
   `El número de clasificación del bien ${class_good} no existe en el sistema.`;
@@ -51,7 +54,7 @@ const ERROR_GOOD_INMUEBLE = (good_number: string) =>
 const ERROR_EXPEDIENTE = (expedient: string) =>
   `No se encontro el expediente en el documento: ${expedient}.`;
 const ERROR_CITY_ASUNTO_SAT = (asunto_sat: string) =>
-  `No se encontro la clave de la ciudad filtrada por el asunto SAT: ${asunto_sat}.`;
+  `No se encontro la clave de la ciudad filtrada por el asunto: ${asunto_sat}.`;
 const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
   `No se encontro SAT_CVE_UNICA de: ${descripcion}.`;
 const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
@@ -62,6 +65,17 @@ const ERROR_TRANSFERENTE_PARAMS = (contador: number) =>
       ? 'No existe el transferente, emisora y autoridad.'
       : 'Demasiadas transferentes, emisoras y autoridades coinciden.'
   }.`;
+// PROCESO GENERAL
+const ERROR_EXPEDIENTE_IDENTIFICADOR = (identificador: string) =>
+  `El identificador correcto es: ${identificador}.`;
+const ERROR_EXPEDIENTE_TRANSFERENTE_INDICIADO_CITY = (
+  expediente: string,
+  volante: string
+) =>
+  `Se encontró repetido el expediente ('${expediente}') en el volante : '${volante}'.`;
+const ERROR_INDICATOR = (indicado: string) =>
+  `El indicado ${indicado} no existe en el sistema.`;
+const ERROR_CREATE_EXPEDIENT = `El al crear el expediente.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -93,4 +107,10 @@ export {
   ERROR_ISSUING_INSTITUTION,
   ERROR_TRANSFERENTE_PARAMS,
   ERROR_CANTIDAD,
+  ERROR_ESTATUS_GENERAL,
+  ERROR_EXPEDIENTE_IDENTIFICADOR,
+  ERROR_EXPEDIENTE_TRANSFERENTE_INDICIADO_CITY,
+  ERROR_INDICATOR,
+  ERROR_CREATE_EXPEDIENT,
+  VALIDATION_UPLOAD_END_MESSAGE,
 };

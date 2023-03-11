@@ -11,4 +11,16 @@ export enum NotificationEndpoints {
   NotifyRatification = `notify-ratification`,
   //post
   NotificationxPropertyFilter = `notification/notification-x-property/filter`,
+  //get, post
+  TmpNotification = `tmp-notification`,
+  //get
+  MaxFlyerNumber = `notification/max-flyer-number`,
+  //last wheel number
+  LastWheelNumber = `notification/last-wheel-number`,
+  //dailyConsecutive
+  DailyConsecutive = `daily-consecutive`,
+  //find-notification-by-transferent-or-city
+  FindTransferentCity = `notification/find-notification-by-transferent-or-city`,
+  //find-count-by-inquiri
+  FindCountByInquiry = `notification/find-count-by-inquiri`,
 }

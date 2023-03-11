@@ -1,30 +1,25 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
-import { COORDINATIONS_COLUMNS } from './interfaces/columns';
-import { TypeEvents } from './interfaces/typeEvents';
 
 @Component({
   template: '',
 })
 export abstract class ScheduledMaintenance extends BasePage {
   form: FormGroup;
+  first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
   elementToExport: any[];
   settings1 = {
@@ -33,7 +28,6 @@ export abstract class ScheduledMaintenance extends BasePage {
       display: false,
     },
     hideSubHeader: true,
-    actions: false,
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
@@ -47,7 +41,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         type: Date,
         sort: false,
       },
-      ingreso: {
+      elaborate: {
         title: 'Ingreso',
         type: 'string',
         sort: false,
@@ -68,111 +62,62 @@ export abstract class ScheduledMaintenance extends BasePage {
   totalItems: number = 0;
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
-  paramsUsers: FilterParams = new FilterParams();
-  tiposEvento = TypeEvents;
+  tiposEvento: { id: string; description: string }[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new FilterParams();
-  // coordinaciones: any[] = [];
-  // maxDate: Date;
   constructor(
     protected fb: FormBuilder,
-    protected modalService: BsModalService,
-    protected delegationService: DelegationService,
     protected service: ProceedingsDeliveryReceptionService,
     protected detailService: ProceedingsDetailDeliveryReceptionService,
-    protected userService: UsersService
+    @Inject('formStorage') protected formStorage: string
   ) {
     super();
     // this.maxDate = new Date();
-    console.log(this.settings1);
-  }
-
-  get segUsers() {
-    return this.userService.getAllSegUsers(this.paramsUsers.getParams());
+    // console.log(this.settings1);
   }
 
   get fechaInicio() {
     return this.form.get('fechaInicio');
   }
 
-  get coordRegional() {
-    return this.form.get('coordRegional');
-  }
-
-  get coordinaciones() {
-    return this.coordRegional.value
-      ? this.coordRegional.value.split(',') ?? []
-      : [];
-  }
-
-  get coordinacionesSeparadas() {
-    return this.coordRegional.value
-      ? this.coordRegional.value.replace(',', '\n') ?? ''
-      : '';
-  }
-
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getProceedingReception());
+    this.service.getTypes().subscribe({
+      next: response => {
+        this.tiposEvento = response.data;
+      },
+    });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
+      // console.log(x);
+      this.getData();
+    });
+  }
+
+  setForm() {
+    const filtersActa = window.localStorage.getItem(this.formStorage);
+    if (filtersActa) {
+      this.form.setValue(JSON.parse(filtersActa));
+    }
+  }
+
+  saveForm() {
+    window.localStorage.setItem(
+      this.formStorage,
+      JSON.stringify(this.form.value)
+    );
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      tipoEvento: [null],
-      fechaInicio: [null, [Validators.required]],
+      tipoEvento: [null, [Validators.required]],
+      fechaInicio: [null],
       fechaFin: [null],
       statusEvento: [null],
-      coordRegional: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      usuario: [null],
+      coordRegional: [null, [Validators.pattern(STRING_PATTERN)]],
+      usuario: [null, [Validators.pattern(STRING_PATTERN)]],
+      claveActa: [null],
     });
-  }
-
-  openModalCoordinaciones() {
-    this.openModalSelect(
-      {
-        title: 'Coordinaciones',
-        columnsType: { ...COORDINATIONS_COLUMNS },
-        service: this.delegationService,
-        settings: {
-          ...TABLE_SETTINGS,
-          selectMode: 'multi',
-        },
-        dataObservableListParamsFn: this.delegationService.getAllModal,
-        searchFilter: null,
-      },
-      this.selectCoord
-    );
-  }
-
-  selectCoord(coords: { description: string }[], self: ScheduledMaintenance) {
-    console.log(coords);
-    // this.coordinaciones = coords;
-    let coordRegional = '';
-    coords.forEach((coord, index) => {
-      const extra = index < coords.length - 1 ? ',' : '';
-      coordRegional += coord.description + extra;
-    });
-    console.log(coordRegional);
-    self.form.get('coordRegional').setValue(coordRegional);
-  }
-
-  protected openModalSelect(
-    context?: Partial<SelectListFilteredModalComponent>,
-    callback?: Function
-  ) {
-    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.onSelect.subscribe(data => {
-      if (data) callback(data, this);
-    });
+    this.setForm();
   }
 
   private fillParams() {
@@ -182,24 +127,14 @@ export abstract class ScheduledMaintenance extends BasePage {
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
-    console.log(fechaInicio, coordRegional);
-    if (
-      !tipoEvento &&
-      !fechaInicio &&
-      !fechaFin &&
-      !statusEvento &&
-      !coordRegional &&
-      !usuario
-    ) {
+    const cveActa = this.form.get('claveActa').value;
+    // console.log(fechaInicio, coordRegional);
+    if (this.form.invalid) {
       return false;
     }
     this.filterParams = new FilterParams();
     if (tipoEvento) {
-      const textos = tipoEvento.split('-');
-      this.filterParams.addFilter(
-        'typeProceedings',
-        textos && textos.length > 0 ? textos[0].trim() : tipoEvento
-      );
+      this.filterParams.addFilter('typeProceedings', tipoEvento);
     }
 
     if (statusEvento) {
@@ -222,17 +157,17 @@ export abstract class ScheduledMaintenance extends BasePage {
         coordRegional,
         SearchFilter.IN
       );
-    if (usuario)
-      this.filterParams.addFilter(
-        'elaborateDetail.user',
-        usuario,
-        SearchFilter.LIKE
-      );
+    if (cveActa) {
+      this.filterParams.addFilter('keysProceedings', cveActa);
+    }
+    if (usuario) this.filterParams.addFilter('elaborate', usuario);
     this.filterParams.page = this.params.getValue().page;
+    this.filterParams.limit = this.params.getValue().limit;
     return true;
   }
 
-  getProceedingReception() {
+  getData() {
+    this.saveForm();
     if (this.fillParams()) {
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({
@@ -251,7 +186,10 @@ export abstract class ScheduledMaintenance extends BasePage {
           this.data = [];
         },
       });
+    } else {
+      if (!this.first) this.form.markAllAsTouched();
     }
+    this.first = false;
   }
 
   // abstract fillElementsToExport(): void;

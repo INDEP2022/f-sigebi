@@ -1,89 +1,250 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { FormBuilder } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { takeUntil } from 'rxjs/operators';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
+
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IProceedingInfo } from './components/proceeding-info/models/proceeding-info';
 
 @Component({
   selector: 'app-maintenance-records',
   templateUrl: './maintenance-records.component.html',
-  styleUrls: ['maintenance-records.scss'],
+  styleUrls: ['maintenance-records.component.scss'],
 })
-export class MaintenanceRecordsComponent implements OnInit {
+export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   itemsSelect = new DefaultSelect();
-  form: FormGroup;
-  settings = {
-    ...TABLE_SETTINGS,
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No Bien',
-        type: 'string',
-        sort: false,
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: Date,
-        sort: false,
-      },
-      descripcion: {
-        title: 'Descripcion',
-        type: 'string',
-        sort: false,
-      },
-      fechaAprobacion: {
-        title: 'Fecha Aprobacion',
-        type: Date,
-        sort: false,
-      },
-      usuarioAprobado: {
-        title: 'Usuario Aprobado por Admon',
-        type: 'string',
-        sort: false,
-      },
-      fechaIndicaAprobacion: {
-        title: 'Fecha Indica Usuario Aprobacion',
-        type: Date,
-        sort: false,
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  totalItems = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  infoForm: IProceedingDeliveryReception;
+  formValue: IProceedingInfo;
+  filterParams = new FilterParams();
 
-  data = EXAMPLE_DATA;
+  data: IDetailProceedingsDeliveryReception[] = [];
+  statusActa = 'CERRADA';
+  goodParams = new ListParams();
+  loadingGoods = true;
+  totalGoods = 0;
 
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.prepareForm();
+  rowsSelected: any[];
+  constructor(
+    private fb: FormBuilder,
+    private proceedingService: ProceedingsDeliveryReceptionService,
+    private detailService: ProceedingsDetailDeliveryReceptionService
+  ) {
+    super();
+    this.settings = {
+      ...this.settings,
+      selectMode: 'multi',
+      mode: 'inline',
+      edit: {
+        editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+        saveButtonContent:
+          '<i class="fa fa-solid fa-check text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="fa fa-solid fa-ban text-danger mx-2"></i>',
+        confirmSave: true,
+      },
+      columns: {
+        numberGood: {
+          title: 'N° Bien',
+          sort: false,
+          editable: false,
+        },
+        amount: {
+          title: 'Cantidad',
+          sort: false,
+          editable: false,
+        },
+        description: {
+          title: 'Descripción',
+          sort: false,
+          editable: false,
+        },
+        approvedDateXAdmon: {
+          title: 'Fec. Aprobación',
+          sort: false,
+          editable: false,
+        },
+        approvedUserXAdmon: {
+          title: 'Usuario Aprobo por Admon',
+          sort: false,
+          editable: false,
+        },
+        dateIndicatesUserApproval: {
+          title: 'Fec. Indica Usuario Aprobación',
+          sort: false,
+          editable: false,
+        },
+        approvedXAdmon: {
+          title: 'Apr.',
+          sort: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+              data.row.to = data.toggle;
+            });
+          },
+        },
+        received: {
+          title: 'Rec.',
+          sort: false,
+          type: 'custom',
+          editable: false,
+          renderComponent: CheckboxElementComponent,
+        },
+      },
+    };
+    this.params.value.limit = 1;
   }
 
-  prepareForm() {
-    this.form = this.fb.group({
-      tipoEvento: [null, [Validators.required]],
-      fechapage: [null, [Validators.required]],
-      fechaFin: [null, [Validators.required]],
-      statusEvento: [null, [Validators.required]],
-      coordRegional: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      usuario: [null, [Validators.required]],
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      //
-
-      statusAcata: [null, [Validators.required]],
-      fechaAvaluo: [null, [Validators.required]],
+  ngOnInit(): void {
+    // this.prepareForm();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      // console.log(x);
+      this.getData(this.formValue);
     });
+  }
+
+  private addFilter(
+    name: string,
+    value: any,
+    operator: SearchFilter = SearchFilter.EQ
+  ) {
+    if (value) {
+      this.filterParams.addFilter(name, value, operator);
+    }
+  }
+
+  getData(form: IProceedingInfo) {
+    if (this.fillParams(form)) {
+      this.loading = true;
+      this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
+        next: response => {
+          this.infoForm = response.data[0];
+          this.statusActa = this.infoForm.statusProceedings;
+          this.totalItems = response.count;
+          this.loading = false;
+          this.getGoods();
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    }
+  }
+
+  getGoods() {
+    if (this.infoForm && this.infoForm.id) {
+      const filterParams = new FilterParams();
+      filterParams.limit = this.goodParams.limit;
+      filterParams.page = this.goodParams.page;
+      filterParams.addFilter('numberProceedings', this.infoForm.id);
+      this.detailService.getAll3(filterParams.getParams()).subscribe({
+        next: response => {
+          this.data = response.data;
+          this.totalGoods = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => {
+          this.loadingGoods = false;
+        },
+      });
+    }
+  }
+
+  private fillParams(form: IProceedingInfo) {
+    // debugger;
+    if (!form) return false;
+    this.formValue = form;
+    this.filterParams = new FilterParams();
+    this.filterParams.limit = 1;
+    this.filterParams.page = this.params.getValue().page;
+    const {
+      id,
+      cveActa,
+      numFile,
+      tipoActa,
+      labelActa,
+      receiptKey,
+      statusActa,
+      address,
+      observations,
+      numDelegation1,
+      numDelegation2,
+      elaborationDate,
+      closeDate,
+      datePhysicalReception,
+      maxDate,
+      dateElaborationReceipt,
+      dateCaptureHc,
+      dateDeliveryGood,
+      dateCloseHc,
+      captureDate,
+      dateMaxHc,
+      witness1,
+      witness2,
+      comptrollerWitness,
+    } = form;
+    if (id) {
+      this.filterParams.addFilter('id', id);
+      return true;
+    }
+    if (cveActa) {
+      this.filterParams.addFilter('keysProceedings', cveActa.trim());
+      return true;
+    }
+    this.addFilter('numFile', numFile);
+    this.addFilter('typeProceedings', tipoActa);
+    this.addFilter('label', labelActa, SearchFilter.ILIKE);
+    this.addFilter('receiptKey', receiptKey);
+    this.addFilter('statusProceedings', statusActa);
+    this.addFilter('address', address, SearchFilter.ILIKE);
+    this.addFilter('observations', observations, SearchFilter.ILIKE);
+    this.addFilter('numDelegation1', numDelegation1);
+    this.addFilter('numDelegation2', numDelegation2);
+    this.addFilter('elaborationDate', elaborationDate, SearchFilter.ILIKE);
+    this.addFilter('closeDate', closeDate, SearchFilter.ILIKE);
+    this.addFilter(
+      'datePhysicalReception',
+      datePhysicalReception,
+      SearchFilter.ILIKE
+    );
+    this.addFilter('maxDate', maxDate, SearchFilter.ILIKE);
+    this.addFilter(
+      'dateElaborationReceipt',
+      dateElaborationReceipt,
+      SearchFilter.ILIKE
+    );
+    this.addFilter('dateCaptureHc', dateCaptureHc, SearchFilter.ILIKE);
+    this.addFilter('dateDeliveryGood', dateDeliveryGood, SearchFilter.ILIKE);
+    this.addFilter('dateCloseHc', dateCloseHc, SearchFilter.ILIKE);
+    this.addFilter('captureDate', captureDate, SearchFilter.ILIKE);
+    this.addFilter('dateMaxHc', dateMaxHc, SearchFilter.ILIKE);
+    this.addFilter('witness1', witness1, SearchFilter.ILIKE);
+    this.addFilter('witness2', witness2, SearchFilter.ILIKE);
+    this.addFilter(
+      'comptrollerWitness',
+      comptrollerWitness,
+      SearchFilter.ILIKE
+    );
+    if (this.filterParams.getFilterParams()) {
+      return true;
+    }
+    return false;
   }
 }
 

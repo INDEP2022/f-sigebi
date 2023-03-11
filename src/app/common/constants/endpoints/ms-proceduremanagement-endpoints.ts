@@ -5,4 +5,6 @@ export enum ProcedureManagementEndPoints {
   ManagamentArea = `management-area`,
   ReportViews = `views/file-procedure-sat`,
   ReportTranferenciaViews = `views/file-transference-sat`,
+  ReportViewsPgr = `views/file-procedure-mng`,
+  ReportTranferenciaPgrViews = `views/file-transference`,
 }

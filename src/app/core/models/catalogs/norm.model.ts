@@ -9,6 +9,7 @@ export interface INorm {
   fundament: string;
   objective: string;
   destination: number;
+  name: string;
   condition: number;
   userCreation: string;
   creationDate: Date;

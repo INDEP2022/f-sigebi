@@ -8,10 +8,11 @@
     src="assets/images/excel-icon.png" />
   <ng-container *ngIf="text !== ''">
     <button
-      class="btn btn-primary active"
+      class="btn btn-primary btn-sm active"
       type="submit"
       size="small"
       (click)="exportToExcel()">
+      <i class="bx bx-download float-icon"></i>
       {{ text }}
     </button>
   </ng-container>

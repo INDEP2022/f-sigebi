@@ -11,7 +11,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'execute-reception',
+    path: 'execute-reception/:id',
     loadChildren: async () =>
       (await import('./execute-reception/execute-reception.module'))
         .ExecuteReceptionModule,
@@ -52,6 +52,16 @@ const routes: Routes = [
       (await import('./schedule-reception/schedule-reception.module'))
         .ScheduleReceptionModule,
     data: { title: 'Programar Recepción' },
+  },
+  {
+    path: 'return-to-programming/:id',
+    loadChildren: async () =>
+      (
+        await import(
+          './return-to-perform-programming/return-to-perform-programming.module'
+        )
+      ).ReturnToPerformProgramming,
+    data: { title: 'Realizar programación' },
   },
 ];
 

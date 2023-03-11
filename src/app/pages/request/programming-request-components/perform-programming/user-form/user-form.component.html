@@ -17,10 +17,10 @@
         </form-field>
       </div>
       <div class="row pt-3">
-        <form-field [control]="userForm.get('charge')">
+        <form-field [control]="userForm.get('userCharge')">
           <ngx-select
             [form]="userForm"
-            control="charge"
+            control="userCharge"
             [data]="chargesUsers"
             value="description"
             bindLabel="description"
