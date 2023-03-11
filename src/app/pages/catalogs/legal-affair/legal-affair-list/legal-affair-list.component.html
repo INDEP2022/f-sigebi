@@ -22,7 +22,7 @@
           <div class="table-responsive">
             <ng2-smart-table
               [settings]="settings"
-              [source]="legalAffairList"
+              [source]="data"
               (edit)="openForm($event.data)"
               (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
           </div>

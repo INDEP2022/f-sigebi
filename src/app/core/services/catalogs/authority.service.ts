@@ -1,6 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthorityEndpoints } from 'src/app/common/constants/endpoints/authority-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
@@ -10,6 +11,7 @@ import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAuthority,
+  IAuthority2,
   IAuthorityIssuingParams,
   INoCityByAsuntoSAT,
 } from '../../models/catalogs/authority.model';
@@ -105,5 +107,27 @@ export class AuthorityService
       'catalog/api/v1/authority/authority-and-station?limit=1&page=1',
       body
     );
+  }
+
+  getAuthorityByTransferent(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IAuthority2>> {
+    const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}`;
+    return this.get(route, params);
+  }
+
+  create2(model: IAuthority) {
+    return this.post(AuthorityEndpoints.Authority, model);
+  }
+
+  update2(model: IAuthority) {
+    const route = `${AuthorityEndpoints.Authority}`;
+    return this.put(route, model);
+  }
+
+  remove2(id: number | string, model: Object) {
+    const route = `${AuthorityEndpoints.Authority}/${id}`;
+    return this.delete(route, model);
   }
 }
