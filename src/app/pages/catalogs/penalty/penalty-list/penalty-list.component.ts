@@ -69,7 +69,11 @@ export class PenaltyListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.penaltyService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.penaltyService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.data.load(this.paragraphs);
