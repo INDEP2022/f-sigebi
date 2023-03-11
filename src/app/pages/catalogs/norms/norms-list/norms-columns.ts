@@ -39,7 +39,7 @@ export const NORMS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  destination: {
+  name: {
     title: 'Destino',
     type: 'string',
     sort: false,

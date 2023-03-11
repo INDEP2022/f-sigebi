@@ -40,4 +40,7 @@ export class GenericService implements ICrudMethods<IGeneric> {
   getBySearch(params: ListParams): Observable<IListResponse<IGeneric>> {
     return this.catGenericRepository.getGenericBySearch(this.route, params);
   }
+  getByFilter(params: ListParams): Observable<IListResponse<IGeneric>> {
+    return this.catGenericRepository.getGenericByFilter(this.route, params);
+  }
 }
