@@ -34,23 +34,11 @@ export class LegendFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.legendForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      userCreation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      creationDate: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      userModification: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      modificationDate: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      userCreation: [null, [Validators.pattern(STRING_PATTERN)]],
+      creationDate: [null, [Validators.pattern(STRING_PATTERN)]],
+      userModification: [null, [Validators.pattern(STRING_PATTERN)]],
+      modificationDate: [null, [Validators.pattern(STRING_PATTERN)]],
       legend: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       version: [
         null,

@@ -46,7 +46,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   prepareForm() {
     this.fractionForm = this.fb.group({
       id: [null, [Validators.required]],
-      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      code: [null, [Validators.required]],
       level: [null, [Validators.required]],
       description: [
         null,
