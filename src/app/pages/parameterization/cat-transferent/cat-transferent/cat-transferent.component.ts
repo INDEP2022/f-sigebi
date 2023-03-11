@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CatTransferentModalComponent } from '../cat-transferent-modal/cat-transferent-modal.component';
 import {
@@ -30,6 +33,10 @@ import { CatStationModalComponent } from '../cat-station-modal/cat-station-modal
   styles: [],
 })
 export class CatTransferentComponent extends BasePage implements OnInit {
+  columns: ITransferente[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+
   transferentList: ITransferente[] = [];
   transferents: ITransferente;
 
@@ -47,8 +54,6 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
-
-  data: LocalDataSource = new LocalDataSource();
 
   settings2;
   settings3;
@@ -73,10 +78,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...TRANSFERENT_COLUMNS },
@@ -84,6 +91,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -95,6 +103,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
     this.settings3 = {
       ...this.settings,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -106,6 +115,31 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'city'
+              ? (field = `filter.${filter.field}.nameCity`)
+              : (field = `filter.${filter.field}`);
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getTransferents();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getTransferents());
@@ -114,10 +148,18 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   //Trae lista de los transferentes
   getTransferents() {
     this.loading1 = true;
-    this.transferenteService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.transferenteService.getAll(params).subscribe({
       next: response => {
-        this.transferentList = response.data;
-        this.totalItems = response.count;
+        this.columns = response.data;
+        this.totalItems = response.count || 0;
+
+        this.data.load(this.columns);
+        this.data.refresh();
         this.loading1 = false;
       },
       error: error => (this.loading1 = false),

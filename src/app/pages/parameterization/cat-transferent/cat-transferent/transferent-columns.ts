@@ -6,6 +6,9 @@ export const TRANSFERENT_COLUMNS = {
   nameTransferent: {
     title: 'Nombre',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
   keyTransferent: {
     title: 'Clave',
@@ -154,6 +157,7 @@ export const STATION_COLUMNS = {
   id: {
     title: 'No.',
     sort: false,
+    filter: false,
   },
   stationName: {
     title: 'Nombre',

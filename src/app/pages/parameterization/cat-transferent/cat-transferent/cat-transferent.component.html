@@ -26,7 +26,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="transferentList"
+            [source]="data"
             (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)"
             (userRowSelect)="rowsSelected($event)"
