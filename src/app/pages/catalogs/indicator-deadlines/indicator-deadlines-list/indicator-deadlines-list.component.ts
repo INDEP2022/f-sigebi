@@ -69,7 +69,11 @@ export class IndicatorDeadlinesListComponent
 
   getExample() {
     this.loading = true;
-    this.indicatorDeadlineService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.indicatorDeadlineService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
         this.data.load(this.columns);
