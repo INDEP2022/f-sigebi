@@ -28,6 +28,10 @@ export class LegendsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = LEGENDS_COLUMS;
     this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
