@@ -18,8 +18,12 @@ export const PAY_RECEIPT_REPORT_COLUMNS = {
     title: 'Descripción del Bien',
     sort: false,
   },
-  numRegister: {
-    title: 'Numero de registro',
-    sort: false,
+  numSubType: {
+    title: 'Ubicación de Bien',
+    type: 'list',
+    sort: true,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.numSubType.descriptionPhotography;
+    },
   },
 };
