@@ -142,31 +142,48 @@
         </div>
       </div>
 
-      <div class="row mt-5">
-        <label for="">Layouts</label>
+      <div body>
+        <div class="row">
+          <label for="">Layouts</label>
+        </div>
+        <div class="row pt-2 scroll-table justify-content-center">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings5"
+            [source]="layoutsList"
+            (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
+        </div>
       </div>
 
-      <div class="row pt-2 scroll-table">
-        <ng2-smart-table
-          class="col-md-12"
-          [attr.class]="'table-bordered'"
-          [settings]="settings5"
-          (userRowSelect)="userRowSelect($event)"
-          [source]="layousthList"></ng2-smart-table>
+      <div body>
+        <div class="row">
+          <h5 class="title">Estructura Layouts {{ idLayout }}</h5>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings6"
+            [source]="layoutsList"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert(idLayout, idStructure)"></ng2-smart-table>
+        </div>
       </div>
 
+      <!--
       <div class="row mt-5">
-        <label for="">Estructura Layouts</label>
+        <div class="ch-content">
+          <h5 class="title">Estructura Layouts {{ rowAllotment }}</h5>
+        </div>
+        <div class="row pt-2 scroll-table">
+         <ng2-smart-table class="col-md-12" [attr.class]="'table-bordered'" [settings]="settings6" [source]="layoutsList"
+                        (edit)="openForm($event.data)" (delete)="showDeleteAlert($event.data)"></ng2-smart-table> 
+          <ng2-smart-table class="col-md-12" [attr.class]="'table-bordered'" [settings]="settings6"
+            [source]="layoutsList" (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+        </div>
       </div>
-      <div class="row pt-2 scroll-table">
-        <ng2-smart-table
-          class="col-md-12"
-          [attr.class]="'table-bordered'"
-          [settings]="settings6"
-          [source]="layoutsList"
-          (edit)="openForm($event.data)"
-          (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
-      </div>
+-->
       <div class="row mt-5 d-flex justify-content-center">
         <app-pagination
           [params]="params"

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -37,6 +38,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   idLayout: number = 0;
   layoutDuplicated: IComerLayoutsH;
   structureLayout: IComerLayouts;
+  data1: LocalDataSource = new LocalDataSource();
+  data0: LocalDataSource = new LocalDataSource();
   layousthList: IComerLayoutsH[] = [];
   totalItems2: number = 0;
   lay: any;
@@ -45,10 +48,17 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   layout: IComerLayouts;
   provider: any;
   id: number = 0;
+  idStructure: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
+  rowSelected: boolean = false;
+  rowAllotment: string = null;
+  selectedRow: any = null;
+  rowSelectedGood: boolean = false;
+  columns: any[] = [];
+  @Output() refresh = new EventEmitter<true>();
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
@@ -60,6 +70,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data1.load(this.layousthList);
+
     this.getLayoutH();
     this.prepareForm();
     this.params
@@ -95,10 +107,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getByIdH(event.data.id).subscribe({
       next: data => {
         this.idLayout = data.id;
-        this.totalItems = data.count;
         this.layoutDuplicated = event.data;
         console.log(this.idLayout);
-        console.log(data);
+        console.log(this.layoutDuplicated);
+        this.rowSelected = true;
         this.valid = true;
       },
       error: error => {
@@ -108,22 +120,47 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
     });
   }
-
-  // userRowStructure(event: any) {
-  //   this.layoutsConfigService.getById(this.params.getValue()).subscribe({
+  // selectRow(row: any) {
+  //   this.data0.load(row.data); //Sub
+  //   this.data0.refresh();
+  //   this.rowAllotment = row.idLayout.id; //primary
+  //   this.rowSelected = true;
+  //   this.layoutsConfigService.getByIdH(row.data.id).subscribe({
   //     next: data => {
-  //       // this.idLayout = data.id;
-  //       this.structureLayout = event.data;
-  //       console.log(this.structureLayout);
-  //       // this.valid = true;
+  //       this.idLayout = data.id;
+  //       this.totalItems = data.count;
+  //       this.layoutDuplicated = row.data;
+  //       console.log(this.idLayout);
+  //       console.log(this.layoutDuplicated);
+  //       this.valid = true;
   //     },
   //     error: error => {
   //       this.loading = false;
-  //       this.onLoadToast('error', 'no hay detalles para éste layout!!', '');
+  //       this.onLoadToast('error', 'Layout no existe!!', '');
   //       return;
   //     },
   //   });
   // }
+
+  selectRowGood() {
+    this.rowSelectedGood = true;
+  }
+
+  userStructure(event: any) {
+    this.layoutsConfigService.getById(event.data.id).subscribe({
+      next: data => {
+        this.idStructure = data.idConsec;
+        this.structureLayout = event.data;
+        console.log(this.structureLayout);
+        // this.valid = true;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'no hay detalles para éste layout!!', '');
+        return;
+      },
+    });
+  }
 
   // findOne(id: number) {
   //   this.layoutsConfigService.findOne(id).subscribe({
@@ -167,7 +204,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
       next: data => {
         this.layoutsList = data.data;
-        this.totalItems2 = data.count;
+        // this.totalItems = data.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -208,14 +245,14 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     );
   }
-  showDeleteAlert(layout: IComerLayouts) {
+  showDeleteAlert(id: number, idStructure: number) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService.remove(layout.idLayout).subscribe({
+        this.layoutsConfigService.remove(id, idStructure).subscribe({
           next: data => {
             this.loading = false;
             this.onLoadToast('success', 'Detalle de layout eliminado', '');
@@ -283,7 +320,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data5 = this.layousthList;
+  data5 = this.layoutsList;
 
   settings6 = {
     ...TABLE_SETTINGS,

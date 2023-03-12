@@ -62,8 +62,8 @@ export class LayoutsConfigService extends HttpService {
     return this.post(route, id);
   }
 
-  remove(id: string | number) {
-    const route = `${this.endpoint}/${id}`;
+  remove(id: string | number, idConsec: string | number) {
+    const route = `${this.endpoint}/${id}/${idConsec}`;
     return this.delete(route);
   }
 

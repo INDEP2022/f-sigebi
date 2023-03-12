@@ -137,31 +137,49 @@ export const LAYOUTS_COLUMNS5 = {
     title: 'Id',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.id;
+    },
   },
   descLayout: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.descLayout;
+    },
   },
   screenKey: {
     title: 'Pantalla',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.screenKey;
+    },
   },
   table: {
     title: 'Tabla o Vista',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.table;
+    },
   },
   criterion: {
     title: 'Filtro de Selección',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.criterion;
+    },
   },
   registryNumber: {
     title: 'Número de registro',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.registryNumber;
+    },
   },
   indActive: {
     title: 'Activo',
@@ -172,6 +190,9 @@ export const LAYOUTS_COLUMNS5 = {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.indActive;
     },
   },
 };
@@ -241,35 +262,54 @@ export const LAYOUTS_COLUMNS6 = {
 
 export const LAYOUTS_COLUMNS56 = {
   idLayout: {
+    type: 'list',
     id: {
       title: 'Id',
       type: 'number',
       sort: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.id;
+      },
     },
     descLayout: {
       title: 'Descripción',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.descLayout;
+      },
     },
     screenKey: {
       title: 'Pantalla',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.screenKey;
+      },
     },
     table: {
       title: 'Tabla o Vista',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.table;
+      },
     },
     criterion: {
       title: 'Filtro de Selección',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.criterion;
+      },
     },
     registryNumber: {
       title: 'Número de registro',
       type: 'number',
       sort: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.registryNumber;
+      },
     },
     indActive: {
       title: 'Activo',
@@ -281,8 +321,12 @@ export const LAYOUTS_COLUMNS56 = {
           data.row.to = data.toggle;
         });
       },
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idLayout.indActive;
+      },
     },
   },
+
   idConsec: {
     title: 'id Consec',
     type: 'number',
