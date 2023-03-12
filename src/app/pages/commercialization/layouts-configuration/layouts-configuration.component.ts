@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -9,6 +8,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
   IComerLayoutsH,
+  IL,
+  ILay,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,19 +36,15 @@ import {
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   title = 'Layous';
   layoutsList: IComerLayouts[] = [];
-  idLayout: number = 0;
   layoutDuplicated: IComerLayoutsH;
   structureLayout: IComerLayouts;
-  data1: LocalDataSource = new LocalDataSource();
-  data0: LocalDataSource = new LocalDataSource();
   layousthList: IComerLayoutsH[] = [];
-  totalItems2: number = 0;
   lay: any;
   allLayouts: any;
   valid: boolean = false;
-  layout: IComerLayouts;
+  layout: IL;
   provider: any;
-  id: number = 0;
+  idLayout: number = 0;
   idStructure: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -70,8 +67,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data1.load(this.layousthList);
-
     this.getLayoutH();
     this.prepareForm();
     this.params
@@ -104,12 +99,20 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   userRowSelect(event: any) {
-    this.layoutsConfigService.getByIdH(event.data.id).subscribe({
+    this.idLayout = event.data.idLayout.id;
+    console.log(this.idLayout);
+    let params: ILay = {
+      idLayout: event.data.idLayout.id,
+      idConsec: event.data.idConsec,
+    };
+    let paramsId: IL = {
+      idLayout: event.data.idLayout.id,
+    };
+    this.layoutsConfigService.findOne(params).subscribe({
       next: data => {
-        this.idLayout = data.id;
-        this.layoutDuplicated = event.data;
-        console.log(this.idLayout);
-        console.log(this.layoutDuplicated);
+        this.layout = paramsId;
+        this.structureLayout = data;
+        console.log(this.structureLayout);
         this.rowSelected = true;
         this.valid = true;
       },
@@ -120,75 +123,27 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
     });
   }
-  // selectRow(row: any) {
-  //   this.data0.load(row.data); //Sub
-  //   this.data0.refresh();
-  //   this.rowAllotment = row.idLayout.id; //primary
-  //   this.rowSelected = true;
-  //   this.layoutsConfigService.getByIdH(row.data.id).subscribe({
-  //     next: data => {
-  //       this.idLayout = data.id;
-  //       this.totalItems = data.count;
-  //       this.layoutDuplicated = row.data;
-  //       console.log(this.idLayout);
-  //       console.log(this.layoutDuplicated);
-  //       this.valid = true;
-  //     },
-  //     error: error => {
-  //       this.loading = false;
-  //       this.onLoadToast('error', 'Layout no existe!!', '');
-  //       return;
-  //     },
-  //   });
-  // }
 
   selectRowGood() {
     this.rowSelectedGood = true;
   }
 
-  userStructure(event: any) {
-    this.layoutsConfigService.getById(event.data.id).subscribe({
+  duplicar() {
+    this.loading = false;
+    this.layoutsConfigService.create(this.layout).subscribe({
       next: data => {
-        this.idStructure = data.idConsec;
-        this.structureLayout = event.data;
+        this.structureLayout = data;
         console.log(this.structureLayout);
-        // this.valid = true;
+        this.rowSelected = true;
+        this.valid = true;
+        this.handleSuccess();
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'no hay detalles para éste layout!!', '');
+        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
         return;
       },
     });
-  }
-
-  // findOne(id: number) {
-  //   this.layoutsConfigService.findOne(id).subscribe({
-  //     next: data => {
-  //       this.layoutDuplicated = data.id;
-  //     },
-  //     error: error => {
-  //       this.loading = false;
-  //       this.onLoadToast('error', 'Layout no existe!!', '');
-  //       return;
-  //     },
-  //   });
-  // }
-
-  duplicar() {
-    try {
-      this.loading = false;
-      this.layoutsConfigService.createH(this.layoutDuplicated).subscribe({
-        next: data => this.handleSuccess(),
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-          return;
-        },
-      });
-    } catch {
-      console.error('Layout no existe');
-    }
   }
 
   handleSuccess() {
@@ -196,7 +151,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.onLoadToast('success', `${message} Correctamente`, '');
     this.loading = false;
     this.onConfirm.emit(true);
-    this.getLayoutH();
+    this.getLayouts();
   }
 
   getLayouts() {
@@ -204,7 +159,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
       next: data => {
         this.layoutsList = data.data;
-        // this.totalItems = data.count;
+        this.totalItems = data.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -245,17 +200,17 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     );
   }
-  showDeleteAlert(id: number, idStructure: number) {
+  showDeleteAlert(id: IL) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService.remove(id, idStructure).subscribe({
+        this.layoutsConfigService.remove(id).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Detalle de layout eliminado', '');
+            this.onLoadToast('success', 'Layout eliminado', '');
             this.getLayouts();
           },
           error: error => {
@@ -266,14 +221,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     });
   }
-  // rowClassFunction({ row }: { row: any; }): any {
-  //   console.log("\nRow is ::: ", row.data);
-  //   if (row.data == '') {
-  //     return 'hide_edit';
-  //   } else {
-  //     console.error('error al leer filas')
-  //   }
-  // }
+
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,

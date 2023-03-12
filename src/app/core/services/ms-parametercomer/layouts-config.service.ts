@@ -9,6 +9,8 @@ import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-
 import {
   IComerLayouts,
   IComerLayoutsH,
+  IL,
+  ILay,
 } from '../../models/ms-parametercomer/parameter';
 
 @Injectable({
@@ -40,7 +42,7 @@ export class LayoutsConfigService extends HttpService {
     return this.get(route, params);
   }
 
-  create(layout: number) {
+  create(layout: IL) {
     const route = `${this.endpoint}`;
     return this.post(route, layout);
   }
@@ -53,21 +55,22 @@ export class LayoutsConfigService extends HttpService {
   //   const route = `${this.endpoint}`;
   //   return this.put(route, layout);
   // }
-  update(id: string | number, layout: IComerLayouts) {
-    const route = `${this.endpoint}/${id}`;
+  update(layout: IComerLayouts) {
+    const route = `${this.endpoint}`;
     return this.put(route, layout);
   }
-  findOne(id: number) {
+
+  findOne(idLayout: ILay) {
     const route = `${this.endpoint}/find-one`;
-    return this.post(route, id);
+    return this.post(route, idLayout);
   }
 
-  remove(id: string | number, idConsec: string | number) {
-    const route = `${this.endpoint}/${id}/${idConsec}`;
-    return this.delete(route);
+  remove(id: IL) {
+    const route = `${this.endpoint}`;
+    return this.delete(route, id);
   }
 
-  createH(layout: IComerLayoutsH) {
+  createH(layout: IComerLayouts) {
     return this.post(this.endpointH, layout);
   }
 }

@@ -4,42 +4,42 @@ export const LAYOUTS_COLUMNS1 = {
   id: {
     title: 'Id',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   clave: {
     title: 'Clave',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   status: {
     title: 'Status',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   d: {
     title: 'D',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   tipoDispersion: {
     title: 'Tipo Dispersion',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   origen: {
     title: 'Origen',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   fechaCreacion: {
     title: 'Fecha Creacion',
     type: Date,
-    sort: false,
+    sort: true,
   },
   fechaTermino: {
     title: 'Fecha Termino',
     type: Date,
-    sort: false,
+    sort: true,
   },
 };
 
@@ -47,29 +47,29 @@ export const LAYOUTS_COLUMNS2 = {
   id: {
     title: 'Id',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   cveProceso: {
     title: 'C.V.E Proceso',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   cantidad: {
     title: 'Cantidad',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   monto: {
     title: 'Monto',
     type: 'number',
-    sort: false,
+    sort: true,
   },
 };
 
 export const LAYOUTS_COLUMNS3 = {
   fis: {
     title: 'FIS',
-    sort: false,
+    sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -80,7 +80,7 @@ export const LAYOUTS_COLUMNS3 = {
   },
   cnt: {
     title: 'CNT',
-    sort: false,
+    sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -91,7 +91,7 @@ export const LAYOUTS_COLUMNS3 = {
   },
   pto: {
     title: 'PTO',
-    sort: false,
+    sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -102,7 +102,7 @@ export const LAYOUTS_COLUMNS3 = {
   },
   TSR: {
     title: 'TSR',
-    sort: false,
+    sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -117,11 +117,11 @@ export const LAYOUTS_COLUMNS4 = {
   fechaTransf: {
     title: 'Fecha Transferencia',
     type: Date,
-    sort: false,
+    sort: true,
   },
   claveValida: {
     title: 'Clave Validad',
-    sort: false,
+    sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -136,7 +136,7 @@ export const LAYOUTS_COLUMNS5 = {
   id: {
     title: 'Id',
     type: 'number',
-    sort: false,
+    sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idLayout.id;
     },
@@ -144,7 +144,7 @@ export const LAYOUTS_COLUMNS5 = {
   descLayout: {
     title: 'Descripción',
     type: 'string',
-    sort: false,
+    sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idLayout.descLayout;
     },
@@ -152,7 +152,7 @@ export const LAYOUTS_COLUMNS5 = {
   screenKey: {
     title: 'Pantalla',
     type: 'string',
-    sort: false,
+    sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idLayout.screenKey;
     },
@@ -160,7 +160,7 @@ export const LAYOUTS_COLUMNS5 = {
   table: {
     title: 'Tabla o Vista',
     type: 'string',
-    sort: false,
+    sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idLayout.table;
     },
@@ -168,7 +168,7 @@ export const LAYOUTS_COLUMNS5 = {
   criterion: {
     title: 'Filtro de Selección',
     type: 'string',
-    sort: false,
+    sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idLayout.criterion;
     },
@@ -176,14 +176,14 @@ export const LAYOUTS_COLUMNS5 = {
   registryNumber: {
     title: 'Número de registro',
     type: 'number',
-    sort: false,
+    sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idLayout.registryNumber;
     },
   },
   indActive: {
     title: 'Activo',
-    sort: false,
+    sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -198,55 +198,58 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
-  // idLayout: {
-  //   title: 'Layout',
-  //   type: 'number',
-  //   sort: false,
-  // },
-  // idConsec: {
-  //   title: 'id',
-  //   type: 'number',
-  //   sort: false,
-  // },
+  idLayout: {
+    title: 'Layout',
+    type: 'number',
+    sort: true,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.id;
+    },
+  },
+  idConsec: {
+    title: 'Consec',
+    type: 'number',
+    sort: true,
+  },
   position: {
     title: 'Posición',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   column: {
     title: 'Columna',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   type: {
     title: 'Tipo Dato',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   length: {
     title: 'Longitud',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   constant: {
     title: 'Constante',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   carFilling: {
     title: 'Caracter de Relleno',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   justification: {
     title: 'Justificación',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   decimal: {
     title: 'Decimales',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   dateFormat: {
     title: 'Formato de Fecha',
@@ -256,7 +259,7 @@ export const LAYOUTS_COLUMNS6 = {
   registryNumber: {
     title: 'Número de Registro',
     type: 'number',
-    sort: false,
+    sort: true,
   },
 };
 
@@ -266,7 +269,7 @@ export const LAYOUTS_COLUMNS56 = {
     id: {
       title: 'Id',
       type: 'number',
-      sort: false,
+      sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
         return row.idLayout.id;
       },
@@ -274,7 +277,7 @@ export const LAYOUTS_COLUMNS56 = {
     descLayout: {
       title: 'Descripción',
       type: 'string',
-      sort: false,
+      sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
         return row.idLayout.descLayout;
       },
@@ -282,7 +285,7 @@ export const LAYOUTS_COLUMNS56 = {
     screenKey: {
       title: 'Pantalla',
       type: 'string',
-      sort: false,
+      sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
         return row.idLayout.screenKey;
       },
@@ -290,7 +293,7 @@ export const LAYOUTS_COLUMNS56 = {
     table: {
       title: 'Tabla o Vista',
       type: 'string',
-      sort: false,
+      sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
         return row.idLayout.table;
       },
@@ -298,7 +301,7 @@ export const LAYOUTS_COLUMNS56 = {
     criterion: {
       title: 'Filtro de Selección',
       type: 'string',
-      sort: false,
+      sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
         return row.idLayout.criterion;
       },
@@ -306,14 +309,14 @@ export const LAYOUTS_COLUMNS56 = {
     registryNumber: {
       title: 'Número de registro',
       type: 'number',
-      sort: false,
+      sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
         return row.idLayout.registryNumber;
       },
     },
     indActive: {
       title: 'Activo',
-      sort: false,
+      sort: true,
       type: 'custom',
       renderComponent: CheckboxElementComponent,
       onComponentInitFunction(instance: any) {
@@ -330,47 +333,47 @@ export const LAYOUTS_COLUMNS56 = {
   idConsec: {
     title: 'id Consec',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   position: {
     title: 'Posición',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   column: {
     title: 'Columna',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   type: {
     title: 'Tipo Dato',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   length: {
     title: 'Longitud',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   constant: {
     title: 'Constante',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   carFilling: {
     title: 'Caracter de Relleno',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   justification: {
     title: 'Justificación',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   decimal: {
     title: 'Decimales',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   dateFormat: {
     title: 'Formato de Fecha',
@@ -380,7 +383,7 @@ export const LAYOUTS_COLUMNS56 = {
   registryNumber: {
     title: 'Número de Registro',
     type: 'number',
-    sort: false,
+    sort: true,
   },
 };
 
