@@ -3,25 +3,27 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="legalAffairForm">
+    <form class="form-material" [formGroup]="stationForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field label="ID" [control]="legalAffairForm.get('id')">
+          <form-field
+            label="No. Transferente"
+            [control]="stationForm.get('idTransferent')">
             <input
               type="text"
               class="form-control"
-              formControlName="id"
+              formControlName="idTransferent"
               readonly />
           </form-field>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6">
           <form-field
-            label="Asunto Jurídico"
-            [control]="legalAffairForm.get('legalAffair')">
+            label="Nombre Emisora"
+            [control]="stationForm.get('stationName')">
             <input
               type="text"
               class="form-control"
-              formControlName="legalAffair" />
+              formControlName="stationName" />
           </form-field>
         </div>
       </div>
@@ -32,6 +34,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="stationForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

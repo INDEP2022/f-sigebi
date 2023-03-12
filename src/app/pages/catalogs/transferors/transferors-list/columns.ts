@@ -3,15 +3,18 @@ export const TRANSFERENT_STATE_COLUMNS = {
     title: 'No.',
     sort: false,
   },
-  keyCode: {
+  keyTransferent: {
     title: 'Clave',
     sort: false,
   },
-  name: {
+  nameTransferent: {
     title: 'Nombre',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
-  type: {
+  typeTransferent: {
     title: 'Tipo',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -20,5 +23,26 @@ export const TRANSFERENT_STATE_COLUMNS = {
 
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Select',
+        list: [
+          { value: 'NO', title: 'No obligatorio' },
+          { value: 'CE', title: 'Asegurado' },
+        ],
+      },
+    },
+  },
+};
+
+export const STATE_COLUMS = {
+  transferente: {
+    title: 'Transferente',
+    sort: false,
+  },
+  estado: {
+    title: 'Estado',
+    sort: false,
   },
 };
