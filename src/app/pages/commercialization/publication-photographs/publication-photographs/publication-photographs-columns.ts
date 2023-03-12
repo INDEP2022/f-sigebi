@@ -31,3 +31,40 @@ export const PUBLICATION_PHOTO2 = {
     sort: false,
   },
 };
+
+export const dataBatchColum = {
+  id: {
+    title: 'id Lote',
+    type: 'string',
+    sort: false,
+  },
+  description: {
+    title: 'Description',
+    type: 'string',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  numStore: {
+    type: 'list',
+    ubication: {
+      title: 'Ubicación',
+      type: 'string',
+      sort: true,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.numStore.ubication;
+      },
+    },
+    manager: {
+      title: 'Ubicación',
+      type: 'string',
+      sort: true,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.numStore.manager;
+      },
+    },
+  },
+};
