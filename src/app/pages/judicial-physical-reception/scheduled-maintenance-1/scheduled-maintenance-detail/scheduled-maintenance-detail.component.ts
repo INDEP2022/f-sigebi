@@ -33,7 +33,6 @@ export class ScheduledMaintenanceDetailComponent
   data: IGoodsByProceeding[] = [];
   totalItems: number = 0;
   selecteds: IGoodsByProceeding[] = [];
-  selectedsForUpdate: IGoodsByProceeding[] = [];
   settingsGoods = settingsGoods;
   params: ListParams = new ListParams();
   constructor(
@@ -79,36 +78,33 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   private massiveUpdate(message = '') {
-    if (this.selectedsForUpdate.length > 0) {
-      this.detailService
-        .updateMasive(this.selectedsForUpdate, this.actaId)
-        .subscribe({
-          next: response => {
-            let goods = '';
-            this.selectedsForUpdate.forEach((selected, index) => {
-              goods +=
-                selected.no_bien +
-                (index < this.selecteds.length - 1 ? ',' : '');
-            });
-            if (message === '') {
-              message = `Se actualizaron los bienes N° ${goods} `;
-            } else {
-              message += ` y los bienes N° ${goods}`;
-            }
-            this.onLoadToast('success', 'Exito', message);
-          },
-          error: err => {
-            if (message === '') {
-              this.onLoadToast('error', 'Error', 'Programación no actualizada');
-            } else {
-              this.onLoadToast(
-                'warning',
-                'Exito',
-                message + ' pero no se pudieron actualizar los bienes'
-              );
-            }
-          },
-        });
+    if (this.data.length > 0) {
+      this.detailService.updateMasive(this.data, this.actaId).subscribe({
+        next: response => {
+          let goods = '';
+          this.data.forEach((selected, index) => {
+            goods +=
+              selected.no_bien + (index < this.selecteds.length - 1 ? ',' : '');
+          });
+          if (message === '') {
+            message = `Se actualizaron los bienes N° ${goods} `;
+          } else {
+            message += ` y los bienes N° ${goods}`;
+          }
+          this.onLoadToast('success', 'Exito', message);
+        },
+        error: err => {
+          if (message === '') {
+            this.onLoadToast('error', 'Error', 'Programación no actualizada');
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Exito',
+              message + ' pero no se pudieron actualizar los bienes'
+            );
+          }
+        },
+      });
     }
   }
 
@@ -138,15 +134,17 @@ export class ScheduledMaintenanceDetailComponent
       newData.fec_indica_usuario_aprobacion !==
         data.fec_indica_usuario_aprobacion
     ) {
-      let index = this.selectedsForUpdate.findIndex(
-        x => x.no_bien === newData.no_bien
-      );
+      let index = this.data.findIndex(x => x.no_bien === newData.no_bien);
       if (index === -1) {
-        this.selectedsForUpdate.push(newData);
+        this.data.push(newData);
       } else {
-        this.selectedsForUpdate[index] = newData;
+        this.data[index] = newData;
       }
     }
+  }
+
+  updateDatesTable() {
+    console.log(this.data);
   }
 
   updateGoodsRow(event: any) {

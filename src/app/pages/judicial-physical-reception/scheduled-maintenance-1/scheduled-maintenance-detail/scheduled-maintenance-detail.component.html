@@ -69,10 +69,14 @@
         </div>
         <div class="col-md-3 center">
           <app-update-dates-goods
-            [statusActaValue]="statusActaValue"
+            [disabled]="
+              statusActaValue !== 'ABIERTA' && data && data.length > 0
+            "
             [data]="data"
+            inicioColumn="fec_aprobacion_x_admon"
+            finColumn="fec_indica_usuario_aprobacion"
             (updateGoodEvent)="
-              selectedsForUpdate = $event
+              data = $event; updateDatesTable()
             "></app-update-dates-goods>
         </div>
         <div class="col-md-3">

@@ -13,8 +13,10 @@ import { firstFormatDate } from 'src/app/shared/utils/date';
   styles: [],
 })
 export class UpdateDatesGoodsComponent implements OnInit {
-  @Input() statusActaValue: string;
+  @Input() disabled: boolean;
   @Input() data: any[];
+  @Input() inicioColumn: string = 'approvedDateXAdmon';
+  @Input() finColumn: string = 'dateIndicatesUserApproval';
   selectedsForUpdate: any[] = [];
   @Output() updateGoodEvent = new EventEmitter();
   constructor(private modalService: BsModalService) {}
@@ -25,19 +27,18 @@ export class UpdateDatesGoodsComponent implements OnInit {
     const modalRef = this.modalService.show(RangePickerModalComponent, {
       class: 'modal-md modal-dialog-centered modal-not-top-padding',
       ignoreBackdropClick: true,
+      backdrop: false,
     });
     modalRef.content.onSelect.subscribe(data => {
       if (data) {
         console.log(data);
-        const { rangoFecha } = data;
+        const { inicio, fin } = data;
         this.updateGoodEvent.emit(
           this.data.map(x => {
             return {
               ...x,
-              approvedDateXAdmon: firstFormatDate(new Date(rangoFecha[0])),
-              dateIndicatesUserApproval: firstFormatDate(
-                new Date(rangoFecha[1])
-              ),
+              [this.inicioColumn]: firstFormatDate(new Date(inicio)),
+              [this.finColumn]: firstFormatDate(new Date(fin)),
             };
           })
         );
