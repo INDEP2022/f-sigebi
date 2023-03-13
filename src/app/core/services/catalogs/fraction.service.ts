@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CatFractionExtendRepository } from 'src/app/common/repository/repositories/cat-fraction-extend-repository';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -11,6 +12,8 @@ import { IFraction } from '../../models/catalogs/fraction.model';
 })
 export class FractionService implements ICrudMethods<IFraction> {
   private readonly route: string = ENDPOINT_LINKS.Fraction;
+  private fractionExtRepository = inject(CatFractionExtendRepository);
+
   constructor(private fractionRepository: Repository<IFraction>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IFraction>> {
@@ -29,7 +32,15 @@ export class FractionService implements ICrudMethods<IFraction> {
     return this.fractionRepository.update(this.route, id, model);
   }
 
+  newUpdate(model: IFraction): Observable<Object> {
+    return this.fractionRepository.newUpdate(this.route, model);
+  }
+
   remove(id: string | number): Observable<Object> {
     return this.fractionRepository.remove(this.route, id);
+  }
+
+  getByParentId(id: string | number): Observable<any> {
+    return this.fractionExtRepository.getByParendId(this.route, id);
   }
 }

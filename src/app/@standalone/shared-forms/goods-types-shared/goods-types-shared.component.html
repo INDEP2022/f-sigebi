@@ -9,11 +9,18 @@
       [form]="form"
       value="id"
       label="Tipo de Bien"
-      bindLabel="nameGoodType"
       [control]="typeField"
-      (change)="onTypesChange($event)">
+      (change)="onTypesChange($event)"
+      [labelTemplate]="typeLabel"
+      [optionTemplate]="typeOption">
     </ngx-select>
   </form-field>
+  <ng-template #typeLabel let-item="item"
+    >{{ item.id }} - {{ item.nameGoodType }}</ng-template
+  >
+  <ng-template #typeOption let-item="item"
+    >{{ item.id }} - {{ item.nameGoodType }}</ng-template
+  >
 
   <form-field
     *ngIf="subTypeShow"
@@ -25,11 +32,19 @@
       [form]="form"
       value="id"
       label="Subtipo"
-      bindLabel="description"
+      bindLabel="nameSubtypeGood"
       [control]="subtypeField"
-      (change)="onSubtypesChange($event)">
+      (change)="onSubtypesChange($event)"
+      [labelTemplate]="subtypeLabel"
+      [optionTemplate]="subtypeOption">
     </ngx-select>
   </form-field>
+  <ng-template #subtypeLabel let-item="item"
+    >{{ item.id }} - {{ item.nameSubtypeGood }}</ng-template
+  >
+  <ng-template #subtypeOption let-item="item"
+    >{{ item.id }} - {{ item.nameSubtypeGood }}</ng-template
+  >
 
   <form-field
     *ngIf="ssubTypeShow"
@@ -43,10 +58,18 @@
       label="Ssubtipo"
       bindLabel="description"
       [control]="ssubtypeField"
-      (change)="onSsubtypesChange($event)">
+      (change)="onSsubtypesChange($event)"
+      [labelTemplate]="ssubtypeLabel"
+      [optionTemplate]="ssubtypeOption">
     </ngx-select>
   </form-field>
 
+  <ng-template #ssubtypeLabel let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
+  <ng-template #ssubtypeOption let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
   <form-field
     *ngIf="sssubTypeShow"
     [control]="form.get(sssubtypeField)"
@@ -59,7 +82,16 @@
       label="Sssubtipo"
       bindLabel="description"
       [control]="sssubtypeField"
-      (change)="onSssubtypesChange($event)">
+      (change)="onSssubtypesChange($event)"
+      [labelTemplate]="sssubtypeLabel"
+      [optionTemplate]="sssubtypeOption">
     </ngx-select>
   </form-field>
+
+  <ng-template #sssubtypeLabel let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
+  <ng-template #sssubtypeOption let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
 </div>

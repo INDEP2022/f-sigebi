@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showBatch">
+    <div class="col-md-12">
+      <form-field [control]="form.get(batchField)">
+        <ngx-select
+          (fetchItems)="getBatchs($event)"
+          [data]="batchs"
+          [form]="form"
+          value="id"
+          bindLabel="numRegister"
+          label="Lotes"
+          [control]="batchField"
+          (change)="onBatchsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

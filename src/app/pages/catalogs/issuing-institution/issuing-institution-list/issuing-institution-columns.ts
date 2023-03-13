@@ -77,7 +77,7 @@ export const ISSUING_INSTITUTION_COLUMNS = {
     title: 'N° transferencia',
     type: 'string',
     valuePrepareFunction: (value: ITransferente) => {
-      return value?.name || '';
+      return value?.nameTransferent || '';
     },
     sort: false,
   },

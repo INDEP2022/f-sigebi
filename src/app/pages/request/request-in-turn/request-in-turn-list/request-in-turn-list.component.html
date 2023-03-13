@@ -1,12 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">LISTA SOLICITUDES A TURNO</h5>
+    <h5 class="title">SOLICITUDES A TURNAR</h5>
   </div>
 
   <div body>
     <!-- Start filter -->
     <app-request-in-turn-form
-      (sendSearchForm)="searchForm($event)"></app-request-in-turn-form>
+      (sendSearchForm)="searchForm($event)"
+      (resetForm)="resetForm($event)"></app-request-in-turn-form>
     <!-- ends filter -->
     <div class="row">
       <div class="ch-content">
@@ -27,7 +28,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             (userRowSelect)="onCustomAction($event)"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive '"
             [settings]="settings"
             [source]="paragraphs">
           </ng2-smart-table>

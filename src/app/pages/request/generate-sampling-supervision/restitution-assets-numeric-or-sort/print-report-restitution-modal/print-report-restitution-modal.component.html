@@ -1,0 +1,68 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">{{ title }}</h5>
+    <!--    <button-->
+    <!--      type="button"-->
+    <!--      class="close btn-close pull-right"-->
+    <!--      aria-label="Close"-->
+    <!--      (click)="modalRef?.hide()">-->
+    <!--      <span aria-hidden="true" class="visually-hidden">&times;</span>-->
+    <!--    </button>-->
+  </div>
+  <div body class="body">
+    <div *ngIf="printReport">
+      <div class="row">
+        <div class="d-flex">
+          <h5 class="mr-auto p-2">Vista Previa Reporte</h5>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="signReport()">
+              <i class="bx bx-edit-alt"></i>{{ btnTitle }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">mostrar reporte</div>
+    </div>
+
+    <div *ngIf="isUploadingDoc">
+      <div class="row">
+        <div class="d-flex">
+          <h5 class="mr-auto p-2">Carga documento</h5>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="backStep()">
+              <i class="bx bx-left-arrow-alt"></i> Anterior Paso
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="attachDoc()">
+              <i class="bx bxs-check-circle"></i> Adjuntar Documento
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-8">
+          <!--          <form-field label="*Seleccione Archivo">-->
+          <input
+            type="file"
+            #FileInput
+            class="form-control"
+            (change)="selectFile($event)" />
+          <!--          </form-field>-->
+          <span id="size" *ngIf="sizeMessage"
+            >Seleccione un archivo no mayor a 100 MB&#46;</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,148 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Reporte exposici&oacute;n a venta</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">B&uacute;squeda por bien&#58;</h5>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <form-check label="Por bien" for="label1">
+              <input
+                id="label1"
+                type="checkbox"
+                formControlName="filterGoods" />
+            </form-check>
+          </div>
+          <div class="col-md-2">
+            <form-check label="Con archivo de texto" for="label2">
+              <input id="label2" type="checkbox" formControlName="filterText" />
+            </form-check>
+          </div>
+          <div class="col-md-3" *ngIf="filterText.value">
+            <input type="file" (change)="chargeFile($event.target)" />
+          </div>
+          <div class="col-md-2" *ngIf="filterText.value">
+            <div class="justify-content-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="!form.valid"
+                (click)="show = !show">
+                Buscar bienes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="filterGoods.value">
+        <div class="ch-content">
+          <h5 class="title">Filtros de B&uacute;squeda</h5>
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-2">
+            <form-field [control]="form.get('typeGood')" label="Tipo Bien">
+              <ng-select
+                formControlName="typeGood"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="M">Bienes Muebles</ng-option>
+                <ng-option value="I">Bienes Inmuebles</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="form.get('subtype')" label="Sub Tipo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="subtype" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="form.get('delegation')"
+              label="Delegaci&oacute;n Regional">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="delegation" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="form.get('status')" label="Estatus">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="!form.valid">
+                Reporte ning&uacute;n intento
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="!form.valid">
+                Reporte 2 meses
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm active"
+                [disabled]="!form.valid">
+                Limpiar
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="!form.valid"
+                (click)="show = !show">
+                Consultar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div *ngIf="show" class="pt-5">
+      <div class="ch-content" header>
+        <h5 class="title">
+          Bienes que no han sido expuestos a evento comercial
+        </h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

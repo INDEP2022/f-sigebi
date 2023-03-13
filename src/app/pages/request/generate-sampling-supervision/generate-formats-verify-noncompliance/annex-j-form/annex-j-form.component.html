@@ -1,0 +1,92 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Capturar datos para el firmante</h5>
+  </div>
+  <div body class="body">
+    <div>
+      <form [formGroup]="signForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="signForm.get('name')" label="&#42;Nombre">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="signForm.get('position')" label="&#42;Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="signForm.get('thirdSpecial')"
+              label="Tercero Especializado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="thirdSpecial" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="signForm.get('relevantFacts')"
+              label="Hecho Relevantes">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="relevantFacts"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="signForm.get('date1')"
+              label="Fecha incumplimiento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="date1"
+                placeholder=""
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="signForm.get('date2')"
+              label="Fecha reposici&oacute;n servicios">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="date2"
+                placeholder=""
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="save()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

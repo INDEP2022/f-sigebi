@@ -1,25 +1,34 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'search-bar-simple',
   template: `
-    <div class="form-group form-secondary d-flex justify-content-center">
+    <div
+      class="form-material form-group form-secondary d-flex justify-content-center">
       <label class="search-label">{{ label }}</label>
-      <div class="">
+      <div class="text-search ">
         <input
-          type="text"
+          type="number"
           class="form-control"
           [formControl]="search"
           [placeholder]="placeholder"
-          [(ngModel)]="term" />
+          [(ngModel)]="inputValue" />
       </div>
       <div>
-        <input
+        <button
+          [disabled]="search.invalid"
+          type="button"
+          (click)="searchTerm()"
+          class="btn btn-primary btn-sm active ml-1">
+          <i class="fa fa-search"></i
+          ><span [ngClass]="{ 'ml-2': valueBut != '' }">{{ valueBut }}</span>
+        </button>
+        <!-- <input
           value="{{ valueBut }}"
           (click)="searchTerm()"
           type="submit"
-          class="btn btn-primary active" />
+          class="btn btn-primary active ml-1" /> -->
       </div>
     </div>
   `,
@@ -28,20 +37,21 @@ import { FormControl } from '@angular/forms';
 export class SearchBarSimpleComponent implements OnInit {
   @Input() label?: string = 'Buscar:';
   @Input() placeholder?: string = 'Placeholder...';
-  @Input() valueBut?: string = 'Buscar';
-  @Output() eventEmit = new EventEmitter<string>();
-  term: string = '';
-
-  search: FormControl = new FormControl();
+  @Input() valueBut?: string = '';
+  @Input() inputValue?: string | number;
+  @Output() eventEmit = new EventEmitter<string | number>();
+  // term: string = '';
+  search: FormControl = new FormControl(null, [Validators.required]);
   constructor() {}
 
-  ngOnInit(): void {
-    console.log(this.placeholder);
-    console.log(this.valueBut);
-  }
+  ngOnInit(): void {}
+
+  // getValue() {
+  //   if (this.term == '') return false;
+  //   return true;
+  // }
 
   searchTerm() {
-    console.log(this.term);
-    this.eventEmit.emit(this.term);
+    this.eventEmit.emit(this.inputValue);
   }
 }

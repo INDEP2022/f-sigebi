@@ -38,13 +38,27 @@ export class DrawerFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.drawerForm = this.fb.group({
-      noDrawer: [null, [Validators.required, Validators.maxLength(3)]],
+      noDrawer: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       noBobeda: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       status: [null, [Validators.required, Validators.maxLength(2)]],
-      noRegistration: [null, [Validators.required, Validators.maxLength(10)]],
+      noRegistration: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
     });
 
     if (this.drawer != null) {
@@ -54,7 +68,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
       this.boveda = new DefaultSelect([bobeda], 1);
       this.drawerForm.get('noDrawer').disable();
     } else {
-      this.getBovedaSelect({ inicio: 1, text: '' });
+      this.getBovedaSelect({ page: 1, text: '' });
     }
   }
 

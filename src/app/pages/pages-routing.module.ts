@@ -3,13 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'documentation',
-    loadChildren: async () =>
-      (await import('./documentation-examples/documentation-examples.module'))
-        .DocumentationExamplesModule,
-    data: { title: 'Documentation' },
-  },
-  {
     path: 'example',
     loadChildren: async () =>
       (await import('./example/example.module')).ExampleModule,
@@ -42,10 +35,15 @@ const routes: Routes = [
       ).AdministrativeProcessesModule,
   },
   {
+    path: 'master-file',
+    loadChildren: async () =>
+      (await import('./master-file/master-file.module')).MasterFileModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
-    data: { title: 'Inicio' },
+    data: { title: 'page' },
   },
 
   {
@@ -60,22 +58,21 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'general-processes/goods-tracker',
     pathMatch: 'full',
   },
   {
-    path: 'juridicos',
+    path: 'juridical',
     loadChildren: async () =>
       (await import('./juridical-processes/juridical-processes.module'))
         .JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
-  // {
-
-  //   path: 'legal-processes',
-  //   loadChildren: () => import('./legal-processes/legal-processes.module')
-  //     .then(m => m.LegalProcessesModule),
-  // },
+  {
+    path: 'security',
+    loadChildren: () =>
+      import('./security/security.module').then(m => m.SecurityModule),
+  },
   {
     path: 'executive-processes',
     loadChildren: async () =>
@@ -106,11 +103,32 @@ const routes: Routes = [
   },
 
   {
-    path: 'registration-request',
+    path: 'parameterization',
     loadChildren: async () =>
-      (await import('./registration-request/registration-request.module'))
-        .RegistrationRequestModule,
+      (await import('./parameterization/parameterization.module'))
+        .ParameterizationModule,
   },
+
+  {
+    path: 'siab-web',
+    loadChildren: async () =>
+      (await import('./siab-web/siab-web.module')).SiabWebModule,
+  },
+  {
+    path: 'assets-for-study',
+    loadChildren: async () =>
+      (await import('./assets-for-study/assets-for-study.module'))
+        .AssetsForStudyModule,
+    data: { title: 'Bienes para estudio' },
+  },
+  {
+    path: '404-not-found',
+    pathMatch: 'full',
+    loadChildren: async () =>
+      (await import('./errors/error-404/error-404.module')).Error404Module,
+    data: { title: 'Página no Encontrada' },
+  },
+  { path: '**', redirectTo: '404-not-found' },
 ];
 
 @NgModule({

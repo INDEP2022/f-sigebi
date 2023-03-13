@@ -25,7 +25,7 @@ export class EventsSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() eventField: string = 'event';
   @Input() label: string = 'Eventos';
-  @Input() bindLabel: string = 'keyProcess';
+  @Input() bindLabel: string = 'eventKey';
   @Input() showEvents: boolean = true;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -39,7 +39,18 @@ export class EventsSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let eventId = this.form.controls[this.eventField].value;
+    if (eventId !== null && this.form.contains('eventKey')) {
+      let eventKP = this.form.controls['eventKey'].value;
+      this.events = new DefaultSelect([
+        {
+          id: eventId,
+          eventKey: eventKP,
+        },
+      ]);
+    }
+  }
 
   getEvents(params: ListParams) {
     //Provisional data

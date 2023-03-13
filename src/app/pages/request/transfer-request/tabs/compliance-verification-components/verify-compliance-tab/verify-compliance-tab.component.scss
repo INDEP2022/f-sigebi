@@ -1,20 +1,39 @@
 p {
-    font-size: 1.5rem;
-    font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 label {
-    color: black;
+  color: black;
 
-    span {
-        font-size: smaller;
-        font-weight: 400;
-    }
+  span {
+    font-size: smaller;
+    font-weight: 400;
+  }
 }
 
-.custom-label{
-    font-weight: 700;
-    line-height: 1;
-    padding-left: 1.2%;
-    font-size: smaller;
+.custom-label {
+  font-weight: 700;
+  line-height: 1;
+  padding-left: 1.2%;
+  font-size: smaller;
+}
+
+:host ::ng-deep ng2-smart-table {
+  th,
+  ng2-st-checkbox-select-all {
+    text-align: center;
+  }
+
+  .goodDescription {
+    min-width: 27rem;
+  }
+
+  .goodTypeName {
+    min-width: 30rem;
+  }
+
+  .descriptionGoodSae {
+    min-width: 25rem;
+  }
 }

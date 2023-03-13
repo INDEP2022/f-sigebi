@@ -6,7 +6,7 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    data: { title: 'Inicio' },
+    data: { title: 'page', screen: 'home' },
   },
 ];
 

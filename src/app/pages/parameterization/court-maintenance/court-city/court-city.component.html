@@ -1,0 +1,60 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Agregar Ciudad</h5>
+      <div class="buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-cities-shared
+            [form]="form"
+            (state)="getState($event)"></app-cities-shared>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('entity')" label="Entidad Federativa">
+            <input type="text" class="form-control" formControlName="entity" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            label="Delegaci&oacute;n"
+            [control]="form.get('delegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            label="Sub Delegaci&oacute;n"
+            [control]="form.get('subDelegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-center">
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            [disabled]="!form.valid"
+            (click)="confirm()">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

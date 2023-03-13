@@ -1,0 +1,79 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CALCULO DE COMISIONES PARA TERCERO COMERCIALIZADOR</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
+    </div>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <div>
+          <button
+            (click)="openForm1()"
+            class="btn btn-primary active btn-sm ml-3">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="comerComCalculatedList"
+          (edit)="openForm1($event.data)"
+          (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="row pt-5">
+      <div class="col-md-2">
+        <button class="btn btn-sm btn-secondary active" type="submit">
+          Calcular comisi&oacute;n
+        </button>
+      </div>
+    </div>
+
+    <div class="row pt-5">
+      <div class="ch-content" header>
+        <h5 class="title">Comisiones</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings2"></app-columns-select>
+          <div>
+            <button
+              (click)="openForm2()"
+              class="btn btn-primary active btn-sm ml-3">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="comerCommissionsList"
+              (edit)="openForm2($event.data)">
+            </ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

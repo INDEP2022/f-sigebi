@@ -1,0 +1,286 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Orden de Servicio</h5>
+  </div>
+  <div body>
+    <form [formGroup]="serviceOrdersForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field [control]="serviceOrdersForm.get('type')" label="Tipo">
+            <select class="form-control" formControlName="type">
+              <option [value]="null">Seleccione un tipo</option>
+              <option value="normal">normal</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('process')">
+            <ngx-select
+              (fetchItems)="getProcess($event)"
+              [data]="process"
+              [form]="serviceOrdersForm"
+              value="process"
+              bindLabel="description"
+              label="Proceso"
+              control="process">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="serviceOrdersForm.get('dateCapture')"
+            label="Fecha de captura">
+            <input
+              type="text"
+              formControlName="dateCapture"
+              placeholder="Fecha de captura"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('regionalCoordination')">
+            <ngx-select
+              (fetchItems)="getRegionalCoordination($event)"
+              [data]="regionalCoordination"
+              [form]="serviceOrdersForm"
+              value="regionalCoordination"
+              bindLabel="description"
+              label="Coordinación Regional"
+              control="regionalCoordination">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="serviceOrdersForm.get('serviceOrderKey')"
+            label="Clave.Orden de servicio">
+            <input
+              type="text"
+              formControlName="serviceOrderKey"
+              placeholder="Clave.Orden de servicio"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="serviceOrdersForm.get('cancellationAuthorizationDate')"
+            label="Fecha Autorización/Cancelación">
+            <input
+              type="text"
+              formControlName="cancellationAuthorizationDate"
+              placeholder="Fecha Autorización/Cancelación"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="serviceOrdersForm.get('uniqueKey')"
+            label="Clave única de 3 niveles">
+            <input
+              type="text"
+              formControlName="uniqueKey"
+              placeholder="Clave única de 3 niveles"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('transference')">
+            <ngx-select
+              (fetchItems)="getTransference($event)"
+              [data]="transference"
+              [form]="serviceOrdersForm"
+              value="transference"
+              bindLabel="description"
+              label="Transferente"
+              control="transference">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('station')">
+            <ngx-select
+              (fetchItems)="getStation($event)"
+              [data]="station"
+              [form]="serviceOrdersForm"
+              value="station"
+              bindLabel="description"
+              label="Emisora"
+              control="station">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('authority')">
+            <ngx-select
+              (fetchItems)="getAuthority($event)"
+              [data]="authority"
+              [form]="serviceOrdersForm"
+              value="authority"
+              bindLabel="description"
+              label="Autoridad"
+              control="authority">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('keyStore')">
+            <ngx-select
+              (fetchItems)="getKeyStore($event)"
+              [data]="keyStore"
+              [form]="serviceOrdersForm"
+              value="keyStore"
+              bindLabel="description"
+              label="Clave almacén"
+              control="keyStore">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('location')"
+            label="Ubicación">
+            <input
+              type="text"
+              formControlName="location"
+              placeholder="Ubicación"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('municipality')"
+            label="Municipio">
+            <input
+              type="text"
+              formControlName="municipality"
+              placeholder="Municipio"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('entity')"
+            label="Entidad">
+            <input
+              type="text"
+              formControlName="entity"
+              placeholder="Entidad"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('supplierFolio')"
+            label="Folio Proveedor">
+            <input
+              type="text"
+              formControlName="supplierFolio"
+              placeholder="Folio Proveedor"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
+          <h5 class="title">Fecha Evento</h5>
+          <div class="margin-input">
+            <form-field [control]="serviceOrdersForm.get('start')" label="page">
+              <input
+                type="text"
+                formControlName="start"
+                placeholder="page"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+            <form-field
+              [control]="serviceOrdersForm.get('finished')"
+              label="Término">
+              <input
+                type="text"
+                formControlName="finished"
+                placeholder="Término"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+            <form-field [control]="serviceOrdersForm.get('hour')" label="Hora">
+              <input
+                type="text"
+                formControlName="hour"
+                placeholder="Hora"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
+          <h5 class="title">Cambio Estatus</h5>
+          <div class="margin-input">
+            <form-field
+              [control]="serviceOrdersForm.get('status')"
+              label="Estatus">
+              <select class="form-control" formControlName="status">
+                <option [value]="null">Seleccione un estado</option>
+                <option value="Autorizada">Autorizada</option>
+              </select>
+            </form-field>
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="openEstate('')">
+              Histórico
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    </form>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active">Incorpora Bienes</button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-danger btn-sm active">Eliminar Bienes</button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active">G.Programación</button>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

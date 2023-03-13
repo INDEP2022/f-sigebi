@@ -21,11 +21,11 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="lawyers"
             (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
+            (delete)="showDeleteAlert($event.data)">
           </ng2-smart-table>
         </div>
       </div>

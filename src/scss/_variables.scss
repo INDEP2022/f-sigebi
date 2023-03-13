@@ -7,11 +7,11 @@
 
 // Vertical Sidebar - Default Light
 $sidebar-bg: #ffffff;
-$sidebar-menu-item-color: #545a6d;
+$sidebar-menu-item-color: #000000; //#545a6d;
 $sidebar-menu-sub-item-color: #545a6d;
-$sidebar-menu-item-icon-color: #7f8387;
-$sidebar-menu-item-hover-color: #383c40;
-$sidebar-menu-item-active-color: #556ee6;
+$sidebar-menu-item-icon-color: #000000; //#7f8387;
+$sidebar-menu-item-hover-color: #7e1d3a; //#383c40;
+$sidebar-menu-item-active-color: #7e1d3a; //#556ee6;
 $sidebar-width: 250px;
 $sidebar-collapsed-width: 70px;
 $sidebar-width-sm: 160px;
@@ -872,7 +872,7 @@ $form-select-font-size-lg: $input-font-size-lg;
 $form-range-track-width: 100%;
 $form-range-track-height: 0.5rem;
 $form-range-track-cursor: pointer;
-$form-range-track-bg: $gray-300;
+$form-range-track-bg: $gray-400;
 $form-range-track-border-radius: 1rem;
 $form-range-track-box-shadow: $box-shadow-inset;
 

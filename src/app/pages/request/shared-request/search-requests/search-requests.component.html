@@ -1,0 +1,234 @@
+<div class="my-4">
+  <app-card [header]="false" class="p-10">
+    <div body>
+      <form [formGroup]="searchForm" class="form-material pb-0 mb-0">
+        <div
+          class="ms-n2 mb-2 pointer"
+          (click)="toggleSearch = !toggleSearch"
+          [attr.aria-expanded]="!toggleSearch"
+          aria-controls="collapseSearch">
+          <i
+            class="bx bx-chevron-down bx-md float-icon-md"
+            [ngClass]="{
+              'rotate-down': toggleSearch,
+              'rotate-up': !toggleSearch
+            }"></i>
+          <h6 class="d-inline">Buscar Solicitudes</h6>
+        </div>
+        <div
+          class="row mt-5"
+          id="collapseSearch"
+          [isAnimated]="true"
+          [collapse]="!toggleSearch">
+          <div class="row mt-3">
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('requestNo')"
+                label="No&#46; Solicitud">
+                <input
+                  type="number"
+                  formControlName="requestNo"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('authority')"
+                label="Autoridad">
+                <ng-select
+                  formControlName="authority"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option *ngFor="let a of authorities" value="a.id">{{
+                    a.description
+                  }}</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('transferType')"
+                label="Tipo Transferencia">
+                <input
+                  type="text"
+                  formControlName="transferType"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('fileNo')"
+                label="No&#46; Expediente">
+                <input
+                  type="number"
+                  formControlName="fileNo"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('contributor')"
+                label="Contribuyente y&#47;o Indiciado">
+                <input
+                  type="text"
+                  formControlName="contributor"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('domainExtinction')"
+                label="Extinci&oacute;n de Dominio">
+                <input
+                  type="text"
+                  formControlName="domainExtinction"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <form-field [control]="searchForm.get('regionalDelegation')">
+                <ngx-select
+                  [form]="searchForm"
+                  [data]="delegationItems"
+                  value="id"
+                  bindLabel="description"
+                  label="Delegaci&oacute;n Regional"
+                  (fetchItems)="getDelegations($event)"
+                  control="regionalDelegation">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('transferFile')"
+                label="Expediente Transferente &#47; PAMA">
+                <input
+                  type="text"
+                  formControlName="transferFile"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('judgementType')"
+                label="Tipo Juicio">
+                <input
+                  type="text"
+                  formControlName="judgementType"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <form-field [control]="searchForm.get('state')">
+                <ngx-select
+                  [form]="searchForm"
+                  [data]="stateItems"
+                  value="id"
+                  bindLabel="description"
+                  label="Estado"
+                  (fetchItems)="getStates($event)"
+                  control="state">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('previousAscertainment')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  type="text"
+                  formControlName="previousAscertainment"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('judgement')"
+                label="Juicio">
+                <input
+                  type="text"
+                  formControlName="judgement"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <form-field [control]="searchForm.get('transferee')">
+                <ngx-select
+                  [form]="searchForm"
+                  [data]="transfereeItems"
+                  value="id"
+                  bindLabel="description"
+                  label="Transferente"
+                  (fetchItems)="getTransferees($event)"
+                  control="transferee">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('criminalCase')"
+                label="Causa Penal">
+                <input
+                  type="text"
+                  formControlName="criminalCase"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="searchForm.get('protectionNo')"
+                label="No&#46; Amparo">
+                <input
+                  type="number"
+                  formControlName="protectionNo"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <form-field [control]="searchForm.get('emitter')">
+                <ngx-select
+                  [form]="searchForm"
+                  [data]="emitterItems"
+                  value="id"
+                  bindLabel="description"
+                  label="Emisora"
+                  (fetchItems)="getEmitters($event)"
+                  control="emitter">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
+          <div class="mt-3 d-flex flex-row-reverse">
+            <div class="mx-1">
+              <button
+                (click)="search()"
+                class="btn btn-sm btn-primary active btn-sm"
+                [disabled]="!searchForm.touched">
+                <i class="bx bx-search-alt-2 me-1 float-icon"></i> Buscar
+              </button>
+            </div>
+            <div class="mx-1">
+              <button
+                (click)="reset()"
+                class="btn btn-danger active btn-sm"
+                [disabled]="!searchForm.touched">
+                <i class="bx bx-reset me-1 float-icon"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </app-card>
+</div>

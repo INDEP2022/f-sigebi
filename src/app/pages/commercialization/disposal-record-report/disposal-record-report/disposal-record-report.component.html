@@ -1,0 +1,108 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Impresi&oacute;n de actas de enajenaci&oacute;n</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- <div class="col-md-3">
+          <form-field [control]="form.get('noFile')" label="No. Expediente">
+            <input type="text" class="form-control" formControlName="noFile" />
+          </form-field>
+        </div> -->
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('PN_EXPINI')"
+            label="Fecha de expediente inicial">
+            <input
+              formControlName="PN_EXPINI"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('PN_EXPFIN')"
+            label="Fecha de expediente final">
+            <input
+              formControlName="PN_EXPFIN"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('noActa')" label="No. Acta">
+            <input type="text" class="form-control" formControlName="noActa" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('PN_ACTAINI')"
+            label="Fecha inicial de acta">
+            <input
+              formControlName="PN_ACTAINI"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <app-delegation-shared [form]="form"></app-delegation-shared>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('PN_ACTAFIN')"
+            label="Fecha final de acta">
+            <input
+              formControlName="PN_ACTAFIN"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('PF_ELABIN')"
+            label="Fecha inicial de elaboración">
+            <input
+              formControlName="PF_ELABIN"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('PF_ELABFIN')"
+            label="Fecha final de elaboración">
+            <input
+              formControlName="PF_ELABFIN"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { LegendService } from 'src/app/core/services/catalogs/legend.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { LegendFormComponent } from '../legend-form/legend-form.component';
 import { LEGENDS_COLUMS } from './legends-columns';
 
@@ -27,6 +28,10 @@ export class LegendsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = LEGENDS_COLUMS;
     this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
@@ -65,7 +70,9 @@ export class LegendsListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log(legend);
         this.delete(legend.id);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }

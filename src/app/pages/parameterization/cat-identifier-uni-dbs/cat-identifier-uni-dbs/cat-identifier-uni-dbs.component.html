@@ -1,0 +1,17 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Relaci&oacute;n de asunto&#45;dictamen</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data"
+        (deleteConfirm)="onDeleteConfirm($event)"
+        (createConfirm)="onAddConfirm($event)"
+        (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

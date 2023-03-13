@@ -1,13 +1,13 @@
 <ng-container>
-  <div class="row mb-3 mt-3" *ngIf="showEvents">
+  <div class="row" *ngIf="showEvents">
     <div class="col-md-12">
       <form-field [control]="form.get(eventField)">
         <ngx-select
           (fetchItems)="getEvents($event)"
           [data]="events"
           [form]="form"
-          value="id_tpevento"
-          [bindLabel]="bindLabel"
+          value="id"
+          [bindLabel]="'description'"
           [label]="label"
           [control]="eventField"
           (change)="onEventsChange($event)">

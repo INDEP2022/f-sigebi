@@ -1,0 +1,352 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nueva car&aacute;tula</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="associateFileForm" class="form-material">
+      <div class="row">
+        <!-- <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('user')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="user"
+              [data]="users"
+              value="usrID"
+              bindLabel="Nombre"
+              label="Usuario"
+              (fetchItems)="getUserSelect($event)"></ngx-select>
+          </form-field>
+        </div> -->
+        <div class="col-md-6">
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="inaiUser"
+              [clearable]="false"
+              [items]="users"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="Nombre"
+              bindValue="usrID">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.Nombre }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Usuario</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Transferente&#58;</label>
+            <span> {{ transferentName }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <!-- <form-field [control]="associateFileForm.get('unit')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="unit"
+              [data]="units"
+              value="IdUnidad"
+              bindLabel="DscUnidad"
+              label="Unidad"
+              (fetchItems)="getUnitSelect($event)"></ngx-select>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="inaiUnit"
+              [clearable]="false"
+              [items]="units"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="DscUnidad"
+              bindValue="IdUnidad">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.DscUnidad }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Unidad</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">ddcld&#58;</label>
+            <span> {{ ddcId }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <!-- <form-field [control]="associateFileForm.get('file')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="file"
+              [data]="files"
+              value="arhID"
+              bindLabel="arhDescripcion"
+              label="Archivo"
+              (fetchItems)="getFileSelect($event)"></ngx-select>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="inaiFile"
+              [clearable]="false"
+              [items]="files"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="arhDescripcion"
+              bindValue="arhID">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.arhDescripcion }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Archivo</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Codificaci&oacute;n&#58;</label>
+            <span> {{ associateFileForm.get('fullCoding').value }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <!-- <form-field [control]="associateFileForm.get('disposition')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="disposition"
+              [data]="dispositions"
+              value="id"
+              bindLabel="id"
+              label="Disposici&oacute;n"
+              (fetchItems)="getDispositionSelect($event)"></ngx-select>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="provisionInai"
+              [clearable]="false"
+              [items]="dispositions"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="ddcCodificacion"
+              bindValue="ddcId">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.ddcCodificacion }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Disposici&oacute;n</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Periodo de reserva&#58;</label>
+            <span>
+              {{ associateFileForm.get('reservePeriodInai').value }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <!-- <form-field [control]="associateFileForm.get('functionary')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="functionary"
+              [data]="functionarys"
+              value="id"
+              bindLabel="id"
+              label="Funcionario"
+              (fetchItems)="getFunctionarySelect($event)"></ngx-select>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="inaiOfficial"
+              [clearable]="false"
+              [items]="users"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="Nombre"
+              bindValue="usrID">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.Nombre }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Funcionario</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Clasificaci&oacute;n&#58;</label>
+            <span>
+              {{ associateFileForm.get('clasificationInai').value }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('expedientDate')"
+            label="Fecha expediente">
+            <input
+              class="form-control"
+              formControlName="expedientDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Secci&oacute;n docuemental&#58;</label
+            >
+            <span>
+              {{ associateFileForm.get('documentarySectionInai').value }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('reserveDateInai')"
+            label="Fecha de reserva">
+            <input
+              class="form-control"
+              formControlName="reserveDateInai"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Serie documental&#58;</label>
+            <span>
+              {{ associateFileForm.get('documentarySeriesInai').value }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('sheetsInai')"
+            label="Fojas">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sheetsInai" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Vigencia del archivo de tr&aacute;mite&#58;</label
+            >
+            <span> {{ associateFileForm.get('vaProcedureInai').value }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('filesInai')"
+            label="Legajos">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="filesInai" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Vigencia de archivo de concentraci&oacute;n&#58;</label
+            >
+            <span>
+              {{ associateFileForm.get('vaConcentrationInai').value }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-6 text-right"
+              >Delegaci&oacute;n regional&#58;</label
+            >
+            <span> {{ regionalDelegacionName }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Valores documentales&#58;</label>
+            <span>
+              {{ associateFileForm.get('documentaryValueInai').value }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          [btnSmall]="true"
+          [text]="'Generar Caratula'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

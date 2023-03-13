@@ -7,8 +7,10 @@ import {
 } from './juridical-processes-nombres-rutas-archivos';
 
 const DISPERSION_PAGOS: string[] = [
-  'conciliacion-pagos-depositaria',
-  'consulta-pagos-relacionados-depositaria',
+  'conciliation-depositary-payments',
+  'query-related-payments-depositories',
+  // 'conciliacion-pagos-depositaria',
+  // 'consulta-pagos-relacionados-depositaria',
 ];
 
 export const CREAR_MENU_DEPOSITARY = function () {
@@ -36,6 +38,5 @@ export const CREAR_MENU_DEPOSITARY = function () {
       link: baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[index].link,
     });
   }
-  console.log('MENU', menuDepositary);
   return menuDepositary;
 };

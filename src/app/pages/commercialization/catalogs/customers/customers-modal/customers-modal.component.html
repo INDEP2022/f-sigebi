@@ -1,0 +1,435 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="customerForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="ID" [control]="customerForm.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Nombre Razón"
+            [control]="customerForm.get('reasonName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reasonName" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="RFC" [control]="customerForm.get('rfc')">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Clave vendedor"
+            [control]="customerForm.get('sellerId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sellerId" />
+            <!-- <ngx-select
+              [searchOnInit]="true"
+              [form]="customerForm"
+              control="sellerId"
+              [data]="sellers"
+              value="id"
+              bindLabel="id"
+              label="Clave vendedor"
+              (fetchItems)="getSellers($event)"> -->
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Calle" [control]="customerForm.get('street')">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Ciudad" [control]="customerForm.get('city')">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Colonia" [control]="customerForm.get('colony')">
+            <input type="text" class="form-control" formControlName="colony" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Delegación"
+            [control]="customerForm.get('delegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            label="Código Postal"
+            [control]="customerForm.get('zipCode')">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="País" [control]="customerForm.get('country')">
+            <input type="text" class="form-control" formControlName="country" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="FAX" [control]="customerForm.get('fax')">
+            <input type="text" class="form-control" formControlName="fax" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Teléfono" [control]="customerForm.get('phone')">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Email" [control]="customerForm.get('mailWeb')">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="mailWeb" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Estado" [control]="customerForm.get('state')">
+            <input type="text" class="form-control" formControlName="state" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="CURP" [control]="customerForm.get('curp')">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="¿En lista Negra?"
+            [control]="customerForm.get('blackList')">
+            <ng-select
+              formControlName="blackList"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="Apellido Paterno"
+            [control]="customerForm.get('paternalSurname')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="paternalSurname" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Apellido Materno"
+            [control]="customerForm.get('maternalSurname')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maternalSurname" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Clave municipal"
+            [control]="customerForm.get('municipalityId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="municipalityId" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Clave estatal"
+            [control]="customerForm.get('stateId')">
+            <input type="text" class="form-control" formControlName="stateId" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Fecha lista negra"
+            [control]="customerForm.get('blackListDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="blackListDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha de liberación"
+            [control]="customerForm.get('releaseDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="releaseDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Clave penalización"
+            [control]="customerForm.get('penaltyId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penaltyId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de persona"
+            [control]="customerForm.get('personType')">
+            <ng-select
+              formControlName="personType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="M">Hombre</ng-option>
+              <ng-option value="F">Mujer</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="RFC Aprobado"
+            [control]="customerForm.get('approvedRfc')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="approvedRfc" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Usuario liberado"
+            [control]="customerForm.get('userFree')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userFree" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha liberación"
+            [control]="customerForm.get('freeDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="freeDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Cve. Act. Econo."
+            [control]="customerForm.get('economicAgreementKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="economicAgreementKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de identifación"
+            [control]="customerForm.get('identificationType')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="identificationType" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Identificación"
+            [control]="customerForm.get('identificationNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="identificationNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cve. Representante"
+            [control]="customerForm.get('agentId')">
+            <input type="text" class="form-control" formControlName="agentId" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            label="No. Exterior"
+            [control]="customerForm.get('outsideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="outsideNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="No. Interior"
+            [control]="customerForm.get('insideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="insideNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Contraseña"
+            [control]="customerForm.get('password')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="password" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Usuario" [control]="customerForm.get('user')">
+            <input type="text" class="form-control" formControlName="user" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="CLABE"
+            [control]="customerForm.get('interbankKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="interbankKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Banco" [control]="customerForm.get('bank')">
+            <input type="text" class="form-control" formControlName="bank" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Sucursal" [control]="customerForm.get('branch')">
+            <input type="text" class="form-control" formControlName="branch" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cta. Cheque"
+            [control]="customerForm.get('checksAccount')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="checksAccount" />
+          </form-field>
+        </div>
+      </div>
+      <!-- __ -->
+      <div class="row pt-5">
+        <div class="col-md-5">
+          <form-field
+            label="Fecha inicial de penalización"
+            [control]="customerForm.get('penaltyInitDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penaltyInitDate" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field
+            label="Usuario penalizado"
+            [control]="customerForm.get('penalizeUser')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penalizeUser" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="No. Registro"
+            [control]="customerForm.get('registryNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registryNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

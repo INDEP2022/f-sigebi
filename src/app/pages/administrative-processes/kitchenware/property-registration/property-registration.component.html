@@ -1,0 +1,123 @@
+<form [formGroup]="form" class="form-material">
+  <app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Registro del menaje del bien</h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('numberFile')" label="No Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberFile"
+              (change)="searchExpedient()" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('causePenal')" label="Causa Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="causePenal" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('preliminaryInquiry')"
+            label="Averiguación Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="preliminaryInquiry" />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="container">
+        <div class="row"></div>
+        <div class="row mt-5">
+          <!-- <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings1"
+            [source]="goods"
+            (userRowSelect)="uploadTableMenaje($event.data)">
+          </ng2-smart-table> -->
+          <form-field [control]="form.get('goodSelect')">
+            <ngx-select
+              [data]="goods"
+              [form]="form"
+              value="id"
+              bindLabel="description"
+              label="Seleccione un bien para ver sus menajes"
+              [control]="'goodSelect'"
+              (change)="uploadTableMenaje($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <hr />
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-start">
+                <div class="m-3">
+                  <span>
+                    Listado de menages del bien No
+                    <strong>{{ numberGoodSelect }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-end">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-info active"
+                    (click)="cleandInfo()">
+                    Limpiar
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-end">
+                <div class="m-3">
+                  <button
+                    [disabled]="enableAddgood"
+                    type="button"
+                    class="btn btn-sm btn-primary active"
+                    (click)="showGoods()">
+                    {{ textButton }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="addGood">
+            <app-goods-shared
+              [form]="formGood"
+              (good)="addMenage($event)"></app-goods-shared>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="menajes"
+                  (delete)="showDeleteAlert($event.data)">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <div class="roe">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>

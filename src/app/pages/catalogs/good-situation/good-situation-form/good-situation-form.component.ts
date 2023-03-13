@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSituation } from 'src/app/core/models/catalogs/good-situation.model';
 import { GoodSituationService } from 'src/app/core/services/catalogs/good-situation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-good-situation-form',
@@ -15,7 +16,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   goodSituation: IGoodSituation;
   edit: boolean = false;
   goodSituationForm: ModelForm<IGoodSituation>;
-  title = 'Situacion Bien';
+  title = 'Situación Bien';
 
   constructor(
     private modalRef: BsModalRef,
@@ -31,8 +32,15 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.goodSituationForm = this.fb.group({
-      situation: [null],
-      descSituation: [null, [Validators.required, Validators.maxLength(300)]],
+      situation: [null, [Validators.required]],
+      descSituation: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(300),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       status: [null, [Validators.required, Validators.maxLength(3)]],
     });
 

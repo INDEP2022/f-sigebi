@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-wharehouse-from',
@@ -33,10 +34,14 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(80)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(80),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       version: [null, Validators.compose([Validators.required])],
-      estatus: [null, Validators.compose([Validators.required])],
+      status: [null, Validators.compose([Validators.required])],
     });
     if (this.typeWarehouse != null) {
       this.edit = true;

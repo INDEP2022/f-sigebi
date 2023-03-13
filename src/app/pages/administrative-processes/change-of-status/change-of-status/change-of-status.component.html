@@ -1,0 +1,126 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cambio de estatus bienes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('numberGood')" label="Numero de Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood"
+              (change)="loadGood()" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripcion del bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionGood"
+              [disabled]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('currentStatus')"
+            label="Estatus actual">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descripcion del estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('processesGood')" label="Proceso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processesGood" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div *ngIf="endProcess">
+      <hr />
+      ° Nuevos datos
+      <form [formGroup]="formNew" class="form-material">
+        <div class="row mt-5">
+          <div class="col-md-6 col-sm-12 col-xs-12">
+            <app-goods-status-shared [form]="formNew"></app-goods-status-shared>
+          </div>
+          <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+            <form-field [control]="formNew.get('dateStatus')" label="Fecha">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateStatus"
+                bsDatepicker
+                [disabled]="false" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div class="col-md-8 col-sm-12 col-xs-12">
+            <app-processes-shared
+              [form]="formNew"
+              [label]="'Nuevo Proceso'"
+              [idGood]="numberGood.value"
+              [packageField]="'extDomProcess'"
+              [process]="good.extDomProcess"></app-processes-shared>
+          </div>
+          <div class="col-md-4 col-sm-12 col-xs-12">
+            <app-user-shared
+              [form]="formNew"
+              [userField]="'issuingUser'"
+              [label]="'Usuario Emisor'"></app-user-shared>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <form-field
+              [control]="formNew.get('description')"
+              label="Descripcion">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="description"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-success active"
+              (click)="accept()">
+              &nbsp; &nbsp; Cambiar Estatus &nbsp; &nbsp;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+<!-- goodStatus.value != undefined ? false : true -->

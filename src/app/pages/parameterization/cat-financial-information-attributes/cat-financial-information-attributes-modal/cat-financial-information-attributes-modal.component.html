@@ -1,0 +1,78 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="attributesFinancialInfoForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="Nombre"
+            [control]="attributesFinancialInfoForm.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Descripci&oacute;n"
+            [control]="attributesFinancialInfoForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo"
+            [control]="attributesFinancialInfoForm.get('type')">
+            <ng-select
+              formControlName="type"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="ACT">Activo</ng-option>
+              <ng-option value="PAS">Pasivo</ng-option>
+              <ng-option value="CAP">Capital contable</ng-option>
+              <ng-option value="RES">Resultados</ng-option>
+              <ng-option value="ADE">Adeudos</ng-option>
+              <ng-option value="PRI">Principales Cuentas</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Sub Tipo"
+            [control]="attributesFinancialInfoForm.get('subType')">
+            <ng-select
+              formControlName="subType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="GEN">Genérico</ng-option>
+              <ng-option value="UTB">Utilidad bruta</ng-option>
+              <ng-option value="UTO">Utilidad de operación</ng-option>
+              <ng-option value="UTN">Utilidad neta</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [loading]="loading"
+          [disabled]="!attributesFinancialInfoForm.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

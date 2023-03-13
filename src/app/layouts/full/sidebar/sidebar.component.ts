@@ -7,41 +7,52 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
 import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
 import { MENU } from 'src/app/core/menu';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styles: [],
+  styles: [
+    `
+      .scrollbar-menu {
+        --scrollbar-thumb-color: #10312b;
+        --scrollbar-thumb-hover-color: var(--scrollbar-thumb-color);
+      }
+    `,
+  ],
 })
 export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('componentRef') scrollRef: any;
   @Input() isCondensed = false;
   private menu: any;
-  private data: any;
-
   public menuItems: IMenuItem[] = [];
+
+  menus: any[] = [];
 
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
-  constructor(private router: Router) {
-    this.router.events.forEach((event: any) => {
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.initialize();
+  }
+
+  ngAfterViewInit() {
+    this.router.events.forEach(event => {
       if (event instanceof NavigationEnd) {
         this._activateMenuDropdown();
         this._scrollElement();
       }
     });
-  }
-
-  ngOnInit() {
-    this.initialize();
     this._scrollElement();
-  }
-
-  ngAfterViewInit() {
     this.menu = new MetisMenu(this.sideMenu.nativeElement);
     this._activateMenuDropdown();
   }
@@ -65,10 +76,12 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
         const currentPosition: any =
           document.getElementsByClassName('mm-active')[0];
         let position = currentPosition.offsetTop;
-        if (position > 500)
-          if (this.scrollRef.SimpleBar !== null)
-            this.scrollRef.SimpleBar.getScrollElement().scrollTop =
-              position + 300;
+        if (position > 500) {
+          this.scrollRef.scrollTo({ top: position + 300, duration: 0 });
+        }
+        // if (this.scrollRef.SimpleBar !== null)
+        //   this.scrollRef.SimpleBar.getScrollElement().scrollTop =
+        //     position + 300;
       }
     }, 300);
   }
@@ -132,6 +145,18 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
                 const childanchor = parent5El.querySelector('.is-parent');
                 if (childanchor && parent5El.id !== 'side-menu') {
                   childanchor.classList.add('mm-active');
+                }
+
+                /*IF MENU NIVEL 3*/
+                const parent6El = parent5El.parentElement;
+                if (parent6El && parent6El.id !== 'side-menu') {
+                  parent6El.classList.add('mm-show');
+                  parent6El.classList.add('mm-active');
+                  const childanchor = parent6El.querySelector('.is-parent');
+                  if (childanchor && parent6El.id !== 'side-menu') {
+                    childanchor.classList.add('mm-show');
+                    childanchor.classList.add('mm-active');
+                  }
                 }
               }
             }

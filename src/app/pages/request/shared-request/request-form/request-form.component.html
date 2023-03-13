@@ -1,0 +1,243 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <div *ngIf="op == 1; else optionTitle">
+          <h5 class="modal-title">
+            {{ edit ? 'ACTUALIZAR' : 'NUEVA' }} SOLICITUD
+          </h5>
+        </div>
+        <ng-template #optionTitle>
+          <h5 class="modal-title">Documentaci&oacute;n Complementaria</h5>
+        </ng-template>
+      </div>
+
+      <div class="p-2">
+        <confirm-button
+          [btnSmall]="true"
+          [disabled]="requestForm.invalid"
+          (confirm)="save()">
+        </confirm-button>
+      </div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active"
+          [disabled]="requestForm.invalid"
+          (click)="turnRequest()">
+          Turnar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body class="body">
+    <form [formGroup]="requestForm" class="form-material">
+      <app-card [header]="false">
+        <div body>
+          <div class="row">
+            <h5 class="title">
+              <p>
+                <a
+                  class="text-color"
+                  (click)="showSearchForm = true"
+                  *ngIf="!showSearchForm">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  Información de la solicitud</a
+                >
+              </p>
+
+              <p>
+                <a
+                  class="text-color"
+                  (click)="showSearchForm = false"
+                  *ngIf="showSearchForm">
+                  <i class="fa fa-angle-down" aria-hidden="true"></i>
+                  Información de la solicitud</a
+                >
+              </p>
+            </h5>
+          </div>
+          <div *ngIf="showSearchForm">
+            <div class="row pt-5">
+              <div class="col-md-2">
+                <form-field
+                  [control]="requestForm.get('applicationDate')"
+                  label="Fecha de solicitud">
+                  <input
+                    class="form-control"
+                    #dp="bsDatepicker"
+                    formControlName="applicationDate"
+                    bsDatepicker
+                    [bsValue]="bsValue" />
+                </form-field>
+              </div>
+
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="regionalDelegationId"
+                  (fetchItems)="getRegionalDeleg($event)"
+                  [data]="selectRegionalDeleg"
+                  bindLabel="description"
+                  label="Delegaci&oacute;n Regional"
+                  value="id"></ngx-select>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="requestForm.get('paperNumber')"
+                  label="No&#46; Oficio">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="paperNumber" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="keyStateOfRepublic"
+                  (fetchItems)="getEntity($event)"
+                  [data]="selectEntity"
+                  bindLabel="descCondition"
+                  [searchable]="false"
+                  label="Entidad"
+                  value="id"></ngx-select>
+              </div>
+            </div>
+            <div class="row pt-5">
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="transferenceId"
+                  (fetchItems)="getTransferent($event)"
+                  [data]="selectTransfe"
+                  bindLabel="nameTransferent"
+                  label="Transferente"
+                  value="id"></ngx-select>
+              </div>
+              <div class="col-md-4">
+                <ngx-select
+                  [form]="requestForm"
+                  control="stationId"
+                  (fetchItems)="getStation($event)"
+                  [data]="selectStation"
+                  bindLabel="stationName"
+                  [searchable]="false"
+                  label="Emisora"
+                  value="id"></ngx-select>
+              </div>
+              <div class="col-md-4">
+                <ngx-select
+                  [form]="requestForm"
+                  control="authorityId"
+                  (fetchItems)="getAuthority($event)"
+                  [data]="selectAuthority"
+                  bindLabel="authorityName"
+                  [searchable]="false"
+                  label="Autoridad"
+                  value="idAuthority"></ngx-select>
+              </div>
+              <div *ngIf="op == 2" class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="keyStateOfRepublic"
+                  (fetchItems)="getState($event)"
+                  [data]="selectState"
+                  bindLabel="descCondition"
+                  label="Estado"
+                  value="id"></ngx-select>
+              </div>
+            </div>
+            <div class="row pt-4" *ngIf="authorityName">
+              <p style="color: blue">
+                <strong>Autoridad: </strong> {{ authorityName }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </app-card>
+      <div>
+        <img
+          *ngIf="loadingTurn"
+          src="assets/images/loader-button.gif"
+          alt="loading"
+          id="loading" />
+      </div>
+      <div *ngIf="op == 2">
+        <app-card [header]="true">
+          <div class="ch-content" header>
+            <h6 class="title">Seleccione el Asunto</h6>
+          </div>
+          <div body>
+            <div class="row pt-5">
+              <div class="col-md-6">
+                <form-field [control]="requestForm.get('affair')">
+                  <ngx-select
+                    (fetchItems)="getIssue($event)"
+                    [data]="issues"
+                    [form]="requestForm"
+                    value="id"
+                    bindLabel="issue"
+                    label="Asunto"
+                    [control]="'affair'">
+                  </ngx-select>
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </app-card>
+      </div>
+
+      <app-card [header]="true">
+        <div class="ch-content" header>
+          <h6 class="title">Seleccione Usuario a Turnar</h6>
+        </div>
+        <div body>
+          <div class="row pt-5">
+            <div class="col-md-3" style="line-height: 2.5">
+              Tipo de Usuario&#58;
+            </div>
+            <div class="col-sm-1">
+              <form-radio label="T.E">
+                <input
+                  type="radio"
+                  formControlName="targetUserType"
+                  value="TE"
+                  id="te"
+                  [checked]="checked" />
+              </form-radio>
+            </div>
+            <div class="col-sm-1">
+              <form-radio label="SAE">
+                <input
+                  type="radio"
+                  formControlName="targetUserType"
+                  value="SAE"
+                  id="sae" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <button
+                class="btn btn-info active btn-sm ml-3"
+                (click)="openModalSelectUser()">
+                Seleccionar
+              </button>
+            </div>
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-3">Usuario Recepci&oacute;n&#58;</div>
+            <div class="col-md-3">
+              <input
+                type="text"
+                class="form-control"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="userName"
+                [readOnly]="true" />
+            </div>
+          </div>
+        </div>
+      </app-card>
+    </form>
+  </div>
+</app-card>

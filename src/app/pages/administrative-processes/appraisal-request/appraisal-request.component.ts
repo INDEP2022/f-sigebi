@@ -1,13 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
+import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { DelegationService } from '../../../core/services/catalogs/delegation.service';
+import { InstitutionClasificationService } from '../../../core/services/catalogs/institution-classification.service';
+import { InstitutionClassificationDetailComponent } from '../../../pages/catalogs/institution-classification/institution-classification-detail/institution-classification-detail.component';
 
 @Component({
   selector: 'app-appraisal-request',
   templateUrl: './appraisal-request.component.html',
   styles: [],
 })
-export class AppraisalRequestComponent implements OnInit {
+export class AppraisalRequestComponent extends BasePage implements OnInit {
   form: FormGroup;
 
   public peritos = new DefaultSelect();
@@ -18,8 +28,16 @@ export class AppraisalRequestComponent implements OnInit {
   public appraisalCurrency = new DefaultSelect();
 
   constructor(
-    private fb: FormBuilder // private peritosService: PeritosService
-  ) {}
+    private fb: FormBuilder,
+    private proeficientService: ProeficientService,
+    private delegationService: DelegationService,
+    private subdelegationService: SubdelegationService,
+    private departamentService: DepartamentService,
+    private institucionService: InstitutionClasificationService,
+    private modalService: BsModalService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -31,17 +49,33 @@ export class AppraisalRequestComponent implements OnInit {
       requestDate: [null, Validators.required],
       noPerito: [null, Validators.required],
       institution: [null, Validators.required],
-      applicant: [null, Validators.required],
-      userName: [null, Validators.required],
+      applicant: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      userName: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       delegation: [null, Validators.required],
       subdelegation: [null, Validators.required],
       department: [null, Validators.required],
-      requestedTo: [null, Validators.required],
-      requestedName: [null, Validators.required],
+      requestedTo: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      requestedName: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       requestedDelegation: [null, Validators.required],
       requestedSubdelegation: [null, Validators.required],
       requestedDepartment: [null, Validators.required],
-      observations: [null, Validators.required],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
 
       costCurrency: [null, Validators.required],
       appraisalCurrency: [null, Validators.required],
@@ -54,39 +88,58 @@ export class AppraisalRequestComponent implements OnInit {
     console.log(this.form.value);
   }
 
-  public getPeritos(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.peritos = new DefaultSelect(data.data, data.count);
-    // });
+  public getPeritos(params: ListParams) {
+    this.proeficientService.getAll(params).subscribe(data => {
+      this.peritos = new DefaultSelect(data.data, data.count);
+    });
   }
 
-  public getInstitutions(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
+  public getInstitutions(params: any) {
+    this.institucionService.getAll(params).subscribe(data => {
+      console.log(data);
+      this.institutions = new DefaultSelect(data.data, data.count);
+    });
   }
 
-  public getDelegations(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
+  public getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe(data => {
+      // console.log(data);
+      this.delegation = new DefaultSelect(data.data, data.count);
+    });
   }
 
-  public getSubdelegations(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
+  public getSubdelegations(params: ListParams) {
+    this.subdelegationService.getAll(params).subscribe(data => {
+      console.log(data);
+      this.subdelegation = new DefaultSelect(data.data, data.count);
+    });
   }
 
-  public getDepartments(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
+  public getDepartments(params: any) {
+    this.departamentService.getAll(params).subscribe(data => {
+      console.log(data);
+      this.department = new DefaultSelect(data.data, data.count);
+    });
   }
 
   public getCurrencies(event: any) {
     // this.currencyService.getAll(params).subscribe(data => {
     //   this.currency = new DefaultSelect(data.data, data.count);
     // });
+  }
+
+  openModal(context?: Partial<InstitutionClassificationDetailComponent>) {
+    const modalRef = this.modalService.show(
+      InstitutionClassificationDetailComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+
+  public add() {
+    this.openModal();
   }
 }

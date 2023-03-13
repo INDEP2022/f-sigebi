@@ -3,6 +3,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
     label: 'Procesos Administrativos',
     icon: 'bx-folder',
     subItems: [
+      {
+        label: 'Administracion Bienes',
+        link: '/pages/administrative-processes/administration-assets',
+      },
       /**
        * DAVID
        **/
@@ -176,6 +180,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Gastos',
             link: '/pages/administrative-processes/expenses-register',
           },
+          {
+            label: 'Conceptos de Gastos',
+            link: '/pages/administrative-processes/expenses-concepts',
+          },
+          {
+            label: 'Criterios de aplicación',
+            link: '/pages/administrative-processes/applicants-criteria',
+          },
+          {
+            label: 'Clasificación costos',
+            link: '/pages/administrative-processes/costs-clasification',
+          },
         ],
       },
       /**
@@ -213,10 +229,9 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/request-numbering-change',
       },
       {
-        label: 'Cambio de Estatus',
-        link: '/pages/administrative-processes/change-of-status',
+        label: 'Cambio de indicadores de destino de bienes',
+        link: '/pages/administrative-processes/change-destination-goods-indicators',
       },
-
       {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',
@@ -226,11 +241,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/massive-change-status',
       },
       {
-        label: 'Cambio de estatus',
+        label: 'Cambio de status',
         link: '/pages/administrative-processes/change-of-status',
       },
       {
-        label: 'Cambio de estatus STI',
+        label: 'Cambio de status STI',
         link: '/pages/administrative-processes/change-status-sti',
       },
       {
@@ -304,6 +319,39 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Alta de Almacenes por Contrato',
             link: '/pages/administrative-processes/reg-warehouse-contract',
           },
+          {
+            label: 'Bienes en almacén',
+            link: '/pages/administrative-processes/warehouses',
+          },
+          {
+            label: 'Reportes de Almacén',
+            link: '/pages/administrative-processes/storehouse',
+          },
+          {
+            label: 'Tipo de Almacén',
+            link: '/pages/administrative-processes/warehouse-type',
+          },
+
+          {
+            label: 'Control de las ordenes de servicio',
+            link: '/pages/administrative-processes/control-service-orders',
+          },
+          {
+            label: 'Ordenes de servicio',
+            link: '/pages/administrative-processes/service-orders-format',
+          },
+          {
+            label: 'Reporte de implementacion',
+            link: '/pages/administrative-processes/implementation-report',
+          },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator',
+          },
+          {
+            label: 'Reportes de la O.DE S.',
+            link: '/pages/administrative-processes/service-order-reports',
+          },
         ],
       },
       {
@@ -349,6 +397,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Reporte de inventario',
             link: '/pages/administrative-processes/inventory-report',
+          },
+          {
+            label: 'Indicadores por Bien',
+            link: '/pages/administrative-processes/indicators-per-good',
+          },
+          {
+            label: 'Reporte de información financiera',
+            link: '/pages/administrative-processes/financial-information-report',
+          },
+          {
+            label: 'Información financiera',
+            link: '/pages/administrative-processes/financial-information',
           },
         ],
       },
@@ -399,6 +459,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Gastos por bien',
             link: '/pages/administrative-processes/bills-good',
+          },
+          {
+            label: 'Analitico de bienes inmuebles',
+            link: '/pages/administrative-processes/real-estate-analytical-report',
+          },
+          {
+            label: 'Acumulado de bienes mensual',
+            link: '/pages/administrative-processes/accumulated-monthly-assets',
           },
         ],
       },
@@ -461,6 +529,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Concentrado de bienes para contabilidad',
             link: '/pages/administrative-processes/services/descripcion-of-the-matter',
           },
+          {
+            label: 'Factura de reportes de implementación',
+            link: '/pages/administrative-processes/services/implementation-reports-invoices',
+          },
         ],
       },
       {
@@ -470,6 +542,102 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       /**
        * END LEGASPI
        **/
+      /**START Abner */
+      {
+        label: 'Numerario',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de fichas de deposito',
+            link: '/pages/administrative-processes/numerary/deposit-tokens',
+          },
+          {
+            label: 'Calculo de numerario',
+            link: '/pages/administrative-processes/numerary/numerary-calc',
+          },
+          {
+            label: 'Solicitud de numerario',
+            link: '/pages/administrative-processes/numerary/numerary-request',
+          },
+          {
+            label: 'Conciliación masiva numerario',
+            link: '/pages/administrative-processes/numerary-massive-consiliation',
+          },
+          {
+            label: 'Transferencia de cuentas a oficinas centrales',
+            link: '/pages/administrative-processes/central-offices-transference',
+          },
+          {
+            label: 'Transferencia de cuentas a Regional',
+            link: '/pages/administrative-processes/regional-accounts-transference',
+          },
+          {
+            label: 'Movimientos tesofe',
+            link: '/pages/administrative-processes/tesofe-movements',
+          },
+          {
+            label: 'Conciliación de fichas de deposito vs expediente',
+            link: '/pages/administrative-processes/deposit-tokens-conciliation',
+          },
+          {
+            label: 'Devolución de numerario efectivo',
+            link: '/pages/administrative-processes/effective-numerary-devolution',
+          },
+          {
+            label: 'Cuentas aseguradas por expediente',
+            link: '/pages/administrative-processes/accounts-insured-by-file',
+          },
+          {
+            label: 'Conciliación de numerario efectivo',
+            link: '/pages/administrative-processes/effective-numerary-reconciliation',
+          },
+          {
+            label: 'Cuentas aseguradas por bancos',
+            link: '/pages/administrative-processes/bank-accounts-insured',
+          },
+          {
+            label: 'Estado de cuenta por Indiciado',
+            link: '/pages/administrative-processes/massive-account-indiciado',
+          },
+          {
+            label: 'Expedientes sin conciliar',
+            link: '/pages/administrative-processes/unreconcilied-files',
+          },
+          {
+            label: 'Fichas de deposito sin conciliar',
+            link: '/pages/administrative-processes/deposit-unreconcilied-files',
+          },
+          {
+            label: 'Relación de decomiso',
+            link: '/pages/administrative-processes/confiscation-ratio',
+          },
+          {
+            label: 'Registro de Estados de cuenta',
+            link: '/pages/administrative-processes/record-account-statements',
+          },
+          {
+            label: 'Estado de cuenta (Deposito)',
+            link: '/pages/administrative-processes/deposit-account-statement',
+          },
+          {
+            label: 'Tasas para interes',
+            link: '/pages/administrative-processes/rate-catalog',
+          },
+          {
+            label: 'Cambio a numerario',
+            link: '/pages/commercialization/numeraire-exchange',
+          },
+          {
+            label: 'Cambio a numerario masivo',
+            link: '/pages/administrative-processes/massive-numerary-change',
+          },
+          {
+            label: 'Cierre historico de numerario',
+            link: '/pages/administrative-processes/numerary-historical-closing',
+          },
+        ],
+      },
+      /**END Abner */
     ],
   },
 ];

@@ -1,0 +1,91 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reportes de bienes declarados como abandono</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-delegation-shared
+            [form]="form"
+            [showSubdelegation]="false"></app-delegation-shared>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-delegation-shared
+            [form]="form"
+            [showDelegation]="false"></app-delegation-shared>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateInitRatification')"
+            label="Fecha page de Ratificaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInitRatification"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('dateFinish')" label="Fecha Final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateFinish"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('ofFile')" label="Del Expediente">
+            <input type="text" class="form-control" formControlName="ofFile" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('atFile')" label="Al Expediente">
+            <input type="text" class="form-control" formControlName="atFile" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('ofgood')" label="Del Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ofgood"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('atgood')" label="Al Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="atgood"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <app-user-shared
+            [form]="form"
+            [userField]="'capturingUser'"
+            [label]="'Usuario que Ratifica'"></app-user-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+    </div>
+  </div>
+</app-card>

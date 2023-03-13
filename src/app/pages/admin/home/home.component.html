@@ -8,6 +8,65 @@
     </div>
   </div>
   <div body>
+    <div class="row">
+      <h5>Ejemplo de formulario tipado</h5>
+      <form [formGroup]="userExample" class="form-material">
+        <form-field
+          [control]="userExample.get('username')"
+          label="Input Usuario">
+          <input type="text" class="form-control" formControlName="username" />
+        </form-field>
+        <ng-container formGroupName="person">
+          <form-field
+            [control]="personForm.get('name')"
+            label="Input Nombre Persona">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+          <form-field
+            [control]="personForm.get('birthdate')"
+            label="Input Fecha Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="birthdate"
+              bsDatepicker />
+          </form-field>
+        </ng-container>
+        <div>
+          <button class="btn btn-primary" (click)="addRole()">
+            Agregar Rol
+          </button>
+        </div>
+        <ng-container
+          formArrayName="roles"
+          *ngFor="let role of roles.controls; index as i">
+          <br />
+          <div class="d-flex" [formGroupName]="i">
+            <form-field [control]="role.get('role')" label="Input Role">
+              <input type="text" class="form-control" formControlName="role" />
+            </form-field>
+            <div>
+              <button class="btn btn-danger" (click)="removeRole(i)">
+                Eliminar Role
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </form>
+      <button class="btn btn-success" (click)="saveRole()">Ver Data</button>
+      <div>
+        {{ user | json }}
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <h5>Carga masiva de archivos</h5>
+      <div class="col-md-12">
+        <file-upload
+          (onUploadFiles)="testFiles($event)"
+          [accept]="'image/*'"></file-upload>
+      </div>
+    </div>
     <div>
       <div class="md-tabs">
         <tabset>
@@ -120,6 +179,32 @@
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+
+    <div class="row mb-3 mt-3">
+      <div class="col-md-12">
+        <h5>Cambiar estado Variables Globales</h5>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="newStateGlobalVars('allP')">
+          Cambiar Todo
+        </button>
+        <button
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="newStateGlobalVars('oneP')">
+          Cambiar 1 Var
+        </button>
+        <button
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="newStateGlobalVars('reset')">
+          Estado inicial
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" style="height: 250px; overflow-y: auto">
+        <pre>{{ globalVars | json }}</pre>
       </div>
     </div>
   </div>

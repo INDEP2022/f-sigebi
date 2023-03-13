@@ -1,0 +1,183 @@
+<form [formGroup]="form" class="form-material" (submit)="getData()">
+  <div class="row">
+    <form-field
+      class="col-md-2"
+      [control]="form.get('goodNumber')"
+      label="No. SIAB">
+      <input
+        type="number"
+        formControlName="goodNumber"
+        (change)="getGood()"
+        class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-4" [control]="goodControl" label="">
+      <input type="text" [formControl]="goodControl" class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-2" [control]="form.get('eventId')" label="Evento">
+      <input
+        type="number"
+        formControlName="eventId"
+        class="form-control"
+        (change)="getEvent()" />
+    </form-field>
+
+    <form-field class="col-md-4" [control]="eventControl" label="">
+      <input type="text" [formControl]="eventControl" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field class="col-md-3" [control]="form.get('rfc')" label="RFC">
+      <input type="text" formControlName="rfc" class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-3" [control]="form.get('ref')" label="Referencia">
+      <input type="text" formControlName="ref" class="form-control" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('expedientNumber')"
+      label="Expediente">
+      <input
+        type="number"
+        formControlName="expedientNumber"
+        class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-3" [control]="form.get('lot')" label="Lote">
+      <input type="number" formControlName="lot" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field class="col-md-4" [control]="form.get('mandate')">
+      <ngx-select
+        [form]="form"
+        label="Transferente"
+        [data]="transferents"
+        (fetchItems)="getTransferent($event)"
+        value="cvman"
+        bindLabel="nameTransferent"
+        control="mandate"
+        [searchOnInit]="true"></ngx-select>
+    </form-field>
+
+    <form-field class="col-md-4" [control]="form.get('eventTp')">
+      <ngx-select
+        [form]="form"
+        label="Tipo Evento"
+        control="eventTp"
+        [data]="eventTypes"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getEventTypes($event)"
+        [searchOnInit]="true"></ngx-select>
+    </form-field>
+
+    <form-field class="col-md-4" [control]="form.get('regc')">
+      <ngx-select
+        [form]="form"
+        label="Coord. Capt."
+        control="regc"
+        [data]="delegations"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getDelegations($event)"
+        [searchOnInit]="true"></ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      class="col-md-3"
+      [control]="form.get('serieNumber')"
+      label="No. Serie">
+      <input type="text" formControlName="serieNumber" class="form-control" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('invoice')"
+      label="Factura">
+      <input type="text" formControlName="invoice" class="form-control" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('oi')"
+      label="Orden Ingreso">
+      <input type="number" formControlName="oi" class="form-control" />
+    </form-field>
+
+    <form-field class="col-md-3" [control]="form.get('price')" label="Precio">
+      <input type="number" formControlName="price" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      class="col-md-3"
+      [control]="form.get('dateInit')"
+      label="De Fecha Evento">
+      <input
+        type="text"
+        formControlName="dateInit"
+        class="form-control"
+        (bsValueChange)="fromDateChange($event)"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="form.get('dateFinal')"
+      label="A Fecha Evento">
+      <input
+        type="text"
+        (bsValueChange)="toDateChange($event)"
+        formControlName="dateFinal"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 d-flex">
+      <div>
+        <confirm-button
+          [loading]="loading"
+          text="Ejecutar consutla"
+          [btnSmall]="true"
+          loadingText="Obteniendo datos"></confirm-button>
+      </div>
+      <div class="ml-3">
+        <button
+          [disabled]="loading"
+          class="btn btn-danger btn-sm active"
+          type="button"
+          (click)="resetForm()">
+          Limpiar Filtro
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="row">
+  <div class="ch-content">
+    <h5 class="title">Datos</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <ng2-smart-table [settings]="settings"> </ng2-smart-table>
+  </div>
+  <div class="col-md-2 mt-4">
+    <button type="button" class="btn btn-success btn-sm active">
+      Exportar a Excel
+    </button>
+  </div>
+</div>

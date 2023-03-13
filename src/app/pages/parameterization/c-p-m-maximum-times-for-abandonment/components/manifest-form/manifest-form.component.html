@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Actualizar No Recogidos</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="goodTypeForm">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="goodTypeForm.get('maxLimitTime1')"
+            label="Resoluci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maxLimitTime1" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="goodTypeForm.get('maxLimitTime2')"
+            label="Plazo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maxLimitTime2" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field
+            [control]="goodTypeForm.get('maxLimitTime3')"
+            label="Declaraci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maxLimitTime3" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="updateManifest()"
+          [disabled]="!goodTypeForm.valid">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,329 @@
+<div>
+  <div class="row">
+    <div class="d-flex bd-highlight">
+      <div class="p-2 flex-grow-1 bd-highlight">
+        <h5 class="title">
+          <strong>Informaci&oacute;n de Recepci&oacute;n de Solicitud</strong>
+        </h5>
+      </div>
+      <div class="p-2 bd-highlight buttons">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="requestForm.invalid"
+          (click)="confirm()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+    <form [formGroup]="requestForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-3">
+          <form-check label="Prioridad" for="urgentPriority">
+            <input
+              id="urgentPriority"
+              type="checkbox"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="priority"
+              (change)="changePriority($event)" />
+          </form-check>
+        </div>
+        <div class="col-md-3" *ngIf="priorityString === 'Y'">
+          <form-field
+            [control]="requestForm.get('priorityDate')"
+            label="Fecha de Prioridad">
+            <input
+              type="text"
+              class="form-control"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [bsValue]="bsPriorityDate"
+              (bsValueChange)="changePriorityDateEvent($event)" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
+            bindLabel="description"
+            value="keyId">
+          </ngx-select>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="requestForm.get('receptionDate')"
+            label="Fecha de Recepci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [bsValue]="bsReceptionValue"
+              [disabled]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="requestForm.get('paperDate')"
+            label="Fecha de Ofici&oacute;">
+            <input
+              type="text"
+              class="form-control"
+              [bsValue]="bsPaperValue"
+              #dp="bsDatepicker"
+              bsDatepicker
+              (bsValueChange)="changeDateEvent($event)" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="typeRecord"
+            (fetchItems)="getTypeExpedient($event)"
+            [data]="selectTypeExpedient"
+            [searchable]="false"
+            label="Tipo Expediente"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('publicMinistry')"
+            label="Ministerio P&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="publicMinistry" />
+          </form-field>
+        </div>
+        <!--<div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('indicated')"
+            label="Indiciado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="indicated" />
+          </form-field>
+        </div>-->
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('nameOfOwner')"
+            label="Nombre del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameOfOwner" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('holderCharge')"
+            label="Cargo del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="holderCharge" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phoneOfOwner" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('emailOfOwner')"
+            label="Email del Remitente">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="emailOfOwner" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <!--<div class="col-md-3">
+          <form-field [control]="receptionForm.get('sender')" label="Remitente">
+            <input type="text" class="form-control" formControlName="sender" />
+          </form-field>
+        </div>-->
+        <div class="col-md-3">
+          <form-field [control]="requestForm.get('court')" label="Juzgado">
+            <input type="text" class="form-control" formControlName="court" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="requestForm.get('crime')" label="Delito">
+            <input type="text" class="form-control" formControlName="crime" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field
+            [control]="requestForm.get('receiptRoute')"
+            label="V&iacute;a de Recepci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receiptRoute"
+              [readOnly]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('destinationManagement')"
+            label="Gesti&oacute;n de Destino">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="destinationManagement" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('indicatedTaxpayer')"
+            label="Contribuyente y&#47;o Indiciado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="indicatedTaxpayer" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field [control]="requestForm.get('affair')" label="Asunto">
+            <input
+              type="text"
+              class="form-control"
+              [ngModelOptions]="{ standalone: true }"
+              [ngModel]="affairName"
+              [readOnly]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <!--<div class="col-md-3">
+          <form-field
+            [control]="receptionForm.get('transExpedient')"
+            label="Expediente Transferente&#47;PAMA">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transExpedient" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="receptionForm.get('typeTransfer')"
+            label="Tipo Transferencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeTransfer" />
+          </form-field>
+        </div>-->
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('trialType')"
+            label="Tipo Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="trialType" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="requestForm.get('transferEntNotes')"
+            label="Notas Entidad Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferEntNotes" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field
+            [control]="requestForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              id="observations"
+              formControlName="observations">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4" *ngIf="transferenceNumber === 1">
+          <form-field
+            [control]="requestForm.get('previousInquiry')"
+            label="Averiguacion Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="previousInquiry" />
+          </form-field>
+        </div>
+        <div class="col-md-4" *ngIf="transferenceNumber === 1">
+          <form-field
+            [control]="requestForm.get('circumstantialRecord')"
+            label="Acta Circunstancial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="circumstantialRecord" />
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+          <form-field
+            [control]="requestForm.get('lawsuit')"
+            label="Causa Penal">
+            <input type="text" class="form-control" formControlName="lawsuit" />
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('tocaPenal')"
+            label="Toca Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tocaPenal" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('protectNumber')"
+            label="Numero Amparo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="protectNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

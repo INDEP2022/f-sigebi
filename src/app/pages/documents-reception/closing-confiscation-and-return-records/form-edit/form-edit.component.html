@@ -1,0 +1,101 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Actualizar Acta</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('id')" label="Número de Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('elaborationDate')"
+            label="Fecha Elaboración">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborationDate"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('proceedingsType')"
+            label="Tipo de Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="proceedingsType"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('proceedingsCve')"
+            label="Acta/Oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="proceedingsCve" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('authorityOrder')"
+            label="Autoridad/Juez que Ordena">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorityOrder" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('universalFolio')" label="Folio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="universalFolio" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [disabled]="form.invalid"
+            [type]="'button'"
+            (confirm)="buildObjectToUpdate()">
+          </confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,157 @@
+<div class="row pt-4">
+  <h5 class="title">
+    <p>
+      <a
+        class="text-color"
+        (click)="showOrderservice = true"
+        *ngIf="!showOrderservice">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Orden de
+        servicio</a
+      >
+    </p>
+
+    <p>
+      <a
+        class="text-color"
+        (click)="showOrderservice = false"
+        *ngIf="showOrderservice">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Orden de servicio</a
+      >
+    </p>
+  </h5>
+
+  <form
+    [formGroup]="form"
+    class="form-horizontal"
+    style="margin: 0 auto"
+    *ngIf="showOrderservice">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label class="col-lg-6 text-right">Folio orden servicio&#58;</label>
+        <span> Metropolitana-SAT-1340-OS</span>
+      </div>
+
+      <div class="form-group" *ngIf="op != 1 && op != 2">
+        <label class="col-lg-6 text-right"
+          >Folio reporte implementación&#58;</label
+        >
+        <span> Metropolitana-SAT-1333-RI </span>
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-6 text-right">Fecha de turnano&#58;</label>
+        <span> 25-nov-2022 </span>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <label class="col-lg-6 text-right">Usuario turnado&#58;</label>
+        <span> Usuario</span>
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-6 text-right">No&#46; contrato&#58;</label>
+        <span> 124 </span>
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-6 text-right">Tranporte zona&#58;</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="tranportZone"
+          style="width: 97px; height: 24px"
+          *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="tranportZone"
+          style="width: 97px; height: 24px"
+          *ngIf="(showForm && op != 9) || (!showForm && op != 9)"
+          readonly />
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-6 text-right">Folio TLP&#58;</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="folioTlp"
+          style="width: 97px; height: 24px"
+          *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="folioTlp"
+          style="width: 97px; height: 24px"
+          *ngIf="(!showForm && op != 9) || (showForm && op != 9)"
+          readonly />
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <form-check label="Visita ocular" for="label">
+          <input
+            id="label"
+            type="checkbox"
+            formControlName="visit"
+            *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
+          <input
+            id="label"
+            type="checkbox"
+            formControlName="visit"
+            readonly
+            *ngIf="
+              (!showForm && op != 9) ||
+              (!showForm && op != 13) ||
+              (showForm && op != 9)
+            " />
+        </form-check>
+      </div>
+
+      <div class="form-group">
+        <label>Razones de no realizaci&oacute;n&#58;</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="razonsNoRealization"
+          style="width: 290px; height: 27px"
+          *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="razonsNoRealization"
+          style="width: 290px; height: 27px"
+          *ngIf="(showForm && op != 9) || (!showForm && op != 9)"
+          readonly />
+      </div>
+
+      <div class="form-group">
+        <form-check label="Consolidado con contenedores" for="label2">
+          <input
+            id="label2"
+            type="checkbox"
+            formControlName="consolidate"
+            *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
+          <input
+            id="label2"
+            type="checkbox"
+            formControlName="consolidate"
+            *ngIf="
+              (!showForm && op != 9) ||
+              (!showForm && op != 13) ||
+              (showForm && op != 9)
+            "
+            readonly />
+        </form-check>
+      </div>
+
+      <div class="font-size-45">
+        <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
+        <span> <b>$2,973.11</b></span>
+      </div>
+    </div>
+  </form>
+</div>

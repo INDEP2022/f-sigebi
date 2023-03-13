@@ -1,0 +1,72 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title pull-left">Respuesta de la solicitud</h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="finish()">
+          Finalizar
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="suspend()">
+          Suspender
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body class="body">
+    <div id="assets">
+      <app-card [header]="false">
+        <div body>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="title">
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showRequestDetail = true"
+                    *ngIf="!showRequestDetail">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    Detalles de la solicitud</a
+                  >
+                </p>
+
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showRequestDetail = false"
+                    *ngIf="showRequestDetail">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+                    de la solicitud</a
+                  >
+                </p>
+              </h5>
+            </div>
+          </div>
+          <div class="row pt-4" *ngIf="showRequestDetail">
+            <app-assets-assigned
+              [data]="data"
+              [typeComponent]="'save-answer'"
+              [isSaving]="save"
+              (assetData)="getAssetDta($event)"></app-assets-assigned>
+          </div>
+        </div>
+      </app-card>
+    </div>
+
+    <div id="tabs">
+      <tabset class="md-tabs">
+        <tab heading="Bienes" id="tab1">
+          <app-list-assets
+            [dataAssets]="dataAssets"
+            [isSaving]="save"
+            [typeComponent]="'save-answer'"
+            (listAssetsData)="getListAssetsData($event)"></app-list-assets>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

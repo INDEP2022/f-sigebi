@@ -1,96 +1,126 @@
 <div>
-  <div class="row">
+  <div class="row pt-4">
     <div class="d-flex">
       <div class="mr-auto p-2">
-        <h5 class="title"><strong>Verificación de Cumplimiento</strong></h5>
+        <h5 class="title">
+          <strong>Clasificaci&oacute;n del Bien</strong>
+        </h5>
       </div>
       <div class="p-2 buttons">
         <button
           class="btn btn-secondary btn-sm active"
           (click)="openSearchModal()">
-          Busqueda Avanzada
+          B&uacute;squeda Avanzada
         </button>
       </div>
       <div class="p-2 buttons">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="saveRequest()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
       <div class="p-2 buttons">
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
+        <button class="btn btn-danger btn-sm active" (click)="clean()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
 
   <div>
     <div class="row pt-4">
-      <div class="col-md-5">
-        <ngx-select
-          [form]="classiGoodsForm"
-          control="section"
-          (fetchItems)="getSection($event)"
-          [data]="selectSection"
-          label="Section"
-          value="section">
-        </ngx-select
-        ><span>A</span>
+      <div class="col-md-6">
+        <div
+          [formGroup]="classiGoodsForm"
+          class="form-group form-secondary form-static-label">
+          <ng-select
+            class="form-control"
+            formControlName="ligieSection"
+            [clearable]="false"
+            [items]="selectSection"
+            [virtualScroll]="true"
+            [loading]="loading"
+            bindLabel="description"
+            bindValue="id">
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <b>{{ item.code }}</b> {{ item.description }}
+            </ng-template>
+          </ng-select>
+          <span class="form-bar"></span>
+          <label class="float-label">Sección</label>
+        </div>
       </div>
-      <div class="col-md-5">
+      <div class="col-md-6">
         <ngx-select
           [form]="classiGoodsForm"
-          control="chapter"
+          control="ligieChapter"
           (fetchItems)="getChapter($event)"
           [data]="selectChapter"
-          label="Section"
-          value="section">
+          [searchable]="false"
+          bindLabel="description"
+          label="Cap&iacute;tulo"
+          value="id">
         </ngx-select>
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-5">
+      <div class="col-md-6">
         <ngx-select
           [form]="classiGoodsForm"
-          control="level1"
+          control="ligieLevel1"
           (fetchItems)="getLevel1($event)"
           [data]="selectLevel1"
+          [searchable]="false"
+          bindLabel="description"
           label="Nivel 1"
-          value="level1">
-        </ngx-select
-        ><span>A</span>
+          value="id">
+        </ngx-select>
       </div>
-      <div class="col-md-5">
+      <div class="col-md-6">
         <ngx-select
           [form]="classiGoodsForm"
-          control="level2"
+          control="ligieLevel2"
           (fetchItems)="getLevel2($event)"
           [data]="selectLevel2"
+          [searchable]="false"
+          bindLabel="description"
           label="Nivel 2"
-          value="level2">
+          value="id">
         </ngx-select>
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-5">
+      <div class="col-md-6">
         <ngx-select
           [form]="classiGoodsForm"
-          control="level3"
+          control="ligieLevel3"
           (fetchItems)="getLevel3($event)"
           [data]="selectLevel3"
+          [searchable]="false"
+          bindLabel="description"
           label="Nivel 3"
-          value="level3">
-        </ngx-select
-        ><span>A</span>
-      </div>
-      <div class="col-md-5">
-        <ngx-select
-          [form]="classiGoodsForm"
-          control="level4"
-          (fetchItems)="getLevel4($event)"
-          [data]="selectLevel4"
-          label="Nivel 4"
-          value="level4">
+          value="id">
         </ngx-select>
       </div>
+      <div class="col-md-6">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="ligieLevel4"
+          (fetchItems)="getLevel4($event)"
+          [data]="selectLevel4"
+          [searchable]="false"
+          bindLabel="description"
+          label="Nivel 4"
+          value="id">
+        </ngx-select>
+      </div>
+    </div>
+    <div class="row pt-4" *ngIf="typeDoc === 'assets'">
+      <hr style="color: black" />
+      <app-detail-assets-tab-component
+        [requestObject]="requestObject"
+        [detailAssets]="classiGoodsForm"
+        [domicilieObject]="domicilieObject"
+        [typeDoc]="typeDoc"></app-detail-assets-tab-component>
     </div>
   </div>
 </div>

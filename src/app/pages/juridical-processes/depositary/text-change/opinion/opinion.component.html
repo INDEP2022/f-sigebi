@@ -1,0 +1,175 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row">
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('numberGood')" label="Expediente">
+        <input type="text" class="form-control" formControlName="numberGood" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('numberGestion')"
+        label="No de Gesti&oacute;n">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="numberGestion" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('flywheel')" label="Volante">
+        <input type="text" class="form-control" formControlName="flywheel" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('dictamination')"
+        label="Dictaminaci&oacute;n">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="dictamination" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-8 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('key')" label="Clave">
+        <input type="text" class="form-control" formControlName="key" />
+      </form-field>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <app-user-shared
+        [form]="form"
+        [userField]="'senderUser'"
+        [label]="'Remitente'"></app-user-shared>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('charge')" label="Cargo">
+        <input type="text" class="form-control" formControlName="charge" />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('addressee')" label="Destinatario">
+        <input type="text" class="form-control" formControlName="addressee" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+      <form-field
+        [control]="form.get('numberDictamination')"
+        label="No de Dictaminaci&oacute;n">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="numberDictamination" />
+      </form-field>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('addressee_I')" label="Destinatario">
+        <input type="text" class="form-control" formControlName="addressee_I" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('paragraphInitial')"
+        label="P&aacute;rrafo Inicial">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="paragraphInitial"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('paragraphFinish')"
+        label="P&aacute;rrafo Final">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="paragraphFinish"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('paragraphOptional')"
+        label="P&aacute;rrafo Opcional">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="paragraphOptional"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('descriptionSender')"
+        label="Descripci&oacute;n Remitente">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="descriptionSender"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <div class="row pl-3">C&#46;C&#46;P&#46;</div>
+  <div class="row mt-5">
+    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('typePerson')" label="Tipo Persona">
+        <select class="form-control" formControlName="typePerson">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">PERSONA EXTERNA</option>
+          <option [value]="2">PERSONA INTERNA</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-md-7 col-sm-12 col-xs-12">
+      <app-user-shared
+        [form]="form"
+        [userField]="'senderUser'"
+        [label]="'Detinatario Copia'"></app-user-shared>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
+        <select class="form-control" formControlName="typePerson_I">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">PERSONA EXTERNA</option>
+          <option [value]="2">PERSONA INTERNA</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-md-7 col-sm-12 col-xs-12">
+      <app-user-shared
+        [form]="form"
+        [userField]="'senderUser_I'"
+        [label]="'Detinatario Copia'"></app-user-shared>
+    </div>
+  </div>
+  <hr />
+  <div class="row mb-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            text="Imprimir"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

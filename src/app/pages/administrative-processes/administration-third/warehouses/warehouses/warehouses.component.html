@@ -1,0 +1,421 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Acta de recepción</h5>
+    <!-- <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div> -->
+  </div>
+  <div body>
+    <form [formGroup]="warehouseForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="warehouseForm.get('no')" label="No.">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="no"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="warehouseForm.get('keyCode')" label="Clave">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="keyCode"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="warehouseForm.get('file')" label="Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="file"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseForm.get('dateElaboration')"
+            label="Fecha de Elaboración">
+            <input
+              type="text"
+              formControlName="dateElaboration"
+              placeholder="Fecha de Elaboración"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseForm.get('statusRecord')"
+            label="Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusRecord" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseForm.get('physicalReceiptDate')"
+            label="Fecha de Recepcón Física">
+            <input
+              type="text"
+              formControlName="physicalReceiptDate"
+              placeholder="Fecha de Recepcón Física"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseForm.get('dateClosure')"
+            label="Fecha de Cierre">
+            <input
+              type="text"
+              formControlName="dateClosure"
+              placeholder="Fecha de Cierre"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseForm.get('transference')"
+            label="Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transference" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Ingresar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings3"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Ingresar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="pt-4">
+      <h5 class="title">Bienes en Pallet</h5>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Ingresar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Almacén/Contrato</h5>
+    <!-- <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div> -->
+  </div>
+  <div body>
+    <form [formGroup]="warehouseContractForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseContractForm.get('storehouse')"
+            label="Almacén">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="storehouse" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseContractForm.get('contract')"
+            label="Contrato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contract" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="warehouseContractForm.get('tStorehouse')"
+            label="T.Almacén">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tStorehouse" />
+          </form-field>
+        </div>
+      </div>
+      <h5 class="title pt-4">Capacidad:</h5>
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            [control]="warehouseContractForm.get('total')"
+            label="Total">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="total"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="warehouseContractForm.get('secc1')"
+            label="Secc1">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="secc1"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="warehouseContractForm.get('secc2')"
+            label="Secc2">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="secc2"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="warehouseContractForm.get('secc3')"
+            label="Secc3">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="secc3"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="warehouseContractForm.get('secc4')"
+            label="Secc4">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="secc4"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-check label="Patio" for="yard">
+            <input id="yard" type="checkbox" formControlName="yard" />
+          </form-check>
+          <form-check label="Techumbre" for="roofing">
+            <input id="roofing" type="checkbox" formControlName="roofing" />
+          </form-check>
+          <form-check label="Almacén" for="storehouseCheck">
+            <input
+              id="storehouseCheck"
+              type="checkbox"
+              formControlName="storehouseCheck" />
+          </form-check>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <h5 class="title pt-4">Espacio:</h5>
+          <form-radio label="Patio">
+            <input type="radio" formControlName="space" value="yard" />
+          </form-radio>
+          <form-radio label="Techumbre">
+            <input type="radio" formControlName="space" value="roofing" />
+          </form-radio>
+          <form-radio label="Almacén">
+            <input type="radio" formControlName="space" value="dog2" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <h5 class="title pt-4">Sección:</h5>
+          <form-radio label="1">
+            <input type="radio" formControlName="section" value="1" />
+          </form-radio>
+          <form-radio label="2">
+            <input type="radio" formControlName="section" value="2" />
+          </form-radio>
+          <form-radio label="3">
+            <input type="radio" formControlName="section" value="3" />
+          </form-radio>
+          <form-radio label="4">
+            <input type="radio" formControlName="section" value="4" />
+          </form-radio>
+        </div>
+        <div class="col-md-4">
+          <h5 class="title pt-4">Almacenamiento:</h5>
+          <div class="row">
+            <div class="col-md-5">
+              <form-radio label="Directo">
+                <input type="radio" formControlName="storage" value="Directo" />
+              </form-radio>
+              <form-radio label="Contenedor">
+                <input
+                  type="radio"
+                  formControlName="storage"
+                  value="Contenedor" />
+              </form-radio>
+              <form-radio label="M2">
+                <input type="radio" formControlName="storage" value="M2" />
+              </form-radio>
+            </div>
+            <div class="col-md-5">
+              <form-radio label="Piso">
+                <input type="radio" formControlName="storage" value="Piso" />
+              </form-radio>
+              <form-radio label="Rack">
+                <input type="radio" formControlName="storage" value="Rack" />
+              </form-radio>
+              <form-radio label="Remonta">
+                <input type="radio" formControlName="storage" value="Remonta" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5 class="title pt-4">Contenedor:</h5>
+          <div class="row">
+            <div class="col-md-12">
+              <form-field
+                [control]="warehouseContractForm.get('container')"
+                label="Contenedor">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="container" />
+              </form-field>
+            </div>
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Ingresar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-4">
+      <div class="col-md-6">
+        <h5 class="title pt-4">Posiciones</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings4"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <div class="col-md-6">
+        <h5 class="title pt-4">Niveles</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings5"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h5 class="title pt-4">Bienes en Posición/Nivel</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings6"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

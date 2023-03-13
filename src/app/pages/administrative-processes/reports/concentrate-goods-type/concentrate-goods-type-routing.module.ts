@@ -4,12 +4,13 @@ import { ConcentrateGoodsTypeComponent } from './concentrate-goods-type/concentr
 
 const routes: Routes = [
   {
-    path: '', component: ConcentrateGoodsTypeComponent
-  }
+    path: '',
+    component: ConcentrateGoodsTypeComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ConcentrateGoodsTypeRoutingModule { }
+export class ConcentrateGoodsTypeRoutingModule {}

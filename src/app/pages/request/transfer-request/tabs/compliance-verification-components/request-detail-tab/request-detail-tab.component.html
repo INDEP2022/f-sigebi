@@ -3,7 +3,7 @@
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
         <h5 class="title">
-          <strong>Informacion de Recepción de Solicitud</strong>
+          <strong>Informaci&oacute;n de Recepci&oacute;n de Solicitud</strong>
         </h5>
       </div>
 
@@ -18,15 +18,18 @@
     </div>
   </div>
   <div class="row">
-    <form [formGroup]="receptionForm" class="form-material">
+    <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-3">
         <div class="col-sm-2">
           <span style="line-height: 3">Prioridad</span>
         </div>
         <div class="col-sm-2">
-          <form-field [control]="receptionForm.get('priority')" label="">
-            <input id="label" type="checkbox" formControlName="priority" />
-          </form-field>
+          <input
+            id="urgentPriority"
+            type="checkbox"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="priority"
+            [disabled]="true" />
         </div>
         <!--  <div class="col-sm-2">
           <form-radio label="">
@@ -37,155 +40,90 @@
               id="priority" />
           </form-radio>
         </div> -->
+
         <div class="col-md-3">
-          <label class="label" for=""
-            >Procedencia Información:
-            <span for="">{{
-              receptionForm.get('infoProvenance').value
-            }}</span></label
-          >
+          <label class="label">Procedencia Informaci&oacute;n&#58;</label>
+          {{ requestForm?.get('originInfo').value || '' }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <label class="label" for=""
-            >Fecha de Recepcion:
-            <span for="">{{
-              receptionForm.get('receptDate').value
-            }}</span></label
-          >
+          <label class="label">Fecha de Recepci&oacute;n&#58;</label>
+          {{ requestForm?.get('receptionDate').value | date: 'dd/MM/yyyy' }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Fecha de Oficion:
-            <span for="">{{
-              receptionForm.get('officeDate').value
-            }}</span></label
-          >
+          <label class="label">Fecha de Oficion&#58;</label>
+          {{ requestForm?.get('paperDate').value | date: 'dd/MM/yyyy' }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Tipo Expediente:
-            <span for="">{{
-              receptionForm.get('typeExpedient').value
-            }}</span></label
-          >
+          <label class="label">Tipo Expediente&#58;</label>
+          {{ requestForm?.get('typeRecord').value }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <label class="label" for=""
-            >Nombre del Remitente:
-            <span for="">{{
-              receptionForm.get('nameSender').value
-            }}</span></label
-          >
+          <label class="label">Nombre del Remitente&#58;</label>
+          {{ requestForm?.get('nameOfOwner').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Cargo del Remitente:
-            <span for="">{{
-              receptionForm.get('senderCharge').value
-            }}</span></label
-          >
+          <label class="label">Cargo del Remitente&#58;</label>
+          {{ requestForm?.get('holderCharge').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Telefono del Remitente:
-            <span for="">{{
-              receptionForm.get('phoneSender').value
-            }}</span></label
-          >
+          <label class="label">Tel&eacute;fono del Remitente&#58;</label>
+          {{ requestForm?.get('phoneOfOwner').value }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <label class="label" for=""
-            >Email del Remitente:
-            <span for="">{{
-              receptionForm.get('emailSender').value
-            }}</span></label
-          >
+          <label class="label">Email del Remitente&#58;</label>
+          {{ requestForm?.get('emailOfOwner').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Juzgado:
-            <span for="">{{ receptionForm.get('tribunal').value }}</span></label
-          >
+          <label class="label">Juzgado&#58;</label>
+          {{ requestForm?.get('court').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Delito:
-            <span for="">{{ receptionForm.get('crime').value }}</span></label
-          >
+          <label class="label">Delito&#58;</label>
+          {{ requestForm?.get('crime').value }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <label class="label" for=""
-            >Via de Recepción:
-            <span for="">{{
-              receptionForm.get('typeReception').value
-            }}</span></label
-          >
+          <label class="label">V&iacute;a de Recepci&oacute;n&#58;</label
+          >{{ requestForm?.get('receiptRoute').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Gestión de Destino:
-            <span for="">{{
-              receptionForm.get('destinationManage').value
-            }}</span></label
-          >
+          <label class="label">Gesti&oacute;n de Destino&#58;</label>
+          {{ requestForm?.get('destinationManagement').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Contribuyente y/o Indiciado:
-            <span for="">{{
-              receptionForm.get('contributor').value
-            }}</span></label
-          >
+          <label class="label">Contribuyente y&#47;o Indiciado&#58;</label>
+          {{ requestForm?.get('indicatedTaxpayer').value }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <label class="label" for=""
-            >Asunto:
-            <span for="">{{ receptionForm.get('subject').value }}</span></label
-          >
+          <label class="label">Asunto&#58;</label>
+          {{ requestForm?.get('affair').value }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Expediente Transferente/PAMA:
-            <span for="">{{
-              receptionForm.get('transExpedient').value
-            }}</span></label
-          >
+          <label class="label">Expediente Transferente&#47;PAMA&#58;</label>
+          {{ requestForm?.get('transferenceFile').value || '' }}
         </div>
         <div class="col-md-4">
-          <label class="label" for=""
-            >Tipo Transferencia:
-            <span for="">{{
-              receptionForm.get('typeTransfer').value
-            }}</span></label
-          >
+          <label class="label">Tipo Transferencia&#58;</label>
+          {{ requestForm?.get('typeRecord').value }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <label class="label" for=""
-            >Notas Entidad Transferente:
-            <span for="">{{
-              receptionForm.get('transferEntityNotes').value
-            }}</span></label
-          >
+          <label class="label">Notas Entidad Transferente&#58;</label>
+          {{ requestForm?.get('transferEntNotes').value }}
         </div>
         <div class="col-md-8">
-          <label class="label" for=""
-            >Observaciones:
-            <span for="">{{
-              receptionForm.get('observations').value
-            }}</span></label
-          >
+          <label class="label">Observaciones&#58;</label>
+          {{ requestForm?.get('observations').value }}
         </div>
       </div>
     </form>

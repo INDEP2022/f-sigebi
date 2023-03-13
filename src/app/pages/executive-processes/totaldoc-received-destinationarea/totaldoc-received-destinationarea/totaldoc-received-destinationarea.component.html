@@ -1,0 +1,96 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DOCUMENTOS RECIBIDOS POR &Aacute;REA</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('report')"
+            label="&iquest;Reporte Detallado&#63;">
+            <select class="form-control" formControlName="report">
+              <option value="si">Si</option>
+              <option value="no">No</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('departamentDes')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getAreas($event)"
+              [data]="areas"
+              value="id"
+              bindLabel="dsarea"
+              label="Área Destino"
+              [control]="'departamentDes'"
+              (change)="onValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Delegación Destino"
+            [control]="form.get('delegationDes')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationDes"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Sub Delegación Destino"
+            [control]="form.get('subdelegationDes')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subdelegationDes"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

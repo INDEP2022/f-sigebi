@@ -2,11 +2,14 @@
   <div class="form-group form-secondary form-static-label">
     <ng-select
       #select
-      [clearable]="false"
+      [clearable]="clearable"
       class="form-control"
       [items]="buffer"
       [bindLabel]="bindLabel"
       [hideSelected]="true"
+      [closeOnSelect]="closeOnSelect"
+      [maxSelectedItems]="maxSelectedItems"
+      [multiple]="multiple"
       [bindValue]="value"
       [minTermLength]="1"
       [loading]="loading"
@@ -17,9 +20,18 @@
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
       (change)="onChange($event)"
-      [placeholder]="placeholder">
+      [searchable]="searchable"
+      [placeholder]="placeholder"
+      [readonly]="readonly"
+      [inputAttrs]="inputAttrs">
+      <ng-template *ngIf="showTooltip" ng-option-tmp let-item="item">
+        <div [title]="item[bindLabel]">{{ item[bindLabel] }}</div>
+      </ng-template>
     </ng-select>
     <span class="form-bar"></span>
-    <label class="float-label">{{ label }}</label>
+    <label class="float-label"
+      >{{ label }}
+      <span [style.color]="'#9D2449'" *ngIf="isRequired()">*</span></label
+    >
   </div>
 </ng-container>

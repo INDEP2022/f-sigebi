@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 interface IExcelToJson {
   id: number;
   utf8: string;
@@ -13,13 +14,12 @@ interface IExcelToJson {
 @Component({
   selector: 'app-flat-file-for-good',
   templateUrl: './flat-file-for-good.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FlatFileForGoodComponent extends BasePage implements OnInit {
   flatFileGoodForm: ModelForm<any>;
   data: IExcelToJson[] = [];
-  constructor(private fb: FormBuilder, private excelService: ExcelService,) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
   }
 
@@ -28,10 +28,16 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.flatFileGoodForm = this.fb.group({
-      delegationReceives: [null, Validators.required],
-      delegationManages: [null, Validators.required],
-      type: [null, Validators.required],
-      area: [null, Validators.required],
+      delegationReceives: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      delegationManages: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       initialDate: [null, Validators.required],
       finalDate: [null, Validators.required],
     });

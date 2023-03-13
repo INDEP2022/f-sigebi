@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Selección de Expediente</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-3">
+        <form-field
+          class="col-md-10"
+          [control]="form.get('recordId')"
+          label="No: Expediente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="recordId" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-check label="¿Es Empresa?" for="isCompany">
+          <input
+            type="checkbox"
+            formControlName="esEmpresa"
+            id="isCompany"
+            (change)="isCompanyChange()" />
+        </form-check>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          *ngIf="isCompany"
+          class="col-md-10"
+          [control]="form.get('noBien')"
+          label="No. Bien Empresa">
+          <input type="number" class="form-control" formControlName="noBien" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Buscar"
+          loadingText="Buscando ..."
+          [loading]="loading"
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

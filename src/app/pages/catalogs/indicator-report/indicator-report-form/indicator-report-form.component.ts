@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { IndicatorReportService } from 'src/app/core/services/catalogs/indicator-report.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
-import { ProeficientService } from '../../../../core/services/catalogs/proficient.service';
-import { DefaultSelect } from '../../../../shared/components/select/default-select';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-indicator-report-form',
@@ -18,11 +17,11 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
   title: string = 'Indicador';
   edit: boolean = false;
   indicatorReport: IIndicatorReport;
-  proficients = new DefaultSelect<IIndicatorReport>();
+  // proficients = new DefaultSelect<IIndicatorReport>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private proeficientService: ProeficientService
+    private indicatorReportService: IndicatorReportService
   ) {
     super();
   }
@@ -34,16 +33,19 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      tipo_servicio: [null, [Validators.required]],
-      rango_porcentaje_inicial: [null, [Validators.required]],
-      rango_porcentaje_final: [null, [Validators.required]],
-      pena_convencional: [null, [Validators.required]],
-      no_contrato: [null, [Validators.required]],
-      usuario_creacion: [null],
-      fecha_creacion: [null],
-      usuario_modificacion: [null],
-      fecha_modificacion: [null],
-      estatus: [null, [Validators.required]],
+      serviceType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      startingPercentageRange: [null, [Validators.required]],
+      finalPercentageRange: [null, [Validators.required]],
+      contractualPenalty: [null, [Validators.required]],
+      contractNumber: [null, [Validators.required]],
+      userCreation: [null],
+      creationDate: [null],
+      userModification: [null],
+      modificationDate: [null],
+      status: [null, [Validators.required]],
       version: [null, [Validators.required]],
     });
     if (this.indicatorReport != null) {
@@ -52,11 +54,11 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getData(params: ListParams) {
-    this.proeficientService.getAll(params).subscribe(data => {
-      this.proficients = new DefaultSelect(data.data, data.count);
-    });
-  }
+  // getData(params: ListParams) {
+  //   this.proeficientService.getAll(params).subscribe(data => {
+  //     this.proficients = new DefaultSelect(data.data, data.count);
+  //   });
+  // }
   close() {
     this.modalRef.hide();
   }
@@ -67,7 +69,7 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.proeficientService.create(this.form.getRawValue()).subscribe({
+    this.indicatorReportService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -75,7 +77,7 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.proeficientService
+    this.indicatorReportService
       .update(this.indicatorReport.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),

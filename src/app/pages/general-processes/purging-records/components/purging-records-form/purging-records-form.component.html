@@ -1,0 +1,67 @@
+<ng-container [formGroup]="form">
+  <div class="row pt-3">
+    <form-field
+      [control]="formControls.id"
+      label="No&#46; Expediente"
+      class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="id"
+        (change)="expedientChange()" />
+    </form-field>
+
+    <form-field
+      [control]="formControls.preliminaryInquiry"
+      label="Averiguaci&oacute;n Previa"
+      class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="preliminaryInquiry" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      [control]="formControls.criminalCase"
+      label="Causa Penal"
+      class="col-md-6">
+      <input type="text" class="form-control" formControlName="criminalCase" />
+    </form-field>
+
+    <form-field
+      [control]="formControls.circumstantialRecord"
+      label="Acta Circunstanciada"
+      class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="circumstantialRecord" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      [control]="formControls.protectionKey"
+      label="Amparo"
+      class="col-md-6">
+      <input type="text" class="form-control" formControlName="protectionKey" />
+    </form-field>
+
+    <form-field
+      [control]="formControls.keyPenalty"
+      label="Toca Penal"
+      class="col-md-6">
+      <input type="text" class="form-control" formControlName="keyPenalty" />
+    </form-field>
+  </div>
+  <div class="row pt-3">
+    <form-field
+      [control]="formControls.identifier"
+      label="Identificador"
+      class="col-md-6">
+      <input type="text" class="form-control" formControlName="identifier" />
+    </form-field>
+  </div>
+</ng-container>

@@ -1,3 +1,5 @@
+import { ICity } from './city.model';
+
 export interface ICourt {
   id?: number;
   description: string;
@@ -11,4 +13,11 @@ export interface ICourt {
   numPhone: string;
   circuitCVE: string;
   numRegister: number;
+  nameAndId?: string;
+}
+
+export interface ICourtModel {
+  court: ICourt | number;
+  city: ICity | number;
+  registerNumber?: number;
 }

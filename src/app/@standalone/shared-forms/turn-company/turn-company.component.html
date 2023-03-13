@@ -1,0 +1,19 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showTurn">
+    <div class="col-md-12">
+      <form-field [control]="form.get(turnField)">
+        <ngx-select
+          (fetchItems)="getTurn($event)"
+          [data]="turn"
+          [form]="form"
+          value="otKey"
+          bindLabel="value"
+          label="Giro"
+          [control]="turnField"
+          (change)="onTurnChange($event)"
+          [searchable]="false">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

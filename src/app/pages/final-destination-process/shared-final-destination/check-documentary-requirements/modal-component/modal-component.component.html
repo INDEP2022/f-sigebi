@@ -1,0 +1,116 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title"></h5>
+  </div>
+
+  <div body>
+    <div *ngIf="op === 1">
+      <h5 class="mb-5">
+        Para Generar Requisitos documentales con detalle de todos los
+        Expedientes y Bienes, el N&uacute;mero de Expediente y N&uacute;mero de
+        Bien deben estar vac&iacute;os,
+      </h5>
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 align-items-center">
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('proceedings')"
+                label="No. Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="proceedings" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('good')" label="Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="good" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('goodDescrip')"
+                label="Descripci&oacute;n Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="goodDescrip" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="row mt-3">
+        <div class="col-12 col-md-6 text-center">
+          <button class="btn btn-secondary btn-sm active">
+            Ejecutar Informe
+          </button>
+        </div>
+        <div class="col-12 col-md-6 text-center">
+          <button class="btn btn-primary btn-sm active">Salir</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="op === 2">
+      <h5 class="mb-5">Ingrese la Autoridad que aprueba el Dict&aacute;men</h5>
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="form2"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 align-items-center">
+          <div class="col-12 mt-5">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form2.get('authority')" label="Autoridad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="authority" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="row mt-3">
+        <div class="col-12 col-md-6 text-center">
+          <button class="btn btn-secondary btn-sm active">Aceptar</button>
+        </div>
+        <div class="col-12 col-md-6 text-center">
+          <button class="btn btn-primary btn-sm active">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="op === 3">
+      <div class="row mt-5 justify-content-end mt-3">
+        <div class="col-md-5 buttons pt-3 text-right">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings">
+          </app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-5 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,32 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">USUARIOS POR TIPO DE EVENTO</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="teventsForm">
+      <label>Filtrar</label>
+      <div class="row mb-3 mt-3">
+        <!--Event Types Component-->
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <app-event-type-shared
+            [form]="teventsForm"
+            (emitTevents)="onTeventsChange($event)"></app-event-type-shared>
+        </div>
+      </div>
+    </form>
+    <!--USERS PER EVENT TYPE TABLE-->
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="valuesList">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

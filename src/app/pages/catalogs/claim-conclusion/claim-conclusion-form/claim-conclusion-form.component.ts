@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IClaimConclusion } from 'src/app/core/models/catalogs/claim-conclusion.model';
 import { ClaimConclusionService } from 'src/app/core/services/catalogs/claim-conclusion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-claim-conclusion-form',
@@ -30,22 +31,22 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.ClaimConclusionForm = this.fb.group({
-      id: [null, Validators.required],
+      id: [null, [Validators.required]],
       description: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(200),
-        ]),
+        ],
       ],
       flag: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(20),
-        ]),
+        ],
       ],
     });
     if (this.claimConclusion != null) {

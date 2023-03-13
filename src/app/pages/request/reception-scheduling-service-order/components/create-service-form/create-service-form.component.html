@@ -1,0 +1,67 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Agregar servicios</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = true"
+          *ngIf="!showSearchForm">
+          <i class="fa fa-angle-right" aria-hidden="true"></i>
+          B&uacute;squeda</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = false"
+          *ngIf="showSearchForm">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda</a
+        >
+      </p>
+    </h5>
+
+    <div class="row pt-3 form-material">
+      <search-bar *ngIf="showSearchForm" [params]="params"></search-bar>
+
+      <div class="justify-content-end btn-toolbar pt-2">
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+        <button *ngIf="showSearchForm" class="btn btn-danger btn-sm active">
+          <i class="fa fa-reload"></i> Limpiar
+        </button>
+      </div>
+
+      <div class="pt-5">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button class="btn btn-primary active" (click)="confirm()">
+          Seleccionar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

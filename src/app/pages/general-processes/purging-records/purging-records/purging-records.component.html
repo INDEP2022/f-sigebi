@@ -1,0 +1,121 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Depuraci&oacute;n de Expedientes</h5>
+  </div>
+
+  <div body>
+    <form class="form-material">
+      <div class="row b-content">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-between">
+              <h3>Origen</h3>
+              <div>
+                <confirm-button
+                  [btnSmall]="true"
+                  type="button"
+                  (confirm)="updateExpedient()"
+                  *ngIf="originExpedient"
+                  [loading]="loadingExpedient"
+                  text="Actualizar expediente"
+                  loadingText="Actualizando epxediente"></confirm-button>
+              </div>
+            </div>
+          </div>
+
+          <div class="row pt-3">
+            <app-purging-records-form
+              [form]="originForm"
+              (onExpedientChange)="
+                getOriginExpedient($event)
+              "></app-purging-records-form>
+          </div>
+          <div class="row pt-2">
+            <form-field
+              [control]="integratedExpedients"
+              label="Expedientes integrados"
+              class="col-md-12">
+              <input
+                type="text"
+                class="form-control"
+                [formControl]="integratedExpedients" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <app-purging-records-table
+                [data]="originGoods"
+                [params]="originParams"
+                [totalItems]="totalOrigin"></app-purging-records-table>
+            </div>
+          </div>
+
+          <div class="row pt-3">
+            <div class="col-md-12 d-flex justify-content-center">
+              <!-- <div>
+                <button
+                  [disabled]="isIntegratingExpedient || !originExpedient"
+                  class="btn btn-danger btn-sm active mr-2"
+                  type="button">
+                  Eliminar Exp&#46;
+                </button>
+              </div> -->
+              <div>
+                <button
+                  [disabled]="isIntegratingExpedient || !originExpedientExist"
+                  class="btn btn-primary btn-sm active"
+                  type="button"
+                  (click)="integrateExpedient()">
+                  Integrar Exp&#46;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6" *ngIf="isIntegratingExpedient">
+          <h3>Destino</h3>
+          <div class="row pt-3 pb-5">
+            <app-purging-records-form
+              [form]="targetForm"
+              (onExpedientChange)="
+                getTargetExpedient($event)
+              "></app-purging-records-form>
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-12">
+              <app-purging-records-table
+                [data]="targetGoods"
+                [params]="targetParams"
+                [totalItems]="totalTarget"></app-purging-records-table>
+            </div>
+          </div>
+
+          <div class="row pt-3">
+            <div class="col-md-12 d-flex justify-content-center">
+              <div>
+                <button
+                  [disabled]="loading"
+                  type="button"
+                  class="btn btn-danger btn-sm active mr-2"
+                  (click)="resetForm()">
+                  Cancelar
+                </button>
+              </div>
+              <div>
+                <confirm-button
+                  [loading]="loading"
+                  text="Aceptar"
+                  loadingText="Integrando Expediente"
+                  [btnSmall]="true"
+                  type="button"
+                  (confirm)="save()"></confirm-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

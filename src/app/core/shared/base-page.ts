@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { AES, enc } from 'crypto-js';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
@@ -11,7 +12,7 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 
-class SweetalertModel implements SweetAlertOptions {
+export class SweetalertModel implements SweetAlertOptions {
   title: string;
   text: string;
   icon: SweetAlertIcon;
@@ -51,6 +52,7 @@ interface TableSettings {
   pager: Object;
   hideSubHeader: boolean;
   mode: string;
+  add: Object;
   edit: Object;
   delete: Object;
   columns: Object;
@@ -83,6 +85,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   hideSubHeader: true,
   mode: 'external',
+  add: {},
   edit: {
     editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
   },
@@ -103,6 +106,7 @@ export abstract class BasePage implements OnDestroy {
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
+  private readonly key = 'Pru3b4Cr1pt0S1G3B1';
 
   constructor() {
     this.bsConfig = {
@@ -117,7 +121,7 @@ export abstract class BasePage implements OnDestroy {
     let sweetalert = new SweetalertModel();
     sweetalert.toast = true;
     sweetalert.position = 'top-end';
-    sweetalert.timer = 2000;
+    sweetalert.timer = 6000;
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
@@ -137,16 +141,32 @@ export abstract class BasePage implements OnDestroy {
     icon: SweetAlertIcon,
     title: string,
     text: string,
-    confirmButtonText?: string
+    confirmButtonText?: string,
+    cancelButtonText: string = 'Cancelar'
   ): Promise<SweetAlertResult> {
     let sweetalert = new SweetalertModel();
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
     confirmButtonText ? (sweetalert.confirmButtonText = confirmButtonText) : '';
+    cancelButtonText ? (sweetalert.cancelButtonText = cancelButtonText) : '';
     sweetalert.showConfirmButton = true;
     sweetalert.showCancelButton = true;
     return Swal.fire(sweetalert);
+  }
+
+  protected encodeData<T>(data: T) {
+    let value = '';
+    value = AES.encrypt(
+      JSON.stringify(data).trim(),
+      this.key.trim()
+    ).toString();
+    return value;
+  }
+
+  protected decodeData<T>(data: string): T {
+    const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
+    return JSON.parse(value);
   }
 
   ngOnDestroy(): void {

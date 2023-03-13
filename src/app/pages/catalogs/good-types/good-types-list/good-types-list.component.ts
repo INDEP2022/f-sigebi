@@ -68,7 +68,15 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        console.log(goodType.id);
+        this.goodTypesService.remove(goodType.id).subscribe(
+          res => {
+            this.getExample();
+          },
+          err => {
+            this.loading = false;
+          }
+        );
       }
     });
   }

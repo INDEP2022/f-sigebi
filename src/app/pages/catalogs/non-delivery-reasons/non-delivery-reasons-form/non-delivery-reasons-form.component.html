@@ -5,92 +5,46 @@
   <div body>
     <form class="form-material" [formGroup]="nonDeliveryReasonsForm">
       <div class="row">
+        <!-- <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="nonDeliveryReasonsForm.get('id')" label="Registro">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div> -->
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="nonDeliveryReasonsForm.get('id')"
-            label="Registro">
-            <input type="number" class="form-control" formControlName="id" />
+            [control]="nonDeliveryReasonsForm.get('reasonType')"
+            label="Tipo motivo">
+            <select class="form-control" formControlName="reasonType">
+              <option [value]="null">Seleccione un tipo motivo</option>
+              <option *ngFor="let item of typeReason" [value]="item.label">
+                {{ item.label }}
+              </option>
+            </select>
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="nonDeliveryReasonsForm.get('reasonType')"
-            label="Tipo de motivo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="reasonType" />
+            [control]="nonDeliveryReasonsForm.get('eventType')"
+            label="Tipo evento">
+            <select class="form-control" formControlName="eventType">
+              <option [value]="null">Seleccione un tipo evento</option>
+              <option *ngFor="let item of typeEvent" [value]="item.label">
+                {{ item.label }}
+              </option>
+            </select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="nonDeliveryReasonsForm.get('eventType')"
-            label="Tipo de evento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="eventType" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-12 pt-sm-5 pt-md-2">
           <form-field
             [control]="nonDeliveryReasonsForm.get('reason')"
-            label="Motivo">
+            label="Descripción Motivo">
             <textarea
               rows="2"
               class="form-control pt-3"
               formControlName="reason">
             </textarea>
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="nonDeliveryReasonsForm.get('userCreation')"
-            label="Creado por">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userCreation" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="nonDeliveryReasonsForm.get('userModification')"
-            label="Modificado por">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userModification" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="nonDeliveryReasonsForm.get('version')"
-            label="Versión">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="nonDeliveryReasonsForm.get('status')"
-            label="Estado">
-            <ng-select
-              formControlName="status"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="0">Inactivo</ng-option>
-              <ng-option value="1">Activo</ng-option>
-            </ng-select>
           </form-field>
         </div>
       </div>

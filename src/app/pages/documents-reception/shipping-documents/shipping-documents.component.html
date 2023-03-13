@@ -1,0 +1,218 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title col-md-5">Envío de oficios</h5>
+    <div class="buttons d-flex justify-content-end">
+      <div class="mx-5" *ngIf="officeNumber">
+        <p>
+          No. Oficio: <b>{{ officeNumber }}</b>
+        </p>
+      </div>
+      <div class="mx-5" *ngIf="officeKey">
+        <p>
+          CVE Oficio: <b>{{ officeKey }}</b>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <form [formGroup]="documentsForm" class="form-material" (submit)="save()">
+      <div class="row">
+        <div class="col-md-6">
+          <!-- <div class="row">
+            <form-field
+              class="col-md-4"
+              [control]="documentsForm.get('officeNum')"
+              label="No&#46; Oficio">
+              <input
+                class="form-control"
+                type="text"
+                formControlName="officeNum" />
+            </form-field>
+            <form-field
+              class="col-md-8"
+              [control]="documentsForm.get('officeCve')"
+              label="Cve Oficio">
+              <input
+                class="form-control"
+                type="text"
+                formControlName="officeCve" />
+            </form-field>
+          </div> -->
+
+          <div class="row">
+            <form-field
+              class="col-md-6"
+              [control]="documentsForm.get('date')"
+              label="Fecha Turno">
+              <input class="form-control" formControlName="date" bsDatepicker />
+            </form-field>
+
+            <form-field
+              class="col-md-4 offset-md-2"
+              [control]="documentsForm.get('priority')"
+              label="Prioridad">
+              <select class="form-control" formControlName="priority">
+                <option value="A">Alta</option>
+                <option value="N">Normal</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              class="col-md-12"
+              [control]="documentsForm.get('sender')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getSenders($event)"
+                [form]="documentsForm"
+                control="sender"
+                value="id"
+                bindLabel="name"
+                [data]="senders"
+                label="Remitente"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              class="col-md-12"
+              [control]="documentsForm.get('receiver')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getReceivers($event)"
+                (change)="getDepartmentTarget($event)"
+                [form]="documentsForm"
+                value="id"
+                bindLabel="name"
+                control="receiver"
+                [data]="receivers"
+                label="Destinatario"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field class="col-md-12" [control]="documentsForm.get('cpp')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getReceivers($event)"
+                (change)="getDepartmentTarget($event)"
+                [data]="receivers"
+                value="id"
+                bindLabel="name"
+                [form]="documentsForm"
+                control="cpp"
+                label="C&#46;P&#46;P&#46;"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="row">
+              <form-field [control]="documentsForm.get('delegation')">
+                <ngx-select
+                  [form]="documentsForm"
+                  value="id"
+                  bindLabel="description"
+                  control="delegation"
+                  [data]="delegations"
+                  label="Delegación Destino"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row pt-4">
+              <form-field [control]="documentsForm.get('subdelegation')">
+                <ngx-select
+                  [form]="documentsForm"
+                  control="subdelegation"
+                  value="id"
+                  bindLabel="description"
+                  [data]="subdelegations"
+                  label="Subdelegación Destino"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row pt-4">
+              <form-field [control]="documentsForm.get('department')">
+                <ngx-select
+                  [form]="documentsForm"
+                  control="department"
+                  value="id"
+                  bindLabel="dsarea"
+                  [data]="departments"
+                  label="Área Destino"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row" *ngIf="!queryMode">
+              <div class="col-md-8 d-flex">
+                <form-radio label="Texto areas">
+                  <input
+                    type="radio"
+                    formControlName="messageType"
+                    value="area" />
+                </form-radio>
+
+                <form-radio label="Texto Direcci&oacute;n General">
+                  <input
+                    type="radio"
+                    formControlName="messageType"
+                    value="direction" />
+                </form-radio>
+              </div>
+              <div class="col-md-4">
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm"
+                  (click)="getNotifications()">
+                  Selccionar Volantes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          class="col-md-12"
+          [control]="documentsForm.get('messageBody')"
+          label="Texto del mensaje">
+          <textarea formControlName="messageBody" class="form-control" rows="6">
+          </textarea>
+        </form-field>
+      </div>
+
+      <div class="row">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="notifications">
+        </ng2-smart-table>
+      </div>
+      <div class="row">
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalNotifications"></app-pagination>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-12 text-right">
+          <button
+            class="btn btn-secondary active mx-2"
+            type="button"
+            (click)="resetScreen()">
+            Consultar / Crear Envío
+          </button>
+          <confirm-button
+            [loading]="loading"
+            [text]="queryMode ? 'Imprimir' : 'Guardar'"
+            [loadingText]="
+              queryMode ? 'Imprimiendo...' : 'Guardando...'
+            "></confirm-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

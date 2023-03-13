@@ -1,0 +1,35 @@
+<div class="row">
+  <div class="col-6">
+    <h5>Lineamientos</h5>
+  </div>
+</div>
+<div class="row mt-3 mb-5">
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Fecha Primera Revisi&oacute;n&#58;
+      <span>{{ guidelinesInfo.firstRevisionDate }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Fecha Segunda Revisi&oacute;n&#58;
+      <span>{{ guidelinesInfo.secondRevisionDate }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Observaciones&#58; <span>{{ guidelinesInfo.observations }}</span></label
+    >
+  </div>
+</div>
+<ng-scrollbar [track]="'all'" [autoHeightDisabled]="false">
+  <div [class]="loading ? 'table-loading' : 'guidelines-table'">
+    <ng2-smart-table
+      id="guidelinesTable"
+      [attr.class]="'table-bordered'"
+      [settings]="guidelinesSettings"
+      [source]="guidelinesColumns">
+    </ng2-smart-table>
+  </div>
+</ng-scrollbar>
+<app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>

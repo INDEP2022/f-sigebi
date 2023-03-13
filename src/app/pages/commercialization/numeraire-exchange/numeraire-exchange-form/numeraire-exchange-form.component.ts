@@ -1,12 +1,15 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { HistoricalGoodSituationComponent } from 'src/app/pages/general-processes/historical-good-situation/historical-good-situation/historical-good-situation.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { TableSelectComponent } from '../components/table-select/table-select.component';
 import {
@@ -176,6 +179,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   constructor(
     private modalRef: BsModalRef,
+    private modalService: BsModalService,
     private fb: FormBuilder,
     private excelService: ExcelService
   ) {
@@ -184,8 +188,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoods({ inicio: 1, text: '' });
-    this.getAccounts({ inicio: 1, text: '' });
+    this.getGoods({ page: 1, text: '' });
+    this.getAccounts({ page: 1, text: '' });
     this.expenseSettings.columns = EXPENSE_COLUMNS;
     this.expenseSettings.columns = {
       ...this.expenseSettings.columns,
@@ -224,7 +228,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       commissionTax: [null, [Validators.required]],
       account: [null, [Validators.required]],
       depositDate: [null, [Validators.required]],
-      depositReferece: [null, [Validators.required]],
+      depositReferece: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       depositAmount: [null, [Validators.required]],
       exchangeType: [null, [Validators.required]],
       expenses: this.fb.array([null]),
@@ -450,5 +457,29 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.expenseTestData
     );
     console.log(this.numeraireExchangeForm.value);
+  }
+  getAttributes() {
+    this.loading = true;
+    // this.attributes
+    //   .getAll(this.params.getValue())
+    //   .subscribe({
+    //     next: response => {
+    //       this.attributes = response.data;
+    //       this.totalItems = response.count;
+    //       this.loading = false;
+    //     },
+    //     error: error => (this.loading = false),
+    //   });
+  }
+
+  openForm(attributesFinancialInfo?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      attributesFinancialInfo,
+      callback: (next: boolean) => {
+        if (next) this.getAttributes();
+      },
+    };
+    this.modalService.show(HistoricalGoodSituationComponent, modalConfig);
   }
 }

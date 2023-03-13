@@ -1,0 +1,226 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-1">
+          <form-field [control]="form.get('id')" label="No.">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('keysProceedings')"
+            label="Oficio de Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keysProceedings" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('typeProceedings')"
+            label="Oficio de alcance">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeProceedings" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('datePhysicalReception')"
+            label="Fecha recepci&oacute;n">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="datePhysicalReception"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('dateDeliveryGood')"
+            label="Fecha de alcance">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateDeliveryGood"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('dateCaptureHc')"
+            label="Fecha de integraci&oacute;n">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateCaptureHc"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field [control]="form.get('statusProceedings')" label="Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusProceedings"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getProceedingsByKey()">
+            Sacar bienes
+          </button>
+        </div>
+        <div
+          class="col-md-2"
+          *ngIf="form.get('keysProceedings').value !== null">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid">
+            Crear nuevo
+          </button>
+        </div>
+        <div class="col-md-2" *ngIf="form.get('id').value !== null">
+          <button
+            (click)="cleanForm()"
+            type="button"
+            class="btn btn-sm btn-danger active">
+            Limpiar
+          </button>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-lg-12">
+          <div class="form-group row">
+            <div class="row"></div>
+            <div class="col-md-6 table-responsive">
+              <ng2-smart-table
+                [settings]="settings2"
+                [source]="dataActRec"></ng2-smart-table>
+            </div>
+            <div class="col-md-6 table-responsive">
+              <ng2-smart-table
+                [settings]="settings3"
+                [source]="dataDictam"></ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('universalFolio')"
+            label="Folio de escaneo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="universalFolio" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjRequest()">
+            Solicitud
+          </button>
+        </div>
+
+        <div class="col-md-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjScan()">
+            Escanear
+          </button>
+        </div>
+
+        <div class="col-md-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="openPrevImg()">
+            Ver IMG
+          </button>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('observations')" label="Obervaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              rows="3"></textarea>
+          </form-field>
+        </div>
+
+        <div class="row">
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="goodPDS">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+        <div class="row">
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="goodPDS">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-8">
+          <p class="d-flex justify-content-center">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+            <span class="text-danger"
+              ><i class="fa fa-square"></i> No disponible</span
+            >
+          </p>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn-sm btn-secondary active">
+            Insertar v&iacute;a archivo plano
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn-sm btn-secondary active">
+            Insertar v&iacute;a rastreador
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

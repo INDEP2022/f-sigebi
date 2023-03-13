@@ -1,0 +1,218 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="clarificationForm" class="form-material">
+      <div>
+        <div class="row pt-4" *ngIf="!withDocumentation">
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('receiver')"
+              label="&#42;Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="receiver" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('senderCharge')"
+              label="&#42;Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="senderCharge" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="clarificationForm.get('receiverCharge')"
+              label="&#42;Cargo Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="receiverCharge" />
+            </form-field>
+          </div>
+          <div class="col-md-4" *ngIf="isInterconnection">
+            <form-field
+              [control]="clarificationForm.get('keyClarification')"
+              label="&#42;Clave Oficio Aclaraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="keyClarification" />
+            </form-field>
+          </div>
+          <div class="col-md-4" *ngIf="isInterconnection">
+            <form-field
+              [control]="clarificationForm.get('idTransmitter')"
+              label="ID Emisor">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idTransmitter" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('clarification')"
+              label="Aclaraci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="clarification"></textarea>
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('consistent')"
+              label="Consistente en">
+              <textarea
+                class="form-control"
+                formControlName="consistent"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-4" *ngIf="isInterconnection">
+            <form-field
+              [control]="clarificationForm.get('finalParagraph')"
+              label="P&aacute;rrafo Final">
+              <textarea
+                class="form-control"
+                formControlName="finalParagraph"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-4" *ngIf="isInterconnection">
+            <form-field
+              [control]="clarificationForm.get('initialParagraph')"
+              label="P&aacute;rrafo Inicial">
+              <textarea
+                class="form-control"
+                formControlName="initialParagraph"></textarea>
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('captureUserArea')"
+              label="&Aacute;rea del Usuario Captura">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="captureUserArea" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('emailNotifiSat')"
+              label="Email Notificaci&oacute;n SAT">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="emailNotifiSat" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('nameSender')"
+              label="&#42;Nombre Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameSender" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4" *ngIf="withDocumentation">
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('keyClarification')"
+              label="&#42;Clave Oficio Aclaraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="keyClarification" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('nameSender')"
+              label="&#42;Nombre Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameSender" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('captureUserArea')"
+              label="&Aacute;rea del Usuario Captura">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="captureUserArea" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('emailNotifiSat')"
+              label="Email Notificaci&oacute;n SAT">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="emailNotifiSat" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('senderCharge')"
+              label="&#42;Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="senderCharge" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="clarificationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

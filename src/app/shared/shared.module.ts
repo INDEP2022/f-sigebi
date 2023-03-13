@@ -8,6 +8,7 @@ import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CardComponent } from './components/card/card.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
@@ -24,6 +25,12 @@ import { SearchBarSimpleComponent } from './components/search-bar-simple/search-
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { SeeMoreComponent } from './components/see-more/see-more.component';
 import { SelectComponent } from './components/select/select.component';
+import { AutoSizeDirective } from './directives/autosize.directive';
+import { MaxLengthDirective } from './directives/maxlength.directive';
+import { NumbersFilterDirective } from './directives/numbers-filter.directive';
+import { PermissionsDirective } from './directives/permissions.directive';
+/*Redux NgRX Global Vars Store*/
+import { GlobalVarsModule } from './global-vars/global-vars.module';
 
 @NgModule({
   declarations: [
@@ -43,6 +50,10 @@ import { SelectComponent } from './components/select/select.component';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    PermissionsDirective,
+    MaxLengthDirective,
+    NumbersFilterDirective,
+    AutoSizeDirective,
   ],
   imports: [
     CommonModule,
@@ -53,6 +64,8 @@ import { SelectComponent } from './components/select/select.component';
     PaginationModule,
     Ng2SmartTableModule,
     BsDatepickerModule.forRoot(),
+    NgScrollbarModule,
+    GlobalVarsModule,
   ],
   exports: [
     ColumnsSelectComponent,
@@ -77,6 +90,12 @@ import { SelectComponent } from './components/select/select.component';
     CommonModule,
     CheckboxElementComponent,
     CheckboxColumnComponent,
+    NgScrollbarModule,
+    PermissionsDirective,
+    GlobalVarsModule,
+    MaxLengthDirective,
+    NumbersFilterDirective,
+    AutoSizeDirective,
   ],
 })
 export class SharedModule {

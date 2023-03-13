@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="typeDoctoForm">
+    <form [formGroup]="typeDoctoForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field [control]="typeDoctoForm.get('id')" label="Identificador">
@@ -14,7 +14,7 @@
         <div class="col-md-12">
           <form-field
             [control]="typeDoctoForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               rows="1"
               class="form-control"
@@ -23,7 +23,9 @@
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="typeDoctoForm.get('version')" label="Version">
+          <form-field
+            [control]="typeDoctoForm.get('version')"
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
@@ -32,11 +34,11 @@
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="typeDoctoForm.get('estatus')" label="Estatus">
+          <form-field [control]="typeDoctoForm.get('status')" label="Estatus">
             <input
               type="number"
               class="form-control"
-              formControlName="estatus" />
+              formControlName="status" />
           </form-field>
         </div>
       </div>

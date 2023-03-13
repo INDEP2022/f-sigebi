@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AppraisesService } from '../../../../../app/core/services/ms-appraises/appraises.service';
 import { APPRAISAL_COLUMNS } from './appraisal-monitor-columns';
 
 @Component({
@@ -21,18 +21,18 @@ export class AppraisalMonitorComponent extends BasePage implements OnInit {
 
   constructor(
     private modalService: BsModalService,
-    private fb: FormBuilder // private appraisalService: AppraisalService
+    private fb: FormBuilder,
+    private appraisalService: AppraisesService
   ) {
     super();
     this.settings.columns = APPRAISAL_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAppraisals());
-
     this.prepareForm();
   }
 
@@ -43,15 +43,15 @@ export class AppraisalMonitorComponent extends BasePage implements OnInit {
   }
 
   getAppraisals() {
-    // this.loading = true;
-    // this.bankService.getAll(this.params.getValue()).subscribe(
-    //   response => {
-    //     this.lawyers = response.data;
-    //     this.totalItems = response.count;
-    //     this.loading = false;
-    //   },
-    //   error => (this.loading = false)
-    // );
+    this.loading = true;
+    this.appraisalService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.appraisals = data.data;
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   add() {

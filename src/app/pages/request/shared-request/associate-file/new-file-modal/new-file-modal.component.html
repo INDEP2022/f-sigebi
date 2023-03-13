@@ -1,0 +1,274 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nueva {{ title }}</h5>
+  </div>
+  <div body>
+    <form
+      class="form-material pt-0 mt-n5"
+      [formGroup]="coverForm"
+      *ngIf="!coverGenerated">
+      <h6>Datos de la Car&aacute;tula</h6>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field [control]="coverForm.get('user')">
+            <ngx-select
+              [form]="coverForm"
+              [data]="userItems"
+              value="id"
+              bindLabel="name"
+              label="*Usuario"
+              (fetchItems)="getUsers($event)"
+              control="user">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Transferente&#58; </strong
+            >{{ coverForm.controls['transferee'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field [control]="coverForm.get('unit')">
+            <ngx-select
+              [form]="coverForm"
+              [data]="unitItems"
+              value="id"
+              bindLabel="description"
+              label="*Unidad"
+              (fetchItems)="getUnits($event)"
+              control="unit">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">ddcId&#58; </strong
+            >{{ coverForm.controls['ddcId'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field [control]="coverForm.get('file')">
+            <ngx-select
+              [form]="coverForm"
+              [data]="fileItems"
+              value="id"
+              bindLabel="description"
+              label="*Archivo"
+              (fetchItems)="getFiles($event)"
+              control="file">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Codificaci&oacute;n&#58; </strong
+            >{{ coverForm.controls['coding'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="coverForm.get('disposition')"
+            label="*Disposición">
+            <ng-select
+              formControlName="disposition"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option *ngFor="let d of dispositions" value="d.id">{{
+                d.description
+              }}</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Periodo de Reserva&#58; </strong
+            >{{ coverForm.controls['reservePeriod'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field [control]="coverForm.get('publicOfficial')">
+            <ngx-select
+              [form]="coverForm"
+              [data]="officialItems"
+              value="id"
+              bindLabel="name"
+              label="*Funcionario"
+              (fetchItems)="getOfficials($event)"
+              control="publicOfficial">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Clasificaci&oacute;n&#58; </strong
+            >{{ coverForm.controls['clasificacition'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="coverForm.get('fileDate')"
+            label="*Fecha Expediente">
+            <input
+              type="text"
+              formControlName="fileDate"
+              class="form-control"
+              [maxDate]="maxDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Secci&oacute;n Documental&#58; </strong
+            >{{ coverForm.controls['documentSection'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="coverForm.get('reserveDate')"
+            label="Fecha de Reserva">
+            <input
+              type="text"
+              formControlName="reserveDate"
+              class="form-control"
+              [maxDate]="maxDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Serie Documental&#58; </strong
+            >{{ coverForm.controls['documentSeries'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field [control]="coverForm.get('pages')" label="&#42;Fojas">
+            <input type="text" formControlName="pages" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13"
+              >Vigencia del Archivo de Tr&aacute;mite&#58; </strong
+            >{{ coverForm.controls['procedureFileLifetime'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="coverForm.get('dossiers')"
+            label="&#42;Legajos">
+            <input
+              type="text"
+              formControlName="dossiers"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13"
+              >Vigencia del Archivo de Concentraci&oacute;n&#58; </strong
+            >{{ coverForm.controls['concentrationFileLifetime'].value }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="coverForm.get('regionalDelegation')"
+            label="Delegación Regional">
+            <input
+              type="text"
+              formControlName="regionalDelegation"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-13 mt-2">
+            <strong class="font-size-13">Valores Documentales&#58; </strong
+            >{{ coverForm.controls['documentValues'].value }}
+          </p>
+        </div>
+      </div>
+    </form>
+    <div class="pt-0 mt-n5" *ngIf="coverGenerated">
+      <h6>Datos del Expediente</h6>
+      <div class="d-flex flex-column">
+        <div class="text-center">
+          <p class="font-size-13">
+            <strong class="font-size-13">No&#46; Expediente&#58; </strong
+            >{{ fileInfo.fileNo }}
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="font-size-13">
+            <strong class="font-size-13">Fecha Expediente&#58; </strong
+            >{{ fileInfo.fileDate }}
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="font-size-13">
+            <strong class="font-size-13">Usuario Creaci&oacute;n&#58; </strong
+            >{{ fileInfo.userCreate }}
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="font-size-13">
+            <strong class="font-size-13">Fecha Creaci&oacute;n&#58; </strong
+            >{{ fileInfo.creationDate }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3" *ngIf="!coverGenerated">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!coverForm.valid"
+          (click)="confirm()">
+          Generar Car&aacute;tula
+        </button>
+      </div>
+      <div class="m-3" *ngIf="!coverGenerated">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3" *ngIf="coverGenerated">
+        <button
+          type="button"
+          class="btn btn-secondary active"
+          (click)="openCover()">
+          Ver Car&aacute;tula
+        </button>
+      </div>
+      <div class="m-3" *ngIf="coverGenerated">
+        <button
+          type="button"
+          class="btn btn-success active"
+          (click)="handleSuccess()">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

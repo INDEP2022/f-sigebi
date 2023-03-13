@@ -1,0 +1,35 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Confirmaci&oacute;n</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <div class="row">
+      <p>
+        &#191;Desea rechazar la orden de servicio con folio&#58;
+        METROPOLITANA&#45;SAT&#45;1350&#45;OS&#63;
+      </p>
+      <form [formGroup]="form">
+        <form-field
+          [control]="form.get('comments')"
+          label="Comentario de rechazo">
+          <textarea class="form-control" formControlName="comments"></textarea>
+        </form-field>
+      </form>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

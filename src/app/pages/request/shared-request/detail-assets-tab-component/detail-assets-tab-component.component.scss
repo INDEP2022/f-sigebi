@@ -1,0 +1,27 @@
+/* label {
+    color: #7d788d;
+
+    span {
+        font-size: smaller;
+        font-weight: 600;
+    }
+} */
+
+.custom-label {
+  color: black; //#7d788d;
+  font-weight: 500;
+  padding-left: 1.2%;
+  font-size: small;
+
+  span {
+    font-size: smaller;
+    font-weight: 400;
+  }
+}
+
+.msg-required {
+  color: blue;
+  span {
+    color: #9d2449;
+  }
+}

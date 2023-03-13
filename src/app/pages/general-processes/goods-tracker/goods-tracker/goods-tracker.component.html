@@ -1,0 +1,125 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="col-md-5">
+      <h5 class="title">RASTREADOR POR BIENES Y NOTIFICACIONES</h5>
+    </div>
+    <div class="buttons d-flex">
+      <form-check for="irregular-goods" label="Bienes Irregulares">
+        <input type="checkbox" name="" id="irregular-goods" />
+      </form-check>
+      <form-check for="galery" label="Ver Fotos">
+        <input type="checkbox" name="" id="galery" />
+      </form-check>
+      <div>
+        <button (click)="getAll()" class="btn btn-primary btn-sm active">
+          Todos los registros <i class="fa fa-search ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <accordion [isAnimated]="true">
+          <accordion-group [isOpen]="true">
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Clasificación de Bienes (Tipo, Subtipo, Ssubtipo, Sssubtipo)
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <clasification-filter
+              [form]="form"
+              [(subloading)]="subloading"
+              [params]="params"
+              (onSubmit)="searchGoods($event)"></clasification-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Datos del Bien
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <data-filter
+              [form]="form"
+              [params]="params"
+              [(subloading)]="subloading"
+              (onSubmit)="searchGoods($event)"></data-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Expediente Notificación y Dictamen
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <record-notification-filter
+              [form]="form"
+              [(subloading)]="subloading"
+              (onSubmit)="searchGoods($event)"></record-notification-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Actas de Recepción y Actas o Procesos de Destino
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <certificates-filter
+              [form]="form"
+              (onSubmit)="searchGoods($event)"></certificates-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Catálogo de Transferente | Emisora | Autoridad
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <transfer-autority-filter
+              [form]="form"
+              (onSubmit)="searchGoods($event)"></transfer-autority-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Ubicación del Bien
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <location-filter
+              [form]="form"
+              (onSubmit)="searchGoods($event)"></location-filter>
+          </accordion-group>
+        </accordion>
+      </div>
+    </div>
+  </div>
+</app-card>
+<div #scrollTable></div>
+<goods-table
+  [loading]="loading"
+  *ngIf="showTable"
+  [goods]="goods"
+  [params]="_params"
+  [totalItems]="totalItems"></goods-table>

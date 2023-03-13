@@ -1,0 +1,46 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        Generaci&oacute;n de ficha comercial e ingresos y egresos
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form-field [control]="form.get('noGood')" label="No. Bien">
+            <input type="text" class="form-control" formControlName="noGood" />
+          </form-field>
+          <!-- <app-goods-table-shared [form]="form" [disabled]="statusActaValue !== 'ABIERTA'"></app-goods-table-shared> -->
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Ficha comercial"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="fcom()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <confirm-button
+          text="Ficha t&eacute;cnica"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="ftec()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <confirm-button
+          text="Ingresos y Egresos"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="fie()"></confirm-button>
+      </div>
+    </div>
+  </div>
+</app-card>

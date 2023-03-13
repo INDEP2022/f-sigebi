@@ -1,5 +1,3 @@
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-
-export class DefaultSelect<T> implements IListResponse<T> {
+export class DefaultSelect<T = any> {
   constructor(public data: any[] = [], public count: number = 0) {}
 }

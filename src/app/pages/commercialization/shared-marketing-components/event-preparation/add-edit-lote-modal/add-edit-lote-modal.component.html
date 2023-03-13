@@ -1,0 +1,147 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="loteForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="loteForm.get('id')" label="ID Lote">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="loteForm.get('eventId')" label="ID Event">
+            <input type="text" class="form-control" formControlName="eventId" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="loteForm.get('publicLot')"
+            label="Lote Público">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="publicLot" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="loteForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="loteForm.get('baseValue')" label="Precio Base">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="baseValue" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="loteForm.get('customerId')" label="Cliente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="customerId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="loteForm.get('transferenceNumber')"
+            label="No. Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferenceNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="loteForm.get('warrantyPrice')"
+            label="Precio Garantía">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="warrantyPrice" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="loteForm.get('finalPrice')"
+            label="Precio Final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="finalPrice" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="loteForm.get('referential')"
+            label="Referencial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="referential" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="loteForm.get('statusVtantId')"
+            label="ID Estatus VTA">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusVtantId" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="loteForm.get('assignedEs')" label="Asignado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="assignedEs" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="loteForm.get('scrapEs')" label="Es Chatarra">
+            <input type="text" class="form-control" formControlName="scrapEs" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="loteForm.get('location')" label="Ubicación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button (click)="close()" [disabled]="!loteForm.valid">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

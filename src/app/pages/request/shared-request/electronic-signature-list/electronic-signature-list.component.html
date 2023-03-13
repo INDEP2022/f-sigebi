@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Listado de firmantes electr&oacute;nicos</h5>
+  </div>
+  <div body>
+    <div class="btn-toolbar">
+      <button (click)="send()" class="btn btn-primary btn-sm active">
+        <i class="fa fa-check-circle"></i> Enviar a firmar
+      </button>
+      <button (click)="next()" class="btn btn-info btn-sm active">
+        <i class="fa fa-arrow-right"></i> Paso siguiente
+      </button>
+    </div>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Cargo</th>
+          <th scope="col">Estatus registro</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gustavo Angel</td>
+          <td>Autorizador</td>
+          <td>Datos incompletos</td>
+          <td class="text-center">
+            <a style="cursor: pointer" (click)="upload()"
+              ><i class="fa fa-key"></i> Cargar archivos</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

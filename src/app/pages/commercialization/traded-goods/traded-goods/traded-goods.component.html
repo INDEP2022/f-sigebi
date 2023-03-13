@@ -1,0 +1,66 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Reporte de bienes comercializados</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared [form]="form"></app-delegation-shared>
+        </div>
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('typeEvent')"
+              label="Tipo de evento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="typeEvent" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="form.get('PF_FECFIN')" label="Hasta">
+              <input
+                formControlName="PF_FECFIN"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field [control]="form.get('PF_FECINI')" label="Desde">
+              <input
+                formControlName="PF_FECINI"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

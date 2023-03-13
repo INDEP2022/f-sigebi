@@ -1,0 +1,32 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Asociaci&oacute;n de notifiaciones a expedientes</h5>
+    <div>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="save()"
+          [loadingText]="loadingText"></confirm-button>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-12">
+        <div [ngClass]="{ 'table-loading': loading }">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="notifications"></ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

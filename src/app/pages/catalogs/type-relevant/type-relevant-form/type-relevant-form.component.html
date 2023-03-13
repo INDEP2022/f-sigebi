@@ -3,24 +3,23 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="typeRelevantForm">
+    <form [formGroup]="typeRelevantForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="typeRelevantForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="typeRelevantForm.get('version')"
-            label="Versión">
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
@@ -30,7 +29,7 @@
         <div class="col-md-6">
           <form-field
             [control]="typeRelevantForm.get('noPhotography')"
-            label="Número fotografia">
+            label="N&uacute;mero fotograf&iacute;a">
             <input
               type="number"
               class="form-control"
@@ -45,8 +44,7 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="detailsPhotography"
-              placeholder="Detalle"></textarea>
+              formControlName="detailsPhotography"></textarea>
           </form-field>
         </div>
       </div>

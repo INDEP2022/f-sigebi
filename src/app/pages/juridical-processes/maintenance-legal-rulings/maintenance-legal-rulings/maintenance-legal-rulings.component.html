@@ -1,0 +1,82 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DICTAMINACIONES</h5>
+  </div>
+
+  <div body>
+    <app-rulings></app-rulings>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BIENES</h5>
+  </div>
+
+  <div body>
+    <app-goods></app-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DOCUMENTOS BIEN</h5>
+  </div>
+
+  <div body>
+    <app-documentation-goods></app-documentation-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">OFICIO</h5>
+  </div>
+
+  <div body>
+    <app-document-trade></app-document-trade>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MÁS INFORMACIÓN</h5>
+  </div>
+
+  <div body>
+    <app-more-information></app-more-information>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">COPIAS DE OFICIO</h5>
+  </div>
+
+  <div body>
+    <app-copy-documentation-goods></app-copy-documentation-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">JUSTIFICACIÓN</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('justificacion')"
+            label="Justificación">
+            <textarea
+              rows="6"
+              class="form-control"
+              formControlName="justificacion"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

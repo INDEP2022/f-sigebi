@@ -1,0 +1,491 @@
+<form
+  [formGroup]="form"
+  (submit)="mostrarInfo()"
+  class="container-fluid form-material">
+  <div class="row w-100">
+    <!-- <div class="col-sm-12 col-12 col-md-6 p-2 pr-5">
+            <div class="row"> -->
+
+    <!-- DATOS DEL VOLANTE> -->
+    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+      <h6 class="title">DATOS DEL VOLANTE</h6>
+      <hr class="row" />
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1">
+      <form-field [control]="form.get('noVolante')" label="No Volante">
+        <input type="number" class="form-control" formControlName="noVolante" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1">
+      <form-field
+        [control]="form.get('fechaRecepcion')"
+        label="Fec&#46; Recepción">
+        <input
+          class="form-control"
+          formControlName="fechaRecepcion"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1">
+      <form-field
+        [control]="form.get('consecutivoDiario')"
+        label="Consecutivo Diario">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="consecutivoDiario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field
+        [control]="form.get('actaCircunst')"
+        label="Acta Circunst&#46;">
+        <input class="form-control" formControlName="actaCircunst" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field
+        [control]="form.get('averigPrevia')"
+        label="Averig&#46; Previa">
+        <input class="form-control" formControlName="averigPrevia" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+        <input class="form-control" formControlName="causaPenal" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1">
+      <form-field [control]="form.get('noAmparo')" label="No&#46; Amparo">
+        <input class="form-control" formControlName="noAmparo" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('tocaPenal')" label="Toca Penal">
+        <input class="form-control" formControlName="tocaPenal" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1">
+      <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
+        <input class="form-control" formControlName="noOficio" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1">
+      <form-field [control]="form.get('fechaOficio')" label="Fecha Oficio">
+        <input class="form-control" formControlName="fechaOficio" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-1">
+      <form-field
+        [control]="form.get('descripcionAsunto')"
+        label="Descripci&oacute;n del Asunto">
+        <textarea
+          fullWidth
+          class="form-control"
+          formControlName="descripcionAsunto"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-1">
+      <div class="row w-100 pl-4">
+        <label class="form-control-label">Tipo Volante</label>
+        <div
+          class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2 text-center"
+          *ngFor="let option of optionsTipoVolante">
+          <form-radio label="{{ option.label }}">
+            <input
+              type="radio"
+              formControlName="tipoVolante"
+              [value]="option.value" />
+          </form-radio>
+        </div>
+      </div>
+    </div>
+    <!-- DATOS DEL VOLANTE> -->
+
+    <!-- DATOS DEL EXPEDIENTE> -->
+    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+      <h6 class="title">DATOS DEL EXPEDIENTE</h6>
+      <hr class="row" />
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 offset-md-6 p-1">
+      <form-field
+        [control]="form.get('noExpediente')"
+        label="No&#46; Expediente">
+        <!-- <label class="label w-100">No. Expediente</label> -->
+        <input
+          type="number"
+          class="form-control"
+          formControlName="noExpediente" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-1">
+      <form-field [control]="form.get('remitente')" label="Remitente">
+        <!-- <label class="label w-100">Remitente</label> -->
+        <input class="form-control" formControlName="remitente" />
+      </form-field>
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-1 p-1">
+                    <div class="form-group">
+                        <input id="idAsunto" class="form-control"
+                                placeholder="Asunto">
+                        <label class="form-control-label w-100">Asunto ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="asuntoName"
+        label="Asunto"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="asunto"></ngx-select>
+      <!-- <form-field [control]="form.get('asunto')" label="Asunto">
+                        <input class="form-control" formControlName="asunto"
+                                placeholder="Asunto">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-1 p-1">
+                    <div class="form-group">
+                        <input id="idDesahogo" class="form-control"
+                                placeholder="Desahogo Asunto">
+                        <label class="form-control-label w-100">Desahogo Asunto ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="desahogoAsuntoName"
+        label="Desahogo Asunto"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="desahogoAsunto"></ngx-select>
+      <!-- <form-field [control]="form.get('desahogoAsunto')" label="Desahogo Asunto">
+                        <input class="form-control" formControlName="desahogoAsunto"
+                                placeholder="Desahogo Asunto">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-1 p-1">
+                    <div class="form-group">
+                        <input id="idCiudad" class="form-control"
+                                placeholder="Ciudad">
+                        <label class="form-control-label w-100">Ciudad ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="desahogoAsuntoName"
+        label="Ciudad"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="ciudad"></ngx-select>
+      <!-- <form-field [control]="form.get('ciudad')" label="Ciudad">
+                        <input class="form-control" formControlName="ciudad"
+                                placeholder="Ciudad">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-1 p-1">
+                    <div class="form-group">
+                        <input id="idEntidadFederativa" class="form-control"
+                                placeholder="Entidad Federativa">
+                        <label class="form-control-label w-100">Entidad Federativa ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="entidadFederativaName"
+        label="Entidad Federativa"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="entidadFederativa"></ngx-select>
+      <!-- <form-field [control]="form.get('entidadFederativa')" label="Entidad Federativa">
+                        <input class="form-control" formControlName="entidadFederativa"
+                                placeholder="Entidad Federativa">
+                        
+                    </form-field> -->
+    </div>
+    <!-- </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2 pl-4">
+            <div class="row"> -->
+    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+      <h6 class="title">DATOS DEL DESTINO</h6>
+      <hr class="row" />
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 offset-md-3 p-1">
+      <form-field [control]="form.get('claveUnica')" label="Clave Única">
+        <!-- <label class="label w-100">Clave Única</label> -->
+        <input class="form-control" formControlName="claveUnica" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field
+        [control]="form.get('areaDestino')"
+        label="&Aacute;rea Destino">
+        <input class="form-control" formControlName="areaDestino" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-1">
+      <form-field [control]="form.get('destinatario')" label="Destinatario">
+        <input class="form-control" formControlName="destinatario" />
+      </form-field>
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idTransferente" class="form-control"
+                                placeholder="Transferente ID">
+                        <label class="form-control-label w-100">Transferente ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="transferenteName"
+        label="Transferente"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="transferente"></ngx-select>
+      <!-- <form-field [control]="form.get('transferente')" label="Transferente">
+                        <input class="form-control" formControlName="transferente"
+                                placeholder="Transferente">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idEmisora" class="form-control"
+                                placeholder="Emisora ID">
+                        <label class="form-control-label w-100">Emisora ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="emisoraName"
+        label="Emisora"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="emisora"></ngx-select>
+      <!-- <form-field [control]="form.get('emisora')" label="Emisora">
+                        <input class="form-control" formControlName="emisora"
+                                placeholder="Emisora">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idAutoridad" class="form-control"
+                                placeholder="Autoridad ID">
+                        <label class="form-control-label w-100">Autoridad ID</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="autoridadName"
+        label="Autoridad"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="autoridad"></ngx-select>
+      <!-- <form-field [control]="form.get('autoridad')" label="Autoridad">
+                        <input class="form-control" formControlName="autoridad"
+                                placeholder="Autoridad">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idAutoridadEmisora" class="form-control"
+                                placeholder="Autoridad Emisora">
+                        <label class="form-control-label w-100">Autoridad Emisora</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="autoridadEmisoraName"
+        label="Autoridad Emisora"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="autoridadEmisora"></ngx-select>
+      <!-- <form-field [control]="form.get('autoridadEmisora')" label="Autoridad Emisora">
+                        <input class="form-control" formControlName="autoridadEmisora"
+                                placeholder="Autoridad Emisora">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idMinisterioPublico" class="form-control"
+                                placeholder="Ministerio Publico">
+                        <label class="form-control-label w-100">Ministerio Publico</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="ministerioPublicoName"
+        label="Ministerio P&uacute;blico"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="ministerioPublico"></ngx-select>
+      <!-- <form-field [control]="form.get('ministerioPublico')" label="Ministerio Público">
+                        <input class="form-control" formControlName="ministerioPublico"
+                                placeholder="Ministerio Publico">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idJuzgado" class="form-control"
+                                placeholder="Juzgado">
+                        <label class="form-control-label w-100">Juzgado</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="juzgadoName"
+        label="Juzgado"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="juzgado"></ngx-select>
+      <!-- <form-field [control]="form.get('juzgado')" label="Juzgado">
+                        <input class="form-control" formControlName="juzgado"
+                                placeholder="Juzgado">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idIndiciado" class="form-control"
+                                placeholder="Indiciado">
+                        <label class="form-control-label w-100">Indiciado</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="indiciadoName"
+        label="Indiciado"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="indiciado"></ngx-select>
+      <!-- <form-field [control]="form.get('indiciado')" label="Indiciado">
+                        <input class="form-control" formControlName="indiciado"
+                                placeholder="Indiciado">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idDelito" class="form-control"
+                                placeholder="Delito">
+                        <label class="form-control-label w-100">Delito</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="delitoName"
+        label="Delito"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="delito"></ngx-select>
+      <!-- <form-field [control]="form.get('delito')" label="Delito">
+                        <input class="form-control" formControlName="delito"
+                                placeholder="Delito">
+                        
+                    </form-field> -->
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
+                    <div class="form-group">
+                        <input id="idViaRecepcion" class="form-control"
+                                placeholder="Vía Recepción">
+                        <label class="form-control-label w-100">Vía Recepción</label>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <ngx-select
+        [data]="items"
+        bindLabel="viaRecepcionName"
+        label="V&iacute;a Recepci&oacute;n"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="viaRecepcion"></ngx-select>
+      <!-- <form-field [control]="form.get('viaRecepcion')" label="Vía Recepción">
+                        <input class="form-control" formControlName="viaRecepcion"
+                                placeholder="Vía Recepción">
+                        
+                    </form-field> -->
+    </div>
+    <div class="col-sm-12 col-12 col-md-9 p-1">
+      <form-field
+        [control]="form.get('justificacionConocimiento')"
+        label="Justificaci&oacute;n del Conocimiento">
+        <textarea
+          class="form-control"
+          formControlName="justificacionConocimiento"></textarea>
+      </form-field>
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <div class="form-group">
+                        <button type="submit" status="primary" [disabled]="!form.valid">
+                            Resignación de Turno
+                        </button>
+                    </div>
+                </div> -->
+    <div class="col-sm-12 col-12 col-md-12 p-1 text-center">
+      <button type="submit" class="btn btn-primary btn-sm active">
+        Resignaci&oacute;n de Turno
+      </button>
+      <button
+        *ngIf="botonOficio"
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="oficioRelacionado()">
+        Oficio Relacionado
+      </button>
+      <button
+        *ngIf="botonCaptura"
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="capturaCopias()">
+        Captura de Copias
+      </button>
+    </div>
+    <!-- <div *ngIf="botonOficio" class="col-sm-12 col-12 col-md-12 p-1">
+                    <div class="form-group">
+                        <button *ngIf="botonOficio" type="button" status="primary" (click)="oficioRelacionado()">
+                            Oficio Relacionado
+                        </button>
+                    </div>
+                </div>
+                <div *ngIf="botonCaptura" class="col-sm-12 col-12 col-md-12 p-1">
+                    <div class="form-group">
+                        <button *ngIf="botonCaptura" type="button" status="primary" (click)="capturaCopias()">
+                            Captura de Copias
+                        </button>
+                    </div>
+                </div> -->
+    <!-- </div>
+        </div> -->
+  </div>
+</form>

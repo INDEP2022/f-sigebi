@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -23,8 +23,9 @@ import { IBank } from 'src/app/core/models/catalogs/bank.model';
 export class BanksSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() bankField: string = 'bank';
-
   @Input() showBanks: boolean = true;
+  @Input() labelName: string = 'Bancos';
+  @Output() nameBank: EventEmitter<string> = new EventEmitter<string>();
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   banks = new DefaultSelect<IBank>();
@@ -33,14 +34,32 @@ export class BanksSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let bankCode = this.form.controls[this.bankField].value;
+    if (bankCode !== null && this.form.contains('bankName')) {
+      let name = this.form.controls['bankName'].value;
+      this.banks = new DefaultSelect([
+        {
+          bankCode: bankCode,
+          name: name,
+        },
+      ]);
+    }
+
+    this.form.get('cveBank').valueChanges.subscribe(data => {
+      if (data) {
+        this.service.getById(data).subscribe(resp => {
+          this.banks = new DefaultSelect([resp], 1);
+          this.nameBank.next(resp.name);
+        });
+      }
+    });
+  }
 
   getBanks(params: ListParams) {
-    this.service.getAll(params).subscribe(
-      data => {
-        this.banks = new DefaultSelect(data.data, data.count);
-      },
-      err => {
+    this.service.getAll(params).subscribe({
+      next: resp => (this.banks = new DefaultSelect(resp.data, resp.count)),
+      error: err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -49,11 +68,11 @@ export class BanksSharedComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
-    );
+    });
   }
 
   onBanksChange(type: any) {
+    this.nameBank.next(this.banks.data[0].name);
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }

@@ -1,19 +1,26 @@
+import { DatePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from 'src/environments/environment.prod';
+import { DateFnsModule } from 'ngx-date-fns';
+import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ROOT_REDUCERS } from './app.reducers';
 import { InputFormDirective } from './common/directives/input-form.directive';
+import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
-import { DateFnsModule } from 'ngx-date-fns';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
-import { counterReducer } from './pages/admin/reducer/home.reducer';
-
+import { AffairModule } from './pages/catalogs/affair/affair.module';
+import { LegalAffairModule } from './pages/catalogs/legal-affair/legal-affair.module';
+import { TransferorsModule } from './pages/catalogs/transferors/transferors.module';
+import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
+import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
+import { MailModule } from './pages/parameterization/mail/mail.module';
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
@@ -29,8 +36,11 @@ export function tokenGetter() {
         disallowedRoutes: [],
       },
     }),
-    StoreModule.forRoot({
-      count: counterReducer,
+    StoreModule.forRoot(ROOT_REDUCERS, {
+      runtimeChecks: {
+        strictStateImmutability: false,
+        strictActionImmutability: false,
+      },
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -39,6 +49,12 @@ export function tokenGetter() {
     AppRoutingModule,
     HttpClientModule,
     DateFnsModule.forRoot(),
+    MailModule,
+    CatTransferentModule,
+    AuthorizationKeysModule,
+    AffairModule,
+    LegalAffairModule,
+    TransferorsModule,
   ],
   providers: [
     {
@@ -46,7 +62,13 @@ export function tokenGetter() {
       useClass: HttpErrorsInterceptor,
       multi: true,
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
     JwtInterceptor,
+    DatePipe,
   ],
   bootstrap: [AppComponent],
 })

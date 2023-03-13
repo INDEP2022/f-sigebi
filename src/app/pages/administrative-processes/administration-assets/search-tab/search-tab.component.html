@@ -1,0 +1,58 @@
+<form [formGroup]="searchTabForm" class="form-material">
+  <div class="row">
+    <div class="col-md-6">
+      <app-goods-types-shared
+        [form]="searchTabForm"
+        typeField="tipo"
+        subtypeField="subtipo"
+        ssubtypeField="ssubtipo"
+        sssubtypeField="sssubtipo"
+        (goodSssubtypeChange)="getGoods($event)"></app-goods-types-shared>
+      <div class="form-group row">
+        <goods-filter-shared
+          [form]="searchTabForm"
+          goodField="noBien"
+          [classifGood]="classifGood"></goods-filter-shared>
+      </div>
+      <div class="form-group row">
+        <form-field [control]="searchTabForm.get('estatus')" label="Estatus">
+          <input
+            class="form-control"
+            type="text"
+            name="estatus"
+            formControlName="estatus" />
+        </form-field>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-6">
+          <form-field
+            [control]="searchTabForm.get('situacion')"
+            label="Situacion">
+            <input
+              class="form-control"
+              type="text"
+              name="situacion"
+              formControlName="situacion" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="searchTabForm.get('destino')" label="Destino">
+            <input
+              class="form-control"
+              type="text"
+              name="destino"
+              formControlName="destino" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6"></div>
+  </div>
+  <div>
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <br />
+    <ng-scrollbar [track]="'all'" style="min-height: 120px">
+      <ng2-smart-table [settings]="settings" [source]="list"> </ng2-smart-table>
+    </ng-scrollbar>
+  </div>
+</form>

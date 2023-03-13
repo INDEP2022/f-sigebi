@@ -1,0 +1,34 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccionar Almacén</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <form-field [control]="form.get('warehouse')">
+        <ngx-select
+          [form]="form"
+          control="warehouse"
+          [data]="warehouses"
+          value="name"
+          bindLabel="name"
+          label="Seleccione un almac&eacute;n"
+          (fetchItems)="getWarehouses($event)"></ngx-select>
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

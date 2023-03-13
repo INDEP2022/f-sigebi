@@ -3,8 +3,8 @@ export interface ITypeDocto {
   description?: string;
   userCreation?: string;
   creationDate?: Date;
-  userModificatio?: string;
+  userModification?: string;
   modificatioDate?: Date;
   version?: number;
-  estatus: number;
+  status: number;
 }

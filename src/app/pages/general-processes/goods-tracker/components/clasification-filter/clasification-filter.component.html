@@ -1,0 +1,102 @@
+<form [formGroup]="form" class="form-material" (submit)="search()">
+  <div class="row">
+    <form-field
+      [control]="form.get('satDepartureNum')"
+      label="Fracci&oacute;n Arancelar&iacute;a"
+      class="col-md-2">
+      <input
+        type="number"
+        (change)="fractionChange()"
+        formControlName="satDepartureNum"
+        class="form-control" />
+    </form-field>
+
+    <div class="col-1 mx-0 px-0">
+      <button class="btn btn-small" type="button" (click)="selectFraction()">
+        <i class="fa fa-search text-pink" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <form-field
+      [control]="form.get('clasifNum')"
+      label="N&uacute;mero Clasificaci&oacute;n de Bien"
+      class="col-md-2">
+      <input type="number" formControlName="clasifNum" class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('alternativeClasifNum')"
+      label="Clasificaci&oacute;n Alterna del Bien"
+      class="col-md-4">
+      <input
+        type="text"
+        formControlName="alternativeClasifNum"
+        class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field [control]="form.get('types')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="types"
+        label="Tipo"
+        [data]="types"
+        bindLabel="nameGoodType"
+        (fetchItems)="getTypes($event)"
+        (change)="typesChange($event)"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('subtypes')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="subtypes"
+        label="Subtipo"
+        [data]="subtypes"
+        bindLabel="nameSubtypeGood"
+        (fetchItems)="getSubtypes($event)"
+        (change)="subtypesChange($event)"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('ssubtypes')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="ssubtypes"
+        label="Ssubtipo"
+        [data]="ssubtypes"
+        bindLabel="description"
+        (fetchItems)="getSsubtypes($event)"
+        (change)="ssubtypesChange($event)"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('sssubtypes')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="sssubtypes"
+        label="Sssubtipo"
+        [data]="sssubtypes"
+        value="numClasifGoods"
+        bindLabel="description"
+        (fetchItems)="getSssubtypes($event)"
+        (change)="sssubtypesChange($event)"></ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col-md-12">
+      <button class="btn btn-primary active" [disabled]="subloading">
+        {{ subloading ? 'Espere un momento ...' : 'Buscar' }}
+        <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>

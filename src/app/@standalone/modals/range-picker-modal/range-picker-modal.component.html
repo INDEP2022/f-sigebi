@@ -1,0 +1,34 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccione un Rango de Fecha</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <form-field
+        [control]="form.get('rangoFecha')"
+        label="Fecha de Pago - Fin">
+        <input
+          class="form-control"
+          ngModel
+          bsDaterangepicker
+          formControlName="rangoFecha" />
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.get('rangoFecha').value"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,37 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Actas</h5>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+
+  <div body>
+    <div>
+      <app-proceeding-info
+        [info]="infoForm"
+        (filterEvent)="getData($event)"
+        (updateStatus)="statusActa = $event"></app-proceeding-info>
+    </div>
+    <hr />
+    <div class="row border border-dark">
+      <div class="row header mt-3 mb-5">
+        <h5 class="title">Bienes</h5>
+      </div>
+      <app-good-actions
+        [statusActaValue]="statusActa"
+        [nroActa]="infoForm ? infoForm.id : null"
+        [data]="data"
+        [rowsSelected]="rowsSelected"
+        (updateTable)="getGoods()"></app-good-actions>
+      <app-table-goods
+        [settingsTable]="settings"
+        [statusActaValue]="statusActa"
+        [data]="data"
+        [totalItems]="totalGoods"
+        (updateData)="goodParams = $event; getGoods()"
+        (rowsSelected)="rowsSelected = $event">
+      </app-table-goods>
+    </div>
+  </div>
+</app-card>

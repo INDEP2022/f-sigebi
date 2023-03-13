@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="typeServiceForm">
+    <form [formGroup]="typeServiceForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field
@@ -20,14 +20,13 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="concept"
-              placeholder="Concepto de servicio"></textarea>
+              formControlName="concept"></textarea>
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
             [control]="typeServiceForm.get('version')"
-            label="Versión">
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"

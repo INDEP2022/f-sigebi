@@ -1,0 +1,21 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex justify-content-between">
+      <div>
+        <h5 class="title">ACTUALIZACI&Oacute;N DE DATOS DEL EXPEDIENTE</h5>
+      </div>
+      <!-- TODO: Botones para componente de consulta y seleccion de registro -->
+      <div>
+        <button
+          class="btn btn-secondary active btn-sm"
+          (click)="returnToFlyers()">
+          Registro de Volantes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <app-juridical-record-update></app-juridical-record-update>
+  </div>
+</app-card>

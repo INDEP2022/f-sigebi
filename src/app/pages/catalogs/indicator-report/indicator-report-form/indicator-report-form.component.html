@@ -6,58 +6,51 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('tipo_servicio')"
-            label="Tipo Servicio">
+          <form-field [control]="form.get('serviceType')" label="Tipo Servicio">
             <input
               type="text"
               class="form-control"
-              formControlName="tipo_servicio"
-              placeholder="ejemplo" />
+              formControlName="serviceType" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('rango_porcentaje_inicial')"
+            [control]="form.get('startingPercentageRange')"
             label="Rango Porcentaje Inicial">
             <input
               type="number"
               class="form-control"
-              formControlName="rango_porcentaje_inicial"
-              placeholder="ejemplo" />
+              formControlName="startingPercentageRange" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('rango_porcentaje_final')"
+            [control]="form.get('finalPercentageRange')"
             label="Rango Porcentaje Final">
             <input
               type="number"
               class="form-control"
-              formControlName="rango_porcentaje_final"
-              placeholder="ejemplo" />
+              formControlName="finalPercentageRange" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('pena_convencional')"
+            [control]="form.get('contractualPenalty')"
             label="Pena Convencional">
             <input
               type="number"
               class="form-control"
-              formControlName="pena_convencional"
-              placeholder="ejemplo" />
+              formControlName="contractualPenalty" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('no_contrato')"
-            label="Numero de Registro">
+            [control]="form.get('contractNumber')"
+            label="N&uacute;mero de Registro">
             <input
               type="text"
               class="form-control"
-              formControlName="no_contrato"
-              placeholder="ejemplo" />
+              formControlName="contractNumber" />
           </form-field>
         </div>
         <!--
@@ -83,21 +76,19 @@
                 </div>
                 -->
         <div class="col-md-4">
-          <form-field [control]="form.get('estatus')" label="Estado">
+          <form-field [control]="form.get('status')" label="Estado">
             <input
               type="number"
               class="form-control"
-              formControlName="estatus"
-              placeholder="ejemplo" />
+              formControlName="status" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('version')" label="Version">
+          <form-field [control]="form.get('version')" label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="version"
-              placeholder="ejemplo" />
+              formControlName="version" />
           </form-field>
         </div>
       </div>

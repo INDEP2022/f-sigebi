@@ -1,0 +1,77 @@
+<div>
+  <div class="row">
+    <h5>Captura de datos para Anexo K</h5>
+  </div>
+  <div>
+    <form [formGroup]="annexForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="annexForm.get('relevantFacts')"
+            label="Cargo Hechos Relevantes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="relevantFacts" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="annexForm.get('noncomplianceDescription')"
+            label="Descripci&oacute;n Incumplimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noncomplianceDescription" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="annexForm.get('datenoncompliance')"
+            label="Fecha Incumplimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="datenoncompliance"
+              placeholder=""
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="annexForm.get('agreements')" label="Acuerdos">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="agreements" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="annexForm.get('dateRepositionServices')"
+            label="Fecha reposici&oacute;n servicios">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateRepositionServices"
+              placeholder=""
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="annexForm.get('warehouseManagement')"
+            label="Gerente almac&eacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="warehouseManagement" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

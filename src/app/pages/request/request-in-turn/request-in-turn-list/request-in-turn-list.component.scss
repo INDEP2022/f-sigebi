@@ -1,0 +1,41 @@
+:host ::ng-deep ng2-smart-table {
+  .nameOfOwner {
+    min-width: 33rem !important;
+  }
+
+  .holderCharge {
+    min-width: 35rem !important;
+  }
+
+  .paperNumber {
+    min-width: 30rem !important;
+  }
+
+  .transferentName {
+    min-width: 25rem !important;
+  }
+
+  .authorityName {
+    min-width: 40rem !important;
+  }
+
+  .transferenceFile {
+    min-width: 33rem !important;
+  }
+
+  .indicatedTaxpayer {
+    min-width: 20rem !important;
+  }
+
+  .stateOfRepublicName {
+    min-width: 20rem !important;
+  }
+
+  .affairName {
+    min-width: 40rem;
+  }
+
+  .delegationName {
+    min-width: 35rem;
+  }
+}

@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusProcess } from 'src/app/core/models/catalogs/status-process.model';
 import { StatusProcessService } from 'src/app/core/services/catalogs/status-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-process-form',
@@ -30,25 +31,15 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.statusProcessForm = this.fb.group({
-      status: [
-        null,
-        [
-          Validators.pattern(
-            '[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}'
-          ),
-          Validators.required,
-        ],
-      ],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       process: [
         null,
-        [
-          Validators.pattern(
-            '[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}'
-          ),
-          Validators.required,
-        ],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.statusProcess != null) {
       this.edit = true;

@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-state-form',
@@ -30,12 +31,30 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stateForm = this.fb.group({
+      id: [null, [Validators.required]],
       cveState: [null, [Validators.required]],
-      descState: [null, [Validators.required]],
-      codeState: [null, [Validators.required]],
+      descCondition: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      codeCondition: [null, [Validators.required]],
+      registrationNumber: [null],
+      nmtable: [null],
+      abbreviation: [null],
+      risk: [null],
       version: [null, [Validators.required]],
-      timeZonaStd: [null, [Validators.required]],
-      timeZonaView: [null, [Validators.required]],
+      zoneHourlyStd: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      zoneHourlyVer: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userCreation: [null],
+      creationDate: [null],
+      userModification: [null],
+      modificationDate: [null],
     });
     if (this.state != null) {
       this.edit = true;
@@ -60,12 +79,10 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.stateService
-      .update(this.state.cveState, this.stateForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.stateService.update(this.state.id, this.stateForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

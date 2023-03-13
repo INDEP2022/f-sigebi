@@ -1,0 +1,98 @@
+<form [formGroup]="form" class="form-material" (submit)="search()">
+  <div class="row">
+    <form-field
+      [control]="form.get('receptionForm')"
+      label="Fecha de Recepci&oacute;n de"
+      class="col-md-3">
+      <input
+        type="text"
+        formControlName="receptionForm"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+
+    <form-field [control]="form.get('receptionTo')" label="A" class="col-md-3">
+      <input
+        type="text"
+        formControlName="receptionTo"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      [control]="form.get('certificate')"
+      label="Acta"
+      class="col-md-3">
+      <input type="text" formControlName="certificate" class="form-control" />
+    </form-field>
+
+    <form-field [control]="form.get('receptionStatus')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        (change)="statusChange()"
+        [multiple]="true"
+        [searchOnInit]="true"
+        control="receptionStatus"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <!-- <form-field
+      [control]="form.get('statusChangeFrom')"
+      label="Fecha de Cambio de Estatus de"
+      class="col-md-3">
+      <input
+        type="text"
+        formControlName="statusChangeFrom"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      [control]="form.get('statusChaangeTo')"
+      label="A"
+      class="col-md-3">
+      <input
+        type="text"
+        formControlName="statusChaangeTo"
+        class="form-control"
+        bsDatepicker />
+    </form-field> -->
+
+    <form-field
+      [control]="form.get('eventNum')"
+      label="No&#46; Evento de Comercializaci&oacute;n"
+      class="col-md-3">
+      <input type="text" formControlName="eventNum" class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('historicalProcess')"
+      label="Historia de Proceso del bien"
+      class="col-md-3">
+      <input
+        type="text"
+        formControlName="historicalProcess"
+        class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row">
+    <!-- <form-check label="En Proceso de Venta" for="inSaleProcess">
+      <input type="checkbox" formControlName="enProceso" id="inSaleProcess" />
+    </form-check> -->
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary active">
+        Buscar<i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>
