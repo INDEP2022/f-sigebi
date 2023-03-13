@@ -12,3 +12,16 @@ export interface IStation {
   status: number | null;
   nameAndId?: string;
 }
+
+export interface IStation2 {
+  id?: number;
+  idTransferent?: number;
+  stationName?: string;
+  userCreation?: string;
+  creationDate?: Date;
+  userModification?: string;
+  modificationDate?: Date;
+  keyState?: string;
+  version?: number;
+  status?: number;
+}

@@ -25,18 +25,14 @@ export class ScheduledMaintenanceDetailComponent
   implements OnInit
 {
   form: FormGroup;
-  // params = new BehaviorSubject<ListParams>(new ListParams());
   statusList = [
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
-
-  // datepicker: any;
-  // source: LocalDataSource;
   paramsStatus: ListParams = new ListParams();
   data: IGoodsByProceeding[] = [];
   totalItems: number = 0;
-  selecteds: IGoodsByProceeding[];
+  selecteds: IGoodsByProceeding[] = [];
   selectedsForUpdate: IGoodsByProceeding[] = [];
   settingsGoods = settingsGoods;
   params: ListParams = new ListParams();
@@ -193,20 +189,21 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   ngOnInit(): void {
+    this.getData();
     // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
     //   // console.log(x);
     //   this.getData();
     // });
   }
 
-  getData(params: ListParams) {
-    this.params = params;
+  getData() {
     const idActa = this.actaId;
     console.log(idActa);
     console.log(new Date());
     console.log(new Date().toISOString());
-    if (idActa && idActa.length > 0) {
-      this.service.getGoodsByProceeding(idActa).subscribe({
+    this.params['id'] = idActa;
+    if (idActa) {
+      this.service.getGoodsByProceeding(this.params).subscribe({
         next: response => {
           this.data = response.data;
           this.totalItems = response.count;
@@ -219,8 +216,8 @@ export class ScheduledMaintenanceDetailComponent
     }
   }
 
-  rowsSelected(event: { selected: IGoodsByProceeding[] }) {
-    this.selecteds = event.selected;
+  rowsSelected(selecteds: IGoodsByProceeding[]) {
+    this.selecteds = selecteds;
   }
 
   showDeleteAlert(item: IGoodsByProceeding) {
@@ -233,7 +230,7 @@ export class ScheduledMaintenanceDetailComponent
         this.detailService.deleteById(+item.no_bien, this.actaId).subscribe({
           next: response => {
             console.log(response);
-            this.getData(this.params);
+            this.getData();
             this.onLoadToast(
               'success',
               'Exito',

@@ -46,6 +46,8 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       status: [null],
       contractNumber: [null, Validators.required],
     });
+    this.penaltyForm.controls['version'].setValue(1);
+    this.penaltyForm.controls['status'].setValue(1);
     if (this.penalty != null) {
       this.edit = true;
       this.penaltyForm.patchValue(this.penalty);

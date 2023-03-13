@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -24,7 +28,11 @@ export class AppraisalGoodsComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private delegationService: DelegationService,
-    private subdelegationService: SubdelegationService
+    private subdelegationService: SubdelegationService,
+    private goodTypesService: GoodTypeService,
+    private goodSubtypeService: GoodSubtypeService,
+    private goodSsubtypeService: GoodSsubtypeService,
+    private goodSssubtypeService: GoodSssubtypeService
   ) {
     super();
   }
@@ -46,7 +54,7 @@ export class AppraisalGoodsComponent extends BasePage implements OnInit {
     });
   }
 
-  save() {
+  send() {
     console.log(this.form.value);
     this.loading = true;
     // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONADBBIENESSAVA.pdf?PARAMFORM=NO&PN_DELEG=` +
@@ -89,26 +97,26 @@ export class AppraisalGoodsComponent extends BasePage implements OnInit {
   }
 
   getInitialType(params: ListParams) {
-    // this.subdelegationService.getAll(params).subscribe(data => {
-    //   this.subdelegations = new DefaultSelect(data.data, data.count);
-    // });
+    this.goodTypesService.getAll(params).subscribe(data => {
+      this.initialType = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getFinaltype(params: ListParams) {
-    // this.subdelegationService.getAll(params).subscribe(data => {
-    //   this.subdelegations = new DefaultSelect(data.data, data.count);
-    // });
+    this.goodSubtypeService.getAll(params).subscribe(data => {
+      this.finalType = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getInitialSubtype(params: ListParams) {
-    // this.subdelegationService.getAll(params).subscribe(data => {
-    //   this.subdelegations = new DefaultSelect(data.data, data.count);
-    // });
+    this.goodSsubtypeService.getAll(params).subscribe(data => {
+      this.initialSubtype = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getFinalSubtype(params: ListParams) {
-    // this.subdelegationService.getAll(params).subscribe(data => {
-    //   this.subdelegations = new DefaultSelect(data.data, data.count);
-    // });
+    this.goodSssubtypeService.getAll(params).subscribe(data => {
+      this.finalSubtype = new DefaultSelect(data.data, data.count);
+    });
   }
 }

@@ -120,6 +120,10 @@ export interface INotificationTransferentIndiciadoCityGetData {
   transferent: number;
 }
 
+export interface ItVolanteNotificacionesByNoExpedient {
+  wheel: string;
+}
+
 export interface INotificationTransferentIndiciadoCity {
   wheelNumber: string;
   receiptDate: string;
