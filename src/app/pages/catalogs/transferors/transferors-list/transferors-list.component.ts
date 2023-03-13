@@ -6,9 +6,14 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ITransferenteSae } from 'src/app/core/models/catalogs/transferente.model';
+import { IState } from 'src/app/core/models/catalogs/state-model';
+import {
+  ITransferente,
+  ITransferenteSae,
+} from 'src/app/core/models/catalogs/transferente.model';
 import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { StateModalComponent } from '../state-modal/state-modal.component';
 import { TransferorsDetailComponent } from '../transferors-detail/transferors-detail.component';
 import { STATE_COLUMS, TRANSFERENT_STATE_COLUMNS } from './columns';
 
@@ -28,14 +33,14 @@ export class TransferorsListComponent extends BasePage implements OnInit {
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings2;
+  stateList: IState[] = [];
+  transferents: ITransferente;
 
-  stateList = [
-    {
-      transferente: 'PGR',
-      estado: 'Aguascalientes',
-    },
-  ];
+  loading1 = this.loading;
+  loading2 = this.loading;
+  loading3 = this.loading;
+
+  settings2;
 
   constructor(
     private modalService: BsModalService,
@@ -58,16 +63,19 @@ export class TransferorsListComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...STATE_COLUMS },
     };
   }
 
+  //Inicia integrando los filtros a las tablas
   ngOnInit(): void {
     this.data
       .onChanged()
@@ -99,8 +107,9 @@ export class TransferorsListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getTransferents());
   }
 
+  //Tabla de transferentes
   getTransferents() {
-    this.loading = true;
+    this.loading1 = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -118,6 +127,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     });
   }
 
+  //Modal del formulario para actualizar un transferente
   openForm(transferorsState?: ITransferenteSae) {
     let config: ModalOptions = {
       initialState: {
@@ -131,5 +141,45 @@ export class TransferorsListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(TransferorsDetailComponent, config);
+  }
+
+  //Selecciona fila de tabla de transferente para ver los estados
+  rowsSelected(event: any) {
+    const idTrans = { ...this.transferents };
+    this.totalItems2 = 0;
+    this.stateList = [];
+    this.transferents = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getStateByTransferent(idTrans.id));
+  }
+
+  getStateByTransferent(id?: number) {
+    this.loading2 = true;
+    const idTrans = { ...this.transferents };
+    this.transferenteSaeService.getStateByTransferent(idTrans.id).subscribe({
+      next: response => {
+        this.stateList = response.data;
+        this.totalItems2 = response.count;
+        this.loading2 = false;
+      },
+      error: error => (this.loading2 = false),
+    });
+  }
+
+  //Modal del formulario para actualizar un transferente
+  openForm2(state?: IState) {
+    let config: ModalOptions = {
+      initialState: {
+        state,
+        callback: (next: boolean) => {
+          if (next) this.getTransferents();
+          console.log('cerrando');
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(StateModalComponent, config);
   }
 }

@@ -2,6 +2,7 @@ export const TRANSFERENT_STATE_COLUMNS = {
   id: {
     title: 'No.',
     sort: false,
+    width: '25px',
   },
   keyTransferent: {
     title: 'Clave',
@@ -26,7 +27,7 @@ export const TRANSFERENT_STATE_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Select',
+        selectText: 'Seleccionar',
         list: [
           { value: 'NO', title: 'No obligatorio' },
           { value: 'CE', title: 'Asegurado' },
@@ -37,11 +38,11 @@ export const TRANSFERENT_STATE_COLUMNS = {
 };
 
 export const STATE_COLUMS = {
-  transferente: {
+  nametransferent: {
     title: 'Transferente',
     sort: false,
   },
-  estado: {
+  statekey: {
     title: 'Estado',
     sort: false,
   },
