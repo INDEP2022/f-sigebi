@@ -1,0 +1,929 @@
+<form [formGroup]="fileDataUpdateForm" class="container-fluid form-material">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <form-field
+              [control]="fileDataUpdateForm.get('wheelNumber')"
+              label="No. Volante">
+              <input
+                type="number"
+                formControlName="wheelNumber"
+                class="form-control" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="fileDataUpdateForm.get('receiptDate')"
+              label="Fec. Recepci&oacute;n">
+              <input
+                formControlName="receiptDate"
+                class="form-control"
+                [maxDate]="maxDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="fileDataUpdateForm.get('consecutiveNumber')"
+              label="Consecutivo diario">
+              <input
+                type="number"
+                formControlName="consecutiveNumber"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mt-n4">
+            <label class="label gray-label">Tipo Volante</label>
+            <form-radio
+              *ngFor="let option of optionsTipoVolante"
+              [label]="option.label">
+              <input
+                type="radio"
+                formControlName="wheelType"
+                [value]="option.value" />
+            </form-radio>
+            <!-- <form-radio label="Administrativo">
+                  <input
+                    type="radio"
+                    formControlName="tipoVolante"
+                    value="Administrativo" />
+                </form-radio>
+                <form-radio label="Procesal" class="mt-0 pt-0 bt-0">
+                  <input
+                    type="radio"
+                    formControlName="tipoVolante"
+                    value="Procesal" />
+                </form-radio>
+                <form-radio label="Trans">
+                  <input
+                    type="radio"
+                    formControlName="tipoVolante"
+                    value="Trans" />
+                </form-radio>
+                <form-radio label="Transferente">
+                  <input
+                    type="radio"
+                    formControlName="tipoVolante"
+                    value="Transferente" />
+                </form-radio> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="row">
+            <form-field
+              [control]="fileDataUpdateForm.get('expedientNumber')"
+              label="No. Expediente">
+              <input
+                type="text"
+                formControlName="expedientNumber"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="row">
+            <form-field
+              [control]="fileDataUpdateForm.get('externalRemitter')"
+              label="Remitente">
+              <input
+                type="text"
+                formControlName="externalRemitter"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('affairKey')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="affairs"
+            (fetchItems)="getAffairs($event)"
+            bindLabel="nameAndId"
+            control="dictumKey"
+            label="Asunto"
+            [searchOnInit]="true"
+            termMaxLength="200"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('dictumKey')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="dictums"
+            (fetchItems)="getDictums($event)"
+            bindLabel="nameAndId"
+            control="dictumKey"
+            label="Desahogo Asunto"
+            [searchOnInit]="true"
+            termMaxLength="80"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <div>
+          <button
+            type="button"
+            class="ml-3 btn btn-secondary active btn-sm"
+            [disabled]="!canViewDocuments"
+            (click)="viewDocuments()">
+            <i class="bx bx-file"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active ml-3"
+            (click)="sentToDocumentsManagement()">
+            Oficio de desahogo
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active ml-3"
+            (click)="sentToJuridicalRuling()">
+            Dictaminaci&oacute;n Jur&iacute;dica
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-md-5">
+      <div class="row" *ngIf="initialCondition != 'T'">
+        <form-field
+          [control]="fileDataUpdateForm.get('circumstantialRecord')"
+          label="Acta Circusnt.">
+          <input
+            type="text"
+            formControlName="circumstantialRecord"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+        <form-field
+          [control]="fileDataUpdateForm.get('preliminaryInquiry')"
+          label="Averig. Previa">
+          <input
+            type="text"
+            formControlName="preliminaryInquiry"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+        <form-field
+          [control]="fileDataUpdateForm.get('criminalCase')"
+          label="Causa Penal">
+          <input
+            type="text"
+            formControlName="criminalCase"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4" *ngIf="initialCondition == 'T'">
+        <form-field
+          [control]="fileDataUpdateForm.get('expedientTransferenceNumber')"
+          label="Exp Transfer">
+          <input
+            type="text"
+            formControlName="expedientTransferenceNumber"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          *ngIf="initialCondition == 'T'"
+          class="col-md-12"
+          [control]="fileDataUpdateForm.get('judgementType')"
+          label="Tipo Juicio">
+          <ng-select
+            formControlName="judgementType"
+            [searchable]="false"
+            class="form-control"
+            [clearable]="false">
+            <ng-option value="Amparo">Amparo</ng-option>
+            <ng-option value="Procedimientos en Materia Adminsitrativa"
+              >Procedimientos en Materia Adminsitrativa</ng-option
+            >
+          </ng-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('protectionKey')"
+          label="No. Amparo">
+          <input
+            type="text"
+            formControlName="protectionKey"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+        <form-field
+          [control]="fileDataUpdateForm.get('touchPenaltyKey')"
+          label="Toca Penal">
+          <input
+            type="text"
+            formControlName="touchPenaltyKey"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('officeExternalKey')"
+          label="No. Oficio">
+          <input
+            type="number"
+            formControlName="officeExternalKey"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          class="col"
+          [control]="fileDataUpdateForm.get('externalOfficeDate')"
+          label="Fecha Oficio">
+          <input
+            formControlName="externalOfficeDate"
+            class="form-control"
+            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+            [maxDate]="maxDate"
+            bsDatepicker />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          class="col"
+          [control]="fileDataUpdateForm.get('observations')"
+          label="Descripci&oacute;n del Asunto">
+          <textarea
+            rows="4"
+            formControlName="observations"
+            class="form-control"></textarea>
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="row">
+        <form-field
+          [control]="fileDataUpdateForm.get('cityNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="cities"
+            (fetchItems)="getCities($event)"
+            bindLabel="nameAndId"
+            control="cityNumber"
+            label="Ciudad"
+            [searchOnInit]="true"
+            termMaxLength="60"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('entFedKey')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="federalEntities"
+            (fetchItems)="getFederalEntities($event)"
+            bindLabel="otKeyAndValue"
+            control="entFedKey"
+            label="Entidad Federativa"
+            [searchOnInit]="true"
+            termMaxLength="80"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          class="col-md-4"
+          [control]="fileDataUpdateForm.get('uniqueKey')">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="uniqueKeys"
+            (fetchItems)="getUniqueKey($event)"
+            bindLabel="uniqueCve"
+            control="uniqueKey"
+            label="Clave &uacute;nica 3 niveles"
+            (change)="setUniqueKeyData($event, true)"
+            termMaxLength="5">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('endTransferNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            (fetchItems)="getTransferors($event)"
+            [data]="transferors"
+            bindLabel="nameAndId"
+            control="endTransferNumber"
+            label="Transferente"
+            [searchOnInit]="true"
+            (change)="changeTransferor($event)"
+            termMaxLength="200"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('stationNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="stations"
+            (fetchItems)="getStations($event)"
+            bindLabel="nameAndId"
+            control="stationNumber"
+            label="Emisora"
+            [searchOnInit]="true"
+            (change)="changeStation($event)"
+            termMaxLength="100"
+            [showTooltip]="true"
+            [readonly]="transferorLoading || stationLoading">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('autorityNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="authorities"
+            (fetchItems)="getAuthorities($event)"
+            bindLabel="nameAndId"
+            control="autorityNumber"
+            label="Autoridad"
+            [searchOnInit]="true"
+            [readonly]="stationLoading || transferorLoading"
+            termMaxLength="400"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('institutionNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="institutions"
+            (fetchItems)="getInstitutions($event)"
+            bindLabel="nameAndId"
+            control="institutionNumber"
+            label="{{
+              initialCondition == 'T' ? 'Solicitante' : 'Autoridad Emisora'
+            }}"
+            [searchOnInit]="true"
+            termMaxLength="200"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('courtNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="courts"
+            (fetchItems)="getCourts($event)"
+            bindLabel="nameAndId"
+            control="courtNumber"
+            label="Juzgado"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+        <form-field
+          [control]="fileDataUpdateForm.get('minpubNumber')"
+          class="col-md-6"
+          label="Ministerio p&uacute;blico">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="publicMinistries"
+            (fetchItems)="getPublicMinistries($event)"
+            bindLabel="nameAndId"
+            control="minpubNumber"
+            [searchOnInit]="true"
+            label="Min. P&uacute;blico"
+            termMaxLength="100"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('crimeKey')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="crimes"
+            (fetchItems)="getCrimes($event)"
+            bindLabel="otKeyAndValue"
+            control="crimeKey"
+            label="Delito"
+            [searchOnInit]="true"
+            termMaxLength="80">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('indiciadoNumber')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="defendants"
+            (fetchItems)="getDefendants($event)"
+            bindLabel="nameAndId"
+            control="indiciadoNumber"
+            label="{{
+              initialCondition == 'T' ? 'Contribuyente' : 'Indiciado'
+            }}"
+            [searchOnInit]="true"
+            termMaxLength="1000"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="fileDataUpdateForm.get('viaKey')"
+          class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="receptionWays"
+            (fetchItems)="getReceptionWays($event)"
+            bindLabel="otKeyAndValue"
+            control="viaKey"
+            label="V&iacute;a Recepci&oacute;n"
+            [searchOnInit]="true"
+            termMaxLength="30">
+          </ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-5">
+        <form-field
+          class="col-md-6"
+          [control]="fileDataUpdateForm.get('destinationArea')"
+          label="&Aacute;rea Destino">
+          <input
+            type="text"
+            formControlName="destinationArea"
+            class="form-control"
+            [title]="departmentName"
+            readonly />
+        </form-field>
+
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="openModalAreas()">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <form-field
+          class="col-md-6"
+          [control]="fileDataUpdateForm.get('delegationName')"
+          label="Delegaci&oacute;n">
+          <input
+            type="text"
+            formControlName="delegationName"
+            class="form-control"
+            [title]="delegationName"
+            readonly />
+        </form-field>
+
+        <form-field
+          class="col-md-6"
+          [control]="fileDataUpdateForm.get('subDelegationName')"
+          label="Subdelegaci&oacute;n">
+          <input
+            type="text"
+            formControlName="subDelegationName"
+            class="form-control"
+            [title]="subDelegationName"
+            readonly />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <!-- <form-field [control]="fileDataUpdateForm.get('area')" class="col-md-6">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            [data]="subjects"
+            control="area"
+            label="Area Destino">
+          </ngx-select>
+        </form-field> -->
+
+        <form-field
+          [control]="fileDataUpdateForm.get('userRecipient')"
+          class="col-md-6"
+          label="Destinatario">
+          <input
+            type="text"
+            formControlName="userRecipient"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="fileDataUpdateForm.get('reserved')"
+          label="Justificaci&oacute;n del conocimiento">
+          <textarea
+            rows="4"
+            formControlName="reserved"
+            class="form-control"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row">
+        <div>
+          <button
+            outline
+            type="button"
+            class="mr-2 btn btn-sm active btn-primary"
+            (click)="sentToShiftChange()">
+            Reasignaci&oacute;n de Turno
+          </button>
+          <button
+            outline
+            type="button"
+            class="mr-2 btn-sm active btn-primary"
+            (click)="sendToRelatedDocumentsManagement()">
+            Oficio Relacionado
+          </button>
+          <button
+            outline
+            type="button"
+            class="mr-2 btn-sm active btn-primary"
+            (click)="openFlyerCopies()">
+            Captura de copias
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="row">
+    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <h6 class="title">DATOS DEL ASUNTO</h6>
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('noVolante')"
+            label="No&#46; Volante">
+            <input class="form-control" formControlName="noVolante" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('fecRecepcion')"
+            label="Fec&#46; Recepción&#46;">
+            <input
+              formControlName="fecRecepcion"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('noConsecutivoDiario')"
+            label="Consecutivo Diario">
+            <input class="form-control" formControlName="noConsecutivoDiario" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+          <div class="row w-100 pl-4">
+            <label class="form-control-label">Tipo Volante</label>
+            <div
+              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2 text-center"
+              *ngFor="let option of optionsTipoVolante">
+              <form-radio label="{{ option.label }}">
+                <input
+                  type="radio"
+                  formControlName="tipoVolante"
+                  [value]="option.value" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('actaCircunst')"
+            label="Acta Circunst">
+            <input class="form-control" formControlName="actaCircunst" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('averiguacionPrevia')"
+            label="Averig&#46; Previa">
+            <input class="form-control" formControlName="averiguacionPrevia" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('causaPenal')"
+            label="Causa Penal">
+            <input class="form-control" formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('cveAmparo')"
+            label="No&#46; Amparo">
+            <input class="form-control" formControlName="cveAmparo" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2 text-center">
+          <button type="button" class="btn btn-primary btn-sm active">
+            Observaciones
+          </button>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('cveTocaPenal')"
+            label="Toca Penal">
+            <input class="form-control" formControlName="cveTocaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('cveOficioExterno')"
+            label="No&#46; Oficio">
+            <input class="form-control" formControlName="cveOficioExterno" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('fecOficioExterno')"
+            label="Fecha Oficio">
+            <input
+              formControlName="fecOficioExterno"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('observaciones')"
+            label="Descripci&oacute;n del Asunto">
+            <textarea
+              class="form-control"
+              formControlName="observaciones"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+          <h6 class="title">DATOS DEL EXPEDIENTE</h6>
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('noExpediente')"
+            label="No&#46; Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('remitenteExterno')"
+            label="Remitente">
+            <input class="form-control" formControlName="remitenteExterno" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('asunto')"
+            label="Asunto">
+            <input class="form-control" formControlName="asunto" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('desahogoAsunto')"
+            label="Desahogo Asunto">
+            <textarea
+              class="form-control"
+              formControlName="desahogoAsunto"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
+          <button type="button" class="btn btn-primary btn-sm active">
+            Oficio de desahogo
+          </button>
+          <button
+            type="button"
+            class="btn btn-link btn-sm"
+            [routerLink]="[linkDictaminacionesJuridicas, flyerId]">
+            Dictaminaci&oacute;n Jur&iacute;dicca
+          </button>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('claveUnica')"
+            label="Clave &uacute;nica">
+            <input class="form-control" formControlName="claveUnica" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="cityName"
+            label="Ciudad"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="ciudad"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="federativeEntityName"
+            label="Entidad Federativa"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="entidadFed"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="transferName"
+            label="Transferente"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="transferente"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="emiterName"
+            label="Emisora"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="emisora"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="autorityName"
+            label="Autoridad"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="autoridad"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="autorityEmiterName"
+            label="Autoridad Emisora"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="institucion"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="publicMinisteryName"
+            label="Ministerio p&uacute;blico"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="minPub"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="judeName"
+            label="Juzgado"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="juzgado"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="indicadoName"
+            label="Indicado"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="indicado"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="delitoName"
+            label="Delito"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="delito"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="viaReceptionName"
+            label="V&iacute;a Recepci&oacute;n"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="recepcion"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="destinityAreaName"
+            label="&Aacute;rea Destino"
+            value="id"
+            (fetchItems)="(true)"
+            [form]="fileDataUpdateForm"
+            control="area"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('destinatario')"
+            label="Destinatario">
+            <input class="form-control" formControlName="destinatario" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
+          <form-field
+            [control]="fileDataUpdateForm.get('justificacion')"
+            label="Justificaci&oacute;n del conocimiento">
+            <textarea
+              class="form-control"
+              formControlName="justificacion"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
+          <button
+            type="button"
+            class="btn btn-link btn-sm"
+            [routerLink]="[linkReaccionacionTurno, flyerId]">
+            Reasignaci&oacute;n de Turno
+          </button>
+          <button
+            type="button"
+            class="btn btn-link btn-sm"
+            [routerLink]="[linkOficioRelacionado, flyerId]">
+            Oficio Relacionado
+          </button>
+          <button type="button" class="btn btn-primary btn-sm active">
+            Captura de Copias
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</form>

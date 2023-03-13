@@ -27,6 +27,7 @@ import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area
 import { AuthorityService } from '../catalogs/authority.service';
 import { CourtService } from '../catalogs/court.service';
 import { DelegationService } from '../catalogs/delegation.service';
+import { IndiciadosService } from '../catalogs/indiciados.service';
 import { MinPubService } from '../catalogs/minpub.service';
 import { StationService } from '../catalogs/station.service';
 import { TransferenteService } from '../catalogs/transferente.service';
@@ -47,7 +48,8 @@ export class DocReceptionRegisterService extends HttpService {
     private authorityService: AuthorityService,
     private minPubService: MinPubService,
     private courtService: CourtService,
-    private procedureManageService: ProcedureManagementService
+    private procedureManageService: ProcedureManagementService,
+    private indiciadosService: IndiciadosService
   ) {
     super();
   }
@@ -427,6 +429,17 @@ export class DocReceptionRegisterService extends HttpService {
         };
       }),
       tap(() => (this.microservice = ''))
+    );
+  }
+
+  getDefendant(id: string | number) {
+    return this.indiciadosService.getById(id).pipe(
+      map(data => {
+        return {
+          ...data,
+          nameAndId: `${data.id} - ${data.name}`,
+        };
+      })
     );
   }
 }

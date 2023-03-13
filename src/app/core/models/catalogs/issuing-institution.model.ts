@@ -18,6 +18,7 @@ export interface IIssuingInstitution {
   phone: string;
   numClasif: number;
   numRegister: number;
+  nameAndId?: string;
 }
 
 export interface IOTClaveEntityFederativeByAsuntoSAT {

@@ -68,6 +68,7 @@ import { MassiveGoodService } from '../../../../core/services/ms-massivegood/mas
 import { ProtectionService } from '../../../../core/services/ms-protection/protection.service';
 import { IGlobalVars } from '../../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../../shared/global-vars/services/global-vars.service';
+import { FileUpdateCommunicationService } from '../../../juridical-processes/file-data-update/services/file-update-communication.service';
 import { DocReceptionTrackRecordsModalComponent } from './components/doc-reception-track-records-modal/doc-reception-track-records-modal.component';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
 import {
@@ -129,6 +130,7 @@ export class DocumentsReceptionRegisterComponent
   transferorLoading: boolean = false;
   stationLoading: boolean = false;
   populatingForm: boolean = false;
+  procedureId: number;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -198,7 +200,8 @@ export class DocumentsReceptionRegisterComponent
     private documentsService: DocumentsService,
     private store: Store<AppState>,
     private globalVarsService: GlobalVarsService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private fileUpdComService: FileUpdateCommunicationService
   ) {
     super();
     if (this.docDataService.flyersRegistrationParams != null)
@@ -423,7 +426,7 @@ export class DocumentsReceptionRegisterComponent
       affair,
       affairType,
       officeNumber,
-      wheelNumber,
+      flierNumber,
       admissionDate,
       typeManagement,
       affairSij,
@@ -442,7 +445,7 @@ export class DocumentsReceptionRegisterComponent
     if (!procedure) {
       volante = this.pageParams.pNoVolante;
     } else {
-      volante = wheelNumber;
+      volante = flierNumber;
     }
     if (volante == null) {
       switch (affairType) {
@@ -1119,7 +1122,7 @@ export class DocumentsReceptionRegisterComponent
         next: data => this.formControls.crimeKey.setValue(data.data),
       });
     if (notif.indiciadoNumber != null)
-      this.indiciadosService.getById(notif.indiciadoNumber).subscribe({
+      this.docRegisterService.getDefendant(notif.indiciadoNumber).subscribe({
         next: data => this.formControls.indiciadoNumber.setValue(data),
       });
     if (notif.viaKey != null)
@@ -1171,12 +1174,13 @@ export class DocumentsReceptionRegisterComponent
     if (notif.wheelNumber != null && notif.expedientNumber != null) {
       filterParams.removeAllFilters();
       filterParams.addFilter('expedient', notif.expedientNumber);
-      filterParams.addFilter('wheelNumber', notif.wheelNumber);
+      filterParams.addFilter('flierNumber', notif.wheelNumber);
       this.procedureManageService
         .getAllFiltered(filterParams.getParams())
         .subscribe({
           next: data => {
             console.log(data.data[0].id);
+            this.procedureId = data.data[0].id;
             const { status, areaToTurn, userToTurn } = data.data[0];
             // if (status == 'OPI') {
             //   this.formControls.wheelStatus.setValue(ProcedureStatus.pending);
@@ -1243,6 +1247,16 @@ export class DocumentsReceptionRegisterComponent
       },
     };
     this.modalService.show(DocumentsReceptionFlyerSelectComponent, modalConfig);
+  }
+
+  sendToRecordUpdate() {
+    if (this.procedureId != undefined) {
+      this.fileUpdComService.fileDataUpdateParams = {
+        pGestOk: 1,
+        pNoTramite: this.procedureId,
+      };
+    }
+    this.router.navigateByUrl('/pages/juridical/file-data-update');
   }
 
   showTrackRecords(trackRecords: INotification[]) {
@@ -2292,7 +2306,7 @@ export class DocumentsReceptionRegisterComponent
       affairType = 1;
     }
     const param = new FilterParams();
-    param.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+    param.addFilter('flierNumber', this.formControls.wheelNumber.value);
     if (this.pageParams.pNoTramite == null) {
       this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
         next: data => {
@@ -2319,7 +2333,7 @@ export class DocumentsReceptionRegisterComponent
     this.loading = true;
     const body = {
       expedient: this.formControls.expedientNumber.value,
-      wheelNumber: this.formControls.wheelNumber.value,
+      flierNumber: this.formControls.wheelNumber.value,
       status: 'OPS',
       affair,
       affairType,
@@ -2371,7 +2385,7 @@ export class DocumentsReceptionRegisterComponent
       actualDate: new Date(),
       dailyConsecutiveNumber: 0,
       admissionDate: new Date(),
-      wheelNumber: null,
+      flierNumber: null,
       expedient: null,
       affair,
       affairType,
@@ -3236,7 +3250,7 @@ export class DocumentsReceptionRegisterComponent
     const body = {
       userToTurn: this.userRecipient.value.user,
       areaToTurn,
-      wheelNumber: this.formControls.wheelNumber.value,
+      flierNumber: this.formControls.wheelNumber.value,
       expedient: this.formControls.expedientNumber.value,
       status,
     };
