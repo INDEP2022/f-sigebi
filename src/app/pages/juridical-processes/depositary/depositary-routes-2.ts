@@ -100,4 +100,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       (await import('./text-change/text-change.module')).TextChangeModule,
     data: { title: DEPOSITARY_ROUTES_2[10].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[11].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './notice-abandonment-for-securing/notice-abandonment-for-securing.module'
+        )
+      ).NoticeAbandonmentForSecuringModule,
+    data: { title: DEPOSITARY_ROUTES_2[11].label },
+  },
 ];

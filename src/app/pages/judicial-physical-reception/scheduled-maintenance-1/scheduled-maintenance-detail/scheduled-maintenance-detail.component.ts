@@ -32,7 +32,7 @@ export class ScheduledMaintenanceDetailComponent
   paramsStatus: ListParams = new ListParams();
   data: IGoodsByProceeding[] = [];
   totalItems: number = 0;
-  selecteds: IGoodsByProceeding[];
+  selecteds: IGoodsByProceeding[] = [];
   selectedsForUpdate: IGoodsByProceeding[] = [];
   settingsGoods = settingsGoods;
   params: ListParams = new ListParams();
@@ -216,8 +216,8 @@ export class ScheduledMaintenanceDetailComponent
     }
   }
 
-  rowsSelected(event: { selected: IGoodsByProceeding[] }) {
-    this.selecteds = event.selected;
+  rowsSelected(selecteds: IGoodsByProceeding[]) {
+    this.selecteds = selecteds;
   }
 
   showDeleteAlert(item: IGoodsByProceeding) {
