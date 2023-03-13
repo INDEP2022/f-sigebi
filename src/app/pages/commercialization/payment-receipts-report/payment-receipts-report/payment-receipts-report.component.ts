@@ -25,9 +25,11 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   total: number = 0;
   goodList: any;
   dataGood: any;
+  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   select = new DefaultSelect<IDepartment>();
   @Output() onConfirm = new EventEmitter<any>();
+
   constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
     this.settings = {
@@ -119,7 +121,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      department: [null],
+      federative: [null],
       subdelegation: [null],
     });
   }
@@ -133,7 +135,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       DOMICILIO: this.form.controls['domicile'].value,
       COLONIA: this.form.controls['suburb'].value,
       DELEGACION: this.form.controls['delegation'].value,
-      ESTADO: this.form.controls['department'].value,
+      ESTADO: this.form.controls['federative'].value,
       CP: this.form.controls['cp'].value,
       PRECIO_VENTA: this.form.controls['price'].value,
       IVA: this.form.controls['iva'].value,
