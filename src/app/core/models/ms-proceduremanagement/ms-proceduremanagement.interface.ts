@@ -6,7 +6,7 @@ export interface IProceduremanagement {
   actualDate: Date;
   dailyConsecutiveNumber: number;
   admissionDate: Date;
-  wheelNumber: number;
+  flierNumber: number;
   expedient: number;
   affair: string;
   affairType: number;

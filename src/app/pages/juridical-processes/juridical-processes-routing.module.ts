@@ -24,7 +24,7 @@ const routes: Routes = [
   },
   {
     // ACTUALIZACIÓN DE EXPEDIENTE
-    path: routesJuridicalProcesses[1].link + '/:id',
+    path: routesJuridicalProcesses[1].link,
     loadChildren: async () =>
       (await import('./file-data-update/file-data-update.module'))
         .FileDataUpdateModule,

@@ -64,7 +64,6 @@ export class MenajeComponent extends BasePage implements OnInit {
     this.listMenage = [];
     this.params.value.addFilter('requestId', this.requestId);
     var filter = this.params.getValue().getParams();
-    debugger;
     this.goodService.getAll(filter).subscribe({
       next: async (resp: any) => {
         if (resp.data) {

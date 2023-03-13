@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  ICompleteDisposition,
   IDispositionCoverExpedient,
   IFileCoverExpedient,
   IUnitCoverExpedient,
@@ -52,6 +53,14 @@ export class CoverExpedientService extends HttpService {
     return this.get<IListResponse<IDispositionCoverExpedient>>(
       CoverExpedientEndpoints.Disposition,
       params
+    );
+  }
+
+  getCompleteDisposition(
+    ddcId: number | string
+  ): Observable<ICompleteDisposition> {
+    return this.get<ICompleteDisposition>(
+      `${CoverExpedientEndpoints.CompleteDisposition}/${ddcId}`
     );
   }
 }

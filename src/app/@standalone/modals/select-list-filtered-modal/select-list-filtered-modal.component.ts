@@ -53,6 +53,7 @@ export class SelectListFilteredModalComponent
     params: ListParams
   ) => Observable<any>; // Input requerido al llamar el modal por listParams
   dataObservableId: (self: any, id: string) => Observable<any>;
+  type: 'number' | 'text' = 'number';
   initialCharge = true;
   haveSearch = true;
   showError: boolean = true;

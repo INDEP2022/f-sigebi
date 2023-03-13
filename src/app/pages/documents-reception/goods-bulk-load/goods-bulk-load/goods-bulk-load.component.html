@@ -24,9 +24,60 @@
       </div>
       <hr />
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-8">
           <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label>Opciones de Carga</label>
+                      <div class="mt-4">
+                        <form-radio
+                          *ngFor="let action of actions"
+                          [label]="action.title">
+                          <input
+                            type="radio"
+                            formControlName="actionType"
+                            [value]="action.value" />
+                        </form-radio>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="row">
+                        <form-check label="Son automoviles" for="cars">
+                          <input
+                            id="cars"
+                            type="checkbox"
+                            formControlName="cars" />
+                        </form-check>
+                      </div>
+                      <div class="row">
+                        <form-check label="Son inmuebles" for="property">
+                          <input
+                            id="property"
+                            type="checkbox"
+                            formControlName="inmuebles" />
+                        </form-check>
+                      </div>
+                      <div class="row">
+                        <hr
+                          class="row mr-4"
+                          style="width: -webkit-fill-available" />
+                        <form-check label="Desalojo" for="desalojov">
+                          <input
+                            id="desalojov"
+                            type="checkbox"
+                            formControlName="desalojo"
+                            (change)="desalojoChange()" />
+                        </form-check>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="col-md-7">
               <label>Opciones de Carga</label>
               <div>
                 <form-radio
@@ -53,8 +104,8 @@
                     formControlName="inmuebles" />
                 </form-check>
               </div>
-              <hr class="row" />
               <div class="row">
+                <hr class="row" />
                 <form-check label="Desalojo" for="desalojov">
                   <input
                     id="desalojov"
@@ -63,24 +114,58 @@
                     (change)="desalojoChange()" />
                 </form-check>
               </div>
-            </div>
+            </div> -->
           </div>
-          <div class="row pt-1">
+          <!-- <div class="row pt-1">
             <form-field
               [control]="assetsForm.get('idCarga')"
               label="ID carga:"
               class="col-md-9">
               <input class="form-control" formControlName="idCarga" />
             </form-field>
+          </div> -->
+        </div>
+        <div class="col-md-4">
+          <div class="card p-2">
+            <div class="card-header">
+              Proceso actual:
+              <div class="badge badge-pill bg-primary text-wrap">
+                {{ assetsForm.get('actionType').value }}
+              </div>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Total de Registros:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{ tableSource.length }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                <form-field
+                  [control]="assetsForm.get('idCarga')"
+                  label="ID carga:"
+                  class="col-md-12">
+                  <input class="form-control" formControlName="idCarga" />
+                </form-field>
+              </li>
+            </ul>
+            <!-- <div class="card-footer">
+              <form-field
+                [control]="assetsForm.get('idCarga')"
+                label="ID carga:"
+                class="col-md-12">
+                <input class="form-control" formControlName="idCarga" />
+              </form-field>
+            </div> -->
           </div>
         </div>
-
-        <div class="col-md-5">
+        <div class="col-md-12">
           <div class="row">
-            <div>
+            <div class="col-12 text-center">
               <button
-                class="btn btn-success btn-sm ml-2"
+                class="m-4 btn btn-success btn-sm ml-2"
                 type="button"
+                [disabled]="procesandoUpload || procesandoPreload"
                 (click)="file.click()">
                 Abrir archivo Excel / CSV
               </button>
@@ -91,24 +176,22 @@
                 class="d-none"
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 (change)="onFileChange($event)" />
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div>
               <button
                 type="submit"
                 status="info"
-                class="ml-2 mb-0 btn btn-primary btn-sm active">
+                [disabled]="
+                  !assetsForm.get('idCarga') ||
+                  procesandoUpload ||
+                  procesandoPreload
+                "
+                class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
                 Ejecutar proceso
               </button>
-            </div>
-          </div>
-          <div class="row pt-4 pb-3">
-            <div>
               <button
                 (click)="resetProcess()"
                 type="button"
-                class="ml-2 mb-0 btn btn-danger btn-sm active">
+                [disabled]="procesandoUpload || procesandoPreload"
+                class="ml-2 mb-0 m-4 btn btn-danger btn-sm active">
                 Limpiar Proceso
               </button>
             </div>
@@ -117,7 +200,7 @@
       </div>
     </form>
 
-    <hr class="row" />
+    <hr class="row mt-3" />
 
     <div
       class="row mt-3 mb-5"
@@ -125,95 +208,149 @@
         DeclarationsValidationMassive &&
         DeclarationsValidationMassive.message_progress != ''
       ">
-      <div class="col-md-12">
-        <h2>Proceso de validación de archivo</h2>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            Proceso actual:
-            <div class="badge badge-pill bg-primary text-wrap">
-              {{ DeclarationsValidationMassive.common_general.proceso }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Estatus del Proceso Actual:
-            <div class="badge badge-pill bg-info text-wrap">
-              {{ DeclarationsValidationMassive.message_progress }}
-            </div>
-          </li>
-          <div class="list-group-item">
-            <div
-              class="progress"
-              role="progressbar"
-              aria-label="Example with label"
-              style="background-color: lightgrey"
-              [attr.aria-valuenow]="
-                ((DeclarationsValidationMassive.common_general.count + 1) /
-                  DeclarationsValidationMassive.common_general.total) *
-                  100 | number: '1.2-2'
-              "
-              aria-valuemin="0"
-              aria-valuemax="100">
-              <div
-                class="progress-bar bg-info"
-                [style.width]="
-                  (((DeclarationsValidationMassive.common_general.count + 1) /
-                    DeclarationsValidationMassive.common_general.total) *
-                    100 | number: '1.2-2') + '%'
-                ">
-                {{
-                  ((DeclarationsValidationMassive.common_general.count + 1) /
-                    DeclarationsValidationMassive.common_general.total) *
-                    100 | number: '1.2-2'
-                }}%
+      <div
+        class="col-md-12 alert alert-warning"
+        *ngIf="stopProcess && procesandoPreload">
+        Deteniendo el proceso, Espere un momento...
+      </div>
+      <div class="col-md-12"><h2>Proceso de validación de archivo</h2></div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Proceso actual:
+                <div class="badge badge-pill bg-primary text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.proceso }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Estatus del Proceso Actual:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{ DeclarationsValidationMassive.message_progress }}
+                </div>
+              </li>
+              <div class="list-group-item">
+                <div
+                  class="progress"
+                  role="progressbar"
+                  aria-label="Example with label"
+                  style="background-color: lightgrey"
+                  [attr.aria-valuenow]="
+                    ((DeclarationsValidationMassive.common_general.count + 1) /
+                      DeclarationsValidationMassive.common_general.total) *
+                      100 | number: '1.2-2'
+                  "
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                  <div
+                    class="progress-bar bg-info"
+                    [style.width]="
+                      (((DeclarationsValidationMassive.common_general.count +
+                        1) /
+                        DeclarationsValidationMassive.common_general.total) *
+                        100 | number: '1.2-2') + '%'
+                    ">
+                    {{
+                      ((DeclarationsValidationMassive.common_general.count +
+                        1) /
+                        DeclarationsValidationMassive.common_general.total) *
+                        100 | number: '1.2-2'
+                    }}%
+                  </div>
+                </div>
               </div>
-            </div>
+              <div class="list-group-item">
+                Datos del registro actual en proceso:
+                <div
+                  class="row mt-5 w-100"
+                  style="max-height: 200px; overflow-y: scroll">
+                  <div class="col-md-12">
+                    <ng2-smart-table
+                      [source]="tableSourceActualPreload"
+                      [settings]="settings">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </ul>
           </div>
-          <li class="list-group-item">
-            Registro actual en proceso:
-            <div class="badge badge-pill bg-info text-wrap">
-              {{ DeclarationsValidationMassive.common_general.count + 1 }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Total de Registros:
-            <div class="badge badge-pill bg-success text-wrap">
-              {{ DeclarationsValidationMassive.common_general.total }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Total de Registros con Errores:
-            <div class="badge badge-pill bg-danger text-wrap">
-              {{
-                DeclarationsValidationMassive.common_general.registro_errores
-              }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Total de Errores:
-            <div class="badge badge-pill bg-danger text-wrap">
-              {{ DeclarationsValidationMassive.common_general.total_errores }}
-            </div>
-          </li>
-          <div
-            class="list-group-item"
-            *ngIf="
-              DeclarationsValidationMassive.common_general.total_errores > 0 &&
-              DeclarationsValidationMassive.common_general.valid == false
-            ">
-            El archivo que se genera al dar clic en "Exportar Errores
-            Encontrados en el Proceso de Validación del Archivo" contiene los
-            campos donde se encontraron errores durante el proceso de
-            validación. Se muestran los errores puntuales en la última columna
-            del contenido del excel.
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header text-center">
             <button
+              (click)="detenerProceso()"
               type="button"
-              class="ml-2 mr-2 mt-4 btn btn-success btn-sm"
-              (click)="exportXlsx()">
-              Exportar Errores Encontrados en el Proceso de Validación del
-              archivo<i class="fa fa-file-excel ml-1"></i>
+              *ngIf="procesandoPreload"
+              class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+              Detener Proceso
             </button>
           </div>
-        </ul>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Porcentaje proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{
+                    (((DeclarationsValidationMassive.common_general.count + 1) /
+                      DeclarationsValidationMassive.common_general.total) *
+                      100 | number: '1.2-2') + '%'
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Registro actual en proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.count + 1 }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.total }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros con Errores:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsValidationMassive.common_general
+                      .registro_errores
+                  }}
+                </div>
+              </li>
+              <!-- <li class="list-group-item">
+                Total de Errores en el proceso:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.total_errores }}
+                </div>
+              </li> -->
+            </ul>
+            <div
+              class="alert alert-info"
+              *ngIf="
+                DeclarationsValidationMassive.common_general.total_errores >
+                  0 &&
+                DeclarationsValidationMassive.common_general.valid == false
+              ">
+              El archivo que se genera al dar clic en "Exportar Errores
+              Encontrados en el Proceso de Validación del Archivo" contiene los
+              campos donde se encontraron errores durante el proceso de
+              validación. Se muestran los errores puntuales en la última columna
+              del contenido del excel.
+              <button
+                type="button"
+                [disabled]="procesandoPreload"
+                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
+                (click)="exportXlsx()">
+                Exportar Errores Encontrados en el Proceso de Validación del
+                archivo<i class="fa fa-file-excel ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -223,7 +360,186 @@
         DeclarationsUploadValidationMassive &&
         DeclarationsUploadValidationMassive.message_progress != ''
       ">
+      <div
+        class="col-md-12 alert alert-warning"
+        *ngIf="stopProcess && procesandoUpload">
+        Deteniendo el proceso, Espere un momento...
+      </div>
       <div class="col-md-12">
+        <h2>Proceso de validación en la carga de datos</h2>
+      </div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Proceso actual:
+                <div class="badge badge-pill bg-primary text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.proceso
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Estatus del Proceso Actual:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{ DeclarationsUploadValidationMassive.message_progress }}
+                </div>
+              </li>
+              <div class="list-group-item">
+                <div
+                  class="progress"
+                  role="progressbar"
+                  aria-label="Example with label"
+                  style="background-color: lightgrey"
+                  [attr.aria-valuenow]="
+                    ((DeclarationsUploadValidationMassive.common_general.count +
+                      1) /
+                      DeclarationsUploadValidationMassive.common_general
+                        .total) *
+                      100 | number: '1.2-2'
+                  "
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                  <div
+                    class="progress-bar bg-info"
+                    [style.width]="
+                      (((DeclarationsUploadValidationMassive.common_general
+                        .count +
+                        1) /
+                        DeclarationsUploadValidationMassive.common_general
+                          .total) *
+                        100 | number: '1.2-2') + '%'
+                    ">
+                    {{
+                      ((DeclarationsUploadValidationMassive.common_general
+                        .count +
+                        1) /
+                        DeclarationsUploadValidationMassive.common_general
+                          .total) *
+                        100 | number: '1.2-2'
+                    }}%
+                  </div>
+                </div>
+              </div>
+              <div class="list-group-item">
+                Datos del registro actual en proceso:
+                <div
+                  class="row mt-5 w-100"
+                  style="max-height: 200px; overflow-y: scroll">
+                  <div class="col-md-12">
+                    <ng2-smart-table
+                      [source]="tableSourceActualUpload"
+                      [settings]="settings">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header text-center">
+            <button
+              (click)="detenerProceso()"
+              type="button"
+              *ngIf="procesandoUpload"
+              class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+              Detener Proceso
+            </button>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Porcentaje proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{
+                    (((DeclarationsUploadValidationMassive.common_general
+                      .count +
+                      1) /
+                      DeclarationsUploadValidationMassive.common_general
+                        .total) *
+                      100 | number: '1.2-2') + '%'
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Registro actual en proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.count + 1
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{ DeclarationsUploadValidationMassive.common_general.total }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros con Errores:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general
+                      .registro_errores
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Bienes creados:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.bienes
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Expedientes creados:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general
+                      .expedientes
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Volantes creados:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.volantes
+                  }}
+                </div>
+              </li>
+            </ul>
+            <div
+              class="alert alert-info"
+              *ngIf="
+                DeclarationsUploadValidationMassive.common_general
+                  .total_errores > 0 &&
+                DeclarationsUploadValidationMassive.common_general.valid ==
+                  false
+              ">
+              El archivo que se genera al dar clic en "Exportar Errores
+              Encontrados en el Proceso de Validación del Archivo" contiene los
+              campos donde se encontraron errores durante el proceso de
+              validación. Se muestran los errores puntuales en la última columna
+              del contenido del excel.
+              <button
+                type="button"
+                [disabled]="procesandoPreload"
+                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
+                (click)="exportXlsx()">
+                Exportar Errores Encontrados en el Proceso de Validación del
+                archivo<i class="fa fa-file-excel ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-md-12">
         <h2>Proceso de validación en la carga de datos</h2>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
@@ -236,6 +552,11 @@
             Estatus del Proceso Actual:
             <div class="badge badge-pill bg-info text-wrap">
               {{ DeclarationsUploadValidationMassive.message_progress }}
+            </div><div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
+              <div class="col-md-12">
+                <ng2-smart-table [source]="tableSourceActualUpload" [settings]="settings">
+                </ng2-smart-table>
+              </div>
             </div>
           </li>
           <div class="list-group-item">
@@ -291,7 +612,7 @@
             </div>
           </li>
           <li class="list-group-item">
-            Total de Errores:
+            Total de Errores en el proceso:
             <div class="badge badge-pill bg-danger text-wrap">
               {{
                 DeclarationsUploadValidationMassive.common_general.total_errores
@@ -312,6 +633,7 @@
             del excel.
             <button
               type="button"
+              [disabled]="procesandoUpload"
               class="ml-2 mr-2 mt-4 btn btn-success btn-sm"
               (click)="exportErrorUploadXlsx()">
               Exportar Errores Encontrados en el Proceso de Carga de Datos<i
@@ -319,7 +641,7 @@
             </button>
           </div>
         </ul>
-      </div>
+      </div> -->
     </div>
 
     <hr *ngIf="tableSource.length > 0" class="row" />
