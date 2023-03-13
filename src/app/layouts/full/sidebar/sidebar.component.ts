@@ -7,10 +7,14 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
+import {
+  MenuPermission,
+  Submenu,
+} from 'src/app/core/interfaces/menu-permission.interface';
 import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
-import { MENU } from 'src/app/core/menu';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,11 +34,27 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   private menu: any;
   public menuItems: IMenuItem[] = [];
 
+  menus: MenuPermission[] = [];
+
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
-  constructor(private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    const roles = this.authService.accessRoles();
+    roles.some((rol: any) =>
+      rol.menus.some(
+        (menu: any) => {
+          this.menus.push(menu);
+        }
+        //menu.screen === screenId &&
+        //menu.permissions[permission] == PERMISSION_ENABLED
+      )
+    );
     this.initialize();
   }
 
@@ -150,6 +170,17 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
                     childanchor.classList.add('mm-show');
                     childanchor.classList.add('mm-active');
                   }
+
+                  const parent7El = parent5El.parentElement;
+                  if (parent7El && parent7El.id !== 'side-menu') {
+                    parent7El.classList.add('mm-show');
+                    parent7El.classList.add('mm-active');
+                    const childanchor = parent7El.querySelector('.is-parent');
+                    if (childanchor && parent7El.id !== 'side-menu') {
+                      childanchor.classList.add('mm-show');
+                      childanchor.classList.add('mm-active');
+                    }
+                  }
                 }
               }
             }
@@ -163,18 +194,57 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    * Initialize
    */
   private initialize(): void {
-    let id = 0;
-    MENU.forEach(menu => {
-      if (menu.subItems?.length > 0) {
-        menu.id = id;
-        id = this.setParentId(menu, menu.id);
+    console.log(this.menus);
+
+    for (const menu of this.menus) {
+      //crea nivel menu
+      const global: IMenuItem = {} as IMenuItem;
+      global.label = menu.description;
+
+      //buscar hijos menus
+      if (menu.submenus.length > 0) {
+        global.icon = 'bx-folder';
+        global.subItems = searchChild(menu.submenus);
       } else {
-        menu.id = id;
-        id++;
+        //si no se tiene hijos menu se pondra icono igual ?
+        global.link = menu.name;
       }
-      this.menuItems.push(menu);
-    });
+      this.menuItems.push(global);
+    }
+
+    function searchChild(subMenu: Submenu[]): IMenuItem[] {
+      let subItemsArray: IMenuItem[] = [];
+      for (const sub of subMenu) {
+        console.log(subMenu);
+
+        const subItems: IMenuItem = {} as IMenuItem;
+        subItems.label = sub.description;
+        subItems.subItems = [];
+        if (sub.submenus.length > 0) {
+          subItems.subItems = searchChild(sub.submenus);
+        } else {
+          subItems.link = sub.name;
+        }
+        subItemsArray.push(subItems);
+      }
+
+      return subItemsArray;
+    }
+
+    //Se ocupara para algo los id ???
+    // let id = 0;
+    // MENU.forEach(menu => {
+    //   if (menu.subItems?.length > 0) {
+    //     menu.id = id;
+    //     id = this.setParentId(menu, menu.id);
+    //   } else {
+    //     menu.id = id;
+    //     id++;
+    //   }
+    //   this.menuItems.push(menu);
+    // });
   }
+
   private setParentId(menuItem: IMenuItem, id: number): number {
     menuItem.subItems.forEach(sub => {
       id++;

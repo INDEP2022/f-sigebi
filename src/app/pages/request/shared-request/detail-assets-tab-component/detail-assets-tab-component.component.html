@@ -116,7 +116,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-6">
+            <div class="col-md-3">
               <form-field
                 [control]="detailAssets.get('useType')"
                 label="Tipo de Uso">
@@ -126,7 +126,7 @@
                   formControlName="useType" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <ngx-select
                 [form]="detailAssets"
                 control="physicalStatus"
@@ -148,7 +148,7 @@
                 bindLabel="description"
                 value="keyId"></ngx-select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <form-field
                 [control]="detailAssets.get('origin')"
                 label="Procedencia">
@@ -156,6 +156,19 @@
                   type="text"
                   class="form-control"
                   formControlName="origin" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('unitMeasure')"
+                label="Unid&#46; Medida Transferente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="unitMeasure"
+                  [readOnly]="true" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -170,11 +183,13 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-check label="Avalúo" for="aval&uacute;o">
+              <form-check label="Avaluo" for="appraisal">
                 <input
-                  id="avaluo"
+                  id="appraisal"
                   type="checkbox"
-                  formControlName="appraisal" />
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="appraisal"
+                  (change)="handleAppraisalEvent($event)" />
               </form-check>
             </div>
           </div>
@@ -198,20 +213,10 @@
                 control="transferentDestiny"
                 (fetchItems)="getDestinyTransfer($event)"
                 [data]="selectDestinyTransfer"
-                label="&#42;Destino Transferente"
+                label="Destino Transferente"
                 [searchable]="false"
                 bindLabel="description"
                 value="keyId"></ngx-select>
-            </div>
-            <div
-              class="col-md-3"
-              *ngIf="otherAssets === true || manejeAssets === true">
-              <form-check label="Cumple Norma" for="compliesNorm">
-                <input
-                  id="compliesNorm"
-                  type="checkbox"
-                  formControlName="compliesNorm" />
-              </form-check>
             </div>
             <div class="col-md-3">
               <form-field
@@ -225,27 +230,17 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-4">
-              <form-field
-                [control]="detailAssets.get('unitMeasure')"
-                label="Unid&#46; Medida Transferente">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="unitMeasure"
-                  [readOnly]="true" />
-              </form-field>
-            </div>
             <div
-              class="col-md-4"
+              class="col-md-3"
               *ngIf="otherAssets === true || manejeAssets === true">
-              <form-field
-                [control]="detailAssets.get('notesTransferringEntity')"
-                label="Notas">
-                <textarea
-                  class="form-control"
-                  formControlName="notesTransferringEntity"></textarea>
-              </form-field>
+              <form-check label="Cumple Norma" for="compliesNorm">
+                <input
+                  id="compliesNorm"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="complyNorm"
+                  (change)="handleCumpliesNormEvent($event)" />
+              </form-check>
             </div>
             <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
               <ngx-select

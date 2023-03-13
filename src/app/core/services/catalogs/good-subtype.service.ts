@@ -45,6 +45,11 @@ export class GoodSubtypeService
   update(id: string | number, model: IGoodSubType): Observable<Object> {
     return this.goodSubtypeRepository.update(this.route, id, model);
   }
+
+  newUpdate(model: IGoodSubType): Observable<Object> {
+    return this.goodSubtypeRepository.newUpdate(this.route, model);
+  }
+
   updateByIds(
     ids: Partial<IGoodSubType>,
     model: IGoodSubType

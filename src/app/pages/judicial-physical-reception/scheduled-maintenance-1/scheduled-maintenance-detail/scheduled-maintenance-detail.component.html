@@ -74,23 +74,30 @@
         </div>
       </div> -->
       <div class="action-buttons mr-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
+          <button
+            class="btn btn-primary btn-sm active"
+            type="submit"
+            size="small"
+            (click)="getData()">
+            <i class="bx bx-loader float-icon"></i>
+            Refrescar Informaci&oacute;n
+          </button>
+        </div>
+        <div class="col-md-3 center">
           <app-goodtracker-button
             [statusActaValue]="statusActaValue"
             [data]="data"></app-goodtracker-button>
         </div>
-        <div class="col-md-4">
-          <button
-            [class]="statusActaValue === 'CERRADA' ? 'disabled' : ''"
-            class="btn btn-primary btn-sm active"
-            type="submit"
-            size="small"
-            (click)="updateGoods()">
-            <i class="bx bx-pencil float-icon"></i>
-            Editar fechas
-          </button>
+        <div class="col-md-3 center">
+          <app-update-dates-goods
+            [statusActaValue]="statusActaValue"
+            [data]="data"
+            (updateGoodEvent)="
+              selectedsForUpdate = $event
+            "></app-update-dates-goods>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <app-massive-delete-button
             [statusActaValue]="statusActaValue"
             [actaId]="actaId"
@@ -117,22 +124,15 @@
     </div>
   </div>
   <div body>
-    <div class="row pt-4 table-container" style="margin-right: 0px">
-      <div class="col-md-12 table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            class="col-md-12"
-            [settings]="settingsGoods"
-            [source]="data"
-            (userRowSelect)="rowsSelected($event)"
-            (editConfirm)="updateGoodsRow($event)"
-            (deleteConfirm)="showDeleteAlert($event.data)"></ng2-smart-table>
-        </div>
-      </div>
-    </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+    <app-table-goods
+      [settingsTable]="settingsGoods"
+      [data]="data"
+      [totalItems]="totalItems"
+      [statusActaValue]="statusActaValue"
+      (updateGoodsRow)="updateGoodsRow($event)"
+      (updateData)="this.params = $event; getData()"
+      (rowsSelected)="rowsSelected($event)"
+      (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
 
     <hr class="row" />
     <app-cants></app-cants>

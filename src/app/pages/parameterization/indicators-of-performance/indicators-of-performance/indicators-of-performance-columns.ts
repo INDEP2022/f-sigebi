@@ -35,6 +35,11 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     title: 'Término',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   daysLimNumber: {
     title: 'Días Límite',
@@ -45,6 +50,11 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     title: 'Hora Límite',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   contractZoneKey: {
     title: 'Zona Contrato',

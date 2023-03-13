@@ -11,6 +11,8 @@ import { ProceedingTypesSharedComponent } from 'src/app/@standalone/shared-forms
 import { RegionalCoordSharedComponent } from 'src/app/@standalone/shared-forms/regional-coord-shared/regional-coord-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { KeyProceedingsFormComponent } from '../key-proceedings-form/key-proceedings-form.component';
+import { TableGoodsComponent } from '../table-goods/table-goods.component';
+import { UpdateDatesGoodsComponent } from '../update-dates-goods/update-dates-goods.component';
 import { CantsComponent } from './scheduled-maintenance-detail/cants/cants.component';
 import { ExcelButtonComponent } from './scheduled-maintenance-detail/components/excel-button/excel-button.component';
 import { GoodtrackerButtonComponent } from './scheduled-maintenance-detail/components/goodtracker-button/goodtracker-button.component';
@@ -41,6 +43,8 @@ import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component
     ElaborateUsersSharedComponent,
     KeyProceedingsFormComponent,
     CleanFiltersSharedComponent,
+    UpdateDatesGoodsComponent,
+    TableGoodsComponent,
   ],
 })
 export class ScheduledMaintenanceModule {}

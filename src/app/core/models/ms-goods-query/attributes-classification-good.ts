@@ -1,6 +1,6 @@
 export interface IAttribClassifGoods {
-  classifGoodNumber: number;
-  columnNumber: number;
+  classifGoodNumber?: number;
+  columnNumber?: number;
   attribute: string;
   description: string;
   required: string;
@@ -9,6 +9,6 @@ export interface IAttribClassifGoods {
   update: string;
   accessKey: string;
   tableCd: string;
-  registrationNumber: number;
-  typeAct: number;
+  registrationNumber?: number;
+  typeAct?: number;
 }

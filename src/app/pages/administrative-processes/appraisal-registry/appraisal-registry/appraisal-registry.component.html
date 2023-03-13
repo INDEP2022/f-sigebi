@@ -100,12 +100,14 @@
             <form-field [control]="form.get('delegation')">
               <ngx-select
                 [form]="form"
-                [data]="delegation"
-                bindLabel="name"
-                label="Delegacíon"
-                value="id"
                 (fetchItems)="getDelegations($event)"
-                control="delegation"></ngx-select>
+                [data]="delegation"
+                value="id"
+                bindLabel="name"
+                label="Delegaci&oacute;n"
+                [control]="'delegation'"
+                (change)="getDelegations($event)">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-4">

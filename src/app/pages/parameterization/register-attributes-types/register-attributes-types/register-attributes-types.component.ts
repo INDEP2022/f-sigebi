@@ -267,11 +267,17 @@ export class RegisterAttributesTypesComponent
       initialState: {
         attribClassifGood,
         _id,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getAttribClassifGood(_id);
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(RegisterAttributesTypesModalComponent, config);
+  }
+
+  resetForm() {
+    this.form.reset();
   }
 }

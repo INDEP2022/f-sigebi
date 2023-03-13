@@ -34,6 +34,12 @@
           </form-radio>
         </div>
       </div>
+      <div class="row" *ngIf="warningTLP === true">
+        <p style="color: #9d2449">
+          Usted va a transferir una solicitud que no es comercio exterior a un
+          TE
+        </p>
+      </div>
       <div class="row">
         <div class="form-material col-md-5">
           <search-bar [filterParams]="params"></search-bar>
@@ -59,8 +65,11 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-primary btn-sm active">
-          Seleccionar
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="turnRequest()">
+          Turnar
         </button>
       </div>
       <div class="m-3">

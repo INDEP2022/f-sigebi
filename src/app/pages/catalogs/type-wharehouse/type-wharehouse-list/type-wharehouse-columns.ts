@@ -1,6 +1,6 @@
 export const TYPESWHAREHOUSE_COLUMS = {
   id: {
-    title: 'Registro',
+    title: 'ID',
     type: 'number',
     sort: false,
   },
@@ -15,7 +15,7 @@ export const TYPESWHAREHOUSE_COLUMS = {
     type: 'number',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     type: 'number',
     sort: false,

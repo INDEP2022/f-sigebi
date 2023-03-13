@@ -6,53 +6,51 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('tipo_servicio')"
-            label="Tipo Servicio">
+          <form-field [control]="form.get('serviceType')" label="Tipo Servicio">
             <input
               type="text"
               class="form-control"
-              formControlName="tipo_servicio" />
+              formControlName="serviceType" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('rango_porcentaje_inicial')"
+            [control]="form.get('startingPercentageRange')"
             label="Rango Porcentaje Inicial">
             <input
               type="number"
               class="form-control"
-              formControlName="rango_porcentaje_inicial" />
+              formControlName="startingPercentageRange" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('rango_porcentaje_final')"
+            [control]="form.get('finalPercentageRange')"
             label="Rango Porcentaje Final">
             <input
               type="number"
               class="form-control"
-              formControlName="rango_porcentaje_final" />
+              formControlName="finalPercentageRange" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('pena_convencional')"
+            [control]="form.get('contractualPenalty')"
             label="Pena Convencional">
             <input
               type="number"
               class="form-control"
-              formControlName="pena_convencional" />
+              formControlName="contractualPenalty" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('no_contrato')"
+            [control]="form.get('contractNumber')"
             label="N&uacute;mero de Registro">
             <input
               type="text"
               class="form-control"
-              formControlName="no_contrato" />
+              formControlName="contractNumber" />
           </form-field>
         </div>
         <!--
@@ -78,11 +76,11 @@
                 </div>
                 -->
         <div class="col-md-4">
-          <form-field [control]="form.get('estatus')" label="Estado">
+          <form-field [control]="form.get('status')" label="Estado">
             <input
               type="number"
               class="form-control"
-              formControlName="estatus" />
+              formControlName="status" />
           </form-field>
         </div>
         <div class="col-md-4">

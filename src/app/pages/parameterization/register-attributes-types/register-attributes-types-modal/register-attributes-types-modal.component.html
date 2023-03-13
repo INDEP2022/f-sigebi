@@ -19,11 +19,12 @@
         <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('columnNumber')"
-            label="No. Columna">
+            label="Clave">
             <input
               type="number"
               class="form-control"
-              formControlName="columnNumber" />
+              formControlName="columnNumber"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -51,7 +52,7 @@
         <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('required')"
-            label="¿Requerdio?">
+            label="¿Requerido?">
             <ng-select
               formControlName="required"
               [searchable]="false"
@@ -65,16 +66,16 @@
         <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('dataType')"
-            label="tipo de dato">
+            label="Tipo de dato">
             <ng-select
               formControlName="dataType"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">Alfanum&eacute;rico</ng-option>
-              <ng-option value="2">Num&eacute;rico</ng-option>
-              <ng-option value="3">Flotante</ng-option>
-              <ng-option value="4">Fecha</ng-option>
+              <ng-option value="V">Alfanum&eacute;rico</ng-option>
+              <ng-option value="N">Num&eacute;rico</ng-option>
+              <ng-option value="F">Flotante</ng-option>
+              <ng-option value="D">Fecha</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -121,11 +122,11 @@
         <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('tableCd')"
-            label="cdTabla">
+            label="Tabla de soporte">
             <input type="text" class="form-control" formControlName="tableCd" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('typeAct')"
             label="Tipo de acta">
@@ -134,17 +135,7 @@
               class="form-control"
               formControlName="typeAct" />
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="attribClassifGoodForm.get('registrationNumber')"
-            label="No. Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registrationNumber" />
-          </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

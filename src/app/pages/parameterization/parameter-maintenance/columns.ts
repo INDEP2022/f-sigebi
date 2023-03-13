@@ -13,7 +13,7 @@ export const COLUMNSPARAMETER = {
     type: 'html',
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}  
       `;
     },
   },
@@ -23,7 +23,7 @@ export const COLUMNSPARAMETER = {
     type: 'html',
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}  
       `;
     },
   },
