@@ -36,17 +36,17 @@ export const dataBatchColum = {
   id: {
     title: 'id Lote',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   description: {
     title: 'Description',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   status: {
     title: 'Estatus',
     type: 'string',
-    sort: false,
+    sort: true,
   },
   numStore: {
     type: 'list',

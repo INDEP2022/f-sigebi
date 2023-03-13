@@ -1,10 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IPhotographMedia } from 'src/app/core/models/catalogs/photograph-media.model';
 import { BatchService } from 'src/app/core/services/catalogs/batch.service';
+import { PhotographMediaService } from 'src/app/core/services/catalogs/photograph-media.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DATA } from './data';
@@ -38,7 +41,7 @@ export class PublicationPhotographsComponent
   selectedCve: any = null;
   cveItems = new DefaultSelect();
   totalItems: number = 0;
-
+  picture: IPhotographMedia;
   data1: LocalDataSource = new LocalDataSource();
   dataAllotment = DATA;
 
@@ -55,8 +58,14 @@ export class PublicationPhotographsComponent
 
   columns: any[] = [];
   @Output() refresh = new EventEmitter<true>();
+  @Output() onConfirm = new EventEmitter<any>();
 
-  constructor(private fb: FormBuilder, private batchService: BatchService) {
+  constructor(
+    private fb: FormBuilder,
+    private batchService: BatchService,
+    private photographMediaService: PhotographMediaService,
+    private modalRef: BsModalRef
+  ) {
     super();
     this.settings1 = {
       ...this.settings,
@@ -86,8 +95,10 @@ export class PublicationPhotographsComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      favorite: [null, [Validators.required]],
-      id: [null, [Validators.required]],
+      picture: [null, [Validators.required]],
+      // favorite: [null, [Validators.required]],
+      id: [null],
+      noConsec: [null],
     });
   }
 
@@ -148,6 +159,35 @@ export class PublicationPhotographsComponent
       },
       error: error => (this.loading = false),
     });
+  }
+  confirm() {
+    this.loading = false;
+    this.photographMediaService.create(this.form.value).subscribe({
+      next: data => {
+        this.picture = data;
+        console.log(this.picture);
+        this.rowSelected = true;
+        this.handleSuccess();
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+        return;
+      },
+    });
+  }
+
+  handleSuccess() {
+    setTimeout(() => {
+      this.onLoadToast('success', 'fotografía creada correctamente', '');
+    }, 2000);
+    this.loading = false;
+    this.onConfirm.emit(true);
+    this.modalRef.content.callback(true);
+    this.close();
+  }
+  close() {
+    this.modalRef.hide();
   }
 
   //Carrusel de fotografías
