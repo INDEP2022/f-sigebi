@@ -1,3 +1,3 @@
 export interface IEncrypt {
-  txtEncrip:string
+  txtEncrip: string;
 }

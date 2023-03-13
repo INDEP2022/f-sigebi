@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
   BsDatepickerConfig,
@@ -7,7 +12,11 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Models
@@ -32,11 +41,12 @@ export class AnnualAccumulatedAssetsComponent
 {
   form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
-  pdfurl = 'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
+  pdfurl =
+    'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
   bsConfigToYear: Partial<BsDatepickerConfig>;
   bsConfigFromYear: Partial<BsDatepickerConfig>;
-  
+
   maxDateEnd = new Date();
   maxDateStart: Date;
   minDateEnd: Date;
@@ -54,7 +64,6 @@ export class AnnualAccumulatedAssetsComponent
   get subdelegation() {
     return this.form.get('subdelegation');
   }
-  
 
   constructor(
     private modalService: BsModalService,
@@ -92,10 +101,10 @@ export class AnnualAccumulatedAssetsComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required, ]],
-      subdelegation: [null, [Validators.required, ]],
-      fromYear: [null, [Validators.required, ]],
-      toYear: [null, [Validators.required, ]], 
+      delegation: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
+      fromYear: [null, [Validators.required]],
+      toYear: [null, [Validators.required]],
     });
   }
 
@@ -117,7 +126,7 @@ export class AnnualAccumulatedAssetsComponent
     );
   }
 
- onDelegationsChange(element: any) {
+  onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
     this.subdelegations = new DefaultSelect();
     // console.log(this.PN_NODELEGACION.value);
@@ -156,9 +165,7 @@ export class AnnualAccumulatedAssetsComponent
 
   onSubDelegationsChange(element: any) {
     this.resetFields([this.subdelegation]);
-    
   }
-
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
@@ -167,7 +174,7 @@ export class AnnualAccumulatedAssetsComponent
     this.form.updateValueAndValidity();
   }
 
-setMinDateEnd(date: Date) {
+  setMinDateEnd(date: Date) {
     if (date != undefined) this.minDateEnd = date;
   }
 
@@ -196,8 +203,6 @@ setMinDateEnd(date: Date) {
     this.loading = false;
   }
 
-  
-
   readFile(file: IReport) {
     const reader = new FileReader();
     reader.readAsDataURL(file.data);
@@ -206,7 +211,6 @@ setMinDateEnd(date: Date) {
       this.openPrevPdf(reader.result as string);
     };
   }
-  
 
   openPrevPdf(pdfurl: string) {
     console.log(pdfurl);

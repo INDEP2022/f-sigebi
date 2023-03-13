@@ -54,4 +54,26 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'text-change',
     menu: 'Cambio de Texto',
   },
+  {
+    label: 'Mantenimiento amparos',
+    link: 'maintenance-of-coverages',
+    menu: 'Mantenimiento amparos',
+  },
+  {
+    label: 'Carga masiva de carga de depositarias',
+    link: 'bulk-loading-depository-cargo',
+    menu: 'Carga masiva de carga de depositarias',
+  },
+  {
+    label: 'Monitor de abandono por aseguramiento',
+    link: 'abandonment-monitor-for-securing',
+    menu: 'Monitor de abandono por aseguramiento',
+  },
+  {
+    // Dictaminación Masiva Prog. Desalojo
+    label: 'Notificación de abandono por aseguramiento',
+    link: 'notice-abandonment-for-securing',
+    menu: 'Notificación de abandono por aseguramiento',
+  },
+  {},
 ];
