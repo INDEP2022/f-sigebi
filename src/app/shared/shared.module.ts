@@ -25,6 +25,7 @@ import { SearchBarSimpleComponent } from './components/search-bar-simple/search-
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { SeeMoreComponent } from './components/see-more/see-more.component';
 import { SelectComponent } from './components/select/select.component';
+import { AutoSizeDirective } from './directives/autosize.directive';
 import { MaxLengthDirective } from './directives/maxlength.directive';
 import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
@@ -52,6 +53,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     PermissionsDirective,
     MaxLengthDirective,
     NumbersFilterDirective,
+    AutoSizeDirective,
   ],
   imports: [
     CommonModule,
@@ -93,6 +95,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     GlobalVarsModule,
     MaxLengthDirective,
     NumbersFilterDirective,
+    AutoSizeDirective,
   ],
 })
 export class SharedModule {

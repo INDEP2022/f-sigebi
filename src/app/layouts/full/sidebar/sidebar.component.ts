@@ -7,10 +7,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
 import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
 import { MENU } from 'src/app/core/menu';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,9 +31,15 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   private menu: any;
   public menuItems: IMenuItem[] = [];
 
+  menus: any[] = [];
+
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
-  constructor(private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.initialize();

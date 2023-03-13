@@ -1,23 +1,11 @@
 //Components
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
-  reclassify: {
-    title: 'Reclasificar',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-  },
-  goodNumber: {
+  id: {
     title: 'No. Bien',
     sort: false,
   },
-  DescriptionClassification: {
+  goodDescription: {
     title: 'Descripcion de la clasificacion',
     sort: false,
   },
@@ -25,7 +13,7 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  descriptionGood: {
+  description: {
     title: 'Descripción del Bien',
     sort: false,
   },

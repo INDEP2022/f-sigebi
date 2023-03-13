@@ -81,9 +81,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
       .idZoneGeographic as IZoneGeographic;
     if (idZoneGeographic) {
       this.zones = new DefaultSelect([idZoneGeographic], 1);
-      this.delegationForm.controls.idZoneGeographic.setValue(
-        idZoneGeographic.id_zona_geografica
-      );
+      this.delegationForm.controls.id.setValue(idZoneGeographic.id);
     }
   }
 

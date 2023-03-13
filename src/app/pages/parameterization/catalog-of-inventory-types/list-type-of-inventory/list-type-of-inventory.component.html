@@ -21,16 +21,18 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng-scrollbar [track]="'all'" style="min-height: 300px">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="dataInventory.data"
-              (edit)="formDataType($event.data)"
-              (delete)="deleteType($event.data)">
-            </ng2-smart-table>
-          </ng-scrollbar>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng-scrollbar [track]="'all'" style="min-height: 300px">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="dataInventory.data"
+                (edit)="formDataType($event.data)"
+                (delete)="deleteType($event.data)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+          </div>
         </div>
       </div>
     </div>

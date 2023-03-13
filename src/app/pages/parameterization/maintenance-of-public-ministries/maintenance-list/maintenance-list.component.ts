@@ -86,7 +86,22 @@ export class MaintenanceListComponent extends BasePage implements OnInit {
                   this.onLoadToast('success', 'Ha sido eliminado', '');
                   this.getMinPub();
                 },
-                error: err => this.onLoadToast('error', err.error.message, ''),
+                error: err => {
+                  console.log(err);
+
+                  if (
+                    err.status == 500 &&
+                    err.error.message[0].includes('amparos')
+                  ) {
+                    this.onLoadToast(
+                      'error',
+                      'No puede eliminar un ministerio público que tenga relación con la tabla amparos',
+                      ''
+                    );
+                  } else {
+                    this.onLoadToast('error', err.error.message, '');
+                  }
+                },
               });
             }
           });

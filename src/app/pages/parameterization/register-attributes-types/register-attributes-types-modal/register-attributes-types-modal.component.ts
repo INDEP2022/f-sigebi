@@ -40,24 +40,8 @@ export class RegisterAttributesTypesModalComponent
 
   private prepareForm() {
     this.attribClassifGoodForm = this.fb.group({
-      classifGoodNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
-      columnNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
+      classifGoodNumber: [null, []],
+      columnNumber: [null, []],
       attribute: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -78,7 +62,8 @@ export class RegisterAttributesTypesModalComponent
         null,
         [
           Validators.required,
-          Validators.maxLength(8),
+          Validators.maxLength(2),
+          Validators.max(80),
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
         ],
@@ -89,23 +74,7 @@ export class RegisterAttributesTypesModalComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       tableCd: [null, [Validators.pattern(STRING_PATTERN)]],
-      registrationNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(12),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
-      typeAct: [
-        null,
-        [
-          Validators.maxLength(8),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
+      //typeAct: [null, []],
     });
     if (this.attribClassifGood != null) {
       this.edit = true;

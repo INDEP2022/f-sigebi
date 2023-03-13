@@ -65,7 +65,7 @@ export interface IGood {
   rackNumber?: number;
   storeNumber?: number;
   lotNumber?: number;
-  goodClassNumber?: number;
+  goodClassNumber?: number | string;
   subDelegationNumber?: number;
   delegationNumber?: number;
   physicalReceptionDate?: Date;
@@ -102,7 +102,7 @@ export interface IGood {
   referenceValue?: number;
   insertHcDate?: Date;
   extDomProcess?: string;
-  requestId?: number;
+  requestId?: number | number;
   goodTypeId?: number;
   subTypeId?: number;
   goodStatus?: string;
