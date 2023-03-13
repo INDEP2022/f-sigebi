@@ -86,6 +86,11 @@ const routes: Routes = [
         .CommercializationModule,
   },
   {
+    path: 'sami',
+    loadChildren: async () =>
+      (await import('./siab-web/sami/sami.module')).SamiModule,
+  },
+  {
     path: 'judicial-physical-reception',
     loadChildren: async () =>
       (
