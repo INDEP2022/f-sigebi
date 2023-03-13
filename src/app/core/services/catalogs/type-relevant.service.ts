@@ -33,6 +33,7 @@ export class TypeRelevantService implements ICrudMethods<ITypeRelevant> {
     return this.typeRelevantRepository.remove(this.route, id);
   }
 
+  //Borrar servicio
   search(params: ListParams): Observable<IListResponse<ITypeRelevant>> {
     return this.typeRelevantRepository.getAllPaginated(
       `${this.route}/search`,
