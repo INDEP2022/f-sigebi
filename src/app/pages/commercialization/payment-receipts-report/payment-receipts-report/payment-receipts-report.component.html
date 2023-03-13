@@ -65,7 +65,8 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <app-departments-shared [form]="form"></app-departments-shared>
+              <!-- <app-departments-shared [form]="form"></app-departments-shared> -->
+              <app-federative-shared [form]="form"></app-federative-shared>
             </div>
             <div class="col-md-4">
               <app-delegation-shared
@@ -194,19 +195,20 @@
               </form-field>
             </div>
             <!-- table -->
-            <div class="row pt-5">
-              <div class="table-responsive">
-                <ng2-smart-table
-                  [settings]="settings"
-                  [source]="dataGood"></ng2-smart-table>
-                <!-- <app-goods-types-shared [subTypeShow]="true" [ssubTypeShow]="false"
-                  [sssubTypeShow]="false"></app-goods-types-shared> -->
-              </div>
+            <div class="row pt-2 scroll-table justify-content-center">
+              <!-- <div class="table-responsive"> -->
+              <ng2-smart-table
+                class="col-md-12"
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataGood"></ng2-smart-table>
             </div>
+            <!-- </div> -->
             <!--  -->
           </div>
         </div>
       </div>
+
       <div class="row pt-5">
         <div class="col-md-6">
           <form-field
@@ -284,6 +286,9 @@
               formControlName="receiver" />
           </form-field>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6"></div>
       </div>
     </form>
   </div>

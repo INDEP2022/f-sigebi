@@ -22,4 +22,5 @@ export interface IAffair {
   creationDate?: Date;
   editionUser?: string;
   modificationDate?: Date;
+  nameAndId?: string;
 }
