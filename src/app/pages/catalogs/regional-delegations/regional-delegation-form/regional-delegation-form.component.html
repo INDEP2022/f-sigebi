@@ -5,12 +5,12 @@
   <div body>
     <form class="form-material" [formGroup]="regionalDelegationForm">
       <div class="row">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="regionalDelegationForm.get('id')" label="ID">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
-        </div>
-        <div class="col-md-4">
+        </div> -->
+        <div class="col-md-8">
           <form-field
             [control]="regionalDelegationForm.get('description')"
             label="Descripci&oacute;n">
@@ -35,22 +35,22 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field
-            [control]="regionalDelegationForm.get('idGeographicZona')"
-            label="ID Entidad">
-            <input
+            [control]="regionalDelegationForm.get('idGeographicZona')">
+            <!--  <input
               type="text"
               class="form-control"
-              formControlName="idGeographicZona" />
+              formControlName="idGeographicZona" /> -->
+            <ngx-select
+              (fetchItems)="getGeoZone($event)"
+              [form]="regionalDelegationForm"
+              [data]="selectGeoZone"
+              bindLabel="id"
+              label="ID Zona Geografica"
+              control="idGeographicZona">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="regionalDelegationForm.get('version')"
-            label="Versi&oacute;n">
-            <input type="text" class="form-control" formControlName="version" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-8">
           <form-field
             [control]="regionalDelegationForm.get('regionalDelegate')"
             label="Delegado Regional">
@@ -63,7 +63,7 @@
       </div>
       <!-- ------ -->
       <div class="row pt-5">
-        <div class="col-md-4">
+        <div class="col-md-8">
           <form-field
             [control]="regionalDelegationForm.get('officeAddress')"
             label="Domicilio de la oficina">
@@ -71,13 +71,6 @@
               type="text"
               class="form-control"
               formControlName="officeAddress" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="regionalDelegationForm.get('status')"
-            label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -96,10 +89,16 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="regionalDelegationForm.get('city')"
-            label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
+          <form-field [control]="regionalDelegationForm.get('city')">
+            <ngx-select
+              (fetchItems)="getCity($event)"
+              [form]="regionalDelegationForm"
+              [data]="selectCity"
+              bindLabel="nameCity"
+              label="Ciudad"
+              control="city"
+              (change)="fillSelectCity()">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -108,7 +107,7 @@
             label="Clave del estado">
             <input
               type="text"
-              class="form-control"
+              class="form-control disabled"
               formControlName="keyState" />
           </form-field>
         </div>

@@ -72,7 +72,11 @@ export class NonDeliveryReasonsListComponent
 
   getExample() {
     this.loading = true;
-    this.nonDeliveryReasonsService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.nonDeliveryReasonsService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
         this.data.load(this.columns);

@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<!-- <app-card [header]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">Publicaci&oacute;n de fotograf&iacute;as</h5>
@@ -9,14 +9,8 @@
       <div class="row">
         <div class="col-md-3">
           <h5 class="font-size-14 d-inline">Seleccione Cve Proceso</h5>
-          <ngx-select
-            [form]="form"
-            [data]="cveItems"
-            value="id"
-            bindLabel="description"
-            (fetchItems)="getCve($event)"
-            (change)="selectCve($event)"
-            control="id">
+          <ngx-select [form]="form" [data]="cveItems" value="id" bindLabel="description" (fetchItems)="getCve($event)"
+            (change)="selectCve($event)" control="id">
           </ngx-select>
         </div>
         <div class="col-md-3" *ngIf="selectedCve != null">
@@ -34,32 +28,50 @@
       </div>
     </form>
   </div>
-</app-card>
+</app-card> -->
 
-<app-card [header]="true" *ngIf="selectedCve != null">
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Publicaci&oacute;n de fotograf&iacute;as</h5>
+    </div>
+  </div>
   <div header>
     <div class="ch-content">
       <h5 class="title">Lotes</h5>
     </div>
   </div>
   <div body>
-    <div class="col-md-2">
+    <!-- <div class="col-md-2">
       <div class="w-100 m-1 img-container">
-        <img
-          src="https://samyak.co.in/wp-content/uploads/2021/04/image.jpg"
-          alt=""
-          class="w-50" />
+        <img src="https://samyak.co.in/wp-content/uploads/2021/04/image.jpg" alt="" class="w-50" />
       </div>
     </div>
     <div class="col-md-10">
       <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings1"
-          [source]="data1"
+        <ng2-smart-table [settings]="settings1" [source]="data1"
           (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
       </div>
+    </div> -->
+
+    <div class="row">
+      <label for="">Lotes</label>
+    </div>
+    <div class="row pt-2 scroll-table justify-content-center">
+      <ng2-smart-table
+        class="col-md-12"
+        [attr.class]="'table-bordered'"
+        [settings]="settings4"
+        [source]="dataBatch"></ng2-smart-table>
+    </div>
+    <div class="row mt-5 d-flex justify-content-center">
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
+
+  <br /><br />
 </app-card>
 
 <app-card [header]="true" *ngIf="rowSelected">
