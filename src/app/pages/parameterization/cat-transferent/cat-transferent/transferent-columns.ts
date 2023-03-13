@@ -23,6 +23,16 @@ export const TRANSFERENT_COLUMNS = {
 
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'NO', title: 'No obligatorio' },
+          { value: 'CE', title: 'Asegurado' },
+        ],
+      },
+    },
   },
   /*userCreation: {
     title: 'Usuario creado',
