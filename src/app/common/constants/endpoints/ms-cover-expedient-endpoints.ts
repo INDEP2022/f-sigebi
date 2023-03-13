@@ -4,4 +4,5 @@ export enum CoverExpedientEndpoints {
   Unit = 'expedient/unit',
   File = 'expedient/file',
   Disposition = 'expedient/disposition',
+  CompleteDisposition = 'expedient/completedisposition',
 }

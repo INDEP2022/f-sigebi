@@ -125,6 +125,12 @@ export class GoodsBulkLoadService {
     return this.notificationService.getAll(params);
   }
 
+  getVolanteNotificacionesByNoExpedient(noExpediente: string) {
+    return this.notificationService.getVolanteNotificacionesByNoExpedient(
+      noExpediente
+    );
+  }
+
   getIssuingInstitutionById(idInstitution: string) {
     return this.authorityService.getById(idInstitution);
   }
@@ -197,5 +203,9 @@ export class GoodsBulkLoadService {
   }
   createMenaje(menaje: IMenageWrite) {
     return this.menageService.create(menaje);
+  }
+
+  getZStatusCatPhasePart(status: string) {
+    return this.goodsQueryService.getZStatusCatPhasePart(status);
   }
 }

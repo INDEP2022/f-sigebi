@@ -16,7 +16,7 @@ export class MassiveDeleteButtonComponent
   extends AlertButton
   implements OnInit
 {
-  @Input() statusActaValue: string;
+  @Input() disabled: boolean;
   @Input() actaId: any;
   @Input() selecteds: IGoodsByProceeding[];
   @Output() finishDelete = new EventEmitter();

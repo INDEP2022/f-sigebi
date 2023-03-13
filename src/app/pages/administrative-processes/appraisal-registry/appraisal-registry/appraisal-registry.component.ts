@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -17,10 +18,16 @@ export class AppraisalRegistryComponent implements OnInit {
   public subdelegation = new DefaultSelect();
   public department = new DefaultSelect();
   public appraisalCurrency = new DefaultSelect();
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private _AppraisalService: AppraiseService
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
+    this._AppraisalService.getPerito().subscribe(data => {
+      console.log(data);
+    });
   }
 
   prepareForm() {

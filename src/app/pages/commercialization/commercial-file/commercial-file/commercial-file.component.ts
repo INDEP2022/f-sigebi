@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -16,6 +16,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   pdfurl = `https://drive.google.com/file/d/1PwfG-hqQzsL4ZSGheQJHkHsWJDsW0hwG/view?usp=sharing`; //window.URL.createObjectURL(blob);
+  @Input() statusActaValue: string;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,

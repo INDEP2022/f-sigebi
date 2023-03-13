@@ -166,15 +166,15 @@ export class DocumentsReceptionFlyerSelectComponent
           let satIndicator = null;
           if (type == 'SAT') satIndicator = 0;
           let wheelNumber;
-          if (proc.wheelNumber) {
-            wheelNumber = proc.wheelNumber;
+          if (proc.flierNumber) {
+            wheelNumber = proc.flierNumber;
           } else {
             wheelNumber = null;
           }
-          if (proc.wheelNumber == 0) wheelNumber = null;
+          if (proc.flierNumber == 0) wheelNumber = null;
           let expType = 'PAMA';
           if (type == 'PGR') expType = null;
-          console.log(proc.wheelNumber, wheelNumber);
+          console.log(proc.flierNumber, wheelNumber);
           this.docsDataService.flyersRegistrationParams = {
             pIndicadorSat: satIndicator, // 0 / 1
             pGestOk: 1,
@@ -243,15 +243,15 @@ export class DocumentsReceptionFlyerSelectComponent
     let satIndicator = null;
     if (type == 'SAT-MAS') satIndicator = 0;
     let wheelNumber;
-    if (proc.wheelNumber) {
-      wheelNumber = proc.wheelNumber;
+    if (proc.flierNumber) {
+      wheelNumber = proc.flierNumber;
     } else {
       wheelNumber = null;
     }
-    if (proc.wheelNumber == 0) wheelNumber = null;
+    if (proc.flierNumber == 0) wheelNumber = null;
     let expType = 'PAMA';
     if (type == 'PGR-MAS') expType = null;
-    console.log(proc.wheelNumber, wheelNumber);
+    console.log(proc.flierNumber, wheelNumber);
     this.docsDataService.flyersRegistrationParams = {
       pIndicadorSat: satIndicator, // 0 / 1
       pGestOk: 1,

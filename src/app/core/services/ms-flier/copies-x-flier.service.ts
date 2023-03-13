@@ -29,6 +29,9 @@ export class CopiesXFlierService extends HttpService {
     return this.get<IListResponse<ICopiesxFlier>>(this.endpoint, params);
   }
 
+  /**
+   * @deprecated
+   */
   getById(id: string | number) {
     const route = `${this.endpoint}/${id}`;
     return this.get(route);
@@ -70,5 +73,12 @@ export class CopiesXFlierService extends HttpService {
     return this.get<IDataAttributeGoodFunctionData>(
       `${FlierEndpoints.FnDataAttributeGood}/${id}`
     );
+  }
+
+  findByIds(ids: {
+    copyNumber: string | number;
+    flierNumber: string | number;
+  }): Observable<ICopiesxFlier> {
+    return this.post(FlierEndpoints.FindByIds, ids);
   }
 }

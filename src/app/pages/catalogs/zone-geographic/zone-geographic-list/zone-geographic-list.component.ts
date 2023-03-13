@@ -21,8 +21,8 @@ import { ZONEGEOGRAPHIC_COLUMS } from './zone-geographic-columnc';
 export class ZoneGeographicListComponent extends BasePage implements OnInit {
   paragraphs: IZoneGeographic[] = [];
   totalItems: number = 0;
-  data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   constructor(
     private zoneGeographicService: ZoneGeographicService,
