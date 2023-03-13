@@ -118,11 +118,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   confirm() {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
-    /*expedient.creationUser = this.authService.decodeToken().preferred_username;
+    expedient.creationUser = this.authService.decodeToken().preferred_username;
     expedient.creationDate = new Date().toISOString();
     expedient.modificationUser =
       this.authService.decodeToken().preferred_username;
-    expedient.modificationDate = new Date().toISOString();*/
+    expedient.modificationDate = new Date().toISOString();
 
     this.expedientSamiService.create(expedient).subscribe({
       next: expedient => {
