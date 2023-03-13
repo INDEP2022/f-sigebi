@@ -51,6 +51,34 @@ export abstract class ScheduledMaintenance extends BasePage {
         type: 'number',
         sort: false,
       },
+      address: {
+        title: 'Dirección',
+        sort: false,
+      },
+      numFile: {
+        title: 'N° Archivo',
+        sort: false,
+      },
+      witness1: {
+        title: 'Testigo 1',
+        sort: false,
+      },
+      witness2: {
+        title: 'Testigo 2',
+        sort: false,
+      },
+      comptrollerWitness: {
+        title: 'Testigo Contraloria',
+        sort: false,
+      },
+      observations: {
+        title: 'Observaciones',
+        sort: false,
+      },
+      label: {
+        title: 'Label',
+        sort: false,
+      },
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -96,15 +124,24 @@ export abstract class ScheduledMaintenance extends BasePage {
   setForm() {
     const filtersActa = window.localStorage.getItem(this.formStorage);
     if (filtersActa) {
-      this.form.setValue(JSON.parse(filtersActa));
+      const newData = JSON.parse(filtersActa);
+      newData.fechaInicio = newData.fechaInicio
+        ? new Date(newData.fechaInicio)
+        : null;
+      newData.fechaFin = newData.fechaFin ? new Date(newData.fechaFin) : null;
+      this.form.setValue(newData);
     }
   }
 
   saveForm() {
-    window.localStorage.setItem(
-      this.formStorage,
-      JSON.stringify(this.form.value)
-    );
+    let form = this.form.getRawValue();
+    if (!form.fechaInicio) {
+      form.fechaInicio = null;
+    }
+    if (!form.fechaFin) {
+      form.fechaFin = null;
+    }
+    window.localStorage.setItem(this.formStorage, JSON.stringify(form));
   }
 
   prepareForm() {
@@ -122,7 +159,7 @@ export abstract class ScheduledMaintenance extends BasePage {
 
   private fillParams() {
     const tipoEvento = this.form.get('tipoEvento').value;
-    const fechaInicio: Date = this.form.get('fechaInicio').value;
+    const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     const fechaFin: Date = this.form.get('fechaFin').value;
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
@@ -141,7 +178,10 @@ export abstract class ScheduledMaintenance extends BasePage {
       this.filterParams.addFilter('statusProceedings', statusEvento);
     }
     if (fechaInicio) {
-      const inicio = fechaInicio.toISOString().split('T')[0];
+      const inicio =
+        fechaInicio instanceof Date
+          ? fechaInicio.toISOString().split('T')[0]
+          : fechaInicio;
       const final = fechaFin
         ? fechaFin.toISOString().split('T')[0]
         : new Date().toISOString().split('T')[0];
@@ -160,7 +200,8 @@ export abstract class ScheduledMaintenance extends BasePage {
     if (cveActa) {
       this.filterParams.addFilter('keysProceedings', cveActa);
     }
-    if (usuario) this.filterParams.addFilter('elaborate', usuario);
+    if (usuario)
+      this.filterParams.addFilter('elaborate', usuario, SearchFilter.LIKE);
     this.filterParams.page = this.params.getValue().page;
     this.filterParams.limit = this.params.getValue().limit;
     return true;
