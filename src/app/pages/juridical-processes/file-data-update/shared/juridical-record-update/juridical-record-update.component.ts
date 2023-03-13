@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
@@ -66,7 +74,10 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
     `,
   ],
 })
-export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
+export class JuridicalRecordUpdateComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   public readonly flyerId: number = null;
   flyerForm: FormGroup;
   linkDictaminacionesJuridicas: string =
@@ -105,9 +116,11 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
   globals: IGlobalVars;
   items: DefaultSelect<any>;
   @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT';
-  @Input() searchMode: boolean;
-  @Input() confirmSearch: boolean;
-  @Output() onSearch = new EventEmitter<IJuridicalFileDataUpdateForm>();
+  @Input() searchMode: boolean = false;
+  @Input() confirmSearch: boolean = false;
+  @Output() onSearch = new EventEmitter<
+    Partial<IJuridicalFileDataUpdateForm>
+  >();
 
   public optionsTipoVolante = [
     { value: 'A', label: 'Administrativo' },
@@ -166,6 +179,19 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
     this.formControls.receiptDate.setValue(this.initialDate);
     this.checkParams();
     this.fileDataUpdateForm.disable();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['searchMode'].currentValue) {
+      this.activateSearch();
+    } else {
+      this.deactivateSearch();
+    }
+    if (changes['confirmSearch'].currentValue) {
+      this.onSearch.emit(this.fileDataUpdateForm.value);
+      this.deactivateSearch();
+    } else {
+    }
   }
 
   checkParams() {
@@ -466,6 +492,15 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
         control.disable();
       }
     }
+  }
+
+  activateSearch() {
+    console.log(this.searchMode);
+  }
+
+  deactivateSearch() {
+    console.log(this.searchMode);
+    console.log(this.confirmSearch);
   }
 
   setUniqueKeyData(key: ITransferingLevelView, full?: boolean) {
