@@ -1,6 +1,6 @@
 :host ::ng-deep ng2-smart-table {
   .nameOfOwner {
-    min-width: 25rem !important;
+    min-width: 33rem !important;
   }
 
   .holderCharge {
@@ -29,5 +29,13 @@
 
   .stateOfRepublicName {
     min-width: 20rem !important;
+  }
+
+  .affairName {
+    min-width: 40rem;
+  }
+
+  .delegationName {
+    min-width: 35rem;
   }
 }

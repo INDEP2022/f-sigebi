@@ -7,6 +7,10 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  INotificationTransferentIndiciadoCityGetData,
+  ItVolanteNotificacionesByNoExpedient,
+} from '../../models/ms-notification/notification.model';
 
 @Injectable({
   providedIn: 'root',
@@ -54,5 +58,21 @@ export class NotificationService implements ICrudMethods<AnyFn> {
       `${environment.API_URL}notification/api/v1/notification/${id}`,
       body
     );
+  }
+
+  getNotificacionesByTransferentIndiciadoCity(
+    body: INotificationTransferentIndiciadoCityGetData | any
+  ) {
+    return this.notificationRepository.getNotificacionesByTransferentIndiciadoCity(
+      'notification/notification/find-notification-by-transferent-or-city',
+      body
+    );
+  }
+
+  getVolanteNotificacionesByNoExpedient(id: string) {
+    let expedient = encodeURI(id);
+    return this.httpClient.get<
+      IListResponse<ItVolanteNotificacionesByNoExpedient>
+    >('notification/notification/find-count-by-expedient' + expedient);
   }
 }

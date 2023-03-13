@@ -37,10 +37,11 @@ export interface ITable {
 
 export interface TvalTable1Data {
   otKey: string;
-  table: ITables;
+  table: ITable;
   value: string;
   numRegister: string;
   abbreviation: null;
+  otKeyAndValue?: string;
 }
 
 export interface ISingleTable {
@@ -59,4 +60,5 @@ export interface ITablesEntryData {
   value: string;
   numRegister: string | number;
   abbreviation: string | null;
+  otKeyAndValue?: string;
 }

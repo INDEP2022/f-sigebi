@@ -3,6 +3,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MasiveConversionPermissionsDeleteComponent } from '../masive-conversion-permissions-delete/masive-conversion-permissions-delete.component';
@@ -32,7 +33,8 @@ export class MassiveConversionPermissionsComponent
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private tvalTable1Service: TvalTable1Service
   ) {
     super();
     this.settings = {
@@ -58,6 +60,27 @@ export class MassiveConversionPermissionsComponent
       next: response => {
         console.log(response);
         this.data1 = response.data;
+        this.data1.forEach(element => {
+          this.tvalTable1Service.getById5(element.id).subscribe({
+            next: response => {
+              console.log(response);
+              this.tvalTable1Service.getById6(response.otKey).subscribe({
+                next: response => {
+                  console.log(response);
+                },
+                error: error => {
+                  this.loading = false;
+                  console.log(error);
+                },
+              });
+            },
+            error: error => {
+              this.loading = false;
+              console.log(error);
+            },
+          });
+        });
+
         this.totalItems = response.count;
         this.loading = false;
       },

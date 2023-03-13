@@ -6,18 +6,36 @@ export const TRANSFERENT_COLUMNS = {
   nameTransferent: {
     title: 'Nombre',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
   keyTransferent: {
-    title: 'Calve',
+    title: 'Clave',
     sort: false,
   },
-  userCreation: {
+  typeTransferent: {
+    title: 'Tipo',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'NO') return 'No obligatorio ';
+      if (value == 'CE') return 'Asegurado';
+
+      return value;
+    },
+  },
+  /*userCreation: {
     title: 'Usuario creado',
     sort: false,
   },
   dateCreation: {
     title: 'Fecha creación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   userUpdate: {
     title: 'Usuario actualizado',
@@ -26,11 +44,13 @@ export const TRANSFERENT_COLUMNS = {
   dateUpdate: {
     title: 'Fecha actualización',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
-  typeTransferent: {
-    title: 'Tipo',
-    sort: false,
-  },
+ 
   version: {
     title: 'Versión',
     sort: false,
@@ -42,10 +62,20 @@ export const TRANSFERENT_COLUMNS = {
   dateBegOperation: {
     title: 'Fecha de pago de operación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   dateFinalOperation: {
     title: 'Fecha final de operación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   assignor: {
     title: 'Mandato cedente',
@@ -66,6 +96,11 @@ export const TRANSFERENT_COLUMNS = {
   dateFormalization: {
     title: 'Fecha de formalización',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   entity: {
     title: 'Entidad',
@@ -78,6 +113,11 @@ export const TRANSFERENT_COLUMNS = {
   dateAmeding: {
     title: 'Fecha de convenio modificatorio',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   typeGoods: {
     title: 'Tipo bien',
@@ -109,6 +149,57 @@ export const TRANSFERENT_COLUMNS = {
   },
   risk: {
     title: 'Riesgo',
+    sort: false,
+  },*/
+};
+
+export const STATION_COLUMNS = {
+  id: {
+    title: 'No.',
+    sort: false,
+    filter: false,
+  },
+  stationName: {
+    title: 'Nombre',
+    sort: false,
+  },
+  idTransferent: {
+    title: 'No. Transferente',
+    sort: false,
+  },
+  keyState: {
+    title: 'Código Estado',
+    sort: false,
+  },
+};
+
+export const AUTHORITY_COLUMNS = {
+  idAuthority: {
+    title: 'No. Autoridad',
+    sort: false,
+  },
+  cveUnique: {
+    title: 'Clave Única',
+    sort: false,
+  },
+  idCity: {
+    title: 'No. ciudad',
+    sort: false,
+  },
+  authorityName: {
+    title: 'Nombre de autoridad',
+    sort: false,
+  },
+  codeStatus: {
+    title: 'Código de estado',
+    sort: false,
+  },
+  idStation: {
+    title: 'No. Emisora',
+    sort: false,
+  },
+  idTransferer: {
+    title: 'No. Transferente',
     sort: false,
   },
 };

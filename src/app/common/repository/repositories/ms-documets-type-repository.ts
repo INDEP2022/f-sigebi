@@ -20,6 +20,7 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   }
 
   getByFilters(route: string) {
+    console.log('1');
     const fullRoute = `${this.ms}${route}`;
     return this.httpClient.get<IListResponse<T>>(fullRoute);
   }
@@ -40,7 +41,7 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   }
 
   remove(route: string, id: number | string) {
-    const fullRoute = `${this.ms}${route}${id}`;
+    const fullRoute = `${this.ms}${route}/${id}`;
     return this.httpClient.delete<IListResponse<T>>(fullRoute);
   }
 

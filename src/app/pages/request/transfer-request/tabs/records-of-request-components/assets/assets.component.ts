@@ -1,11 +1,11 @@
-import { Component,Input,OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalRef,BsModalService,ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject,takeUntil } from 'rxjs';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
-FilterParams,
-ListParams
+  FilterParams,
+  ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
@@ -139,6 +139,9 @@ export class AssetsComponent extends BasePage implements OnInit {
           this.loading = false;
         }
       },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
@@ -224,18 +227,18 @@ export class AssetsComponent extends BasePage implements OnInit {
     });
   }
 
-  onFileChange(event: any) {
+  onFileChange(event: any, type?: string) {
+    console.log(event.target.files[0]);
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    //fileReader.onload = () => this.readExcel(fileReader.result);
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.data = this.excelService.getData<ExcelFormat>(binaryExcel);
-      debugger;
       console.log(this.data);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -294,8 +297,6 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
-      //this.domicilieObject = res as IDomicilies;
-
       if (res) {
         for (let i = 0; i < this.listgoodObjects.length; i++) {
           const element = this.listgoodObjects[i];
@@ -303,11 +304,9 @@ export class AssetsComponent extends BasePage implements OnInit {
         }
         this.isSaveDomicilie = true;
       }
-      //this.assetsForm.controls['address'].get('longitud').enable();
-      //this.requestForm.get('receiUser').patchValue(res.user);
     });
   }
-
+  // abrir menaje
   menajeModal() {
     if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);

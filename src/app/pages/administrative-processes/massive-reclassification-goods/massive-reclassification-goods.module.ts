@@ -11,16 +11,13 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
-import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { ClassificationOfGoodsSharedComponent } from 'src/app/@standalone/shared-forms/classification-of-goods-shared/classification-of-goods-shared.component';
+import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
 import { MassiveReclassificationGoodsRoutingModule } from './massive-reclassification-goods-routing.module';
 import { MassiveReclassificationGoodsComponent } from './massive-reclassification-goods/massive-reclassification-goods.component';
-import { ModalClassificationGoodsComponent } from './modal-classification-goods/modal-classification-goods.component';
 
 @NgModule({
-  declarations: [
-    MassiveReclassificationGoodsComponent,
-    ModalClassificationGoodsComponent,
-  ],
+  declarations: [MassiveReclassificationGoodsComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -33,7 +30,8 @@ import { ModalClassificationGoodsComponent } from './modal-classification-goods/
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent,
+    ClassificationOfGoodsSharedComponent,
+    GoodsStatusSharedComponent,
   ],
 })
 export class MassiveReclassificationGoodsModule {}

@@ -1,13 +1,15 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IDelegation } from '../../models/catalogs/delegation.model';
 import { ISubdelegation } from '../../models/catalogs/subdelegation.model';
 @Injectable({
   providedIn: 'root',
 })
-export class ReportService {
-  constructor(private httpClient: HttpClient) {}
+export class ReportService extends HttpService {
+  constructor() {
+    super();
+  }
 
   /**
    * @deprecated Checar como se usara esta parte
@@ -48,6 +50,17 @@ export class ReportService {
   ) {
     return this.httpClient.get(
       `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${PN_DELEG}&PN_SUBDEL=${PN_SUBDEL}&PF_MES=${PF_MES}&PF_ANIO=${PF_ANIO}`
+    );
+  }
+
+  getGood() {
+    return this.httpClient.get(
+      `http://sigebimsqa.indep.gob.mx/catalog/api/v1/good-sssubtype/search`
+    );
+  }
+  getBatch(text: string) {
+    return this.httpClient.get(
+      `http://reportsqa.indep.gob.mx/catalog/api/v1//batch/search=${text}`
     );
   }
 }

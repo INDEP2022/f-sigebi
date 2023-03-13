@@ -25,7 +25,7 @@ export class CustomerService extends HttpService {
     this.microservice = CustomersEndpoint.Customer;
   }
 
-  getAllClients(params?: ListParams): Observable<IListResponse<ICustomer>> {
+  getAllClients(params?: string): Observable<IListResponse<ICustomer>> {
     return this.get<IListResponse<ICustomer>>(this.endpointClients, params);
   }
 
@@ -72,5 +72,10 @@ export class CustomerService extends HttpService {
 
   remove(id: string | number): Observable<Object> {
     return this.customerRepository.remove(this.route, id);
+  }
+
+  getRepresentativeByClients(id: string | number, params?: ListParams) {
+    const route = `${this.endpointRepresentative}/${id}`;
+    return this.get(route, params);
   }
 }

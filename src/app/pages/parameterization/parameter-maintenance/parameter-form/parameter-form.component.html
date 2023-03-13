@@ -50,8 +50,7 @@
               formControlName="startDate"
               bsDatepicker
               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
-              [minDate]="minDate"
-              [maxDate]="maxDate" />
+              [minDate]="minDate" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -62,8 +61,7 @@
               formControlName="endDate"
               bsDatepicker
               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
-              [minDate]="minDate"
-              [maxDate]="maxDate" />
+              [minDate]="minDate" />
           </form-field>
         </div>
       </div>
@@ -74,11 +72,16 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [btnSmall]="true"
           [disabled]="!form.valid || invalidDate"
-          (click)="confirm()"></confirm-button>
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

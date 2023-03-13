@@ -50,9 +50,9 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     const idWarehouse = this.opcion.initialState;
     console.log(Number(idWarehouse));
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() =>

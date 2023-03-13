@@ -14,10 +14,9 @@
 
       <div class="p-2">
         <confirm-button
-          [loading]="loading"
           [btnSmall]="true"
           [disabled]="requestForm.invalid"
-          (confirm)="confirm()">
+          (confirm)="save()">
         </confirm-button>
       </div>
       <div class="p-2">
@@ -149,10 +148,21 @@
                   value="id"></ngx-select>
               </div>
             </div>
+            <div class="row pt-4" *ngIf="authorityName">
+              <p style="color: blue">
+                <strong>Autoridad: </strong> {{ authorityName }}
+              </p>
+            </div>
           </div>
         </div>
       </app-card>
-
+      <div>
+        <img
+          *ngIf="loadingTurn"
+          src="assets/images/loader-button.gif"
+          alt="loading"
+          id="loading" />
+      </div>
       <div *ngIf="op == 2">
         <app-card [header]="true">
           <div class="ch-content" header>

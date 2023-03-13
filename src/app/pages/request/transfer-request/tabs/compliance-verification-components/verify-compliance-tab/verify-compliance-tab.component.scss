@@ -20,8 +20,8 @@ label {
 }
 
 :host ::ng-deep ng2-smart-table {
-  
-  th,ng2-st-checkbox-select-all{
+  th,
+  ng2-st-checkbox-select-all {
     text-align: center;
   }
 
@@ -33,7 +33,7 @@ label {
     min-width: 30rem;
   }
 
-  .descriptionGoodSae{
+  .descriptionGoodSae {
     min-width: 25rem;
   }
 }

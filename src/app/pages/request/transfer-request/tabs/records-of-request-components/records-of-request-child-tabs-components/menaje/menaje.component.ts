@@ -68,9 +68,11 @@ export class MenajeComponent extends BasePage implements OnInit {
       next: async (resp: any) => {
         if (resp.data) {
           const result = resp.data.map(async (item: any) => {
-            const menage = await this.getGoodRealState(item);
-            if (menage !== null) {
-              this.listMenage.push(menage);
+            if (item.idGoodProperty) {
+              const menage = await this.getGoodRealState(item);
+              if (menage !== null) {
+                this.listMenage.push(menage);
+              }
             }
           });
 
@@ -84,6 +86,7 @@ export class MenajeComponent extends BasePage implements OnInit {
     });
   }
 
+  //obtiene los inmuebles
   getGoodRealState(item: any): any {
     const params = new ListParams();
     return new Promise((resolve, reject) => {
@@ -93,9 +96,9 @@ export class MenajeComponent extends BasePage implements OnInit {
           this.menage = new Manege();
           var good = resp.data;
           if (good.length !== 0) {
-            this.menage.id = good[0].id;
+            this.menage.id = item.goodId;
             this.menage.description = good[0].description;
-            this.menage.requestId = item.requestId;
+            this.menage.requestId = item.requestId.id;
             resolve(this.menage);
           } else {
             resolve(null);

@@ -11,12 +11,14 @@
             <form-field [control]="form.get('delegation')">
               <ngx-select
                 [form]="form"
-                [data]="delegations"
-                bindLabel="name"
-                label="Delegacíon"
-                value="id"
                 (fetchItems)="getDelegations($event)"
-                control="delegation"></ngx-select>
+                [data]="delegations"
+                value="id"
+                bindLabel="description"
+                label="Delegaci&oacute;n"
+                [control]="'delegation'"
+                (change)="getDelegations($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -26,12 +28,14 @@
             <form-field [control]="form.get('subdelegation')">
               <ngx-select
                 [form]="form"
-                [data]="subdelegations"
-                bindLabel="name"
-                label="Subdelegación"
-                value="id"
                 (fetchItems)="getSubdelegations($event)"
-                control="subdelegation"></ngx-select>
+                [data]="subdelegations"
+                value="id"
+                bindLabel="description"
+                label="Sub Delegaci&oacute;n"
+                [control]="'subdelegation'"
+                (change)="getSubdelegations($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -41,12 +45,14 @@
             <form-field [control]="form.get('initialType')">
               <ngx-select
                 [form]="form"
-                [data]="initialType"
-                bindLabel="name"
-                label="Tipo Inicial"
-                value="id"
                 (fetchItems)="getInitialType($event)"
-                control="initialType"></ngx-select>
+                [data]="initialType"
+                value="id"
+                bindLabel="nameGoodType"
+                label="Tipo Inicial"
+                [control]="'initialType'"
+                (change)="getInitialType($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -56,12 +62,14 @@
             <form-field [control]="form.get('finalType')">
               <ngx-select
                 [form]="form"
-                [data]="finalType"
-                bindLabel="name"
-                label="Tipo Final"
-                value="id"
                 (fetchItems)="getFinaltype($event)"
-                control="finalType"></ngx-select>
+                [data]="finalType"
+                value="id"
+                bindLabel="nameSubtypeGood"
+                label="Tipo Final"
+                [control]="'finalType'"
+                (change)="getFinaltype($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -71,12 +79,14 @@
             <form-field [control]="form.get('initialSubtype')">
               <ngx-select
                 [form]="form"
-                [data]="initialSubtype"
-                bindLabel="name"
-                label="Subtipo Inicial"
-                value="id"
                 (fetchItems)="getInitialSubtype($event)"
-                control="initialSubtype"></ngx-select>
+                [data]="initialSubtype"
+                value="id"
+                bindLabel="description"
+                label="Subtipo Inicial"
+                [control]="'initialSubtype'"
+                (change)="getInitialSubtype($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -86,16 +96,17 @@
             <form-field [control]="form.get('finalSubtype')">
               <ngx-select
                 [form]="form"
-                [data]="finalSubtype"
-                bindLabel="name"
-                label="Subtipo Final"
-                value="id"
                 (fetchItems)="getFinalSubtype($event)"
-                control="finalSubtype"></ngx-select>
+                [data]="finalSubtype"
+                value="id"
+                bindLabel="description"
+                label="Subtipo Final"
+                [control]="'finalSubtype'"
+                (change)="getFinalSubtype($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
-
         <div class="row margin-input">
           <div class="col-md-3">
             <form-field
@@ -111,9 +122,12 @@
           </div>
           <div class="col-md-3">
             <div class="col-md-2">
-              <button type="submit" class="btn btn-primary btn-sm active">
-                Enviar
-              </button>
+              <confirm-button
+                text="Enviar"
+                [disabled]="form.invalid"
+                [loading]="loading"
+                (confirm)="send()">
+              </confirm-button>
             </div>
           </div>
         </div>

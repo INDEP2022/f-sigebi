@@ -31,9 +31,14 @@ export class EvenPermissionControlModalComponent
   idE: IComerEvent;
   cve: IComerEvent;
 
-  users= new DefaultSelect<IComerClients>();
+  users = new DefaultSelect<IComerClients>();
 
-  constructor(private modalRef: BsModalRef, private fb:FormBuilder, private comerUsuauTxEventService:ComerUsuauTxEventService, private comerClientsService:ComerClientsService) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private comerUsuauTxEventService: ComerUsuauTxEventService,
+    private comerClientsService: ComerClientsService
+  ) {
     super();
   }
 
@@ -49,15 +54,14 @@ export class EvenPermissionControlModalComponent
     });
     if (this.comerUser != null) {
       this.edit = true;
-      console.log("Editar Evento:", this.comerUser.idEvent);
+      console.log('Editar Evento:', this.comerUser.idEvent);
       this.comerUserForm.patchValue(this.comerUser);
     } else {
-      
-      console.log("Nuevo", this.idE);
+      console.log('Nuevo', this.idE);
     }
   }
 
-   getUsers(params: ListParams){
+  getUsers(params: ListParams) {
     this.comerClientsService.getAll(params).subscribe(
       data => {
         this.users = new DefaultSelect(data.data, data.count);
@@ -73,7 +77,6 @@ export class EvenPermissionControlModalComponent
       },
       () => {}
     );
-
   }
 
   close() {

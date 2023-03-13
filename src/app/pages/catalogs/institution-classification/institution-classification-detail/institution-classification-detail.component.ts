@@ -78,11 +78,9 @@ export class InstitutionClassificationDetailComponent implements OnInit {
   update() {
     this.loading = true;
 
-    this.institutionService
-      .update(this.institution.id, this.form.value)
-      .subscribe(
-        data => this.handleSuccess(),
-        error => (this.loading = false)
-      );
+    this.institutionService.newUpdate(this.form.value).subscribe(
+      data => this.handleSuccess(),
+      error => (this.loading = false)
+    );
   }
 }

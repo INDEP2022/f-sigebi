@@ -7,7 +7,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { ListIndividualsAndCompaniesComponent } from '../list-individuals-and-companies/list-individuals-and-companies.component';
@@ -39,17 +38,25 @@ export class MaintenanceIndividualsAndCompaniesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      personNumber: [
+      id: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      personName: [
         null,
         [
-          Validators.required,
           Validators.pattern(STRING_PATTERN),
+          Validators.required,
           Validators.maxLength(30),
         ],
       ],
       name: [
         null,
-        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       street: [
         null,
@@ -83,19 +90,11 @@ export class MaintenanceIndividualsAndCompaniesComponent
       ],
       rfc: [
         null,
-        [
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-          Validators.pattern(RFCCURP_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       curp: [
         null,
-        [
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-          Validators.pattern(RFCCURP_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       curriculumV: [null],
       curriculum: ['N'],
@@ -113,7 +112,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
         null,
         [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
-      keyEntFed: [null],
+      keyEntFed: [null, [Validators.required]],
       typeResponsible: [null],
     });
 
@@ -146,6 +145,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
     if (this.form.valid) {
       this.form.get('typeResponsible').patchValue('D');
       if (this.edit) {
+        this.form.get('id').enable();
         const { id } = this.form.value;
         this.personService.update(id, this.form.value).subscribe({
           next: () => {
@@ -176,6 +176,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
           if (next) {
             this.edit = next;
             this.form.patchValue(data);
+            this.form.get('id').disable();
           }
         },
       },
@@ -187,6 +188,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
 
   clean() {
     this.form.reset();
+    this.form.get('id').disable();
     this.edit = false;
     this.loading = false;
   }

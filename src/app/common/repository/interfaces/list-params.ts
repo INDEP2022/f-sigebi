@@ -35,6 +35,10 @@ export class FilterParams {
     return allParams.join('&');
   }
 
+  getFilterParams() {
+    return this.filters.join('&');
+  }
+
   removeAllFilters() {
     this.filters = [];
   }
@@ -79,6 +83,6 @@ export enum SearchFilter {
 
 export interface DynamicFilterLike {
   field: string;
-  value: string | number;
+  value?: string | number;
   operator?: SearchFilter;
 }

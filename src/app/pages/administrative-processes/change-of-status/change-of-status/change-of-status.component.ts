@@ -174,23 +174,21 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         ? this.good.extDomProcess
         : this.extDomProcess.value;
     this.good.userModification = this.token.decodeToken().preferred_username;
-    this.goodServices
-      .updateStatusGood(this.numberGood.value, this.good)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.postHistoryGood();
-          this.form.reset();
-          this.formNew.reset();
-          this.dateStatus.setValue(new Date());
-          this.onLoadToast(
-            'success',
-            'Actualizado',
-            'Se le ha cambiado el Estatus al bien'
-          );
-        },
-        error: error => (this.loading = false),
-      });
+    this.goodServices.updateStatusGood(this.good).subscribe({
+      next: response => {
+        console.log(response);
+        this.postHistoryGood();
+        this.form.reset();
+        this.formNew.reset();
+        this.dateStatus.setValue(new Date());
+        this.onLoadToast(
+          'success',
+          'Actualizado',
+          'Se le ha cambiado el Estatus al bien'
+        );
+      },
+      error: error => (this.loading = false),
+    });
     this.endProcess = false;
   }
   postHistoryGood() {

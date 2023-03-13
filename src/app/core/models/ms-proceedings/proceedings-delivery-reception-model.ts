@@ -1,8 +1,8 @@
 export interface IProccedingsDeliveryReception {
   id?: number;
   keysProceedings?: string;
-  elaborationDate?: Date;
-  datePhysicalReception?: Date;
+  elaborationDate?: string;
+  datePhysicalReception?: string;
   address?: string;
   statusProceedings?: string;
   elaborate?: string;
@@ -19,7 +19,7 @@ export interface IProccedingsDeliveryReception {
   approvalDateXAdmon?: Date;
   approvalUserXAdmon?: string;
   numRegister?: number;
-  captureDate?: Date;
+  captureDate?: string;
   numDelegation1?: number;
   numDelegation2?: number;
   identifier?: string;

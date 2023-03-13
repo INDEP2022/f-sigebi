@@ -19,6 +19,9 @@ export class NonDeliveryReasonsFormComponent
   title: string = 'Motivo No Entrega';
   edit: boolean = false;
   nonDeliveryReasons: INonDeliveryReason;
+  typeEvent: any[];
+  typeReason: any[];
+
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
@@ -31,22 +34,45 @@ export class NonDeliveryReasonsFormComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.typeEvent = [
+      { label: 'DESTRUCCIÓN', value: '1' },
+      { label: 'DEVOLUCIÓN', value: '2' },
+      { label: 'DONACIÓN', value: '3' },
+      { label: 'RESARCIMIENTO', value: '4' },
+      { label: 'VENTA', value: '5' },
+    ];
+    this.typeReason = [
+      { label: 'Motivos No Aceptado', value: '1' },
+      { label: 'Motivos No Entregados', value: '2' },
+      { label: 'Motivos No Retirados', value: '3' },
+    ];
   }
 
   private prepareForm(): void {
     this.nonDeliveryReasonsForm = this.fb.group({
-      id: [null, [Validators.required]],
-      reasonType: [null, [Validators.required]],
-      eventType: [null, [Validators.required]],
+      id: [null],
+      reasonType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      eventType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       reason: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userCreation: [null, [Validators.required]],
-      userModification: [null, [Validators.required]],
-      version: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      userCreation: [null],
+      userModification: [null],
+      version: [null],
+      status: [null],
     });
+    this.nonDeliveryReasonsForm.controls['version'].setValue(1);
+    this.nonDeliveryReasonsForm.controls['status'].setValue(1);
     if (this.nonDeliveryReasons != null) {
       this.edit = true;
       this.nonDeliveryReasonsForm.patchValue(this.nonDeliveryReasons);
+    } else {
+      this.nonDeliveryReasonsForm.controls['reasonType'].setValue(null);
+      this.nonDeliveryReasonsForm.controls['eventType'].setValue(null);
     }
   }
 
@@ -61,22 +87,39 @@ export class NonDeliveryReasonsFormComponent
   create() {
     this.loading = true;
     console.log(this.nonDeliveryReasonsForm.value);
-    this.nonDeliveryReasonsService
-      .create(this.nonDeliveryReasonsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.nonDeliveryReasonsForm.controls['reasonType'].value != 'null' &&
+      this.nonDeliveryReasonsForm.controls['eventType'].value != 'null'
+    ) {
+      this.nonDeliveryReasonsService
+        .create(this.nonDeliveryReasonsForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    } else {
+      this.onLoadToast('warning', this.title, 'Debe agregar un tipo valido.');
+      this.loading = false;
+    }
   }
 
   update() {
     this.loading = true;
-    this.nonDeliveryReasonsService
-      .update(this.nonDeliveryReasons.id, this.nonDeliveryReasonsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    console.log(this.nonDeliveryReasonsForm.value);
+    if (
+      this.nonDeliveryReasonsForm.controls['reasonType'].value != 'null' &&
+      this.nonDeliveryReasonsForm.controls['eventType'].value != 'null'
+    ) {
+      this.nonDeliveryReasonsService
+        .update7(this.nonDeliveryReasonsForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    } else {
+      this.onLoadToast('warning', this.title, 'Debe agregar un tipo valido.');
+      this.loading = false;
+    }
   }
 
   handleSuccess() {

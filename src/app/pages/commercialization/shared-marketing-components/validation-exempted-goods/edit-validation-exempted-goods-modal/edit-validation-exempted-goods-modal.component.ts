@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -26,7 +24,11 @@ export class EditValidationExemptedGoodsModalComponent
 
   goods = new DefaultSelect();
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder, private goodTransAvaService: GoodTransAvaService) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private goodTransAvaService: GoodTransAvaService
+  ) {
     super();
   }
 
@@ -46,7 +48,6 @@ export class EditValidationExemptedGoodsModalComponent
       this.goodForm.patchValue(this.good);
     }
   }
-
 
   onValuesChange() {
     // console.log(delegationChange);
@@ -75,14 +76,10 @@ export class EditValidationExemptedGoodsModalComponent
 
   update() {
     this.loading = true;
-    this.goodTransAvaService
-      .update(
-        this.goodForm.value
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.goodTransAvaService.update(this.goodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

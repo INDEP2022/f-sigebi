@@ -12,7 +12,7 @@ const routes: Routes = [
         )
       ).CatFinancialInformationAttributesModule,
     data: {
-      title: 'Catálogo de atributos de información financiera',
+      title: 'Atributos de información financiera',
       screen: 'FCATADBATRIBINFIN',
     },
   },
@@ -26,7 +26,7 @@ const routes: Routes = [
         )
       ).CatFinancialIndicatorsModule,
     data: {
-      title: 'Catálogo de indicadores financieros',
+      title: 'Indicadores financieros',
       screen: 'FCATADBINDICFINAN',
     },
   },
@@ -35,14 +35,14 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./question-catalog/question-catalog.module'))
         .QuestionCatalogModule,
-    data: { title: 'Catálogo de preguntas', screen: 'FCATADBINFOREMPRE' },
+    data: { title: 'Preguntas', screen: 'FCATADBINFOREMPRE' },
   },
   {
     path: 'logical-tables-register',
     loadChildren: async () =>
       (await import('./logical-tables-register/logical-tables-register.module'))
         .LogicalTablesRegisterModule,
-    data: { title: 'Catálogo de tablas lógicas', screen: 'FCATCATALTATABLAS' },
+    data: { title: 'Tablas lógicas', screen: 'FCATCATALTATABLAS' },
   },
   {
     path: 'flyer-subject-catalog',
@@ -50,7 +50,7 @@ const routes: Routes = [
       (await import('./flyer-subject-catalog/flyer-subject-catalog.module'))
         .FlyerSubjectCatalogModule,
     data: {
-      title: 'Catálogo de asuntos para volantes',
+      title: 'Asuntos para volantes',
       screen: 'FCATCATASUNTOS',
     },
   },
@@ -73,7 +73,7 @@ const routes: Routes = [
       (await import('./cat-effective-numeraire/cat-effective-numeraire.module'))
         .CatEffectiveNumeraireModule,
     data: {
-      title: 'Categoria para numerario efectivo',
+      title: 'Numerario efectivo',
       screen: 'FCATCATCATEGONUME',
     },
   },
@@ -103,7 +103,7 @@ const routes: Routes = [
         )
       ).MaintenanceDelegSubdelegModule,
     data: {
-      title: 'Mant. a delegaciones y subdelegaciones',
+      title: 'Mant. a Delegaciones y Subdelegaciones',
       screen: 'FCATCATDELYSUBDEL',
     },
   },
@@ -153,7 +153,7 @@ const routes: Routes = [
       (await import('./cat-doc-require/cat-doc-require.module'))
         .CatDocRequireModule,
     data: {
-      title: 'Catálogo de requisitos documentales',
+      title: 'Requisitos documentales',
       screen: 'FCATCATDOCUMDICTA',
     },
   },
@@ -162,7 +162,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./general-archive-catalog/general-archive-catalog.module'))
         .GeneralArchiveCatalogModule,
-    data: { title: 'Catálogo de Archivo General', screen: 'FCATCATGUARDAVALO' },
+    data: { title: 'Archivo General', screen: 'FCATCATGUARDAVALO' },
   },
   {
     path: 'cat-identifier-uni-dbs',
@@ -170,7 +170,7 @@ const routes: Routes = [
       (await import('./cat-identifier-uni-dbs/cat-identifier-uni-dbs.module'))
         .CatIdentifierUniDbsModule,
     data: {
-      title: 'Catálogo de identificador para la unificacion de las dbs',
+      title: 'Identificador para la unificacion de las dbs',
       screen: 'FCATCATIDENTIFICADOR',
     },
   },
@@ -183,7 +183,7 @@ const routes: Routes = [
         )
       ).CatRelationshipOpinionModule,
     data: {
-      title: 'Catálogo de relación y de asunto dictamen',
+      title: 'Relación y de asunto dictamen',
       screen: 'FCATADBRELASDIC',
     },
   },
@@ -193,7 +193,7 @@ const routes: Routes = [
       (await import('./cat-transferent/cat-transferent.module'))
         .CatTransferentModule,
     data: {
-      title: 'Catálogo de Transferentes',
+      title: 'Transferentes',
       screen: 'FCATCATTRANSFERENTE',
     },
   },
@@ -201,7 +201,7 @@ const routes: Routes = [
     path: 'mail',
     loadChildren: async () => (await import('./mail/mail.module')).MailModule,
     data: {
-      title: 'Matt. Correos',
+      title: 'Mant. Correos',
       screen: 'FMTODESTCORREOS',
     },
   },
@@ -229,7 +229,10 @@ const routes: Routes = [
           './maintenance-of-public-ministries/maintenance-of-public-ministries.module'
         )
       ).MaintenanceOfPublicMinistriesModule,
-    data: { title: 'Mantenimiento a ministerios públicos' },
+    data: {
+      title: 'Mantenimiento a ministerios públicos',
+      screen: 'FCATCATMINPUBLICO',
+    },
   },
   {
     path: 'wareahouse-catalog',
@@ -242,7 +245,7 @@ const routes: Routes = [
     path: 'banks-catalog',
     loadChildren: async () =>
       (await import('./banks-catalog/banks-catalog.module')).BanksCatalogModule,
-    data: { title: 'Catálogo de Bancos' },
+    data: { title: 'Catálogo de Bancos', screen: 'FCATCATMTOBANCOS' },
   },
   {
     path: 'filters-of-goods-for-donation',
@@ -252,14 +255,17 @@ const routes: Routes = [
           './filters-of-goods-for-donation/filters-of-goods-for-donation.module'
         )
       ).FiltersOfGoodsForDonationModule,
-    data: { title: 'Filtros de bienes para donación' },
+    data: {
+      title: 'Filtros de bienes para donación',
+      screen: 'FCATCATMTOFILDONAC',
+    },
   },
   {
     path: 'court-maintenance',
     loadChildren: async () =>
       (await import('./court-maintenance/court-maintenance.module'))
         .CourtMaintenanceModule,
-    data: { title: 'Mantenimiento a juzgados' },
+    data: { title: 'Mantenimiento a juzgados', screen: 'FCATCATMTOJUZGADO' },
   },
   {
     path: 'maintenance-individuals-and-companies',
@@ -271,6 +277,7 @@ const routes: Routes = [
       ).MaintenanceIndividualsAndCompaniesModule,
     data: {
       title: 'Mantenimiento de personas fisicas y morales',
+      screen: 'FCATCATMTOPERSONA',
     },
   },
   {
@@ -326,6 +333,7 @@ const routes: Routes = [
         .ParameterMaintenanceModule,
     data: {
       title: 'Mantenimiento de parámetros',
+      screen: 'FCATCATPARAMETROS',
     },
   },
   {
@@ -338,6 +346,7 @@ const routes: Routes = [
       ).CPMMaximumTimesForAbandonmentModule,
     data: {
       title: 'Tiempos Maximos para abandono',
+      screen: 'FCATCATTIEMPOABAN',
     },
   },
   {
@@ -350,6 +359,7 @@ const routes: Routes = [
       ).CatalogOfDocumentTypesModule,
     data: {
       title: 'Catálogo de tipos de documentos',
+      screen: 'FCATCATTIPOSDOCUM',
     },
   },
   {
@@ -362,6 +372,7 @@ const routes: Routes = [
       ).CatalogOfInventoryTypesModule,
     data: {
       title: 'Catálogo de tipos de inventario',
+      screen: 'FCATCATTIPOSINVEN',
     },
   },
   //Félix
