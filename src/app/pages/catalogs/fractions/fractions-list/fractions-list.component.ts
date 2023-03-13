@@ -41,6 +41,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.fractionService.getAll(this.params.getValue()).subscribe({
       next: response => {
+        console.log(response);
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
