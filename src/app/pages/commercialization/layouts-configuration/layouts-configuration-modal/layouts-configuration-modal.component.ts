@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IComerLayouts } from 'src/app/core/models/ms-parametercomer/parameter';
+import {
+  IComerLayouts,
+  IL,
+} from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -25,10 +28,11 @@ export class LayoutsConfigurationModalComponent
   providerForm: FormGroup = new FormGroup({});
   id: number = 0;
   layoutsT: IComerLayouts;
+  layout: IL;
   layoutList: IComerLayouts[] = [];
   @Output() onConfirm = new EventEmitter<any>();
-  @Input()
-  idLayout: number;
+  @Input() idLayout: number | undefined;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -38,6 +42,7 @@ export class LayoutsConfigurationModalComponent
   }
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.idLayout);
   }
 
   private prepareForm(): void {
@@ -78,11 +83,11 @@ export class LayoutsConfigurationModalComponent
   create() {
     try {
       this.loading = false;
-      this.layoutsConfigService.create(this.providerForm.value).subscribe({
+      this.layoutsConfigService.create(this.layout).subscribe({
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
-          this.onLoadToast('error', 'No se puede crear detalle layout!!', '');
+          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
           return;
         },
       });
@@ -97,22 +102,22 @@ export class LayoutsConfigurationModalComponent
       'Desea actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService
-          .update(this.provider.id, this.providerForm.value)
-          .subscribe({
-            next: data => this.handleSuccess(),
-            error: error => {
-              this.onLoadToast('error', 'layout', '');
-              this.loading = false;
-            },
-          });
+        this.layoutsConfigService.update(this.layoutsT).subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.onLoadToast('error', 'layout', '');
+            this.loading = false;
+          },
+        });
       }
     });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    setTimeout(() => {
+      this.onLoadToast('success', this.title, `${message} Correctamente`);
+    }, 2000);
     this.loading = false;
     this.onConfirm.emit(true);
     this.modalRef.content.callback(true);

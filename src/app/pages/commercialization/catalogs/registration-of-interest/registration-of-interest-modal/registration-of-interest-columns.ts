@@ -1,9 +1,9 @@
 export const COUNT_TIIE_COLUMNS = {
-  id: {
-    title: 'Id',
-    type: 'number',
-    sort: false,
-  },
+  // id: {
+  //   title: 'Id',
+  //   type: 'number',
+  //   sort: false,
+  // },
   tiieDays: {
     title: 'Dias Tiie',
     type: 'number',
