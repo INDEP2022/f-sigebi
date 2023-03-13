@@ -100,4 +100,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       (await import('./text-change/text-change.module')).TextChangeModule,
     data: { title: DEPOSITARY_ROUTES_2[10].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[11].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './maintenance-of-coverages/jp-d-m-maintenance-of-coverages.module'
+        )
+      ).JpDMMaintenanceOfCoveragesModule,
+    data: { title: DEPOSITARY_ROUTES_2[11].label },
+  },
 ];
