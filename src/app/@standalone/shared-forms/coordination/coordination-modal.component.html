@@ -1,0 +1,22 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Coordinación</h5>
+  </div>
+  <div body>
+    <ng2-smart-table [settings]="settings"></ng2-smart-table>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-primary active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

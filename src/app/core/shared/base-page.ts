@@ -1,10 +1,11 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { AES, enc } from 'crypto-js';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { Subject } from 'rxjs';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import Swal, {
   SweetAlertIcon,
   SweetAlertOptions,
@@ -107,6 +108,7 @@ export abstract class BasePage implements OnDestroy {
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
+  private _showHide = inject(showHideErrorInterceptorService);
 
   constructor() {
     this.bsConfig = {
@@ -167,6 +169,10 @@ export abstract class BasePage implements OnDestroy {
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
     return JSON.parse(value);
+  }
+
+  hideError(show: boolean = false) {
+    this._showHide.showHideError(show);
   }
 
   ngOnDestroy(): void {

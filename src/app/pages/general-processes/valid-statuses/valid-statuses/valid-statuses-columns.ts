@@ -1,9 +1,9 @@
 export const VALID_STATUSES_COLUMNS = {
-  operacion: {
+  description: {
     title: 'Operación',
     sort: false,
   },
-  inicial: {
+  status: {
     title: 'Estatus Inicial',
     sort: false,
   },
@@ -11,7 +11,7 @@ export const VALID_STATUSES_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  final: {
+  statusFinal: {
     title: 'Estatus Final',
     sort: false,
   },
@@ -19,7 +19,7 @@ export const VALID_STATUSES_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  extDominio: {
+  processExtSun: {
     title: 'Proceso Ext Dominio',
     sort: false,
   },

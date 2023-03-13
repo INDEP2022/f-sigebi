@@ -79,6 +79,10 @@ export const GENERAL_PROCESSES_ROUTES = [
             link: '/pages/general-processes/indicators/incident-maintenance',
           },
           {
+            label: 'Bitácora del sismtea',
+            link: '/pages/general-processes/system-log',
+          },
+          {
             label: 'Historico de Indicadores',
             link: '/pages/general-processes/indicators/history',
           },

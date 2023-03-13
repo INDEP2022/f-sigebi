@@ -5,11 +5,27 @@
 
   <div body>
     <div class="row">
+      <form class="form-material d-flex justify-content-center">
+        <form-field
+          class="col-md-4"
+          [control]="screenCtrl"
+          label="Desc. Estatus">
+          <input type="text" class="form-control" [formControl]="screenCtrl" />
+        </form-field>
+      </form>
+    </div>
+    <div class="row">
       <div class="col-md-12 md-tabs">
         <tabset>
           <tab heading="Estatus" id="tab1">
-            <ng2-smart-table [settings]="settings"></ng2-smart-table>
-            <app-pagination></app-pagination>
+            <div class="row" [ngClass]="{ 'table-loading': loading }">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="statuses"></ng2-smart-table>
+              <app-pagination
+                [filterParams]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
           </tab>
           <tab heading="Ayuda"></tab>
         </tabset>
