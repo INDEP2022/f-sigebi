@@ -181,7 +181,8 @@
                 status="info"
                 [disabled]="
                   !assetsForm.get('idCarga') ||
-                  procesandoUpload || procesandoPreload
+                  procesandoUpload ||
+                  procesandoPreload
                 "
                 class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
                 Ejecutar proceso

@@ -54,4 +54,11 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'text-change',
     menu: 'Cambio de Texto',
   },
+  {
+    // Dictaminación Masiva Prog. Desalojo
+    label: 'Notificación de abandono por aseguramiento',
+    link: 'notice-abandonment-for-securing',
+    menu: 'Notificación de abandono por aseguramiento',
+  },
+  {},
 ];

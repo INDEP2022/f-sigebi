@@ -5,12 +5,12 @@ import { AuthorizationKeysComponent } from './authorization-keys/authorization-k
 const routes: Routes = [
   {
     path: '',
-    component: AuthorizationKeysComponent
-  }
+    component: AuthorizationKeysComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AuthorizationKeysRoutingModule { }
+export class AuthorizationKeysRoutingModule {}
