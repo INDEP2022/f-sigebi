@@ -38,24 +38,24 @@
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
-                  [control]="actForm.get('preliminaryAscertainment')"
+                  [control]="actForm.get('previewFind')"
                   label="Averiguaci&oacute;n Previa">
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="preliminaryAscertainment" />
+                    formControlName="previewFind" />
                 </form-field>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
-                  [control]="actForm.get('causePenal')"
+                  [control]="actForm.get('penaltyCause')"
                   label="Causa Penal">
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="causePenal" />
+                    formControlName="penaltyCause" />
                 </form-field>
               </div>
             </div>
@@ -89,13 +89,13 @@
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <form-field
-                  [control]="actForm.get('actSelect')"
-                  label="&Aacute;cta">
-                  <select class="form-control" formControlName="actSelect">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option [value]="1">1</option>
-                    <option [value]="2">2</option>
+                <form-field [control]="actForm.get('proceeding')" label="Acta">
+                  <select class="form-control" formControlName="proceeding">
+                    <option
+                      value="{{ proceeding?.value }}"
+                      *ngFor="let proceeding of proceedingList">
+                      {{ proceeding?.text }}
+                    </option>
                   </select>
                 </form-field>
               </div>
