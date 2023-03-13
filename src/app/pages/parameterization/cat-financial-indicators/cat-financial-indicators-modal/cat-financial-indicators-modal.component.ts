@@ -41,7 +41,7 @@ export class CatFinancialIndicatorsModalComponent
 
   private prepareform() {
     this.financialIndicatorsForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       name: [null, [Validators.required]],
       description: [null, [Validators.required]],
       formula: [null, [Validators.required]],
@@ -115,6 +115,7 @@ export class CatFinancialIndicatorsModalComponent
 
   update() {
     this.loading = true;
+    console.log(this.financialIndicatorsForm);
     this.financialIndicatorsService
       .update(this.financialIndicators.id, this.financialIndicatorsForm.value)
       .subscribe({

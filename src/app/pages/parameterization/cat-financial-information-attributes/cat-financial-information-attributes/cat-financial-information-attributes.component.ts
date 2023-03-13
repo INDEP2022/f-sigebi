@@ -32,6 +32,7 @@ export class CatFinancialInformationAttributesComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Accione',
         add: true,
@@ -39,7 +40,6 @@ export class CatFinancialInformationAttributesComponent
         delete: true,
         position: 'right',
       },
-
       //hideSubHeader: false,
       columns: { ...FINANCIAL_INFO_ATTR_COLUMNS },
     };
@@ -57,6 +57,7 @@ export class CatFinancialInformationAttributesComponent
       .getAll(this.params.getValue())
       .subscribe({
         next: response => {
+          console.log(response);
           this.attributesFinancialInfo = response.data;
           this.totalItems = response.count;
           this.loading = false;
