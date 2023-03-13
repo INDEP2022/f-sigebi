@@ -69,4 +69,11 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'abandonment-monitor-for-securing',
     menu: 'Monitor de abandono por aseguramiento',
   },
+  {
+    // Dictaminación Masiva Prog. Desalojo
+    label: 'Notificación de abandono por aseguramiento',
+    link: 'notice-abandonment-for-securing',
+    menu: 'Notificación de abandono por aseguramiento',
+  },
+  {},
 ];

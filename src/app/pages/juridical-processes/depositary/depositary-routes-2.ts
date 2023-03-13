@@ -130,4 +130,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).AbandonmentMonitorForSecuringModule,
     data: { title: DEPOSITARY_ROUTES_2[13].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[14].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './notice-abandonment-for-securing/notice-abandonment-for-securing.module'
+        )
+      ).NoticeAbandonmentForSecuringModule,
+    data: { title: DEPOSITARY_ROUTES_2[14].label },
+  },
 ];
