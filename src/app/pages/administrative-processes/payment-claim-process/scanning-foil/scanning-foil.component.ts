@@ -124,20 +124,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       },
     });
   }
-  /*   validFoli() {
-    console.log('Entro');
-    if (this.good !== undefined) {
-      this.documnetServices.getByGood(this.good.id).subscribe({
-        next: response => {
-          if (response.count === 0) return;
-          console.log(response);
-          this.document = response.data[0];
-          this.scanningFoli.setValue(this.document.id);
-          this.documentEmmit.emit(this.document);
-        },
-      });
-    }
-  } */
+
   question() {
     if (this.scanningFoli.value !== '') {
       this.onLoadToast(

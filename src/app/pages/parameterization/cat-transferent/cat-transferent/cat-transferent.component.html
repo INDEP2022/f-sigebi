@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content" header>
       <h5 class="title">TRANSFERENTES</h5>
@@ -20,18 +20,88 @@
         <search-bar [params]="params"></search-bar>
       </div>
     </div> -->
-    <div class="table-responsive">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="transferent"
-          (edit)="openForm($event.data)"
-          (delete)="showDeleteAlert($event.data)">
-        </ng2-smart-table>
+    <div class="row">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)"
+            (userRowSelect)="rowsSelected($event)"
+            (rowSelect)="selectRow($event.data)">
+          </ng2-smart-table>
+        </div>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+
+    <div class="row pt-5" *ngIf="rowSelected">
+      <div class="ch-content">
+        <h5 class="title">Emisoras</h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openForm2()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="stationList"
+            (edit)="openForm2($event.data)"
+            (delete)="showDeleteAlert2($event.data)"
+            (userRowSelect)="rowsSelected2($event)"
+            (rowSelect)="selectRow2($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
+      </app-pagination>
+    </div>
+    <div class="row pt-5" *ngIf="rowSelected2">
+      <div class="ch-content">
+        <h5 class="title">Autoridades</h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openForm3()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings3"
+            [source]="authorityList"
+            (edit)="openForm3($event.data)"
+            (delete)="showDeleteAlert3($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params3" [totalItems]="totalItems3">
+      </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div *ngIf="rowSelected">
+      <button
+        (click)="resetScreen()"
+        class="btn btn-primary active btn-sm ml-3">
+        Reiniciar
+      </button>
+    </div>
   </div>
 </app-card>

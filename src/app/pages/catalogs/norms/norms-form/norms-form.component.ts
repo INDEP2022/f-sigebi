@@ -47,6 +47,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
       article: [null],
       type: [null, [Validators.required]],
       destination: [null, [Validators.required]],
+      name: [null, [Validators.required]],
       characteristics: [null, [Validators.required]],
       merchandise: [null, [Validators.required]],
       fundament: [null, [Validators.required]],
@@ -55,6 +56,8 @@ export class NormsFormComponent extends BasePage implements OnInit {
       version: [null],
       status: [null],
     });
+    this.normForm.controls['version'].setValue(1);
+    this.normForm.controls['status'].setValue(1);
     if (this.norm != null) {
       this.edit = true;
       console.log(this.norm);
@@ -72,7 +75,20 @@ export class NormsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.normService.create(this.normForm.value).subscribe({
+    let form = {
+      norm: this.normForm.controls['norm'].value,
+      article: this.normForm.controls['article'].value,
+      type: this.normForm.controls['type'].value,
+      destination: this.normForm.controls['destination'].value,
+      characteristics: this.normForm.controls['characteristics'].value,
+      merchandise: this.normForm.controls['merchandise'].value,
+      fundament: this.normForm.controls['fundament'].value,
+      objective: this.normForm.controls['objective'].value,
+      condition: this.normForm.controls['condition'].value,
+      version: this.normForm.controls['version'].value,
+      status: this.normForm.controls['status'].value,
+    };
+    this.normService.create(form).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -87,7 +103,8 @@ export class NormsFormComponent extends BasePage implements OnInit {
       if (next) {
         console.log(next);
         this.event = next;
-        this.normForm.controls['destination'].setValue(this.event.name);
+        this.normForm.controls['destination'].setValue(this.event.keyId);
+        this.normForm.controls['name'].setValue(this.event.description);
       }
     });
   }

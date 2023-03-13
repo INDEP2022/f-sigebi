@@ -65,6 +65,8 @@ export class NonDeliveryReasonsFormComponent
       version: [null],
       status: [null],
     });
+    this.nonDeliveryReasonsForm.controls['version'].setValue(1);
+    this.nonDeliveryReasonsForm.controls['status'].setValue(1);
     if (this.nonDeliveryReasons != null) {
       this.edit = true;
       this.nonDeliveryReasonsForm.patchValue(this.nonDeliveryReasons);

@@ -30,6 +30,7 @@ export class RegionalDelegationsListComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,

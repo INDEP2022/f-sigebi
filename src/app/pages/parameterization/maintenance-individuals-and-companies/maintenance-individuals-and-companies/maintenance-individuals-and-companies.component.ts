@@ -7,7 +7,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { ListIndividualsAndCompaniesComponent } from '../list-individuals-and-companies/list-individuals-and-companies.component';
@@ -43,7 +42,14 @@ export class MaintenanceIndividualsAndCompaniesComponent
         { value: null, disabled: true },
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      personNumber: [null, Validators.pattern(STRING_PATTERN)],
+      personName: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(30),
+        ],
+      ],
       name: [
         null,
         [
@@ -84,19 +90,11 @@ export class MaintenanceIndividualsAndCompaniesComponent
       ],
       rfc: [
         null,
-        [
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-          Validators.pattern(RFCCURP_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       curp: [
         null,
-        [
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-          Validators.pattern(RFCCURP_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       curriculumV: [null],
       curriculum: ['N'],
@@ -190,6 +188,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
 
   clean() {
     this.form.reset();
+    this.form.get('id').disable();
     this.edit = false;
     this.loading = false;
   }
