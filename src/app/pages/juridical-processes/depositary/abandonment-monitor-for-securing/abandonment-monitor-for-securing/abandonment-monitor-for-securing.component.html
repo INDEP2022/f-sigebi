@@ -1,0 +1,170 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Monitor de abandono por aseguramiento</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('goodNumber')" label="No Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionGood" />
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descripci&oacute;n Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('typeGood')" label="Tipo de Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeGood" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateReturn')"
+            label="Fecha Devoluci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateReturn"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('notificationDate')"
+            label="Notificado el">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="notificationDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('suspensionDate')"
+            label="Fecha de Suspensi&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="suspensionDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('notificationDate1')"
+            label="Fecha de Notificaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="notificationDate1"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('currentDays')"
+            label="D&iacute;as Corrientes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentDays" />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('daysTerm')"
+            label="D&iacute;as de Plazo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="daysTerm" />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('daysExpiration')"
+            label="D&iacute;as para vencimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="daysExpiration" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                (click)="reason()"
+                type="button"
+                class="btn btn-primary btn-sm active">
+                Motivo
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-success btn-sm active">
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-check
+            label="Suspensi&oacute;n Temporal"
+            for="temporarySuspension">
+            <input
+              id="temporarySuspension"
+              type="checkbox"
+              formControlName="temporarySuspension" />
+          </form-check>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-check
+            label="Suspensi&oacute;n Definitiva"
+            for="definitiveSuspension">
+            <input
+              id="definitiveSuspension"
+              type="checkbox"
+              formControlName="definitiveSuspension" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -110,4 +110,24 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMMaintenanceOfCoveragesModule,
     data: { title: DEPOSITARY_ROUTES_2[11].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[12].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './bulk-loading-depository-cargo/jp-d-m-bulk-loading-depository-cargo.module'
+        )
+      ).JpDMBulkLoadingDepositoryCargoModule,
+    data: { title: DEPOSITARY_ROUTES_2[12].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_2[13].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './abandonment-monitor-for-securing/abandonment-monitor-for-securing.module'
+        )
+      ).AbandonmentMonitorForSecuringModule,
+    data: { title: DEPOSITARY_ROUTES_2[13].label },
+  },
 ];
