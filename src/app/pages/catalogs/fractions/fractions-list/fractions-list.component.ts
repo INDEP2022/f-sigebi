@@ -25,6 +25,10 @@ export class FractionsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
     this.settings.actions.delete = false;
+    this.settings.actions.edit = false;
+    this.settings.actions.custom = [
+      { name: 'add', title: '<i class="fa fa-plus text-success mx-2"></i>' },
+    ];
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
