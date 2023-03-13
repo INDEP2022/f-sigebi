@@ -101,8 +101,9 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getTransferente(params?: ListParams) {
+    params['filter.nameTransferent'] = `$ilike:${params.text}`;
     this.transferenteSevice
-      .search(params)
+      .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
         this.selectTransfer = new DefaultSelect(data.data, data.count);
       });
@@ -127,9 +128,9 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getAuthority(params?: ListParams) {
-    params.text = params.text == null ? '' : params.text;
+    params['filter.authorityName'] = `$ilike:${params.text}`;
     this.authorityService
-      .search(params)
+      .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });

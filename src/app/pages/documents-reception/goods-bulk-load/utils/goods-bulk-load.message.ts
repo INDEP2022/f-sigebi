@@ -29,8 +29,25 @@ const ERROR_CANTIDAD = (cantidad: string) =>
   `La cantidad es inválida. En el campo CANTIDAD: ${cantidad}.`;
 const ERROR_ESTATUS = (estatus: string) =>
   `El estatus ${estatus} no existe en el sistema.`;
-const ERROR_ESTATUS_GENERAL = (numero_registro: number) =>
-  `No se realizo la inserción del bien con la posición "${numero_registro}" debido a que no se permiten inserciones con estatus diferente de "ROP" .`;
+const ERROR_ESTATUS_GENERAL = (numero_registro: number, proceso: number) =>
+  `${
+    proceso == 1
+      ? 'No se realizo la inserción del bien con la posición ' +
+        numero_registro +
+        ' debido a que no se permiten inserciones con estatus diferente de "ROP".'
+      : proceso == 2
+      ? 'No se realizo la inserción del bien con la posición ' +
+        numero_registro +
+        ' debido a que no se permiten inserciones con estatus diferente de "ROP"-'
+      : proceso == 3
+      ? 'No se realizo la inserción del bien con la posición ' +
+        numero_registro +
+        ' debido a que su estatus no es permitido para actualización.'
+      : 'No se realizo la inserción del bien con la posición ' +
+        numero_registro +
+        ' debido a que no se permiten inserciones con estatus diferente de "ROP".'
+  }.`;
+// `No se realizo la inserción del bien con la posición "${numero_registro}" debido a que no se permiten inserciones con estatus diferente de "ROP" .`;
 // PROCESO 1 Y PROCESO 3
 const ERROR_CLASS_GOOD = (class_good: number) =>
   `El número de clasificación del bien ${class_good} no existe en el sistema.`;

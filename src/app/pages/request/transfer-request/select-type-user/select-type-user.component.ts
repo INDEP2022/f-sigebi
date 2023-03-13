@@ -104,7 +104,6 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   }
 
   userSelected(event: any) {
-    console.log(event);
     if (event.isSelected) {
       this.user = event.data;
     } else {
