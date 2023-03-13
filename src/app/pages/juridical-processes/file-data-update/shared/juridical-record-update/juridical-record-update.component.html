@@ -48,30 +48,6 @@
                 formControlName="wheelType"
                 [value]="option.value" />
             </form-radio>
-            <!-- <form-radio label="Administrativo">
-                  <input
-                    type="radio"
-                    formControlName="tipoVolante"
-                    value="Administrativo" />
-                </form-radio>
-                <form-radio label="Procesal" class="mt-0 pt-0 bt-0">
-                  <input
-                    type="radio"
-                    formControlName="tipoVolante"
-                    value="Procesal" />
-                </form-radio>
-                <form-radio label="Trans">
-                  <input
-                    type="radio"
-                    formControlName="tipoVolante"
-                    value="Trans" />
-                </form-radio>
-                <form-radio label="Transferente">
-                  <input
-                    type="radio"
-                    formControlName="tipoVolante"
-                    value="Transferente" />
-                </form-radio> -->
           </div>
         </div>
       </div>
@@ -113,7 +89,7 @@
             [data]="affairs"
             (fetchItems)="getAffairs($event)"
             bindLabel="nameAndId"
-            control="dictumKey"
+            control="affairKey"
             label="Asunto"
             [searchOnInit]="true"
             termMaxLength="200"
@@ -131,6 +107,7 @@
             bindLabel="nameAndId"
             control="dictumKey"
             label="Desahogo Asunto"
+            (change)="changeDictum($event)"
             [searchOnInit]="true"
             termMaxLength="80"
             [showTooltip]="true">
@@ -150,12 +127,14 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
+            [disabled]="affair == null"
             (click)="sentToDocumentsManagement()">
             Oficio de desahogo
           </button>
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
+            [disabled]="dictum == ''"
             (click)="sentToJuridicalRuling()">
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
@@ -325,7 +304,7 @@
 
       <div class="row pt-4">
         <form-field
-          class="col-md-4"
+          class="col-md-6"
           [control]="fileDataUpdateForm.get('uniqueKey')">
           <ngx-select
             [form]="fileDataUpdateForm"
@@ -433,8 +412,7 @@
       <div class="row pt-4" *ngIf="initialCondition != 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('minpubNumber')"
-          class="col-md-6"
-          label="Ministerio p&uacute;blico">
+          class="col-md-6">
           <ngx-select
             [form]="fileDataUpdateForm"
             [data]="publicMinistries"
@@ -548,15 +526,6 @@
       </div>
 
       <div class="row pt-4">
-        <!-- <form-field [control]="fileDataUpdateForm.get('area')" class="col-md-6">
-          <ngx-select
-            [form]="fileDataUpdateForm"
-            [data]="subjects"
-            control="area"
-            label="Area Destino">
-          </ngx-select>
-        </form-field> -->
-
         <form-field
           [control]="fileDataUpdateForm.get('userRecipient')"
           class="col-md-6"
@@ -568,7 +537,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="dictum == 'CONOCIMIENTO'">
         <form-field
           [control]="fileDataUpdateForm.get('reserved')"
           label="Justificaci&oacute;n del conocimiento">
@@ -592,6 +561,7 @@
             outline
             type="button"
             class="mr-2 btn-sm active btn-primary"
+            [disabled]="wheelNumber == null || dictum == ''"
             (click)="sendToRelatedDocumentsManagement()">
             Oficio Relacionado
           </button>
@@ -606,324 +576,4 @@
       </div>
     </div>
   </div>
-  <!-- <div class="row">
-    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-      <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <h6 class="title">DATOS DEL ASUNTO</h6>
-          <hr class="row" />
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('noVolante')"
-            label="No&#46; Volante">
-            <input class="form-control" formControlName="noVolante" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('fecRecepcion')"
-            label="Fec&#46; Recepción&#46;">
-            <input
-              formControlName="fecRecepcion"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('noConsecutivoDiario')"
-            label="Consecutivo Diario">
-            <input class="form-control" formControlName="noConsecutivoDiario" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-          <div class="row w-100 pl-4">
-            <label class="form-control-label">Tipo Volante</label>
-            <div
-              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2 text-center"
-              *ngFor="let option of optionsTipoVolante">
-              <form-radio label="{{ option.label }}">
-                <input
-                  type="radio"
-                  formControlName="tipoVolante"
-                  [value]="option.value" />
-              </form-radio>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('actaCircunst')"
-            label="Acta Circunst">
-            <input class="form-control" formControlName="actaCircunst" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('averiguacionPrevia')"
-            label="Averig&#46; Previa">
-            <input class="form-control" formControlName="averiguacionPrevia" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('causaPenal')"
-            label="Causa Penal">
-            <input class="form-control" formControlName="causaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('cveAmparo')"
-            label="No&#46; Amparo">
-            <input class="form-control" formControlName="cveAmparo" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2 text-center">
-          <button type="button" class="btn btn-primary btn-sm active">
-            Observaciones
-          </button>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('cveTocaPenal')"
-            label="Toca Penal">
-            <input class="form-control" formControlName="cveTocaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('cveOficioExterno')"
-            label="No&#46; Oficio">
-            <input class="form-control" formControlName="cveOficioExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('fecOficioExterno')"
-            label="Fecha Oficio">
-            <input
-              formControlName="fecOficioExterno"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('observaciones')"
-            label="Descripci&oacute;n del Asunto">
-            <textarea
-              class="form-control"
-              formControlName="observaciones"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
-          <h6 class="title">DATOS DEL EXPEDIENTE</h6>
-          <hr class="row" />
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('remitenteExterno')"
-            label="Remitente">
-            <input class="form-control" formControlName="remitenteExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('asunto')"
-            label="Asunto">
-            <input class="form-control" formControlName="asunto" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('desahogoAsunto')"
-            label="Desahogo Asunto">
-            <textarea
-              class="form-control"
-              formControlName="desahogoAsunto"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
-          <button type="button" class="btn btn-primary btn-sm active">
-            Oficio de desahogo
-          </button>
-          <button
-            type="button"
-            class="btn btn-link btn-sm"
-            [routerLink]="[linkDictaminacionesJuridicas, flyerId]">
-            Dictaminaci&oacute;n Jur&iacute;dicca
-          </button>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('claveUnica')"
-            label="Clave &uacute;nica">
-            <input class="form-control" formControlName="claveUnica" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="cityName"
-            label="Ciudad"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="ciudad"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="federativeEntityName"
-            label="Entidad Federativa"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="entidadFed"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="transferName"
-            label="Transferente"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="transferente"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="emiterName"
-            label="Emisora"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="emisora"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="autorityName"
-            label="Autoridad"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="autoridad"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="autorityEmiterName"
-            label="Autoridad Emisora"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="institucion"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="publicMinisteryName"
-            label="Ministerio p&uacute;blico"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="minPub"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="judeName"
-            label="Juzgado"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="juzgado"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="indicadoName"
-            label="Indicado"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="indicado"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="delitoName"
-            label="Delito"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="delito"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="viaReceptionName"
-            label="V&iacute;a Recepci&oacute;n"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="recepcion"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="destinityAreaName"
-            label="&Aacute;rea Destino"
-            value="id"
-            (fetchItems)="(true)"
-            [form]="fileDataUpdateForm"
-            control="area"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('destinatario')"
-            label="Destinatario">
-            <input class="form-control" formControlName="destinatario" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
-          <form-field
-            [control]="fileDataUpdateForm.get('justificacion')"
-            label="Justificaci&oacute;n del conocimiento">
-            <textarea
-              class="form-control"
-              formControlName="justificacion"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
-          <button
-            type="button"
-            class="btn btn-link btn-sm"
-            [routerLink]="[linkReaccionacionTurno, flyerId]">
-            Reasignaci&oacute;n de Turno
-          </button>
-          <button
-            type="button"
-            class="btn btn-link btn-sm"
-            [routerLink]="[linkOficioRelacionado, flyerId]">
-            Oficio Relacionado
-          </button>
-          <button type="button" class="btn btn-primary btn-sm active">
-            Captura de Copias
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </form>

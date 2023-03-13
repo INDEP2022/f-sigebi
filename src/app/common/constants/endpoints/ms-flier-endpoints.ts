@@ -5,4 +5,5 @@ export enum FlierEndpoints {
   FnNotificationDetail = 'functions/notification-detail',
   FnExpedientDetail = 'functions/expedient-detail',
   FnDataAttributeGood = 'functions/data-attribute-good',
+  FindByIds = `copies-x-flier/find-by-ids`,
 }

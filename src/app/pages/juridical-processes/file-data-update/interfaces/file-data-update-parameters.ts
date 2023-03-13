@@ -32,19 +32,20 @@ export interface IJuridicalRulingParams {
 }
 
 export interface IJuridicalDocumentManagementParams {
-  pNoExpediente: number;
-  pNoVolante: number;
-  pAvPrevia: string;
-}
-
-export interface IJuridicalRelatedDocumentManagementParams {
   volante: number;
   expediente: number;
   doc: number | string;
   tipoOf: number | string;
   sale: string;
-  bien: number;
+  bien: string;
   pGestOk: number;
   pNoTramite: number;
   pDictamen: number | string;
+}
+
+export interface IJuridicalRelatedDocumentManagementParams {
+  volante: number;
+  expediente: number;
+  pGestOk: number;
+  pNoTramite: number;
 }

@@ -27,11 +27,13 @@ import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area
 import { AuthorityService } from '../catalogs/authority.service';
 import { CourtService } from '../catalogs/court.service';
 import { DelegationService } from '../catalogs/delegation.service';
+import { DepartamentService } from '../catalogs/departament.service';
 import { IndiciadosService } from '../catalogs/indiciados.service';
 import { MinPubService } from '../catalogs/minpub.service';
 import { StationService } from '../catalogs/station.service';
 import { TransferenteService } from '../catalogs/transferente.service';
 import { DynamicTablesService } from '../dynamic-catalogs/dynamic-tables.service';
+import { GoodParametersService } from '../ms-good-parameters/good-parameters.service';
 import { ProcedureManagementService } from '../proceduremanagement/proceduremanagement.service';
 
 @Injectable({
@@ -49,7 +51,9 @@ export class DocReceptionRegisterService extends HttpService {
     private minPubService: MinPubService,
     private courtService: CourtService,
     private procedureManageService: ProcedureManagementService,
-    private indiciadosService: IndiciadosService
+    private indiciadosService: IndiciadosService,
+    private goodParametersService: GoodParametersService,
+    private departamentService: DepartamentService
   ) {
     super();
   }
@@ -441,5 +445,9 @@ export class DocReceptionRegisterService extends HttpService {
         };
       })
     );
+  }
+
+  getPhaseEdo() {
+    return this.goodParametersService.getPhaseEdo();
   }
 }

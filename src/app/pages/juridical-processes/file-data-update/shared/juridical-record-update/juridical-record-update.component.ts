@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { TaxpayerLabel } from 'src/app/pages/documents-reception/flyers/documents-reception-register/interfaces/documents-reception-register-form';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
   baseMenu,
@@ -25,6 +24,7 @@ import { IIdentifier } from '../../../../../core/models/catalogs/identifier.mode
 import { IIndiciados } from '../../../../../core/models/catalogs/indiciados.model';
 import { IIssuingInstitution } from '../../../../../core/models/catalogs/issuing-institution.model';
 import { IMinpub } from '../../../../../core/models/catalogs/minpub.model';
+import { IOpinion } from '../../../../../core/models/catalogs/opinion.model';
 import { IStation } from '../../../../../core/models/catalogs/station.model';
 import {
   ITransferente,
@@ -76,13 +76,14 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
   linkOficioRelacionado: string =
     '/pages/documents-reception/flyers-registration/related-document-management';
   fileDataUpdateForm = this.fb.group(JURIDICAL_FILE_DATA_UPDATE_FORM);
-  initialCondition: string = 'A';
+  initialCondition: string = 'P';
   canViewDocuments = false;
   transferorLoading: boolean = false;
   stationLoading: boolean = false;
+  dictum: string = '';
+  procedureId: number;
   initialDate: string;
   maxDate: Date = new Date();
-  taxpayerLabel: TaxpayerLabel = TaxpayerLabel.Taxpayer;
   identifiers = new DefaultSelect<IIdentifier>();
   subjects = new DefaultSelect<IAffair>();
   cities = new DefaultSelect<ICity>();
@@ -150,6 +151,14 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
 
   get subDelegationName() {
     return this.fileDataUpdateForm.controls['subDelegationName'].value;
+  }
+
+  get affair() {
+    return this.fileDataUpdateForm.controls['affairKey'].value;
+  }
+
+  get wheelNumber() {
+    return this.fileDataUpdateForm.controls['wheelNumber'].value;
   }
 
   ngOnInit(): void {
@@ -345,10 +354,22 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
       this.fileUpdateService.getDictum(notif.dictumKey).subscribe({
         next: data => {
           this.formControls.dictumKey.setValue(data);
+          this.dictum = data.description;
         },
         error: () => {},
       });
     }
+    filterParams.removeAllFilters();
+    filterParams.addFilter('expedient', notif.expedientNumber);
+    filterParams.addFilter('flierNumber', notif.wheelNumber);
+    this.fileUpdateService.getProcedures(filterParams.getParams()).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          this.procedureId = data.data[0].id;
+        }
+      },
+      error: () => {},
+    });
     if (notif.delDestinyNumber != null) {
       this.formControls.delDestinyNumber.setValue(notif.delDestinyNumber);
       if (notif.delegation != null) {
@@ -384,15 +405,66 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
           notif.departament.description
         );
       } else {
-        this.fileUpdateService
-          .getDepartament(notif.departamentDestinyNumber)
-          .subscribe(data =>
-            this.formControls.destinationArea.setValue(data.description)
-          );
+        this.docRegisterService.getPhaseEdo().subscribe({
+          next: data => {
+            filterParams.removeAllFilters();
+            filterParams.addFilter('id', notif.departamentDestinyNumber);
+            filterParams.addFilter('numDelegation', notif.delDestinyNumber);
+            filterParams.addFilter(
+              'numSubDelegation',
+              notif.subDelDestinyNumber
+            );
+            filterParams.addFilter('phaseEdo', data.stagecreated);
+            this.docRegisterService
+              .getDepartamentsFiltered(filterParams.getParams())
+              .subscribe(data =>
+                this.formControls.destinationArea.setValue(
+                  data.data[0].description
+                )
+              );
+          },
+          error: () => {},
+        });
       }
     }
+    this.fileUpdateService
+      .getRecipientUser({ copyNumber: 1, flierNumber: notif.wheelNumber })
+      .subscribe({
+        next: data => {
+          filterParams.removeAllFilters();
+          filterParams.addFilter('user', data.copyuser);
+          this.docRegisterService
+            .getUsersSegAreas(filterParams.getParams())
+            .subscribe({
+              next: data => {
+                if (data.count > 0) {
+                  this.formControls.userRecipient.setValue(
+                    data.data[0].userDetail.name
+                  );
+                }
+              },
+              error: () => {},
+            });
+        },
+        error: () => {},
+      });
     if (this.formControls.wheelNumber.value != null) {
       this.canViewDocuments = true;
+    }
+    // TODO: Deshabilitar dictamen si no es nulo y no cumple condiciones SAT
+    // if (this.formControls.dictumKey != null) {
+    // } else {
+    //   this.fileDataUpdateForm.enable();
+    // }
+    this.fileDataUpdateForm.enable();
+    for (const key in this.formControls) {
+      if (
+        key != 'dictumKey' ||
+        (this.dictum == 'CONOCIMIENTO' && key == 'dictumKey')
+      ) {
+        const control = this.fileDataUpdateForm.get(key);
+        control.disable();
+      }
     }
   }
 
@@ -448,13 +520,66 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
 
   sentToDocumentsManagement() {
     // TODO: mandar parametros
+    this.fileUpdateService.juridicalFileDataUpdateForm =
+      this.fileDataUpdateForm.value;
+    let procedure;
+    if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != undefined
+    ) {
+      procedure = this.pageParams.pNoTramite;
+    } else if (this.procedureId != undefined) {
+      procedure = this.procedureId;
+    }
+    this.fileUpdComService.juridicalDocumentManagementParams = {
+      expediente: this.formControls.expedientNumber.value,
+      volante: this.formControls.wheelNumber.value,
+      pDictamen: this.formControls.dictumKey.value?.id,
+      pGestOk: this.pageParams.pGestOk,
+      pNoTramite: procedure,
+      tipoOf: 'INTERNO',
+      bien: 'S',
+      sale: 'D',
+      doc: '',
+    };
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/related-document-management'
     );
   }
 
   sentToJuridicalRuling() {
-    // TODO: mandar parametros
+    let dictumType: string;
+    const dictumId = Number(this.formControls.dictumKey.value?.id);
+    if ([1, 16, 23].includes(dictumId)) dictumType = 'PROCEDENCIA';
+    if (dictumId == 15) dictumType = 'DESTRUCCION';
+    if (dictumId == 2) dictumType = 'DECOMISO';
+    if (dictumId == 22) dictumType = 'EXT_DOM';
+    if ([3, 19].includes(dictumId)) dictumType = 'DEVOLUCION';
+    if (dictumId == 17) dictumType = 'TRANSFERENTE';
+    if (dictumId == 18) dictumType = 'RESARCIMIENTO';
+    if (dictumId == 20) dictumType = 'ABANDONO';
+    if (dictumId == 24) dictumType = 'ACLARA';
+    let procedure;
+    if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != undefined
+    ) {
+      procedure = this.pageParams.pNoTramite;
+    } else if (this.procedureId != undefined) {
+      procedure = this.procedureId;
+    }
+    this.fileUpdateService.juridicalFileDataUpdateForm =
+      this.fileDataUpdateForm.value;
+    //TODO: Asignar parametro consulta de acuerdo a permisos del usuario en la pantalla
+    this.fileUpdComService.juridicalRulingParams = {
+      expediente: this.formControls.expedientNumber.value,
+      volante: this.formControls.wheelNumber.value,
+      tipoVo: this.formControls.wheelType.value,
+      tipoDic: dictumType,
+      consulta: 'S',
+      pGestOk: this.pageParams.pGestOk,
+      pNoTramite: procedure,
+    };
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/juridical-dictums'
     );
@@ -462,6 +587,23 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
 
   sentToShiftChange() {
     // TODO: mandar parametros
+    this.fileUpdateService.juridicalFileDataUpdateForm =
+      this.fileDataUpdateForm.value;
+    let procedure;
+    if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != undefined
+    ) {
+      procedure = this.pageParams.pNoTramite;
+    } else if (this.procedureId != undefined) {
+      procedure = this.procedureId;
+    }
+    this.fileUpdComService.juridicalRelatedDocumentManagementParams = {
+      expediente: this.formControls.expedientNumber.value,
+      volante: this.formControls.wheelNumber.value,
+      pGestOk: this.pageParams.pGestOk,
+      pNoTramite: procedure,
+    };
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/shift-change'
     );
@@ -536,6 +678,13 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
   changeStation(event: IStation) {
     this.formControls.autorityNumber.setValue(null);
     this.getAuthorities({ page: 1, text: '' });
+  }
+
+  changeDictum(dictum: IOpinion) {
+    this.dictum = dictum.description;
+    if (this.dictum == 'CONOCIMIENTO') {
+      this.formControls.reserved.enable();
+    }
   }
 
   openModalDocuments() {
@@ -792,6 +941,11 @@ export class JuridicalRecordUpdateComponent extends BasePage implements OnInit {
   }
 
   getDictums(params: ListParams) {
-    //
+    this.fileUpdateService.getDictums(params).subscribe({
+      next: data => {
+        this.dictums = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {},
+    });
   }
 }

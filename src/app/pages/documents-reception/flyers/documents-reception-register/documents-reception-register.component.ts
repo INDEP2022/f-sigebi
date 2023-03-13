@@ -1164,11 +1164,26 @@ export class DocumentsReceptionRegisterComponent
           notif.departament.description
         );
       } else {
-        this.departamentService
-          .getById(notif.departamentDestinyNumber)
-          .subscribe(data =>
-            this.formControls.destinationArea.setValue(data.description)
-          );
+        this.docRegisterService.getPhaseEdo().subscribe({
+          next: data => {
+            filterParams.removeAllFilters();
+            filterParams.addFilter('id', notif.departamentDestinyNumber);
+            filterParams.addFilter('numDelegation', notif.delDestinyNumber);
+            filterParams.addFilter(
+              'numSubDelegation',
+              notif.subDelDestinyNumber
+            );
+            filterParams.addFilter('phaseEdo', data.stagecreated);
+            this.docRegisterService
+              .getDepartamentsFiltered(filterParams.getParams())
+              .subscribe(data =>
+                this.formControls.destinationArea.setValue(
+                  data.data[0].description
+                )
+              );
+          },
+          error: () => {},
+        });
       }
     }
     if (notif.wheelNumber != null && notif.expedientNumber != null) {

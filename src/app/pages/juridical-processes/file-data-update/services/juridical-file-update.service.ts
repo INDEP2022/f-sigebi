@@ -5,10 +5,10 @@ import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
-import { DepartamentService } from '../../../../core/services/catalogs/departament.service';
 import { IssuingInstitutionService } from '../../../../core/services/catalogs/issuing-institution.service';
 import { OpinionService } from '../../../../core/services/catalogs/opinion.service';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
+import { CopiesXFlierService } from '../../../../core/services/ms-flier/copies-x-flier.service';
 import { NotificationService } from '../../../../core/services/ms-notification/notification.service';
 import { ProcedureManagementService } from '../../../../core/services/proceduremanagement/proceduremanagement.service';
 import { IJuridicalFileDataUpdateForm } from '../interfaces/file-data-update-form';
@@ -28,7 +28,7 @@ export class JuridicalFileUpdateService {
     private opinionService: OpinionService,
     private delegationService: DelegationService,
     private subDelegationService: SubdelegationService,
-    private departamentService: DepartamentService
+    private flyerCopiesService: CopiesXFlierService
   ) {}
 
   get juridicalFileDataUpdateForm() {
@@ -143,7 +143,10 @@ export class JuridicalFileUpdateService {
     return this.subDelegationService.getById(id);
   }
 
-  getDepartament(id: string | number) {
-    return this.departamentService.getById(id);
+  getRecipientUser(body: {
+    copyNumber: string | number;
+    flierNumber: string | number;
+  }) {
+    return this.flyerCopiesService.findByIds(body);
   }
 }
