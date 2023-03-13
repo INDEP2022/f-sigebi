@@ -100,4 +100,44 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       (await import('./text-change/text-change.module')).TextChangeModule,
     data: { title: DEPOSITARY_ROUTES_2[10].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[11].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './maintenance-of-coverages/jp-d-m-maintenance-of-coverages.module'
+        )
+      ).JpDMMaintenanceOfCoveragesModule,
+    data: { title: DEPOSITARY_ROUTES_2[11].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_2[12].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './bulk-loading-depository-cargo/jp-d-m-bulk-loading-depository-cargo.module'
+        )
+      ).JpDMBulkLoadingDepositoryCargoModule,
+    data: { title: DEPOSITARY_ROUTES_2[12].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_2[13].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './abandonment-monitor-for-securing/abandonment-monitor-for-securing.module'
+        )
+      ).AbandonmentMonitorForSecuringModule,
+    data: { title: DEPOSITARY_ROUTES_2[13].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_2[14].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './notice-abandonment-for-securing/notice-abandonment-for-securing.module'
+        )
+      ).NoticeAbandonmentForSecuringModule,
+    data: { title: DEPOSITARY_ROUTES_2[14].label },
+  },
 ];
