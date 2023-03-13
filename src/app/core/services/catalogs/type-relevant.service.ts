@@ -18,7 +18,7 @@ export class TypeRelevantService implements ICrudMethods<ITypeRelevant> {
   }
 
   getById(id: string | number): Observable<ITypeRelevant> {
-    return this.typeRelevantRepository.getById(this.route, id);
+    return this.typeRelevantRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: ITypeRelevant): Observable<ITypeRelevant> {
