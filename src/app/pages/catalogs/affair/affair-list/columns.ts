@@ -2,6 +2,7 @@ export const AFFAIR_COLUMNS = {
   id: {
     title: 'Código',
     sort: false,
+    width: '35px',
   },
   description: {
     title: 'Descripción',
