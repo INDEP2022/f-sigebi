@@ -232,7 +232,6 @@ export class AssetsComponent extends BasePage implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
-    debugger;
     fileReader.readAsBinaryString(files[0]);
     //fileReader.onload = () => this.readExcel(fileReader.result);
   }

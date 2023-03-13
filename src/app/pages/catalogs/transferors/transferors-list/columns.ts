@@ -2,16 +2,20 @@ export const TRANSFERENT_STATE_COLUMNS = {
   id: {
     title: 'No.',
     sort: false,
+    width: '25px',
   },
-  keyCode: {
+  keyTransferent: {
     title: 'Clave',
     sort: false,
   },
-  name: {
+  nameTransferent: {
     title: 'Nombre',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
-  type: {
+  typeTransferent: {
     title: 'Tipo',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -20,5 +24,26 @@ export const TRANSFERENT_STATE_COLUMNS = {
 
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'NO', title: 'No obligatorio' },
+          { value: 'CE', title: 'Asegurado' },
+        ],
+      },
+    },
+  },
+};
+
+export const STATE_COLUMS = {
+  nametransferent: {
+    title: 'Transferente',
+    sort: false,
+  },
+  statekey: {
+    title: 'Estado',
+    sort: false,
   },
 };

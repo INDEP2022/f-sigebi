@@ -41,7 +41,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     this.getTypeExpedient(new ListParams());
 
     this.requestForm.controls['affair'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['id'].value != null) {
+      if (this.requestForm.controls['affair'].value != null) {
         this.getAffair(this.requestForm.controls['affair'].value);
       }
 

@@ -59,8 +59,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     if (this.requestSelected.length === 0) {
       this.onLoadToast(
         'info',
-        'Informacion',
-        `Seleccione una o muchas solicitudes!`
+        'Información',
+        `Seleccione una o mas solicitudes!`
       );
       return;
     }
@@ -92,6 +92,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.requestService.getAll(params).subscribe(
       (data: IListResponse<IRequest>) => {
+        console.log(data);
         this.totalItems = Number(data.count);
         this.getresponse(data.data);
       },

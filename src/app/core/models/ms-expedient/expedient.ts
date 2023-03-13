@@ -67,3 +67,43 @@ export interface IExpedientMassiveUpload {
   authorityNumber: number | string; //  NO DE AUTORIDAD
   stationNumber: number | string; // NO EMISORA
 }
+
+export interface IExpedientSami {
+  id?: number;
+  expedientDate?: string; //date
+  creationUser?: string;
+  creationDate?: string; //date
+  modificationUser?: string;
+  modificationDate?: string; //date
+  courtNumber?: string;
+  publicMinistry?: string;
+  externalOfficeNumber?: string;
+  help?: string;
+  tocaPenal?: string;
+  preliminaryInvestigationion?: string;
+  criminalCase?: string;
+  opinion?: string;
+  indicated?: string;
+  legalBasisInai?: string;
+  reserveDateInai?: string; //date
+  reserveTypeInai?: string;
+  reservePeriodInai?: number;
+  documentarySectionInai?: string;
+  documentarySeriesInai?: string;
+  clasificationInai?: string;
+  documentaryValueInai?: string;
+  vaProcedureInai?: number;
+  vaConcentrationInai?: number;
+  sheetsInai?: number;
+  filesInai?: number;
+  coverInai?: string;
+  version?: number;
+  inaiUser?: number;
+  inaiUnit?: number;
+  inaiFile?: number;
+  provisionInai?: number;
+  inaiOfficial?: number;
+  fullCoding?: string;
+  adminUnit?: string;
+  endExpedientDate?: string; //string
+}

@@ -55,6 +55,8 @@ export class IndicatorDeadlinesFormComponent
       estatus: [null],
       version: [null],
     });
+    this.indicatorDeadlinesModalForm.controls['version'].setValue(1);
+    this.indicatorDeadlinesModalForm.controls['estatus'].setValue(1);
     if (this.indicatorsDeadlines != null) {
       this.edit = true;
       this.indicatorDeadlinesModalForm.patchValue(this.indicatorsDeadlines);

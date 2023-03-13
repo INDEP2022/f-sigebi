@@ -28,6 +28,10 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = CLARIFICATION_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {

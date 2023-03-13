@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
   BsDatepickerConfig,
@@ -7,7 +12,11 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -152,7 +161,6 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
 
   onSubDelegationsChange(element: any) {
     this.resetFields([this.subdelegation]);
-    
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -191,8 +199,6 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
-  
-
   readFile(file: IReport) {
     const reader = new FileReader();
     reader.readAsDataURL(file.data);
@@ -201,7 +207,6 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
       this.openPrevPdf(reader.result as string);
     };
   }
-  
 
   openPrevPdf(pdfurl: string) {
     console.log(pdfurl);
@@ -220,8 +225,4 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
     };
     this.modalService.show(PreviewDocumentsComponent, config);
   }
-
-  
-
-
 }

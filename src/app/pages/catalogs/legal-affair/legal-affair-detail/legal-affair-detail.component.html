@@ -7,7 +7,11 @@
       <div class="row">
         <div class="col-md-3">
           <form-field label="ID" [control]="legalAffairForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-9">
