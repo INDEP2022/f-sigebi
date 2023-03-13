@@ -141,6 +141,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getRegionalDeleg(params?: ListParams) {
     const regDelId = Number(this.getRegionalDelegationId());
     this.regionalDelegationService.getById(regDelId).subscribe((data: any) => {
+      debugger;
       this.requestForm.controls['regionalDelegationId'].setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 

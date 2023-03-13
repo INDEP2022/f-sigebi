@@ -4,13 +4,16 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CoverExpedientService } from 'src/app/core/services/ms-cover-expedient/cover-expedient.service';
+import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
 
 @Component({
   selector: 'app-associate-file',
@@ -29,10 +32,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   idUser: number;
   idUnit: number;
   ddcId: number = null;
-  codificacion: string = '';
-  periodoRecerva: string = '';
-  vigenciaTramite: string = '';
-  vigenciaConcentracion: string = '';
   transferentName: string = '';
   regionalDelegacionName: string = '';
 
@@ -42,7 +41,10 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     private externalExpedientService: CoverExpedientService,
     private transferentService: TransferenteService,
     private regioinalDelegation: RegionalDelegationService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private expedientSamiService: ExpedientSamiService,
+    private requestHelperService: RequestHelperService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -53,39 +55,33 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
-    console.log(this.parameter.getRawValue());
+    console.log(this.authService.decodeToken());
   }
   formsChanges() {
-    this.associateFileForm.controls['user'].valueChanges.subscribe(data => {
+    this.associateFileForm.controls['inaiUser'].valueChanges.subscribe(data => {
       if (data) {
         this.idUser = data;
         this.getUnitSelect(new ListParams(), data);
       }
     });
 
-    this.associateFileForm.controls['unit'].valueChanges.subscribe(data => {
+    this.associateFileForm.controls['inaiUnit'].valueChanges.subscribe(data => {
       if (data) {
         this.idUnit = data;
         this.getFileSelect(new ListParams(), this.idUnit, this.idUser);
       }
     });
 
-    this.associateFileForm.controls['file'].valueChanges.subscribe(data => {
+    this.associateFileForm.controls['inaiFile'].valueChanges.subscribe(data => {
       if (data) {
         this.getDispositionSelect(new ListParams());
       }
     });
-    this.associateFileForm.controls['disposition'].valueChanges.subscribe(
+
+    this.associateFileForm.controls['provisionInai'].valueChanges.subscribe(
       data => {
         if (data) {
-          const disposition = this.dispositions.filter(
-            (x: any) => x.ddcId === data
-          )[0];
-          this.ddcId = data;
-          this.codificacion = disposition.ddcCodificacion;
-          this.periodoRecerva = disposition.PeriodoReserva;
-          this.vigenciaTramite = disposition.VArchivoTramite;
-          this.vigenciaConcentracion = disposition.VArchivoConcentracion;
+          this.getCompleteDisposition(Number(data));
         }
       }
     );
@@ -93,45 +89,75 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.associateFileForm = this.fb.group({
-      user: [null, [Validators.required]],
-      unit: [null, [Validators.required]],
-      file: [null, [Validators.required]],
-      disposition: [null, [Validators.required]],
-      functionary: [null, [Validators.required]],
-      fileDate: [null, [Validators.required]],
-      reservationDate: [null],
-      fojas: [null, [Validators.required]],
-      legajos: [
+      inaiUser: [null, [Validators.required]], //user
+      inaiUnit: [null, [Validators.required]], //unidad
+      inaiFile: [null, [Validators.required]], //file
+      provisionInai: [null, [Validators.required]], //disposicion
+      inaiOfficial: [null, [Validators.required]], //funcionario
+      expedientDate: [null, [Validators.required]], //fecha expediente
+      reserveDateInai: [null], //fecha reserva
+      sheetsInai: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ], //foja
+      filesInai: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
+      fullCoding: [null], // codificacion
+      reservePeriodInai: [null], //periodo de reserva
+      clasificationInai: [null], // clasificación
+      documentarySectionInai: [null], //seccion documental
+      documentarySeriesInai: [null], // serie documental
+      vaProcedureInai: [null], // vigencia del archivo tramite
+      vaConcentrationInai: [null], // vigencia archivo concentracion
+      documentaryValueInai: [null], //valor documental
     });
   }
 
   confirm() {
-    /*console.log(this.parameter);
     let request = this.parameter.getRawValue();
-    this.requestService.update(request.id, request).subscribe({
-      next: resp => {
-        console.log(resp);
-      },
-    });*/
-    /* const div = document.createElement('div');
-    div.style.cssText = 'width: 200px; height: 200px; background: #09c;';
-    document.body.appendChild(div);
- */
-  }
+    let expedient = this.associateFileForm.getRawValue();
+    /*expedient.creationUser = this.authService.decodeToken().preferred_username;
+    expedient.creationDate = new Date().toISOString();
+    expedient.modificationUser =
+      this.authService.decodeToken().preferred_username;
+    expedient.modificationDate = new Date().toISOString();*/
 
-  getRequest() {
-    this.requestService.getById(43717).subscribe({
-      next: resp => {
-        return resp;
+    this.expedientSamiService.create(expedient).subscribe({
+      next: expedient => {
+        if (expedient.id) {
+          request.recordId = expedient.id;
+          this.requestService.update(request.id, request).subscribe({
+            next: resp => {
+              if (resp.id) {
+                this.message(
+                  'success',
+                  'Expediente Asociado',
+                  'Se asocio el expediente correctamente'
+                );
+                this.closeAssociateExpedientTab();
+                this.close();
+              }
+            },
+          });
+        } else {
+          this.message(
+            'error',
+            'Error en el expediente',
+            'Ocurrio un erro al guardar el expediente'
+          );
+        }
       },
     });
   }
 
   close() {
     this.modalRef.hide();
+  }
+
+  closeAssociateExpedientTab() {
+    this.requestHelperService.associateExpedient(true);
   }
 
   getUserSelect(params: ListParams) {
@@ -170,7 +196,44 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     });
   }
 
-  getFunctionarySelect(functionary: ListParams) {}
+  getCompleteDisposition(id: string | number) {
+    this.externalExpedientService.getCompleteDisposition(id).subscribe({
+      next: (resp: any) => {
+        const disposition = resp.ObtenDisposicionCompletaResult.Disposicion[0];
+        this.ddcId = disposition.ddcId;
+        this.associateFileForm.controls['fullCoding'].setValue(
+          disposition.ddcCodificacion
+        );
+        this.associateFileForm.controls['reservePeriodInai'].setValue(
+          disposition.PeriodoReserva
+        );
+
+        this.associateFileForm.controls['clasificationInai'].setValue(
+          disposition.TClasificacion
+        );
+
+        this.associateFileForm.controls['documentarySectionInai'].setValue(
+          disposition.SeccionDocumental
+        );
+
+        this.associateFileForm.controls['documentarySeriesInai'].setValue(
+          disposition.SerieDocumental
+        );
+
+        this.associateFileForm.controls['vaProcedureInai'].setValue(
+          disposition.VArchivoTramite
+        );
+
+        this.associateFileForm.controls['vaConcentrationInai'].setValue(
+          disposition.VArchivoConcentracion
+        );
+
+        this.associateFileForm.controls['documentaryValueInai'].setValue(
+          disposition.ValoresDocumentales
+        );
+      },
+    });
+  }
 
   getTransferent() {
     var id = this.parameter.value.transferenceId;
@@ -188,5 +251,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
         this.regionalDelegacionName = resp.description;
       },
     });
+  }
+
+  message(header: any, title: string, body: string) {
+    setTimeout(() => {
+      this.onLoadToast(header, title, body);
+    }, 2000);
   }
 }
