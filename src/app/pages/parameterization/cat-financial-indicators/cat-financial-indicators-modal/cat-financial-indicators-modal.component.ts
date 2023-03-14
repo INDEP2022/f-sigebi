@@ -114,6 +114,7 @@ export class CatFinancialIndicatorsModalComponent
 
   update() {
     this.loading = true;
+    console.log(this.financialIndicatorsForm);
     this.financialIndicatorsService
       .update(this.financialIndicators.id, this.financialIndicatorsForm.value)
       .subscribe({
