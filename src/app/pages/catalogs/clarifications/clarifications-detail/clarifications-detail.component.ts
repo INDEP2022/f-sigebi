@@ -84,7 +84,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.clarificationService
-      .newUpdate(this.clarificationForm.value)
+      .update(this.clarificationForm.value.id, this.clarificationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
