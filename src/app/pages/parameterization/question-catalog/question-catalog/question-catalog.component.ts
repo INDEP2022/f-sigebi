@@ -70,6 +70,7 @@ export class QuestionCatalogComponent extends BasePage implements OnInit {
     this.loading = true;
     this.questionService.getAll(this.params.getValue()).subscribe({
       next: response => {
+        console.log(response);
         this.questionI = response.data;
         this.totalItems = response.count;
         this.loading = false;
@@ -112,6 +113,7 @@ export class QuestionCatalogComponent extends BasePage implements OnInit {
     this.loading = true;
     this.responseService.getAll(this.params2.getValue()).subscribe({
       next: response => {
+        console.log(response);
         this.responseI = response.data;
         this.totalItems2 = response.count;
         this.loading = false;

@@ -38,7 +38,7 @@ export interface IComerLayoutsH {
 }
 
 export interface IComerLayouts {
-  idLayout: number;
+  idLayout: IComerLayoutsH;
   idConsec: number;
   position: number;
   column: string;

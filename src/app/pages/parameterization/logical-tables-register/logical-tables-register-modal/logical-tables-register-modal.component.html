@@ -5,12 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="tablesForm">
       <div class="row">
-        <div class="col-md-4">
-          <form-field label="No&#46; Tabla" [control]="tablesForm.get('table')">
-            <input type="text" class="form-control" formControlName="table" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-8">
           <form-field label="Nombre" [control]="tablesForm.get('name')">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>

@@ -33,6 +33,7 @@ export class FinancialIndicatorsService
   }
 
   update(id: string | number, model: IFinancialIndicators): Observable<Object> {
+    console.log(this.route);
     return this.financialIndicatorsRepository.update(this.route, id, model);
   }
 

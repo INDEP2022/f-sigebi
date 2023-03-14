@@ -88,23 +88,17 @@ export class CatFinancialInformationAttributesComponent
 
   getAttributesFinancialInfo() {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.attributesInfoFinancialService.getAll(params).subscribe({
-      next: response => {
-        this.columns = response.data;
-        this.totalItems = response.count || 0;
-
-        this.data.load(this.columns);
-        this.data.refresh();
-        // this.attributesFinancialInfo = response.data;
-        // this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+    this.attributesInfoFinancialService
+      .getAll(this.params.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.attributesFinancialInfo = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
   openForm(attributesFinancialInfo?: IAttributesFinancialInfo) {
