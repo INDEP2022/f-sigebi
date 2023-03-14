@@ -92,6 +92,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.requestService.getAll(params).subscribe(
       (data: IListResponse<IRequest>) => {
+        console.log(data);
         this.totalItems = Number(data.count);
         this.getresponse(data.data);
       },

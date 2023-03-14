@@ -14,13 +14,13 @@ export const APPRAISAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  requestType: {
+  targetUser: {
     title: 'Area destino',
     type: 'string',
     sort: false,
   },
   observations: {
-    title: 'Observaciónes',
+    title: 'Observaciones',
     type: 'string',
     sort: false,
   },

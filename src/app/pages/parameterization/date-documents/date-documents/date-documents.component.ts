@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDateDocuments } from 'src/app/core/models/catalogs/date-documents.model';
 import { DateDocumentsService } from 'src/app/core/services/catalogs/date-documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -17,6 +21,8 @@ import { DATEDOCUMENTS_COLUMNS } from './date-documents-columns';
 })
 export class DateDocumentsComponent extends BasePage implements OnInit {
   dateDocuments: IDateDocuments[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -32,9 +38,36 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
       ...this.settings,
       columns: DATEDOCUMENTS_COLUMNS,
     };
+    this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getAllDateDocuments();
+        }
+      });
     this.prepareForm();
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
@@ -50,16 +83,20 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
   }
   getAllDateDocuments() {
     this.loading = true;
-    this.dateDocumentsService
-      .getAllPaginated2(this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.dateDocuments = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.dateDocumentsService.getAllPaginated2(params).subscribe({
+      next: response => {
+        this.dateDocuments = response.data;
+        this.data.load(this.dateDocuments);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
   private getDateDocuments() {
     this.loading = true;
@@ -67,6 +104,8 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
     this.dateDocumentsService.getById3(file.toString()).subscribe({
       next: response => {
         this.dateDocuments = response.data;
+        this.data.load(this.dateDocuments);
+        this.data.refresh();
         this.totalItems = response.count != undefined ? response.count : 0;
         this.loading = false;
       },
