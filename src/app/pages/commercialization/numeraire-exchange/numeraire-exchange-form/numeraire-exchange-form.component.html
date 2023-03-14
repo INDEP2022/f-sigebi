@@ -6,52 +6,98 @@
     <div class="md-tabs mt-n3">
       <tabset>
         <tab heading="Conversión Individual" id="tabIndividualConversion">
-          <form class="form-material mb-0" [formGroup]="numeraireExchangeForm">
-            <div class="row mb-0 d-block">
+          <form class="form-material mb-0" [formGroup]="form">
+            <div class="row py-5 rounded-4 shadow">
               <div
-                class="row d-flex justify-content-center align-content-center">
-                <div class="col-sm-12 col-md-4 mh-80">
-                  <i
-                    class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">N° Bien</h5>
-                  <ngx-select
-                    [form]="numeraireExchangeForm"
-                    [data]="goodItems"
-                    value="id"
-                    bindLabel="id"
-                    (fetchItems)="getGoods($event)"
-                    (change)="selectGood($event)"
-                    control="id">
-                  </ngx-select>
+                [ngClass]="selectedGood ? 'col-md-4' : 'col-md-12'"
+                class="col-sm-12">
+                <i
+                  class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">N° Bien</h5>
+                <app-goods-shared
+                  goodField="id"
+                  (good)="selectGood($event)"
+                  [form]="form">
+                </app-goods-shared>
+              </div>
+              <ng-container *ngIf="selectedGood">
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Siglas</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.originSignals }}
+                    </p>
+                  </div>
                 </div>
-                <div
-                  class="col-sm-12 col-md-8"
-                  *ngIf="selectedGood != null"
-                  @OnGoodSelected>
-                  <div class="row">
-                    <div class="col-4 d-flex justify-content-center">
-                      <div>
-                        <i
-                          class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
-                        <h5 class="font-size-14 mb-2 d-inline">Siglas</h5>
-                        <p class="text-muted">
-                          {{ selectedGood?.originSignals }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="col-8">
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.description }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-dollar text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Importe Avalúo</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.appraisedValue }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-check-circle text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.status }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-table text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Ext. Dominio</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.extDomProcess }}
+                    </p>
+                  </div>
+                </div>
+              </ng-container>
+              <!-- <div
+                class="col-sm-12 col-md-8"
+                @OnGoodSelected>
+                <div class="row">
+                  <div class="col-4 d-flex justify-content-center">
+                    <div>
                       <i
-                        class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                      <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
+                        class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                      <h5 class="font-size-14 mb-2 d-inline">Siglas</h5>
                       <p class="text-muted">
-                        {{ selectedGood?.description }}
+                        {{ selectedGood?.originSignals }}
                       </p>
                     </div>
                   </div>
+                  <div class="col-8">
+                    <i
+                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.description }}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </div>-->
             </div>
-            <div class="row mt-3" *ngIf="selectedGood != null" @OnGoodSelected>
+            <!-- <div class="row mt-3" *ngIf="selectedGood != null" @OnGoodSelected>
               <div class="col-sm-12 col-md-3">
                 <i
                   class="bx bx-dollar text-success me-2 d-inline float-icon"></i>
@@ -64,7 +110,7 @@
                 <i
                   class="bx bx-check-circle text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
-                <p class="text-muted" (click)="openForm()">
+                <p class="text-muted">
                   {{ selectedGood?.status }}
                 </p>
               </div>
@@ -76,8 +122,9 @@
                   {{ selectedGood?.extDomProcess }}
                 </p>
               </div>
-            </div>
-            <div class="row mt-3" *ngIf="selectedGood != null" @OnGoodSelected>
+            </div> -->
+
+            <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
               <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Datos de venta</h6>
@@ -86,37 +133,32 @@
               <div class="row mt-2">
                 <div class="col-sm-12 col-md-4">
                   <form-field
-                    [control]="numeraireExchangeForm.get('salePrice')"
+                    [control]="form.get('salePrice')"
                     label="Precio de Venta">
                     <input
-                      type="text"
-                      class="form-control"
+                      class="form-control px-3"
                       formControlName="salePrice"
-                      (blur)="formatCurrency($event)"
-                      (keypress)="validateCurrency($event)"
-                      (input)="calculateSaleTax()" />
+                      (blur)="formatCurrency2($event, true)"
+                      (keyup)="multiCalculate($event)" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-4">
                   <form-field
-                    [control]="numeraireExchangeForm.get('saleTaxPercent')"
+                    [control]="form.get('saleTaxPercent')"
                     label="% IVA">
                     <input
                       type="number"
-                      class="form-control"
+                      class="form-control px-3"
                       formControlName="saleTaxPercent"
                       max="100"
-                      (blur)="formatDecimals($event)"
-                      (input)="calculateSaleTax()" />
+                      (keyup)="calculateSaleTax($event)" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-4">
-                  <form-field
-                    [control]="numeraireExchangeForm.get('saleTax')"
-                    label="Iva Venta">
+                  <form-field [control]="form.get('saleTax')" label="Iva Venta">
                     <input
-                      type="number"
-                      class="form-control"
+                      type="text"
+                      class="form-control px-3"
                       formControlName="saleTax"
                       readonly />
                   </form-field>
@@ -125,57 +167,57 @@
               <div class="row mt-5">
                 <div class="col-sm-6 col-md-3">
                   <form-field
-                    [control]="numeraireExchangeForm.get('commissionPercent')"
+                    [control]="form.get('commissionPercent')"
                     label="% Comisión">
                     <input
                       type="number"
-                      class="form-control"
+                      class="form-control px-3"
                       formControlName="commissionPercent"
                       max="100"
-                      (blur)="formatDecimals($event)"
                       (input)="calculateCommission()" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-3">
                   <form-field
-                    [control]="numeraireExchangeForm.get('commission')"
+                    [control]="form.get('commission')"
                     label="Comisión">
                     <input
-                      type="number"
-                      class="form-control"
+                      type="text"
+                      class="form-control px-3"
                       formControlName="commission"
                       readonly />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-3">
                   <form-field
-                    [control]="
-                      numeraireExchangeForm.get('commissionTaxPercent')
-                    "
+                    [control]="form.get('commissionTaxPercent')"
                     label="% IVA Comisión">
                     <input
                       type="number"
-                      class="form-control"
+                      class="form-control px-3"
                       formControlName="commissionTaxPercent"
                       max="100"
-                      (blur)="formatDecimals($event)"
                       (input)="calculateCommissionTax()" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-3">
                   <form-field
-                    [control]="numeraireExchangeForm.get('commissionTax')"
+                    [control]="form.get('commissionTax')"
                     label="IVA Comisión">
                     <input
-                      type="number"
-                      class="form-control"
+                      type="text"
+                      class="form-control px-3"
                       formControlName="commissionTax"
                       readonly />
                   </form-field>
                 </div>
               </div>
             </div>
-            <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
+
+            <div
+              class="row mt-3 py-5 px-3 rounded-4 shadow"
+              *ngIf="selectedGood != null"
+              @OnGoodSelected>
               <div
                 class="ms-n2 mb-2 pointer"
                 (click)="toggleExpenses = !toggleExpenses"
@@ -195,31 +237,25 @@
                 id="collapseExpenses"
                 [isAnimated]="true"
                 [collapse]="!toggleExpenses">
-                <div class="d-flex flex-row-reverse mb-4 mt-0">
-                  <div class="">
-                    <button
-                      class="btn btn-sm btn-success active font-size-14"
-                      (click)="addRow()"
-                      [disabled]="adding">
-                      Agregar Registro
-                    </button>
-                  </div>
-                </div>
                 <div class="table-container">
                   <div [class]="loading ? 'table-loading' : ''">
-                    <ng2-smart-table
+                    <!-- <ng2-smart-table
                       id="expenses-table"
                       [attr.class]="'table-bordered'"
                       [settings]="expenseSettings"
                       [source]="expenseColumns"
                       (createConfirm)="addEntry($event)"
                       (editConfirm)="editEntry($event)">
-                    </ng2-smart-table>
+                    </ng2-smart-table> -->
+                    <app-table-expenses></app-table-expenses>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
+            <div
+              class="row mt-3 py-5 px-3 rounded-4 shadow"
+              *ngIf="selectedGood != null"
+              @OnGoodSelected>
               <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Datos de cuenta</h6>
@@ -232,52 +268,69 @@
                     <i
                       class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Banco</h5>
-                    <ngx-select
-                      [form]="numeraireExchangeForm"
+                    <!-- <ngx-select
+                      [form]="form"
                       [data]="banksAccounts"
                       value="accountNumber"
                       bindLabel="cveBank"
                       (fetchItems)="getBanks($event)"
                       (change)="selectAccount($event)"
                       control="account">
-                    </ngx-select>
+                    </ngx-select> -->
+                    <!-- <app-banks-shared
+                      [form]="form"
+                      bankField="account"
+                      (nameBank)="changeBank($event)"></app-banks-shared> -->
+
+                    <div class="form-group">
+                      <ng-custom-select
+                        placeholder="Buscador de bancos"
+                        class="form-control"
+                        paramSearch="filter.cveBank"
+                        prefixSearch="$ilike"
+                        value="accountNumber"
+                        formControlName="account"
+                        path="accountmvmnt/api/v1/bank-account"
+                        (valueChange)="selectAccount($event)">
+                        <ng-template let-item> {{ item.cveBank }} </ng-template>
+                      </ng-custom-select>
+                    </div>
                   </div>
-                  <div
-                    class="col-sm-12 col-md-6"
-                    *ngIf="selectedAccount != null">
-                    <i
-                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                    <h5 class="font-size-14 mb-2 d-inline">
-                      Descripci&oacute;n
-                    </h5>
-                    <p class="text-muted">
-                      {{ selectedAccount.description }}
-                    </p>
-                  </div>
-                  <div
-                    class="col-sm-6 col-md-6"
-                    *ngIf="selectedAccount != null">
-                    <i
-                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                    <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
-                    <p class="text-muted">
-                      {{ selectedAccount.cveAccount }}
-                    </p>
-                  </div>
-                  <div
-                    class="col-sm-6 col-md-6"
-                    *ngIf="selectedAccount != null">
-                    <i
-                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                    <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
-                    <p class="text-muted">
-                      {{ selectedAccount.cveCurrency }}
-                    </p>
-                  </div>
+                  <ng-container *ngIf="selectedBank">
+                    <div class="col-sm-12 col-md-6">
+                      <i
+                        class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                      <h5 class="font-size-14 mb-2 d-inline">
+                        Descripci&oacute;n
+                      </h5>
+                      <p class="text-muted">
+                        {{ selectedBank?.square }}
+                      </p>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                      <i
+                        class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                      <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
+                      <p class="text-muted">
+                        {{ selectedBank.cveAccount }}
+                      </p>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                      <i
+                        class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                      <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
+                      <p class="text-muted">
+                        {{ selectedBank.cveCurrency }}
+                      </p>
+                    </div>
+                  </ng-container>
                 </div>
               </div>
             </div>
-            <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
+            <div
+              class="row mt-3 py-5 px-3 rounded-4 shadow"
+              *ngIf="selectedGood != null"
+              @OnGoodSelected>
               <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Datos de dep&oacute;sito</h6>
@@ -285,9 +338,7 @@
               <hr class="mw-98" />
               <div class="row">
                 <div class="col-sm-6 col-md-4">
-                  <form-field
-                    [control]="numeraireExchangeForm.get('depositDate')"
-                    label="Fecha">
+                  <form-field [control]="form.get('depositDate')" label="Fecha">
                     <input
                       type="text"
                       formControlName="depositDate"
@@ -297,17 +348,17 @@
                 </div>
                 <div class="col-sm-6 col-md-4">
                   <form-field
-                    [control]="numeraireExchangeForm.get('depositReferece')"
+                    [control]="form.get('depositReference')"
                     label="Referencia">
                     <input
                       type="text"
                       class="form-control"
-                      formControlName="depositReferece" />
+                      formControlName="depositReference" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-4">
                   <form-field
-                    [control]="numeraireExchangeForm.get('depositAmount')"
+                    [control]="form.get('depositAmount')"
                     label="Importe">
                     <input
                       type="number"
@@ -318,7 +369,10 @@
                 </div>
               </div>
             </div>
-            <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
+            <div
+              class="row mt-3 py-5 px-3 rounded-4 shadow"
+              *ngIf="selectedGood != null"
+              @OnGoodSelected>
               <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Conversi&oacute;n</h6>
@@ -326,10 +380,10 @@
               <hr class="mw-98" />
               <div class="row">
                 <div class="col-sm-12 col-md-8 pt-sm-5 pt-md-2">
-                  <form-field
-                    [control]="numeraireExchangeForm.get('exchangeType')"
+                  <!--<form-field
+                    [control]="form.get('exchangeType')"
                     label="Tipo de conversión">
-                    <ng-select
+                     <ng-select
                       formControlName="exchangeType"
                       [searchable]="false"
                       class="form-control"
@@ -363,7 +417,20 @@
                       >
                       <ng-option value="1">Activo</ng-option>
                     </ng-select>
-                  </form-field>
+                  </form-field>-->
+                  <div class="form-group">
+                    <ng-custom-select
+                      placeholder="Selector de tipo de conversion"
+                      class="form-control"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      formControlName="exchangeType"
+                      path="spent/api/v1/expense-concept">
+                      <ng-template let-item>
+                        {{ item.description }}
+                      </ng-template>
+                    </ng-custom-select>
+                  </div>
                 </div>
                 <div class="col-sm-6 col-md-4 d-flex justify-content-center">
                   <div>
@@ -424,3 +491,39 @@
     </div>
   </div>
 </app-card>
+
+<!-- <ng-template #dialogExpense>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{ dialogData.title }}</h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="dialogExpenseRef?.hide()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body form-material" [formGroup]="formExpense">
+    <form-field [control]="formExpense.get('register')" label="Registro">
+      <input type="text" formControlName="register" class="form-control" />
+    </form-field>
+    <form-field [control]="formExpense.get('description')" label="Desripcion">
+      <ng-select class="form-control" formControlName="description">
+        <ng-option [value]="type.id" *ngFor="let type of expenseTypeTest">{{
+          type.description
+        }}</ng-option>
+      </ng-select>
+    </form-field>
+    <form-field [control]="formExpense.get('import')" label="Importe">
+      <input type="text" formControlName="import" class="form-control" />
+    </form-field>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="dialogExpenseRef?.hide()">
+      Cerrar
+    </button>
+  </div>
+</ng-template> -->

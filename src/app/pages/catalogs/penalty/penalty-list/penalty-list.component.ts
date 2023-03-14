@@ -25,7 +25,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = PENALTY_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -51,7 +51,11 @@ export class PenaltyListComponent extends BasePage implements OnInit {
       initialState: {
         penalty,
         callback: (next: boolean) => {
-          if (next) this.getExample();
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getExample());
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',

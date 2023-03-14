@@ -22,6 +22,7 @@ export interface IGood {
   fecOpinion?: any;
   proficientOpinion?: any;
   appraiserOpinion?: any;
+  originSignals?: any;
   worthApraisal: string;
   Nodrawer?: any;
   NoVault?: any;
@@ -536,4 +537,40 @@ export interface IGoodRealState {
   creationDate?: string;
   userModification?: string;
   modificationDate?: string;
+}
+
+//Valuo de Bien
+export interface IAppraisersGood {
+  noGood?: string | number;
+  noRequest?: string | number;
+  appraisalDate?: string;
+  effectiveDate?: string;
+  registerDate?: string;
+  cost?: string | number;
+  valueAppraisal?: string | number;
+  state?: string;
+  noRegister?: string | number;
+  vPhysical?: string;
+  vCommercial?: string;
+  vTerrain?: string;
+  vConst?: string;
+  vInst?: string;
+  vOpportunity?: string;
+  vUnitaryM2?: string;
+  vMachEquip?: string;
+  good?: IGood;
+  requestXAppraisal?: {
+    noRequest?: string | number;
+    requestDate?: string;
+    sourceUser?: string;
+    targetUser?: string;
+    requestType?: string;
+    paid?: string;
+    cveCurrencyCost?: string;
+    cveCurrencyAppraisal?: string;
+    observations?: string;
+    noAppraiser?: string | number;
+    noExpert?: string | number;
+    noRegister?: string;
+  };
 }

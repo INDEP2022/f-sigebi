@@ -16,6 +16,7 @@ import { SelectDescriptionComponent } from './entity-classification/select-descr
 import { SelectIdComponent } from './entity-classification/select-id/select-id.component';
 import { SelectEventTypeComponent } from './select-event-type/select-event-type.component';
 import { SelectUserComponent } from './select-user/select-user.component';
+import { TextAreaRenderComponent } from './text-area-render/text-area-render.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { SelectUserComponent } from './select-user/select-user.component';
     SelectDescriptionComponent,
     SelectEventTypeComponent,
     DatePipeComponent,
+    TextAreaRenderComponent,
   ],
   imports: [
     CommonModule,

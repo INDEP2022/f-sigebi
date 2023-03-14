@@ -5,6 +5,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 enum REPORT_TYPE {
@@ -17,11 +20,17 @@ enum REPORT_TYPE {
   templateUrl: './records-report.component.html',
   styles: [],
 })
-export class RecordsReportComponent implements OnInit {
+export class RecordsReportComponent extends BasePage implements OnInit {
   REPORT_TYPES = REPORT_TYPE;
   type: FormControl = new FormControl(REPORT_TYPE.Reception);
-  form: FormGroup;
+  form: FormGroup = this.fb.group({});
   itemsSelect = new DefaultSelect();
+  initialProceeding = new DefaultSelect();
+  finalProceeding = new DefaultSelect();
+  delegacionRecibe: string = 'delegacionRecibe';
+  subdelegationField: string = 'subdelegation';
+  labelDelegation: string = 'Delegación Recibe';
+  labelSubdelegation: string = 'Delegación Administra';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -29,7 +38,13 @@ export class RecordsReportComponent implements OnInit {
   get finalRecord() {
     return this.form.get('actaFinal');
   }
-  constructor(private fb: FormBuilder) {}
+
+  constructor(
+    private fb: FormBuilder,
+    private serviceProcVal: ProceedingsDeliveryReceptionService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -38,7 +53,7 @@ export class RecordsReportComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       delegacionRecibe: [null, [Validators.required]],
-      delegacionAdministra: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
       estatusActa: [null, [Validators.required]],
       actaInicial: [null, [Validators.required]],
       actaFinal: [null, [Validators.required]],
@@ -52,6 +67,71 @@ export class RecordsReportComponent implements OnInit {
 
   onSubmit() {
     this.form.markAllAsTouched();
+    if (this.REPORT_TYPES.Reception) {
+      const value = this.form.get('delegacionRecibe').value;
+      console.log({
+        delegacionRecibe: value,
+        delegacionEmite: this.form.get('subdelegation').value,
+      });
+    }
+  }
+
+  getInitialProceedings(params: any) {
+    console.log(params);
+    this.serviceProcVal
+      .getProceedingsByDelAndSub(
+        this.form.get('delegacionRecibe').value,
+        this.form.get('subdelegation').value.id,
+        'proceedingkey',
+        params.textx
+      )
+      .subscribe(
+        (res: any) => {
+          console.log(res);
+          this.initialProceeding = new DefaultSelect(res.data, res.count);
+        },
+        (err: any) => {
+          console.log(err);
+        }
+      );
+  }
+
+  getFinalProceedings(params: ListParams) {
+    this.serviceProcVal
+      .getProceedingsByDelAndSub(
+        this.form.get('delegacionRecibe').value,
+        this.form.get('subdelegation').value.id,
+        'proceedingkey',
+        params
+      )
+      .subscribe(
+        (res: any) => {
+          console.log(res);
+          this.finalProceeding = new DefaultSelect(res.data, res.count);
+        },
+        (err: any) => {
+          console.log(err);
+        }
+      );
+  }
+
+  print() {
+    this.loading = true;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RREPREFACTAENTREC.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    /* let params = { ...this.flyersForm.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    } */
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 
   onTypeChange() {

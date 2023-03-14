@@ -1,8 +1,8 @@
 export interface IIndicatorDeadline {
   id: number;
-  indicador: string;
+  indicator: string;
   formula: string;
-  plazo: number;
+  deadline: number;
   usuario_creacion: string;
   fecha_creacion: Date;
   usuario_modificacion: string;

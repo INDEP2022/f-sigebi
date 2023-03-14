@@ -62,4 +62,8 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.Documents}/?filter.id=$eq:${id}&filter.noGood=$eq:${idGood}&filter.scanStatus=$eq:${scanStatus}`;
     return this.get<IListResponse<IDocuments>>(route, params);
   }
+  getByGood(id: string | number) {
+    const route = `${DocumentsEndpoints.Documents}/good/${id}`;
+    return this.get<IListResponse<IDocuments>>(route);
+  }
 }

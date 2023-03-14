@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
@@ -9,6 +11,8 @@ import {
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { LayoutsConfigurationModalComponent } from './layouts-configuration-modal/layouts-configuration-modal.component';
+
 import {
   EXAMPLE_DAT2,
   EXAMPLE_DAT3,
@@ -18,7 +22,7 @@ import {
   LAYOUTS_COLUMNS2,
   LAYOUTS_COLUMNS3,
   LAYOUTS_COLUMNS4,
-  LAYOUTS_COLUMNS56,
+  LAYOUTS_COLUMNS5,
   LAYOUTS_COLUMNS6,
 } from './layouts-config-columns';
 
@@ -28,21 +32,29 @@ import {
   styleUrls: ['layouts-configuration.component.scss'],
 })
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
-  layout: IComerLayouts[] = [];
-  idLayout: any[];
-  layoutHSelected: IComerLayoutsH[];
-  isSelected: string;
-  layoutH: any;
+  title = 'Layous';
+  layoutsList: IComerLayouts[] = [];
+  idLayout: number = 0;
+  layoutDuplicated: IComerLayoutsH;
+  structureLayout: IComerLayouts;
+  layousthList: IComerLayoutsH[] = [];
+  totalItems2: number = 0;
+  lay: any;
+  allLayouts: any;
+  valid: boolean = false;
+  layout: IComerLayouts;
+  provider: any;
+  id: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  totalItems2: number = 0;
   form: FormGroup = new FormGroup({});
-
+  edit: boolean = false;
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
     private fb: FormBuilder,
-    private layoutsConfigService: LayoutsConfigService
+    private layoutsConfigService: LayoutsConfigService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -71,59 +83,90 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ccp1: [null, [Validators.required]],
       ccp2: [null, [Validators.required]],
     });
+    if (this.provider !== undefined) {
+      this.edit = true;
+      this.form.patchValue(this.provider);
+    } else {
+      this.edit = false;
+    }
   }
 
-  duplicateLayouts() {
-    // let params = {
-    //   id: this.form.controls['idLayout'].value,
-    //   descLayout: this.form.controls['descLayout'].value,
-    //   screenKey: this.form.controls['screenKey'].value,
-    //   table: this.form.controls['table'].value,
-    //   criterio: this.form.controls['criterio'].value,
-    //   indActive: this.form.controls['indActive'].value,
-    //   registryNumber: this.form.controls['indActive'].value,
-    // };
-    this.layout.forEach((obj: any) => {
-      if (obj.idLayout.id != undefined) {
-        this.isSelected += obj.idLayout.id + ',';
-      }
-    });
-    console.log(this.isSelected);
-    this.layoutsConfigService.create(this.form.value).subscribe({
-      next: response => {
-        this.totalItems = response.count;
-        this.loading = false;
-        this.onConfirm.emit(this.form.value);
-        setTimeout(() => {
-          this.onLoadToast('success', 'Layout duplicado!', '');
-        }, 2000);
-        this.getLayouts();
+  userRowSelect(event: any) {
+    this.layoutsConfigService.getByIdH(event.data.id).subscribe({
+      next: data => {
+        this.idLayout = data.id;
+        this.totalItems = data.count;
+        this.layoutDuplicated = event.data;
+        console.log(this.idLayout);
+        console.log(data);
+        this.valid = true;
       },
-      error: () => {
+      error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Error al duplicar layout!', '');
+        this.onLoadToast('error', 'Layout no existe!!', '');
         return;
       },
     });
+  }
+
+  // userRowStructure(event: any) {
+  //   this.layoutsConfigService.getById(this.params.getValue()).subscribe({
+  //     next: data => {
+  //       // this.idLayout = data.id;
+  //       this.structureLayout = event.data;
+  //       console.log(this.structureLayout);
+  //       // this.valid = true;
+  //     },
+  //     error: error => {
+  //       this.loading = false;
+  //       this.onLoadToast('error', 'no hay detalles para éste layout!!', '');
+  //       return;
+  //     },
+  //   });
+  // }
+
+  // findOne(id: number) {
+  //   this.layoutsConfigService.findOne(id).subscribe({
+  //     next: data => {
+  //       this.layoutDuplicated = data.id;
+  //     },
+  //     error: error => {
+  //       this.loading = false;
+  //       this.onLoadToast('error', 'Layout no existe!!', '');
+  //       return;
+  //     },
+  //   });
+  // }
+
+  duplicar() {
+    try {
+      this.loading = false;
+      this.layoutsConfigService.createH(this.layoutDuplicated).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+          return;
+        },
+      });
+    } catch {
+      console.error('Layout no existe');
+    }
+  }
+
+  handleSuccess() {
+    const message: string = 'Duplicado';
+    this.onLoadToast('success', `${message} Correctamente`, '');
+    this.loading = false;
+    this.onConfirm.emit(true);
+    this.getLayoutH();
   }
 
   getLayouts() {
     this.loading = true;
     this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
       next: data => {
-        this.layout = data.data;
-        console.log(this.layout);
-        this.totalItems = data.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
-  getLayoutH() {
-    this.loading = true;
-    this.layoutsConfigService.getAllLayouts(this.params.getValue()).subscribe({
-      next: data => {
-        this.layoutH = data.data;
+        this.layoutsList = data.data;
         this.totalItems2 = data.count;
         this.loading = false;
       },
@@ -131,6 +174,69 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     });
   }
 
+  getLayoutH() {
+    this.loading = true;
+    this.layoutsConfigService.getAllLayoutsH(this.params.getValue()).subscribe({
+      next: data => {
+        this.layousthList = data.data;
+        //console.log(this.layousthList);
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  openForm(provider?: IComerLayouts) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getLayouts();
+      },
+    };
+    this.modalService.show(LayoutsConfigurationModalComponent, modalConfig);
+  }
+
+  openModal(context?: Partial<LayoutsConfigurationModalComponent>) {
+    const modalRef = this.modalService.show(
+      LayoutsConfigurationModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+  showDeleteAlert(layout: IComerLayouts) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.layoutsConfigService.remove(layout.idLayout).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Detalle de layout eliminado', '');
+            this.getLayouts();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.loading = false;
+          },
+        });
+      }
+    });
+  }
+  // rowClassFunction({ row }: { row: any; }): any {
+  //   console.log("\nRow is ::: ", row.data);
+  //   if (row.data == '') {
+  //     return 'hide_edit';
+  //   } else {
+  //     console.error('error al leer filas')
+  //   }
+  // }
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -173,18 +279,33 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     editable: true,
     actions: false,
-    columns: { ...LAYOUTS_COLUMNS56.idLayout },
+    columns: { ...LAYOUTS_COLUMNS5 },
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data5 = this.getLayouts();
+  data5 = this.layousthList;
 
   settings6 = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      position: 'left',
+      edit: {
+        confirmSave: true,
+      },
+      delete: {
+        confirmDelete: true,
+        deleteButtonContent: 'Delete data',
+        saveButtonContent: 'save',
+        cancelButtonContent: 'cancel',
+      },
+      add: {
+        confirmCreate: true,
+      },
+    },
     columns: { ...LAYOUTS_COLUMNS6 },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data6 = this.getLayouts();
+  data6 = this.layoutsList;
 }

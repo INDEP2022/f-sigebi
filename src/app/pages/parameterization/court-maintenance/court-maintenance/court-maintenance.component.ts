@@ -8,9 +8,13 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
 import { CourtByCityService } from 'src/app/core/services/catalogs/court-by-city.service';
 import { CourtService } from 'src/app/core/services/catalogs/court.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
+import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
@@ -32,7 +36,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
   isPresent: boolean = false;
-
+  loadingForm: boolean = false;
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   dataCourtCity: IListResponse<TableCity> = {} as IListResponse<TableCity>;
   idCourt: string | number = null;
@@ -41,7 +45,10 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private fb: FormBuilder,
     private courtServ: CourtService,
-    private courtCityServ: CourtByCityService
+    private courtCityServ: CourtByCityService,
+    private readonly serviceSubDeleg: SubdelegationService,
+    private readonly serviceFederation: EntFedService,
+    private readonly serviceDeleg: DelegationService
   ) {
     super();
     this.settings = {
@@ -156,6 +163,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
 
   confirm() {
     this.form.get('id').enable();
+    this.loadingForm = true;
     if (this.form.value) {
       if (this.edit) {
         this.courtServ.updateCourt(this.form.value).subscribe({
@@ -167,10 +175,14 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         });
       } else {
         this.courtServ.create(this.form.value).subscribe({
-          next: () => (
-            this.onLoadToast('success', 'Juzgado', 'Se ha guardado'),
-            this.clean()
-          ),
+          next: data => {
+            this.onLoadToast('success', 'Juzgado', 'Se ha guardado');
+            this.form.patchValue(data);
+            this.form.get('id').disable();
+            this.isPresent = true;
+            this.idCourt = data.id;
+            this.loadingForm = false;
+          },
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
       }
@@ -183,11 +195,17 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       .getAllWithFilters(this.filterParams.getValue().getParams())
       .subscribe({
         next: response => {
-          let dataCity: TableCity[] = [];
-          response.data.map(city => {
-            dataCity.push({ ...(city.city as any) });
+          this.dataCourtCity.data = [];
+          response.data.map((city, index) => {
+            const descCity: TableCity = {
+              ...(city.city as any),
+            };
+            this.dataCourtCity.data.push(descCity);
+            const properties = city.city as ICity;
+            this.getEntidad(properties.state as any, index);
+            this.getDelegation(properties.noDelegation as any, index);
+            this.getSubDelegation(properties.noSubDelegation as any, index);
           });
-          this.dataCourtCity.data = dataCity;
           this.dataCourtCity.count = response.count;
           this.loading = false;
           this.isPresent = true;
@@ -199,11 +217,45 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       });
   }
 
+  private getEntidad(id: number, index: number) {
+    this.serviceFederation.getById(id).subscribe({
+      next: data => {
+        this.dataCourtCity.data[index].cvEntidad = data.id;
+        this.dataCourtCity.data[index].cvEntDescripcion = data.otWorth;
+        this.dataCourtCity.data = [...this.dataCourtCity.data];
+      },
+      error: error => this.onLoadToast('error', error.erro.message, ''),
+    });
+  }
+
+  private getDelegation(delegation: number, index: number) {
+    this.serviceDeleg.getById(delegation).subscribe({
+      next: data => {
+        this.dataCourtCity.data[index].cvDelDescripcion = data.description;
+        this.dataCourtCity.data = [...this.dataCourtCity.data];
+      },
+      error: error => this.onLoadToast('error', error.erro.message, ''),
+    });
+  }
+
+  private getSubDelegation(subDelegation: number, index: number) {
+    this.serviceSubDeleg.getById(subDelegation).subscribe({
+      next: data => {
+        this.dataCourtCity.data[index].cvSubDelDescripcion = data.description;
+        this.dataCourtCity.data = [...this.dataCourtCity.data];
+      },
+      error: error => this.onLoadToast('error', error.erro.message, ''),
+    });
+  }
+
   clean() {
     this.form.reset();
     this.edit = false;
+    this.loading = false;
+    this.loadingForm = false;
     this.isPresent = false;
     this.dataCourtCity = {} as IListResponse<TableCity>;
+    this.form.get('id').disable();
   }
 
   openModalCity() {
@@ -224,7 +276,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-md modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(CourtCityComponent, config);

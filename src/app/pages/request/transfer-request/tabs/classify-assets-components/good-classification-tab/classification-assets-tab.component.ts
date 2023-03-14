@@ -1,7 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 
@@ -47,17 +54,19 @@ var data = [
 })
 export class ClassificationAssetsTabComponent
   extends BasePage
-  implements OnInit
+  implements OnInit, OnChanges
 {
   @Input() dataObject: any;
+  @Input() requestObject: any;
   @Input() typeDoc: any = '';
   title: string = 'Bienes de la Solicitud';
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   assetsId: any = '';
   detailArray: any;
+  totalItems: number = 0;
 
-  constructor() {
+  constructor(private goodService: GoodService) {
     super();
   }
 
@@ -70,7 +79,16 @@ export class ClassificationAssetsTabComponent
       selectMode: '',
       columns: REQUEST_OF_ASSETS_COLUMNS,
     };
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.requestObject);
+    if (this.requestObject) {
+      this.tablePaginator();
+    }
+  }
+
+  tablePaginator() {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
@@ -78,18 +96,16 @@ export class ClassificationAssetsTabComponent
 
   getData() {
     this.loading = true;
-    this.paragraphs = data;
-    /*  this.exampleService.getAll(this.params.getValue()).subscribe(
-      response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
+    //this.paragraphs = data;
+    this.params.value.addFilter('requestId', this.requestObject.id);
+    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
+      next: resp => {
+        debugger;
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    ); */
-    setTimeout(() => {
-      this.loading = false;
-    }, 2000);
+    });
   }
 
   rowSelected(event: any) {

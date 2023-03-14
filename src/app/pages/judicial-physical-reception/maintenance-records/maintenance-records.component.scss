@@ -1,0 +1,50 @@
+.scroll-table {
+  height: 250px;
+  overflow-y: auto;
+}
+
+.scroll-table::-webkit-scrollbar {
+  width: 20px;
+}
+
+.scroll-table::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scroll-table::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+.scroll-table::-webkit-scrollbar-thumb:hover {
+  background-color: #a8bbbf;
+}
+
+:host ::ng-deep ng2-smart-table tr.available td {
+  color: #28a745 !important;
+}
+
+:host ::ng-deep ng2-smart-table tr.not-available td {
+  color: #dc3545 !important;
+}
+
+:host ::ng-deep app-card {
+  .card .card-header {
+    height: auto !important;
+    h5 {
+      margin-top: 0px;
+      &:after {
+        height: 50px !important;
+        top: -15px !important;
+      }
+    }
+  }
+}
+
+:host .ch-content ::ng-deep app-pagination {
+  .paginator-page-size {
+    display: none !important;
+  }
+}

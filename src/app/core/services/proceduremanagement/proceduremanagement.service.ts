@@ -36,6 +36,12 @@ export class ProcedureManagementService extends HttpService {
     );
   }
 
+  getById(id: number | string): Observable<IProceduremanagement> {
+    return this.get(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`
+    );
+  }
+
   getManagamentProcessSat(
     params?: ListParams
   ): Observable<IListResponse<IManagamentProcessSat>> {
@@ -85,14 +91,62 @@ export class ProcedureManagementService extends HttpService {
       })
     );
   }
+  getReportTransferenciaSat(
+    params: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    this.microservice = 'massivegood';
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ReportTranferenciaViews,
+      params
+    ).pipe(
+      tap(() => {
+        this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+      })
+    );
+  }
+
+  getReportProcedureManagePgr(
+    params: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    this.microservice = 'massivegood';
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ReportViewsPgr,
+      params
+    ).pipe(
+      tap(() => {
+        this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+      })
+    );
+  }
+  getReportTransferenciaPgr(
+    params: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    this.microservice = 'massivegood';
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ReportTranferenciaPgrViews,
+      params
+    ).pipe(
+      tap(() => {
+        this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+      })
+    );
+  }
   // http://sigebimsqa.indep.gob.mx/massivegood/api/v1/views/file-procedure-mng?limit=11&page=1
+  // massivegood/api/v1/views/file-transference-sat
 
   update(
     id: number,
     body: Partial<IProceduremanagement>
   ): Observable<IProceduremanagement> {
-    return this.patch<IProceduremanagement>(
+    return this.put<IProceduremanagement>(
       `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`,
+      body
+    );
+  }
+
+  create(body: IProceduremanagement): Observable<IProceduremanagement> {
+    return this.post<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}`,
       body
     );
   }

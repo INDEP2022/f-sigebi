@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Ngx Bootstrap
 import { ModalModule } from 'ngx-bootstrap/modal';
 //Standalone Components
@@ -14,16 +13,23 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 import { MarketingRecordsRoutingModule } from './marketing-records-routing.module';
 //Components
 import { AddDocsComponent } from './add-docs/add-docs.component';
+import { ChooseDocumentComponent } from './components/choose-document/choose-document.component';
+import { CppControlComponent } from './components/cpp-control/cpp-control.component';
+import { CppFormComponent } from './components/cpp-form/cpp-form.component';
 import { MarketingRecordsComponent } from './marketing-records/marketing-records.component';
 
 @NgModule({
-  declarations: [MarketingRecordsComponent, AddDocsComponent],
+  declarations: [
+    MarketingRecordsComponent,
+    AddDocsComponent,
+    ChooseDocumentComponent,
+    CppControlComponent,
+    CppFormComponent,
+  ],
   imports: [
     CommonModule,
     MarketingRecordsRoutingModule,
     SharedModule,
-    FormsModule,
-    ReactiveFormsModule,
     ModalModule.forChild(),
     UsersSharedComponent,
     CitiesSharedComponent,

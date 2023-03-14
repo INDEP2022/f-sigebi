@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -34,7 +34,7 @@ export class ClassifyAssetsTabComponent
   @Input() typeDoc: string = '';
   @Input() goodObject: ModelForm<any> = null;
   @Input() domicilieObject: IDomicilies;
-  classiGoodsForm: ModelForm<IGood>;
+  classiGoodsForm: ModelForm<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
 
@@ -104,51 +104,52 @@ export class ClassifyAssetsTabComponent
       goodDescription: [null],
       quantity: [1],
       duplicity: ['N'],
-      capacity: [null],
+      capacity: [null, [Validators.required]],
       volume: [null],
       fileeNumber: [null],
       useType: [null],
       physicalStatus: [null],
       stateConservation: [null],
-      origin: [null],
+      origin: [null, [Validators.required]],
       goodClassNumber: [null],
       ligieUnit: [null],
       appraisal: [null],
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
-      compliesNorm: [null],
+      compliesNorm: ['N'], //cumple norma
       notesTransferringEntity: [null],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
-      brand: [null],
-      subBrand: [null],
+      brand: [null, [Validators.required]],
+      subBrand: [null, [Validators.required]],
       armor: [null],
-      model: [null],
+      model: [null, [Validators.required]],
       doorsNumber: [null],
-      axesNumber: [null],
-      engineNumber: [null], //numero motor
-      tuition: [null],
-      serie: [null],
+      axesNumber: [null, [Validators.required]],
+      engineNumber: [null, [Validators.required]], //numero motor
+      tuition: [null, [Validators.required]],
+      serie: [null, [Validators.required]],
       chassis: [null],
       cabin: [null],
-      fitCircular: [null],
-      theftReport: [null],
+      fitCircular: ['N', [Validators.required]],
+      theftReport: ['N', [Validators.required]],
       addressId: [null],
-      operationalState: [null],
-      manufacturingYear: [null],
-      enginesNumber: [null], // numero de motores
-      flag: [null],
-      openwork: [null],
+      operationalState: [null, [Validators.required]],
+      manufacturingYear: [null, [Validators.required]],
+      enginesNumber: [null, [Validators.required]], // numero de motores
+      flag: [null, [Validators.required]],
+      openwork: [null, [Validators.required]],
       sleeve: [null],
-      length: [null],
-      shipName: [null],
-      publicRegistry: [null], //registro public
+      length: [null, [Validators.required]],
+      shipName: [null, [Validators.required]],
+      publicRegistry: [null, [Validators.required]], //registro public
       ships: [null],
-      dgacRegistry: [null], //registro direccion gral de aereonautica civil
-      airplaneType: [null],
-      caratage: [null], //kilatage
-      material: [null],
-      weight: [null],
+      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
+      airplaneType: [null, [Validators.required]],
+      caratage: [null, [Validators.required]], //kilatage
+      material: [null, [Validators.required]],
+      weight: [null, [Validators.required]],
+      fractionId: [null],
     });
 
     if (this.goodObject != null) {
@@ -215,6 +216,10 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    delete params.text;
+    delete params.inicio;
+    delete params.pageSize;
+    delete params.take;
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
@@ -361,36 +366,80 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  clean() {
+    this.classiGoodsForm.controls['ligieSection'].setValue(null);
+    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+    this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+  }
+
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
-    var goodAction =
-      goods.goodId === null
-        ? this.goodService.create(goods)
-        : this.goodService.update(goods.id, goods);
+    if (goods.addressId === null) {
+      this.message(
+        'error',
+        'Domicilio requerido',
+        'Es requerido el domicilio del bien'
+      );
+      return;
+    }
+
+    if (!goods.idGoodProperty) {
+      goods.idGoodProperty =
+        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    }
+    let goodAction: any = null;
+    if (goods.goodId === null) {
+      goods.requestId = Number(goods.requestId);
+      goods.addressId = Number(goods.addressId);
+      goodAction = this.goodService.create(goods);
+    } else {
+      goods.requestId = Number(goods.requestId.id);
+      goods.addressId = Number(goods.addressId.id);
+      goodAction = this.goodService.update(goods);
+    }
 
     goodAction.subscribe({
       next: (data: any) => {
-        if (data.statusCode != null) {
-          this.message(
-            'error',
-            'Error',
-            `El registro no sepudo guardar!. ${data.message}`
-          );
-        }
+        if (data) {
+          if (data.id) {
+            this.message(
+              'success',
+              'Guardado',
+              `El registro se actualizo exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-        if (data.id != null) {
-          this.message(
-            'success',
-            'Guardado',
-            `El registro se guardo exitosamente!`
-          );
-          this.classiGoodsForm.controls['id'].setValue(data.id);
+            this.refreshTable(true);
 
-          this.refreshTable(true);
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+          }
+        } else {
+          if (data.statusCode === 200) {
+            this.message(
+              'success',
+              'Guardado',
+              `El registro se guardo exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-          setTimeout(() => {
-            this.refreshTable(false);
-          }, 5000);
+            this.refreshTable(true);
+
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+          } else {
+            this.message(
+              'error',
+              'Error',
+              `El registro no sepudo guardar!. ${data.message}`
+            );
+          }
         }
       },
     });
@@ -403,55 +452,51 @@ export class ClassifyAssetsTabComponent
         if (data != null) {
           if (this.advSearch === false) {
             this.getChapter(new ListParams(), data);
-            this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieChapter'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
     );
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
-        //this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
         if (dataChapter != null) {
           let fractionCode = this.selectChapter.data.filter(
             x => x.id === dataChapter
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
+          this.setFractionId(dataChapter, fractionCode, 'Capítulo');
 
           const relativeTypeId = this.getRelevantTypeId(
             this.selectChapter.data,
             dataChapter
           );
           this.setRelevantTypeId(relativeTypeId);
-          /* this.classiGoodsForm.controls['goodTypeId'].setValue(
-            this.getRelevantTypeId(this.selectChapter.data, dataChapter)
-          ); */
+
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
-            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
     );
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
-        //this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
         if (dataLevel1 != null) {
           let fractionCode = this.selectLevel1.data.filter(
             x => x.id === dataLevel1
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
+          this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
-          /* this.classiGoodsForm.controls['goodTypeId'].setValue(
-            this.getRelevantTypeId(this.selectLevel1.data, dataLevel1)
-          ); */
           const relativeTypeId = this.getRelevantTypeId(
             this.selectLevel1.data,
             dataLevel1
@@ -459,9 +504,10 @@ export class ClassifyAssetsTabComponent
           this.setRelevantTypeId(relativeTypeId);
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
             this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -480,11 +526,12 @@ export class ClassifyAssetsTabComponent
             dataLevel2
           );
           this.setRelevantTypeId(relativeTypeId);
+          this.setFractionId(dataLevel2, fractionCode, 'Nivel 2');
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
         }
       }
@@ -497,6 +544,7 @@ export class ClassifyAssetsTabComponent
             x => x.id === dataLevel3
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
+          this.setFractionId(dataLevel3, fractionCode, 'Nivel 3');
 
           const relevantTypeId = this.getRelevantTypeId(
             this.selectLevel3.data,
@@ -507,7 +555,7 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            /* this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
         }
       }
@@ -521,6 +569,12 @@ export class ClassifyAssetsTabComponent
             dataLevel4
           );
           this.setRelevantTypeId(relevantTypeId);
+
+          let fractionCode = this.selectLevel4.data.filter(
+            x => x.id === dataLevel4
+          )[0].fractionCode;
+          this.getUnidMeasure(fractionCode);
+          this.setFractionId(dataLevel4, fractionCode, 'Nivel 4');
         }
       }
     );
@@ -530,12 +584,31 @@ export class ClassifyAssetsTabComponent
     return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
   }
 
+  //inserta en el formulario el id del tipo de bien
   setRelevantTypeId(relativeTypeId: number) {
-    if (this.classiGoodsForm.controls['goodTypeId'].value != relativeTypeId) {
+    if (this.classiGoodsForm.controls['goodTypeId'].value !== relativeTypeId) {
       this.classiGoodsForm.controls['goodTypeId'].setValue(relativeTypeId);
     }
   }
 
+  //registra el fraction id en el formulario
+  setFractionId(fractionId: number, fractionCode: string, campo: string) {
+    if (fractionCode !== null) {
+      if (fractionCode.length >= 8) {
+        this.classiGoodsForm.controls['fractionId'].setValue(
+          Number(fractionId)
+        );
+      }
+    } else {
+      this.message(
+        'info',
+        'Fraccion Nula',
+        `La fracción del campo ${campo} no tiene un codigo`
+      );
+    }
+  }
+
+  //obtenien la unidad de medida
   getUnidMeasure(value: string) {
     if (value) {
       if (value.length === 8) {
@@ -544,9 +617,15 @@ export class ClassifyAssetsTabComponent
           .getUnitLigie(fractionCode)
           .subscribe((data: any) => {
             //guarda el no_clasify_good
-            if (data.clasifGoodNumber != null) {
+            if (data.clasifGoodNumber !== null) {
               this.classiGoodsForm.controls['goodClassNumber'].setValue(
                 data.clasifGoodNumber
+              );
+            } else {
+              this.message(
+                'info',
+                'clasificación de bien nula',
+                'el bien seleccionado no tiene numero de clasificación de bien'
               );
             }
             //guarda el tipo de unidad

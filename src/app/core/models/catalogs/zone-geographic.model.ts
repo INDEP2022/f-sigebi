@@ -16,15 +16,15 @@
 //   status?: number;
 // }
 export interface IZoneGeographic {
-  id_zona_geografica?: number;
-  descripcion: string;
-  no_contrato: number;
-  usuario_creacion?: string;
-  fecha_creacion?: Date;
-  usuario_modificacion?: string;
-  fecha_modificacion?: Date;
+  id?: number;
+  description: string;
+  contractNumber: number;
+  userCreation?: string;
+  creationDate?: Date;
+  userModification?: string;
+  modificationDate?: Date;
   version: number;
-  tercero_especializado: string;
-  iva?: number;
-  estatus?: number;
+  thirdPartySpecialized: string;
+  vat?: number;
+  status?: number;
 }

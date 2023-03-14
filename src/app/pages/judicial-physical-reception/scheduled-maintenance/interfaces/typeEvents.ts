@@ -1,22 +1,22 @@
 export const TypeEvents = [
   {
-    id: 'ENTREGA - COMERCIALIZACIÓN',
+    id: 'EVENCOMER',
     description: 'ENTREGA - COMERCIALIZACIÓN',
   },
   {
-    id: 'ENTREGA - DONACIÓN',
+    id: 'EVENDON',
     description: 'ENTREGA - DONACIÓN',
   },
   {
-    id: 'ENTREGA - DESTRUCCIÓN',
+    id: 'EVENDEST',
     description: 'ENTREGA - DESTRUCCIÓN',
   },
   {
-    id: 'ENTREGA - DEVOLUCIÓN',
+    id: 'EVENDEV',
     description: 'ENTREGA - DEVOLUCIÓN',
   },
   {
-    id: 'RECEPCIÓN FÍSICA',
+    id: 'EVENTREC',
     description: 'RECEPCIÓN FÍSICA',
   },
 ];

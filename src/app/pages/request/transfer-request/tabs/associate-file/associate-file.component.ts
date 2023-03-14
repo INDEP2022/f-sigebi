@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IRequest } from 'src/app/core/models/requests/request.model';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { CoverExpedientService } from 'src/app/core/services/ms-cover-expedient/cover-expedient.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -13,19 +19,76 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class AssociateFileComponent extends BasePage implements OnInit {
   associateFileForm: FormGroup = new FormGroup({});
-
-  users = new DefaultSelect();
-  units = new DefaultSelect();
-  files = new DefaultSelect();
-  dispositions = new DefaultSelect();
+  parameter: ModelForm<IRequest>;
+  users: any;
+  units: any;
+  files: any;
+  dispositions: any;
   functionarys = new DefaultSelect();
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  idUser: number;
+  idUnit: number;
+  ddcId: number = null;
+  codificacion: string = '';
+  periodoRecerva: string = '';
+  vigenciaTramite: string = '';
+  vigenciaConcentracion: string = '';
+  transferentName: string = '';
+  regionalDelegacionName: string = '';
+
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private externalExpedientService: CoverExpedientService,
+    private transferentService: TransferenteService,
+    private regioinalDelegation: RegionalDelegationService,
+    private requestService: RequestService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getUserSelect(new ListParams());
+    this.formsChanges();
+    this.getTransferent();
+    this.getRegionalDelegation();
+    console.log(this.parameter.getRawValue());
+  }
+  formsChanges() {
+    this.associateFileForm.controls['user'].valueChanges.subscribe(data => {
+      if (data) {
+        this.idUser = data;
+        this.getUnitSelect(new ListParams(), data);
+      }
+    });
+
+    this.associateFileForm.controls['unit'].valueChanges.subscribe(data => {
+      if (data) {
+        this.idUnit = data;
+        this.getFileSelect(new ListParams(), this.idUnit, this.idUser);
+      }
+    });
+
+    this.associateFileForm.controls['file'].valueChanges.subscribe(data => {
+      if (data) {
+        this.getDispositionSelect(new ListParams());
+      }
+    });
+    this.associateFileForm.controls['disposition'].valueChanges.subscribe(
+      data => {
+        if (data) {
+          const disposition = this.dispositions.filter(
+            (x: any) => x.ddcId === data
+          )[0];
+          this.ddcId = data;
+          this.codificacion = disposition.ddcCodificacion;
+          this.periodoRecerva = disposition.PeriodoReserva;
+          this.vigenciaTramite = disposition.VArchivoTramite;
+          this.vigenciaConcentracion = disposition.VArchivoConcentracion;
+        }
+      }
+    );
   }
 
   prepareForm() {
@@ -45,19 +108,85 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {}
+  confirm() {
+    /*console.log(this.parameter);
+    let request = this.parameter.getRawValue();
+    this.requestService.update(request.id, request).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+    });*/
+    /* const div = document.createElement('div');
+    div.style.cssText = 'width: 200px; height: 200px; background: #09c;';
+    document.body.appendChild(div);
+ */
+  }
+
+  getRequest() {
+    this.requestService.getById(43717).subscribe({
+      next: resp => {
+        return resp;
+      },
+    });
+  }
 
   close() {
     this.modalRef.hide();
   }
 
-  getUserSelect(user: ListParams) {}
+  getUserSelect(params: ListParams) {
+    this.externalExpedientService.getUsers(params).subscribe({
+      next: (resp: any) => {
+        const data = resp.ObtenUsuarioResult.Usuario;
+        this.users = data; //new DefaultSelect(data, data.length);
+      },
+    });
+  }
 
-  getUnitSelect(unit: ListParams) {}
+  getUnitSelect(params: ListParams, userId?: number) {
+    this.externalExpedientService.getUnits(userId).subscribe({
+      next: (resp: any) => {
+        const data = resp.ObtenUnidadResult.Unidad;
+        this.units = data; //new DefaultSelect(data, data.length);
+      },
+    });
+  }
 
-  getFileSelect(file: ListParams) {}
+  getFileSelect(params: ListParams, unitId?: number, userId?: number) {
+    this.externalExpedientService.getFiles(unitId, userId).subscribe({
+      next: (resp: any) => {
+        const data = resp.ObtenArchivoResult.Archivo;
+        this.files = data; //new DefaultSelect(data, data.length);
+      },
+    });
+  }
 
-  getDispositionSelect(disposition: ListParams) {}
+  getDispositionSelect(params: ListParams) {
+    this.externalExpedientService.getDisposition(params).subscribe({
+      next: (resp: any) => {
+        const data = resp.ObtenDisposicionResult.Disposicion;
+        this.dispositions = data;
+      },
+    });
+  }
 
   getFunctionarySelect(functionary: ListParams) {}
+
+  getTransferent() {
+    var id = this.parameter.value.transferenceId;
+    this.transferentService.getById(id).subscribe({
+      next: resp => {
+        this.transferentName = resp.nameTransferent;
+      },
+    });
+  }
+
+  getRegionalDelegation() {
+    var id = this.parameter.value.regionalDelegationId;
+    this.regioinalDelegation.getById(id).subscribe({
+      next: resp => {
+        this.regionalDelegacionName = resp.description;
+      },
+    });
+  }
 }

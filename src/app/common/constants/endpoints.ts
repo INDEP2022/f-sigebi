@@ -2,6 +2,7 @@ export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
   Authority = 'catalog/authority',
   appraiser = 'catalog/valuadores',
+  Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
@@ -70,6 +71,7 @@ export enum ENDPOINT_LINKS {
   Origin = 'catalog/origin',
   Paragraph = 'catalog/cat-paragraphs',
   Parameter = 'catalog/parameter',
+  ParametersIndicators = 'catalog/parameters-indicators',
   PaymentConcept = 'payments-concept',
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
@@ -117,6 +119,8 @@ export enum ENDPOINT_LINKS {
   TypeServices = 'catalog/type-services',
   Warehouse = 'catalog/warehouse',
   ZipCode = 'catalog/zip-code', //
+  IndicatorsParameter = 'parametergood/indicators-parameter',
+  DetailIndParameter = 'parametergood/detalle-ind-parametro',
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'parametergood/validadores-actas',
   parametergoodCat = 'parametergood/cat-motivosrev',
@@ -132,6 +136,9 @@ export enum ENDPOINT_LINKS {
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',
+  DinamicTable = 'dinamic-tables/get-tvaltable5-by-table',
+  DinamicTable1 = 'dinamic-tables/tavaltable1',
+
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',

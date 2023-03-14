@@ -1,15 +1,15 @@
 export const REQUEST_OF_ASSETS_COLUMNS = {
-  noManagement: {
+  id: {
     title: 'No. Gestion',
     type: 'string',
     sort: false,
   },
-  assetsDescripTransfer: {
+  goodDescription: {
     title: 'Descripción de Bien Transferente',
     type: 'string',
     sort: false,
   },
-  assetsDescripSAE: {
+  descriptionGoodSae: {
     title: 'Descripción de Bien SAE',
     type: 'string',
     sort: false,

@@ -31,8 +31,12 @@ export class FilterParams {
 
   getParams() {
     const paginationParams = this.getPaginationParams();
-    const allParams = [...paginationParams, ...this.filters];
+    const allParams = [...this.filters, ...paginationParams];
     return allParams.join('&');
+  }
+
+  getFilterParams() {
+    return this.filters.join('&');
   }
 
   removeAllFilters() {
@@ -79,6 +83,6 @@ export enum SearchFilter {
 
 export interface DynamicFilterLike {
   field: string;
-  value: string | number;
+  value?: string | number;
   operator?: SearchFilter;
 }

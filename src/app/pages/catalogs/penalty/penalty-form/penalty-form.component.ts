@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DOUBLE_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-penalty-form',
@@ -32,13 +33,17 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
     this.penaltyForm = this.fb.group({
       id: [null],
       serviceType: [null, Validators.required],
-      penaltyPercentage: [null, Validators.required],
-      equivalentDays: [null, [Validators.required]],
-      version: [
+      penaltyPercentage: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.required,
+        Validators.pattern(DOUBLE_PATTERN),
       ],
-      status: [null, Validators.compose([Validators.required])],
+      equivalentDays: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+      ],
+      version: [null],
+      status: [null],
       contractNumber: [null, Validators.required],
     });
     if (this.penalty != null) {

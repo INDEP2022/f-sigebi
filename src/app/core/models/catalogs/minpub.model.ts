@@ -14,4 +14,6 @@ export interface IMinpub {
   phone: string;
   registryNumber: number;
   idCity: number | ICity;
+  city: ICity;
+  nameAndId?: string;
 }

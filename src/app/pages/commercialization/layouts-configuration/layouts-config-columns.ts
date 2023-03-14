@@ -153,7 +153,7 @@ export const LAYOUTS_COLUMNS5 = {
     type: 'string',
     sort: false,
   },
-  criterio: {
+  criterion: {
     title: 'Filtro de Selección',
     type: 'string',
     sort: false,
@@ -177,6 +177,16 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
+  // idLayout: {
+  //   title: 'Layout',
+  //   type: 'number',
+  //   sort: false,
+  // },
+  // idConsec: {
+  //   title: 'id',
+  //   type: 'number',
+  //   sort: false,
+  // },
   position: {
     title: 'Posición',
     type: 'number',
@@ -251,7 +261,7 @@ export const LAYOUTS_COLUMNS56 = {
       type: 'string',
       sort: false,
     },
-    criterio: {
+    criterion: {
       title: 'Filtro de Selección',
       type: 'string',
       sort: false,
@@ -272,6 +282,11 @@ export const LAYOUTS_COLUMNS56 = {
         });
       },
     },
+  },
+  idConsec: {
+    title: 'id Consec',
+    type: 'number',
+    sort: false,
   },
   position: {
     title: 'Posición',

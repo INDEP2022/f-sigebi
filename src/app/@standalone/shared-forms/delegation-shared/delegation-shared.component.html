@@ -8,7 +8,7 @@
           [form]="form"
           value="id"
           bindLabel="description"
-          label="Delegaci&oacute;n"
+          [label]="labelDelegation"
           [control]="delegationField"
           (change)="onDelegationsChange($event)">
         </ngx-select>
@@ -23,9 +23,8 @@
           (fetchItems)="getSubDelegations($event)"
           [data]="subdelegations"
           [form]="form"
-          value="id"
           bindLabel="description"
-          label="Sub Delegaci&oacute;n"
+          [label]="labelSubdelegation"
           [control]="subdelegationField"
           (change)="onSubDelegationsChange($event)">
         </ngx-select>

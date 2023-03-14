@@ -1,0 +1,162 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="proceedingForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="No." [control]="proceedingForm.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Oficio de solicitud"
+            [control]="proceedingForm.get('keysProceedings')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keysProceedings" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha recepción"
+            [control]="proceedingForm.get('datePhysicalReception')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="datePhysicalReception"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha elaboración"
+            [control]="proceedingForm.get('elaborationDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborationDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Captura"
+            [control]="proceedingForm.get('captureDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="captureDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado"
+            [control]="proceedingForm.get('statusProceedings')">
+            <ng-select
+              formControlName="statusProceedings"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="CERRADA">CERRADA</ng-option>
+              <ng-option value="ABIERTA">ABIERTA</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Folio Universal"
+            [control]="proceedingForm.get('universalFolio')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="universalFolio" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Observaciones"
+            [control]="proceedingForm.get('observations')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Elaboró"
+            [control]="proceedingForm.get('elaborate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Expediente"
+            [control]="proceedingForm.get('numFile')">
+            <input type="text" class="form-control" formControlName="numFile" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de Acta"
+            [control]="proceedingForm.get('typeProceedings')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeProceedings"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Delegación"
+            [control]="proceedingForm.get('numDelegation1')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numDelegation1" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

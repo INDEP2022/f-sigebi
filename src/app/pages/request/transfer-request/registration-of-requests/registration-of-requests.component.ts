@@ -5,7 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { forkJoin } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -21,19 +25,22 @@ import { StationService } from '../../../../core/services/catalogs/station.servi
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { SelectTypeUserComponent } from '../select-type-user/select-type-user.component';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
+import { RegistrationHelper } from './registrarion-of-request-helper.component';
 
 @Component({
   selector: 'app-registration-of-requests',
   templateUrl: './registration-of-requests.component.html',
   styleUrls: ['./registration-of-requests.component.scss'],
+  providers: [RegistrationHelper],
 })
 export class RegistrationOfRequestsComponent
   extends BasePage
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
-  registRequestForm: ModelForm<IRequest>;
+  registRequestForm: ModelForm<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
   parameter: any;
@@ -74,7 +81,7 @@ export class RegistrationOfRequestsComponent
 
   constructor(
     public fb: FormBuilder,
-    public modalRef: BsModalRef,
+    private bsModalRef: BsModalRef,
     public modalService: BsModalService,
     public route: ActivatedRoute,
     public router: Router,
@@ -85,7 +92,11 @@ export class RegistrationOfRequestsComponent
     private transferentService: TransferenteService,
     private stationService: StationService,
     private delegationService: RegionalDelegationService,
-    private authorityService: AuthorityService
+    private authorityService: AuthorityService,
+    private goodService: GoodService,
+    private fractionService: FractionService,
+    private goodEstateService: RealStateService,
+    private registrationHelper: RegistrationHelper
   ) {
     super();
   }
@@ -99,6 +110,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
+    this.dinamyCallFrom();
   }
 
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
@@ -114,8 +126,10 @@ export class RegistrationOfRequestsComponent
   }
 
   prepareForm() {
+    //formulario de solicitudes
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
+      recordId: [null],
       paperNumber: [null, [Validators.required]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
@@ -126,6 +140,7 @@ export class RegistrationOfRequestsComponent
       //receiUser: [''],
       id: [null],
       urgentPriority: [null],
+      priorityDate: [null],
       originInfo: [null],
       receptionDate: [{ value: null, disabled: true }],
       paperDate: [null, Validators.required],
@@ -143,14 +158,22 @@ export class RegistrationOfRequestsComponent
       affair: [null],
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferenceFile: [null],
+      previousInquiry: [null],
+      trialType: [null],
+      circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
+      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
+      tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
+      protectNumber: [null],
     });
   }
 
   getRequest(id: any) {
     this.requestService.getById(id).subscribe((data: any) => {
       let request = data;
-      //verifica si la solicitud tiene expediente si no tiene no muestra el tab asociar expediente
+      //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
       this.isExpedient = request.recordId ? true : false;
+
       request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
@@ -269,14 +292,98 @@ export class RegistrationOfRequestsComponent
     }
   }
 
+  getGoodQuantity(requestId: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.requestId'] = `$eq:${requestId}`;
+      this.goodService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
+  }
+
+  getFractionCode(fractionId: number) {
+    return new Promise((resolve, reject) => {
+      this.fractionService.getById(fractionId).subscribe({
+        next: resp => {
+          debugger;
+          if (resp.fractionCode) {
+            resolve(resp.fractionCode);
+          } else {
+            resolve('');
+          }
+        },
+      });
+    });
+  }
+
+  //obtiene el bien inmueble
+  getGoodRealEstate(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodEstateService.getById(id).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
+  }
+
+  finish() {
+    this.requestData.requestStatus = 'FINALIZADA';
+    const typeCommit = 'finish';
+    this.msgSaveModal(
+      'Finalizar Solicitud',
+      'Asegurse de guardar toda la información antes de Finalizar la solicitud!',
+      'Confirmación',
+      undefined,
+      typeCommit
+    );
+  }
+
+  finishMethod() {
+    this.requestService
+      .update(this.requestData.id, this.requestData)
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp.statusCode !== null) {
+            this.message('error', 'Error', 'Ocurrio un error al guardar');
+          }
+          if (resp.id !== null) {
+            this.message(
+              'success',
+              'Solicitud Guardada',
+              'Se guardo la solicitud correctamente'
+            );
+          }
+        },
+      });
+  }
+
   confirm() {
-    console.log(this.registRequestForm.getRawValue());
-    this.msgAvertanceModal(
-      '',
+    const typeCommit = 'confirm-request';
+    this.msgSaveModal(
+      'Aceptar',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
-      ''
+      undefined,
+      typeCommit
     );
+  }
+
+  //metodo que guarda la verificacion
+  public async confirmMethod() {
+    const result = await this.registrationHelper.validateForm(this.requestData);
+
+    if (result === true) {
+      this.cambiarTipoUsuario(this.requestData);
+    }
+  }
+
+  cambiarTipoUsuario(request: any) {
+    this.openModal(SelectTypeUserComponent, request, 'commit-request');
   }
 
   saveClarification(): void {
@@ -292,26 +399,13 @@ export class RegistrationOfRequestsComponent
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
 
-  msgAvertanceModal(
+  msgSaveModal(
     btnTitle: string,
     message: string,
     title: string,
-    typeMsg: any
+    typeMsg: any,
+    typeCommit?: string
   ) {
-    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.msgSaveModal(
-          this.btnTitle,
-          '¿Deseas turnar la solicitud con Folio:....?',
-          'Confirmación',
-          undefined
-        );
-      }
-    });
-  }
-
-  msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
     Swal.fire({
       title: title,
       text: message,
@@ -323,9 +417,18 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
-        console.log('Guardar solicitud');
+        if (typeCommit === 'finish') {
+          this.finishMethod();
+        }
+        if (typeCommit === 'confirm-request') {
+          this.confirmMethod();
+        }
       }
     });
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 
   openModal(component: any, data?: any, typeAnnex?: String): void {
@@ -340,11 +443,16 @@ export class RegistrationOfRequestsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalRef = this.modalService.show(component, config);
+    this.bsModalRef = this.modalService.show(component, config);
 
-    this.modalRef.content.event.subscribe((res: any) => {
-      // cargarlos en el formulario
+    /*  this.BsModal.content.event.subscribe((res: any) => {
       console.log(res);
+    }); */
+  }
+
+  dinamyCallFrom() {
+    this.registRequestForm.valueChanges.subscribe(data => {
+      this.requestData = data;
     });
   }
 }

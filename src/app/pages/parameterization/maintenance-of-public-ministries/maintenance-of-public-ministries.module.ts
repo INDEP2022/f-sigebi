@@ -4,11 +4,15 @@ import { CitiesSharedComponent } from 'src/app/@standalone/shared-forms/cities-s
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MaintenanceListComponent } from './maintenance-list/maintenance-list.component';
 import { MaintenanceOfPublicMinistriesRoutingModule } from './maintenance-of-public-ministries-routing.module';
 import { MaintenanceOfPublicMinistriesComponent } from './maintenance-of-public-ministries/maintenance-of-public-ministries.component';
 
 @NgModule({
-  declarations: [MaintenanceOfPublicMinistriesComponent],
+  declarations: [
+    MaintenanceOfPublicMinistriesComponent,
+    MaintenanceListComponent,
+  ],
   imports: [
     CommonModule,
     MaintenanceOfPublicMinistriesRoutingModule,

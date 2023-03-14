@@ -7,12 +7,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError } from 'rxjs/operators';
@@ -41,7 +36,6 @@ import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -58,15 +52,15 @@ export class DetailAssetsTabComponentComponent
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
-  @Input() detailAssets: ModelForm<any>; // bienes
-  @Input() domicilieObject: IDomicilies; //
+  @Input() detailAssets: ModelForm<any>; // bienes ModelForm
+  @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodRealState>; // bien del inmueble
+  goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
@@ -80,6 +74,14 @@ export class DetailAssetsTabComponentComponent
   addressId: number = null;
   bsEvaluoDate: any;
   brandId: string = '';
+  circulate: boolean = false;
+  circulateString: string = 'N';
+  theftReport: boolean = false;
+  theftReportString: string = 'N';
+  complyNorm: boolean = false;
+  complyNormString: string = 'N';
+  appraisal: boolean = false;
+  appraisalString = 'N';
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
@@ -126,9 +128,10 @@ export class DetailAssetsTabComponentComponent
   parameterSubBrandsService = inject(ParameterSubBrandsService);
   menageService = inject(MenageService);
 
-  isDisabled: boolean = true;
+  isDisabled: boolean = true; //desabilita el campo domicilio
   menajeSelected: any;
   isSaveMenaje: boolean = false;
+  disableDuplicity: boolean = false; //para verificar cumplimientos = false
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {
     super();
@@ -139,17 +142,28 @@ export class DetailAssetsTabComponentComponent
       console.log(changes['detailAssets'].currentValue);
     }
 
-    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
-      (data: any) => {
-        if (data) {
-          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
-          this.displayTypeTapInformation(Number(data));
-        } else {
-          //limpia los tabs de los bienes
-          this.displayTypeTapInformation(data);
+    //verifica si la vista es verificacion de cumplimiento o bien
+    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+      if (this.detailAssets.controls['addressId'].value) {
+        this.addressId = this.detailAssets.controls['addressId'].value;
+        this.getGoodDomicilie(this.addressId);
+      }
+      //verifica si la vista es verificacion de cumplimiento
+      if (this.typeDoc === 'verify-compliance') {
+        this.detailAssets.disable();
+        this.disableDuplicity = true;
+        if (this.goodDomicilieForm !== undefined) {
+          this.goodDomicilieForm.disable();
         }
       }
-    );
+    }
+
+    //revisa si el formulario de bienes contiene el id del tipo de bien
+    if (this.detailAssets.controls['goodTypeId'].value != null) {
+      const data = this.detailAssets.controls['goodTypeId'].value;
+      this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+      this.displayTypeTapInformation(Number(data));
+    }
   }
 
   ngOnInit(): void {
@@ -188,135 +202,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   initForm() {
-    this.assetsForm = this.fb.group({
-      noManagement: [null],
-      typeAsset: [null, [Validators.pattern(STRING_PATTERN)]],
-      color: [null, [Validators.pattern(STRING_PATTERN)]],
-      transferQuantity: [null],
-      descripTransfeAsset: [null, [Validators.pattern(STRING_PATTERN)]],
-      duplicity: [false],
-      capacityLts: [null, [Validators.pattern(STRING_PATTERN)]],
-      volumem3: [null, [Validators.pattern(STRING_PATTERN)]],
-      noExpedient: [null],
-      typeUse: [null],
-      conservationState: [null],
-      origin: [null, [Validators.pattern(STRING_PATTERN)]],
-      LigieUnitMeasure: [
-        { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      avaluo: [null],
-      destinyLigie: [
-        { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      meetNoraml: [true],
-      destinyTransfer: [null],
-      tansferUnitMeasure: [null],
-      notes: [null, [Validators.pattern(STRING_PATTERN)]],
-      sae: [null],
-      physicalState: [null],
-      destintSae: [{ value: null, disabled: true }],
-      /* tab bienes */
-      address: new FormGroup({
-        aliasWarehouse: new FormControl(''),
-        referenceVia2: new FormControl(''),
-        state: new FormControl(''),
-        referenceVia3: new FormControl(''),
-        municipe: new FormControl(''),
-        suburb: new FormControl(''),
-        cp: new FormControl(''),
-        longitud: new FormControl(''),
-        latitud: new FormControl(''),
-        nameRoute: new FormControl(''),
-        numExt: new FormControl(''),
-        originRoute: new FormControl(''),
-        numInt: new FormControl(''),
-        routeDestination: new FormControl(''),
-        referenceVia1: new FormControl(''),
-        kilometerRoute: new FormControl(''),
-        description: new FormControl(''),
-      }),
-      vehicle: new FormGroup({
-        brand: new FormControl(''),
-        enrollment: new FormControl(''),
-        subBrand: new FormControl(''),
-        serie: new FormControl(''),
-        armored: new FormControl(''),
-        chassis: new FormControl(''),
-        model: new FormControl(''),
-        numDoors: new FormControl(''),
-        cabin: new FormControl(''),
-        numEje: new FormControl(''),
-        originVehicle: new FormControl(''),
-        engineNum: new FormControl(''),
-        canCirculate: new FormControl(''),
-        hasTheftReport: new FormControl(''),
-      }),
-      boat: new FormGroup({
-        boatArmored: new FormControl(''),
-        operativeStatus: new FormControl(''),
-        engineNumBoat: new FormControl(''),
-        numEngines: new FormControl(''),
-        enrollmentBoat: new FormControl(''),
-        flag: new FormControl(''),
-        cabinBoat: new FormControl(''),
-        fretwork: new FormControl(''),
-        volumem3Boat: new FormControl(''),
-        eslora: new FormControl(''),
-        originBoat: new FormControl(''),
-        manga: new FormControl(''),
-        typeUseBoat: new FormControl(''),
-        boatName: new FormControl(''),
-        yearProduction: new FormControl(''),
-        boatRegistration: new FormControl(''),
-        capacityLtsBoat: new FormControl(''),
-        boats: new FormControl(''),
-      }),
-      jewel: new FormGroup({
-        kilos: new FormControl(''),
-        material: new FormControl(''),
-        weight: new FormControl(''),
-      }),
-      aircraft: new FormGroup({
-        aircraftArmored: new FormControl(''),
-        yearProductionAircraft: new FormControl(''),
-        modelAircraft: new FormControl(''),
-        operativeStatusAircraf: new FormControl(''),
-        engineNumAircraft: new FormControl(''),
-        numEnginesAircraft: new FormControl(''),
-        enrollmentAircraft: new FormControl(''),
-        AeronauticsRegistry: new FormControl(''),
-        serieAircraft: new FormControl(''),
-        typeAirplane: new FormControl(''),
-        originAircraft: new FormControl(''),
-        flagAircraft: new FormControl(''),
-        typeUseAirCraft: new FormControl(''),
-      }),
-      immovables: new FormGroup({
-        descriptionImmovable: new FormControl(''),
-        custody: new FormControl(''),
-        statusImmovable: new FormControl(''),
-        requireVigilance: new FormControl(''),
-        levelVigilance: new FormControl(''),
-        typeImmovable: new FormControl(''),
-        metersWarehouse: new FormControl(''),
-        metersLand: new FormControl(''),
-        rooms: new FormControl(''),
-        metersBuiltLand: new FormControl(''),
-        bathRoom: new FormControl(''),
-        kitchen: new FormControl(''),
-        dinningRoom: new FormControl(''),
-        livingRoom: new FormControl(''),
-        studyRoom: new FormControl(''),
-        garage: new FormControl(''),
-        publicDeed: new FormControl(''),
-        appraisedValue: new FormControl(''),
-        valueDate: new FormControl(''),
-        gravamen: new FormControl(''),
-      }),
-    });
-
     //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
@@ -344,11 +229,6 @@ export class DetailAssetsTabComponentComponent
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
-
-    if (this.detailAssets.controls['addressId'].value) {
-      this.addressId = this.detailAssets.controls['addressId'].value;
-      this.getGoodDomicilie(this.addressId);
-    }
   }
 
   //formulario del inmueble
@@ -357,12 +237,12 @@ export class DetailAssetsTabComponentComponent
       id: [null],
       description: [null],
       status: [null],
-      propertyType: [null],
-      surfaceMts: [0, Validators.required],
-      consSurfaceMts: [0, Validators.required],
-      publicDeed: [null],
-      pubRegProperty: [null],
-      appraisalValue: [0, Validators.required],
+      propertyType: [null, [Validators.required]],
+      surfaceMts: [0, [Validators.required]],
+      consSurfaceMts: [0, [Validators.required]],
+      publicDeed: [null, [Validators.required]],
+      pubRegProperty: [null, [Validators.required]],
+      appraisalValue: [0, [Validators.required]],
       appraisalDate: [null],
       certLibLien: [null],
       guardCustody: [null],
@@ -381,13 +261,9 @@ export class DetailAssetsTabComponentComponent
       addressId: [null],
       userModification: [null],
       modificationDate: [null],
+      forProblems: [null, [Validators.required]],
     });
   }
-  getSae(event: any) {}
-
-  getConservationState(event: any): void {}
-
-  getQuantityTransfer(event: any) {}
 
   getPhysicalState(params: ListParams) {
     params['filter.name'] = '$eq:Estado Fisico';
@@ -510,14 +386,6 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getTypeUseBoat(event: any) {
-    //mis cambios
-  }
-
-  getTypeAirplane(event: any) {}
-
-  getTypeUseAirCrafte(event: any) {}
-
   modifyResponse(event: any) {
     let checked = event.currentTarget.checked;
     let value = checked === true ? 'Y' : 'N';
@@ -532,10 +400,39 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  handleCirculateEvent(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.circulateString = value;
+    this.detailAssets.controls['fitCircular'].setValue(value);
+  }
+
+  handleTheftReportEvent(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.theftReportString = value;
+    this.detailAssets.controls['theftReport'].setValue(value);
+  }
+
+  //TODO: recibir los datos de cumple norma
+  handleCumpliesNormEvent(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.complyNormString = value;
+    this.detailAssets.controls['compliesNorm'].setValue(value);
+  }
+
+  handleAppraisalEvent(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.appraisalString = value;
+    this.detailAssets.controls['appraisal'].setValue(value);
+  }
+
   initInputs(): void {
     //control de disable de pantalla
     if (this.typeDoc === 'verify-compliance') {
-      this.assetsForm.disable();
+      this.detailAssets.disable();
     } else if (this.typeDoc === 'classify-assets') {
       this.assetsForm.disable();
       this.assetsForm.controls['physicalState'].enable();
@@ -561,6 +458,7 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  //Habre el modal de seleccion del domicilio
   openSelectAddressModal(): void {
     let config: ModalOptions = {
       initialState: {
@@ -606,6 +504,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    debugger;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
         this.goodTypeName = data.description;
@@ -644,17 +543,21 @@ export class DetailAssetsTabComponentComponent
       case 5:
         this.jewelerAssets = true;
         break;
+      case 8:
+        this.otherAssets = true;
+        break;
       default:
         this.immovablesAssets = false;
         this.carsAssets = false;
         this.boatAssets = false;
         this.aircraftAssets = false;
         this.jewelerAssets = false;
+        this.otherAssets = false;
         break;
     }
   }
 
-  async save(): Promise<void> {
+  async save() {
     const domicilie = this.domicileForm.getRawValue();
     //se guarda bien domicilio
     if (domicilie.id !== null) {
@@ -669,7 +572,7 @@ export class DetailAssetsTabComponentComponent
           `Se reguiqere ingresar el domicilio del bien`
         );
       } else {
-        await this.saveGoodDomicilie();
+        await this.saveGoodRealState();
       }
     }
 
@@ -710,8 +613,11 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  saveDomicilieGood(domicilie: IDomicilies) {
+  //guarda bien domicilio
+  saveDomicilieGood(domicilie: any) {
     return new Promise((resolve, reject) => {
+      domicilie.regionalDelegationId = domicilie.regionalDelegationId.id;
+      domicilie.requestId = domicilie.requestId.id;
       this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
         next: (data: any) => {
           if (data.statusCode != null) {
@@ -737,28 +643,25 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  saveGoodDomicilie() {
+  //guardar el bien inmueble
+  saveGoodRealState() {
     return new Promise((resolve, reject) => {
-      this.goodDomicilieForm.controls['addressId'].setValue(
-        this.domicileForm.controls['id'].value
-      );
-      this.goodDomicilieForm.controls['creationDate'].setValue(
-        new Date().toISOString()
-      );
-      this.goodDomicilieForm.controls['modificationDate'].setValue(
-        new Date().toISOString()
-      );
-      const username = this.authService.decodeToken().preferred_username;
-      this.goodDomicilieForm.controls['userCreation'].setValue(username);
-      this.goodDomicilieForm.controls['userModification'].setValue(username);
+      let domicilio = this.goodDomicilieForm.getRawValue();
+      domicilio.addressId = this.domicileForm.controls['id'].value;
+      domicilio.creationDate = new Date().toISOString();
+      domicilio.modificationDate = new Date().toISOString();
 
-      var domicilie = this.goodDomicilieForm.getRawValue();
+      const username = this.authService.decodeToken().preferred_username;
+      domicilio.userCreation = username;
+      domicilio.userModification = username;
+      console.log(domicilio);
+
       var action = null;
-      if (domicilie.id === null) {
-        domicilie.id = this.detailAssets.controls['id'].value;
-        action = this.goodEstateService.create(domicilie);
+      if (domicilio.id === null) {
+        domicilio.id = this.detailAssets.controls['id'].value;
+        action = this.goodEstateService.create(domicilio);
       } else {
-        action = this.goodEstateService.update(domicilie.id, domicilie);
+        action = this.goodEstateService.update(domicilio.id, domicilio);
       }
 
       action.subscribe({
@@ -786,8 +689,14 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getGoodDomicilie(addressId: number) {
-    this.goodDomicilie.getById(addressId).subscribe({
+  getGoodDomicilie(addressId: any) {
+    let address = null;
+    if (addressId.id != null) {
+      address = addressId.id;
+    } else {
+      address = addressId;
+    }
+    this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
@@ -798,6 +707,18 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+          this.displayTypeTapInformation(Number(data));
+        } else {
+          //limpia los tabs de los bienes
+          this.displayTypeTapInformation(data);
+        }
+      }
+    );
+
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
@@ -849,6 +770,30 @@ export class DetailAssetsTabComponentComponent
         }
       }
     );
+
+    if (this.detailAssets.controls['fitCircular'].value) {
+      this.circulateString = this.detailAssets.controls['fitCircular'].value;
+      this.circulate =
+        this.detailAssets.controls['fitCircular'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['theftReport'].value) {
+      this.theftReportString = this.detailAssets.controls['theftReport'].value;
+      this.theftReport =
+        this.detailAssets.controls['theftReport'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['compliesNorm'].value) {
+      this.complyNormString = this.detailAssets.controls['compliesNorm'].value;
+      this.complyNorm =
+        this.detailAssets.controls['compliesNorm'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['appraisal'].value) {
+      this.appraisalString = this.detailAssets.controls['appraisal'].value;
+      this.appraisal =
+        this.detailAssets.controls['appraisal'].value === 'Y' ? true : false;
+    }
   }
 
   getGoodEstate() {
@@ -856,7 +801,6 @@ export class DetailAssetsTabComponentComponent
       const id = this.detailAssets.controls['id'].value;
       this.goodEstateService.getById(id).subscribe({
         next: resp => {
-          console.log(resp);
           this.goodDomicilieForm.patchValue(resp);
         },
       });
@@ -880,9 +824,8 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: IDomicilies) {
-    this.detailAssets.controls['addressId'].setValue(domicilie.id);
+    this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
-    //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['municipalityKey'].setValue(

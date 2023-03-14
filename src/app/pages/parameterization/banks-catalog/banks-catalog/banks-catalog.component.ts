@@ -32,10 +32,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       cveBank: [null, [Validators.required]],
-      nameBank: [
-        { value: null, disabled: true },
-        Validators.pattern(STRING_PATTERN),
-      ],
+      nameBank: [null, Validators.pattern(STRING_PATTERN)],
       accountNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       cveAccount: [
         null,
@@ -91,6 +88,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
     if (this.form.valid) {
       const data = this.form.value;
       delete data.bankName;
+      this.loading = true;
       if (this.edit) {
         const id = this.form.get('accountNumber').value;
         this.bankServ.update(id, data).subscribe({
@@ -100,6 +98,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
           },
           error: err => {
             this.onLoadToast('error', err.error.message, '');
+            this.loading = false;
           },
         });
       } else {
@@ -110,6 +109,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
           },
           error: err => {
             this.onLoadToast('error', err.error.message, '');
+            this.loading = false;
           },
         });
       }
@@ -127,5 +127,6 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
   clean() {
     this.form.reset();
     this.edit = false;
+    this.loading = false;
   }
 }

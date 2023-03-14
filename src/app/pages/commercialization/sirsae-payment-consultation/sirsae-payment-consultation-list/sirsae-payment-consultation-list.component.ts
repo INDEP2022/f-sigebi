@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { InterfacesirsaeService as InterfaceSirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from './../../../../shared/components/select/default-select';
 import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
@@ -22,9 +29,18 @@ export class SirsaePaymentConsultationListComponent
 {
   // Usando tipo any hasta tener disponibles los servicios de la api
   params = new BehaviorSubject<ListParams>(new ListParams());
-  goodSelected: boolean = false;
-  consultForm: FormGroup = new FormGroup({});
-  filterForm: FormGroup = new FormGroup({});
+  // goodSelected: boolean = false;
+  form: FormGroup = new FormGroup({
+    reference: new FormControl(null, [Validators.required]),
+    // id: new FormControl(null, [Validators.required]),
+    startDate: new FormControl(null, [Validators.required]),
+    endDate: new FormControl(null, [Validators.required]),
+    bank: new FormControl(null),
+    status: new FormControl(null),
+  });
+  // filterForm: FormGroup = new FormGroup({
+  // });
+
   columns: any[] = [];
   totalItems: number = 0;
   goodItems = new DefaultSelect();
@@ -37,53 +53,53 @@ export class SirsaePaymentConsultationListComponent
   tableSource: LocalDataSource;
   tableFilters: any[] = [];
 
-  goodTestData: any = [
-    {
-      id: 1,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-      appraisal: 200,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 2,
-      code: 'BIEN',
-      description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
-      appraisal: 500,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 3,
-      code: 'GOOD',
-      description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
-      appraisal: 100,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 4,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
-      appraisal: 700,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-    {
-      id: 5,
-      code: 'BIEN',
-      description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
-      appraisal: 50,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
-    },
-  ];
+  // paymentsTestData: any = [
+  //   {
+  //     id: 1,
+  //     code: 'ASEG',
+  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+  //     appraisal: 200,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     code: 'BIEN',
+  //     description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
+  //     appraisal: 500,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     code: 'GOOD',
+  //     description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
+  //     appraisal: 100,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 4,
+  //     code: 'ASEG',
+  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
+  //     appraisal: 700,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  //   {
+  //     id: 5,
+  //     code: 'BIEN',
+  //     description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
+  //     appraisal: 50,
+  //     status: 'Bien entregado en Administración',
+  //     domain: 'ASEGURADO',
+  //     converted: false,
+  //   },
+  // ];
 
   paymentTestData: any = [
     {
@@ -138,97 +154,37 @@ export class SirsaePaymentConsultationListComponent
     },
   ];
 
-  // maxDate = new Date();
+  statusesMov: { id: number; statusDescription: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private goodService: GoodService,
-    private bankAccountService: BankAccountService
+    private interfaceSirsaeService: InterfaceSirsaeService // private goodService: GoodService, // private bankAccountService: BankAccountService
   ) {
     super();
     this.tableSource = new LocalDataSource(this.columns);
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    // this.getGoods({ page: 1, text: '' });
+    this.getStatusesMov();
     this.consultSettings.columns = CONSULT_SIRSAE_COLUMNS;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSearch());
   }
 
-  subscribeBankAccountInput() {
-    // this.input$
-    //   .pipe(
-    //     debounceTime(200),
-    //     distinctUntilChanged(),
-    //     switchMap((text: string) => {
-    //     })
-    //   )
-    //   .subscribe();
-  }
-
-  bankAccountObservable(params: { [key: string]: string }): Observable<any> {
-    if (!params) {
-      return this.bankAccountService.getAll({});
-    }
-    if (!isNaN(params as any)) {
-      return this.bankAccountService.getById(params);
-    }
-    return this.bankAccountService.getAll({});
+  getStatusesMov(): void {
+    this.interfaceSirsaeService
+      .getStatusesMov({ limit: 100, page: 1 })
+      .subscribe(res => {
+        console.log(res);
+        this.statusesMov = res.data;
+      });
   }
 
   getSearch() {
     this.loading = true;
     console.log(this.params.getValue());
     this.loading = false;
-  }
-
-  private prepareForm(): void {
-    this.consultForm = this.fb.group({
-      id: [null, [Validators.required]],
-      startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required]],
-    });
-    this.filterForm = this.fb.group({
-      bank: [null],
-      status: [null],
-    });
-  }
-
-  // getGoods(params: ListParams) {
-  //   // if (params.text == '') {
-  //   //   this.goodItems = new DefaultSelect(this.goodTestData, 5);
-  //   // } else {
-  //   //   const id = parseInt(params.text);
-  //   //   const item = [this.goodTestData.filter((i: any) => i.id == id)];
-  //   //   this.goodItems = new DefaultSelect(item[0], 1);
-  //   // }
-  //   if (params.text === '') {
-  //     this.goodService.getAll(params).subscribe(res => {
-  //       this.goodItems = new DefaultSelect(res.data, 5);
-  //     });
-  //     return;
-  //   } else if (!isNaN(params.text as any)) {
-  //     this.goodService.getById(params.text).subscribe(res => {
-  //       this.goodItems = new DefaultSelect([res], 1);
-  //     });
-  //     return;
-  //   }
-  //   this.goodItems = new DefaultSelect([], 0);
-  // }
-
-  getBankAccount(params: ListParams) {
-    if (params.text) {
-      this.bankAccountService.getAll(params).subscribe(res => {
-        // this.bankAccountItems = new DefaultSelect(res.data, 5);
-      });
-    }
-  }
-
-  filterBank(query: string) {
-    this.addFilter(query, 'bank');
   }
 
   filterStatus(query: string) {
@@ -266,18 +222,62 @@ export class SirsaePaymentConsultationListComponent
   }
 
   resetFilter() {
-    this.tableSource.reset();
-    this.tableSource.refresh();
+    this.tableSource.empty().then(res => {
+      this.tableSource.refresh();
+    });
+    this.form.reset();
   }
 
   consult() {
-    console.log(this.consultForm.value);
+    console.log(this.form.value);
+    if (this.tableSource.count() > 0) {
+      this.tableSource.empty().then(res => {
+        this.tableSource.refresh();
+      });
+    }
     this.loading = true;
-    this.columns = this.getData();
-    this.totalItems = this.columns.length;
-    this.tableSource = new LocalDataSource(this.columns);
-    this.goodSelected = true;
-    this.loading = false;
+    this.interfaceSirsaeService
+      .getAccountDetail(this.generateParams().getParams())
+      .pipe(
+        catchError(() => {
+          this.loading = false;
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: res => {
+          if (!res) {
+            this.tableSource.reset();
+            this.tableSource.refresh();
+            return;
+          }
+          console.log(res);
+          this.columns = res.data;
+          this.totalItems = this.columns.length;
+          this.tableSource = new LocalDataSource(this.columns);
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  generateParams(): FilterParams {
+    const filters = new FilterParams();
+    const { reference, startDate, endDate, bank, status } = this.form.value;
+
+    filters.addFilter('reference', reference, SearchFilter.LIKE);
+    filters.addFilter('startDate', startDate, SearchFilter.GTE);
+    filters.addFilter('endDate', endDate, SearchFilter.LTE);
+
+    if (bank) {
+      filters.addFilter('bank', bank);
+    }
+    if (status) {
+      filters.addFilter('status', status);
+    }
+    return filters;
   }
 
   getData() {

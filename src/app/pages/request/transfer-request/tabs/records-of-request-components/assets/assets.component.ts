@@ -139,6 +139,9 @@ export class AssetsComponent extends BasePage implements OnInit {
           this.loading = false;
         }
       },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
@@ -224,18 +227,19 @@ export class AssetsComponent extends BasePage implements OnInit {
     });
   }
 
-  onFileChange(event: any) {
+  onFileChange(event: any, type?: string) {
+    console.log(event.target.files[0]);
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
+    debugger;
     fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    //fileReader.onload = () => this.readExcel(fileReader.result);
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.data = this.excelService.getData<ExcelFormat>(binaryExcel);
-      debugger;
       console.log(this.data);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -274,6 +278,10 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   openSelectAddressModal() {
+    if (this.listgoodObjects.length === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
     let config: ModalOptions = {
       initialState: {
         request: this.requestObject,
@@ -290,8 +298,6 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
-      //this.domicilieObject = res as IDomicilies;
-
       if (res) {
         for (let i = 0; i < this.listgoodObjects.length; i++) {
           const element = this.listgoodObjects[i];
@@ -299,13 +305,11 @@ export class AssetsComponent extends BasePage implements OnInit {
         }
         this.isSaveDomicilie = true;
       }
-      //this.assetsForm.controls['address'].get('longitud').enable();
-      //this.requestForm.get('receiUser').patchValue(res.user);
     });
   }
-
+  // abrir menaje
   menajeModal() {
-    if (!this.listgoodObjects) {
+    if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
       return;
     }
@@ -355,7 +359,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
-        this.goodService.update(element.id, element).subscribe({
+        this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
               this.message(
@@ -398,7 +402,7 @@ export class AssetsComponent extends BasePage implements OnInit {
               reject('El registro del bien del domicilio no se guardo!');
             }
 
-            if (data.id != null) {
+            if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
@@ -436,8 +440,9 @@ export class AssetsComponent extends BasePage implements OnInit {
   deleteGood() {
     for (let i = 0; i < this.listgoodObjects.length; i++) {
       const element = this.listgoodObjects[i];
-      this.goodService.remove(element.id).subscribe({
-        next: resp => {
+      let goodRemove = { id: element.id, goodId: element.goodId };
+      this.goodService.removeGood(goodRemove).subscribe({
+        next: (resp: any) => {
           if (resp.statusCode === 200) {
             this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
             this.closeCreateGoodWIndows();

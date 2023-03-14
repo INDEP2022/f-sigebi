@@ -60,4 +60,5 @@ export class DynamicTablesService extends HttpService {
       params
     );
   }
+  /* getfindTvaltable1ByTableKey() */
 }

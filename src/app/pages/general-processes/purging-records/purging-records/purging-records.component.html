@@ -16,11 +16,13 @@
                   type="button"
                   (confirm)="updateExpedient()"
                   *ngIf="originExpedient"
+                  [loading]="loadingExpedient"
                   text="Actualizar expediente"
                   loadingText="Actualizando epxediente"></confirm-button>
               </div>
             </div>
           </div>
+
           <div class="row pt-3">
             <app-purging-records-form
               [form]="originForm"
@@ -28,23 +30,36 @@
                 getOriginExpedient($event)
               "></app-purging-records-form>
           </div>
+          <div class="row pt-2">
+            <form-field
+              [control]="integratedExpedients"
+              label="Expedientes integrados"
+              class="col-md-12">
+              <input
+                type="text"
+                class="form-control"
+                [formControl]="integratedExpedients" />
+            </form-field>
+          </div>
           <div class="row">
             <div class="col-md-12">
               <app-purging-records-table
-                [data]="originGoods"></app-purging-records-table>
+                [data]="originGoods"
+                [params]="originParams"
+                [totalItems]="totalOrigin"></app-purging-records-table>
             </div>
           </div>
 
           <div class="row pt-3">
             <div class="col-md-12 d-flex justify-content-center">
-              <div>
+              <!-- <div>
                 <button
                   [disabled]="isIntegratingExpedient || !originExpedient"
                   class="btn btn-danger btn-sm active mr-2"
                   type="button">
                   Eliminar Exp&#46;
                 </button>
-              </div>
+              </div> -->
               <div>
                 <button
                   [disabled]="isIntegratingExpedient || !originExpedientExist"
@@ -60,7 +75,7 @@
 
         <div class="col-md-6" *ngIf="isIntegratingExpedient">
           <h3>Destino</h3>
-          <div class="row pt-3">
+          <div class="row pt-3 pb-5">
             <app-purging-records-form
               [form]="targetForm"
               (onExpedientChange)="
@@ -68,27 +83,34 @@
               "></app-purging-records-form>
           </div>
 
-          <div class="row">
+          <div class="row pt-5">
             <div class="col-md-12">
               <app-purging-records-table
-                [data]="targetGoods"></app-purging-records-table>
+                [data]="targetGoods"
+                [params]="targetParams"
+                [totalItems]="totalTarget"></app-purging-records-table>
             </div>
           </div>
 
           <div class="row pt-3">
             <div class="col-md-12 d-flex justify-content-center">
               <div>
-                <button class="btn btn-danger btn-sm active mr-2">
+                <button
+                  [disabled]="loading"
+                  type="button"
+                  class="btn btn-danger btn-sm active mr-2"
+                  (click)="resetForm()">
                   Cancelar
                 </button>
               </div>
               <div>
-                <button
-                  class="btn btn-primary btn-sm active"
+                <confirm-button
+                  [loading]="loading"
+                  text="Aceptar"
+                  loadingText="Integrando Expediente"
+                  [btnSmall]="true"
                   type="button"
-                  (click)="save()">
-                  Aceptar
-                </button>
+                  (confirm)="save()"></confirm-button>
               </div>
             </div>
           </div>

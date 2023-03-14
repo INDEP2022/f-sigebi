@@ -38,7 +38,26 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.City.valueChanges.subscribe(id => {
+      if (id) {
+        this.service.getById(this.City.value).subscribe({
+          next: resp => {
+            this.cities = new DefaultSelect([resp], 1);
+            if (resp) {
+              const { noDelegation, noSubDelegation, state } = resp;
+              let infoForms = {
+                noDelegation,
+                noSubDelegation,
+                state,
+              };
+              this.state.next(infoForms);
+            }
+          },
+        });
+      }
+    });
+  }
 
   getCities(params: ListParams) {
     this.service.getAll(params).subscribe({
@@ -59,7 +78,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
     //this.resetFields([this.City]);
     this.cities = new DefaultSelect();
 
-    if (subdelegation.state) {
+    if (subdelegation) {
       const { noDelegation, noSubDelegation, state } = subdelegation;
       let infoForms = {
         noDelegation,

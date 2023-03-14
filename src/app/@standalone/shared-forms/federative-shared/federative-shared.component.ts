@@ -31,7 +31,16 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
     return this.form.get(this.federativeField);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.Federative.valueChanges.subscribe({
+      next: id => {
+        if (!id) return;
+        this.service.getById(id).subscribe({
+          next: resp => (this.federative = new DefaultSelect([resp], 1)),
+        });
+      },
+    });
+  }
 
   getFederative(params: ListParams) {
     this.service.getAll(params).subscribe({

@@ -47,6 +47,7 @@ export class LoginComponent implements OnInit {
               roles = data;
             },
             complete: () => {
+              localStorage.setItem('username', username);
               localStorage.setItem('roles', JSON.stringify(roles));
               this.router.navigate(['pages/general-processes/goods-tracker']);
             },

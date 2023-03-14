@@ -1,7 +1,7 @@
 export const CONSULT_SIRSAE_COLUMNS = {
-  account: {
+  accountbank: {
     title: 'Cuenta Bancaria',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   bank: {
@@ -14,27 +14,27 @@ export const CONSULT_SIRSAE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  moveDate: {
+  movDate: {
     title: 'Fecha Mov.',
     type: 'number',
     sort: false,
   },
-  amount: {
+  importdep: {
     title: 'Importe Depósito',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  cve: {
+  keycheck: {
     title: 'Cve. Cheque',
     type: 'number',
     sort: false,
   },
-  status: {
+  idestcta: {
     title: 'Estatus Mov.',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  description: {
+  descmov: {
     title: 'Descripción Movimiento',
     type: 'string',
     sort: false,

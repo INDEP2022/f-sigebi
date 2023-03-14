@@ -28,6 +28,15 @@ var usuario: IRequestList[] = [
     process: 'VerificarCumplimiento',
   },
   {
+    id: 43691,
+    title: 'Clasificación de bienes (Captura de Solicitud) con folio 43691',
+    noRequest: 43691,
+    numTask: 260301,
+    noInstance: 820169,
+    created: 'tester_nsbxt',
+    process: 'ClassifyAssets',
+  },
+  {
     id: 43437,
     title: 'Registro de solicitud (Captura de Solicitud) con folio 43437',
     noRequest: 45009,
@@ -37,8 +46,8 @@ var usuario: IRequestList[] = [
     process: 'SolicitudeTransferencia',
   },
   {
-    title: 'Registo de solicitud (programar solicitud) con folio 45010',
-    noRequest: 45010,
+    title: 'Realizar programación con folio: R-METROPOLITANA-PROFECO-8409',
+    noRequest: 8409,
     numTask: 260302,
     noInstance: 820170,
     created: 'tester_nsbxt',
@@ -265,11 +274,17 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     const request = event.data;
+    //si se optiene el nombre por el titulo
+    /*let array1 = request.title.split('(');
+    let array2 = array1[1].split(')');
+    let value = array2[0];
+    console.log(value);*/
+
     switch (event.data.process) {
       case 'SolicitudProgramacion':
-        // en el caso de que sea una solicitud de programacion
+        // en el caso de que se retorne una solicitud de programación
         this.router.navigate([
-          'pages/request/perform-programming',
+          'pages/request/programming-request/return-to-programming/:id',
           event.data.noRequest,
         ]);
         break;
@@ -379,7 +394,13 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
-
+      case 'ClassifyAssets':
+        // en el caso de que sea una solicitud de programacion
+        this.router.navigate([
+          'pages/request/transfer-request/classify-assets',
+          event.data.noRequest,
+        ]);
+        break;
       case 'RE_RevisarLineamientos':
         // en el caso de que sea el proceso de revision de lineamientos de resarcimiento economico
         this.router.navigate([
