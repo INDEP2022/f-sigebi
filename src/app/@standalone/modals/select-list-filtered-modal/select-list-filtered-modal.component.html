@@ -7,6 +7,8 @@
       <div class="form-material col-md-5">
         <search-bar
           *ngIf="dataObservableFn"
+          [haveSearch]="haveSearch"
+          [type]="type"
           [filterParams]="filterParams"
           [filterField]="searchFilter"
           [dynamicFilters]="filters"
@@ -50,7 +52,7 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <div class="m-3" *ngIf="!selectOnClick">
         <confirm-button
           [disabled]="!rowSelected"
           [loading]="loading"

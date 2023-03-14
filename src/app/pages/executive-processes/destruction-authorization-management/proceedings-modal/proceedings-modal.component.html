@@ -33,7 +33,6 @@
               class="form-control"
               formControlName="datePhysicalReception"
               bsDatepicker
-              [maxDate]="today"
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD'
               }" />
@@ -48,7 +47,6 @@
               class="form-control"
               formControlName="elaborationDate"
               bsDatepicker
-              [maxDate]="today"
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD'
               }" />
@@ -65,7 +63,6 @@
               class="form-control"
               formControlName="captureDate"
               bsDatepicker
-              [maxDate]="today"
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD'
               }" />
@@ -98,11 +95,51 @@
         <div class="col-md-3">
           <form-field
             label="Observaciones"
-            [control]="proceedingForm.get('observation')">
+            [control]="proceedingForm.get('observations')">
             <input
               type="text"
               class="form-control"
-              formControlName="observation" />
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Elaboró"
+            [control]="proceedingForm.get('elaborate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Expediente"
+            [control]="proceedingForm.get('numFile')">
+            <input type="text" class="form-control" formControlName="numFile" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de Acta"
+            [control]="proceedingForm.get('typeProceedings')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeProceedings"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Delegación"
+            [control]="proceedingForm.get('numDelegation1')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numDelegation1" />
           </form-field>
         </div>
       </div>

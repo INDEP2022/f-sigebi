@@ -5,14 +5,11 @@
         class="col-xs-10"
         [control]="form.get(formField)"
         [label]="label">
-        <input
-          type="text"
-          [formControlName]="formField"
-          class="form-control"
-          readonly />
+        <input type="text" [formControlName]="formField" class="form-control" />
       </form-field>
       <div class="col-xs-2 pl-0">
         <button
+          [disabled]="disabled"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="openModal()">

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
-//import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { ModalClassificationGoodsComponent } from '../modal-classification-goods/modal-classification-goods.component';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -18,25 +18,27 @@ export class MassiveReclassificationGoodsComponent
   extends BasePage
   implements OnInit
 {
-  data: any[] = [];
-
-  included: boolean = false;
+  listGood: IGood[] = [];
   form: FormGroup;
-
+  selectedGooods: IGood[] = [];
+  goodNotValid: IGood[] = [];
+  origin: string = null;
+  changeDescription: string;
+  changeDescriptionAlterning: string;
   get mode() {
     return this.form.get('mode');
   }
-  get numberClassificationGood() {
-    return this.form.get('numberClassificationGood');
+  get classificationOfGoods() {
+    return this.form.get('classificationOfGoods');
   }
   get description() {
     return this.form.get('description');
   }
-  get filterByStatus() {
-    return this.form.get('filterByStatus');
+  get goodStatus() {
+    return this.form.get('goodStatus');
   }
-  get numberClassificationGoodAlterning() {
-    return this.form.get('numberClassificationGoodAlterning');
+  get classificationGoodAlterning() {
+    return this.form.get('classificationGoodAlterning');
   }
   get descriptionAlternating() {
     return this.form.get('descriptionAlternating');
@@ -44,14 +46,57 @@ export class MassiveReclassificationGoodsComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private readonly goodServices: GoodService
+  ) {
     super();
-    this.settings.columns = COLUMNS;
-    this.settings.actions = false;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        name: {
+          title: 'Reclasificar',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelected(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelect(instance),
+        },
+        ...COLUMNS,
+      },
+    };
+  }
+
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
   }
 
   ngOnInit(): void {
     this.buildForm();
+    this.form.disable();
+    this.mode.enable();
+    console.log(this.mode.value);
   }
 
   /**
@@ -62,16 +107,16 @@ export class MassiveReclassificationGoodsComponent
   private buildForm() {
     this.form = this.fb.group({
       mode: [null, [Validators.required]],
-      numberClassificationGood: [null, [Validators.required]],
+      classificationOfGoods: [null, [Validators.required]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      filterByStatus: [
+      goodStatus: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      numberClassificationGoodAlterning: [null, [Validators.required]],
+      classificationGoodAlterning: [null, [Validators.required]],
       descriptionAlternating: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -86,53 +131,75 @@ export class MassiveReclassificationGoodsComponent
   openQuestion() {
     this.alertQuestion(
       'question',
-      '¿ Desea cambiar la calsificación de los bienes Seleccionado ?',
+      '¿Desea reclasificar los bienes seleccionados?',
       '',
       'Cambiar'
     ).then(resp => {
-      resp.isConfirmed ? this.changeClassification() : undefined;
+      if (resp.isConfirmed) {
+        this.changeClassification();
+      }
     });
   }
 
   changeClassification() {
     console.log('Se cambiaron los datos de forma masiva');
-  }
-
-  inludedRabio() {
-    this.included = true;
-  }
-
-  listGoods() {
-    if (this.mode.value === 'include') {
-      this.data = [
-        {
-          reclassify: false,
-          goodNumber: '1',
-          DescriptionClassification: 'Descripcion de la clasificacion 1',
-          status: 'Estatus 1',
-          descriptionGood: 'Descripcion del bien 1',
-        },
-        {
-          reclassify: false,
-          goodNumber: '2',
-          DescriptionClassification: 'Descripcion de la clasificacion 2',
-          status: 'Estatus 1',
-          descriptionGood: 'Descripcion del bien 2',
-        },
-        {
-          reclassify: false,
-          goodNumber: '3',
-          DescriptionClassification: 'Descripcion de la clasificacion 3',
-          status: 'Estatus 3',
-          descriptionGood: 'Descripcion del bien 3',
-        },
-      ];
-    }
-  }
-  openModal(): void {
-    this.modalService.show(ModalClassificationGoodsComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
+    console.log(this.selectedGooods);
+    this.selectedGooods.forEach(good => {
+      if (good.goodClassNumber === 1575) {
+        this.goodNotValid.push(good);
+      } else {
+        this.mode.value === 'E'
+          ? this.updateMode(good, this.classificationOfGoods.value)
+          : this.updateMode(good, this.classificationGoodAlterning.value);
+      }
     });
+    this.onLoadToast(
+      'success',
+      'Exitoso',
+      'Se ha reclasificado los bienes seleccionados.'
+    );
+  }
+
+  updateMode(good: IGood, newClassNumber: string) {
+    console.log(Number(newClassNumber), this.classificationOfGoods.value);
+    good.goodClassNumber = Number(newClassNumber);
+    good.requestId = Number(good.requestId);
+    good.fractionId = Number(good.fractionId);
+    good.addressId = Number(good.addressId);
+    console.log(good);
+    this.goodServices.update(good).subscribe({
+      next: response => {
+        console.log(response);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+  formEnable() {
+    this.form.enable();
+  }
+
+  loadGoods() {
+    console.log(this.classificationOfGoods.value);
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log('Entro', this.params.getValue());
+      this.goodServices.getAll(this.params.getValue()).subscribe({
+        next: response => {
+          console.log(response);
+          this.listGood = response.data;
+          this.totalItems = response.count;
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    });
+  }
+  onChage(event: string) {
+    this.changeDescription = event;
+  }
+  onChageAlterning(event: string) {
+    this.changeDescriptionAlterning = event;
   }
 }

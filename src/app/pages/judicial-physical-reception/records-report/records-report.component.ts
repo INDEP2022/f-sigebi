@@ -86,11 +86,11 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         params.textx
       )
       .subscribe(
-        res => {
+        (res: any) => {
           console.log(res);
           this.initialProceeding = new DefaultSelect(res.data, res.count);
         },
-        err => {
+        (err: any) => {
           console.log(err);
         }
       );
@@ -105,11 +105,11 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         params
       )
       .subscribe(
-        res => {
+        (res: any) => {
           console.log(res);
           this.finalProceeding = new DefaultSelect(res.data, res.count);
         },
-        err => {
+        (err: any) => {
           console.log(err);
         }
       );

@@ -8,7 +8,7 @@ export abstract class OpenModalListFiltered {
     callback?: Function
   ) {
     const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
-      initialState: { ...context },
+      initialState: { ...context, type: 'text' },
       class: 'modal-lg modal-dialog-centered modal-not-top-padding',
       ignoreBackdropClick: true,
     });

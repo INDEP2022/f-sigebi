@@ -53,10 +53,14 @@ export class SelectListFilteredModalComponent
     params: ListParams
   ) => Observable<any>; // Input requerido al llamar el modal por listParams
   dataObservableId: (self: any, id: string) => Observable<any>;
+  type: 'number' | 'text' = 'number';
+  initialCharge = true;
+  haveSearch = true;
   showError: boolean = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
+  selectOnClick: boolean = false; //Input opcional para seleccionar registro al dar click en la tabla
   @Output() onSelect = new EventEmitter<any>();
 
   constructor(private modalRef: BsModalRef) {
@@ -72,17 +76,25 @@ export class SelectListFilteredModalComponent
     };
     this.addFilters();
     if (this.dataObservableFn) {
-      this.filterParams
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getAndSetInitialCharge();
+      });
     } else if (this.dataObservableListParamsFn) {
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getAndSetInitialCharge();
+      });
     } else if (this.dataObservableId) {
-      this.id
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData());
+      this.id.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getAndSetInitialCharge();
+      });
+    }
+  }
+
+  private getAndSetInitialCharge() {
+    if (this.initialCharge) {
+      this.getData();
+    } else {
+      this.initialCharge = true;
     }
   }
 
@@ -143,6 +155,10 @@ export class SelectListFilteredModalComponent
     console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
+    if (this.selectOnClick) {
+      this.onSelect.emit(this.selectedRow);
+      this.modalRef.hide();
+    }
   }
 
   confirm() {

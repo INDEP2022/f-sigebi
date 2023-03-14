@@ -1,10 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { RangePickerModalComponent } from 'src/app/@standalone/modals/range-picker-modal/range-picker-modal.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsByProceeding } from 'src/app/core/models/ms-indicator-goods/ms-indicator-goods-interface';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
@@ -13,7 +9,6 @@ import {
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings/index';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { firstFormatDate } from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { settingsGoods } from './const';
 
@@ -30,25 +25,20 @@ export class ScheduledMaintenanceDetailComponent
   implements OnInit
 {
   form: FormGroup;
-  params = new BehaviorSubject<ListParams>(new ListParams());
   statusList = [
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
-
-  datepicker: any;
-  source: LocalDataSource;
   paramsStatus: ListParams = new ListParams();
   data: IGoodsByProceeding[] = [];
   totalItems: number = 0;
-  selecteds: IGoodsByProceeding[];
+  selecteds: IGoodsByProceeding[] = [];
   selectedsForUpdate: IGoodsByProceeding[] = [];
   settingsGoods = settingsGoods;
-
+  params: ListParams = new ListParams();
   constructor(
     private location: Location,
     private fb: FormBuilder,
-    private modalService: BsModalService,
     private service: MsIndicatorGoodsService,
     private detailService: ProceedingsDetailDeliveryReceptionService,
     private proceedingService: ProceedingsDeliveryReceptionService
@@ -57,7 +47,6 @@ export class ScheduledMaintenanceDetailComponent
     this.prepareForm();
     this.statusActa.valueChanges.subscribe(x => {
       console.log(x);
-      this.updateSettingsGoods(x);
       if (x === 'CERRADA') {
         const detail = JSON.parse(
           window.localStorage.getItem('detailActa')
@@ -123,18 +112,6 @@ export class ScheduledMaintenanceDetailComponent
     }
   }
 
-  private updateSettingsGoods(value = this.statusActaValue) {
-    this.settingsGoods = {
-      ...this.settingsGoods,
-      actions: {
-        ...this.settingsGoods.actions,
-        edit: value !== 'CERRADA',
-        delete: value !== 'CERRADA',
-      },
-    };
-    this.data = [...this.data];
-  }
-
   private prepareForm() {
     const acta: IProceedingDeliveryReception = JSON.parse(
       localStorage.getItem('detailActa')
@@ -146,8 +123,6 @@ export class ScheduledMaintenanceDetailComponent
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],
     });
-
-    this.updateSettingsGoods();
   }
 
   return() {
@@ -214,10 +189,11 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      // console.log(x);
-      this.getData();
-    });
+    this.getData();
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+    //   // console.log(x);
+    //   this.getData();
+    // });
   }
 
   getData() {
@@ -225,15 +201,12 @@ export class ScheduledMaintenanceDetailComponent
     console.log(idActa);
     console.log(new Date());
     console.log(new Date().toISOString());
-    let params = this.params.getValue();
-    if (idActa && idActa.length > 0) {
-      this.service.getGoodsByProceeding(idActa).subscribe({
+    this.params['id'] = idActa;
+    if (idActa) {
+      this.service.getGoodsByProceeding(this.params).subscribe({
         next: response => {
-          this.data = [...response.data].slice(
-            (params.page - 1) * params.limit,
-            params.page * params.limit
-          );
-          this.totalItems = response.data.length;
+          this.data = response.data;
+          this.totalItems = response.count;
         },
         error: err => {
           this.data = [];
@@ -243,33 +216,8 @@ export class ScheduledMaintenanceDetailComponent
     }
   }
 
-  updateGoods() {
-    const modalRef = this.modalService.show(RangePickerModalComponent, {
-      class: 'modal-md modal-dialog-centered modal-not-top-padding',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.onSelect.subscribe(data => {
-      if (data) {
-        console.log(data);
-        const { rangoFecha } = data;
-        this.data = [
-          ...this.data.map(x => {
-            return {
-              ...x,
-              fec_aprobacion_x_admon: firstFormatDate(new Date(rangoFecha[0])),
-              fec_indica_usuario_aprobacion: firstFormatDate(
-                new Date(rangoFecha[1])
-              ),
-            };
-          }),
-        ];
-        this.selectedsForUpdate = [...this.data];
-      }
-    });
-  }
-
-  rowsSelected(event: { selected: IGoodsByProceeding[] }) {
-    this.selecteds = event.selected;
+  rowsSelected(selecteds: IGoodsByProceeding[]) {
+    this.selecteds = selecteds;
   }
 
   showDeleteAlert(item: IGoodsByProceeding) {

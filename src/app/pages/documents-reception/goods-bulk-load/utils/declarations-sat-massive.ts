@@ -10,4 +10,7 @@ export const COMMON_VALIDATORS = {
   count: 0,
   total: 0,
   proceso: '',
+  bienes: 0,
+  volantes: 0,
+  expedientes: 0,
 };

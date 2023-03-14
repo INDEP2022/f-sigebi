@@ -1,8 +1,8 @@
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Lista de cuentas de bancos</h5>
-    <div class="col-md-5 buttons">
-      <div class="pt-1">
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Lista de cuentas de bancos</h5>
+      <div class="buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
           Cerrar
@@ -40,4 +40,4 @@
       [totalItems]="dataCourt.count">
     </app-pagination>
   </div>
-</app-card>
+</app-modal>

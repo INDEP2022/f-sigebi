@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -40,12 +41,16 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      datePhysicalReception: [null, []],
+      datePhysicalReception: [null, [maxDate(new Date())]],
       elaborationDate: [null, [Validators.required]],
-      captureDate: [null, []],
+      captureDate: [null, [Validators.required]],
       statusProceedings: [null, []],
-      observation: [null, []],
+      observations: [null, []],
       universalFolio: [null, []],
+      elaborate: [null, [Validators.required]],
+      numFile: [null, [Validators.required]],
+      typeProceedings: ['RGA', [Validators.required]],
+      numDelegation1: [null, [Validators.required]],
     });
     if (this.proceeding != null) {
       this.edit = true;

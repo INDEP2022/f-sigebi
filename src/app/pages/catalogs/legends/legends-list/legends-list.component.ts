@@ -28,6 +28,10 @@ export class LegendsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = LEGENDS_COLUMS;
     this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
@@ -66,6 +70,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log(legend);
         this.delete(legend.id);
         Swal.fire('Borrado', '', 'success');
       }

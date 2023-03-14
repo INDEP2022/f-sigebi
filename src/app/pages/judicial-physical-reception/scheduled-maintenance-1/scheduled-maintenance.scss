@@ -67,13 +67,12 @@ ng2-smart-table {
   > div {
     margin-top: 1rem;
     padding: 0px;
-    &:nth-child(2) {
-      text-align: center;
-      padding: 0px;
+    text-align: center;
+    &:first-child {
+      text-align: left;
     }
     &:last-child {
       text-align: right;
-      padding: 0px;
     }
   }
   @media (max-width: 767px) {

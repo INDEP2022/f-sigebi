@@ -78,6 +78,10 @@ export class DetailAssetsTabComponentComponent
   circulateString: string = 'N';
   theftReport: boolean = false;
   theftReportString: string = 'N';
+  complyNorm: boolean = false;
+  complyNormString: string = 'N';
+  appraisal: boolean = false;
+  appraisalString = 'N';
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
@@ -137,11 +141,14 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
       console.log(changes['detailAssets'].currentValue);
     }
+
+    //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
         this.getGoodDomicilie(this.addressId);
       }
+      //verifica si la vista es verificacion de cumplimiento
       if (this.typeDoc === 'verify-compliance') {
         this.detailAssets.disable();
         this.disableDuplicity = true;
@@ -149,6 +156,13 @@ export class DetailAssetsTabComponentComponent
           this.goodDomicilieForm.disable();
         }
       }
+    }
+
+    //revisa si el formulario de bienes contiene el id del tipo de bien
+    if (this.detailAssets.controls['goodTypeId'].value != null) {
+      const data = this.detailAssets.controls['goodTypeId'].value;
+      this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+      this.displayTypeTapInformation(Number(data));
     }
   }
 
@@ -250,11 +264,6 @@ export class DetailAssetsTabComponentComponent
       forProblems: [null, [Validators.required]],
     });
   }
-  getSae(event: any) {}
-
-  getConservationState(event: any): void {}
-
-  getQuantityTransfer(event: any) {}
 
   getPhysicalState(params: ListParams) {
     params['filter.name'] = '$eq:Estado Fisico';
@@ -377,14 +386,6 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getTypeUseBoat(event: any) {
-    //mis cambios
-  }
-
-  getTypeAirplane(event: any) {}
-
-  getTypeUseAirCrafte(event: any) {}
-
   modifyResponse(event: any) {
     let checked = event.currentTarget.checked;
     let value = checked === true ? 'Y' : 'N';
@@ -411,6 +412,21 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.theftReportString = value;
     this.detailAssets.controls['theftReport'].setValue(value);
+  }
+
+  //TODO: recibir los datos de cumple norma
+  handleCumpliesNormEvent(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.complyNormString = value;
+    this.detailAssets.controls['compliesNorm'].setValue(value);
+  }
+
+  handleAppraisalEvent(event: any) {
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.appraisalString = value;
+    this.detailAssets.controls['appraisal'].setValue(value);
   }
 
   initInputs(): void {
@@ -442,6 +458,7 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  //Habre el modal de seleccion del domicilio
   openSelectAddressModal(): void {
     let config: ModalOptions = {
       initialState: {
@@ -525,12 +542,16 @@ export class DetailAssetsTabComponentComponent
       case 5:
         this.jewelerAssets = true;
         break;
+      case 8:
+        this.otherAssets = true;
+        break;
       default:
         this.immovablesAssets = false;
         this.carsAssets = false;
         this.boatAssets = false;
         this.aircraftAssets = false;
         this.jewelerAssets = false;
+        this.otherAssets = false;
         break;
     }
   }
@@ -673,15 +694,15 @@ export class DetailAssetsTabComponentComponent
       address = addressId.id;
     } else {
       address = addressId;
-      this.goodDomicilie.getById(address).subscribe({
-        next: (resp: any) => {
-          var value = resp;
-          this.getStateOfRepublic(new ListParams(), value.statusKey);
-          //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
-          this.domicileForm.patchValue(value);
-        },
-      });
     }
+    this.goodDomicilie.getById(address).subscribe({
+      next: (resp: any) => {
+        var value = resp;
+        this.getStateOfRepublic(new ListParams(), value.statusKey);
+        //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
+        this.domicileForm.patchValue(value);
+      },
+    });
   }
 
   getReactiveFormCall() {
@@ -759,6 +780,18 @@ export class DetailAssetsTabComponentComponent
       this.theftReportString = this.detailAssets.controls['theftReport'].value;
       this.theftReport =
         this.detailAssets.controls['theftReport'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['compliesNorm'].value) {
+      this.complyNormString = this.detailAssets.controls['compliesNorm'].value;
+      this.complyNorm =
+        this.detailAssets.controls['compliesNorm'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['appraisal'].value) {
+      this.appraisalString = this.detailAssets.controls['appraisal'].value;
+      this.appraisal =
+        this.detailAssets.controls['appraisal'].value === 'Y' ? true : false;
     }
   }
 

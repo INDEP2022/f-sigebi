@@ -90,8 +90,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegationSelect(params: ListParams) {
-    params.text = params.text == null ? '' : params.text;
-    this.regionalDelegationService.search(params).subscribe({
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.regionalDelegationService.getAll(params).subscribe({
       next: resp => {
         this.regionalsDelegations = new DefaultSelect(resp.data, resp.count);
       },

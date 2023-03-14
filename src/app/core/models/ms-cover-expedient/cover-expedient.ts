@@ -20,3 +20,15 @@ export interface IDispositionCoverExpedient {
   VArchivoTramite?: number;
   VArchivoConcentracion?: number;
 }
+
+export interface ICompleteDisposition {
+  ddcId?: number;
+  ddcCodificacion?: string;
+  PeriodoReserva?: number;
+  TClasificacion?: string;
+  SeccionDocumental?: string;
+  SerieDocumental?: string;
+  VArchivoTramite?: number;
+  VArchivoConcentracion?: number;
+  ValoresDocumentales?: string;
+}

@@ -1,4 +1,5 @@
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 
 export interface IProceedingInfo {
   id: number;
@@ -12,24 +13,40 @@ export interface IProceedingInfo {
   observations: string;
   numDelegation1: string;
   numDelegation2: string;
-  elaborationDate: string;
-  closeDate: string;
-  datePhysicalReception: string;
-  maxDate: string;
-  dateElaborationReceipt: string;
-  dateCaptureHc: string;
-  dateDeliveryGood: string;
-  dateCloseHc: string;
-  captureDate: string;
-  dateMaxHc: string;
+  elaborationDate: any;
+  closeDate: any;
+  datePhysicalReception: any;
+  maxDate: any;
+  dateElaborationReceipt: any;
+  dateCaptureHc: any;
+  dateDeliveryGood: any;
+  dateCloseHc: any;
+  captureDate: any;
+  dateMaxHc: any;
   witness1: string;
   witness2: string;
   comptrollerWitness: string;
+  elaborate: string;
+  numRegister: string;
+  identifier: any;
+  universalFolio: any;
+  numeraryFolio: any;
+  numTransfer: any;
+  numRequest: any;
+  indFulfilled: any;
+  affair: any;
+  receiveBy: any;
+  destructionMethod: any;
+  approvedXAdmon: any;
+  approvalDateXAdmon: any;
+  approvalUserXAdmon: any;
+  idTypeProceedings: string;
 }
 
 export function deliveryReceptionToInfo(
   item: IProceedingDeliveryReception
 ): IProceedingInfo {
+  // debugger;
   return {
     id: +item.id,
     numFile: item.numFile,
@@ -42,18 +59,33 @@ export function deliveryReceptionToInfo(
     observations: item.observations,
     numDelegation1: item.numDelegation1,
     numDelegation2: item.numDelegation2,
-    elaborationDate: item.elaborationDate,
-    closeDate: item.closeDate,
-    datePhysicalReception: item.datePhysicalReception,
-    maxDate: item.maxDate,
-    dateElaborationReceipt: item.dateElaborationReceipt,
-    dateCaptureHc: item.dateCaptureHc,
-    dateDeliveryGood: item.dateDeliveryGood,
-    dateCloseHc: item.dateCloseHc,
-    captureDate: item.captureDate,
-    dateMaxHc: item.dateMaxHc,
+    elaborationDate: formatForIsoDate(item.elaborationDate),
+    closeDate: formatForIsoDate(item.closeDate),
+    datePhysicalReception: formatForIsoDate(item.datePhysicalReception),
+    maxDate: formatForIsoDate(item.maxDate),
+    dateElaborationReceipt: formatForIsoDate(item.dateElaborationReceipt),
+    dateCaptureHc: formatForIsoDate(item.dateCaptureHc),
+    dateDeliveryGood: formatForIsoDate(item.dateDeliveryGood),
+    dateCloseHc: formatForIsoDate(item.dateCloseHc),
+    captureDate: formatForIsoDate(item.captureDate),
+    dateMaxHc: formatForIsoDate(item.dateMaxHc),
     witness1: item.witness1,
     witness2: item.witness2,
     comptrollerWitness: item.comptrollerWitness,
+    elaborate: item.elaborate,
+    numRegister: item.numRegister,
+    identifier: item.identifier,
+    universalFolio: item.universalFolio,
+    numeraryFolio: item.numeraryFolio,
+    numTransfer: item.numTransfer,
+    numRequest: item.numRequest,
+    indFulfilled: item.indFulfilled,
+    affair: item.affair,
+    receiveBy: item.receiveBy,
+    destructionMethod: item.destructionMethod,
+    approvedXAdmon: item.approvedXAdmon,
+    approvalDateXAdmon: item.approvalDateXAdmon,
+    approvalUserXAdmon: item.approvalUserXAdmon,
+    idTypeProceedings: item.idTypeProceedings,
   };
 }

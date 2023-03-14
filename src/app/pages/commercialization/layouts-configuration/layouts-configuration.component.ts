@@ -1,14 +1,19 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
   IComerLayoutsH,
+  IL,
+  ILay,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { LayoutsConfigurationModalComponent } from './layouts-configuration-modal/layouts-configuration-modal.component';
 
 import {
   EXAMPLE_DAT2,
@@ -31,23 +36,32 @@ import {
 export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   title = 'Layous';
   layoutsList: IComerLayouts[] = [];
-  idLayout: number = 0;
   layoutDuplicated: IComerLayoutsH;
+  structureLayout: IComerLayouts;
   layousthList: IComerLayoutsH[] = [];
   lay: any;
+  allLayouts: any;
   valid: boolean = false;
-  layout: IComerLayouts;
+  layout: IL;
   provider: any;
-  id: number = 0;
+  idLayout: number = 0;
+  idStructure: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
+  rowSelected: boolean = false;
+  rowAllotment: string = null;
+  selectedRow: any = null;
+  rowSelectedGood: boolean = false;
+  columns: any[] = [];
+  @Output() refresh = new EventEmitter<true>();
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
     private fb: FormBuilder,
-    private layoutsConfigService: LayoutsConfigService
+    private layoutsConfigService: LayoutsConfigService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -85,12 +99,21 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   userRowSelect(event: any) {
-    this.layoutsConfigService.getByIdH(event.data.id).subscribe({
+    this.idLayout = event.data.idLayout.id;
+    console.log(this.idLayout);
+    let params: ILay = {
+      idLayout: event.data.idLayout.id,
+      idConsec: event.data.idConsec,
+    };
+    let paramsId: IL = {
+      idLayout: event.data.idLayout.id,
+    };
+    this.layoutsConfigService.findOne(params).subscribe({
       next: data => {
-        this.idLayout = data.id;
-        this.layoutDuplicated = event.data;
-        console.log(this.idLayout);
-        console.log(this.layoutDuplicated);
+        this.layout = paramsId;
+        this.structureLayout = data;
+        console.log(this.structureLayout);
+        this.rowSelected = true;
         this.valid = true;
       },
       error: error => {
@@ -101,33 +124,26 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     });
   }
 
-  // findOne(id: number) {
-  //   this.layoutsConfigService.findOne(id).subscribe({
-  //     next: data => {
-  //       this.layoutDuplicated = data.id;
-  //     },
-  //     error: error => {
-  //       this.loading = false;
-  //       this.onLoadToast('error', 'Layout no existe!!', '');
-  //       return;
-  //     },
-  //   });
-  // }
+  selectRowGood() {
+    this.rowSelectedGood = true;
+  }
 
   duplicar() {
-    try {
-      this.loading = false;
-      this.layoutsConfigService.createH(this.layoutDuplicated).subscribe({
-        next: data => this.handleSuccess(),
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-          return;
-        },
-      });
-    } catch {
-      console.error('Layout no existe');
-    }
+    this.loading = false;
+    this.layoutsConfigService.create(this.layout).subscribe({
+      next: data => {
+        this.structureLayout = data;
+        console.log(this.structureLayout);
+        this.rowSelected = true;
+        this.valid = true;
+        this.handleSuccess();
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+        return;
+      },
+    });
   }
 
   handleSuccess() {
@@ -136,7 +152,6 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.loading = false;
     this.onConfirm.emit(true);
     this.getLayouts();
-    this.getLayoutH();
   }
 
   getLayouts() {
@@ -161,6 +176,49 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => (this.loading = false),
+    });
+  }
+
+  openForm(provider?: IComerLayouts) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getLayouts();
+      },
+    };
+    this.modalService.show(LayoutsConfigurationModalComponent, modalConfig);
+  }
+
+  openModal(context?: Partial<LayoutsConfigurationModalComponent>) {
+    const modalRef = this.modalService.show(
+      LayoutsConfigurationModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+  showDeleteAlert(id: IL) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.layoutsConfigService.remove(id).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Layout eliminado', '');
+            this.getLayouts();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.loading = false;
+          },
+        });
+      }
     });
   }
 
@@ -210,12 +268,27 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     noDataMessage: 'No se encontrarón registros',
   };
 
-  data5 = this.layousthList;
+  data5 = this.layoutsList;
 
   settings6 = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      position: 'left',
+      edit: {
+        confirmSave: true,
+      },
+      delete: {
+        confirmDelete: true,
+        deleteButtonContent: 'Delete data',
+        saveButtonContent: 'save',
+        cancelButtonContent: 'cancel',
+      },
+      add: {
+        confirmCreate: true,
+      },
+    },
     columns: { ...LAYOUTS_COLUMNS6 },
+
     noDataMessage: 'No se encontrarón registros',
   };
 

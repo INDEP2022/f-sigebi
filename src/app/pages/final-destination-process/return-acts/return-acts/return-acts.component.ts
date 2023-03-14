@@ -6,6 +6,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -19,6 +20,10 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
+  proceedingList: any[] = [
+    { value: 'DEV', text: 'DEV' },
+    { value: 'REST', text: 'REST' },
+  ];
   response: boolean = false;
   actForm: FormGroup;
   formTable1: FormGroup;
@@ -35,7 +40,10 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   data2 = EXAMPLE_DATA2;
   settings2: any;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private proceedingService: ProceedingsService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
@@ -64,20 +72,21 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      preliminaryAscertainment: [
+      previewFind: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      causePenal: [
+      penaltyCause: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      //DELITO     FALTA
       crimeKey: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
       crime: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      actSelect: [null, [Validators.required]],
+      proceeding: [null, [Validators.required]],
       status: [null, [Validators.required]],
       authority: [
         null,

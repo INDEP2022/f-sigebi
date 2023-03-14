@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { Minpub } from 'src/app/core/models/parameterization/parametrization.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -27,6 +32,7 @@ export class MaintenanceOfPublicMinistriesComponent
     private readonly maintenceService: MinPubService,
     private readonly serviceDeleg: DelegationService,
     private readonly serviceSubDeleg: SubdelegationService,
+    private readonly serviceFederation: EntFedService,
     private readonly modalService: BsModalService
   ) {
     super();
@@ -132,20 +138,38 @@ export class MaintenanceOfPublicMinistriesComponent
             this.clean();
           },
           error: error => {
-            console.log('entro ??');
             this.loading = false;
             this.onLoadToast('error', error.erro.message, '');
           },
         });
       } else {
-        this.maintenceService.create(this.form.value).subscribe({
-          next: () => {
-            this.onLoadToast('success', 'Ha sido creado con éxito', '');
-            this.clean();
+        const filter = new FilterParams();
+        const { description } = this.form.value;
+
+        filter.removeAllFilters();
+        filter.addFilter('description', description, SearchFilter.EQ);
+
+        this.maintenceService.getAllWithFilters(filter.getParams()).subscribe({
+          next: resp => {
+            if (resp.data.length > 0) {
+              this.loading = false;
+              this.onLoadToast('error', 'Descripción ya registrada', '');
+            } else {
+              this.maintenceService.create(this.form.value).subscribe({
+                next: () => {
+                  this.onLoadToast('success', 'Ha sido creado con éxito', '');
+                  this.clean();
+                },
+                error: error => {
+                  this.loading = false;
+                  this.onLoadToast('error', error.erro.message, '');
+                },
+              });
+            }
           },
-          error: error => {
+          error: err => {
             this.loading = false;
-            this.onLoadToast('error', error.erro.message, '');
+            this.onLoadToast('error', err.error.message, '');
           },
         });
       }
@@ -154,10 +178,21 @@ export class MaintenanceOfPublicMinistriesComponent
 
   public updateEntity(data: any) {
     if (data) {
-      this.form.get('entity').patchValue(data.state.descCondition);
+      if (typeof data.state == 'string') {
+        this.getEntidad(data.state);
+      } else {
+        this.form.get('entity').patchValue(data.state.descCondition);
+      }
       this.getDelegation(data.noDelegation);
       this.getSubDelegation(data.noSubDelegation);
     }
+  }
+
+  private getEntidad(id: number) {
+    this.serviceFederation.getById(id).subscribe({
+      next: data => this.form.get('entity').patchValue(data.otWorth),
+      error: error => this.onLoadToast('error', error.erro.message, ''),
+    });
   }
 
   private getDelegation(delegation: number) {

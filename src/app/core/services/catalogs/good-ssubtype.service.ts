@@ -38,7 +38,12 @@ export class GoodSsubtypeService
   update(id: string | number, model: IGoodSsubType): Observable<Object> {
     return this.goodSsubtypeRepository.update(this.route, id, model);
   }
-
+  updateByIds(
+    ids: Partial<IGoodSsubType>,
+    model: IGoodSsubType
+  ): Observable<Object> {
+    return this.goodSsubtypeRepository.updateByIds(this.route, ids, model);
+  }
   remove(id: string | number): Observable<Object> {
     return this.goodSsubtypeRepository.remove(this.route, id);
   }

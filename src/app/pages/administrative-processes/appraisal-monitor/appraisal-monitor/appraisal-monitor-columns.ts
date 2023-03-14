@@ -1,31 +1,26 @@
 export const APPRAISAL_COLUMNS = {
-  bankCode: {
+  noRequest: {
     title: 'No Solicitud',
     type: 'string',
     sort: false,
   },
-  name: {
+  requestDate: {
     title: 'Fecha Solicitud',
+    type: 'date',
+    sort: false,
+  },
+  sourceUser: {
+    title: 'Usuario Origen',
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'Usuario',
-    type: 'string',
-    sort: false,
-  },
-  ifdsc: {
-    title: 'Origen',
-    type: 'string',
-    sort: false,
-  },
-  dateType: {
+  targetUser: {
     title: 'Area destino',
     type: 'string',
     sort: false,
   },
-  code: {
-    title: 'Observaciónes',
+  observations: {
+    title: 'Observaciones',
     type: 'string',
     sort: false,
   },

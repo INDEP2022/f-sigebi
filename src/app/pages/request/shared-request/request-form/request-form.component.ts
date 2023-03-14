@@ -11,6 +11,7 @@ import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-se
 //Provisional Data
 import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import {
   FilterParams,
@@ -40,6 +41,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   requestForm: ModelForm<any>;
   isReadOnly: boolean = true;
 
+  loadingTurn = false;
   bsModalRef: BsModalRef;
   checked: string = 'checked';
   userName: string = '';
@@ -59,9 +61,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   issues = new DefaultSelect<any>();
 
+  //injeccions
+  authService = inject(AuthService);
   regionalDelegationService = inject(RegionalDelegationService);
   delegationStateService = inject(DelegationStateService);
-
   stateOfRepublicService = inject(StateOfRepublicService);
   stationService = inject(StationService);
   authorityService = inject(AuthorityService);
@@ -69,6 +72,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   requestService = inject(RequestService);
 
   selectedRegDel: any = null;
+  authorityName: string = '';
 
   constructor(
     public fb: FormBuilder,
@@ -101,6 +105,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
         }
       }
     );
+
+    this.requestForm.controls['authorityId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          console.log(this.selectAuthority.data);
+          this.authorityName = this.selectAuthority.data.filter(
+            x => x.idAuthority === data
+          )[0].authorityName;
+
+          console.log(this.authorityName);
+        } else {
+          this.authorityName = '';
+        }
+      }
+    );
   }
 
   prepareForm(): void {
@@ -130,8 +149,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     form.addControl('affair', this.fb.control('', []));
   }
 
+  getRegionalDelegationId() {
+    const id = this.authService.decodeToken().department;
+    return id;
+  }
+
   getRegionalDeleg(params?: ListParams) {
-    this.regionalDelegationService.getById(11).subscribe((data: any) => {
+    const regDelId = Number(this.getRegionalDelegationId());
+    this.regionalDelegationService.getById(regDelId).subscribe((data: any) => {
       this.requestForm.controls['regionalDelegationId'].setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 
@@ -180,8 +205,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   getTransferent(params?: ListParams) {
+    params['filter.nameTransferent'] = `$ilike:${params.text}`;
     this.transferentService
-      .search(params)
+      .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
@@ -218,14 +244,15 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   save() {
+    this.loadingTurn = true;
     this.requestForm.get('requestStatus').patchValue('POR_TURNAR');
     this.requestForm.controls['applicationDate'].setValue(
       new Date().toISOString().toString()
     );
     let form = this.requestForm.getRawValue();
-    this.loading = true;
     this.requestService.create(form).subscribe(
       (data: any) => {
+        this.loadingTurn = false;
         this.msgModal(
           'Se guardo la solicitud con el Folio Nº '.concat(
             `<strong>${data.id}</strong>`
@@ -235,7 +262,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         );
       },
       error => {
-        this.loading = false;
+        this.loadingTurn = false;
       }
     );
   }
@@ -255,7 +282,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       new Date().toISOString().toString()
     );
 
-    this.loading = true;
+    this.loadingTurn = true;
     let form = this.requestForm.getRawValue();
 
     let action = null;
@@ -267,6 +294,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
     action.subscribe(
       (data: any) => {
+        this.loadingTurn = false;
         this.msgModal(
           'Se turnar la solicitud con el Folio Nº '
             .concat(`<strong>${data.id}</strong>`)
@@ -276,7 +304,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         );
       },
       error => {
-        this.loading = false;
+        this.loadingTurn = false;
       }
     );
   }
@@ -296,7 +324,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.requestForm.controls['applicationDate'].patchValue(this.bsValue);
         this.getRegionalDeleg(new ListParams());
         this.userName = '';
-        this.loading = false;
+        this.loadingTurn = false;
       }
     });
   }

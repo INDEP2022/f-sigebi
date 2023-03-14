@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -19,6 +20,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EmailModalComponent } from '../email-modal/email-modal.component';
 import { GoodByProceedingsModalComponent } from '../good-by-proceedings-modal/good-by-proceedings-modal.component';
 import { ProceedingsModalComponent } from '../proceedings-modal/proceedings-modal.component';
 import {
@@ -28,6 +30,10 @@ import {
   GOODS_COLUMNS,
   PROCEEDINGS_COLUMNS,
 } from './columns';
+
+export interface IReport {
+  data: File;
+}
 
 @Component({
   selector: 'app-destruction-authorization',
@@ -52,6 +58,9 @@ export class DestructionAuthorizationComponent
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
+
+  filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter2: SearchBarFilter;
 
   proceedingsList: IProccedingsDeliveryReception[] = [];
   proceedings: IProccedingsDeliveryReception;
@@ -82,6 +91,7 @@ export class DestructionAuthorizationComponent
   loadingActReception = this.loading;
 
   show: boolean = false;
+  show2: boolean = false;
 
   constructor(
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
@@ -90,11 +100,18 @@ export class DestructionAuthorizationComponent
     private detailProceeDelRecService: DetailProceeDelRecService,
     private datePipe: DatePipe,
     private dictationService: DictationService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {
     super();
+
     this.searchFilter = {
       field: 'keysProceedings',
+      operator: SearchFilter.ILIKE,
+    };
+
+    this.searchFilter2 = {
+      field: 'description',
       operator: SearchFilter.ILIKE,
     };
 
@@ -147,7 +164,8 @@ export class DestructionAuthorizationComponent
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAllProceeding());*/
-    this.params2
+    this.show2 = true;
+    this.filterParams2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodByStatusPDS());
   }
@@ -162,25 +180,25 @@ export class DestructionAuthorizationComponent
       .subscribe({
         next: response => {
           this.show = false;
-          let data = response.data.map(
-            (item: IProccedingsDeliveryReception) => {
-              let date1 = item.elaborationDate;
-              item.elaborationDate = this.datePipe.transform(
-                date1,
-                'dd/MM/yyyy'
-              );
-              let date2 = item.datePhysicalReception;
-              item.datePhysicalReception = this.datePipe.transform(
-                date2,
-                'dd/MM/yyyy'
-              );
-              let date3 = item.captureDate;
-              item.captureDate = this.datePipe.transform(date3, 'dd/MM/yyyy');
-              return item;
-            }
-          );
+          // let data = response.data.map(
+          //   (item: IProccedingsDeliveryReception) => {
+          //     let date1 = item.elaborationDate;
+          //     item.elaborationDate = this.datePipe.transform(
+          //       date1,
+          //       'dd-MM-yyyy'
+          //     );
+          //     let date2 = item.datePhysicalReception;
+          //     item.datePhysicalReception = this.datePipe.transform(
+          //       date2,
+          //       'dd-MM-yyyy'
+          //     );
+          //     let date3 = item.captureDate;
+          //     item.captureDate = this.datePipe.transform(date3, 'dd-MM-yyyy');
+          //     return item;
+          //   }
+          // );
           console.log(response);
-          this.data.load(data);
+          this.proceedingsList = response.data;
           this.totalItems = response.count;
           this.loadingProceedings = false;
         },
@@ -200,7 +218,9 @@ export class DestructionAuthorizationComponent
     let config: ModalOptions = {
       initialState: {
         proceeding,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getAllProceeding();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -234,13 +254,14 @@ export class DestructionAuthorizationComponent
       });
   }
 
-  openForm2(
-    detailProceedingsDeliveryReception?: IDetailProceedingsDeliveryReception
-  ) {
+  openForm2() {
+    const idP = { ...this.proceedings };
     let config: ModalOptions = {
       initialState: {
-        detailProceedingsDeliveryReception,
-        callback: (next: boolean) => {},
+        idP,
+        callback: (next: boolean) => {
+          if (next) this.getGoodsByProceedings(idP);
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -280,15 +301,24 @@ export class DestructionAuthorizationComponent
 
   //Trae todos los bienes con estado PDS
   getGoodByStatusPDS() {
+    if (this.show2) this.filterParams2.getValue().removeAllFilters();
+    this.filterField2();
     this.loadingGoods = true;
-    this.goodService.getGoodByStatusPDS(this.params3.getValue()).subscribe({
-      next: response => {
-        this.goodPDS = response.data;
-        this.totalItems3 = response.count;
-        this.loadingGoods = false;
-      },
-      error: error => (this.loadingGoods = false),
-    });
+    this.goodService
+      .getGoodByStatusPDS(this.filterParams2.getValue().getParams())
+      .subscribe({
+        next: response => {
+          this.show2 = false;
+          this.goodPDS = response.data;
+          this.totalItems3 = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => (this.loadingGoods = false),
+      });
+  }
+
+  filterField2() {
+    this.filterParams2.getValue().addFilter('status', 'PDS');
   }
 
   //Muestra información de la fila seleccionada de actas/oficios
@@ -311,4 +341,77 @@ export class DestructionAuthorizationComponent
       }
     });
   }
+
+  //Al presionar "Cerrar acta"
+  openEmail() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(EmailModalComponent, config);
+  }
+
+  //Al presionar "Solicitud" para generar reporte
+  report() {
+    if (this.proceedings.universalFolio == null) {
+      this.alertQuestion(
+        'question',
+        'Precaución',
+        'No hay ningún folio universal asignado, asígnelo primero para continuar'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.alert(
+            'info',
+            'Recuerde',
+            'Elija una acta y actualice la información'
+          );
+          this.openForm1;
+        }
+      });
+    } else {
+      this.loading = true;
+      const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+
+      const downloadLink = document.createElement('a');
+      //console.log(linkSource);
+      downloadLink.href = pdfurl;
+      downloadLink.target = '_blank';
+      downloadLink.click();
+
+      //let newWin = window.open(pdfurl, 'test.pdf');
+      this.onLoadToast('success', '', 'Reporte generado');
+      this.loading = false;
+    }
+  }
+
+  /*readFile(file: IReport) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.data);
+    reader.onload = _event => {
+      // this.retrieveURL = reader.result;
+      this.openPrevPdf(reader.result as string);
+    };
+  }
+  
+
+  openPrevPdf(pdfurl: string) {
+    console.log(pdfurl);
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }*/
 }
