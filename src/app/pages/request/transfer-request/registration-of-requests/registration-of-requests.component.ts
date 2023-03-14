@@ -193,12 +193,8 @@ export class RegistrationOfRequestsComponent
     const delegationService = this.delegationService.getById(
       request.regionalDelegationId
     );
-    let ids = {
-      idAuthority: Number(request.authorityId),
-      idTransferer: Number(request.transferenceId),
-      idStation: Number(request.stationId),
-    };
-    const authorityervice = this.authorityService.postByIds(ids);
+
+    const authorityervice = this.authorityService.getById(request.authorityId);
 
     forkJoin([
       stateOfRepublicService,

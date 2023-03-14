@@ -26,7 +26,7 @@ export class StationService
   }
 
   getById(id: string | number): Observable<IStation> {
-    return this.stationRepository.getById(this.route, id);
+    return this.stationRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IStation): Observable<IStation> {

@@ -4,32 +4,6 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="form.get('id')" label="Id">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-3"></div>
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('registerNumber')"
-            label="N&uacute;mero de Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registerNumber"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-      </div>
-
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field [control]="form.get('name')" label="Nombre">
@@ -37,7 +11,7 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('street')" label="Calle">
+          <form-field [control]="form.get('street')" label="Calle N">
             <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
@@ -80,8 +54,8 @@
           <ngx-select
             [form]="form"
             [data]="delegations"
-            bindLabel="delegation"
-            label="Delegaci&oacute;n"
+            bindLabel="city"
+            label="Delegaci&oacute;n o municipio"
             value="id"
             (fetchItems)="getFromSelect($event)"
             control="delegation"></ngx-select>
@@ -116,7 +90,7 @@
             [form]="form"
             bindLabel="name"
             [data]="offices"
-            label="Despacho"
+            label="No. de Despacho"
             value="id"
             (fetchItems)="getOffices($event)"
             control="idOffice"></ngx-select>

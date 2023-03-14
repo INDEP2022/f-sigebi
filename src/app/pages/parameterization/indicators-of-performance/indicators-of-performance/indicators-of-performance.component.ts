@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDetailIndParameter } from 'src/app/core/models/catalogs/detail-ind-parameter.model';
 import { IIndicatorsParamenter } from 'src/app/core/models/catalogs/indicators-parameter.model';
 
@@ -25,11 +29,15 @@ export class IndicatorsOfPerformanceComponent
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
-  data1: IIndicatorsParamenter[] = [];
+  indicatorsParamenter: IIndicatorsParamenter[] = [];
+  data1: LocalDataSource = new LocalDataSource();
+  columnFilters1: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-  data2: IDetailIndParameter[] = [];
+  detailIndParameter: IDetailIndParameter[] = [];
+  data2: LocalDataSource = new LocalDataSource();
+  columnFilters2: any = [];
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   typeItem: any[];
@@ -46,9 +54,62 @@ export class IndicatorsOfPerformanceComponent
       actions: false,
       columns: INDICATORSOFPERFORMANCE_COLUMNS,
     };
+    // this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
     this.settings2.columns = INDICATORSPERFORMANCE_COLUMNS;
+    this.settings2 = {
+      ...this.settings2,
+      hideSubHeader: false,
+    };
   }
   ngOnInit(): void {
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.getValuesAll();
+        }
+      });
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.getDetailIndParameterAll();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
@@ -78,10 +139,16 @@ export class IndicatorsOfPerformanceComponent
   }
   getValuesAll() {
     this.loading = true;
-    this.indicatorsParameterService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters1,
+    };
+    this.indicatorsParameterService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        this.data1 = response.data;
+        this.indicatorsParamenter = response.data;
+        this.data1.load(this.indicatorsParamenter);
+        this.data1.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -93,10 +160,16 @@ export class IndicatorsOfPerformanceComponent
   }
   getDetailIndParameterAll() {
     this.loading = true;
-    this.detailIndParameterService.getAll(this.params2.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters2,
+    };
+    this.detailIndParameterService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        this.data2 = response.data;
+        this.detailIndParameter = response.data;
+        this.data2.load(this.detailIndParameter);
+        this.data2.refresh();
         this.totalItems2 = response.count;
         this.loading = false;
       },

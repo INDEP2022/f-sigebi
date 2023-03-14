@@ -39,7 +39,10 @@
               >{{ item.badge.text }}</span
             >
           </a>
-
+          <app-menu-dynamic
+            [hasChild]="hasItems(item)"
+            [menuChild]="item.subItems"></app-menu-dynamic>
+          <!-- 
           <ul *ngIf="hasItems(item)" class="sub-menu" aria-expanded="false">
             <li *ngFor="let subitem of item.subItems">
               <a
@@ -62,13 +65,7 @@
                 class="sub-menu mm-collapse"
                 aria-expanded="false">
                 <li *ngFor="let subSubitem of subitem.subItems">
-                  <!--<a
-                    [attr.data-parent]="subSubitem.parentId"
-                    [routerLink]="subSubitem.link"
-                    routerLinkActive="active"
-                    class="side-nav-link-ref">
-                    SUB-{{ subSubitem.label }}
-                  </a>-->
+                 
                   <a
                     [routerLink]="subSubitem.link"
                     *ngIf="!hasItems(subSubitem)"
@@ -84,7 +81,6 @@
                     [attr.data-parent]="subSubitem.parentId">
                     {{ subSubitem.label }}
                   </a>
-                  <!--Level Menu 3-->
                   <ul
                     *ngIf="hasItems(subSubitem)"
                     class="sub-menu mm-collapse"
@@ -125,11 +121,10 @@
                       </ul>
                     </li>
                   </ul>
-                  <!--Level Menu 3-->
                 </li>
               </ul>
             </li>
-          </ul>
+          </ul> -->
         </li>
       </ng-container>
     </ul>

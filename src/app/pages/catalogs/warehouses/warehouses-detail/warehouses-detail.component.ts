@@ -79,26 +79,24 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      stateCode: [
+      stateCodeID: [
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      cityCode: [
+      stateCode: [null],
+      cityCodeID: [
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      municipalityCode: [
+      cityCode: [null],
+      municipalityCodeID: [
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      localityCode: [null, Validators.compose([Validators.pattern('')])],
-      indActive: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
-      ],
+      municipalityCode: [null],
+      localityCodeID: [null, Validators.compose([Validators.pattern('')])],
+      localityCode: [null],
+      indActive: [null],
       type: [
         null,
         Validators.compose([
@@ -117,17 +115,37 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     if (this.warehouse != null) {
       this.edit = true;
       console.log(this.warehouse);
+      let state = this.warehouse.stateCode;
+      let city = this.warehouse.cityCode;
+      let municipality = this.warehouse.municipalityCode;
+      let locality = this.warehouse.localityCode;
       this.warehouseForm.patchValue(this.warehouse);
-      // console.log(this.warehouse);
-      // const { descCondition, nameCity, description, localityName } =
-      //   this.warehouse;
-      // this.warehouseForm.patchValue(this.warehouse);
-      // this.idWarehouse.disable();
-      // //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
-      // this.states = new DefaultSelect([descCondition], 1);
-      // this.cities = new DefaultSelect([nameCity], 1);
-      // this.municipalities = new DefaultSelect([description], 1);
-      // this.localities = new DefaultSelect([localityName], 1);
+      this.warehouseForm.controls['stateCode'].setValue(state.descCondition);
+      this.warehouseForm.controls['stateCodeID'].setValue(state.id);
+      this.warehouseForm.controls['cityCode'].setValue(city.nameCity);
+      this.warehouseForm.controls['cityCodeID'].setValue(city.idCity);
+      this.warehouseForm.controls['municipalityCode'].setValue(
+        municipality.nameMunicipality
+      );
+      this.warehouseForm.controls['municipalityCodeID'].setValue(
+        municipality.idMunicipality
+      );
+      this.warehouseForm.controls['localityCode'].setValue(
+        locality.nameLocation
+      );
+      this.warehouseForm.controls['localityCodeID'].setValue(locality.id);
+      const { stateCode, cityCode, municipalityCode, localityCode } =
+        this.warehouse;
+      console.log([stateCode.descCondition]);
+      this.states = new DefaultSelect([stateCode.descCondition], 1);
+      this.cities = new DefaultSelect([cityCode.nameCity], 1);
+      this.municipalities = new DefaultSelect(
+        [municipalityCode.nameMunicipality],
+        1
+      );
+      this.localities = new DefaultSelect([localityCode.nameLocation], 1);
+    } else {
+      this.warehouseForm.controls['indActive'].setValue(1);
     }
   }
 
@@ -149,12 +167,42 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.warehouseService
-      .update(this.warehouse.idWarehouse, this.warehouseForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    console.log(this.warehouseForm.value);
+    let data = {
+      idWarehouse: this.warehouseForm.controls['idWarehouse'].value,
+      description: this.warehouseForm.controls['description'].value,
+      ubication: this.warehouseForm.controls['ubication'].value,
+      manager: this.warehouseForm.controls['manager'].value,
+      registerNumber: this.warehouseForm.controls['registerNumber'].value,
+      stateCode:
+        this.warehouse.stateCode.descCondition !=
+        this.warehouseForm.get('stateCode').value
+          ? this.warehouseForm.get('stateCode').value
+          : this.warehouseForm.controls['stateCodeID'].value,
+      cityCode:
+        this.warehouse.cityCode.nameCity !=
+        this.warehouseForm.get('cityCode').value
+          ? this.warehouseForm.controls['cityCode'].value
+          : this.warehouseForm.controls['cityCodeID'].value,
+      municipalityCode:
+        this.warehouse.municipalityCode.nameMunicipality !=
+        this.warehouseForm.get('municipalityCode').value
+          ? this.warehouseForm.controls['municipalityCode'].value
+          : this.warehouseForm.controls['municipalityCodeID'].value,
+      localityCode:
+        this.warehouse.localityCode.nameLocation !=
+        this.warehouseForm.get('localityCode').value
+          ? this.warehouseForm.controls['localityCode'].value
+          : this.warehouseForm.controls['localityCodeID'].value,
+      indActive: this.warehouseForm.controls['indActive'].value,
+      type: this.warehouseForm.controls['type'].value,
+      responsibleDelegation:
+        this.warehouseForm.controls['responsibleDelegation'].value,
+    };
+    this.warehouseService.update(this.warehouse.idWarehouse, data).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

@@ -7,6 +7,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
 import { FullComponent } from './full.component';
+import { MenuDynamicComponent } from './sidebar/menu-dynamic/menu-dynamic.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TitleComponent } from './title.component';
 import { TopbarComponent } from './topbar/topbar.component';
@@ -17,6 +18,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     SidebarComponent,
     TopbarComponent,
     TitleComponent,
+    MenuDynamicComponent,
   ],
   imports: [
     CommonModule,

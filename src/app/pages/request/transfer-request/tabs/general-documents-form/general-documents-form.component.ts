@@ -13,8 +13,8 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
-import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -59,7 +59,8 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private authorityService: AuthorityService,
     private regionalDelegationService: RegionalDelegationService,
-    private delegationStateService: DelegationStateService,
+    //private delegationStateService: DelegationStateService,
+    private stateOfRepublicService: StateOfRepublicService,
     private transferenteService: TransferenteService,
     private stationService: StationService,
     private requestService: RequestService,
@@ -91,6 +92,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     this.initSearchForm();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
+    this.getStateSelect(new ListParams());
     this.reactiveFormCalls();
   }
 
@@ -220,35 +222,34 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegationSelect(params: ListParams) {
-    params.text = params.text == null ? '' : params.text;
-    this.regionalDelegationService.search(params).subscribe({
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.regionalDelegationService.getAll(params).subscribe({
       next: resp => {
         this.regionalsDelegations = new DefaultSelect(resp.data, resp.count);
       },
     });
   }
 
-  getStateSelect(params: ListParams, regDelegId?: Number) {
-    const idDelegReg: any = regDelegId ? regDelegId : this.idDelegReg;
-    params['filter.regionalDelegation'] = `$eq:${idDelegReg}`;
-    params.limit = 20;
-    this.delegationStateService.getAll(params).subscribe({
+  getStateSelect(params: ListParams) {
+    //const idDelegReg: any = regDelegId ? regDelegId : this.idDelegReg;
+    params['filter.descCondition'] = `$ilike:${params.text}`;
+    this.stateOfRepublicService.getAll(params).subscribe({
       next: resp => {
-        const stateCode = resp.data
+        /*const stateCode = resp.data
           .map((x: any) => {
             if (x.stateCode != null) {
               return x.stateCode;
             }
           })
-          .filter(x => x != undefined);
-        this.states = new DefaultSelect(stateCode, stateCode.length);
+          .filter(x => x != undefined);*/
+        this.states = new DefaultSelect(resp.data, resp.count);
       },
     });
   }
 
   getTransferentSelect(params: ListParams) {
-    params.text = params.text == null ? '' : params.text;
-    this.transferenteService.search(params).subscribe({
+    params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    this.transferenteService.getAll(params).subscribe({
       next: (resp: any) => {
         this.transferents = new DefaultSelect(resp.data, resp.count);
       },
@@ -293,14 +294,14 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   reactiveFormCalls() {
-    this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
+    /* this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
       resp => {
         if (resp) {
           this.idDelegReg = Number(resp);
           this.getStateSelect(new ListParams(), Number(resp));
         }
       }
-    );
+    );*/
 
     this.searchForm.controls['transferenceId'].valueChanges.subscribe(resp => {
       if (resp) {

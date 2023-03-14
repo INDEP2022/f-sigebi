@@ -8,7 +8,7 @@
         <search-bar
           *ngIf="dataObservableFn"
           [haveSearch]="haveSearch"
-          type="number"
+          [type]="type"
           [filterParams]="filterParams"
           [filterField]="searchFilter"
           [dynamicFilters]="filters"
