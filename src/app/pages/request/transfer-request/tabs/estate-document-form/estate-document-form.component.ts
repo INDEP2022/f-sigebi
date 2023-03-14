@@ -83,8 +83,8 @@ export class EstateDocumentFormComponent
   }
 
   getGoodTypeSelect(params: ListParams) {
-    params.text = params.text ? params.text : '';
-    this.typeRelevantService.search(params).subscribe({
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.typeRelevantService.getAll(params).subscribe({
       next: resp => {
         this.goodTypes = new DefaultSelect(resp.data, resp.count);
       },

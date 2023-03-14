@@ -34,7 +34,7 @@ export class AuthorityService
   }
 
   getById(id: string | number): Observable<IAuthority> {
-    return this.authorityRepository.getById(this.route, id);
+    return this.authorityRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IAuthority): Observable<IAuthority> {
@@ -49,6 +49,7 @@ export class AuthorityService
     return this.authorityRepository.remove(this.route, id);
   }
 
+  //borrar
   postByIds(model: Object): Observable<IListResponse<IAuthority>> {
     const route = 'catalog/api/v1/authority/id';
     return this.httpClient.post<IListResponse<IAuthority>>(
