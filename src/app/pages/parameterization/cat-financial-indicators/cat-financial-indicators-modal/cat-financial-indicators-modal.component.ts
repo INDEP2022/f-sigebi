@@ -8,6 +8,7 @@ import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-ind
 //services
 import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-financial-indicators-modal',
@@ -41,8 +42,11 @@ export class CatFinancialIndicatorsModalComponent
   private prepareform() {
     this.financialIndicatorsForm = this.fb.group({
       id: [null, []],
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       formula: [null, [Validators.required]],
     });
     if (this.financialIndicators != null) {

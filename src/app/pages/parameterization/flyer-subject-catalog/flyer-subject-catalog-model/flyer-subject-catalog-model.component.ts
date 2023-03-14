@@ -45,11 +45,10 @@ export class FlyerSubjectCatalogModelComponent
 
   private prepareForm() {
     this.affairTypeForm = this.fb.group({
-      code: [null, [Validators.required]],
+      code: [null, []],
       relationPropertyKey: [null, [Validators.required]],
       referralNoteType: [null, [Validators.required]],
       versionUser: [null, [Validators.required]],
-      idRegister: [null, [Validators.required]],
     });
     if (this.affairType != null) {
       this.id = this.affairType.code as unknown as IAffair;

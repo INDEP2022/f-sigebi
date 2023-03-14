@@ -126,10 +126,10 @@ export class RegisterAttributesTypesComponent
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
-          error = err.message;
+          //error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        //this.onLoadToast('error', 'Error', error);
       },
       () => {}
     );
