@@ -88,6 +88,7 @@ export class RegisterAttributesTypesComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -117,7 +118,22 @@ export class RegisterAttributesTypesComponent
 
   //Métodos para autocompletar los tipos
   getTypes(params: ListParams) {
-    this.service.search(params).subscribe(
+    this.service.getAll(params).subscribe(
+      res => {
+        this.types = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      }
+    );
+    /* this.service.search(params).subscribe(
       data => {
         this.types = new DefaultSelect(data.data, data.count);
       },
@@ -132,13 +148,14 @@ export class RegisterAttributesTypesComponent
         //this.onLoadToast('error', 'Error', error);
       },
       () => {}
-    );
+    ); */
   }
 
   getSubtypes(params: ListParams) {
     this.goodSubtypesService
       .getAll({ type: this.type.value, ...params })
       .subscribe(data => {
+        console.log(data);
         this.subtypes = new DefaultSelect(data.data, data.count);
       });
   }

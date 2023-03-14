@@ -72,7 +72,7 @@ export class CityListComponent extends BasePage implements OnInit {
   }
 
   delete(id: number) {
-    this.cityService.remove(id).subscribe({
+    this.cityService.remove2(id).subscribe({
       next: () => this.getCities(),
     });
   }

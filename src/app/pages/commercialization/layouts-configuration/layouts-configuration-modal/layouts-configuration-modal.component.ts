@@ -25,13 +25,14 @@ export class LayoutsConfigurationModalComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   edit: boolean = false;
+  structureLayoutSelected: any;
   providerForm: FormGroup = new FormGroup({});
   id: number = 0;
   layoutsT: IComerLayouts;
   layout: IL;
   layoutList: IComerLayouts[] = [];
   @Output() onConfirm = new EventEmitter<any>();
-  @Input() idLayout: number | undefined;
+  @Input() structureLayout: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -42,7 +43,9 @@ export class LayoutsConfigurationModalComponent
   }
   ngOnInit(): void {
     this.prepareForm();
-    console.log(this.idLayout);
+    this.structureLayoutSelected = this.structureLayout;
+    // this.inpuLayout = this.idLayout.toString().toUpperCase();
+    console.log(this.structureLayoutSelected);
   }
 
   private prepareForm(): void {
@@ -83,7 +86,7 @@ export class LayoutsConfigurationModalComponent
   create() {
     try {
       this.loading = false;
-      this.layoutsConfigService.create(this.layout).subscribe({
+      this.layoutsConfigService.create(this.structureLayout).subscribe({
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
@@ -102,13 +105,15 @@ export class LayoutsConfigurationModalComponent
       'Desea actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService.update(this.layoutsT).subscribe({
-          next: data => this.handleSuccess(),
-          error: error => {
-            this.onLoadToast('error', 'layout', '');
-            this.loading = false;
-          },
-        });
+        this.layoutsConfigService
+          .update(this.provider.id, this.providerForm.value)
+          .subscribe({
+            next: data => this.handleSuccess(),
+            error: error => {
+              this.onLoadToast('error', 'layout', '');
+              this.loading = false;
+            },
+          });
       }
     });
   }

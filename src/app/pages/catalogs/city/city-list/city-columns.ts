@@ -1,7 +1,7 @@
 export const CITY_COLUMNS = {
-  noRegister: {
-    title: 'Registro',
-    type: 'number',
+  idCity: {
+    title: 'No. Ciudad',
+    type: 'string',
     sort: false,
   },
   nameCity: {
@@ -10,11 +10,11 @@ export const CITY_COLUMNS = {
     sort: false,
   },
   state: {
-    title: 'CVE',
+    title: 'Entidad Federativa',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.codeCondition;
+      return value.descCondition;
     },
   },
   noDelegation: {
@@ -28,7 +28,7 @@ export const CITY_COLUMNS = {
     sort: false,
   },
   legendOffice: {
-    title: 'Oficina',
+    title: 'Leyenda Oficio',
     type: 'string',
     sort: false,
   },

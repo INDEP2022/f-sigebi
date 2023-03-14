@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -42,21 +42,26 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
 
+  id: any;
+
   settings2;
 
   constructor(
     private affairTypeService: AffairTypeService,
     private affairService: AffairService,
     private fb: FormBuilder,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private r2: Renderer2
   ) {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...AFFAIR_COLUMNS },
@@ -64,6 +69,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -135,9 +141,13 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.affairTypeList = [];
     this.affairs = event.data;
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffairType(this.affairs));
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getAffairType(this.affairs);
+      const btn = document.getElementById('btn-new');
+      this.r2.removeClass(btn, 'disabled');
+      this.id = this.affairs;
+      console.log(this.id);
+    });
   }
 
   //Trae los tipos de asuntos por el id del asunto previamente seleccionado
@@ -147,7 +157,6 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       .getAffairTypeById(affair.id, this.params2.getValue())
       .subscribe({
         next: response => {
-          console.log(response);
           this.affairTypeList = response.data;
           this.totalItems2 = response.count;
           this.loading = false;
@@ -158,7 +167,6 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
 
   //Formulario para actualizar tipo de asunto
   openForm(affairType?: IAffairType) {
-    console.log(affairType);
     const idF = { ...this.affairs };
     let affair = this.affairs;
     let config: ModalOptions = {
@@ -166,7 +174,9 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
         affairType,
         affair,
         idF,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) this.getAffairType(this.id);
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -206,6 +216,27 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de asunto
   delete(id: number) {
     this.affairService.remove2(id).subscribe({
+      next: () => this.getAffairAll(),
+    });
+  }
+
+  //msj de alerta para eliminar un asunto
+  showDeleteAlert2(affairType?: IAffairType) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete2(affairType.code);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //método para borrar registro de asunto
+  delete2(id: number) {
+    this.affairTypeService.remove(id).subscribe({
       next: () => this.getAffairAll(),
     });
   }
