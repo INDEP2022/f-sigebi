@@ -43,10 +43,18 @@ export class AppraisalMonitorComponent extends BasePage implements OnInit {
   }
 
   getAppraisals() {
+    var info: any[] = [];
     this.loading = true;
     this.appraisalService.getAll(this.params.getValue()).subscribe({
       next: data => {
-        this.appraisals = data.data;
+        data.data.forEach((element: any) => {
+          element['requestDate'] = element.requestXAppraisal.requestDate;
+          element['sourceUser'] = element.requestXAppraisal.sourceUser;
+          element['targetUser'] = element.requestXAppraisal.targetUser;
+          element['observations'] = element.requestXAppraisal.observations;
+          info.push(element);
+        });
+        this.appraisals = info;
         this.totalItems = data.count;
         this.loading = false;
       },
