@@ -118,17 +118,13 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   confirm() {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
-    expedient.creationUser = this.authService.decodeToken().preferred_username;
-    expedient.creationDate = new Date().toISOString();
-    expedient.modificationUser =
-      this.authService.decodeToken().preferred_username;
-    expedient.modificationDate = new Date().toISOString();
 
     this.expedientSamiService.create(expedient).subscribe({
       next: expedient => {
         if (expedient.id) {
+          debugger;
           request.recordId = expedient.id;
-          this.requestService.update(request.id, request).subscribe({
+          /* this.requestService.update(request.id, request).subscribe({
             next: resp => {
               if (resp.id) {
                 this.message(
@@ -140,7 +136,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-          });
+          }); */
         } else {
           this.message(
             'error',

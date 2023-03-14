@@ -18,7 +18,7 @@ export class AffairService implements ICrudMethods<IAffair> {
   }
 
   getById(id: string | number): Observable<IAffair> {
-    return this.affairRepository.getById(this.route, id);
+    return this.affairRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IAffair): Observable<IAffair> {

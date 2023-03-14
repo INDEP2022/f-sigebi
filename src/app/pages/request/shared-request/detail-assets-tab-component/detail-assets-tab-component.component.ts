@@ -300,7 +300,7 @@ export class DetailAssetsTabComponentComponent
   getState(event: any) {}
 
   getMunicipaly(params: ListParams, keyState?: number) {
-    params['stateKey'] = keyState;
+    params['filter.stateKey'] = `$eq:${keyState}`;
     params['limit'] = 20;
     this.municipeSeraService.getAll(params).subscribe({
       next: data => {
@@ -314,8 +314,8 @@ export class DetailAssetsTabComponentComponent
 
   getLocality(params: ListParams, municipalityId?: number, stateKey?: number) {
     params.limit = 20;
-    params['municipalityId'] = municipalityId;
-    params['stateKey'] = stateKey;
+    params['filter.municipalityId'] = `$eq:${municipalityId}`;
+    params['filter.stateKey'] = `$eq:${stateKey}`;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);
@@ -695,6 +695,7 @@ export class DetailAssetsTabComponentComponent
     } else {
       address = addressId;
     }
+    debugger;
     this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
