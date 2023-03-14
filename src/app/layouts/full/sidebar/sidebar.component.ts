@@ -194,19 +194,14 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    * Initialize
    */
   private initialize(): void {
-    console.log(this.menus);
-
     for (const menu of this.menus) {
-      //crea nivel menu
       const global: IMenuItem = {} as IMenuItem;
       global.label = menu.description;
 
-      //buscar hijos menus
       if (menu.submenus.length > 0) {
         global.icon = 'bx-folder';
         global.subItems = searchChild(menu.submenus);
       } else {
-        //si no se tiene hijos menu se pondra icono igual ?
         global.link = menu.name;
       }
       this.menuItems.push(global);
@@ -215,8 +210,6 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     function searchChild(subMenu: Submenu[]): IMenuItem[] {
       let subItemsArray: IMenuItem[] = [];
       for (const sub of subMenu) {
-        console.log(subMenu);
-
         const subItems: IMenuItem = {} as IMenuItem;
         subItems.label = sub.description;
         subItems.subItems = [];
