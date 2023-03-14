@@ -4,27 +4,6 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="warehouseForm">
-      <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('idWarehouse')" label="Id">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idWarehouse"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('indActive')" label="Activo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="indActive" />
-          </form-field>
-        </div>
-      </div>
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field
@@ -49,38 +28,6 @@
       </div>
 
       <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('manager')"
-            label="Responsable">
-            <input type="text" class="form-control" formControlName="manager" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('responsibleDelegation')"
-            label="Delegaci&oacute;n Responsable">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="responsibleDelegation" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseForm.get('registerNumber')"
-            label="No&#46; Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registerNumber"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
         <div class="col-md-4">
           <form-field [control]="warehouseForm.get('stateCode')">
             <ngx-select
@@ -105,9 +52,6 @@
               control="cityCode"></ngx-select>
           </form-field>
         </div>
-      </div>
-
-      <div class="row mt-4">
         <div class="col-md-4">
           <form-field [control]="warehouseForm.get('municipalityCode')">
             <ngx-select
@@ -120,6 +64,9 @@
               control="municipalityCode"></ngx-select>
           </form-field>
         </div>
+      </div>
+
+      <div class="row mt-4">
         <div class="col-md-4">
           <form-field
             [control]="warehouseForm.get('type')"
@@ -133,8 +80,8 @@
               [form]="warehouseForm"
               [data]="localities"
               label="Localidad"
-              bindLabel="localityName"
-              value="key"
+              bindLabel="nameLocation"
+              value="id"
               (fetchItems)="getLocalities($event)"
               control="localityCode"></ngx-select>
           </form-field>

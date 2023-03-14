@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
+import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -25,6 +26,7 @@ export class AppraisalRequestComponent extends BasePage implements OnInit {
   public delegation = new DefaultSelect();
   public subdelegation = new DefaultSelect();
   public department = new DefaultSelect();
+  public noRequest = new DefaultSelect();
   public appraisalCurrency = new DefaultSelect();
 
   constructor(
@@ -34,7 +36,8 @@ export class AppraisalRequestComponent extends BasePage implements OnInit {
     private subdelegationService: SubdelegationService,
     private departamentService: DepartamentService,
     private institucionService: InstitutionClasificationService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private appraisalService: AppraisesService
   ) {
     super();
   }
@@ -126,6 +129,17 @@ export class AppraisalRequestComponent extends BasePage implements OnInit {
     // this.currencyService.getAll(params).subscribe(data => {
     //   this.currency = new DefaultSelect(data.data, data.count);
     // });
+  }
+
+  public getRequestById(params: ListParams, id?: number) {
+    this.appraisalService.getRequestAppraisalById(id).subscribe({
+      next: data => {
+        this.noRequest = new DefaultSelect([data]);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   openModal(context?: Partial<InstitutionClassificationDetailComponent>) {

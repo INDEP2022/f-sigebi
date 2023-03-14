@@ -31,4 +31,7 @@ export class AppraisersService implements ICrudMethods<IAppraisers> {
   update(id: string | number, model: IAppraisers): Observable<Object> {
     return this.appraisersRepository.update(this.route, id, model);
   }
+  remove(id: string | number): Observable<Object> {
+    return this.appraisersRepository.remove(this.route, id);
+  }
 }

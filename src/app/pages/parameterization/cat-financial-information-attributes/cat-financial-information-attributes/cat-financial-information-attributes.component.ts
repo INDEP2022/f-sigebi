@@ -48,6 +48,7 @@ export class CatFinancialInformationAttributesComponent
         delete: true,
         position: 'right',
       },
+
       //hideSubHeader: false,
       columns: { ...FINANCIAL_INFO_ATTR_COLUMNS },
     };
