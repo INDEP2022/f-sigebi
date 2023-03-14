@@ -1,10 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NORMS_DETINATION_COLUMNS } from './norms-destination-columns';
 
 @Component({
   selector: 'app-norms-destination',
@@ -24,16 +25,21 @@ export class NormsDestinationComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef
   ) {
     super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: NORMS_DETINATION_COLUMNS,
+      selectedRowIndex: -1,
+    };
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+    this.getExample();
   }
 
   getExample() {
     this.loading = true;
+    this.params.getValue()['filter.name'] = 'Destino';
     this.genericService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.columns = response.data;

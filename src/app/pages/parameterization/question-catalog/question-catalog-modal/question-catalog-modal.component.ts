@@ -37,7 +37,6 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
       id: [
         null,
         [
-          Validators.required,
           Validators.maxLength(8),
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
@@ -71,6 +70,7 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log(this.questionForm.value);
     this.questionService.create(this.questionForm.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)

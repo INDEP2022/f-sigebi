@@ -47,7 +47,6 @@ export class CatFinancialInformationAttributesModalComponent
     });
     if (this.attributesFinancialInfo != null) {
       this.edit = true;
-      console.log(this.attributesFinancialInfo);
       this.attributesFinancialInfoForm.patchValue(this.attributesFinancialInfo);
     }
   }

@@ -5,27 +5,35 @@
     </div>
   </div>
   <div body>
-    <form [formGroup]="consultTasksForm" class="form-material">
+    <form
+      [formGroup]="consultTasksForm"
+      class="form-material"
+      (ngSubmit)="getTasks()">
       <div class="row margin-input">
         <div class="col-md-3">
           <form-field
             [control]="consultTasksForm.get('unlinked')"
-            label="Seleccionar">
-            <select class="form-control" formControlName="unlinked">
-              <option [value]="null">Sin enlazar</option>
-              <option [value]="1">1</option>
-              <option [value]="2">2</option>
-            </select>
+            label="Acciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtSearch"
+              placeholder="Tarea a buscar" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="consultTasksForm.get('unlinked1')"
-            label="Seleccionar">
+            label="Estatus">
             <select class="form-control" formControlName="unlinked1">
-              <option [value]="null">Sin enlazar</option>
-              <option [value]="1">1</option>
-              <option [value]="2">2</option>
+              <option [value]="0">Todos</option>
+              <option [value]="1">Asignado</option>
+              <option [value]="2">Completado</option>
+              <option [value]="3">Suspendido</option>
+              <option [value]="4">Expirado</option>
+              <option [value]="5">Error</option>
+              <option [value]="6">Alertado</option>
+              <option [value]="7">Informaci&oacute;n requerido</option>
             </select>
           </form-field>
         </div>
@@ -33,19 +41,47 @@
     </form>
     <div class="row margin-input">
       <div class="col-md-2">
-        <button type="button" class="btn btn-primary active">Buscar</button>
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="getTasks()"
+          (keydown.enter)="onKeydown($event)">
+          Buscar
+        </button>
       </div>
       <div class="col-md-2">
-        <button type="button" class="btn btn-success active">
+        <button
+          type="button"
+          class="btn btn-success active"
+          (click)="exportToExcel()">
           Exportar a Excel
         </button>
       </div>
       <div class="col-md-2">
-        <button type="button" class="btn btn-secondary active">
+        <button
+          type="button"
+          class="btn btn-secondary active"
+          (click)="cleanFilter()">
           Limpiar Filtro
         </button>
       </div>
     </div>
+
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="tasks">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+
     <div class="row margin-input">
       <div class="col-md-2">
         <button type="button" class="btn btn-danger active">Cerrar</button>

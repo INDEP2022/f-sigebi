@@ -28,7 +28,7 @@ export class ScheduledMaintenanceComponent
   extends ScheduledMaintenance
   implements OnInit
 {
-  selecteds: IProceedingDeliveryReception[];
+  selecteds: IProceedingDeliveryReception[] = [];
   constructor(
     private modalService: BsModalService,
     protected override fb: FormBuilder,
@@ -61,6 +61,14 @@ export class ScheduledMaintenanceComponent
         `Se eliminaron las actas N° ${proceedings} ` +
           this.showMessageProceedingsNotRemoved(notRemoveds)
       );
+    } else {
+      if (notRemoveds.length > 0) {
+        this.onLoadToast(
+          'success',
+          'Exito',
+          `Elimine primero el detalle de las actas N° ${proceedings}`
+        );
+      }
     }
   }
 

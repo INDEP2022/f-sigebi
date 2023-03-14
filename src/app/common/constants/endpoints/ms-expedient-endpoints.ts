@@ -10,4 +10,7 @@ export enum ExpedientEndpoints {
   TmpExpedients = 'tmp-expedients',
   CreateTempExpedient = 'expedient/create-temp-expedient',
   DeleteTempExpedient = 'expedient/delete-temp-expedient',
+
+  //ExpedientSami
+  ExpedientSami = 'expedientsami',
 }

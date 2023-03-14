@@ -1,4 +1,5 @@
 export enum TransferentesSaeEndpoints {
   BasePath = 'catalog',
-  TransferentesSae = 'transferentes',
+  TransferentesSae = 'transferent',
+  EntityTransferring = 'entity-transferring',
 }

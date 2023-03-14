@@ -6,6 +6,9 @@ export const TRANSFERENT_COLUMNS = {
   nameTransferent: {
     title: 'Nombre',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
   keyTransferent: {
     title: 'Clave',
@@ -19,6 +22,16 @@ export const TRANSFERENT_COLUMNS = {
       if (value == 'CE') return 'Asegurado';
 
       return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'NO', title: 'No obligatorio' },
+          { value: 'CE', title: 'Asegurado' },
+        ],
+      },
     },
   },
   /*userCreation: {
@@ -148,4 +161,55 @@ export const TRANSFERENT_COLUMNS = {
     title: 'Riesgo',
     sort: false,
   },*/
+};
+
+export const STATION_COLUMNS = {
+  id: {
+    title: 'No.',
+    sort: false,
+    filter: false,
+  },
+  stationName: {
+    title: 'Nombre',
+    sort: false,
+  },
+  idTransferent: {
+    title: 'No. Transferente',
+    sort: false,
+  },
+  keyState: {
+    title: 'Código Estado',
+    sort: false,
+  },
+};
+
+export const AUTHORITY_COLUMNS = {
+  idAuthority: {
+    title: 'No. Autoridad',
+    sort: false,
+  },
+  cveUnique: {
+    title: 'Clave Única',
+    sort: false,
+  },
+  idCity: {
+    title: 'No. ciudad',
+    sort: false,
+  },
+  authorityName: {
+    title: 'Nombre de autoridad',
+    sort: false,
+  },
+  codeStatus: {
+    title: 'Código de estado',
+    sort: false,
+  },
+  idStation: {
+    title: 'No. Emisora',
+    sort: false,
+  },
+  idTransferer: {
+    title: 'No. Transferente',
+    sort: false,
+  },
 };

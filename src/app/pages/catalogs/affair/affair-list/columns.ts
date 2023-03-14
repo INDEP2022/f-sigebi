@@ -2,16 +2,17 @@ export const AFFAIR_COLUMNS = {
   id: {
     title: 'Código',
     sort: false,
-    filter: false,
+    width: '35px',
   },
   description: {
     title: 'Descripción',
     sort: false,
-    filter: false,
+    filter: {
+      config: {},
+    },
   },
   processDetonate: {
     title: 'Proceso detona',
     sort: false,
-    filter: false,
   },
 };

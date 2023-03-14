@@ -76,7 +76,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       const params = this.params.getValue();
       params.page = 1;
       this.params.next({ ...params, text });
-    } else {
+    } else if (this.filterParams) {
       const filterParams = this.filterParams.getValue();
       filterParams.page = 1;
       if (!this.haveSearch) {

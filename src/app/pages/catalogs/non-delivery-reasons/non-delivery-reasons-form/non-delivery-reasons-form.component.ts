@@ -42,7 +42,7 @@ export class NonDeliveryReasonsFormComponent
       { label: 'VENTA', value: '5' },
     ];
     this.typeReason = [
-      { label: 'Motivos No Aceptado', value: '1' },
+      { label: 'Motivos No Aceptados', value: '1' },
       { label: 'Motivos No Entregados', value: '2' },
       { label: 'Motivos No Retirados', value: '3' },
     ];
@@ -65,6 +65,8 @@ export class NonDeliveryReasonsFormComponent
       version: [null],
       status: [null],
     });
+    this.nonDeliveryReasonsForm.controls['version'].setValue(1);
+    this.nonDeliveryReasonsForm.controls['status'].setValue(1);
     if (this.nonDeliveryReasons != null) {
       this.edit = true;
       this.nonDeliveryReasonsForm.patchValue(this.nonDeliveryReasons);

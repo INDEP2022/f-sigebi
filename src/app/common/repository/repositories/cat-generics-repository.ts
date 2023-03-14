@@ -26,6 +26,17 @@ export class CatGeneticsRepository implements ICatGeneric {
     });
   }
 
+  getGenericByFilter(
+    route: string,
+    _params: ListParams
+  ): Observable<IListResponse<IGeneric>> {
+    const params = _params ? this.makeParams(_params) : {};
+    let fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IListResponse<IGeneric>>(`${fullRoute}`, {
+      params,
+    });
+  }
+
   private buildRoute(route: string) {
     const paths = route.split('/');
     paths.shift();
