@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { OfficeService } from 'src/app/core/services/catalogs/office.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ILawyer } from '../../../../core/models/catalogs/lawyer.model';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
@@ -10,7 +11,6 @@ import { LawyerService } from '../../../../core/services/catalogs/lawyer.service
 import {
   NUMBERS_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 
@@ -19,18 +19,13 @@ import {
   templateUrl: './lawyer-detail.component.html',
   styles: [],
 })
-export class LawyerDetailComponent implements OnInit {
-  loading: boolean = false;
+export class LawyerDetailComponent extends BasePage implements OnInit {
   status: string = 'Nuevo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   lawyer: any;
   delegations = new DefaultSelect<ILawyer>();
   offices = new DefaultSelect<ILawyer>();
-
-  public get id() {
-    return this.form.get('id');
-  }
 
   @Output() refresh = new EventEmitter<true>();
   constructor(
@@ -39,7 +34,9 @@ export class LawyerDetailComponent implements OnInit {
     private lawerService: LawyerService,
     private delegationService: DelegationService,
     private officeService: OfficeService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -51,83 +48,66 @@ export class LawyerDetailComponent implements OnInit {
       idOffice: [null],
       name: [
         '',
-        Validators.compose([
+        [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(80),
-        ]),
+        ],
       ],
       street: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(60),
-        ]),
+        ],
       ],
       streetNumber: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(NUMBERS_PATTERN),
           Validators.required,
           Validators.maxLength(10),
-        ]),
+        ],
       ],
       apartmentNumber: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(NUMBERS_PATTERN),
           Validators.required,
           Validators.maxLength(10),
-        ]),
+        ],
       ],
       suburb: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(''),
           Validators.required,
           Validators.maxLength(100),
-        ]),
+        ],
       ],
       delegation: [
         1,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(60),
-        ]),
+        [Validators.pattern(''), Validators.required, Validators.maxLength(60)],
       ],
-      zipCode: [
-        null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
-      ],
-      rfc: [
-        null,
-        Validators.compose([
-          Validators.pattern(RFCCURP_PATTERN),
-          Validators.required,
-          Validators.maxLength(20),
-        ]),
-      ],
+      zipCode: [null, [Validators.pattern(''), Validators.required]],
+      rfc: [null, [Validators.required, Validators.maxLength(20)]],
       phone: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(PHONE_PATTERN),
           Validators.required,
           Validators.maxLength(20),
-        ]),
+        ],
       ],
-      registerNumber: [
-        4,
-        Validators.compose([Validators.pattern(''), Validators.required]),
-      ],
+      registerNumber: [null],
     });
     if (this.edit) {
       this.status = 'Actualizar';
       const { idOffice, delegation } = this.lawyer;
       this.form.patchValue(this.lawyer);
-      this.id.disable();
       this.form.get('idOffice').setValue(idOffice.id);
+      console.log([delegation]);
       this.offices = new DefaultSelect([idOffice], 1);
       this.delegations = new DefaultSelect([delegation], 1);
     }
@@ -150,6 +130,8 @@ export class LawyerDetailComponent implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', 'ABOGADO', `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();
@@ -158,23 +140,7 @@ export class LawyerDetailComponent implements OnInit {
   //TODO: corregir update with updateByIds
   update() {
     this.loading = true;
-
-    const dataToUpdate: any = {
-      id: parseInt(this.lawyer.id),
-      idOffice: this.lawyer.idOffice.id,
-      apartmentNumber: parseInt(this.lawyer.apartmentNumber),
-      delegation: this.lawyer.delegation,
-      name: this.lawyer.name,
-      phone: this.lawyer.phone,
-      registerNumber: parseInt(this.lawyer.registerNumber),
-      rfc: this.lawyer.rfc,
-      street: this.lawyer.street,
-      streetNumber: this.lawyer.streetNumber,
-      zipCode: parseInt(this.lawyer.zipCode),
-      suburb: this.lawyer.suburb,
-    };
-
-    this.lawerService.update(dataToUpdate.id, dataToUpdate).subscribe(
+    this.lawerService.update(this.lawyer.id, this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );

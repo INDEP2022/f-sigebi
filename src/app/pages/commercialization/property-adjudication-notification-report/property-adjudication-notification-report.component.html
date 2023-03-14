@@ -101,17 +101,24 @@
       </div>
 
  -->
-
-      <div class="row pt-2 scroll-table">
-        <ng2-smart-table
-          class="col-md-12"
-          [attr.class]="'table-bordered'"
-          [settings]="settings4"
-          [source]="dataBatch"></ng2-smart-table>
+      <div body>
+        <div class="row">
+          <label for="">Lotes</label>
+        </div>
+        <div class="row pt-2 scroll-table justify-content-center">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings4"
+            [source]="dataBatch"></ng2-smart-table>
+        </div>
+        <div class="row mt-5 d-flex justify-content-center">
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
       </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+
       <br /><br />
 
       <div class="row">

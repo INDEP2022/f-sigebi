@@ -6,8 +6,6 @@ import {
 const JURIDICAL_PROCESSES: string[] = [
   // 'dictaminaciones-juridicas',
   'juridical-ruling',
-  // 'actualizacion-datos-expediente',
-  'file-data-update',
   // 'abandono-devolucion-monitor',
   'return-abandonment-monitor',
   // 'declaracion-abandono-aseguramiento',

@@ -35,4 +35,7 @@ export class ValidatorsProceedingsService
   update4(model: IValidatorsProceedings): Observable<Object> {
     return this.maximumTimesRepository.update4(this.route, model);
   }
+  remove(id: string | number): Observable<Object> {
+    return this.maximumTimesRepository.remove(this.route, id);
+  }
 }

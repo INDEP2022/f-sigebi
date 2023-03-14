@@ -181,24 +181,36 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings1"
-          [source]="data1"></ng2-smart-table>
+          [source]="goods"></ng2-smart-table>
       </div>
     </div>
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
-        <button class="btn btn-secondary btn-sm active m-3 p-3" type="button">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3"
+          type="button"
+          (click)="addAll()">
           <!-- Mover uno -->
           <i class="bx bxs-down-arrow-circle bx-md"></i>
         </button>
-        <button class="btn btn-secondary btn-sm active m-3 p-3" type="button">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3"
+          type="button"
+          (click)="addSelect()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
-        <button class="btn btn-secondary btn-sm active m-3 p-3" type="button">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3"
+          type="button"
+          (click)="removeSelect()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
-        <button class="btn btn-secondary btn-sm active m-3 p-3" type="button">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3"
+          type="button"
+          (click)="removeAll()">
           <!-- Quitar uno -->
           <i class="bx bxs-up-arrow-circle bx-md"></i>
         </button>
@@ -209,7 +221,7 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings2"
-          [source]="data2"></ng2-smart-table>
+          [source]="goodsValid"></ng2-smart-table>
       </div>
     </div>
 
@@ -224,7 +236,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings3"
-              [source]="data3"></ng2-smart-table>
+              [source]="documents"></ng2-smart-table>
           </div>
           <div class="col-md-2">
             <p class="text-info h5">No&#46; bien</p>

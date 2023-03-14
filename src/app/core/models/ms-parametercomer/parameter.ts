@@ -54,4 +54,15 @@ export interface IComerLayouts {
 
 export interface ILay {
   idLayout: number;
+  idConsec: number;
+}
+
+export interface IL {
+  idLayout: number;
+}
+
+export interface IPhoto {
+  id: number;
+  route: URL;
+  status: string;
 }

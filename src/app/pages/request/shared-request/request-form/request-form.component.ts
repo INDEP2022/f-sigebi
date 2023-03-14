@@ -72,6 +72,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   requestService = inject(RequestService);
 
   selectedRegDel: any = null;
+  authorityName: string = '';
 
   constructor(
     public fb: FormBuilder,
@@ -101,6 +102,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (data != null) {
           this.idsObject.idStation = Number(data);
           this.getAuthority(new ListParams(), this.idsObject);
+        }
+      }
+    );
+
+    this.requestForm.controls['authorityId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          console.log(this.selectAuthority.data);
+          this.authorityName = this.selectAuthority.data.filter(
+            x => x.idAuthority === data
+          )[0].authorityName;
+
+          console.log(this.authorityName);
+        } else {
+          this.authorityName = '';
         }
       }
     );
@@ -189,8 +205,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   getTransferent(params?: ListParams) {
+    params['filter.nameTransferent'] = `$ilike:${params.text}`;
     this.transferentService
-      .search(params)
+      .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });

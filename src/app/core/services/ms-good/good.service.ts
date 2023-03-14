@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { EventEmitter, inject, Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -14,7 +13,6 @@ import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 })
 export class GoodService extends HttpService {
   good$ = new EventEmitter<IGood>();
-  private http = inject(HttpClient);
 
   constructor() {
     super();

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStation2 } from 'src/app/core/models/catalogs/station.model';
@@ -36,7 +36,7 @@ export class CatStationModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stationForm = this.fb.group({
       idTransferent: [null, []],
-      stationName: [null, []],
+      stationName: [null, [Validators.required]],
       status: [1, []],
     });
     if (this.station != null) {

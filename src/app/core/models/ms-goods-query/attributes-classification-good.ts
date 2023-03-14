@@ -12,3 +12,7 @@ export interface IAttribClassifGoods {
   registrationNumber?: number;
   typeAct?: number;
 }
+// Obtener unidades de medida de acuerdo a la clasificacion
+export interface IUnityByClasif {
+  unit: string;
+}
