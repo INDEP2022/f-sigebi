@@ -33,7 +33,16 @@ export class AppraisesService extends HttpService {
   }
 
   getRequestAppraisalById(id: string | number) {
-    const route = `${this.endpoint}/request-x-appraisal/${id}`;
+    const route = `request-x-appraisal/${id}`;
     return this.get(route);
+  }
+
+  getRequestAppraisalAll(
+    params?: ListParams
+  ): Observable<IListResponse<IAppraisalMonitor>> {
+    return this.get<IListResponse<IAppraisalMonitor>>(
+      `/request-x-appraisal`,
+      params
+    );
   }
 }
