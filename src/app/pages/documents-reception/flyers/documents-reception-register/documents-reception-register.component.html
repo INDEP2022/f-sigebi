@@ -22,16 +22,13 @@
         <div class="col-md-7">
           <div class="d-flex">
             <div>
-              <a
-                [routerLink]="[
-                  '/pages/documents-reception/flyers-registration/record-update',
-                  12345
-                ]"
+              <button
                 outline
                 class="btn btn-primary btn-sm mr-3 active"
-                size="small">
+                size="small"
+                (click)="sendToRecordUpdate()">
                 Antecedentes
-              </a>
+              </button>
             </div>
 
             <div
@@ -423,7 +420,7 @@
                 (fetchItems)="getUniqueKey($event)"
                 bindLabel="uniqueCve"
                 control="uniqueKey"
-                label="Clave única 3 niveles"
+                label="Clave &uacute;nica 3 niveles"
                 (change)="setUniqueKeyData($event, true)"
                 termMaxLength="5">
               </ngx-select>
