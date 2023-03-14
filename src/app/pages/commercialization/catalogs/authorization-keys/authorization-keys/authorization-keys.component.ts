@@ -11,16 +11,18 @@ import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-c
 @Component({
   selector: 'app-authorization-keys',
   templateUrl: './authorization-keys.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AuthorizationKeysComponent extends BasePage implements OnInit {
-
   eventForm: ModelForm<IComerEvent>;
   event1: IComerEvent;
   form: FormGroup = new FormGroup({});
 
-  constructor(private fb:FormBuilder, private comerEventosService:ComerEventosService, private utilComerV1Service:UtilComerV1Service) {
+  constructor(
+    private fb: FormBuilder,
+    private comerEventosService: ComerEventosService,
+    private utilComerV1Service: UtilComerV1Service
+  ) {
     super();
   }
 
@@ -35,15 +37,13 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
       processKey: [null, []],
       observations: [null, []],
     });
-    
   }
 
-  private prepareForm2(){
+  private prepareForm2() {
     this.form = this.fb.group({
       txtEncrip: [null, []],
       encrip: [null, []],
     });
-    
   }
 
   getEventById(): void {
@@ -54,7 +54,6 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
       response => {
         //TODO: Validate Response
         if (response !== null) {
-          
           this.eventForm.patchValue(response);
           this.eventForm.updateValueAndValidity();
           let key = this.eventForm.controls['id'].value;
@@ -104,6 +103,4 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
       'copiada al portapapeles'
     );
   }
-
-
 }

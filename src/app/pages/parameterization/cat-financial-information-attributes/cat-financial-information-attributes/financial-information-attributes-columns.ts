@@ -7,12 +7,13 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
   name: {
     title: 'Nombre',
     sort: false,
-    filter: true,
   },
   description: {
     title: 'Descripción',
     sort: false,
-    filter: true,
+    filter: {
+      config: {},
+    },
   },
   type: {
     title: 'Tipo',
@@ -21,11 +22,10 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
     valuePrepareFunction: (value: string) => {
       if (value == 'ACT') return 'Activo';
       if (value == 'PAS') return 'Pasivo';
-      if (value == 'CAP') return 'Resultados';
-      if (value == 'RES') return 'Adeudos';
-      if (value == 'ADE') return 'Principales Cuentas';
+      if (value == 'CAP') return 'Capital Contable';
+      if (value == 'RES') return 'Resultados';
+      if (value == 'ADE') return 'Adeudos';
       if (value == 'PRI') return 'Principales Cuentas';
-
       return value;
     },
     filter: {
@@ -46,7 +46,6 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
   subType: {
     title: 'Sub Tipo',
     sort: false,
-    filter: true,
     valuePrepareFunction: (value: string) => {
       if (value == 'GEN') return 'Genérico';
       if (value == 'UTB') return 'Utilidad bruta';

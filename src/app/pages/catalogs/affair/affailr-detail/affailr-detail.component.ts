@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-affailr-detail',
@@ -33,7 +34,7 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.affairForm = this.fb.group({
       id: [null, []],
-      description: [null, []],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
       processDetonate: [null, []],
     });
     if (this.affair != null) {
