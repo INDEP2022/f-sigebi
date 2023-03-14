@@ -12,7 +12,8 @@
               [settings]="settings"
               [source]="data"
               (edit)="openForm($event.data)"
-              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+              (userRowSelect)="rowsSelected($event)"
+              (rowSelect)="selectRow($event.data)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params"
@@ -21,7 +22,7 @@
       </div>
     </div>
 
-    <div class="row pt-5">
+    <div class="row pt-5" *ngIf="rowSelected">
       <div class="ch-content">
         <h5 class="title">Estados</h5>
         <div class="col-md-5 buttons">

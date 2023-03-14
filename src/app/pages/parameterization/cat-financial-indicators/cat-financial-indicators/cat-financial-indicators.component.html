@@ -24,7 +24,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [settings]="settings"
-            [source]="financialIndicators"
+            [source]="data"
             (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
         </div>
