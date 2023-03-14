@@ -6,10 +6,15 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MaximumTimesModalComponent } from './maximum-times-modal/maximum-times-modal.component';
 import { MaximumTimesRoutingModule } from './maximum-times-routing.module';
+import { MaximumTimesUserComponent } from './maximum-times-user/maximum-times-user.component';
 import { MaximumTimesComponent } from './maximum-times/maximum-times.component';
 
 @NgModule({
-  declarations: [MaximumTimesComponent, MaximumTimesModalComponent],
+  declarations: [
+    MaximumTimesComponent,
+    MaximumTimesModalComponent,
+    MaximumTimesUserComponent,
+  ],
   imports: [
     CommonModule,
     MaximumTimesRoutingModule,

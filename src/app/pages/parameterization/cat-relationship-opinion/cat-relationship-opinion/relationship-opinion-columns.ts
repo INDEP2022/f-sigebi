@@ -1,11 +1,24 @@
+export const AFFAIR_COLUMNS = {
+  id: {
+    title: 'Código',
+    sort: false,
+    width: '35px',
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  processDetonate: {
+    title: 'Proceso detona',
+    sort: false,
+  },
+};
+
 export const AFFAIR_TYPE_COLUMNS = {
   code: {
     title: 'Código',
     sort: false,
     filter: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
-    },
   },
   referralNoteType: {
     title: 'Tipo de volante',
@@ -63,10 +76,6 @@ export const DICTA_COLUMNS = {
   },
   e: {
     title: 'e',
-    sort: false,
-  },
-  registryNumber: {
-    title: 'No. Registro',
     sort: false,
   },
 };
