@@ -31,9 +31,7 @@ export class ProgrammingRequestService {
     );
   }
 
-  getGoodsProgramming(
-    _params: ListParams
-  ): Observable<IListResponse<IGoodProgramming>> {
+  getGoodsProgramming(_params: ListParams) {
     const params = this.makeParams(_params);
     const route = `programminggood/api/v1/programming-goods`;
     return this.http.get<IListResponse<IGoodProgramming>>(
@@ -64,9 +62,19 @@ export class ProgrammingRequestService {
     return this.http.post(`${environment.API_URL}/${route}`, data);
   }
 
+  updateUserProgramming(formData: Object) {
+    let route = `programminggood/api/v1/programming-users`;
+    return this.http.put(`${environment.API_URL}/${route}`, formData);
+  }
+
   updateProgramming(id: number, formData: Object) {
     const route = `programminggood/api/v1/programming/${id}`;
     return this.http.put(`${environment.API_URL}/${route}`, formData);
+  }
+
+  deleteUserProgramming(formData: Object) {
+    const route = `programminggood/api/v1/programming-users`;
+    return this.http.delete(`${environment.API_URL}/${route}`, formData);
   }
 
   private makeParams(params: ListParams): HttpParams {

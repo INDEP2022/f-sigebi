@@ -73,6 +73,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     this.params.getValue()['search'] = this.params.getValue().text;
     this.params.getValue()['filter.employeeType'] = this.typeUser;
     this.userProcessService.getAll(this.params.getValue()).subscribe(data => {
+      console.log('usuarios', data.data);
       this.usersData.load(data.data);
       this.totalItems = data.count;
       this.loading = false;

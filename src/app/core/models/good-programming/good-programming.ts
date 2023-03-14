@@ -1,6 +1,7 @@
 export interface IGoodProgramming {
   id: number;
   typeGoodId: string;
+  goodId: number;
   subTypeGoodId: string;
   startDate: Date;
   endDate: Date;
@@ -55,6 +56,7 @@ export interface IView {
 }
 
 export interface IGoodProgrammingSelect {
+  id: string;
   addressGood: number;
   aliasWarehouse: string;
   code: number;

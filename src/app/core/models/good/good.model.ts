@@ -2,7 +2,7 @@ import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 
 export interface IGood {
-  id: string;
+  id: string | number;
   noInventoey?: any;
   idGood: string;
   description: string;

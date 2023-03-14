@@ -27,6 +27,7 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -55,6 +56,9 @@ export class ReturnToPerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
+  goodsInfoTrans: any[] = [];
+  goodsInfoGuard: any[] = [];
+  goodsInfoWarehouse: any[] = [];
   usersToProgramming: LocalDataSource = new LocalDataSource();
   estatesList: LocalDataSource = new LocalDataSource();
   goodsTranportables: LocalDataSource = new LocalDataSource();
@@ -114,7 +118,8 @@ export class ReturnToPerformProgrammingFormComponent
     private stateOfRepublicService: StateOfRepublicService,
     private municipalityService: MunicipalityService,
     private localityService: LocalityService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodService: GoodService
   ) {
     super();
     this.programmingId = this.activatedRoute.snapshot.paramMap.get(
@@ -305,7 +310,7 @@ export class ReturnToPerformProgrammingFormComponent
       .subscribe({
         next: response => {
           console.log('users', response);
-          this.usersToProgramming.load([response]);
+          this.usersToProgramming.load(response.data);
           //this.totalItemsUsers = this.usersData.length;
           this.loading = false;
         },
@@ -503,11 +508,24 @@ export class ReturnToPerformProgrammingFormComponent
       return item.status == 'EN_TRANSPORTABLE';
     });
 
-    const infoGood = filter.map(goods => {
-      return goods.view;
+    filter.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+
+          this.goodsInfoTrans.push(response);
+
+          this.goodsTranportables.load(this.goodsInfoTrans);
+          this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+        },
+      });
     });
-    this.goodsTranportables.load(infoGood);
-    this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
   }
 
   /*------------------ Goods in guard ---------------------------*/
@@ -516,11 +534,24 @@ export class ReturnToPerformProgrammingFormComponent
       return item.status == 'EN_RESGUARDO';
     });
 
-    const infoGood = filter.map(goods => {
-      return goods.view;
+    filter.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+
+          this.goodsInfoGuard.push(response);
+
+          this.goodsGuards.load(this.goodsInfoGuard);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+        },
+      });
     });
-    this.goodsGuards.load(infoGood);
-    this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
   }
 
   /*-----------------Goods in warehouse---------------------------*/
@@ -529,11 +560,24 @@ export class ReturnToPerformProgrammingFormComponent
       return item.status == 'EN_ALMACÉN';
     });
 
-    const infoGood = filter.map(goods => {
-      return goods.view;
+    filter.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+
+          this.goodsInfoWarehouse.push(response);
+
+          this.goodsWarehouse.load(this.goodsInfoWarehouse);
+          this.headingWarehouse = `Almacén(${this.goodsWarehouse.count()})`;
+        },
+      });
     });
-    this.goodsWarehouse.load(infoGood);
-    this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
   }
 
   /*--------selected Goods ------------*/

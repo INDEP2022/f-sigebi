@@ -16,6 +16,7 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
@@ -30,7 +31,7 @@ import {
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
 import { ESTATE_COLUMNS } from '../columns/estate-columns';
-import { USER_COLUMNS } from '../columns/users-columns';
+import { USER_COLUMNS_SHOW } from '../columns/users-columns';
 
 @Component({
   selector: 'app-acept-programming-form',
@@ -57,13 +58,17 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   };
 
   params = new BehaviorSubject<ListParams>(new ListParams());
+  goodsInfoTrans: any[] = [];
+  goodsInfoGuard: any[] = [];
+  goodsInfoWarehouse: any[] = [];
   totalItems: number = 0;
   totalItemsTransportable: number = 0;
+  totalItemsGuard: number = 0;
   totalItemsWarehouse: number = 0;
   idTransferent: any;
   idStation: any;
   programming: Iprogramming;
-  usersData: any[] = [];
+  usersData: LocalDataSource = new LocalDataSource();
   estateData: any[] = [];
   programmingId: number = 0;
 
@@ -83,10 +88,15 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private stationService: StationService,
     private authorityService: AuthorityService,
     private typeRelevantService: TypeRelevantService,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private goodService: GoodService
   ) {
     super();
-    this.settings = { ...this.settings, actions: false, columns: USER_COLUMNS };
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: USER_COLUMNS_SHOW,
+    };
     this.programmingId = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
@@ -178,8 +188,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          this.usersData = [response];
-          this.totalItems = this.usersData.length;
+          console.log('Usuarios', response);
+          this.usersData.load(response.data);
+
+          this.totalItems = this.usersData.count();
           this.loading = false;
         },
         error: error => (this.loading = false),
@@ -266,6 +278,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .getGoodsProgramming(this.params.getValue())
       .subscribe(data => {
         this.filterStatusTrans(data.data);
+        this.filterStatusGuard(data.data);
         this.filterStatusWarehouse(data.data);
       });
   }
@@ -274,24 +287,78 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_TRANSPORTABLE';
     });
-    this.headingTransportable = `Transportables(${goodsTrans.length})`;
-    const viewGoods = goodsTrans.map(info => {
-      return info.view;
+
+    goodsTrans.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+
+          this.goodsInfoTrans.push(response);
+
+          this.goodsTranportables.load(this.goodsInfoTrans);
+          this.totalItemsTransportable = this.goodsTranportables.count();
+          this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+        },
+      });
     });
-    this.goodsTranportables.load(viewGoods);
-    this.totalItemsTransportable = this.goodsTranportables.count();
+  }
+
+  filterStatusGuard(data: IGoodProgramming[]) {
+    const goodsTrans = data.filter(items => {
+      return items.status == 'EN_RESGUARDO';
+    });
+
+    goodsTrans.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+
+          this.goodsInfoGuard.push(response);
+
+          this.goodsGuards.load(this.goodsInfoGuard);
+          this.totalItemsGuard = this.goodsGuards.count();
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+        },
+      });
+    });
   }
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
     const goodswarehouse = data.filter(items => {
       return items.status == 'EN_ALMACÉN';
     });
-    this.headingWarehouse = `En almacén SAE(${goodswarehouse.length})`;
-    const viewGoods = goodswarehouse.map(info => {
-      return info.view;
+
+    goodswarehouse.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+
+          console.log('El brincos dieras', response);
+          this.goodsInfoWarehouse.push(response);
+          this.goodsWarehouse.load(this.goodsInfoWarehouse);
+          this.totalItemsWarehouse = this.goodsWarehouse.count();
+          this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+        },
+      });
     });
-    this.goodsWarehouse.load(viewGoods);
-    this.totalItemsWarehouse = this.goodsWarehouse.count();
   }
 
   showGood(item: IGoodProgrammingSelect) {
