@@ -44,6 +44,10 @@ export class AffairTypeService extends HttpService {
     return this.affairTypeRepository.update(code, referralNoteType, model);
   }
 
+  newUpdate(model: IAffairType) {
+    return this.affairTypeRepository.newUpdate(model);
+  }
+
   getByAffair(
     id: number | string,
     params?: ListParams

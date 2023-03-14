@@ -39,7 +39,6 @@ export class LogicalTablesRegisterModalComponent
       table: [
         null,
         [
-          Validators.required,
           Validators.maxLength(8),
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
