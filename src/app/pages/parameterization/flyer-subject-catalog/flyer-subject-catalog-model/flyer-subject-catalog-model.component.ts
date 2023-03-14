@@ -56,7 +56,7 @@ export class FlyerSubjectCatalogModelComponent
       this.edit = true;
       console.log(this.affairType);
       this.affairTypeForm.patchValue(this.affairType);
-      this.affairTypeForm.controls['code'].setValue(this.id.id);
+      this.affairTypeForm.controls['code'].setValue(this.affairType.code);
     } else {
       console.log('Limpio', this.idF.id);
       this.affairTypeForm.controls['code'].setValue(this.idF.id);
@@ -81,16 +81,11 @@ export class FlyerSubjectCatalogModelComponent
 
   update() {
     this.loading = true;
-    this.affairTypeService
-      .update(
-        this.affairType.code,
-        this.affairType.referralNoteType,
-        this.affairTypeForm.value
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.affairTypeForm;
+    this.affairTypeService.newUpdate(this.affairTypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
