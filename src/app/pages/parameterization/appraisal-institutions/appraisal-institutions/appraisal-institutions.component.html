@@ -19,7 +19,8 @@
               [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="appraisersList"
-              (edit)="openForm($event.data)">
+              (edit)="openForm($event.data)"
+              (delete)="opendelete($event.data)">
             </ng2-smart-table>
           </div>
         </div>

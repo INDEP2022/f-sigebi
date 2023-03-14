@@ -24,7 +24,8 @@
               [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="maximumTimes"
-              (edit)="openForm($event.data)">
+              (edit)="openForm($event.data)"
+              (delete)="opendelete($event)">
             </ng2-smart-table>
           </div>
         </div>
