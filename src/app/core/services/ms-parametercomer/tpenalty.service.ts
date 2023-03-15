@@ -40,7 +40,7 @@ export class TPenaltyService extends HttpService {
   }
 
   remove(id: string | number) {
-    const route = `${this.endpoint}/id/${id}`;
+    const route = `${this.endpoint}/${id}`;
     return this.delete(route);
   }
 }
