@@ -18,8 +18,9 @@
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dinamicTables"
+            [source]="data"
             (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
         </div>
