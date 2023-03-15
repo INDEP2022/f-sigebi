@@ -40,6 +40,12 @@ export class DynamicTablesService extends HttpService {
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
+    console.log(
+      this.get<IListResponse<ITablesData>>(
+        DynamicCatalogEndpoint.DinamicTables,
+        params
+      )
+    );
     return this.get<IListResponse<ITablesData>>(
       DynamicCatalogEndpoint.DinamicTables,
       params

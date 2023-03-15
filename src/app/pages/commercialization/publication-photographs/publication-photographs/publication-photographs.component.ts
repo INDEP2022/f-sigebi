@@ -7,12 +7,13 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPhotographMedia } from 'src/app/core/models/catalogs/photograph-media.model';
 import { BatchService } from 'src/app/core/services/catalogs/batch.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { PhotographMediaService } from 'src/app/core/services/catalogs/photograph-media.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DATA } from './data';
 import {
   dataBatchColum,
+  numStoreColumn,
   PUBLICATION_PHOTO1,
   PUBLICATION_PHOTO2,
 } from './publication-photographs-columns';
@@ -36,6 +37,7 @@ export class PublicationPhotographsComponent
 {
   form: FormGroup = new FormGroup({});
   dataBatch: any;
+  subtype: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   batchList: any;
   selectedCve: any = null;
@@ -43,7 +45,7 @@ export class PublicationPhotographsComponent
   totalItems: number = 0;
   picture: IPhotographMedia;
   data1: LocalDataSource = new LocalDataSource();
-  dataAllotment = DATA;
+  // dataAllotment = DATA;
 
   data2: LocalDataSource = new LocalDataSource();
   rowSelected: boolean = false;
@@ -54,6 +56,7 @@ export class PublicationPhotographsComponent
 
   settings1;
   settings2;
+  settings3;
   settings4;
 
   columns: any[] = [];
@@ -64,7 +67,8 @@ export class PublicationPhotographsComponent
     private fb: FormBuilder,
     private batchService: BatchService,
     private photographMediaService: PhotographMediaService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private goodSubtypeService: GoodSubtypeService
   ) {
     super();
     this.settings1 = {
@@ -78,19 +82,28 @@ export class PublicationPhotographsComponent
       actions: false,
       columns: { ...PUBLICATION_PHOTO2 },
     };
+
     this.settings4 = {
       ...TABLE_SETTINGS,
       actions: false,
       columns: { ...dataBatchColum },
       noDataMessage: 'No se encontrarón registros',
     };
+
+    this.settings3 = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: { ...numStoreColumn },
+      noDataMessage: 'No se encontrarón registros',
+    };
   }
 
   ngOnInit(): void {
     this.getCve({ page: 1, text: '' });
-    this.data1.load(this.dataAllotment);
+    // this.data1.load(this.dataBatch);
     this.prepareForm();
     this.getBatch();
+    // this.getSubtype();
   }
 
   private prepareForm() {
@@ -138,9 +151,9 @@ export class PublicationPhotographsComponent
   }
 
   selectRow(row: any) {
-    this.data2.load(row.goods); //Sub
+    this.data2.load(row.numStore); //Sub
     this.data2.refresh();
-    this.rowAllotment = row.allotment; //primary
+    this.rowAllotment = row.id; //primary
     this.rowSelected = true;
   }
 
@@ -160,6 +173,20 @@ export class PublicationPhotographsComponent
       error: error => (this.loading = false),
     });
   }
+  getSubtype() {
+    this.loading = true;
+    this.goodSubtypeService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.subtype = data;
+        this.dataBatch = this.subtype.data;
+        this.totalItems = data.count;
+        console.log(this.dataBatch);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
   confirm() {
     this.loading = false;
     this.photographMediaService.create(this.form.value).subscribe({
