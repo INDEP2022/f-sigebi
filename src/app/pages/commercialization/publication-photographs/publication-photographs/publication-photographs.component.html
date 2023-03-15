@@ -142,7 +142,9 @@
         <div class="row mt-5 d-flex justify-content-center">
           <app-pagination
             [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+            [totalItems]="totalItems"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event)"></app-pagination>
         </div>
       </div>
 
