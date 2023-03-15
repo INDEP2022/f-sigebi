@@ -33,6 +33,7 @@ import { IIndiciados } from '../../../../../core/models/catalogs/indiciados.mode
 import { IIssuingInstitution } from '../../../../../core/models/catalogs/issuing-institution.model';
 import { IMinpub } from '../../../../../core/models/catalogs/minpub.model';
 import { IOpinion } from '../../../../../core/models/catalogs/opinion.model';
+import { IRAsuntDic } from '../../../../../core/models/catalogs/r-asunt-dic.model';
 import { IStation } from '../../../../../core/models/catalogs/station.model';
 import {
   ITransferente,
@@ -43,6 +44,7 @@ import {
   INotification,
 } from '../../../../../core/models/ms-notification/notification.model';
 import { IManagementArea } from '../../../../../core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { AuthService } from '../../../../../core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from '../../../../../core/services/document-reception/doc-reception-register.service';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
@@ -92,7 +94,13 @@ export class JuridicalRecordUpdateComponent
   transferorLoading: boolean = false;
   stationLoading: boolean = false;
   dictum: string = '';
+  prevDictumKey: IOpinion;
+  dictOffice: string = '';
+  dictConsultOnly: string = 'N';
   procedureId: number;
+  userId: string;
+  userDelegation: number;
+  dictumPermission: boolean = true;
   initialDate: string;
   maxDate: Date = new Date();
   identifiers = new DefaultSelect<IIdentifier>();
@@ -115,6 +123,7 @@ export class JuridicalRecordUpdateComponent
   pageParams: IJuridicalFileDataUpdateParams = null;
   globals: IGlobalVars;
   items: DefaultSelect<any>;
+  @Input() selectedNotification: INotification;
   @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT';
   @Input() searchMode: boolean = false;
   @Input() confirmSearch: boolean = false;
@@ -138,7 +147,8 @@ export class JuridicalRecordUpdateComponent
     private fileUpdateService: JuridicalFileUpdateService,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private authService: AuthService
   ) {
     super();
     const id = this.activiveRoute.snapshot.paramMap.get('id');
@@ -176,21 +186,38 @@ export class JuridicalRecordUpdateComponent
 
   ngOnInit(): void {
     this.showHideErrorInterceptorService.showHideError(false);
-    this.formControls.receiptDate.setValue(this.initialDate);
+    // this.formControls.receiptDate.setValue(this.initialDate);
     this.checkParams();
     this.fileDataUpdateForm.disable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['searchMode'].currentValue) {
+    console.log(changes);
+    if (
+      changes['searchMode']?.currentValue &&
+      !changes['searchMode']?.isFirstChange()
+    ) {
+      console.log('SearchMode');
       this.activateSearch();
-    } else {
+    } else if (changes['searchMode']?.currentValue === false) {
+      console.log('SearchMode false');
       this.deactivateSearch();
     }
-    if (changes['confirmSearch'].currentValue) {
+    if (
+      changes['confirmSearch']?.currentValue &&
+      !changes['confirmSearch']?.isFirstChange()
+    ) {
+      console.log('confirmSearch');
+      console.log(this.fileDataUpdateForm.value);
       this.onSearch.emit(this.fileDataUpdateForm.value);
-      this.deactivateSearch();
-    } else {
+      // this.deactivateSearch();
+    }
+    if (
+      changes['selectedNotification']?.currentValue &&
+      !changes['selectedNotification']?.isFirstChange()
+    ) {
+      console.log('selectedNotification');
+      this.fillForm(changes['selectedNotification'].currentValue);
     }
   }
 
@@ -207,6 +234,9 @@ export class JuridicalRecordUpdateComponent
     ) {
       this.getData();
     }
+    if (this.pageParams.dictamen) {
+      // TODO: Integrar validaciones cuando se creo dictamen
+    }
   }
 
   getGlobalVars() {
@@ -216,6 +246,41 @@ export class JuridicalRecordUpdateComponent
         this.globals = globalVars;
         console.log(this.globals);
       });
+  }
+
+  getLoggedUser() {
+    const token = this.authService.decodeToken();
+    this.userId = token.preferred_username;
+    const params = new FilterParams();
+    params.addFilter('user', token.preferred_username);
+    this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
+      next: data => {
+        if (data.data.length > 0) {
+          this.userDelegation = data.data[0].delegation1Number;
+          this.getScreenPermissions();
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  getScreenPermissions() {
+    const params = new FilterParams();
+    params.addFilter('typeNumber', 'RESARCIMIENTO');
+    params.addFilter('reading', 'S');
+    params.addFilter('writing', 'S');
+    params.addFilter('user', this.userId);
+    this.fileUpdateService.getUserPermissions(params.getParams()).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          this.dictumPermission = true;
+        } else {
+          // TODO: habilitar cuando el usuario admin tenga permisos
+          // this.dictumPermission = false;
+        }
+      },
+      error: () => {},
+    });
   }
 
   getData() {
@@ -282,9 +347,9 @@ export class JuridicalRecordUpdateComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.fileDataUpdateForm.patchValue({ ...values });
-    this.formControls.receiptDate.setValue(format(new Date(), 'MM/d/yyyy'));
+    this.formControls.receiptDate.setValue(format(new Date(), 'd/MM/yyyy'));
     this.formControls.externalOfficeDate.setValue(
-      format(new Date(), 'MM/d/yyyy')
+      format(new Date(), 'd/MM/yyyy')
     );
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
@@ -380,7 +445,9 @@ export class JuridicalRecordUpdateComponent
       this.fileUpdateService.getDictum(notif.dictumKey).subscribe({
         next: data => {
           this.formControls.dictumKey.setValue(data);
+          this.prevDictumKey = this.formControls.dictumKey.value;
           this.dictum = data.description;
+          this.dictOffice = data.dict_ofi;
         },
         error: () => {},
       });
@@ -496,11 +563,54 @@ export class JuridicalRecordUpdateComponent
 
   activateSearch() {
     console.log(this.searchMode);
+    this.fileDataUpdateForm.enable();
+    this.prevDictumKey = this.formControls.dictumKey.value;
+    this.fileUpdateService.juridicalFileDataUpdateForm =
+      this.fileDataUpdateForm.value;
+    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
+    this.fileDataUpdateForm.reset();
+    this.fileDataUpdateForm.enable();
   }
 
   deactivateSearch() {
     console.log(this.searchMode);
     console.log(this.confirmSearch);
+    this.fileDataUpdateForm.enable();
+    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
+    this.fileDataUpdateForm.patchValue(
+      this.fileUpdateService.juridicalFileDataUpdateForm
+    );
+    this.fileDataUpdateForm.disable();
+    if (this.formControls.dictumKey.value?.description) {
+      this.dictum = this.formControls.dictumKey.value?.description;
+      this.dictOffice = this.formControls.dictumKey.value?.dict_ofi;
+    }
+    this.checkToEnableDictum();
+  }
+
+  checkToEnableDictum() {
+    if (this.formControls.dictumKey.value == null) {
+      this.formControls.dictumKey.enable();
+    } else {
+      this.prevDictumKey = this.formControls.dictumKey.value;
+      if (
+        [16, 24, 26, '16', '24', '26'].includes(
+          this.formControls.dictumKey.value?.id
+        ) &&
+        this.formControls.wheelNumber.value != null
+      ) {
+        const param = new FilterParams();
+        param.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+        this.fileUpdateService.getNotification(param.getParams()).subscribe({
+          next: data => {
+            if (data.count > 0) {
+              this.formControls.dictumKey.enable();
+            }
+          },
+          error: () => {},
+        });
+      }
+    }
   }
 
   setUniqueKeyData(key: ITransferingLevelView, full?: boolean) {
@@ -553,10 +663,126 @@ export class JuridicalRecordUpdateComponent
     // }
   }
 
-  sentToDocumentsManagement() {
+  openSatChat() {
+    //TODO: adaptar PUP_ACLARA_CHAT
+    this.onLoadToast(
+      'info',
+      'Chat no disponible',
+      'El chat para consultar con el SAT no se encuentra disponible.'
+    );
+  }
+
+  sendToDocumentsManagement() {
     // TODO: mandar parametros
+    let dictumId: number;
+    if (this.formControls.dictumKey.value?.id) {
+      dictumId = this.formControls.dictumKey.value.id;
+      if ([24, 26].includes(dictumId)) {
+        this.openSatChat();
+        return;
+      }
+    }
+    const params = new FilterParams();
+    params.addFilter('dictum', this.formControls.dictumKey.value?.id);
+    params.addFilter('code', this.formControls.affairKey.value?.id);
+    params.addFilter('flyerType', this.formControls.wheelType.value);
+    this.fileUpdateService.getDictumSubjects(params.getParams()).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          const catalog = data.data[0];
+          if (catalog.g_of == 'S') {
+            params.removeAllFilters();
+            params.addFilter(
+              'flyerNumber',
+              this.formControls.wheelNumber.value
+            );
+            this.fileUpdateService
+              .getJobManagements(params.getParams())
+              .subscribe({
+                next: data => {
+                  if (data.count > 0) {
+                    this.goToDocumentsManagement(catalog);
+                  } else {
+                    if (dictumId == 1) {
+                      params.removeAllFilters();
+                      params.addFilter(
+                        'fileNumber',
+                        this.formControls.expedientNumber.value
+                      );
+                      params.addFilter('status', 'ROP');
+                      this.docRegisterService
+                        .getGoods(params.getParams())
+                        .subscribe({
+                          next: data => {
+                            if (data.count > 0) {
+                              this.goToDocumentsManagement(catalog);
+                            } else {
+                              this.alert(
+                                'warning',
+                                'No se encontraron bienes',
+                                'Este volante no tiene bienes para Desahogar.'
+                              );
+                            }
+                          },
+                          error: () => {
+                            this.alert(
+                              'warning',
+                              'No se encontraron bienes',
+                              'Este volante no tiene bienes para Desahogar.'
+                            );
+                          },
+                        });
+                    } else {
+                      this.goToDocumentsManagement(catalog);
+                    }
+                  }
+                },
+                error: err => {
+                  console.log(err);
+                },
+              });
+          } else {
+            this.alert(
+              'warning',
+              'Asunto y Dictamen inválidos',
+              'De acuerdo al Asunto y Dictamen NO puede generar un Oficio Gestión.'
+            );
+          }
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Catálogo no encontrado',
+            'Este asunto con este dictamen no esta registrado en el catálogo de Asuntos - Dictamen'
+          );
+        }
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Catálogo no encontrado',
+          'Hubo un problema al buscar el asunto con ese dictamen'
+        );
+      },
+    });
+  }
+
+  goToDocumentsManagement(catalog: IRAsuntDic) {
     this.fileUpdateService.juridicalFileDataUpdateForm =
       this.fileDataUpdateForm.value;
+    let sale: string = '',
+      officeType: string = '';
+    if (catalog.property == 'S') {
+      sale = 'C';
+    } else if (catalog.property == 'N') {
+      sale = 'D';
+    }
+    if (catalog.i == 'S') {
+      officeType = 'INTERNO';
+    }
+    if (catalog.e == 'S') {
+      officeType = 'EXTERNO';
+    }
     let procedure;
     if (
       this.pageParams.pNoTramite != null &&
@@ -572,19 +798,26 @@ export class JuridicalRecordUpdateComponent
       pDictamen: this.formControls.dictumKey.value?.id,
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
-      tipoOf: 'INTERNO',
-      bien: 'S',
-      sale: 'D',
-      doc: '',
+      tipoOf: officeType,
+      bien: catalog.property,
+      sale: sale,
+      doc: catalog.doc,
     };
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/related-document-management'
     );
   }
 
-  sentToJuridicalRuling() {
+  sendToJuridicalRuling() {
     let dictumType: string;
     const dictumId = Number(this.formControls.dictumKey.value?.id);
+    if (dictumId == 18 && !this.dictumPermission) {
+      this.onLoadToast(
+        'warning',
+        'No cuenta con los permisos necesarios',
+        'No tiene privilegios para entrar a los Dictamenes de Resarcimiento.'
+      );
+    }
     if ([1, 16, 23].includes(dictumId)) dictumType = 'PROCEDENCIA';
     if (dictumId == 15) dictumType = 'DESTRUCCION';
     if (dictumId == 2) dictumType = 'DECOMISO';
@@ -605,13 +838,23 @@ export class JuridicalRecordUpdateComponent
     }
     this.fileUpdateService.juridicalFileDataUpdateForm =
       this.fileDataUpdateForm.value;
-    //TODO: Asignar parametro consulta de acuerdo a permisos del usuario en la pantalla
+    this.globalVarsService.updateSingleGlobal(
+      'varDic',
+      this.dictum,
+      this.globals
+    );
+    if (this.formControls.delDestinyNumber.value == this.userDelegation) {
+      this.dictConsultOnly = 'S';
+    } else {
+      //TODO: habilitar cuando el usuario tenga los permisos
+      // this.dictConsultOnly = 'N';
+    }
     this.fileUpdComService.juridicalRulingParams = {
       expediente: this.formControls.expedientNumber.value,
       volante: this.formControls.wheelNumber.value,
       tipoVo: this.formControls.wheelType.value,
       tipoDic: dictumType,
-      consulta: 'S',
+      consulta: this.dictConsultOnly,
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
@@ -620,7 +863,7 @@ export class JuridicalRecordUpdateComponent
     );
   }
 
-  sentToShiftChange() {
+  sendToShiftChange() {
     // TODO: mandar parametros
     this.fileUpdateService.juridicalFileDataUpdateForm =
       this.fileDataUpdateForm.value;
@@ -699,6 +942,43 @@ export class JuridicalRecordUpdateComponent
     // });
   }
 
+  changeDictum(dictum: IOpinion) {
+    console.log(dictum);
+    this.dictum = dictum.description;
+    this.dictOffice = dictum.dict_ofi;
+    if (this.dictum == 'CONOCIMIENTO') {
+      this.formControls.reserved.enable();
+    } else {
+      this.formControls.reserved.disable();
+    }
+    if (
+      this.prevDictumKey != null &&
+      [16, 24, 26, '16', '24', '26'].includes(this.prevDictumKey?.id)
+    ) {
+      const param = new FilterParams();
+      param.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+      param.addFilter('dictumKey', this.prevDictumKey?.description);
+      this.fileUpdateService.getNotification(param.getParams()).subscribe({
+        next: data => {
+          if (data.count > 0) {
+            this.alertQuestion(
+              'info',
+              `El volante ${this.formControls.wheelNumber.value} ya cuenta con un desahogo`,
+              '¿Desea generar otro?',
+              'Sí'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.dictConsultOnly = 'S';
+                this.sendToJuridicalRuling();
+              }
+            });
+          }
+        },
+        error: () => {},
+      });
+    }
+  }
+
   changeTransferor(event: ITransferente) {
     if (event?.id) {
       this.formControls.transference.setValue(event.id);
@@ -713,13 +993,6 @@ export class JuridicalRecordUpdateComponent
   changeStation(event: IStation) {
     this.formControls.autorityNumber.setValue(null);
     this.getAuthorities({ page: 1, text: '' });
-  }
-
-  changeDictum(dictum: IOpinion) {
-    this.dictum = dictum.description;
-    if (this.dictum == 'CONOCIMIENTO') {
-      this.formControls.reserved.enable();
-    }
   }
 
   openModalDocuments() {

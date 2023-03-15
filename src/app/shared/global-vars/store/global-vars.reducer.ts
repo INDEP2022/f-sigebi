@@ -33,6 +33,7 @@ export const initialState: GlobalVarsState = {
     gOFFCommit: null,
     noTransferente: null,
     gNoVolante: null,
+    varDic: null,
   },
 };
 
