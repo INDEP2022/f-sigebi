@@ -3,7 +3,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
@@ -12,6 +15,7 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import { BehaviorSubject } from 'rxjs';
 import {
   KEYGENERATION_PATTERN,
   PHONE_PATTERN,
@@ -19,6 +23,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AppointmentsService } from '../services/appointments.service';
 
 @Component({
   selector: 'app-appointments',
@@ -30,10 +35,18 @@ export class AppointmentsComponent
   implements OnInit, OnDestroy
 {
   items = new DefaultSelect<Example>();
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   public form: FormGroup;
   public checked = false;
+  globalVars = {
+    noExiste: 0,
+  };
 
-  constructor(private fb: FormBuilder, private exampleService: ExampleService) {
+  constructor(
+    private fb: FormBuilder,
+    private exampleService: ExampleService,
+    private appointmentsService: AppointmentsService
+  ) {
     super();
   }
 
@@ -43,7 +56,8 @@ export class AppointmentsComponent
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: '', //*
+      noBien: ['', Validators.required], //*
+      descriptionGood: [''], //*
       averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]], //*
       causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
       estatusBien: ['', [Validators.pattern(STRING_PATTERN)]], //*
@@ -57,7 +71,7 @@ export class AppointmentsComponent
       estatus: '', //* Provisional, Definitiva
       representanteSAE: ['', [Validators.pattern(STRING_PATTERN)]], //*
       nombre: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      bienesMensaje: '', //* Sin Mensaje, Con Mensaje
+      bienesMenaje: '', //* Sin Menaje, Con Menaje
 
       depositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
       representante: ['', [Validators.pattern(STRING_PATTERN)]], //*
@@ -158,5 +172,118 @@ export class AppointmentsComponent
     this.exampleService.getAll(params).subscribe(data => {
       this.items = new DefaultSelect(data.data, data.count);
     });
+  }
+
+  changeMenaje() {
+    if (this.form.get('bienesMenaje').value == '1') {
+    }
+  }
+
+  /**
+   * Validar el número de bien
+   */
+  async validGoodNumberInDepositaryAppointment() {
+    if (this.form.get('noBien').valid) {
+      const params: ListParams = {
+        page: this.params.getValue().page,
+        limit: 10,
+      };
+      this.params.getValue().getParams();
+      params['filter.goodNumber'] = this.form.get('noBien').value;
+      await this.appointmentsService
+        .getGoodAppointmentDepositaryByNoGood(params)
+        .subscribe({
+          next: res => {
+            console.log(res);
+            if (res.count == 0) {
+              this.globalVars.noExiste = 0;
+              this.getGoodDataByNoGood();
+            }
+          },
+          error: err => {
+            console.log(err);
+            this.alert(
+              'warning',
+              'Número de Bien',
+              'El número de Bien no existe.'
+            );
+          },
+        });
+    } else {
+      this.alert('warning', 'Número de Bien', 'Ingresa un número de Bien.');
+    }
+  }
+
+  /**
+   * Obtener los datos del bien por el número de Bien
+   */
+  async getGoodDataByNoGood() {
+    const params: ListParams = {
+      page: this.params.getValue().page,
+      limit: 10,
+    };
+    this.params.getValue().getParams();
+    params['filter.goodId'] = this.form.get('noBien').value;
+    params['filter.status'] = 'DEP';
+    await this.appointmentsService.getGoodByNoGoodAndStatus(params).subscribe({
+      next: res => {
+        console.log(res);
+        // b.descripcion,
+        //   b.no_expediente,
+        //   b.fec_recepcion_fisica,
+        //   b.fec_acuerdo_aseg,
+        //   e.averiguacion_previa,
+        //   e.causa_penal;
+      },
+      error: err => {
+        console.log(err);
+        this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
+      },
+    });
+  }
+
+  /**
+   * Obtener los datos del expediente por el número de expediente
+   */
+  async getExpedientDataByNoExpedient(noExpedient: string) {
+    const params: ListParams = {
+      page: this.params.getValue().page,
+      limit: 10,
+    };
+    this.params.getValue().getParams();
+    params['filter.goodId'] = this.form.get('noBien').value;
+    params['filter.status'] = 'DEP';
+    await this.appointmentsService.getGoodByNoGoodAndStatus(params).subscribe({
+      next: res => {
+        console.log(res);
+      },
+      error: err => {
+        console.log(err);
+        this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
+      },
+    });
+  }
+
+  /**
+   * INCIDENCIA 530
+   * Obtener el estatus del bien por el número del Bien
+   */
+  async getStatusGoodByNoGood() {
+    // const params: ListParams = {
+    //   page: this.params.getValue().page,
+    //   limit: 10,
+    // };
+    // this.params.getValue().getParams();
+    // params['filter.goodId'] = this.form.get('noBien').value;
+    // params['filter.status'] = 'DEP';
+    // await this.appointmentsService.getGoodByNoGoodAndStatus(params).subscribe({
+    //   next: res => {
+    //     console.log(res);
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
+    //   },
+    // });
   }
 }

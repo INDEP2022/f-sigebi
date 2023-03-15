@@ -108,10 +108,24 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     let paramsId: IL = {
       idLayout: event.data.idLayout.id,
     };
+    let paramsUpdate: IComerLayouts = {
+      idLayout: event.data.idLayout.id,
+      idConsec: event.data.idConsec,
+      position: event.data.position,
+      column: event.data.column,
+      type: event.data.type,
+      length: event.data.length,
+      constant: event.data.constant,
+      carFilling: event.data.carFilling,
+      justification: event.data.justification,
+      decimal: event.data.decimal,
+      dateFormat: event.data.dateFormat,
+      registryNumber: event.data.registryNumber,
+    };
     this.layoutsConfigService.findOne(params).subscribe({
       next: data => {
         this.layout = paramsId;
-        this.structureLayout = data;
+        this.structureLayout = paramsUpdate;
         console.log(this.structureLayout);
         this.rowSelected = true;
         this.valid = true;
@@ -132,10 +146,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.loading = false;
     this.layoutsConfigService.create(this.layout).subscribe({
       next: data => {
-        this.structureLayout = data;
-        console.log(this.structureLayout);
-        this.rowSelected = true;
+        console.log('creado' + this.structureLayout);
         this.valid = true;
+        this.rowSelected = true;
+        // this.layoutsConfigService.update(this.provider.id, this.structureLayout).subscribe({
+        //   next: data => this.handleSuccess(),
+        //   error: error => this.loading = false,
+        // });
         this.handleSuccess();
       },
       error: error => {
@@ -199,6 +216,11 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
         ignoreBackdropClick: true,
       }
     );
+  }
+  showIdLayout(event: any) {
+    //enseña lo que elegistes en el input
+    console.log(event.idLayout);
+    console.log(event.idLayout);
   }
   showDeleteAlert(id: IL) {
     this.alertQuestion(

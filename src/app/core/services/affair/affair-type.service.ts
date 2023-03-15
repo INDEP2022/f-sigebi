@@ -44,10 +44,19 @@ export class AffairTypeService extends HttpService {
     return this.affairTypeRepository.update(code, referralNoteType, model);
   }
 
+  newUpdate(model: IAffairType) {
+    return this.affairTypeRepository.newUpdate(model);
+  }
+
   getByAffair(
     id: number | string,
     params?: ListParams
   ): Observable<IListResponse<IAffairType>> {
     return this.affairTypeRepository.getAffairTypebyAffair('', id, params);
+  }
+
+  remove(id: string | number) {
+    const route = `${AffairTypeEndpoints.AffairType}/${id}`;
+    return this.delete(route);
   }
 }
