@@ -30,8 +30,13 @@ export class TPenaltyService extends HttpService {
   }
 
   update(id: string | number, tpenalty: ITPenalty) {
-    const route = `${this.endpoint}/id/${id}`;
+    const route = `${this.endpoint}/${id}`;
     return this.put(route, tpenalty);
+  }
+
+  newUpdate(model: ITPenalty) {
+    const route = `${this.endpoint}`;
+    return this.put(route, model);
   }
 
   remove(id: string | number) {
