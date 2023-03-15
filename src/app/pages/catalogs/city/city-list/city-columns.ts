@@ -8,6 +8,9 @@ export const CITY_COLUMNS = {
     title: 'Nombre',
     type: 'string',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
   state: {
     title: 'Entidad Federativa',

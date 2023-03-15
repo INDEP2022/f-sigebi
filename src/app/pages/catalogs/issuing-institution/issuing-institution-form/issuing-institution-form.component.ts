@@ -1,12 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
-import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { STRING_PATTERN } from '../../../../core/shared/patterns';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 
@@ -19,10 +19,13 @@ export class IssuingInstitutionFormComponent
   extends BasePage
   implements OnInit
 {
-  issuingInstitutionForm: FormGroup = new FormGroup({});
+  issuingInstitutionForm: ModelForm<IIssuingInstitution>;
+  issuingInstitution: IIssuingInstitution;
   title: string = 'Institución Emisora';
   edit: boolean = false;
-  issuingInstitution: IIssuingInstitution;
+
+  idInstitute: IInstitutionClassification;
+
   itemsCity = new DefaultSelect();
   itemsTransfer = new DefaultSelect();
   @Output() refresh = new EventEmitter<true>();
@@ -47,20 +50,31 @@ export class IssuingInstitutionFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       manager: [null, [Validators.required]],
-      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      calle: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      numInside: [null, [Validators.required]],
-      numExterior: [null, [Validators.required]],
-      cologne: [null, [Validators.required]],
-      zipCode: [null, [Validators.required]],
-      delegMunic: [null, [Validators.required]],
-      phone: [null, [Validators.required]],
+      street: [null, [, Validators.pattern(STRING_PATTERN)]],
+      calle: [null, [, Validators.pattern(STRING_PATTERN)]],
+      numInside: [null, []],
+      numExterior: [null, []],
+      cologne: [null, []],
+      zipCode: [null, []],
+      delegMunic: [null, []],
+      phone: [null, []],
       numClasif: [null, [Validators.required]],
-      numCity: [null, [Validators.required]],
-      numRegister: [null, [Validators.required]],
-      numTransference: [null, [Validators.required]],
+      numCity: [null, []],
+      numRegister: [null, []],
+      numTransference: [null, []],
     });
     if (this.issuingInstitution != null) {
+      this.edit = true;
+      this.issuingInstitutionForm.controls['numClasif'].setValue(
+        this.idInstitute.id
+      );
+    } else {
+      this.issuingInstitutionForm.controls['numClasif'].setValue(
+        this.idInstitute.id
+      );
+      console.log(this.idInstitute.id);
+    }
+    /*if (this.issuingInstitution != null) {
       this.edit = true;
       let city: ICity = this.issuingInstitution.numCity as ICity;
       let numTransfer: ITransferente = this.issuingInstitution
@@ -79,7 +93,7 @@ export class IssuingInstitutionFormComponent
     } else {
       this.getFromSelectCity({ page: 1, text: '' });
       this.getFromSelectTransfer({ page: 1, text: '' });
-    }
+    }*/
   }
 
   close() {
@@ -103,7 +117,7 @@ export class IssuingInstitutionFormComponent
   update() {
     this.loading = true;
     this.issuingInstitutionService
-      .update(this.issuingInstitution.id, this.issuingInstitutionForm.value)
+      .update2(this.issuingInstitution.id, this.issuingInstitutionForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

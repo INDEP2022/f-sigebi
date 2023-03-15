@@ -93,6 +93,7 @@ export class RegisterAttributesTypesComponent
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...REGISTER_ATT_TYPES_COLUMNS },
