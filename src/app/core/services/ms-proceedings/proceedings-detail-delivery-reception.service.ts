@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
+import { catchError, forkJoin, mergeMap, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proceedings-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -20,6 +21,16 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
+  }
+
+  getExpedients(id: string) {
+    return this.get<{ count: { count: string }[] }>(
+      this.endpoint + '/getCountExpedient/' + id + '/ENTREGA'
+    ).pipe(
+      map(x => {
+        return x.count[0].count ?? 0;
+      })
+    );
   }
 
   create(model: IDetailProceedingsDeliveryReception) {
