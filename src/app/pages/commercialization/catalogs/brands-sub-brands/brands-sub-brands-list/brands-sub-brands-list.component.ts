@@ -180,7 +180,12 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         // (delete)="deleteBrand($event.data)" (html)
         //este es el subcribe para eliminar
-        // this.brandService.deleteBrandsForId(brand.brand)
+        this.brandService.deleteBrandsForId(brand.brand).subscribe({
+          next: response => {
+            this.getComerBrands();
+          },
+          error: err => {},
+        });
       }
     });
   }

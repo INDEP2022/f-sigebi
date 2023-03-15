@@ -17,7 +17,8 @@ export class RangePickerModalComponent implements OnInit {
   @Output() onSelect = new EventEmitter<any>();
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     this.form = this.fb.group({
-      rangoFecha: [null, [Validators.required]],
+      inicio: [null, [Validators.required]],
+      fin: [null, [Validators.required]],
     });
   }
 
@@ -28,5 +29,9 @@ export class RangePickerModalComponent implements OnInit {
   }
   close() {
     this.modalRef.hide();
+  }
+
+  get fechaInicio() {
+    return this.form.get('inicio');
   }
 }

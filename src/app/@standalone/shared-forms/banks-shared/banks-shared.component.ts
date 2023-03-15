@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SearchFilter } from './../../../common/repository/interfaces/list-params';
 //Rxjs
 import { BehaviorSubject } from 'rxjs';
 //Params
@@ -26,7 +27,7 @@ export class BanksSharedComponent extends BasePage implements OnInit {
   @Input() showBanks: boolean = true;
   @Input() labelName: string = 'Bancos';
   @Output() nameBank: EventEmitter<string> = new EventEmitter<string>();
-
+  columnFilters: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   banks = new DefaultSelect<IBank>();
 
@@ -46,18 +47,27 @@ export class BanksSharedComponent extends BasePage implements OnInit {
       ]);
     }
 
-    this.form.get('cveBank').valueChanges.subscribe(data => {
-      if (data) {
-        this.service.getById(data).subscribe(resp => {
-          this.banks = new DefaultSelect([resp], 1);
-          this.nameBank.next(resp.name);
-        });
-      }
-    });
+    if (this.form.get('bankKey')) {
+      this.form.get('bankKey').valueChanges.subscribe(data => {
+        if (data) {
+          this.service.getById(data).subscribe(resp => {
+            this.banks = new DefaultSelect([resp], 1);
+            this.nameBank.next(resp.name);
+          });
+        }
+      });
+    }
   }
 
   getBanks(params: ListParams) {
-    this.service.getAll(params).subscribe({
+    const field = `filter.name`;
+    if (params.text !== '' && params.text !== null) {
+      this.columnFilters[field] = `${SearchFilter.ILIKE}:${params.text}`;
+    } else {
+      delete this.columnFilters[field];
+    }
+    let paramsValue = { ...params, ...this.columnFilters };
+    this.service.getAll(paramsValue).subscribe({
       next: resp => (this.banks = new DefaultSelect(resp.data, resp.count)),
       error: err => {
         let error = '';

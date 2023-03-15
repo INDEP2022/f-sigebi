@@ -33,22 +33,17 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, [Validators.required]],
-      bankName: [null],
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      type: [null, [Validators.required]],
-      decline: [null, [Validators.required]],
-      affects: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      satPaymentDescription: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      id: [null, [Validators.required]],
+      accountType: [null, [Validators.required]],
+      coinKey: [null],
+      square: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      branchOffice: [null],
+      rateCalculationInterest: [null],
+      bankKey: [null, [Validators.required]],
+      accountNumberTransfer: [null],
+      registryNumber: [null],
+      delegationNumber: [null],
+      esReference: [null],
     });
 
     if (this.edit) {
@@ -68,11 +63,15 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.handleSuccess();
-    // this.bankMovementType.create(this.form.value).subscribe(
-    //   data => this.handleSuccess(),
-    //   error => (this.loading = false)
-    // );
+    // this.handleSuccess();
+    this.bankMovementType
+      .create({ ...this.form.value, accountKey: this.form.get('id').value })
+      .subscribe({
+        next: data => {
+          this.handleSuccess();
+        },
+        error: err => (this.loading = false),
+      });
   }
 
   handleSuccess() {
@@ -84,9 +83,14 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.handleSuccess();
-    /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );*/
+    this.bankMovementType
+      .update(this.bankMove.id, {
+        ...this.form.value,
+        accountKey: this.form.get('id').value,
+      })
+      .subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
   }
 }

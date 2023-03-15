@@ -23,4 +23,5 @@ export interface IGlobalVars {
   gOFFCommit: string | number;
   noTransferente: string | number;
   gNoVolante: string | number;
+  varDic: string;
 }
