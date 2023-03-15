@@ -54,6 +54,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
             if (filter.search !== '') {
               if (filter.field == 'regionalDelegation') {
                 filter.field = 'regionalDelegation.id';
@@ -61,7 +62,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
               if (filter.field == 'stateCode') {
                 filter.field = 'stateCode.codeCondition';
               }
-              field = `filter.${filter.field}`;
+
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
