@@ -1,10 +1,10 @@
 import { IDelegation } from './delegation.model';
-import { IStateOfRepublic } from './state-of-republic.model';
+import { IState } from './state-model';
 
 export interface ICity {
   idCity?: number;
   nameCity: string;
-  state?: IStateOfRepublic;
+  state?: IState;
   noDelegation: IDelegation | number;
   noSubDelegation: number;
   legendOffice: string;

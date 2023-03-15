@@ -480,7 +480,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./issuing-institution/issuing-institution.module'))
         .IssuingInstitutionModule,
-    data: { title: 'Instituciones Emisoras' },
+    data: { title: 'Autoridades Emisoras' },
   },
   {
     path: 'court',

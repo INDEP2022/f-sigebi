@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
@@ -22,7 +23,8 @@ export class GeneralAccountMovementsComponent
   constructor(
     private fb: FormBuilder,
     private bankService: BankService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private currencyService: DynamicTablesService
   ) {
     super();
   }
@@ -78,9 +80,9 @@ export class GeneralAccountMovementsComponent
   }
 
   public getCurrencies(event: any) {
-    // this.currencyService.getAll(event).subscribe(data => {
-    //   this.currency = new DefaultSelect(data.data, data.count);
-    // });
+    this.currencyService.getTvalTable5ByTable(3).subscribe(data => {
+      this.currency = new DefaultSelect(data.data, data.count);
+    });
   }
 
   public getBanks(event: any) {
