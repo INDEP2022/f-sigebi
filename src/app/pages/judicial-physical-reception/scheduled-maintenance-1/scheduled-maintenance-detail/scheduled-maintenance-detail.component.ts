@@ -35,6 +35,7 @@ export class ScheduledMaintenanceDetailComponent
   selecteds: IGoodsByProceeding[] = [];
   settingsGoods = settingsGoods;
   params: ListParams = new ListParams();
+  initialValue: any;
   constructor(
     private location: Location,
     private fb: FormBuilder,
@@ -77,9 +78,13 @@ export class ScheduledMaintenanceDetailComponent
     return this.form.get('acta') ? this.form.get('acta').value : '';
   }
 
+  get typeProceeding() {
+    return this.form.get('tipoEvento') ? this.form.get('tipoEvento').value : '';
+  }
+
   private massiveUpdate(message = '') {
     if (this.data.length > 0) {
-      this.detailService.updateMasive(this.data, this.actaId).subscribe({
+      this.service.updateMassive(this.data, this.actaId).subscribe({
         next: response => {
           let goods = '';
           this.data.forEach((selected, index) => {
@@ -105,6 +110,11 @@ export class ScheduledMaintenanceDetailComponent
           }
         },
       });
+    } else {
+      if (this.form.value !== this.initialValue) {
+        this.onLoadToast('success', 'Exito', message);
+        this.initialValue = { ...this.form.value };
+      }
     }
   }
 
@@ -119,6 +129,7 @@ export class ScheduledMaintenanceDetailComponent
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],
     });
+    this.initialValue = { ...this.form.value };
   }
 
   return() {
@@ -225,7 +236,7 @@ export class ScheduledMaintenanceDetailComponent
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.detailService.deleteById(+item.no_bien, this.actaId).subscribe({
+        this.service.deleteById(item.no_bien, this.actaId).subscribe({
           next: response => {
             console.log(response);
             this.getData();

@@ -1,4 +1,4 @@
-<button
+<!-- <button
   [class]="disabled ? 'disabled' : ''"
   class="btn btn-primary btn-sm active"
   type="submit"
@@ -6,4 +6,35 @@
   (click)="updateGoods()">
   <i class="bx bx-pencil float-icon"></i>
   Editar fechas
-</button>
+</button> -->
+
+<form class="form-material" [formGroup]="form" style="display: flex">
+  <form-field [control]="form.get('inicio')" label="Inicio">
+    <input
+      class="form-control"
+      [class]="disabled ? 'disabled' : ''"
+      ngModel
+      bsDatepicker
+      [bsConfig]="{
+        dateInputFormat: 'YYYY-MM-DD',
+        displayOneMonthRange: true
+      }"
+      formControlName="inicio" />
+  </form-field>
+  <form-field
+    [control]="form.get('fin')"
+    label="Fin"
+    style="padding-left: 10px">
+    <input
+      class="form-control"
+      [class]="disabled ? 'disabled' : ''"
+      ngModel
+      bsDatepicker
+      [bsConfig]="{
+        dateInputFormat: 'YYYY-MM-DD',
+        displayOneMonthRange: true
+      }"
+      [minDate]="fechaInicio.value"
+      formControlName="fin" />
+  </form-field>
+</form>
