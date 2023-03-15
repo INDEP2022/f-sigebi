@@ -377,6 +377,34 @@
           </tab>
 
           <!--Bien a almacén-->
+
+          <tab [heading]="headingWarehouse">
+            <div class="row d-flex justify-content-end">
+              <div class="btn-toolbar pt-5">
+                <app-columns-select
+                  [(settings)]="settingsWarehouseGoods"></app-columns-select>
+                <button class="btn btn-primary btn-sm active ml-2">
+                  Asignar Acta
+                </button>
+
+                <button class="btn btn-pink btn-sm active">
+                  Adjuntar documentos
+                </button>
+                <button class="btn btn-pink btn-sm active">
+                  Integrar fotografia
+                </button>
+              </div>
+            </div>
+
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsWarehouseGoods"
+              [source]="goodsWarehouse">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="paramsGoodsWarehouse"
+              [totalItems]="totalItemsWarehouse"></app-pagination>
+          </tab>
         </tabset>
       </div>
     </div>
@@ -419,27 +447,7 @@
             </ng2-smart-table>
             <app-pagination [params]="paramsGuard" [totalItems]="totalItemsGuard"></app-pagination>
           </tab>
-          <tab [heading]="headingWarehouse">
-            <div class="row d-flex justify-content-end">
-              <div class="btn-toolbar pt-5">
-                <app-columns-select [(settings)]="settingsGoodsGoods"></app-columns-select>
-                <button class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
-                </button>
-
-                <button class="btn btn-pink btn-sm active">
-                  Adjuntar documentos
-                </button>
-                <button class="btn btn-pink btn-sm active">
-                  Integrar fotografia
-                </button>
-              </div>
-            </div>
-
-            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsGoodsGoods" [source]="goodsWarehouse">
-            </ng2-smart-table>
-            <app-pagination [params]="paramsGoodsWarehouse" [totalItems]="totalItemsWarehouse"></app-pagination>
-          </tab>
+          
 
           <tab heading="Reprogramación(0)">
             <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">

@@ -17,6 +17,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
@@ -28,7 +29,6 @@ import { DocumentsListComponent } from '../documents-list/documents-list.compone
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { RECEIPT_COLUMNS } from './columns/minute-columns';
-import { TRANSPORTABLE_GOODS } from './columns/transportable-goods-columns';
 import { receipts, tranGoods } from './execute-reception-data';
 
 @Component({
@@ -39,10 +39,13 @@ import { receipts, tranGoods } from './execute-reception-data';
 export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   isDropup = true;
   goods: any[] = [];
-  goodsGuard: any[] = [];
+  goodsGuard: IGood[] = [];
+  goodsWareh: IGood[] = [];
   goodsSelect: IGood[] = [];
   executeForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsProceeding = new BehaviorSubject<ListParams>(new ListParams());
+  paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   goodsWarehouse: LocalDataSource = new LocalDataSource();
@@ -57,14 +60,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén SAT(0)`;
   idStation: any;
-  settingsTranGoods = {
+
+  settingsGuardGoods = {
     ...this.settings,
     actions: false,
     selectMode: 'multi',
-    columns: TRANSPORTABLE_GOODS,
+    columns: ESTATE_COLUMNS_VIEW,
   };
 
-  settingsGuardGoods = {
+  settingsWarehouseGoods = {
     ...this.settings,
     actions: false,
     selectMode: 'multi',
@@ -103,7 +107,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private typeRelevantService: TypeRelevantService,
     private warehouseService: WarehouseService,
     private goodsQueryService: GoodsQueryService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private proccedingService: ProceedingsService
   ) {
     super();
     this.settings = {
@@ -178,14 +183,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   getAuthority() {
-    const filterColumns = {
-      idAuthority: Number(this.programming.autorityId),
-      idTransferer: Number(this.idTransferent),
-      idStation: Number(this.idStation),
-    };
-    return this.authorityService.postByIds(filterColumns).subscribe(data => {
-      this.programming.autorityId = data['authorityName'];
-    });
+    this.paramsAuthority.getValue()['filter.idAuthority'] =
+      this.programming.autorityId;
+    this.paramsAuthority.getValue()['filter.idTransferer'] = this.idTransferent;
+    this.paramsAuthority.getValue()['filter.idStation'] = this.idStation;
+
+    return this.authorityService
+      .getAll(this.paramsAuthority.getValue())
+      .subscribe(data => {
+        let authority = data.data.find(res => {
+          return res;
+        });
+        this.programming.autorityId = authority.authorityName;
+      });
   }
 
   getTypeRelevant() {
@@ -317,7 +327,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .subscribe(data => {
         console.log('información', data);
         this.getGoodsGuards(data.data);
-        //this.getGoodsWarehouse(data.data);
+        this.getGoodsWarehouse(data.data);
       });
   }
 
@@ -328,7 +338,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
 
     filter.map(items => {
-      console.log(items.goodId);
       this.goodService.getById(items.goodId).subscribe({
         next: response => {
           if (response.saePhysicalState == 1)
@@ -366,7 +375,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
-          console.log('asignar acta', this.goodsSelect);
+          this.checkProccedingsExist();
         }
       });
     } else {
@@ -374,18 +383,34 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
   }
 
-  /*-----------------Goods in warehouse---------------------------*/
+  //Verificar si hay actas abiertas y relacionadas a la programación//
+  checkProccedingsExist() {
+    this.paramsProceeding.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+    this.proccedingService
+      .getProceedings(this.paramsProceeding.getValue())
+      .subscribe({
+        next: response => {
+          console.log('res', response);
+        },
+      });
+  }
+
+  /*-----------------Bienes en almacén---------------------------*/
   getGoodsWarehouse(data: IGoodProgramming[]) {
     const filter = data.filter(item => {
       return item.status == 'EN_ALMACÉN';
     });
 
-    const infoGood = filter.map(goods => {
-      return goods.view;
+    filter.map(items => {
+      this.goodService.getById(items.goodId).subscribe({
+        next: response => {
+          this.goodsWareh.push(response);
+          this.goodsWarehouse.load(this.goodsWareh);
+          this.totalItemsWarehouse = this.goodsWarehouse.count();
+          this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+        },
+      });
     });
-    this.goodsWarehouse.load(infoGood);
-    this.totalItemsWarehouse = this.goodsWarehouse.count();
-    this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
   }
 
   getUsersProgramming() {
