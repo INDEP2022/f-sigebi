@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
 import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
 //service
@@ -36,15 +36,7 @@ export class LogicalTablesRegisterModalComponent
 
   private prepareForm() {
     this.tablesForm = this.fb.group({
-      table: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
+      table: [null, []],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       actionType: [null, [Validators.required]],
       tableType: [null, [Validators.required]],

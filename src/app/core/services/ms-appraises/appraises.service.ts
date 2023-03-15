@@ -31,4 +31,18 @@ export class AppraisesService extends HttpService {
     const url = `${environment.API_URL}appraise/api/v1/appraisal-x-good`;
     return this.http.get(url);
   }
+
+  getRequestAppraisalById(id: string | number) {
+    const route = `request-x-appraisal/${id}`;
+    return this.get(route);
+  }
+
+  getRequestAppraisalAll(
+    params?: ListParams
+  ): Observable<IListResponse<IAppraisalMonitor>> {
+    return this.get<IListResponse<IAppraisalMonitor>>(
+      `/request-x-appraisal`,
+      params
+    );
+  }
 }

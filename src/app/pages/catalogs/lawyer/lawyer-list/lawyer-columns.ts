@@ -1,12 +1,12 @@
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const LAWYER_COLUMNS = {
-  registerNumber: {
+  id: {
     title: 'Registro',
     type: 'number',
     sort: false,
   },
-  idOffice: {
+  office: {
     title: 'Despacho',
     type: 'string',
     sort: false,

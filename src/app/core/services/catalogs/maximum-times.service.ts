@@ -29,4 +29,7 @@ export class MaximumTimesService implements ICrudMethods<IMaximumTimes> {
   update(id: string | number, model: IMaximumTimes): Observable<Object> {
     return this.maximumTimesRepository.update(this.route, id, model);
   }
+  remove(id: string | number): Observable<Object> {
+    return this.maximumTimesRepository.remove(this.route, id);
+  }
 }

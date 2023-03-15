@@ -131,8 +131,6 @@ export class ProcedureManagementService extends HttpService {
       })
     );
   }
-  // http://sigebimsqa.indep.gob.mx/massivegood/api/v1/views/file-procedure-mng?limit=11&page=1
-  // massivegood/api/v1/views/file-transference-sat
 
   update(
     id: number,
