@@ -15,6 +15,7 @@ export class WarehouseService
   implements ICrudMethods<IWarehouse>
 {
   private readonly route: string = ENDPOINT_LINKS.Warehouse;
+  private readonly route2: string = 'catalog/warehouse/id';
   constructor(private warehouseRepository: Repository<IWarehouse>) {
     super();
     this.microservice = 'catalog';
@@ -34,16 +35,16 @@ export class WarehouseService
     return this.warehouseRepository.getById(`${this.route}/id`, id);
   }
 
-  create(model: IWarehouse): Observable<IWarehouse> {
+  create(model: any): Observable<IWarehouse> {
     return this.warehouseRepository.create(this.route, model);
   }
 
   update(id: string | number, model: IWarehouse): Observable<Object> {
-    return this.warehouseRepository.update(this.route, id, model);
+    return this.warehouseRepository.update(this.route2, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.warehouseRepository.remove(this.route, id);
+    return this.warehouseRepository.remove(this.route2, id);
   }
 
   getAllFilter(params: _Params) {

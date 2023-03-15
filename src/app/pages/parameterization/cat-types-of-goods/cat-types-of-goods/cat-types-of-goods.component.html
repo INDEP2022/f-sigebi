@@ -14,8 +14,9 @@
         </div>
         <div class="table-responsive">
           <ng2-smart-table
+            [attr.class]="'table-bordered'"
             [settings]="typeSettings"
-            [source]="paragraphs"
+            [source]="data"
             (deleteConfirm)="onDeleteConfirm($event)"
             (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
           <app-pagination
@@ -32,7 +33,7 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="subTypeSettings"
-            [source]="paragraphs1"
+            [source]="data1"
             (deleteConfirm)="onDeleteConfirm($event)"
             (editConfirm)="onSaveConfirm1($event)"></ng2-smart-table>
           <app-pagination
@@ -51,7 +52,7 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="subsubTypeSettings"
-            [source]="paragraphs2"
+            [source]="data2"
             (deleteConfirm)="onDeleteConfirm($event)"
             (editConfirm)="onSaveConfirm2($event)"></ng2-smart-table>
           <app-pagination
@@ -68,7 +69,7 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="subsubsubTypeSettings"
-            [source]="paragraphs3"
+            [source]="data3"
             (deleteConfirm)="onDeleteConfirm($event)"
             (editConfirm)="onSaveConfirm3($event)"></ng2-smart-table>
           <app-pagination

@@ -29,6 +29,10 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = LOGICAL_TABLES_REGISTER_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {

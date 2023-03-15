@@ -2,6 +2,7 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
   id: {
     title: 'ID',
     sort: false,
+    filter: true,
   },
   name: {
     title: 'Nombre',
@@ -17,6 +18,7 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
   type: {
     title: 'Tipo',
     sort: false,
+    /*  filter: true, */
     valuePrepareFunction: (value: string) => {
       if (value == 'ACT') return 'Activo';
       if (value == 'PAS') return 'Pasivo';
@@ -29,14 +31,14 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Seleccionar',
+        selectText: 'Tipo',
         list: [
-          { value: 'ACT', title: 'Activo' },
-          { value: 'PAS', title: 'Pasivo' },
-          { value: 'CAP', title: 'Capital Contable' },
-          { value: 'RES', title: 'Resultados' },
-          { value: 'ADE', title: 'Adeudos' },
-          { value: 'PRI', title: 'Principales Cuentas' },
+          { value: 'ACT', title: 'ACT' },
+          { value: 'PAS', title: 'PAS' },
+          { value: 'CAP', title: 'CAP' },
+          { value: 'RES', title: 'RES' },
+          { value: 'ADE', title: 'ADE' },
+          { value: 'PRI', title: 'PRI' },
         ],
       },
     },
