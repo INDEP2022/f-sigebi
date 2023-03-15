@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -44,5 +45,20 @@ export class AffairService
 
   getDelegations(params: ListParams) {
     return this.affairRepository.getAllPaginated(this.route, params);
+  }
+
+  create2(model: IAffair) {
+    const route = `affair`;
+    return this.post(route, model);
+  }
+
+  update2(id: number, model: IAffair) {
+    const route = `affair/id/${id}`;
+    return this.put(route, model);
+  }
+
+  remove2(id: number) {
+    const route = `affair/id/${id}`;
+    return this.delete(route);
   }
 }

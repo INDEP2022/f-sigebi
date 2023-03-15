@@ -2,9 +2,17 @@ import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 export const ISSUING_INSTITUTION_COLUMNS = {
   id: {
-    title: 'Registro',
+    title: 'No.',
     type: 'number',
     sort: false,
+  },
+  numClasif: {
+    title: 'N° clasificación',
+    type: 'number',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
   },
   name: {
     title: 'Nombre',
@@ -56,11 +64,7 @@ export const ISSUING_INSTITUTION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numClasif: {
-    title: 'N° clasificación',
-    type: 'number',
-    sort: false,
-  },
+
   numCity: {
     title: 'Ciudad',
     type: 'string',
@@ -69,16 +73,25 @@ export const ISSUING_INSTITUTION_COLUMNS = {
     },
     sort: false,
   },
-  numRegister: {
-    title: 'N° registro',
-    type: 'number',
-  },
   numTransference: {
     title: 'N° transferencia',
     type: 'string',
     valuePrepareFunction: (value: ITransferente) => {
       return value?.nameTransferent || '';
     },
+    sort: false,
+  },
+};
+
+export const INSTITUTION_COLUMNS = {
+  id: {
+    title: 'ID',
+    type: 'number',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'number',
     sort: false,
   },
 };

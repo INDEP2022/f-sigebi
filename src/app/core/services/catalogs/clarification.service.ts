@@ -26,7 +26,7 @@ export class ClarificationService implements ICrudMethods<IClarification> {
   }
 
   update(id: string | number, model: IClarification): Observable<Object> {
-    return this.clarificationRepository.update(this.route, id, model);
+    return this.clarificationRepository.newUpdateId(this.route, id, model);
   }
 
   newUpdate(model: IClarification): Observable<Object> {
