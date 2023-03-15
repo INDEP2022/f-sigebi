@@ -135,6 +135,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     if (menuItemEl) {
       menuItemEl.classList.add('active');
       const parentEl = menuItemEl.parentElement;
+
       if (parentEl) {
         parentEl.classList.add('mm-active');
         const parent2El = parentEl.parentElement.closest('ul');
@@ -156,6 +157,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
             if (parent4El && parent4El.id !== 'side-menu') {
               //se agrega parentElement por app dinamico
               parent4El.parentElement.classList.add('mm-show');
+
               const parent5El = parent4El.parentElement;
               if (parent5El && parent5El.id !== 'side-menu') {
                 //se agrega parentElement por app dinamico
@@ -201,41 +203,63 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    * Initialize
    */
   private initialize(): void {
+    //ordenar menu por parentId 0
+    this.menus.sort(function (a, b) {
+      if (a.parentid < b.parentid) {
+        return -1;
+      }
+      if (a.parentid > b.parentid) {
+        return 1;
+      }
+      return 0;
+    });
+
+    console.log(this.menus);
+
     for (const menu of this.menus) {
       const global: IMenuItem = {} as IMenuItem;
       global.label = menu.description;
       global.parentId = menu.parentid;
+      global.subItems = [];
       global.id = menu.id;
+      if (global.parentId == 0) global.icon = 'bx-folder';
+
       if (menu.submenus.length > 0) {
-        global.icon = 'bx-folder';
         global.subItems = searchChild(menu.submenus);
       } else {
         global.link = menu.name;
       }
+
       const isPresent = this.menuItems.findIndex(
-        menu => menu.label === global.label
+        menu => menu.id === global.parentId
       );
 
       if (isPresent != -1) {
-        for (const sub of global.subItems) {
-          this.menuItems[isPresent].subItems.push(sub);
-        }
+        this.menuItems[isPresent].subItems.push(global);
       } else {
-        //buscar el id padre por parentId y borrar si existe
-        const menusExist = this.menuItems.filter(
-          menu => menu.parentId === global.id
-        );
-        if (menusExist.length > 0) {
-          for (let i = 0; i < menusExist.length; i++) {
-            const index = this.menuItems.findIndex(
-              menu => menu.label === menusExist[i].label
-            );
-            this.menuItems.splice(index, 1);
-          }
-        }
-
         this.menuItems.push(global);
       }
+
+      // if (isPresent != -1) {
+      //   for (const sub of global.subItems) {
+      //     this.menuItems[isPresent].subItems.push(sub);
+      //   }
+      // } else {
+      //   //buscar el id padre por parentId y borrar si existe
+      //   const menusExist = this.menuItems.filter(
+      //     menu => menu.parentId === global.id
+      //   );
+      //   if (menusExist.length > 0) {
+      //     for (let i = 0; i < menusExist.length; i++) {
+      //       const index = this.menuItems.findIndex(
+      //         menu => menu.label === menusExist[i].label
+      //       );
+      //       this.menuItems.splice(index, 1);
+      //     }
+      //   }
+
+      //   this.menuItems.push(global);
+      // }
     }
 
     function searchChild(subMenu: Submenu[]): IMenuItem[] {
