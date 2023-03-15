@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +10,15 @@ import { IAffair } from '../../models/catalogs/affair.model';
 @Injectable({
   providedIn: 'root',
 })
-export class AffairService implements ICrudMethods<IAffair> {
+export class AffairService
+  extends HttpService
+  implements ICrudMethods<IAffair>
+{
   private readonly route: string = ENDPOINT_LINKS.Affair;
-  constructor(private affairRepository: Repository<IAffair>) {}
+  constructor(private affairRepository: Repository<IAffair>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IAffair>> {
     return this.affairRepository.getAllPaginated(this.route, params);
@@ -35,5 +42,20 @@ export class AffairService implements ICrudMethods<IAffair> {
 
   getDelegations(params: ListParams) {
     return this.affairRepository.getAllPaginated(this.route, params);
+  }
+
+  create2(model: IAffair) {
+    const route = `affair`;
+    return this.post(route, model);
+  }
+
+  update2(id: number, model: IAffair) {
+    const route = `affair/id/${id}`;
+    return this.put(route, model);
+  }
+
+  remove2(id: number) {
+    const route = `affair/id/${id}`;
+    return this.delete(route);
   }
 }
