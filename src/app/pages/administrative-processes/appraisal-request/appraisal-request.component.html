@@ -11,13 +11,13 @@
             <form-field [control]="form.get('noRequest')">
               <ngx-select
                 [form]="form"
-                (fetchItems)="getRequestById($event)"
+                (fetchItems)="getRequestAppraisalAll($event)"
                 [data]="noRequest"
                 value="id"
                 bindLabel="id"
                 label="No. Solicitud"
                 [control]="'noRequest'"
-                (change)="getRequestById($event)">
+                (change)="getRequestAppraisalById()">
               </ngx-select>
             </form-field>
           </div>
@@ -61,7 +61,7 @@
               (fetchItems)="getInstitutions($event)"
               [data]="institutions"
               value="id"
-              bindLabel="description"
+              bindLabel="id"
               label="Institución"
               [control]="'institution'"
               (change)="getInstitutions($event)">
@@ -213,7 +213,6 @@
         <form-field [control]="form.get('observations')" label="Observaciones">
           <textarea
             rows="3"
-            placeholder="Observaciones"
             class="form-control"
             formControlName="observations"></textarea>
         </form-field>
@@ -224,10 +223,10 @@
           <form-field [control]="form.get('costCurrency')">
             <ngx-select
               [form]="form"
-              [data]="appraisalCurrency"
-              bindLabel="name"
+              [data]="currency"
+              bindLabel="otKey1"
               label="Moneda del Costo"
-              value="id"
+              value="otKey1"
               (fetchItems)="getCurrencies($event)"
               control="costCurrency"></ngx-select>
           </form-field>
@@ -236,10 +235,10 @@
           <form-field [control]="form.get('appraisalCurrency')">
             <ngx-select
               [form]="form"
-              [data]="appraisalCurrency"
-              bindLabel="name"
+              [data]="currency"
+              bindLabel="otKey1"
               label="Moneda del avalúo"
-              value="id"
+              value="otKey1"
               (fetchItems)="getCurrencies($event)"
               control="appraisalCurrency"></ngx-select>
           </form-field>
@@ -282,9 +281,12 @@
             </div>
             <div class="row margin-input">
               <div class="col-md-1">
-                <button type="submit" class="btn btn-primary btn-sm active">
-                  Generar archivo
-                </button>
+                <confirm-button
+                  text="Generar archivo"
+                  [disabled]="form.invalid"
+                  [loading]="loading"
+                  (confirm)="send()">
+                </confirm-button>
               </div>
             </div>
           </div>
