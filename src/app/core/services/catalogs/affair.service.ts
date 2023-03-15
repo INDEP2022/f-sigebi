@@ -5,7 +5,6 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
-import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAffair } from '../../models/catalogs/affair.model';
 @Injectable({
