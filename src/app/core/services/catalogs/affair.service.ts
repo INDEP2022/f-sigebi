@@ -25,7 +25,9 @@ export class AffairService
   }
 
   getById(id: string | number): Observable<IAffair> {
-    return this.affairRepository.getById(this.route, id);
+    let partials = this.route.split('/');
+    const route = `${partials[1]}/id/${id}`;
+    return this.get(route);
   }
 
   create(model: IAffair): Observable<IAffair> {

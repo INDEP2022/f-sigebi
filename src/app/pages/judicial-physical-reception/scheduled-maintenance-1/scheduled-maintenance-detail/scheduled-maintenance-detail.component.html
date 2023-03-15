@@ -52,7 +52,7 @@
         [form]="form"
         [statusActaValue]="statusActaValue"></app-key-proceedings-form>
       <div class="action-buttons mr-4">
-        <div class="col-md-3">
+        <div class="col-sm-4">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -62,20 +62,13 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col-md-3 center">
+        <div class="col-sm-4">
           <app-goodtracker-button
             [statusActaValue]="statusActaValue"
             [data]="data"></app-goodtracker-button>
         </div>
-        <div class="col-md-3 center">
-          <app-update-dates-goods
-            [statusActaValue]="statusActaValue"
-            [data]="data"
-            (updateGoodEvent)="
-              selectedsForUpdate = $event
-            "></app-update-dates-goods>
-        </div>
-        <div class="col-md-3">
+
+        <div class="col-sm-4">
           <app-massive-delete-button
             [disabled]="
               !(
@@ -108,6 +101,19 @@
     </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <app-update-dates-goods
+          [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
+          [data]="data"
+          inicioColumn="fec_aprobacion_x_admon"
+          finColumn="fec_indica_usuario_aprobacion"
+          (updateGoodEvent)="
+            data = $event; updateDatesTable()
+          "></app-update-dates-goods>
+      </div>
+    </div>
+
     <app-table-goods
       [settingsTable]="settingsGoods"
       [data]="data"
@@ -119,6 +125,6 @@
       (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
 
     <hr class="row" />
-    <app-cants></app-cants>
+    <app-cants [id]="actaId" [typeProceeding]="typeProceeding"></app-cants>
   </div>
 </app-card>

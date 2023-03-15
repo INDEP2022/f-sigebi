@@ -10,7 +10,7 @@
     </div>
     <div class="col-md-4 mb-5" style="text-align: center">
       <app-update-dates-goods
-        [statusActaValue]="statusActaValue"
+        [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
         [data]="data"
         (updateGoodEvent)="
           selectedsForUpdate = $event; updateGoods()
