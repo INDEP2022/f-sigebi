@@ -66,5 +66,11 @@ export class DynamicTablesService extends HttpService {
       params
     );
   }
+
+  getTvalTable5ByTable(id: number | string) {
+    const fullRoute = `${DynamicCatalogEndpoint.getTvalTable5ByTable}/${id}`;
+    return this.get<IListResponse<TvalTable1Data>>(fullRoute);
+  }
+
   /* getfindTvaltable1ByTableKey() */
 }

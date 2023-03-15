@@ -8,11 +8,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-affailr-detail',
-  templateUrl: './affailr-detail.component.html',
+  selector: 'app-affair-modal',
+  templateUrl: './affair-modal.component.html',
   styles: [],
 })
-export class AffailrDetailComponent extends BasePage implements OnInit {
+export class AffairModalComponent extends BasePage implements OnInit {
   affairForm: ModelForm<IAffair>;
   affair: IAffair;
 
@@ -35,7 +35,6 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
     this.affairForm = this.fb.group({
       id: [null, []],
       description: [null, [Validators.pattern(STRING_PATTERN)]],
-      processDetonate: [null, []],
     });
     if (this.affair != null) {
       this.edit = true;

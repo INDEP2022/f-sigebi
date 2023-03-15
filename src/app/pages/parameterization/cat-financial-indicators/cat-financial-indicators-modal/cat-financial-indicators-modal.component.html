@@ -5,21 +5,14 @@
   <div body>
     <form class="form-material" [formGroup]="financialIndicatorsForm">
       <div class="row">
-        <div class="col-md-3">
-          <form-field
-            [control]="financialIndicatorsForm.get('id')"
-            label="No&#46; Indicador">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="financialIndicatorsForm.get('name')"
             label="Nombre">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-8">
           <form-field
             [control]="financialIndicatorsForm.get('description')"
             label="Descripci&oacute;n">

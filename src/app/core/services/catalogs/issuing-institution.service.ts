@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IssuuingInstitutionEndpoints } from 'src/app/common/constants/endpoints/issuing-institution-endpoint';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
@@ -15,6 +17,7 @@ import { ITransferente } from '../../models/catalogs/transferente.model';
   providedIn: 'root',
 })
 export class IssuingInstitutionService
+  extends HttpService
   implements ICrudMethods<IIssuingInstitution>
 {
   private readonly route: string = ENDPOINT_LINKS.IssuingInstitution;
@@ -24,7 +27,10 @@ export class IssuingInstitutionService
     private issuingInstitutionRepository: Repository<IIssuingInstitution>,
     private cityRepository: Repository<ICity>,
     private transferenteRepository: Repository<ITransferente>
-  ) {}
+  ) {
+    super();
+    this.microservice = IssuuingInstitutionEndpoints.BasePage;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IIssuingInstitution>> {
     return this.issuingInstitutionRepository.getAllPaginated(
@@ -76,5 +82,23 @@ export class IssuingInstitutionService
       this.route,
       id
     );
+  }
+
+  update2(id: string | number, model: IIssuingInstitution) {
+    const route = `${IssuuingInstitutionEndpoints.InstitutionClasification}/id/${id}`;
+    return this.put(route, model);
+  }
+
+  getInstitutionByClasif(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IIssuingInstitution>> {
+    const route = `${IssuuingInstitutionEndpoints.InstitutionClasification}?filter.numClasif=${id}`;
+    return this.get(route, params);
+  }
+
+  remove2(id: string | number) {
+    const route = `${IssuuingInstitutionEndpoints.InstitutionClasification}/id/${id}`;
+    return this.delete(route);
   }
 }
