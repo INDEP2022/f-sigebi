@@ -44,21 +44,22 @@ export class CostsResumeComponent extends BasePage implements OnInit {
 
   send() {
     this.loading = true;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/rResumenCostos.pdf?PARAMFORM=NO&Concepto1=`+
-    // this.physicsForm.controls['gasto'].value +
-    //   `&Concepto2=` +
-    //   this.physicsForm.controls['al'].value +
-    //  `&Fecha1=` +
-    //   this.datePipe.transform(
-    //     this.physicsForm.controls['startedDate'].value,
-    //     'dd-mm-yyyy'
-    //   ) +
-    //   `&Fecha2=` +
-    //   this.datePipe.transform(
-    //     this.physicsForm.controls['finishDate'].value,
-    //     'dd-mm-yyyy'
-    //   ) ;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const pdfurl =
+      `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RRESUMENCOSTOS.pdf?PARAMFORM=NO&Concepto1=` +
+      this.form.controls['gasto'].value +
+      `&Concepto2=` +
+      this.form.controls['al'].value +
+      `&Fecha1=` +
+      this.datePipe.transform(
+        this.form.controls['startDate'].value,
+        'dd-mm-yyyy'
+      ) +
+      `&Fecha2=` +
+      this.datePipe.transform(
+        this.form.controls['finishDate'].value,
+        'dd-mm-yyyy'
+      );
+    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
     const downloadLink = document.createElement('a');
     downloadLink.href = pdfurl;
     downloadLink.target = '_blank';
