@@ -1269,6 +1269,7 @@ export class DocumentsReceptionRegisterComponent
       this.fileUpdComService.fileDataUpdateParams = {
         pGestOk: 1,
         pNoTramite: this.procedureId,
+        dictamen: false,
       };
     }
     this.router.navigateByUrl('/pages/juridical/file-data-update');
@@ -1425,6 +1426,7 @@ export class DocumentsReceptionRegisterComponent
           },
         ],
         selectOnClick: true,
+        type: 'text',
       },
       this.selectDocument
     );
@@ -1751,6 +1753,7 @@ export class DocumentsReceptionRegisterComponent
         dataObservableFn: this.docRegisterService.getDepartaments,
         searchFilter: { field: 'description', operator: SearchFilter.LIKE },
         selectOnClick: true,
+        type: 'text',
       },
       this.selectArea
     );

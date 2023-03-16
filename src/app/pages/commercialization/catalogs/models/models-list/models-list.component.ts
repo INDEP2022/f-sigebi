@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 
@@ -20,7 +19,7 @@ import { DATA } from './data';
 export class ModelsListComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
 
-  data: LocalDataSource = new LocalDataSource();
+  // data: LocalDataSource = new LocalDataSource();
   dataBrands = DATA;
 
   totalItems: number = 0;
@@ -72,16 +71,18 @@ export class ModelsListComponent extends BasePage implements OnInit {
   searchParams() {
     this.params.subscribe({
       next: resp => {
-        this.dataBrands = [];
+        // this.dataBrands = [];
         if (resp.text !== '') {
-          this.modelServices.getModelForId(resp.text).subscribe({
-            next: (searchModel: any) => {
-              if (searchModel) {
-                this.dataBrands.push({
-                  model: searchModel.id,
-                });
-              }
-              this.data.load(this.dataBrands);
+          this.modelServices.getModels(resp.text).subscribe({
+            next: brands => {
+              // if (searchModel) {
+              //   this.dataBrands.push({
+              //     model: searchModel.id,
+              //   });
+              // }
+              this.dataBrands = [...brands.data];
+              this.totalItems = brands.count;
+              // this.data.load(brands);
             },
           });
         } else {
@@ -92,9 +93,9 @@ export class ModelsListComponent extends BasePage implements OnInit {
   }
 
   getModels() {
-    this.dataBrands = [];
+    // this.dataBrands = [];
     this.modelServices.getModels().subscribe({
-      next: (resp: any) => {
+      next: resp => {
         if (resp.data) {
           resp.data.forEach((item: any) => {
             this.dataBrands.push({
@@ -102,8 +103,9 @@ export class ModelsListComponent extends BasePage implements OnInit {
             });
           });
         }
-
-        this.data.load(this.dataBrands);
+        this.dataBrands = [...resp.data];
+        this.totalItems = resp.count;
+        // this.data.load(this.dataBrands);
       },
     });
   }
@@ -116,23 +118,26 @@ export class ModelsListComponent extends BasePage implements OnInit {
   }
 
   onSaveConfirm(event: any) {
+    console.log(event);
     const body = {
-      id: event.newData.model,
+      id: event.newData.id,
       modelComment: '',
     };
-    this.modelServices.PutModel(event.data.model, body).subscribe({
+    this.modelServices.PutModel(event.data.id, body).subscribe({
       next: (resp: any) => {
         if (resp.statusCode === 200) {
           event.confirm.resolve();
           this.onLoadToast('success', 'Elemento Actualizado', '');
+          this.getModels();
         }
       },
     });
   }
 
   onAddConfirm(event: any) {
+    console.log(event);
     const body = {
-      id: event.newData.model,
+      id: event.newData.id,
       modelComment: '',
     };
     this.modelServices.postModel(body).subscribe({
@@ -140,6 +145,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
         if (resp) {
           event.confirm.resolve();
           this.onLoadToast('success', 'Elemento Creado', '');
+          this.getModels();
         }
       },
     });
@@ -154,11 +160,13 @@ export class ModelsListComponent extends BasePage implements OnInit {
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
+      console.log(event);
       if (question.isConfirmed) {
-        this.modelServices.deleteModelForId(event.data.model).subscribe({
+        this.modelServices.deleteModelForId(event.data.id).subscribe({
           next: (resp: any) => {
             event.confirm.resolve();
             this.onLoadToast('success', 'Elemento Eliminado', '');
+            this.getModels();
           },
         });
       }

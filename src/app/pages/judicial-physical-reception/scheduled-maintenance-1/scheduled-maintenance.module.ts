@@ -13,7 +13,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { KeyProceedingsFormComponent } from '../key-proceedings-form/key-proceedings-form.component';
 import { TableGoodsComponent } from '../table-goods/table-goods.component';
 import { UpdateDatesGoodsComponent } from '../update-dates-goods/update-dates-goods.component';
-import { CantsComponent } from './scheduled-maintenance-detail/cants/cants.component';
+import { CantsComponent } from './scheduled-maintenance-detail/components/cants/cants.component';
 import { ExcelButtonComponent } from './scheduled-maintenance-detail/components/excel-button/excel-button.component';
 import { GoodtrackerButtonComponent } from './scheduled-maintenance-detail/components/goodtracker-button/goodtracker-button.component';
 import { MassiveDeleteButtonComponent } from './scheduled-maintenance-detail/components/massive-delete-button/massive-delete-button.component';

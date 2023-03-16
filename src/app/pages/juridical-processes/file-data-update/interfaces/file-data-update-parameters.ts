@@ -19,6 +19,7 @@
 export interface IJuridicalFileDataUpdateParams {
   pGestOk: number;
   pNoTramite: number;
+  dictamen: boolean;
 }
 
 export interface IJuridicalRulingParams {
