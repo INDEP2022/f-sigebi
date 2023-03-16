@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  model: {
+  id: {
     title: 'Modelo',
     sort: false,
     width: '80%',

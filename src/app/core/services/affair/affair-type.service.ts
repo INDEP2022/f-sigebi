@@ -54,4 +54,9 @@ export class AffairTypeService extends HttpService {
   ): Observable<IListResponse<IAffairType>> {
     return this.affairTypeRepository.getAffairTypebyAffair('', id, params);
   }
+
+  remove(id: string | number) {
+    const route = `${AffairTypeEndpoints.AffairType}/${id}`;
+    return this.delete(route);
+  }
 }

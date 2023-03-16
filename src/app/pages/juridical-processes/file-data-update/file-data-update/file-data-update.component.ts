@@ -1,10 +1,17 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { INotification } from '../../../../core/models/ms-notification/notification.model';
+import {
+  JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS,
+  JURIDICAL_FILE_UPDATE_SEARCH_FIELDS,
+} from '../interfaces/columns';
+import { IJuridicalFileDataUpdateForm } from '../interfaces/file-data-update-form';
+import { JuridicalFileUpdateService } from '../services/juridical-file-update.service';
 
 /** SERVICE IMPORTS */
 
@@ -19,11 +26,19 @@ export class FileDataUpdateComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  searchMode: boolean = false;
+  confirmSearch: boolean = false;
+  formData: Partial<IJuridicalFileDataUpdateForm> = null;
+  selectedRow: INotification;
+  columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
+  fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    public fileUpdateService: JuridicalFileUpdateService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
   }
@@ -34,5 +49,27 @@ export class FileDataUpdateComponent
 
   returnToFlyers() {
     this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
+  }
+
+  checkSearchMode(searchMode: boolean) {
+    this.searchMode = searchMode;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  confirm(confirm: boolean) {
+    this.confirmSearch = confirm;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  search(formData: Partial<IJuridicalFileDataUpdateForm>) {
+    this.formData = formData;
+    this.changeDetectorRef.detectChanges();
+    console.log(formData);
+  }
+
+  selectData(data: INotification) {
+    this.selectedRow = data;
+    this.changeDetectorRef.detectChanges();
+    console.log(data);
   }
 }
