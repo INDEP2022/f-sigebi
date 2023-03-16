@@ -1,28 +1,10 @@
 export interface IMunicipality {
   idMunicipality?: string;
-  entity: string;
-  nameMunicipality: string;
-  userCreation: string;
-  creationDate: Date;
-  userModification: string;
-  modificationDate: Date;
-  version: number;
-  // key?: string;
-  // entity: string;
-  // municipalityName: string;
-  // userCreation: string;
-  // creationDate: Date;
-  // userModification: string;
-  // modificationDate: Date;
-  // version: number;
-  codeMunicipalityId?: number;
-  codEntfedId: string;
-  description: string;
-  registrationNumber: number;
-  marginalityNumber: number;
-  // userCreation: string;
-  // creationDate: Date;
-  // userModification: string;
-  // modificationDate: Date;
-  // version: number;
+  stateKey?: string;
+  nameMunicipality?: string;
+  description?: string;
+  codMarginality?: number;
+  noRegister?: number;
+  risk?: string;
+  version?: number;
 }
