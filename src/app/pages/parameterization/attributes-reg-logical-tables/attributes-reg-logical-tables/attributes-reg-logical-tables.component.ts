@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -70,9 +70,9 @@ export class AttributesRegLogicalTablesComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getAllTables();
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getRegisterAttribute());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAllTables());
   }
 
   private prepareForm() {
@@ -83,53 +83,15 @@ export class AttributesRegLogicalTablesComponent
     });
   }
 
-  //Método para buscar y llenar inputs (Encabezado)
-
-  /*   getLogicalTablesByID(): void {
-    let _id = this.form.controls['table'].value;
-    this.loading = true;
-    this.dynamicTablesService.getById(_id).subscribe(
-      response => {
-        if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
-          this.getKeysByLogicalTables(_id);
-        } else {
-          this.alert('info', 'No se encontraron los registros', '');
-        }
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
-  } */
-
   getAllTables() {
     this.loading = true;
-    this.dynamicTablesService.getAll().subscribe(res => {
+    this.dynamicTablesService.getAll(this.params.getValue()).subscribe(res => {
       console.log(res);
       this.totalItems = res.count;
       this.logicTables = res.data;
       this.loading = false;
     });
   }
-
-  /*   getKeysByLogicalTables(id: string | number): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRegisterAttribute(id));
-  } */
-
-  /* getRegisterAttribute(id?: string | number): void {
-    this.loading = true;
-    this.parameterGoodService.getById(id).subscribe({
-      next: response => {
-        this.tdescAtrib = response.data;
-        this.totalItems2 = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  } */
 
   rowsSelected(event: any) {
     this.totalItems2 = 0;
