@@ -214,9 +214,10 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       return 0;
     });
 
-    console.log(this.menus);
+    const menusOPID = this.menus.filter(menu => menu.parentid == 0);
+    const menusWPID = this.menus.filter(menu => menu.parentid !== 0);
 
-    for (const menu of this.menus) {
+    this.menuItems = menusOPID.map(menu => {
       const global: IMenuItem = {} as IMenuItem;
       global.label = menu.description;
       global.parentId = menu.parentid;
@@ -225,74 +226,115 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       if (global.parentId == 0) global.icon = 'bx-folder';
 
       if (menu.submenus.length > 0) {
-        global.subItems = searchChild(menu.submenus);
+        global.subItems = this.searchChild(menu.submenus);
       } else {
         global.link = menu.name;
       }
 
+      return global;
+    });
+
+    menusWPID.map((menuWPID: any) => {
       const isPresent = this.menuItems.findIndex(
-        menu => menu.id === global.parentId
+        menu => menu.id === menuWPID.parentid
       );
 
       if (isPresent != -1) {
+        const global: IMenuItem = {} as IMenuItem;
+        global.label = menuWPID.description;
+        global.parentId = menuWPID.parentid;
+        global.subItems = [];
+        global.id = menuWPID.id;
+        if (global.parentId == 0) global.icon = 'bx-folder';
+
+        if (menuWPID.submenus.length > 0) {
+          global.subItems = this.searchChild(menuWPID.submenus);
+        } else {
+          global.link = menuWPID.name;
+        }
+
         this.menuItems[isPresent].subItems.push(global);
       } else {
-        this.menuItems.push(global);
+        //TODO:SEARCH IN CHILDS
+        this.isPresentRc(menuWPID);
       }
+    });
+  }
 
-      // if (isPresent != -1) {
-      //   for (const sub of global.subItems) {
-      //     this.menuItems[isPresent].subItems.push(sub);
-      //   }
-      // } else {
-      //   //buscar el id padre por parentId y borrar si existe
-      //   const menusExist = this.menuItems.filter(
-      //     menu => menu.parentId === global.id
-      //   );
-      //   if (menusExist.length > 0) {
-      //     for (let i = 0; i < menusExist.length; i++) {
-      //       const index = this.menuItems.findIndex(
-      //         menu => menu.label === menusExist[i].label
-      //       );
-      //       this.menuItems.splice(index, 1);
-      //     }
-      //   }
+  private isPresentRc(menuWPID: any): any {
+    this.menuItems = this.menuItems.map(menu => {
+      if (menu.subItems.length > 0) {
+        let isPresent = menu.subItems.findIndex(
+          msi => msi.id === menuWPID.parentid
+        );
 
-      //   this.menuItems.push(global);
-      // }
-    }
+        if (isPresent != -1) {
+          const global: IMenuItem = {} as IMenuItem;
+          global.label = menuWPID.description;
+          global.parentId = menuWPID.parentid;
+          global.subItems = [];
+          global.id = menuWPID.id;
+          if (global.parentId == 0) global.icon = 'bx-folder';
 
-    function searchChild(subMenu: Submenu[]): IMenuItem[] {
-      let subItemsArray: IMenuItem[] = [];
-      for (const sub of subMenu) {
-        const subItems: IMenuItem = {} as IMenuItem;
-        subItems.label = sub.description;
-        subItems.parentId = sub.parentid;
-        subItems.id = sub.id;
-        subItems.subItems = [];
-        if (sub.submenus.length > 0) {
-          subItems.subItems = searchChild(sub.submenus);
+          if (menuWPID.submenus.length > 0) {
+            global.subItems = this.searchChild(menuWPID.submenus);
+          } else {
+            global.link = menuWPID.name;
+          }
+          menu.subItems[isPresent].subItems.push(global);
         } else {
-          subItems.link = sub.name;
+          //TODO:SEARCH IN CHILDS
+          let childs = menu.subItems;
+          do {
+            childs.map(child => {
+              isPresent = child.subItems.findIndex(
+                msi => msi.id === menuWPID.parentid
+              );
+
+              if (isPresent != -1) {
+                const global: IMenuItem = {} as IMenuItem;
+                global.label = menuWPID.description;
+                global.parentId = menuWPID.parentid;
+                global.subItems = [];
+                global.id = menuWPID.id;
+
+                if (menuWPID.submenus.length > 0) {
+                  global.subItems = this.searchChild(menuWPID.submenus);
+                } else {
+                  global.link = menuWPID.name;
+                }
+                child.subItems[isPresent].subItems.push(global);
+              } else {
+                childs = child.subItems;
+              }
+            });
+          } while (isPresent != -1);
+
+          return menu;
         }
-        subItemsArray.push(subItems);
       }
 
-      return subItemsArray;
+      return menu;
+    });
+  }
+
+  private searchChild(subMenu: Submenu[]): IMenuItem[] {
+    let subItemsArray: IMenuItem[] = [];
+    for (const sub of subMenu) {
+      const subItems: IMenuItem = {} as IMenuItem;
+      subItems.label = sub.description;
+      subItems.parentId = sub.parentid;
+      subItems.id = sub.id;
+      subItems.subItems = [];
+      if (sub.submenus.length > 0) {
+        subItems.subItems = this.searchChild(sub.submenus);
+      } else {
+        subItems.link = sub.name;
+      }
+      subItemsArray.push(subItems);
     }
 
-    //Se ocupara para algo los id ???
-    // let id = 0;
-    // MENU.forEach(menu => {
-    //   if (menu.subItems?.length > 0) {
-    //     menu.id = id;
-    //     id = this.setParentId(menu, menu.id);
-    //   } else {
-    //     menu.id = id;
-    //     id++;
-    //   }
-    //   this.menuItems.push(menu);
-    // });
+    return subItemsArray;
   }
 
   private setParentId(menuItem: IMenuItem, id: number): number {
