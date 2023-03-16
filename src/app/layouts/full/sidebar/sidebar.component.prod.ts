@@ -9,8 +9,11 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
+import {
+  MenuPermission,
+  Submenu,
+} from 'src/app/core/interfaces/menu-permission.interface';
 import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
-import { MENU } from 'src/app/core/menu';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
@@ -31,7 +34,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   private menu: any;
   public menuItems: IMenuItem[] = [];
 
-  menus: any[] = [];
+  menus: MenuPermission[] = [];
 
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
@@ -42,6 +45,16 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   ) {}
 
   ngOnInit() {
+    const roles = this.authService.accessRoles();
+    roles.some((rol: any) =>
+      rol.menus.some(
+        (menu: any) => {
+          this.menus.push(menu);
+        }
+        //menu.screen === screenId &&
+        //menu.permissions[permission] == PERMISSION_ENABLED
+      )
+    );
     this.initialize();
   }
 
@@ -110,6 +123,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       paths.push(links[i]['pathname']);
     }
     var itemIndex = paths.indexOf(window.location.pathname);
+
     if (itemIndex === -1) {
       const strIndex = window.location.pathname.lastIndexOf('/');
       const item = window.location.pathname.substr(0, strIndex).toString();
@@ -117,9 +131,11 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     } else {
       menuItemEl = links[itemIndex];
     }
+
     if (menuItemEl) {
       menuItemEl.classList.add('active');
       const parentEl = menuItemEl.parentElement;
+
       if (parentEl) {
         parentEl.classList.add('mm-active');
         const parent2El = parentEl.parentElement.closest('ul');
@@ -127,7 +143,8 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
           parent2El.classList.add('mm-show');
           const parent3El = parent2El.parentElement;
           if (parent3El && parent3El.id !== 'side-menu') {
-            parent3El.classList.add('mm-active');
+            //se agrega parentElement por app dinamico
+            parent3El.parentElement.classList.add('mm-active');
             const childAnchor = parent3El.querySelector('.has-arrow');
             const childDropdown = parent3El.querySelector('.has-dropdown');
             if (childAnchor) {
@@ -138,10 +155,13 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
             }
             const parent4El = parent3El.parentElement;
             if (parent4El && parent4El.id !== 'side-menu') {
-              parent4El.classList.add('mm-show');
+              //se agrega parentElement por app dinamico
+              parent4El.parentElement.classList.add('mm-show');
+
               const parent5El = parent4El.parentElement;
               if (parent5El && parent5El.id !== 'side-menu') {
-                parent5El.classList.add('mm-active');
+                //se agrega parentElement por app dinamico
+                parent5El.parentElement.classList.add('mm-active');
                 const childanchor = parent5El.querySelector('.is-parent');
                 if (childanchor && parent5El.id !== 'side-menu') {
                   childanchor.classList.add('mm-active');
@@ -150,12 +170,25 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
                 /*IF MENU NIVEL 3*/
                 const parent6El = parent5El.parentElement;
                 if (parent6El && parent6El.id !== 'side-menu') {
-                  parent6El.classList.add('mm-show');
-                  parent6El.classList.add('mm-active');
+                  //se agrega parentElement por app dinamico
+                  parent6El.parentElement.classList.add('mm-show');
+                  parent6El.parentElement.classList.add('mm-active');
                   const childanchor = parent6El.querySelector('.is-parent');
                   if (childanchor && parent6El.id !== 'side-menu') {
                     childanchor.classList.add('mm-show');
                     childanchor.classList.add('mm-active');
+                  }
+
+                  const parent7El = parent5El.parentElement;
+                  if (parent7El && parent7El.id !== 'side-menu') {
+                    //se agrega parentElement por app dinamico
+                    parent7El.parentElement.classList.add('mm-show');
+                    parent7El.parentElement.classList.add('mm-active');
+                    const childanchor = parent7El.querySelector('.is-parent');
+                    if (childanchor && parent7El.id !== 'side-menu') {
+                      childanchor.classList.add('mm-show');
+                      childanchor.classList.add('mm-active');
+                    }
                   }
                 }
               }
@@ -170,18 +203,140 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    * Initialize
    */
   private initialize(): void {
-    let id = 0;
-    MENU.forEach(menu => {
-      if (menu.subItems?.length > 0) {
-        menu.id = id;
-        id = this.setParentId(menu, menu.id);
-      } else {
-        menu.id = id;
-        id++;
+    //ordenar menu por parentId 0
+    this.menus.sort(function (a, b) {
+      if (a.parentid < b.parentid) {
+        return -1;
       }
-      this.menuItems.push(menu);
+      if (a.parentid > b.parentid) {
+        return 1;
+      }
+      return 0;
+    });
+
+    const menusOPID = this.menus.filter(menu => menu.parentid == 0);
+    const menusWPID = this.menus.filter(menu => menu.parentid !== 0);
+
+    this.menuItems = menusOPID.map(menu => {
+      const global: IMenuItem = {} as IMenuItem;
+      global.label = menu.description;
+      global.parentId = menu.parentid;
+      global.subItems = [];
+      global.id = menu.id;
+      if (global.parentId == 0) global.icon = 'bx-folder';
+
+      if (menu.submenus.length > 0) {
+        global.subItems = this.searchChild(menu.submenus);
+      } else {
+        global.link = menu.name;
+      }
+
+      return global;
+    });
+
+    menusWPID.map((menuWPID: any) => {
+      const isPresent = this.menuItems.findIndex(
+        menu => menu.id === menuWPID.parentid
+      );
+
+      if (isPresent != -1) {
+        const global: IMenuItem = {} as IMenuItem;
+        global.label = menuWPID.description;
+        global.parentId = menuWPID.parentid;
+        global.subItems = [];
+        global.id = menuWPID.id;
+        if (global.parentId == 0) global.icon = 'bx-folder';
+
+        if (menuWPID.submenus.length > 0) {
+          global.subItems = this.searchChild(menuWPID.submenus);
+        } else {
+          global.link = menuWPID.name;
+        }
+
+        this.menuItems[isPresent].subItems.push(global);
+      } else {
+        //TODO:SEARCH IN CHILDS
+        this.isPresentRc(menuWPID);
+      }
     });
   }
+
+  private isPresentRc(menuWPID: any): any {
+    this.menuItems = this.menuItems.map(menu => {
+      if (menu.subItems.length > 0) {
+        let isPresent = menu.subItems.findIndex(
+          msi => msi.id === menuWPID.parentid
+        );
+
+        if (isPresent != -1) {
+          const global: IMenuItem = {} as IMenuItem;
+          global.label = menuWPID.description;
+          global.parentId = menuWPID.parentid;
+          global.subItems = [];
+          global.id = menuWPID.id;
+          if (global.parentId == 0) global.icon = 'bx-folder';
+
+          if (menuWPID.submenus.length > 0) {
+            global.subItems = this.searchChild(menuWPID.submenus);
+          } else {
+            global.link = menuWPID.name;
+          }
+          menu.subItems[isPresent].subItems.push(global);
+        } else {
+          //TODO:SEARCH IN CHILDS
+          let childs = menu.subItems;
+          do {
+            childs.map(child => {
+              isPresent = child.subItems.findIndex(
+                msi => msi.id === menuWPID.parentid
+              );
+
+              if (isPresent != -1) {
+                const global: IMenuItem = {} as IMenuItem;
+                global.label = menuWPID.description;
+                global.parentId = menuWPID.parentid;
+                global.subItems = [];
+                global.id = menuWPID.id;
+
+                if (menuWPID.submenus.length > 0) {
+                  global.subItems = this.searchChild(menuWPID.submenus);
+                } else {
+                  global.link = menuWPID.name;
+                }
+                child.subItems[isPresent].subItems.push(global);
+              } else {
+                childs = child.subItems;
+              }
+            });
+          } while (isPresent != -1);
+
+          return menu;
+        }
+      }
+
+      return menu;
+    });
+  }
+
+  private searchChild(subMenu: Submenu[]): IMenuItem[] {
+    let subItemsArray: IMenuItem[] = [];
+    for (const sub of subMenu) {
+      const subItems: IMenuItem = {} as IMenuItem;
+      subItems.label = sub.description;
+      subItems.parentId = sub.parentid;
+      subItems.id = sub.id;
+      subItems.subItems = [];
+      if (sub.submenus.length > 0) {
+        subItems.subItems = this.searchChild(sub.submenus);
+      } else {
+        subItems.link = sub.name;
+      }
+      subItemsArray.push(subItems);
+    }
+
+    return subItemsArray;
+  }
+
   private setParentId(menuItem: IMenuItem, id: number): number {
     menuItem.subItems.forEach(sub => {
       id++;

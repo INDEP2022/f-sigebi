@@ -31,6 +31,11 @@ export abstract class ScheduledMaintenance extends BasePage {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      id: {
+        title: 'ID',
+        type: 'string',
+        sort: false,
+      },
       keysProceedings: {
         title: 'Programa Recepcion Entrega',
         type: 'string',

@@ -283,6 +283,7 @@ export class HomeComponent extends BasePage implements OnInit {
           gOFFCommit: null,
           noTransferente: null,
           gNoVolante: null,
+          varDic: null,
         };
 
         this.globalVarsService.updateGlobalVars(newState);
