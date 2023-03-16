@@ -114,8 +114,8 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log(params);
-    this.bankMovementType.getAll(params).subscribe(
-      response => {
+    this.bankMovementType.getAll(params).subscribe({
+      next: response => {
         console.log(response);
         this.bankAccounts = response.data;
         this.totalItems = response.count || 0;
@@ -123,8 +123,8 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: err => (this.loading = false),
+    });
   }
 
   openModal(context?: Partial<BankMovementsFormComponent>) {

@@ -574,3 +574,11 @@ export interface IAppraisersGood {
     noRegister?: string;
   };
 }
+
+export interface IDescriptionByNoGoodBody {
+  goodNumber: number;
+}
+
+export interface IDescriptionByNoGoodResponse {
+  description: string;
+}

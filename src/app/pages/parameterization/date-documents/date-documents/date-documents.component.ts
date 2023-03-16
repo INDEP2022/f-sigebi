@@ -69,9 +69,9 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
         }
       });
     this.prepareForm();
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getAllDateDocuments());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAllDateDocuments());
   }
   private prepareForm() {
     this.dateDocumentsForm = this.fb.group({
@@ -89,6 +89,7 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
     };
     this.dateDocumentsService.getAllPaginated2(params).subscribe({
       next: response => {
+        console.log(response);
         this.dateDocuments = response.data;
         this.data.load(this.dateDocuments);
         this.data.refresh();
@@ -125,9 +126,9 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
           if (this.dateDocumentsForm.valid) {
             this.search();
           } else {
-            // this.params
-            //   .pipe(takeUntil(this.$unSubscribe))
-            //   .subscribe(() => this.getAllDateDocuments());
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getAllDateDocuments());
           }
         },
       },

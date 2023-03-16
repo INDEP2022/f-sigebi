@@ -8,6 +8,7 @@ import { UserProcessService } from 'src/app/core/services/ms-user-process/user-p
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
+
 @Component({
   selector: 'app-search-user-form',
   templateUrl: './search-user-form.component.html',
@@ -71,12 +72,21 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     this.loading = true;
     console.log('Tipo de usuario', this.typeUser);
     this.params.getValue()['search'] = this.params.getValue().text;
-    this.params.getValue()['filter.employeeType'] = this.typeUser;
-    this.userProcessService.getAll(this.params.getValue()).subscribe(data => {
-      this.usersData.load(data.data);
-      this.totalItems = data.count;
-      this.loading = false;
-    });
+    if (this.typeUser && this.typeUser.trim().length > 0) {
+      this.params.getValue()['filter.employeeType'] = this.typeUser;
+    }
+    this.userProcessService.getAll(this.params.getValue()).subscribe(
+      data => {
+        this.usersData.load(data.data);
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error => {
+        this.usersData.load([]);
+        this.totalItems = 0;
+        this.loading = false;
+      }
+    );
   }
 
   sendUser(user: any, selected: boolean) {

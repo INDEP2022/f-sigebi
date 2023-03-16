@@ -120,8 +120,8 @@ export class ModelsListComponent extends BasePage implements OnInit {
   onSaveConfirm(event: any) {
     console.log(event);
     const body = {
-      id: event.newData.id,
-      modelComment: '',
+      id: event.data.id,
+      modelComment: event.newData.modelComment,
     };
     this.modelServices.PutModel(event.data.id, body).subscribe({
       next: (resp: any) => {
@@ -137,8 +137,8 @@ export class ModelsListComponent extends BasePage implements OnInit {
   onAddConfirm(event: any) {
     console.log(event);
     const body = {
-      id: event.newData.id,
-      modelComment: '',
+      id: event.newData.modelComment,
+      modelComment: event.newData.modelComment,
     };
     this.modelServices.postModel(body).subscribe({
       next: (resp: any) => {

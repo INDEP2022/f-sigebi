@@ -18,7 +18,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="valuesList"
+              [source]="data"
               (userRowSelect)="rowsSelected($event)">
             </ng2-smart-table>
           </div>
@@ -34,7 +34,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="tvalTableList"
+              [source]="data1"
               (edit)="openForm($event.data)">
             </ng2-smart-table>
           </div>

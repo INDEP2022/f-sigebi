@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -14,6 +18,8 @@ import { ModalIndiciaRegistrationComponent } from '../modal-indicia-registration
 })
 export class IndiciaRegistrationComponent extends BasePage implements OnInit {
   paragraphs: IIndiciados[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -27,7 +33,7 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: {
@@ -58,9 +64,36 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
         },
       },
     };
+    this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getIndicated();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getIndicated());
@@ -68,9 +101,15 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
 
   getIndicated() {
     this.loading = true;
-    this.indicatedService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.indicatedService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
+        this.data.load(this.paragraphs);
+        this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -93,14 +132,20 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
   }
 
   delete(event: any) {
+    console.log(event);
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Eliminado correctamente', '');
+        this.indicatedService.remove(event.id).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.getIndicated();
+          },
+          error: err => this.onLoadToast('error', err.error.message, ''),
+        });
       }
     });
   }
