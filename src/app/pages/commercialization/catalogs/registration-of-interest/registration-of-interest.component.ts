@@ -19,6 +19,7 @@ export class RegistrationOfInterestComponent
 {
   tiie: ITiieV1;
   form: FormGroup;
+  tiiesList: ITiieV1[] = [];
 
   constructor(
     private fb: FormBuilder,
