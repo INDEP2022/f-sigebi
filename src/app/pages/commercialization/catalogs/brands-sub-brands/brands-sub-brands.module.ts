@@ -11,9 +11,14 @@ import { BrandsSubBrandsRoutingModule } from './brands-sub-brands-routing.module
 //Components
 import { BrandsSubBrandsFormComponent } from './brands-sub-brands-form/brands-sub-brands-form.component';
 import { BrandsSubBrandsListComponent } from './brands-sub-brands-list/brands-sub-brands-list.component';
+import { SubBrandsListComponent } from './brands-sub-brands-list/sub-brands-list/sub-brands-list.component';
 
 @NgModule({
-  declarations: [BrandsSubBrandsListComponent, BrandsSubBrandsFormComponent],
+  declarations: [
+    BrandsSubBrandsListComponent,
+    BrandsSubBrandsFormComponent,
+    SubBrandsListComponent,
+  ],
   imports: [
     CommonModule,
     BrandsSubBrandsRoutingModule,
