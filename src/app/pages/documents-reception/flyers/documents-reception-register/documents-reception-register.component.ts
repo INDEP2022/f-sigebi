@@ -1053,7 +1053,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.wheelType.setValue(notif.wheelType);
     this.initialCondition = notif.wheelType;
     if (notif.identifier != null)
-      this.identifierService.getById(notif.identifier).subscribe({
+      this.docRegisterService.getIdentifier(notif.identifier).subscribe({
         next: data => {
           this.formControls.identifier.setValue(data);
           this.formControls.identifierExp.setValue(data.id);
@@ -1067,7 +1067,7 @@ export class DocumentsReceptionRegisterComponent
           if (data.clv == 'S') {
             goodRelation = data.clv;
           }
-          this.formControls.goodRelation.setValue(data.clv);
+          this.formControls.goodRelation.setValue(goodRelation);
         },
       });
     if (notif.cityNumber != null)
@@ -1699,7 +1699,7 @@ export class DocumentsReceptionRegisterComponent
         this.uniqueKeys = new DefaultSelect(data.data, data.count);
       },
       error: () => {
-        this.users = new DefaultSelect();
+        this.uniqueKeys = new DefaultSelect();
       },
     });
   }
@@ -2050,7 +2050,7 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             iden = data.identifier;
             if (iden != this.formControls.identifier.value.id) {
-              this.identifierService.getById('MIXTO').subscribe({
+              this.docRegisterService.getIdentifier('MIXTO').subscribe({
                 next: data => {
                   this.formControls.identifier.setValue(data);
                 },

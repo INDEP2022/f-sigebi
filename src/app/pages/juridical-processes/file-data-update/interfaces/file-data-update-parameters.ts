@@ -50,3 +50,8 @@ export interface IJuridicalRelatedDocumentManagementParams {
   pGestOk: number;
   pNoTramite: number;
 }
+
+export interface IJuridicalShiftChangeParams {
+  iden: number;
+  exp: number;
+}
