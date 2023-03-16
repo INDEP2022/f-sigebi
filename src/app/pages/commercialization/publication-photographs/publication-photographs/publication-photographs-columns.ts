@@ -93,8 +93,19 @@ export const numStoreColumn = {
 };
 
 export const dataBatchColum = {
+  numStore: {
+    type: 'list',
+    manager: {
+      title: 'Cliente',
+      type: 'string',
+      sort: true,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.numStore.manager;
+      },
+    },
+  },
   id: {
-    title: 'id Lote',
+    title: 'Lote',
     type: 'string',
     sort: false,
   },
@@ -107,17 +118,6 @@ export const dataBatchColum = {
     title: 'Estatus',
     type: 'string',
     sort: true,
-  },
-  numStore: {
-    type: 'list',
-    manager: {
-      title: 'Cliente',
-      type: 'string',
-      sort: true,
-      valuePrepareFunction: (cell: any, row: any) => {
-        return row.numStore.manager;
-      },
-    },
   },
 };
 
@@ -150,14 +150,14 @@ export const SUBTYPE = {
   },
   idTypeGood: {
     type: 'list',
-    id: {
-      title: 'Tipo',
-      sort: false,
-      filter: false,
-      valuePrepareFunction: (cell: any, row: any) => {
-        return row.idTypeGood.id;
-      },
-    },
+    // id: {
+    //   title: 'Tipo',
+    //   sort: false,
+    //   filter: false,
+    //   valuePrepareFunction: (cell: any, row: any) => {
+    //     return row.idTypeGood.id;
+    //   },
+    // },
     nameGoodType: {
       title: 'Nombre de Tipo',
       sort: false,
@@ -171,14 +171,14 @@ export const SUBTYPE = {
 
 export const TYPE = {
   idTypeGood: {
-    id: {
-      title: 'Tipo de Bien',
-      sort: false,
-      filter: false,
-      valuePrepareFunction: (cell: any, row: any) => {
-        return row.idTypeGood.id;
-      },
-    },
+    // id: {
+    //   title: 'Tipo de Bien',
+    //   sort: false,
+    //   filter: false,
+    //   valuePrepareFunction: (cell: any, row: any) => {
+    //     return row.idTypeGood.id;
+    //   },
+    // },
     nameGoodType: {
       title: 'Nombre de Bien',
       sort: false,

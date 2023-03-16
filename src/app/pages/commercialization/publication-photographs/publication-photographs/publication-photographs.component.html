@@ -137,14 +137,14 @@
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings4"
-            [source]="dataBatch"></ng2-smart-table>
+            [source]="dataBatch"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event)"></ng2-smart-table>
         </div>
         <div class="row mt-5 d-flex justify-content-center">
           <app-pagination
             [params]="params"
-            [totalItems]="totalItems"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event)"></app-pagination>
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
 

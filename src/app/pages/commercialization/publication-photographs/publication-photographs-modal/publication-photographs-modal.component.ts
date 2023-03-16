@@ -20,7 +20,7 @@ export class PublicationPhotographsModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Configuración de Layouts';
+  title: string = 'Fotografías';
   provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;

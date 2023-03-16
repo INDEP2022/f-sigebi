@@ -40,7 +40,6 @@ export class PublicationPhotographsComponent
   form: FormGroup = new FormGroup({});
   dataBatch: any;
   subtype: any;
-  title = 'Fotografías';
   params = new BehaviorSubject<ListParams>(new ListParams());
   batchList: any;
   selectedCve: any = null;
@@ -88,7 +87,6 @@ export class PublicationPhotographsComponent
 
     this.settings4 = {
       ...TABLE_SETTINGS,
-      actions: false,
       columns: { ...dataBatchColum },
       noDataMessage: 'No se encontrarón registros',
     };
@@ -106,6 +104,8 @@ export class PublicationPhotographsComponent
     // this.data1.load(this.dataBatch);
     this.prepareForm();
     this.getBatch();
+    this.settings4.actions.delete = true;
+    this.settings4.actions.edit = true;
     // this.getSubtype();
   }
 
