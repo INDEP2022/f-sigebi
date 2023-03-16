@@ -54,16 +54,18 @@
       </div>
       <div class="row">
         <div class="col-md-6">
-          <div [class]="loading ? 'table-loading' : ''">
-            <div class="table-responsive">
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
+                [attr.class]="'table-bordered'"
                 [source]="logicTables"
                 [settings]="settings"
                 (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
             </div>
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
           </div>
         </div>
 

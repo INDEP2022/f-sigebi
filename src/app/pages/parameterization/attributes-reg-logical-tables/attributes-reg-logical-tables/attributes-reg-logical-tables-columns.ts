@@ -3,6 +3,7 @@ export const ATT_REG_LOG_TAB_COLUMNS = {
     title: 'No. Tabla',
     sort: false,
     filter: true,
+    width: '10px',
   },
   keyAtrib: {
     title: 'No. Atributo',
@@ -37,6 +38,7 @@ export const LOG_TAB_COLUMNS = {
     title: 'Id',
     sort: false,
     filter: true,
+    width: '10%',
   },
   description: {
     title: 'Descripcion',
