@@ -97,7 +97,9 @@ export class RegistrationOfInterestModalComponent
         if (data) {
           data.map((item: any) => {
             console.log(item);
-            this.providerForm.get('user').setValue(item.username);
+            this.providerForm
+              .get('user')
+              .setValue(item.firstName + ' ' + item.lastName);
           });
         }
       },
