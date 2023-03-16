@@ -22,6 +22,8 @@
         <ngx-select
           (fetchItems)="getSubDelegations($event)"
           [data]="subdelegations"
+          id="sdele"
+          class="disabled"
           [form]="form"
           bindLabel="description"
           [label]="labelSubdelegation"
