@@ -116,8 +116,8 @@
                   "with": "src/environments/environment.prod.ts"
                 },
                 {
-                  "replace": "src/app/layouts/sidebar/sidebar.component.ts",
-                  "with": "src/app/layouts/sidebar/sidebar.component.prod.ts"
+                  "replace": "src/app/layouts/full/sidebar/sidebar.component.ts",
+                  "with": "src/app/layouts/full/sidebar/sidebar.component.prod.ts"
                 }
               ],
               "outputHashing": "all"
