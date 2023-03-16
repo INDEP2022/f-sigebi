@@ -1,5 +1,5 @@
 export const MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS = {
-  certificateType: {
+  proceedingsType: {
     title: 'Tipo de acta',
     sort: false,
   },
@@ -7,7 +7,7 @@ export const MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS = {
     title: 'Descripcion',
     sort: false,
   },
-  registryNumber: {
+  numRegister: {
     title: 'Registro numero',
     sort: false,
   },

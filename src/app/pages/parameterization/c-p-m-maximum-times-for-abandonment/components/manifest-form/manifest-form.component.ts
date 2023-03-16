@@ -92,7 +92,7 @@ export class ManifestFormComponent extends BasePage implements OnInit {
   handleSuccess() {
     this.onLoadToast(
       'success',
-      'No Manifestados',
+      'No Recogidos ',
       `Ha sido actualizado correctamente`
     );
     this.modalRef.content.callback(true);

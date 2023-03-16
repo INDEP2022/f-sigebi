@@ -1,13 +1,23 @@
-import { IKey } from 'src/app/core/models/catalogs/date-documents.model';
+import {
+  IExpedient,
+  IKey,
+  IState,
+} from 'src/app/core/models/catalogs/date-documents.model';
 
 export const DATEDOCUMENTS_COLUMNS = {
   expedientNumber: {
     title: 'Exp.',
     type: 'number',
+    valuePrepareFunction: (value: IExpedient) => {
+      return value.id;
+    },
     sort: false,
   },
   stateNumber: {
     title: 'Bien',
+    valuePrepareFunction: (value: IState) => {
+      return value.id;
+    },
     type: 'number',
     sort: false,
   },

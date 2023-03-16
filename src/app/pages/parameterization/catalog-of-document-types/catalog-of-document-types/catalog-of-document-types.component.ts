@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
-  FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
@@ -23,7 +24,9 @@ export class CatalogOfDocumentTypesComponent
 {
   columns: any[] = [];
   totalItems: number = 0;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   searchFilter: SearchBarFilter;
   contentDocuments: IListResponse<TypesDocuments> =
     {} as IListResponse<TypesDocuments>;
@@ -52,10 +55,37 @@ export class CatalogOfDocumentTypesComponent
         },
       },
     };
+    this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
     this.searchFilter = { field: 'description', operator: SearchFilter.ILIKE };
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            // filter.field == 'id'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getPagination();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPagination());
@@ -77,18 +107,24 @@ export class CatalogOfDocumentTypesComponent
 
   getPagination() {
     this.loading = true;
-    this.documentsServ
-      .getAllWidthFilters(this.params.getValue().getParams())
-      .subscribe({
-        next: resp => {
-          this.contentDocuments = resp;
-          this.loading = false;
-        },
-        error: error => (
-          this.onLoadToast('error', error.error.message, ''),
-          (this.loading = false)
-        ),
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.documentsServ.getAllWidthFilters(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.contentDocuments = resp.data;
+        this.totalItems = resp.count;
+        this.data.load(resp.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (
+        this.onLoadToast('error', error.error.message, ''),
+        (this.loading = false)
+      ),
+    });
   }
 
   deleteDocument(id: string) {

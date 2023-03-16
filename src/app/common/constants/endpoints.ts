@@ -1,7 +1,7 @@
 export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
   Authority = 'catalog/authority',
-  appraiser = 'catalog/valuadores',
+  appraiser = 'catalog/appraisers',
   Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
@@ -122,7 +122,7 @@ export enum ENDPOINT_LINKS {
   IndicatorsParameter = 'parametergood/indicators-parameter',
   DetailIndParameter = 'parametergood/detalle-ind-parametro',
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
-  parametergoodActa = 'parametergood/validadores-actas',
+  parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
   Document = 'documents',

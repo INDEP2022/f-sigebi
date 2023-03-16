@@ -11,13 +11,13 @@ export class ModelsService {
   getModels(text = '') {
     let url = `${environment.API_URL}parametercomer/api/v1/comer-models`;
     if (text) {
-      url = url + '?filter.id=$ilike:' + text;
+      url = url + '?filter.modelComment=$ilike:' + text;
     }
     return this.htpp.get<{ data: any[]; count: number }>(url);
   }
 
   PutModel(idModel: string, body: any) {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-models/id/${idModel}`;
+    const url = `${environment.API_URL}parametercomer/api/v1/comer-models/${idModel}`;
     return this.htpp.put(url, body);
   }
 

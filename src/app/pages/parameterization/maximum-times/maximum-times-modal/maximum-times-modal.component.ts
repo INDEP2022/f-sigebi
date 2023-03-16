@@ -118,7 +118,10 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
     };
     console.log(data);
     this.maximumTimesService
-      .update(this.maximumTimesForm.controls['user'].value.toString(), data)
+      .update(
+        this.maximumTimesForm.controls['certificateType'].value.toString(),
+        data
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

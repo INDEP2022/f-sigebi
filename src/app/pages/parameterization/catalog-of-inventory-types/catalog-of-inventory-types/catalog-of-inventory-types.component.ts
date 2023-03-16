@@ -1,22 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
-import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import {
-  IInventoryQuery,
-  TypesInventory,
-} from 'src/app/core/models/ms-inventory-query/inventory-query.model';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { InventoryTypeService } from 'src/app/core/services/ms-inventory-type/inventory-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { ListTypeOfInventoryComponent } from '../list-type-of-inventory/list-type-of-inventory.component';
-import { ModalCatalogOfInventoryTypesComponent } from '../modal-catalog-of-inventory-types/modal-catalog-of-inventory-types.component';
 
 @Component({
   selector: 'app-catalog-of-inventory-types',
@@ -29,41 +16,15 @@ export class CatalogOfInventoryTypesComponent
 {
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
-  searchFilter: SearchBarFilter;
-
-  public dataDetail: IListResponse<IInventoryQuery> =
-    {} as IListResponse<IInventoryQuery>;
+  title: string = 'CATÁLOGO DE TIPOS DE INVENTARIO';
+  allotment: any;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
+    private modalRef: BsModalRef,
     private inventoryServ: InventoryTypeService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        position: 'right',
-      },
-      columns: {
-        noTypeInventory: {
-          title: 'Número',
-          sort: false,
-        },
-        attributeInventory: {
-          title: 'Atributo Inventario',
-          sort: false,
-        },
-        typeData: {
-          title: 'Tipo de Dato',
-          sort: false,
-        },
-      },
-    };
-    this.dataDetail.count = 0;
   }
 
   ngOnInit(): void {
@@ -91,21 +52,11 @@ export class CatalogOfInventoryTypesComponent
       ],
       noRegister: [null],
     });
-  }
-
-  openForm(allotment?: any) {
-    let config: ModalOptions = {
-      initialState: {
-        data: this.form.value,
-        allotment,
-        callback: (next: boolean, idCv: string) => {
-          if (next) this.getDetailInventory(idCv);
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ModalCatalogOfInventoryTypesComponent, config);
+    if (this.allotment != null) {
+      console.log(this.allotment);
+      this.edit = true;
+      this.form.patchValue(this.allotment);
+    }
   }
 
   confirm() {
@@ -144,12 +95,7 @@ export class CatalogOfInventoryTypesComponent
         .updateInventory(cveTypeInventory, this.form.value)
         .subscribe({
           next: () => {
-            this.edit = true;
-            this.onLoadToast(
-              'success',
-              'Inventario actualizado correctamente',
-              ''
-            );
+            this.handleSuccess();
           },
           error: err => {
             this.onLoadToast('warning', err.error.message, '');
@@ -158,8 +104,7 @@ export class CatalogOfInventoryTypesComponent
     } else {
       this.inventoryServ.createInventory(this.form.value).subscribe({
         next: () => {
-          this.edit = true;
-          this.onLoadToast('success', 'Inventario creado correctamente', '');
+          this.handleSuccess();
         },
         error: err => {
           this.onLoadToast('warning', err.error.message, '');
@@ -167,44 +112,6 @@ export class CatalogOfInventoryTypesComponent
       });
     }
   }
-
-  openModal() {
-    let config: ModalOptions = {
-      initialState: {
-        callback: (next: boolean, data: TypesInventory) => {
-          if (next) {
-            this.edit = next;
-            this.form.patchValue(data);
-            this.getDetailInventory(data.cveTypeInventory);
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ListTypeOfInventoryComponent, config);
-  }
-
-  getDetailInventory(cv: string) {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      const filters = this.params.getValue();
-      filters.removeAllFilters();
-      filters.addFilter('cveTypeInventory', cv, SearchFilter.EQ);
-      this.inventoryServ
-        .getAllWithFiltersDetails(filters.getParams())
-        .subscribe({
-          next: resp => {
-            this.dataDetail = resp;
-          },
-          error: err => {
-            this.dataDetail.data = [];
-            this.dataDetail.count = 0;
-            this.onLoadToast('error', err.error.message, '');
-          },
-        });
-    });
-  }
-
   deleteDetail(event: string | number) {
     this.alertQuestion(
       'warning',
@@ -221,9 +128,15 @@ export class CatalogOfInventoryTypesComponent
       }
     });
   }
-
-  clean() {
-    this.form.reset();
-    this.edit = false;
+  handleSuccess() {
+    this.loading = false;
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', `${message} Correctamente`, this.title);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
+  close() {
+    this.modalRef.hide();
   }
 }
