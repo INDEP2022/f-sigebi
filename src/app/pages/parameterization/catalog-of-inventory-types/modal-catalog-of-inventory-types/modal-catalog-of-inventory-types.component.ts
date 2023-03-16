@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { TypesInventory } from 'src/app/core/models/ms-inventory-query/inventory-query.model';
+import { IInventoryQuery } from 'src/app/core/models/ms-inventory-query/inventory-query.model';
 import { InventoryTypeService } from 'src/app/core/services/ms-inventory-type/inventory-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -19,7 +19,7 @@ export class ModalCatalogOfInventoryTypesComponent
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
-  data: TypesInventory;
+  data: IInventoryQuery;
   @Output() refresh = new EventEmitter<true>();
   id: number;
 
@@ -45,19 +45,19 @@ export class ModalCatalogOfInventoryTypesComponent
       typeData: ['', [Validators.required]],
       cveTypeInventory: [Validators.required],
     });
-    this.form.get('cveTypeInventory').patchValue(this.data.cveTypeInventory);
     if (this.allotment != null) {
+      console.log(this.allotment);
       this.edit = true;
       this.id = Number(this.allotment.noTypeInventory);
-      this.form.get('noTypeInventory').disable();
       this.form.patchValue(this.allotment);
+    } else {
+      this.form.get('cveTypeInventory').patchValue(this.data.cveTypeInventory);
     }
   }
 
   confirm() {
     this.loading = true;
     if (this.edit) {
-      this.form.get('noTypeInventory')?.enable();
       this.inventoryServ.update(this.id, this.form.value).subscribe({
         next: resp => {
           this.handleSuccess();
@@ -85,12 +85,10 @@ export class ModalCatalogOfInventoryTypesComponent
 
   handleSuccess() {
     this.loading = false;
-    this.onLoadToast(
-      'success',
-      'No Manifestados',
-      `Ha sido actualizado correctamente`
-    );
-    this.modalRef.content.callback(true, this.data.cveTypeInventory);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

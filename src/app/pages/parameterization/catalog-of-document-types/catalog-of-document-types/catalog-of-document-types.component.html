@@ -11,19 +11,12 @@
   </div>
 
   <div body>
-    <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar
-          [filterParams]="params"
-          [filterField]="searchFilter"></search-bar>
-      </div>
-    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [settings]="settings"
-            [source]="contentDocuments.data"
+            [source]="data"
             [attr.class]="'table-bordered'"
             (edit)="openForm($event.data)"
             (delete)="deleteDocument($event.data.id)"></ng2-smart-table>
@@ -31,7 +24,7 @@
       </div>
     </div>
     <app-pagination
-      [filterParams]="params"
-      [totalItems]="contentDocuments.count"></app-pagination>
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>

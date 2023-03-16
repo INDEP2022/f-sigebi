@@ -129,7 +129,10 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.calendarService.remove(calendar.id).subscribe({
+        let data = {
+          id: calendar.id,
+        };
+        this.calendarService.remove(data).subscribe({
           next: () => {
             this.onLoadToast('success', 'Se ha eliminado', '');
             this.getCalendarAll();

@@ -89,7 +89,7 @@ export class GetpickFormComponent extends BasePage implements OnInit {
   handleSuccess() {
     this.onLoadToast(
       'success',
-      'No Recogidos',
+      'No Manifestados',
       `Ha sido actualizado correctamente`
     );
     this.modalRef.content.callback(true);

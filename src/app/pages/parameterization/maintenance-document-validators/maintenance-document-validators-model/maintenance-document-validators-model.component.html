@@ -7,9 +7,9 @@
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="validatorsProceedingsForm.get('certificateType')"
+            [control]="validatorsProceedingsForm.get('proceedingsType')"
             label="Tipo&#58;">
-            <select class="form-control" formControlName="certificateType">
+            <select class="form-control" formControlName="proceedingsType">
               <option [value]="0">Seleccione un tipo acta</option>
               <option *ngFor="let item of typeItem" [value]="item.value">
                 {{ item.label }}

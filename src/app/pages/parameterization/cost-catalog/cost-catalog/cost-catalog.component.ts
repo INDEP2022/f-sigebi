@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CostCatalogService } from '../cost-catalog.service';
 import { ModalCostCatalogComponent } from '../modal-cost-catalog/modal-cost-catalog.component';
@@ -16,24 +19,9 @@ import { COLUMNS } from './columns';
 export class CostCatalogComponent extends BasePage implements OnInit {
   columns: any[] = [];
   dataTable: LocalDataSource = new LocalDataSource();
-  data: any[] = [
-    {
-      keyServices: 'NUMERO 1',
-      descriptionServices: 'DESCRIPCION DEL NUMERO 1',
-      typeExpenditure: 'GASTO DE TIPO 1',
-      unaffordable: true,
-      cost: true,
-      expenditure: false,
-    },
-    {
-      keyServices: 'NUMERO 1',
-      descriptionServices: 'DESCRIPCION DEL NUMERO 1',
-      typeExpenditure: 'GASTO DE TIPO 1',
-      unaffordable: true,
-      cost: false,
-      expenditure: true,
-    },
-  ];
+  data1: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -44,44 +32,49 @@ export class CostCatalogComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
-    this.getPagination();
-    this.searchParams();
-  }
-
-  searchParams() {
-    this.params.subscribe({
-      next: resp => {
-        this.data = [];
-        if (resp.text !== '') {
-          this.catalogService.getCostCatalogForSearch(resp.text).subscribe({
-            next: (searchModel: any) => {
-              if (searchModel) {
-                this.data.push({
-                  keyServices: searchModel.code,
-                  descriptionServices: searchModel.description,
-                  typeExpenditure: searchModel.subaccount,
-                  unaffordable:
-                    searchModel.unaffordabilityCriterion === 'N' ? false : true,
-                  cost: searchModel.cost !== 'GASTO' ? true : false,
-                  expenditure: searchModel.cost === 'GASTO' ? true : false,
-                });
-              }
-              this.dataTable.load(this.data);
-            },
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            // filter.field == 'id'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
           });
-        } else {
           this.getCostCatalog();
         }
-      },
-    });
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getCostCatalog());
   }
 
   getCostCatalog() {
     this.data = [];
-    this.catalogService.getCostCatalog().subscribe({
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.catalogService.getCostCatalogparams(params).subscribe({
       next: (resp: any) => {
         if (resp.data) {
           resp.data.forEach((item: any) => {
@@ -95,49 +88,30 @@ export class CostCatalogComponent extends BasePage implements OnInit {
               expenditure: item.cost === 'GASTO' ? true : false,
             });
           });
+          this.totalItems = resp.count;
         }
-        this.dataTable.load(this.data);
-      },
-    });
-  }
-
-  openModal(context?: Partial<ModalCostCatalogComponent>) {
-    const modalRef = this.modalService.show(ModalCostCatalogComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getCostCatalog();
-    });
-  }
-
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
-  // getData() {
-  //   this.loading = true;
-  //   this.columns = this.data;
-  //   this.totalItems = this.data.length;
-  //   this.loading = false;
-  // }
-
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
-  }
-
-  getDrawers() {
-    this.loading = true;
-    /*     this.drawerService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
+        this.columns = this.data;
         this.loading = false;
       },
-      error: error => (this.loading = false),
-    }); */
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+  openForm(allotment?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        allotment,
+        callback: (next: boolean) => {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getCostCatalog());
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalCostCatalogComponent, config);
   }
 
   delete(drawer: any) {
@@ -150,20 +124,12 @@ export class CostCatalogComponent extends BasePage implements OnInit {
         this.catalogService.deleteCostCatalog(drawer.keyServices).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.onLoadToast('success', 'Eliminado correctamente', '');
+              this.alert('success', 'Eliminado correctamente', '');
               this.getCostCatalog();
             }
           },
         });
       }
-      /*let { noDrawer, noBobeda } = drawer;
-          const idBobeda = (noBobeda as ISafe).idSafe;
-          noBobeda = idBobeda;
-          this.drawerService.removeByIds({ noDrawer, noBobeda }).subscribe({
-            next: data => this.getDrawers(),
-            error: error => (this.loading = false),
-        });
-      } */
     });
   }
 }
