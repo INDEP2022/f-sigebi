@@ -19,6 +19,7 @@ export class RegistrationOfInterestComponent
 {
   tiie: ITiieV1;
   form: FormGroup;
+  tiiesList: ITiieV1[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -94,6 +95,18 @@ export class RegistrationOfInterestComponent
           },
         });
       }
+    });
+  }
+
+  search() {
+    this.parameterTiieService.getAll().subscribe({
+      next: (data: any) => {
+        if (data) {
+          data.map((item: any) => {
+            this.tiiesList = data;
+          });
+        }
+      },
     });
   }
 }
