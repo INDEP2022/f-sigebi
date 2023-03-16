@@ -54,7 +54,9 @@ export class InventoryTypeService
   getAllWithFiltersDetails(params: _Params) {
     return this.get(this.routeDetail, params);
   }
-
+  getInventotyDetailsById(id: string | number): Observable<IInventoryQuery> {
+    return this.requestRepository.getById(this.routeDetail, id);
+  }
   createInventoryDetail(
     model: IInventoryQuery
   ): Observable<IListResponse<IInventoryQuery | TypesInventory>> {

@@ -5,17 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('noTypeInventory')"
-            label="N&uacute;mero">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noTypeInventory" />
-          </form-field>
-        </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <form-field
             [control]="form.get('attributeInventory')"
             label="Atributo Inventario">
@@ -25,7 +15,7 @@
               formControlName="attributeInventory" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="form.get('typeData')" label="Tipo De Dato">
             <select class="form-control" formControlName="typeData">
               <option value="FECHA">FECHA</option>

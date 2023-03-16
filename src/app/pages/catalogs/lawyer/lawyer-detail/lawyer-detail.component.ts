@@ -107,7 +107,6 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
       const { idOffice, delegation } = this.lawyer;
       this.form.patchValue(this.lawyer);
       this.form.get('idOffice').setValue(idOffice.id);
-      console.log([delegation]);
       this.offices = new DefaultSelect([idOffice], 1);
       this.delegations = new DefaultSelect([delegation], 1);
     }

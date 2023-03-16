@@ -5,7 +5,9 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDateDocuments,
+  IExpedient,
   IKey,
+  IState,
 } from 'src/app/core/models/catalogs/date-documents.model';
 import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -26,6 +28,8 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   event: IDocumentsForDictum = null;
   dateDocuments: IDateDocuments;
   id: IKey;
+  expedientNumber: IExpedient;
+  stateNumber: IState;
   dateDocumentsModalForm: ModelForm<IDateDocuments>;
   isDisabled = true;
   constructor(
@@ -76,6 +80,8 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     if (this.dateDocuments != null) {
       console.log(this.dateDocuments);
       this.id = this.dateDocuments.key as IKey;
+      this.expedientNumber = this.dateDocuments.expedientNumber as IExpedient;
+      this.stateNumber = this.dateDocuments.stateNumber as IState;
       this.edit = true;
       this.dateDocumentsModalForm.patchValue(this.dateDocuments);
       let date = new Date(this.dateDocuments.insertionDate + 'T00:00:00-07:00');
@@ -87,9 +93,14 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
           dateNoti
         );
       }
-
       this.dateDocumentsModalForm.controls['insertionDate'].setValue(date);
       this.dateDocumentsModalForm.controls['key'].setValue(this.id.key);
+      this.dateDocumentsModalForm.controls['expedientNumber'].setValue(
+        this.expedientNumber.id
+      );
+      this.dateDocumentsModalForm.controls['stateNumber'].setValue(
+        this.stateNumber.id
+      );
     } else {
       this.dateDocumentsModalForm.controls['userReceipt'].setValue(
         this.authService.decodeToken().preferred_username
