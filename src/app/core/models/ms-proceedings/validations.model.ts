@@ -13,3 +13,8 @@ export interface IValidations {
   secVal: number | null;
   statusValue: number | null;
 }
+
+export interface TransferProceeding {
+  numFile: number;
+  typeProceeding: string;
+}

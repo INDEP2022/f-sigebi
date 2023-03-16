@@ -1,6 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodSpentService } from 'src/app/core/services/ms-spent/good-spent.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -8,11 +11,17 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './costs-resume.component.html',
   styles: [],
 })
-export class CostsResumeComponent implements OnInit {
+export class CostsResumeComponent extends BasePage implements OnInit {
   form: FormGroup;
   public concepts = new DefaultSelect();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private expenseService: GoodSpentService,
+    private datePipe: DatePipe
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -28,8 +37,37 @@ export class CostsResumeComponent implements OnInit {
   }
 
   getCostConcept(params: ListParams) {
-    // this.subdelegationService.getAll(params).subscribe(data => {
-    //   this.subdelegations = new DefaultSelect(data.data, data.count);
-    // });
+    this.expenseService.getExpenseConcept(params).subscribe(data => {
+      this.concepts = new DefaultSelect(data.data, data.count);
+    });
+  }
+
+  send() {
+    this.loading = true;
+    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/rResumenCostos.pdf?PARAMFORM=NO&Concepto1=`+
+    // this.physicsForm.controls['gasto'].value +
+    //   `&Concepto2=` +
+    //   this.physicsForm.controls['al'].value +
+    //  `&Fecha1=` +
+    //   this.datePipe.transform(
+    //     this.physicsForm.controls['startedDate'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&Fecha2=` +
+    //   this.datePipe.transform(
+    //     this.physicsForm.controls['finishDate'].value,
+    //     'dd-mm-yyyy'
+    //   ) ;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }

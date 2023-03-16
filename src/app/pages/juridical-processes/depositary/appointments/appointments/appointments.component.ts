@@ -16,6 +16,8 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** COMPONENTS IMPORTS */
 import { BehaviorSubject } from 'rxjs';
+import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   KEYGENERATION_PATTERN,
   PHONE_PATTERN,
@@ -40,7 +42,11 @@ export class AppointmentsComponent
   public checked = false;
   globalVars = {
     noExiste: 0,
+    depositaria: '',
+    no_dep: '',
   };
+  public good: IGood;
+  noBien: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -57,13 +63,14 @@ export class AppointmentsComponent
   private prepareForm() {
     this.form = this.fb.group({
       noBien: ['', Validators.required], //*
-      descriptionGood: [''], //*
-      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
-      estatusBien: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      fechaAcuerdoAsegurado: '', //*
-      fechaRecepcion: '', //*
-      fechaDecomiso: '', //*
+      descriptionGood: { value: '', disabled: true }, //*
+      noExpedient: { value: '', disabled: true }, //*
+      averiguacionPrevia: [{ value: '', disabled: true }], //*
+      causaPenal: [{ value: '', disabled: true }],
+      estatusBien: [{ value: '', disabled: true }], //*
+      fechaAcuerdoAsegurado: { value: '', disabled: true }, //*
+      fechaRecepcion: { value: '', disabled: true }, //*
+      fechaDecomiso: { value: '', disabled: true }, //*
 
       tipoNombramiento: '', //*
       ///*"Administrador, Depositaría, Interventor, Comodatarío,Bien en uso del SAE"
@@ -153,6 +160,7 @@ export class AppointmentsComponent
   }
 
   btnFolioEscaneoSolicitud() {
+    // IMG_SOLICITUD
     console.log('Escaneo Solicitud');
   }
 
@@ -179,17 +187,111 @@ export class AppointmentsComponent
     }
   }
 
-  /**
-   * Validar el número de bien
-   */
-  async validGoodNumberInDepositaryAppointment() {
-    if (this.form.get('noBien').valid) {
+  async validFielddGoodNumber() {
+    if (this.globalVars.noExiste != 1) {
+      this.noBien = this.form.get('noBien').value;
       const params: ListParams = {
         page: this.params.getValue().page,
         limit: 10,
       };
       this.params.getValue().getParams();
-      params['filter.goodNumber'] = this.form.get('noBien').value;
+      params['filter.goodId'] = this.noBien;
+      params['filter.status'] = 'ADM';
+      await this.appointmentsService.getGoodByParams(params).subscribe({
+        next: res => {
+          console.log(res);
+          if (res.data.length > 0) {
+            this.form.get('descriptionGood').setValue(res.data[0].description);
+            this.form.get('noExpedient').setValue(res.data[0].fileNumber);
+            this.form
+              .get('fechaAcuerdoAsegurado')
+              .setValue(res.data[0].agreementDate);
+            this.form.updateValueAndValidity();
+            this.getStatusGoodByStatus(res.data[0].id);
+            this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
+          } else {
+            this.alert(
+              'warning',
+              'Verificar el Número de Bien',
+              'El No. de Bien ' +
+                this.noBien +
+                ' no existe ó el estatus para depositarias no es el adecuado.'
+            );
+          }
+        },
+        error: err => {
+          console.log(err);
+          this.alert(
+            'warning',
+            'Verificar el Número de Bien',
+            'El No. de Bien ' +
+              this.noBien +
+              ' no existe ó el estatus para depositarias no es el adecuado.'
+          );
+        },
+      });
+    } else {
+      this.alert('warning', 'Número de Bien', 'Ingresa un número de Bien.');
+    }
+  }
+
+  async getStatusGoodByStatus(noGood: number) {
+    await this.appointmentsService
+      .getStatusAndDescriptionGoodByNoGood(noGood)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          this.form.get('estatusBien').setValue(res.description);
+          this.form.updateValueAndValidity();
+        },
+        error: err => {
+          console.log(err);
+          this.alertQuestion(
+            'warning',
+            'Estatus del Bien',
+            'El estatus no se obtubo correctamente para el bien ' + noGood + '.'
+          );
+        },
+      });
+  }
+
+  async getDataExpedientByNoExpedient(noExpedient: number) {
+    await this.appointmentsService
+      .getExpedientByNoExpedient(noExpedient)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          this.form.get('averiguacionPrevia').setValue(res.preliminaryInquiry);
+          this.form.get('causaPenal').setValue(res.keyPenalty);
+          this.form.get('fechaRecepcion').setValue(res.receptionDate);
+          this.form.updateValueAndValidity();
+        },
+        error: err => {
+          console.log(err);
+          this.alertQuestion(
+            'warning',
+            'Número de Expediente',
+            'El número de expediente ' + noExpedient + ' NO existe.'
+          );
+        },
+      });
+  }
+
+  /**
+   * Validar el número de bien
+   */
+  async validGoodNumberInDepositaryAppointment() {
+    if (this.form.get('noBien').valid) {
+      this.noBien = this.form.get('noBien').value;
+      const params: ListParams = {
+        page: this.params.getValue().page,
+        limit: 10,
+      };
+      this.params.getValue().getParams();
+      params['filter.goodNumber'] = this.noBien;
+      this.form.reset();
+      this.form.get('noBien').setValue(this.noBien);
+      this.form.updateValueAndValidity();
       await this.appointmentsService
         .getGoodAppointmentDepositaryByNoGood(params)
         .subscribe({
@@ -197,16 +299,21 @@ export class AppointmentsComponent
             console.log(res);
             if (res.count == 0) {
               this.globalVars.noExiste = 0;
-              this.getGoodDataByNoGood();
+              this.getFromGoodsAndExpedients();
             }
           },
           error: err => {
             console.log(err);
-            this.alert(
-              'warning',
-              'Número de Bien',
-              'El número de Bien no existe.'
-            );
+            if (err.status == 400) {
+              this.globalVars.noExiste = 0;
+              this.getFromGoodsAndExpedients();
+            } else {
+              this.alert(
+                'warning',
+                'Número de Bien',
+                'El número de Bien no existe.'
+              );
+            }
           },
         });
     } else {
@@ -215,60 +322,10 @@ export class AppointmentsComponent
   }
 
   /**
-   * Obtener los datos del bien por el número de Bien
+   * INCIDENCIA 538
+   * Obtener los datos del bien de acuerdo al status DEP
    */
-  async getGoodDataByNoGood() {
-    const params: ListParams = {
-      page: this.params.getValue().page,
-      limit: 10,
-    };
-    this.params.getValue().getParams();
-    params['filter.goodId'] = this.form.get('noBien').value;
-    params['filter.status'] = 'DEP';
-    await this.appointmentsService.getGoodByNoGoodAndStatus(params).subscribe({
-      next: res => {
-        console.log(res);
-        // b.descripcion,
-        //   b.no_expediente,
-        //   b.fec_recepcion_fisica,
-        //   b.fec_acuerdo_aseg,
-        //   e.averiguacion_previa,
-        //   e.causa_penal;
-      },
-      error: err => {
-        console.log(err);
-        this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
-      },
-    });
-  }
-
-  /**
-   * Obtener los datos del expediente por el número de expediente
-   */
-  async getExpedientDataByNoExpedient(noExpedient: string) {
-    const params: ListParams = {
-      page: this.params.getValue().page,
-      limit: 10,
-    };
-    this.params.getValue().getParams();
-    params['filter.goodId'] = this.form.get('noBien').value;
-    params['filter.status'] = 'DEP';
-    await this.appointmentsService.getGoodByNoGoodAndStatus(params).subscribe({
-      next: res => {
-        console.log(res);
-      },
-      error: err => {
-        console.log(err);
-        this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
-      },
-    });
-  }
-
-  /**
-   * INCIDENCIA 530
-   * Obtener el estatus del bien por el número del Bien
-   */
-  async getStatusGoodByNoGood() {
+  async getFromGoodsAndExpedients() {
     // const params: ListParams = {
     //   page: this.params.getValue().page,
     //   limit: 10,
@@ -276,7 +333,7 @@ export class AppointmentsComponent
     // this.params.getValue().getParams();
     // params['filter.goodId'] = this.form.get('noBien').value;
     // params['filter.status'] = 'DEP';
-    // await this.appointmentsService.getGoodByNoGoodAndStatus(params).subscribe({
+    // await this.appointmentsService.getGoodByParams(params).subscribe({
     //   next: res => {
     //     console.log(res);
     //   },
@@ -285,5 +342,35 @@ export class AppointmentsComponent
     //     this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
     //   },
     // });
+    this.getStatusGoodByNoGood();
+  }
+
+  /**
+   * INCIDENCIA 530 -- RESUELTA -- 03/15/2023
+   * Obtener el estatus del bien por el número del Bien
+   */
+  async getStatusGoodByNoGood() {
+    let bodyRequest: IDescriptionByNoGoodBody = {
+      goodNumber: this.noBien,
+    };
+    await this.appointmentsService
+      .getDescriptionGoodByNoGood(bodyRequest)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          if (res.data.length > 0) {
+          }
+          this.validFielddGoodNumber();
+        },
+        error: err => {
+          console.log(err);
+          this.alertQuestion(
+            'warning',
+            'Descripción del Bien',
+            'Error al consultar la descripción del Bien.'
+          );
+          this.validFielddGoodNumber();
+        },
+      });
   }
 }

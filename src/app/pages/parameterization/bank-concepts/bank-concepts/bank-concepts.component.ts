@@ -34,6 +34,7 @@ export class BankConceptsComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...BANK_CONCEPTS_COLUMNS },

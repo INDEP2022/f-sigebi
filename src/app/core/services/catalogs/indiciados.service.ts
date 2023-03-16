@@ -11,6 +11,7 @@ import { IIndiciados } from '../../models/catalogs/indiciados.model';
 })
 export class IndiciadosService implements ICrudMethods<IIndiciados> {
   private readonly route: string = ENDPOINT_LINKS.Indiciados;
+  private readonly route2: string = 'catalog/indiciados/id';
   constructor(private indiciadosRepository: Repository<IIndiciados>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IIndiciados>> {
@@ -26,10 +27,10 @@ export class IndiciadosService implements ICrudMethods<IIndiciados> {
   }
 
   update(id: string | number, model: IIndiciados): Observable<Object> {
-    return this.indiciadosRepository.update(this.route, id, model);
+    return this.indiciadosRepository.update(this.route2, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.indiciadosRepository.remove(this.route, id);
+    return this.indiciadosRepository.remove(this.route2, id);
   }
 }
