@@ -33,9 +33,9 @@ export class ScheduledMaintenanceDetailComponent
   data: IGoodsByProceeding[] = [];
   totalItems: number = 0;
   selecteds: IGoodsByProceeding[] = [];
-  selectedsForUpdate: IGoodsByProceeding[] = [];
   settingsGoods = settingsGoods;
   params: ListParams = new ListParams();
+  initialValue: any;
   constructor(
     private location: Location,
     private fb: FormBuilder,
@@ -78,37 +78,43 @@ export class ScheduledMaintenanceDetailComponent
     return this.form.get('acta') ? this.form.get('acta').value : '';
   }
 
+  get typeProceeding() {
+    return this.form.get('tipoEvento') ? this.form.get('tipoEvento').value : '';
+  }
+
   private massiveUpdate(message = '') {
-    if (this.selectedsForUpdate.length > 0) {
-      this.detailService
-        .updateMasive(this.selectedsForUpdate, this.actaId)
-        .subscribe({
-          next: response => {
-            let goods = '';
-            this.selectedsForUpdate.forEach((selected, index) => {
-              goods +=
-                selected.no_bien +
-                (index < this.selecteds.length - 1 ? ',' : '');
-            });
-            if (message === '') {
-              message = `Se actualizaron los bienes N° ${goods} `;
-            } else {
-              message += ` y los bienes N° ${goods}`;
-            }
-            this.onLoadToast('success', 'Exito', message);
-          },
-          error: err => {
-            if (message === '') {
-              this.onLoadToast('error', 'Error', 'Programación no actualizada');
-            } else {
-              this.onLoadToast(
-                'warning',
-                'Exito',
-                message + ' pero no se pudieron actualizar los bienes'
-              );
-            }
-          },
-        });
+    if (this.data.length > 0) {
+      this.service.updateMassive(this.data, this.actaId).subscribe({
+        next: response => {
+          let goods = '';
+          this.data.forEach((selected, index) => {
+            goods +=
+              selected.no_bien + (index < this.selecteds.length - 1 ? ',' : '');
+          });
+          if (message === '') {
+            message = `Se actualizaron los bienes N° ${goods} `;
+          } else {
+            message += ` y los bienes N° ${goods}`;
+          }
+          this.onLoadToast('success', 'Exito', message);
+        },
+        error: err => {
+          if (message === '') {
+            this.onLoadToast('error', 'Error', 'Programación no actualizada');
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Exito',
+              message + ' pero no se pudieron actualizar los bienes'
+            );
+          }
+        },
+      });
+    } else {
+      if (this.form.value !== this.initialValue) {
+        this.onLoadToast('success', 'Exito', message);
+        this.initialValue = { ...this.form.value };
+      }
     }
   }
 
@@ -123,6 +129,7 @@ export class ScheduledMaintenanceDetailComponent
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],
     });
+    this.initialValue = { ...this.form.value };
   }
 
   return() {
@@ -138,15 +145,17 @@ export class ScheduledMaintenanceDetailComponent
       newData.fec_indica_usuario_aprobacion !==
         data.fec_indica_usuario_aprobacion
     ) {
-      let index = this.selectedsForUpdate.findIndex(
-        x => x.no_bien === newData.no_bien
-      );
+      let index = this.data.findIndex(x => x.no_bien === newData.no_bien);
       if (index === -1) {
-        this.selectedsForUpdate.push(newData);
+        this.data.push(newData);
       } else {
-        this.selectedsForUpdate[index] = newData;
+        this.data[index] = newData;
       }
     }
+  }
+
+  updateDatesTable() {
+    console.log(this.data);
   }
 
   updateGoodsRow(event: any) {
@@ -227,7 +236,7 @@ export class ScheduledMaintenanceDetailComponent
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.detailService.deleteById(+item.no_bien, this.actaId).subscribe({
+        this.service.deleteById(item.no_bien, this.actaId).subscribe({
           next: response => {
             console.log(response);
             this.getData();
