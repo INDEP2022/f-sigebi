@@ -33,8 +33,8 @@ export class ParameterSubBrandsService extends HttpService {
     return this.put(route, tpenalty);
   }
 
-  remove(id: string | number) {
-    const route = `${this.route}/id/${id}`;
-    return this.delete(route);
+  remove(subBrand: ISubBrands) {
+    const route = `${this.route}`;
+    return this.delete(route, subBrand);
   }
 }
