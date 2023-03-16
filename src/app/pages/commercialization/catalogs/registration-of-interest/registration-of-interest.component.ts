@@ -109,4 +109,16 @@ export class RegistrationOfInterestComponent
       }
     });
   }
+
+  search() {
+    this.parameterTiieService.getAll().subscribe({
+      next: (data: any) => {
+        if (data) {
+          data.map((item: any) => {
+            this.tiiesList = data;
+          });
+        }
+      },
+    });
+  }
 }
