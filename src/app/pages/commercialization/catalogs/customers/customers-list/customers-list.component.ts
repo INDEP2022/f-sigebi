@@ -51,21 +51,16 @@ export class CustomersListComponent
       },
       columns: { ...CUSTOMERS_COLUMNS },
     };
-    this.equalFilters = [
-      'id',
-      'rfc',
-      'sellerId',
-      'municipalityId',
-      'stateId',
-      'penaltyId',
-      'freeDate',
-      'registryNumber',
-      'economicAgreementKey',
-      'identificationNumber',
-      'agentId',
-      'outsideNumber',
-      'insideNumber',
-      'penaltyInitDate',
+    this.ilikeFilters = [
+      'fax',
+      'state',
+      'city',
+      'street',
+      'colony',
+      'phone',
+      'mailWeb',
+      'paternalSurname',
+      'maternalSurname',
     ];
     // this.ilikeFilters = ['reasonName', 'street'];
     this.show = true;

@@ -20,8 +20,8 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   columnFilters: any = [];
-  equalFilters: string[] = ['id'];
-  // ilikeFilters: string[] = ['description'];
+  // equalFilters: string[] = ['id'];
+  ilikeFilters: string[] = ['description'];
   params = new BehaviorSubject<ListParams>(new ListParams());
   service: ServiceGetAll<T>;
   constructor() {
@@ -53,10 +53,10 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            if (this.equalFilters.includes(filter.field)) {
-              searchFilter = SearchFilter.EQ;
-            } else {
+            if (this.ilikeFilters.includes(filter.field)) {
               searchFilter = SearchFilter.ILIKE;
+            } else {
+              searchFilter = SearchFilter.EQ;
             }
             // if (this.ilikeFilters.includes(filter.field)) {
             //   searchFilter = SearchFilter.ILIKE;

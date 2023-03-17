@@ -27,13 +27,7 @@ export class RegistrationOfInterestComponent
     private parameterTiieService: ParameterTiieService
   ) {
     super();
-    this.equalFilters = [
-      'tiieDays',
-      'tiieAverage',
-      'tiieMonth',
-      'tiieYear',
-      'registryDate',
-    ];
+    this.ilikeFilters = ['user'];
     // this.ilikeFilters = ['user'];
     this.service = this.parameterTiieService;
     this.settings = {

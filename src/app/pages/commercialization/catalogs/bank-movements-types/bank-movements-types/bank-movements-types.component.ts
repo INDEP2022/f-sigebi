@@ -42,7 +42,7 @@ export class BankMovementsTypesComponent
       ...this.settings,
       columns: COLUMNS,
     };
-    this.equalFilters = ['id', 'registryNumber'];
+    this.ilikeFilters = ['branchOffice'];
     this.prepareForm();
     this.form.valueChanges.subscribe(response => {
       // console.log(response);

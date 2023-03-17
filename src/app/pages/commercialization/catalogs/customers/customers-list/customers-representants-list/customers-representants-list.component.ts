@@ -60,24 +60,7 @@ export class CustomersRepresentantsListComponent
       },
       columns: { ...REPRESENTATIVES_COLUMNS },
     };
-    this.equalFilters = [
-      'id',
-      'dateBorn',
-      'rfc',
-      'curp',
-      'autEmiIndentify',
-      'identificationNumber',
-      'escrowNumber',
-      'nationalityKey',
-      'countryOriginKey',
-      'outsideNumber',
-      'insisdeNumber',
-      'homeCountryKey',
-      'countryPhoneKey',
-      'ecoActivityKey',
-      'repAssociatedId',
-      'registerNumber',
-    ];
+    this.ilikeFilters = ['fax', 'state', 'city', 'street', 'autEmiIndentify'];
   }
 
   override getData() {
