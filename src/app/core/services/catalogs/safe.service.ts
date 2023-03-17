@@ -38,8 +38,8 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     return this.safeRepository.remove(this.route, id);
   }
 
-  getAll2(params?: ListParams | string): Observable<IListResponse<ISafe2>> {
-    return this.get<IListResponse<ISafe2>>(SafeEndpoints.Safe, params);
+  getAll2(params?: ListParams | string): Observable<IListResponse<ISafe>> {
+    return this.get<IListResponse<ISafe>>(SafeEndpoints.Safe, params);
   }
 
   getById2(id: string | number) {
@@ -47,7 +47,7 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     return this.get<ISafe2>(route);
   }
 
-  create2(model: ISafe2) {
+  create2(model: ISafe) {
     return this.post(SafeEndpoints.Safe, model);
   }
 

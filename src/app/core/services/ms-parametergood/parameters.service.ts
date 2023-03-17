@@ -15,7 +15,7 @@ export class ParametersService extends HttpService {
     private parametergoodRepository: ParametergoodRepository<IParameters>
   ) {
     super();
-    this.microservice = ParameterGoodEndpoints.Parametergood;
+    this.microservice = ParameterGoodEndpoints.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IParameters>> {

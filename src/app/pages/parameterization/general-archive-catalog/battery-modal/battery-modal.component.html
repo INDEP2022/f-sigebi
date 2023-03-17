@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="batteryForm">
       <div class="row">
-        <div class="col-md-5 pt-5">
+        <div class="col-md-3">
           <form-field
             label="Cve Guardavalor"
             [control]="batteryForm.get('storeCode')">
@@ -16,7 +16,7 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-2 pt-5">
+        <div class="col-md-3">
           <form-field
             label="No. Bateria"
             [control]="batteryForm.get('idBattery')">
@@ -26,7 +26,7 @@
               formControlName="idBattery" />
           </form-field>
         </div>
-        <div class="col-md-5 pt-5">
+        <div class="col-md-6">
           <form-field
             label="Descripción"
             [control]="batteryForm.get('description')">
@@ -38,26 +38,10 @@
         </div>
         <div class="col-md-3 pt-5">
           <form-field label="Status" [control]="batteryForm.get('status')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              maxlength="1"
-              minlength="1" />
-          </form-field>
-        </div>
-        <div class="col-md-2 pt-5">
-          <form-field
-            label="No. Registro"
-            [control]="batteryForm.get('registerNumber')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registerNumber" />
+            <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5"></div>
     </form>
   </div>
   <div footer>

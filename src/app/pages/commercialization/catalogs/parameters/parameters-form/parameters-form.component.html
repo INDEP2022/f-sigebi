@@ -9,7 +9,11 @@
       <div class="row mb-3 mt-3">
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
           <form-field [control]="form.get('idParam')" label="Parámetro">
-            <input type="text" class="form-control" formControlName="idParam" />
+            <input
+              type="text"
+              id="idP"
+              class="form-control disabled"
+              formControlName="idParam" />
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">

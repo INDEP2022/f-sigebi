@@ -109,8 +109,15 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field label="Estado" [control]="transferentForm.get('status')">
-            <input type="text" class="form-control" formControlName="status" />
+          <form-field label="Status" [control]="transferentForm.get('status')">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Activo</ng-option>
+              <ng-option value="0">Inactivo</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4">

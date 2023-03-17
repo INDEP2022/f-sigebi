@@ -5,7 +5,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
-import { ISafe, ISafe2 } from '../../../../core/models/catalogs/safe.model';
+import { ISafe } from '../../../../core/models/catalogs/safe.model';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 import { VaultDetailComponent } from '../vault-detail/vault-detail.component';
 import { VAULT_COLUMNS } from './vault-columns';
@@ -16,8 +16,8 @@ import { VAULT_COLUMNS } from './vault-columns';
   styles: [],
 })
 export class VaultListComponent extends BasePage implements OnInit {
-  vaults: ISafe2[] = [];
-  values: ISafe2;
+  vaults: ISafe[] = [];
+  values: ISafe;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 

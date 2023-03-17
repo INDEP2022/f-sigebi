@@ -12,8 +12,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class IdentifierFormComponent extends BasePage implements OnInit {
-  identifier: IIdentifier;
+  title: string = 'Identificadores';
   edit: boolean = false;
+
+  identifier: IIdentifier;
   identifierForm: ModelForm<IIdentifier>;
 
   constructor(
@@ -33,7 +35,7 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       description: [null, [Validators.required]],
       keyview: [null, [Validators.required, Validators.maxLength(1)]],
-      noRegistration: [null, [Validators.required]],
+      noRegistration: [null, []],
     });
 
     if (this.identifier != null) {
@@ -56,6 +58,7 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.loading = true;
     this.identifierService
       .update(this.identifier.id, this.identifierForm.value)
       .subscribe({
@@ -69,6 +72,8 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
