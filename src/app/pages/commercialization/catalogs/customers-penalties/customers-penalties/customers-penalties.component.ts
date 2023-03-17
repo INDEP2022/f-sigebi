@@ -36,6 +36,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         ...this.settings.actions,
         add: false,

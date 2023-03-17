@@ -15,15 +15,10 @@
   </div>
   <div body>
     <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
-      </div>
-    </div>
-    <div class="row">
       <div class="table-responsive">
         <ng2-smart-table
           [settings]="settings"
-          [source]="numeraryCategories"
+          [source]="data"
           (edit)="openForm($event.data)"
           (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
       </div>

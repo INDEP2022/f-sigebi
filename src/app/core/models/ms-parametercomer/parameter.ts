@@ -14,7 +14,7 @@ export interface IBrand {
 export interface ISubBrands {
   idBrand: string;
   idSubBrand: string;
-  subBrandDescription: string;
+  subBrandDescription?: string;
 }
 
 export interface ITiieV1 {
@@ -38,7 +38,7 @@ export interface IComerLayoutsH {
 }
 
 export interface IComerLayouts {
-  idLayout: number;
+  idLayout: IComerLayoutsH;
   idConsec: number;
   position: number;
   column: string;

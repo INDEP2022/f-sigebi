@@ -1,7 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
@@ -36,18 +39,26 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   subsubsubTypeSettings = { ...this.settings };
 
   paragraphs: IGoodType[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   paragraphs1: IGoodSubType[] = [];
+  data1: LocalDataSource = new LocalDataSource();
+  columnFilters1: any = [];
   totalItems1: number = 0;
   params1 = new BehaviorSubject<ListParams>(new ListParams());
 
   paragraphs2: IGoodSsubType[] = [];
+  data2: LocalDataSource = new LocalDataSource();
+  columnFilters2: any = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   paragraphs3: IGoodSssubtype[] = [];
+  data3: LocalDataSource = new LocalDataSource();
+  columnFilters3: any = [];
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -63,7 +74,8 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
+        add: false,
         position: 'right',
         width: '10%',
       },
@@ -75,12 +87,13 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
         confirmSave: true,
       },
       // add: {
+      //   ...this.settings.add,
       //   addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
       //   createButtonContent:
       //     '<i class="bx bxs-save me-1 text-success mx-2"></i>',
       //   cancelButtonContent:
       //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      //   confirmCreate: true,
+      //   confirmCreate: false,
       // },
       mode: 'inline',
       // hideSubHeader: false,
@@ -91,7 +104,8 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
+        add: false,
         position: 'right',
         width: '10%',
       },
@@ -102,14 +116,6 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
           '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
-      // add: {
-      //   addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      //   createButtonContent:
-      //     '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      //   cancelButtonContent:
-      //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      //   confirmCreate: true,
-      // },
       mode: 'inline',
       // hideSubHeader: false,
       columns: { ...SUBTYPE_COLUMNS },
@@ -119,7 +125,8 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
+        add: false,
         position: 'right',
         width: '10%',
       },
@@ -130,14 +137,6 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
           '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
-      // add: {
-      //   addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      //   createButtonContent:
-      //     '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      //   cancelButtonContent:
-      //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      //   confirmCreate: true,
-      // },
       mode: 'inline',
       // hideSubHeader: false,
       columns: { ...SUBSUBTYPE_COLUMNS },
@@ -147,7 +146,8 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
+        add: false,
         position: 'right',
         width: '10%',
       },
@@ -158,14 +158,6 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
           '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
-      // add: {
-      //   addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      //   createButtonContent:
-      //     '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      //   cancelButtonContent:
-      //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      //   confirmCreate: true,
-      // },
       mode: 'inline',
       // hideSubHeader: false,
       columns: { ...SUBSUBSUBTYPE_COLUMNS },
@@ -173,6 +165,95 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getExample();
+        }
+      });
+
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getSubExample();
+        }
+      });
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getGoodSsubtypes();
+        }
+      });
+    this.data3
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getGoodSssubtypes();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -189,10 +270,16 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goodTypesService.getAll(params).subscribe({
       next: response => {
         console.log(response);
         this.paragraphs = response.data;
+        this.data.load(this.paragraphs);
+        this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -201,9 +288,15 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   }
   getSubExample() {
     this.loading = true;
-    this.goodSubTypesService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params1.getValue(),
+      ...this.columnFilters1,
+    };
+    this.goodSubTypesService.getAll(params).subscribe({
       next: response => {
         this.paragraphs1 = response.data;
+        this.data1.load(this.paragraphs1);
+        this.data1.refresh();
         this.totalItems1 = response.count;
         this.loading = false;
       },
@@ -212,9 +305,15 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   }
   getGoodSsubtypes() {
     this.loading = true;
-    this.goodSsubtypeService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
+    };
+    this.goodSsubtypeService.getAll(params).subscribe({
       next: response => {
         this.paragraphs2 = response.data;
+        this.data2.load(this.paragraphs2);
+        this.data2.refresh();
         this.totalItems2 = response.count;
         this.loading = false;
       },
@@ -223,9 +322,15 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   }
   getGoodSssubtypes() {
     this.loading = true;
-    this.goodSssubtypeService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params3.getValue(),
+      ...this.columnFilters3,
+    };
+    this.goodSssubtypeService.getAll(params).subscribe({
       next: response => {
         this.paragraphs3 = response.data;
+        this.data3.load(this.paragraphs3);
+        this.data3.refresh();
         this.totalItems3 = response.count;
         this.loading = false;
       },
@@ -312,10 +417,32 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
     event.confirm.resolve();
   }
   onDeleteConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+    // console.log(event);
+    // this.deleteTypeGood(event['data']);
+    // event.confirm.resolve();
   }
-
+  // deleteTypeGood(drawer: any) {
+  //   console.log(drawer);
+  //   this.alertQuestion(
+  //     'warning',
+  //     'Eliminar',
+  //     '¿Desea eliminar este registro?'
+  //   ).then(question => {
+  //     if (question.isConfirmed) {
+  //       this.goodTypesService.remove(drawer.id).subscribe({
+  //         next: (resp: any) => {
+  //           console.log(resp);
+  //           if (resp) {
+  //             this.onLoadToast('success', 'Eliminado correctamente', '');
+  //             this.params
+  //               .pipe(takeUntil(this.$unSubscribe))
+  //               .subscribe(() => this.getExample());
+  //           }
+  //         },
+  //       });
+  //     }
+  //   });
+  // }
   create() {
     this.dataType.getElements().then((data: any) => {
       this.loading = true;

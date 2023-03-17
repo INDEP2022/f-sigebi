@@ -8,43 +8,80 @@
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-6 p-2">
+            <div class="col-sm-12 col-12 col-md-8 p-2">
               <h6>DATOS DEL BIEN</h6>
             </div>
-            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
-              <div class="form-group">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-sm active"
-                  (click)="btnBienes()">
-                  Bienes
-                </button>
+            <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+              <div class="row">
+                <div class="col-12 col-sm-8 col-md-8 p-2">
+                  <form-field
+                    [control]="form.get('noBien')"
+                    label="No&#46; Bien">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="noBien" />
+                  </form-field>
+                </div>
+                <div class="col-12 col-sm-4 col-md-4 p-2">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="validGoodNumberInDepositaryAppointment()">
+                    Buscar
+                    <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="col-sm-12 col-12 col-md-5 p-2">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripción del Bien">
+            <textarea
+              [readonly]="true"
+              class="form-control"
+              formControlName="descriptionGood"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('estatusBien')"
+            label="Estatus del Bien">
+            <textarea
+              [readonly]="true"
+              class="form-control"
+              formControlName="estatusBien"></textarea>
+          </form-field>
+        </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-            <input class="form-control" formControlName="noBien" />
+          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('noExpedient')"
+            label="N&uacute;mero de Expediente">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="noExpedient" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
             label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="averiguacionPrevia" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input class="form-control" formControlName="causaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('estatusBien')"
-            label="Estatus del Bien">
-            <input class="form-control" formControlName="estatusBien" />
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="averiguacionPrevia" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -52,6 +89,7 @@
             [control]="form.get('fechaAcuerdoAsegurado')"
             label="Fecha de Acuerdo Asegurado">
             <input
+              [readonly]="true"
               class="form-control"
               formControlName="fechaAcuerdoAsegurado"
               bsDatepicker />
@@ -62,6 +100,7 @@
             [control]="form.get('fechaRecepcion')"
             label="Fecha de Recepci&oacute;n">
             <input
+              [readonly]="true"
               class="form-control"
               formControlName="fechaRecepcion"
               bsDatepicker />
@@ -72,10 +111,23 @@
             [control]="form.get('fechaDecomiso')"
             label="Fecha de Decomiso">
             <input
+              [readonly]="true"
               class="form-control"
               formControlName="fechaDecomiso"
               bsDatepicker />
           </form-field>
+        </div>
+        <hr class="row" />
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
+          <div class="form-group">
+            <button
+              type="button"
+              [disabled]="form.get('bienesMenaje').value == 1"
+              class="btn btn-primary btn-sm active"
+              (click)="btnBienes()">
+              Bienes
+            </button>
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
@@ -125,21 +177,24 @@
           <div class="row w-100 pl-4">
             <label class="form-control-label">Tipo Volante</label>
             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
-              <form-radio label="Sin Mensaje" for="sinMensaje">
+              <form-radio label="Sin Menaje" for="sinMenaje">
                 <input
-                  id="sinMensaje"
+                  id="sinMenaje"
                   type="radio"
-                  formControlName="bienesMensaje"
-                  value="Sin Mensaje" />
+                  formControlName="bienesMenaje"
+                  value="0" />
               </form-radio>
             </div>
             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
-              <form-radio label="Con Mensaje" for="conMensaje">
+              <form-radio
+                label="Con Menaje"
+                for="conMenaje"
+                (change)="changeMenaje()">
                 <input
-                  id="conMensaje"
+                  id="conMenaje"
                   type="radio"
-                  formControlName="bienesMensaje"
-                  value="Con Mensaje" />
+                  formControlName="bienesMenaje"
+                  value="1" />
               </form-radio>
             </div>
           </div>

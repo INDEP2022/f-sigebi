@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Transferentes por estado</h5>
     <div class="col-md-5 buttons"></div>
@@ -12,7 +12,8 @@
               [settings]="settings"
               [source]="data"
               (edit)="openForm($event.data)"
-              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+              (userRowSelect)="rowsSelected($event)"
+              (rowSelect)="selectRow($event.data)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params"
@@ -21,7 +22,7 @@
       </div>
     </div>
 
-    <div class="row pt-5">
+    <div class="row pt-5" *ngIf="rowSelected">
       <div class="ch-content">
         <h5 class="title">Estados</h5>
         <div class="col-md-5 buttons">
@@ -47,6 +48,15 @@
             [totalItems]="totalItems2"></app-pagination>
         </div>
       </div>
+    </div>
+  </div>
+  <div footer>
+    <div *ngIf="rowSelected">
+      <button
+        (click)="resetScreen()"
+        class="btn btn-primary active btn-sm ml-3">
+        Reiniciar
+      </button>
     </div>
   </div>
 </app-card>

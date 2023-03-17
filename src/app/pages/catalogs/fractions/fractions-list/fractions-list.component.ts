@@ -24,7 +24,11 @@ export class FractionsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
+    this.settings.actions.edit = false;
+    this.settings.actions.custom = [
+      { name: 'add', title: '<i class="fa fa-plus text-success mx-2"></i>' },
+    ];
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -41,6 +45,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.fractionService.getAll(this.params.getValue()).subscribe({
       next: response => {
+        console.log(response);
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;

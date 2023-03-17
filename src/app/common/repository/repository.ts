@@ -53,9 +53,22 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}`, formData);
   }
 
+  newUpdateId(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/${id}`);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
   remove(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/${id}`);
+  }
+
+  newRemove(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
   }
 
   updateByIds(route: string, ids: Partial<T>, formData: Object) {
@@ -154,7 +167,7 @@ export class Repository<T> implements IRepository<T> {
   }
   remove3(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.delete<T>(`${fullRoute}`, formData);
+    return this.httpClient.delete<T>(`${fullRoute}`, { body: formData });
   }
   updateByIds2(route: string, ids: Partial<T>, formData: Object) {
     const idsRoute: string = this.makeIdsRoute(ids);
@@ -193,7 +206,7 @@ export class Repository<T> implements IRepository<T> {
   }
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.put(`${fullRoute}${route}`, formData);
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
   update5(
     route: string,
