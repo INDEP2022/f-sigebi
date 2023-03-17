@@ -1,10 +1,13 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AES, enc } from 'crypto-js';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { Subject } from 'rxjs';
+import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import Swal, {
   SweetAlertIcon,
   SweetAlertOptions,
@@ -107,6 +110,10 @@ export abstract class BasePage implements OnDestroy {
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
+  private _showHide = inject(showHideErrorInterceptorService);
+  private _activatedRoute = inject(ActivatedRoute);
+  private _router = inject(Router);
+  private _screenCode = inject(ScreenCodeService);
 
   constructor() {
     this.bsConfig = {
@@ -115,6 +122,18 @@ export abstract class BasePage implements OnDestroy {
       // minDate: new Date(),
       // maxDate: new Date(),
     };
+
+    this._router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          const screenCode =
+            this._activatedRoute.snapshot.data['screen'] ?? null;
+          this._screenCode.$id.next(screenCode);
+        })
+      )
+      .subscribe();
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
@@ -134,7 +153,7 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.text = text;
     sweetalert.icon = icon;
     sweetalert.showConfirmButton = true;
-    Swal.fire(sweetalert);
+    return Swal.fire(sweetalert);
   }
 
   protected alertQuestion(
@@ -167,6 +186,10 @@ export abstract class BasePage implements OnDestroy {
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
     return JSON.parse(value);
+  }
+
+  hideError(show: boolean = false) {
+    this._showHide.showHideError(show);
   }
 
   ngOnDestroy(): void {

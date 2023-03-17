@@ -582,3 +582,18 @@ export interface IDescriptionByNoGoodBody {
 export interface IDescriptionByNoGoodResponse {
   description: string;
 }
+
+export interface IFromGoodsAndExpedientsBody {
+  goodNumber: number;
+  page: number;
+  limit: number;
+}
+
+export interface IFromGoodsAndExpedientsResponse {
+  descripcion: string;
+  no_expediente: string;
+  fec_recepcion_fisica: Date;
+  fec_acuerdo_aseg: Date;
+  averiguacion_previa: string;
+  causa_penal: string;
+}

@@ -48,16 +48,13 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      registerNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      registerNumber: [null, []],
     });
     if (this.shelves != null) {
       this.edit = true;

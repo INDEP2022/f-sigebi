@@ -328,6 +328,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
       })
       .subscribe({
         next: (res: any) => {
+          console.log(res.data);
           this.form.get('ident').setValue('ADM');
           this.dataGoods.load(res.data);
           this.serviceExpedient

@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
 import { EventTypesFornComponent } from '../event-types-form/event-types-forn.component';
 //Provisional Data
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
+import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { IComerTpEvent } from '../../../../../core/models/ms-event/event-type.model';
 import { ComerTpEventosService } from '../../../../../core/services/ms-event/comer-tpeventos.service';
 
@@ -18,12 +15,11 @@ import { ComerTpEventosService } from '../../../../../core/services/ms-event/com
   templateUrl: './event-types.component.html',
   styles: [],
 })
-export class EventTypesComponent extends BasePage implements OnInit {
-  data: LocalDataSource = new LocalDataSource();
+export class EventTypesComponent
+  extends BasePageWidhtDinamicFilters
+  implements OnInit
+{
   eventTypesD: IComerTpEvent[] = [];
-
-  totalItems: number = 0;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
 
   rowSelected: boolean = false;
@@ -38,42 +34,36 @@ export class EventTypesComponent extends BasePage implements OnInit {
     private tpEventService: ComerTpEventosService
   ) {
     super();
-    this.searchFilter = { field: 'description' };
+    this.service = this.tpEventService;
     this.settings = {
       ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: false,
-        edit: true,
-        delete: true,
-      },
       columns: COLUMNS,
     };
   }
 
-  ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData();
-    });
-  }
-
-  getData(): void {
+  override getData() {
     this.loading = true;
-    this.tpEventService
-      .getAllWithFilters(this.params.getValue().getParams())
-      .subscribe({
-        next: response => {
-          this.eventTypesD = response.data;
-          this.data.load(this.eventTypesD);
-          this.totalItems = response.count;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.service.getAll(params).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.totalItems = response.count || 0;
+          this.data.load(response.data);
+          this.data.refresh();
           this.newId = this.tpEventService.getNewId(response.data);
           this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+        }
+      },
+      error: err => {
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+      },
+    });
   }
 
   openModal(context?: Partial<EventTypesFornComponent>): void {
