@@ -55,6 +55,7 @@ import { DefaultSelect } from '../../../../../shared/components/select/default-s
 import { IGlobalVars } from '../../../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../../../shared/global-vars/services/global-vars.service';
 import { DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS } from '../../../../documents-reception/flyers/documents-reception-register/interfaces/columns';
+import { FlyerCopiesModalComponent } from '../../flyer-copies-modal/flyer-copies-modal.component';
 import {
   IJuridicalFileDataUpdateForm,
   JURIDICAL_FILE_DATA_UPDATE_FORM,
@@ -899,6 +900,15 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
+    // const params = {
+    //   expediente: 791477,
+    //   volante: 1558180,
+    //   tipoVo: 'P',
+    //   tipoDic: 'PROCEDENCIA',
+    //   consulta: 'N',
+    //   pGestOk: 1,
+    //   pNoTramite: 1044141,
+    // };
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/juridical-dictums'
     );
@@ -938,7 +948,14 @@ export class JuridicalRecordUpdateComponent
   }
 
   openFlyerCopies() {
-    //
+    const modalRef = this.modalService.show(FlyerCopiesModalComponent, {
+      initialState: { notification: this.formControls.wheelNumber.value },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    // modalRef.content.onSave.subscribe(data => {
+    //   if (data) console.log(data);
+    // });
   }
 
   viewDocuments() {

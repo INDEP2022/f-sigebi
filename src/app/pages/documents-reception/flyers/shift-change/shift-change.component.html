@@ -82,6 +82,7 @@
             <ngx-select
               [form]="turnForm"
               control="newUser"
+              (fetchItems)="getUsersCopy($event)"
               label="Atención"
               [data]="users"
               bindLabel="userAndName"

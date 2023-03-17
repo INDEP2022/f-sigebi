@@ -71,6 +71,7 @@ import { GlobalVarsService } from '../../../../shared/global-vars/services/globa
 import { FileUpdateCommunicationService } from '../../../juridical-processes/file-data-update/services/file-update-communication.service';
 import { DocReceptionTrackRecordsModalComponent } from './components/doc-reception-track-records-modal/doc-reception-track-records-modal.component';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
+import { IDocReceptionndicatedFormComponent } from './components/indicated-form/indicated-form.component';
 import {
   DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS,
   DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS,
@@ -372,9 +373,9 @@ export class DocumentsReceptionRegisterComponent
   }
 
   setInitialConditions() {
-    if (this.pageParams.pSatTipoExp != null) {
+    if (this.globals.pSatTipoExp != null) {
       const param = new FilterParams();
-      param.addFilter('expSat', this.pageParams.pSatTipoExp);
+      param.addFilter('expSat', this.globals.pSatTipoExp);
       this.catExpSatService.getAllWithFilters(param.getParams()).subscribe({
         next: data => {
           this.updateGlobalVars('pIndicadorSat', data.data[0].indicatorSat);
@@ -387,7 +388,10 @@ export class DocumentsReceptionRegisterComponent
       (this.pageParams.pNoVolante !== null &&
         this.pageParams.pNoVolante !== undefined)
     ) {
-      if (this.pageParams.pNoVolante === null) {
+      if (
+        this.pageParams.pNoVolante === null ||
+        this.pageParams.pNoVolante === undefined
+      ) {
         this.procedureManageService
           .getById(this.pageParams.pNoTramite)
           .subscribe({
@@ -1448,6 +1452,29 @@ export class DocumentsReceptionRegisterComponent
       'Enlace no disponible',
       'El enlace al documento no se encuentra disponible'
     );
+  }
+
+  openModalDefendant() {
+    const modalRef = this.modalService.show(
+      IDocReceptionndicatedFormComponent,
+      {
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onSave.subscribe(data => {
+      if (data) this.addDefendant(data);
+    });
+  }
+
+  addDefendant(defendant: IIndiciados) {
+    this.getDefendants({ page: 1, text: '' });
+    this.docRegisterService.getDefendant(defendant.id).subscribe({
+      next: data => {
+        this.formControls.indiciadoNumber.setValue(data);
+      },
+      error: () => {},
+    });
   }
 
   chooseOther() {
@@ -3085,8 +3112,8 @@ export class DocumentsReceptionRegisterComponent
       pNoExpediente: this.formControls.expedientNumber.value,
       pNoOficio: this.formData.officeExternalKey,
       pNoVolante: this.formControls.wheelNumber.value,
-      pSatTipoExp: this.pageParams.pSatTipoExp,
-      pIndicadorSat: this.pageParams.pIndicadorSat,
+      pSatTipoExp: this.globals.pSatTipoExp.toString(),
+      pIndicadorSat: Number(this.globals.pIndicadorSat),
     };
     console.log(this.docDataService.goodsBulkLoadSatSaeParams);
     const officeExternalKey = encodeURIComponent(

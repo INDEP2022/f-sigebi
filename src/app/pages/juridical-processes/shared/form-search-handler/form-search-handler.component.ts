@@ -149,8 +149,12 @@ export class FormSearchHandlerComponent
             this.loading = false;
             this.modalLoaded = true;
             this.changeDetectorRef.detectChanges();
-            if (!this.modal.isShown) {
+            if (!this.modal.isShown && data.count > 1) {
               this.modal.show();
+            } else if (data.count == 1) {
+              this.onSearchStart.emit(false);
+              this.onConfirmSearch.emit(false);
+              this.onSelect.emit(data.data[0]);
             }
           } else {
             this.columns = [];
