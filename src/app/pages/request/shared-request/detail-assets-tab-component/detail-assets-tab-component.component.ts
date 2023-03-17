@@ -695,7 +695,6 @@ export class DetailAssetsTabComponentComponent
     } else {
       address = addressId;
     }
-    debugger;
     this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;

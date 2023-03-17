@@ -3,12 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IWContent } from 'src/app/core/models/ms-wcontent/wcontent.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CoverExpedientService } from 'src/app/core/services/ms-cover-expedient/cover-expedient.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
@@ -44,7 +45,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private expedientSamiService: ExpedientSamiService,
     private requestHelperService: RequestHelperService,
-    private authService: AuthService
+    private wcontetService: WContentService
   ) {
     super();
   }
@@ -55,7 +56,16 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
-    console.log(this.authService.decodeToken());
+    console.log(this.parameter.getRawValue());
+
+    /* let parameters = {
+      xIdTransferente: request.transferenceId,
+      xidExpediente: '',
+      xidSolicitud: request.id,
+      xestado: request.keyStateOfRepublic,
+      tipoUse: 'AsociarExpedient',
+      xNombreProceso: 'Captura Solicitud',
+    }; */
   }
   formsChanges() {
     this.associateFileForm.controls['inaiUser'].valueChanges.subscribe(data => {
@@ -124,19 +134,41 @@ export class AssociateFileComponent extends BasePage implements OnInit {
         if (expedient.id) {
           debugger;
           request.recordId = expedient.id;
-          /* this.requestService.update(request.id, request).subscribe({
+
+          //actualiza la solicitud
+          this.requestService.update(request.id, request).subscribe({
             next: resp => {
               if (resp.id) {
-                this.message(
-                  'success',
-                  'Expediente Asociado',
-                  'Se asocio el expediente correctamente'
-                );
-                this.closeAssociateExpedientTab();
-                this.close();
+                let wcontent: IWContent = {};
+                wcontent.ddocTitle = 'Public';
+                wcontent.ddocTitle = `Caratula del Expediente ${resp.recordId}`;
+                wcontent.xdelegacionRegional = resp.regionalDelegationId;
+                wcontent.xestado = resp.stationId;
+                wcontent.xidTransferente = resp.transferenceId;
+                wcontent.xnoOficio = resp.paperNumber;
+                wcontent.xremitente = resp.nameOfOwner;
+                wcontent.xnivelRegistroNSBDB = 'Expediente';
+                wcontent.xidExpediente = resp.recordId;
+                wcontent.xidSolicitud = resp.id;
+                wcontent.xcargoRemitente = resp.holderCharge;
+                wcontent.xcontribuyente = resp.contribuyente_indiciado ?? '';
+                wcontent.xtipoDocumento = '';
+                wcontent.xnombreProceso = 'Captura Solicitud';
+
+                //TODO: GENERAR REPORTE
+
+                //guarda el reporte en el contet
+                this.wcontetService
+                  .addDocumentToContent('titulo', '.txt', wcontent, null)
+                  .subscribe({
+                    next: resp => {},
+                  });
+
+                //this.closeAssociateExpedientTab();
+                //this.close();
               }
             },
-          }); */
+          });
         } else {
           this.message(
             'error',
