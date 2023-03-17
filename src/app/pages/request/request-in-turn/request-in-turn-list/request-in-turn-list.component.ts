@@ -116,7 +116,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
             .toString();
           item['authorityName'] = item.authority.authorityName;
 
-          item['delegationName'] = item.delegation.description;
+          item['delegationName'] = item.regionalDelegation.description;
 
           item['stateOfRepublicName'] = item.state.descCondition;
 

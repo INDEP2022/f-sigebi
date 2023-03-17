@@ -39,7 +39,7 @@ export class TransferenteService extends HttpService {
   }
 
   getByIdState(id: string | number): Observable<ITransferente> {
-    const route = `catalog/transferent/get-entity-transferent-by-state/${id}`;
+    const route = `catalog/transferent/get-entity-transferent-by-state`;
     return this.transferenteRepository.getById(route, id);
   }
 
