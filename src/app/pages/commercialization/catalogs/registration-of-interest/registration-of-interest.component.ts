@@ -33,7 +33,7 @@ export class RegistrationOfInterestComponent
       'tiieYear',
       'registryDate',
     ];
-    this.ilikeFilters = ['user'];
+    // this.ilikeFilters = ['user'];
     this.service = this.parameterTiieService;
     this.settings = {
       ...this.settings,
@@ -47,10 +47,6 @@ export class RegistrationOfInterestComponent
       columns: { ...COUNT_TIIE_COLUMNS },
       noDataMessage: 'No se encontrarón registros',
     };
-  }
-  ngOnInit(): void {
-    this.dinamicFilterUpdate();
-    this.searchParams();
   }
 
   openForm(provider?: ITiieV1) {

@@ -21,7 +21,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   totalItems: number = 0;
   columnFilters: any = [];
   equalFilters: string[] = ['id'];
-  ilikeFilters: string[] = ['description'];
+  // ilikeFilters: string[] = ['description'];
   params = new BehaviorSubject<ListParams>(new ListParams());
   service: ServiceGetAll<T>;
   constructor() {
@@ -38,6 +38,11 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
     };
   }
 
+  ngOnInit(): void {
+    this.dinamicFilterUpdate();
+    this.searchParams();
+  }
+
   protected dinamicFilterUpdate() {
     this.data
       .onChanged()
@@ -50,10 +55,12 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
             let searchFilter = SearchFilter.ILIKE;
             if (this.equalFilters.includes(filter.field)) {
               searchFilter = SearchFilter.EQ;
-            }
-            if (this.ilikeFilters.includes(filter.field)) {
+            } else {
               searchFilter = SearchFilter.ILIKE;
             }
+            // if (this.ilikeFilters.includes(filter.field)) {
+            //   searchFilter = SearchFilter.ILIKE;
+            // }
             field = `filter.${filter.field}`;
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
@@ -80,21 +87,28 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.service.getAll(params).subscribe({
-      next: (response: any) => {
-        if (response) {
-          this.totalItems = response.count || 0;
-          this.data.load(response.data);
+    if (this.service) {
+      this.service.getAll(params).subscribe({
+        next: (response: any) => {
+          if (response) {
+            this.totalItems = response.count || 0;
+            this.data.load(response.data);
+            this.data.refresh();
+            this.loading = false;
+          }
+        },
+        error: err => {
+          this.totalItems = 0;
+          this.data.load([]);
           this.data.refresh();
           this.loading = false;
-        }
-      },
-      error: err => {
-        this.totalItems = 0;
-        this.data.load([]);
-        this.data.refresh();
-        this.loading = false;
-      },
-    });
+        },
+      });
+    } else {
+      this.totalItems = 0;
+      this.data.load([]);
+      this.data.refresh();
+      this.loading = false;
+    }
   }
 }
