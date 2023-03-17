@@ -136,7 +136,7 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.text = text;
     sweetalert.icon = icon;
     sweetalert.showConfirmButton = true;
-    Swal.fire(sweetalert);
+    return Swal.fire(sweetalert);
   }
 
   protected alertQuestion(

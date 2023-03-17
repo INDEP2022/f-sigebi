@@ -113,13 +113,13 @@ const routes: Routes = [
   //     (await import('./mass-goods-deletion/mass-goods-deletion.module'))
   //       .MassGoodsDeletionModule,
   // },
-  // {
-  //   path: 'goods-partialization',
-  //   data: { screen: 'FACTGENPARCIALIZA', title: 'Parcialización de Bienes' },
-  //   loadChildren: async () =>
-  //     (await import('./goods-partialization/goods-partialization.module'))
-  //       .GoodsPartializationModule,
-  // },
+  {
+    path: 'goods-partialization',
+    data: { screen: 'FACTGENPARCIALIZA', title: 'Parcialización de Bienes' },
+    loadChildren: async () =>
+      (await import('./goods-partialization/goods-partialization.module'))
+        .GoodsPartializationModule,
+  },
   // {
   //   path: 'goods-with-required-information',
   //   data: {

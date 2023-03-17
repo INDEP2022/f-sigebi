@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { CoordinationModalComponent } from 'src/app/@standalone/shared-forms/coordination/coordination-modal.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,6 +21,15 @@ export class CoordinationComponent implements OnInit {
   ngOnInit(): void {}
 
   openModal() {
-    this.modalService.show(CoordinationModalComponent);
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (delegations: IDelegation[]) =>
+        this.getDelegationsSelected(delegations),
+    };
+    this.modalService.show(CoordinationModalComponent, modalConfig);
+  }
+
+  getDelegationsSelected(delegations: IDelegation[]) {
+    console.log(delegations);
   }
 }

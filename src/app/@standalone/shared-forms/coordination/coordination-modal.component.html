@@ -3,13 +3,25 @@
     <h5 class="modal-title">Coordinación</h5>
   </div>
   <div body>
-    <ng2-smart-table [settings]="settings"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12" [class.table-loading]="loading">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="delegations"></ng2-smart-table>
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-primary active" (click)="close()">
-          Cancelar
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="confirm()">
+          Aceptar
         </button>
       </div>
       <div class="m-3">

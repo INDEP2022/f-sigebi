@@ -1,0 +1,43 @@
+<ng-container [formGroup]="form">
+  <form-field
+    [control]="controls.value"
+    [label]="controls.columnDescription.value"
+    [ngSwitch]="controls.dataType.value">
+    <ng-select
+      class="form-control"
+      formControlName="value"
+      [placeholder]="controls.columnDescription.value"
+      [items]="[]"
+      [addTag]="true"
+      [multiple]="true"
+      [selectOnTab]="true"
+      [isOpen]="false"
+      *ngSwitchCase="'NUMBER'">
+    </ng-select>
+    <!-- <input
+      type="number"
+      formControlName="value"
+      class="form-control"
+      [placeholder]="controls.columnDescription.value"
+      *ngSwitchCase="'NUMBER'" /> -->
+    <input
+      type="text"
+      formControlName="value"
+      class="form-control"
+      [placeholder]="controls.columnDescription.value"
+      *ngSwitchCase="'DATE'"
+      bsDatepicker />
+    <input
+      type="text"
+      formControlName="value"
+      class="form-control"
+      [placeholder]="controls.columnDescription.value"
+      *ngSwitchCase="'VARCHAR2'" />
+    <input
+      type="text"
+      formControlName="value"
+      class="form-control"
+      [placeholder]="controls.columnDescription.value"
+      *ngSwitchDefault />
+  </form-field>
+</ng-container>

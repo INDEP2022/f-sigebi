@@ -25,7 +25,7 @@ import { VALID_STATUSES_COLUMNS } from './valid-statuses-columns';
 export class ValidStatusesComponent extends BasePage implements OnInit {
   private global = {
     // ? FACTREFACTAENTREC usar este parametro como ejemplo
-    screenStatus: '',
+    screenStatus: 'FACTREFACTAENTREC',
   };
   screenCtrl = new FormControl<string>({ value: null, disabled: true });
   helpCtrol = new FormControl<string>(null);
