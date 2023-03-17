@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ITable } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 import { TdescCveService } from 'src/app/core/services/ms-parametergood/tdesccve.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,6 +23,7 @@ export class RegisterKeysLogicalTablesModalComponent
 {
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
+  idCve: ITable;
 
   title: string = 'Registro de claves para tablas logicas';
   edit: boolean = false;
@@ -73,7 +75,8 @@ export class RegisterKeysLogicalTablesModalComponent
       this.edit = true;
       this.tdescCveForm.patchValue(this.tdescCve);
     } else {
-      (this.edit = false), this.tdescCveForm.controls['id'].setValue(this._id);
+      (this.edit = false),
+        this.tdescCveForm.controls['id'].setValue(this.idCve.table);
     }
   }
 
@@ -87,15 +90,11 @@ export class RegisterKeysLogicalTablesModalComponent
 
   create() {
     this.loading = true;
-    this.tdescCveService.create(this.tdescCveForm.value).subscribe({
+    this.tdescCveService.create2(this.tdescCveForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (
         (this.loading = false),
-        this.onLoadToast(
-          'warning',
-          this.title,
-          `${error.error.message} Correctamente`
-        )
+        this.onLoadToast('warning', this.title, `${error.error.message}`)
       ),
     });
   }
@@ -103,7 +102,7 @@ export class RegisterKeysLogicalTablesModalComponent
   update() {
     this.loading = true;
     this.tdescCveService
-      .update(this.tdescCve.id, this.tdescCveForm.value)
+      .update2(this.tdescCve.id, this.tdescCveForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

@@ -289,6 +289,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
     let codeNoty: number;
     filterNoty.addFilter('expedientNumber', this.form.get('expediente').value);
     this.serviceNoty.getAllFilter(filterNoty.getParams()).subscribe(res => {
+      console.log(res);
       const uniqueArray = res.data.filter(
         (product: any, index: any, self: any) =>
           index ===
@@ -297,7 +298,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
           )
       );
       codeNoty = uniqueArray[0]['endTransferNumber'];
-      const paramsF = new FilterParams();
+
+      /* const paramsF = new FilterParams();
       paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
       this.serviceTransferente
         .getAllWithFilter(paramsF.getParams())
@@ -313,9 +315,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
               )
           );
           this.transferSelect = new DefaultSelect(uniqueArray);
-        });
+        }); */
     });
-    /* */
   }
 
   //
@@ -327,6 +328,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
       })
       .subscribe({
         next: (res: any) => {
+          console.log(res.data);
           this.form.get('ident').setValue('ADM');
           this.dataGoods.load(res.data);
           this.serviceExpedient

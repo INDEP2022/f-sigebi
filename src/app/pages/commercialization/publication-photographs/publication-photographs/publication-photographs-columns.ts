@@ -93,8 +93,19 @@ export const numStoreColumn = {
 };
 
 export const dataBatchColum = {
+  numStore: {
+    type: 'list',
+    manager: {
+      title: 'Cliente',
+      type: 'string',
+      sort: true,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.numStore.manager;
+      },
+    },
+  },
   id: {
-    title: 'id Lote',
+    title: 'Lote',
     type: 'string',
     sort: false,
   },
@@ -108,45 +119,51 @@ export const dataBatchColum = {
     type: 'string',
     sort: true,
   },
-  numStore: {
-    type: 'list',
-    manager: {
-      title: 'Cliente',
-      type: 'string',
-      sort: true,
-      valuePrepareFunction: (cell: any, row: any) => {
-        return row.numStore.manager;
-      },
-    },
+  button: {
+    title: 'Button',
+    type: 'custom',
   },
 };
-
 export const SUBTYPE = {
-  // id: {
-  //   title: 'Subtipo',
-  //   sort: false,
-  //   filter: false,
-  // },
-
+  id: {
+    title: 'Subtipo',
+    sort: false,
+    filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.id;
+    },
+  },
   creationUser: {
     title: 'Usuario',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.creationUser;
+    },
   },
   creationDate: {
     title: 'Fecha de creación',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.creationDate;
+    },
   },
   noPhotography: {
     title: 'Numero de fotografías',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.noPhotography;
+    },
   },
   descriptionPhotography: {
     title: 'descripción de foto',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.descriptionPhotography;
+    },
   },
   idTypeGood: {
     type: 'list',

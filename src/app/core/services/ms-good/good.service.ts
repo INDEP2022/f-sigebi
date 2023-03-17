@@ -4,6 +4,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IDescriptionByNoGoodBody,
+  IDescriptionByNoGoodResponse,
+  IFromGoodsAndExpedientsBody,
+  IFromGoodsAndExpedientsResponse,
+} from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
 import { IGood } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
@@ -150,6 +156,18 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(
       `${GoodEndpoints.Good}?filter.fileNumber=$eq:${id}&filter.status=RGA`,
       params
+    );
+  }
+  getDescriptionGoodByNoGood(body: IDescriptionByNoGoodBody) {
+    return this.post<IListResponse<IDescriptionByNoGoodResponse>>(
+      GoodEndpoints.DiStatusGood,
+      body
+    );
+  }
+  getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
+    return this.post<IListResponse<IFromGoodsAndExpedientsResponse>>(
+      GoodEndpoints.DiStatusGood,
+      body
     );
   }
 }

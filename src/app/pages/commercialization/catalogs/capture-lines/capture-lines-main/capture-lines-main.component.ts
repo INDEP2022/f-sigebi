@@ -21,10 +21,12 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
   clColumns: any[] = [];
   eventSettings = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
     actions: false,
   };
   clSettings = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
     actions: false,
   };
 

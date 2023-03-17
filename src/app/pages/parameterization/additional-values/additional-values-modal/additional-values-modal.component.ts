@@ -83,12 +83,16 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
     if (this.tvalTable != null) {
       this.edit = true;
       this.tvalTableForm.patchValue(this.tvalTable);
+      console.log(this.value);
       this.additionalValuesForm.controls['cdtabla'].setValue(
         this.value.cdtabla
       );
       this.additionalValuesForm.controls['dstabla'].setValue(
         this.value.dstabla
       );
+      this.tvalTableForm.controls['table'].setValue(this.value.nmtabla);
+      const { cdtabla } = this.value;
+      this.values = new DefaultSelect([cdtabla], 1);
       if (this.tvalTable.fromDate) {
         let datefrom = new Date(this.tvalTable.fromDate);
         this.tvalTableForm.controls['fromDate'].setValue(datefrom);
@@ -117,12 +121,16 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
       () => {}
     );
   }
-  onAditionalValuesChange(aditionalValues: ITablesType) {
+  onAditionalValuesChange(aditionalValues: any) {
     console.log(aditionalValues);
     this.value = aditionalValues;
-    this.additionalValuesForm.controls['dstabla'].setValue(
-      aditionalValues.dstabla
+    this.additionalValuesForm.controls['cdtabla'].setValue(
+      aditionalValues.name
     );
+    this.additionalValuesForm.controls['dstabla'].setValue(
+      aditionalValues.description
+    );
+    this.tvalTableForm.controls['table'].setValue(aditionalValues.table);
     this.values = new DefaultSelect();
   }
   close() {
@@ -149,12 +157,11 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         )
       );
     }
-    this.tvalTableService
-      .create2(this.value.ottipotb, this.tvalTableForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => {
-          this.loading = false;
+    this.tvalTableService.create2(5, this.tvalTableForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.loading = false;
+        if (this.tvalTable) {
           if (this.tvalTable.fromDate) {
             let datefrom = new Date(this.tvalTable.fromDate);
             this.tvalTableForm.controls['fromDate'].setValue(datefrom);
@@ -163,8 +170,9 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
             let date = new Date(this.tvalTable.toDate);
             this.tvalTableForm.controls['toDate'].setValue(date);
           }
-        },
-      });
+        }
+      },
+    });
   }
   update() {
     this.loading = true;
@@ -184,10 +192,11 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         )
       );
     }
+
     this.tvalTableService
       .update2(
         this.tvalTableForm.controls['id'].value,
-        this.value.ottipotb,
+        5,
         this.tvalTableForm.value
       )
       .subscribe({
