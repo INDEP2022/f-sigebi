@@ -63,17 +63,17 @@ const PGR_TRANSFERS_COLUMNS = {
     sort: false,
   },
   saeGoodNumber: {
-    title: 'SAE No. Bien',
+    title: 'INDEP No. Bien',
     type: 'string',
     sort: false,
   },
   description: {
-    title: 'SAE Descripción',
+    title: 'INDEP Descripción',
     type: 'string',
     sort: false,
   },
   status: {
-    title: 'SAE Estatus',
+    title: 'INDEP Estatus',
     type: 'string',
     sort: false,
   },
