@@ -23,9 +23,4 @@ export const BATTERY_COLUMNS = {
     sort: false,
     filter: false,
   },
-  registerNumber: {
-    title: 'No. Registrado',
-    sort: false,
-    filter: false,
-  },
 };

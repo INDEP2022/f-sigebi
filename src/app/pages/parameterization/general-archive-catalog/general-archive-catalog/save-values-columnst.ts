@@ -15,8 +15,4 @@ export const SAVEVALUES_COLUMNS = {
     title: 'Responsable',
     sort: false,
   },
-  noRegistration: {
-    title: 'No. Registro',
-    sort: false,
-  },
 };
