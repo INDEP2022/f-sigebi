@@ -40,6 +40,10 @@ export const GENERAL_PROCESSES_ROUTES = [
         link: '/pages/general-processes/documents-viewer',
       },
       {
+        label: 'Bitacora del sistema',
+        link: '/pages/general-processes/system-log',
+      },
+      {
         label: 'Indicadores',
         subItems: [
           {

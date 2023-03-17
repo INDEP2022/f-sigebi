@@ -19,6 +19,7 @@ import {
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { CategorizationAutomNumeraryService } from 'src/app/core/services/ms-good-parameters/categorization-autom-numerary.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
@@ -383,13 +384,13 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
           )
         ),
         tap(goods => {
-          const { newGood, originalGood } = goods;
-          forkJoin([
-            this.disperseMovements(originalGood.id, percentage, newGood.id),
-          ]).subscribe();
-          forkJoin([
-            this.disperseCertificates(originalGood.id, percentage, newGood.id),
-          ]).subscribe();
+          // const { newGood, originalGood } = goods;
+          // forkJoin([
+          //   this.disperseMovements(originalGood.id, percentage, newGood.id),
+          // ]).subscribe();
+          // forkJoin([
+          //   this.disperseCertificates(originalGood.id, percentage, newGood.id),
+          // ]).subscribe();
         })
       )
       .subscribe();
@@ -529,6 +530,25 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
     percent: number,
     newGood: number
   ) {
-    return of();
+    console.log('llego');
+    return this.getDetailDeliveryByGoodId(goodId, this.certificates).pipe(
+      map(response => {
+        const obs: Observable<any>[] = [];
+        response.data.forEach(certificate => {
+          let quan1: number, quan2: number;
+          let toSave: IDetailProceedingsDeliveryReception;
+          let toUpdate: IDetailProceedingsDeliveryReception;
+          const { isNume, en, y } = this.controls;
+          if (isNume.value) {
+            quan1 = 1;
+            quan2 = 1;
+          } else {
+            quan1 = en.value;
+            quan2 = y.value;
+          }
+          toSave = { ...certificate, numberGood: newGood };
+        });
+      })
+    );
   }
 }

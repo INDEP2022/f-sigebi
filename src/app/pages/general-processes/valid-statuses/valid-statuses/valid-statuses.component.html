@@ -5,14 +5,9 @@
 
   <div body>
     <div class="row">
-      <form class="form-material d-flex justify-content-center">
-        <form-field
-          class="col-md-4"
-          [control]="screenCtrl"
-          label="Desc. Estatus">
-          <input type="text" class="form-control" [formControl]="screenCtrl" />
-        </form-field>
-      </form>
+      <div class="col-md-12 text-center">
+        <h3>{{ screenCtrl.value }}</h3>
+      </div>
     </div>
     <div class="row">
       <div class="col-md-12 md-tabs">
@@ -27,7 +22,13 @@
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
-          <tab heading="Ayuda"></tab>
+          <tab heading="Ayuda">
+            <div class="row">
+              <div class="col-md-12">
+                <p><b [innerText]="helpText"></b></p>
+              </div>
+            </div>
+          </tab>
         </tabset>
       </div>
     </div>

@@ -8,24 +8,22 @@ export const VALID_STATUSES_COLUMNS = {
   status: {
     title: 'Estatus Inicial',
     sort: false,
-    valuePrepareFunction: (goodStatus: IGoodStatus) => goodStatus.status,
   },
-  descripcion: {
+  statusGood: {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
-      row.status.description,
+      goodStatus?.description,
   },
   statusFinal: {
     title: 'Estatus Final',
     sort: false,
-    valuePrepareFunction: (goodStatus: IGoodStatus) => goodStatus.status,
   },
   descripcion2: {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
-      row.status.description,
+      row.statusFinal,
   },
   processExtSun: {
     title: 'Proceso Ext Dominio',

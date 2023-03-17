@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
+  forkJoin,
   skip,
   switchMap,
   takeUntil,
@@ -12,6 +13,7 @@ import {
 } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IStatusXScreen } from 'src/app/core/models/ms-screen-status/status.model';
+import { ScreenHelpService } from 'src/app/core/services/ms-business-rule/screen-help.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SegAppScreenService } from 'src/app/core/services/ms-screen-status/seg-app-screen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -27,16 +29,18 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     // ? FACTREFACTAENTREC usar este parametro como ejemplo
     screenStatus: 'FACTREFACTAENTREC',
   };
+  helpText = 'No hay ayudata para esta pantalla';
   screenCtrl = new FormControl<string>({ value: null, disabled: true });
   helpCtrol = new FormControl<string>(null);
   params = new BehaviorSubject(new FilterParams());
-
+  showStatus: boolean = true;
   statuses: IStatusXScreen[] = [];
   totalItems = 0;
   constructor(
     private segAppScreenService: SegAppScreenService,
     private activatedRoute: ActivatedRoute,
-    private screenStatusService: ScreenStatusService
+    private screenStatusService: ScreenStatusService,
+    private screenHelpService: ScreenHelpService
   ) {
     super();
     this.settings.actions = false;
@@ -52,7 +56,9 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         skip(1),
-        switchMap(params => this.getScreenStatuses(params))
+        switchMap(params =>
+          forkJoin([this.getScreenStatuses(params), this.getHelpByScreen()])
+        )
       )
       .subscribe();
     this.fillFromParams();
@@ -64,7 +70,7 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
       this.getScreenStatusById(screenStatus).subscribe();
       const params = this.params.getValue();
       params.removeAllFilters();
-      params.addFilter('cveScreen', screenStatus);
+      params.addFilter('screenKey', screenStatus);
       this.params.next(params);
     }
   }
@@ -73,14 +79,19 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     this.hideError();
     return this.segAppScreenService.getById(id).pipe(
       catchError(error => {
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Ocurrio un error al obtener el status'
-        );
+        this.loading = false;
+        if (error.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al obtener el status'
+          );
+        }
+
         return throwError(() => error);
       }),
       tap(screenStatus => {
+        this.loading = false;
         this.screenCtrl.setValue(screenStatus.description);
       })
     );
@@ -92,18 +103,29 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     return this.screenStatusService.getAllFiltered(params.getParams()).pipe(
       catchError(error => {
         this.loading = false;
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Ocurrio un error al obtener los estatus'
-        );
+        if (error.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al obtener los estatus'
+          );
+        }
+
         return throwError(() => error);
       }),
       tap(response => {
         this.loading = false;
         this.statuses = response.data;
         this.totalItems = response.count;
+        this.showStatus = this.statuses.length > 0;
       })
     );
+  }
+
+  getHelpByScreen() {
+    this.hideError();
+    return this.screenHelpService
+      .getById(this.global.screenStatus)
+      .pipe(tap(screenHelp => (this.helpText = screenHelp.help)));
   }
 }
