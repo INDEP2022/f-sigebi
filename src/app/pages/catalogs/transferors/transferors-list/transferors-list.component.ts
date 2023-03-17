@@ -166,7 +166,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
       });
   }
 
-  //Modal del formulario para actualizar un transferente
+  //Modal del formulario para actualizar un estado
   openForm2(stateByTransferent?: IStateByTransferent) {
     const idTrans = { ...this.transferents };
     let transferentsI = this.transferents;

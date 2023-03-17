@@ -1,3 +1,18 @@
+export const LOGICAL_TABLE = {
+  name: {
+    title: 'Nombre',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  tableType: {
+    title: 'Tipo de tabla',
+    sort: false,
+  },
+};
+
 export const REGISTER_KEYS_LOGICAL_COLUMNS = {
   id: {
     title: 'ID',
