@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
   baseMenu,
@@ -20,8 +21,10 @@ import {
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from '../../../../../common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from '../../../../../common/services/show-hide-error-interceptor.service';
+import { IListResponse } from '../../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../../core/models/catalogs/affair.model';
 import { IAuthority } from '../../../../../core/models/catalogs/authority.model';
 import { ICity } from '../../../../../core/models/catalogs/city.model';
@@ -39,6 +42,7 @@ import {
   ITransferente,
   ITransferingLevelView,
 } from '../../../../../core/models/catalogs/transferente.model';
+import { IDocuments } from '../../../../../core/models/ms-documents/documents';
 import {
   IInstitutionNumber,
   INotification,
@@ -50,6 +54,8 @@ import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
 import { IGlobalVars } from '../../../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../../../shared/global-vars/services/global-vars.service';
+import { DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS } from '../../../../documents-reception/flyers/documents-reception-register/interfaces/columns';
+import { FlyerCopiesModalComponent } from '../../flyer-copies-modal/flyer-copies-modal.component';
 import {
   IJuridicalFileDataUpdateForm,
   JURIDICAL_FILE_DATA_UPDATE_FORM,
@@ -90,6 +96,7 @@ export class JuridicalRecordUpdateComponent
     '/pages/documents-reception/flyers-registration/related-document-management';
   fileDataUpdateForm = this.fb.group(JURIDICAL_FILE_DATA_UPDATE_FORM);
   initialCondition: string = 'P';
+  prevInitialCondition: string = '';
   canViewDocuments = false;
   transferorLoading: boolean = false;
   stationLoading: boolean = false;
@@ -184,6 +191,18 @@ export class JuridicalRecordUpdateComponent
     return this.fileDataUpdateForm.controls['wheelNumber'].value;
   }
 
+  get expedientNumber() {
+    return this.fileDataUpdateForm.controls['expedientNumber'].value;
+  }
+
+  get delDestinyNumber() {
+    return this.fileDataUpdateForm.controls['delDestinyNumber'].value;
+  }
+
+  get userRecipient() {
+    return this.fileDataUpdateForm.controls['userRecipient'].value;
+  }
+
   ngOnInit(): void {
     this.showHideErrorInterceptorService.showHideError(false);
     // this.formControls.receiptDate.setValue(this.initialDate);
@@ -208,8 +227,10 @@ export class JuridicalRecordUpdateComponent
       !changes['confirmSearch']?.isFirstChange()
     ) {
       console.log('confirmSearch');
-      console.log(this.fileDataUpdateForm.value);
-      this.onSearch.emit(this.fileDataUpdateForm.value);
+      if (changes['confirmSearch']?.currentValue) {
+        console.log(this.fileDataUpdateForm.value);
+        this.onSearch.emit(this.fileDataUpdateForm.value);
+      }
       // this.deactivateSearch();
     }
     if (
@@ -236,6 +257,10 @@ export class JuridicalRecordUpdateComponent
     }
     if (this.pageParams.dictamen) {
       // TODO: Integrar validaciones cuando se creo dictamen
+    } else if (!this.pageParams.dictamen) {
+      if (this.fileUpdateService.juridicalFileDataUpdateForm != null) {
+        this.deactivateSearch();
+      }
     }
   }
 
@@ -347,9 +372,11 @@ export class JuridicalRecordUpdateComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.fileDataUpdateForm.patchValue({ ...values });
-    this.formControls.receiptDate.setValue(format(new Date(), 'd/MM/yyyy'));
+    this.formControls.receiptDate.setValue(
+      format(new Date(notif.receiptDate), 'd/MM/yyyy')
+    );
     this.formControls.externalOfficeDate.setValue(
-      format(new Date(), 'd/MM/yyyy')
+      format(new Date(notif.externalOfficeDate), 'd/MM/yyyy')
     );
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
@@ -442,12 +469,17 @@ export class JuridicalRecordUpdateComponent
       });
     }
     if (notif.dictumKey != null) {
-      this.fileUpdateService.getDictum(notif.dictumKey).subscribe({
+      filterParams.removeAllFilters();
+      filterParams.addFilter('description', notif.dictumKey);
+      this.fileUpdateService.getDictum(filterParams.getParams()).subscribe({
         next: data => {
-          this.formControls.dictumKey.setValue(data);
-          this.prevDictumKey = this.formControls.dictumKey.value;
-          this.dictum = data.description;
-          this.dictOffice = data.dict_ofi;
+          if (data.count > 0) {
+            const dictum = data.data[0];
+            this.formControls.dictumKey.setValue(dictum);
+            this.prevDictumKey = this.formControls.dictumKey.value;
+            this.dictum = dictum.description;
+            this.dictOffice = dictum.dict_ofi;
+          }
         },
         error: () => {},
       });
@@ -565,6 +597,7 @@ export class JuridicalRecordUpdateComponent
     console.log(this.searchMode);
     this.fileDataUpdateForm.enable();
     this.prevDictumKey = this.formControls.dictumKey.value;
+    this.prevInitialCondition = this.initialCondition;
     this.fileUpdateService.juridicalFileDataUpdateForm =
       this.fileDataUpdateForm.value;
     console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
@@ -580,6 +613,15 @@ export class JuridicalRecordUpdateComponent
     this.fileDataUpdateForm.patchValue(
       this.fileUpdateService.juridicalFileDataUpdateForm
     );
+    if (this.prevInitialCondition !== '') {
+      this.initialCondition = this.prevInitialCondition;
+    } else {
+      if (['A', 'P'].includes(this.formControls.wheelType.value)) {
+        this.initialCondition = 'A';
+      } else if (['AT', 'T'].includes(this.formControls.wheelType.value)) {
+        this.initialCondition = this.formControls.wheelType.value;
+      }
+    }
     this.fileDataUpdateForm.disable();
     if (this.formControls.dictumKey.value?.description) {
       this.dictum = this.formControls.dictumKey.value?.description;
@@ -614,53 +656,52 @@ export class JuridicalRecordUpdateComponent
   }
 
   setUniqueKeyData(key: ITransferingLevelView, full?: boolean) {
-    // if (key.transfereeNum != null)
-    //   this.docRegisterService.getTransferent(key.transfereeNum).subscribe({
-    //     next: data => {
-    //       this.formControls.endTransferNumber.setValue(data);
-    //       this.updateGlobalVars('noTransferente', data.id);
-    //     },
-    //     error: () => {},
-    //   });
-    // if (key.stationNum != null)
-    //   this.docRegisterService.getStation(key.stationNum).subscribe({
-    //     next: data => this.formControls.stationNumber.setValue(data),
-    //     error: () => {},
-    //   });
-    // if (key.authorityNum != null) {
-    //   const param = new FilterParams();
-    //   param.addFilter('idAuthority', key.authorityNum);
-    //   this.docRegisterService
-    //     .getAuthoritiesFilter(param.getParams())
-    //     .subscribe({
-    //       next: data => {
-    //         if (data.count > 0) {
-    //           this.formControls.autorityNumber.setValue(data.data[0]);
-    //         }
-    //       },
-    //       error: () => {},
-    //     });
-    // }
-    // if (full) {
-    //   if (key.cityNum != null) {
-    //     this.docRegisterService.getCity(key.cityNum).subscribe({
-    //       next: data => {
-    //         this.formControls.cityNumber.setValue(data);
-    //       },
-    //       error: () => {},
-    //     });
-    //   }
-    //   if (key.federalEntityCve != null) {
-    //     this.docRegisterService
-    //       .getByTableKeyOtKey(1, key.federalEntityCve)
-    //       .subscribe({
-    //         next: data => {
-    //           this.formControls.entFedKey.setValue(data.data);
-    //         },
-    //         error: () => {},
-    //       });
-    //   }
-    // }
+    if (key.transfereeNum != null)
+      this.docRegisterService.getTransferent(key.transfereeNum).subscribe({
+        next: data => {
+          this.formControls.endTransferNumber.setValue(data);
+        },
+        error: () => {},
+      });
+    if (key.stationNum != null)
+      this.docRegisterService.getStation(key.stationNum).subscribe({
+        next: data => this.formControls.stationNumber.setValue(data),
+        error: () => {},
+      });
+    if (key.authorityNum != null) {
+      const param = new FilterParams();
+      param.addFilter('idAuthority', key.authorityNum);
+      this.docRegisterService
+        .getAuthoritiesFilter(param.getParams())
+        .subscribe({
+          next: data => {
+            if (data.count > 0) {
+              this.formControls.autorityNumber.setValue(data.data[0]);
+            }
+          },
+          error: () => {},
+        });
+    }
+    if (full) {
+      if (key.cityNum != null) {
+        this.docRegisterService.getCity(key.cityNum).subscribe({
+          next: data => {
+            this.formControls.cityNumber.setValue(data);
+          },
+          error: () => {},
+        });
+      }
+      if (key.federalEntityCve != null) {
+        this.docRegisterService
+          .getByTableKeyOtKey(1, key.federalEntityCve)
+          .subscribe({
+            next: data => {
+              this.formControls.entFedKey.setValue(data.data);
+            },
+            error: () => {},
+          });
+      }
+    }
   }
 
   openSatChat() {
@@ -817,6 +858,7 @@ export class JuridicalRecordUpdateComponent
         'No cuenta con los permisos necesarios',
         'No tiene privilegios para entrar a los Dictamenes de Resarcimiento.'
       );
+      return;
     }
     if ([1, 16, 23].includes(dictumId)) dictumType = 'PROCEDENCIA';
     if (dictumId == 15) dictumType = 'DESTRUCCION';
@@ -858,13 +900,31 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
+    // const params = {
+    //   expediente: 791477,
+    //   volante: 1558180,
+    //   tipoVo: 'P',
+    //   tipoDic: 'PROCEDENCIA',
+    //   consulta: 'N',
+    //   pGestOk: 1,
+    //   pNoTramite: 1044141,
+    // };
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/juridical-dictums'
     );
   }
 
-  sendToShiftChange() {
-    // TODO: mandar parametros
+  openToShiftChange() {
+    this.fileUpdateService.juridicalFileDataUpdateForm =
+      this.fileDataUpdateForm.value;
+    this.fileUpdComService.juridicalShiftChangeParams = {
+      iden: this.formControls.wheelNumber.value,
+      exp: this.formControls.expedientNumber.value,
+    };
+    this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
+  }
+
+  sendToRelatedDocumentsManagement() {
     this.fileUpdateService.juridicalFileDataUpdateForm =
       this.fileDataUpdateForm.value;
     let procedure;
@@ -883,63 +943,74 @@ export class JuridicalRecordUpdateComponent
       pNoTramite: procedure,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/shift-change'
-    );
-  }
-
-  sendToRelatedDocumentsManagement() {
-    // TODO: mandar parametros
-    this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/related-document-management'
     );
   }
 
   openFlyerCopies() {
-    //
+    const modalRef = this.modalService.show(FlyerCopiesModalComponent, {
+      initialState: { notification: this.formControls.wheelNumber.value },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    // modalRef.content.onSave.subscribe(data => {
+    //   if (data) console.log(data);
+    // });
   }
 
   viewDocuments() {
     // TODO: ajustar busqueda de documentos
-    // const params = new FilterParams();
-    // params.addFilter('flyerNumber', this.wheelNumber.value);
-    // params.addFilter('scanStatus', 'ESCANEADO');
-    // this.documentsService.getAllFilter(params.getParams()).subscribe({
-    //   next: data => {
-    //     console.log(data);
-    //     const documents = data.data;
-    //     if (data.count == 1) {
-    //       if (documents[0].associateUniversalFolio) {
-    //         this.onLoadToast(
-    //           'info',
-    //           'Enlace no disponible',
-    //           'El enlace al documento no se encuentra disponible'
-    //         );
-    //       } else {
-    //         this.onLoadToast(
-    //           'info',
-    //           'No disponible',
-    //           'No tiene documentos digitalizados.'
-    //         );
-    //       }
-    //     } else if (data.count > 1) {
-    //       this.openModalDocuments();
-    //     } else {
-    //       this.onLoadToast(
-    //         'info',
-    //         'No disponible',
-    //         'No tiene documentos digitalizados.'
-    //       );
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.onLoadToast(
-    //       'info',
-    //       'No disponible',
-    //       'No se encontraron documentos asociados.'
-    //     );
-    //   },
-    // });
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.fileUpdateService.getDocuments(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        const documents = data.data;
+        if (data.count == 1) {
+          if (documents[0].associateUniversalFolio) {
+            this.onLoadToast(
+              'info',
+              'Enlace no disponible',
+              'El enlace al documento no se encuentra disponible'
+            );
+          } else {
+            this.onLoadToast(
+              'info',
+              'No disponible',
+              'No tiene documentos digitalizados.'
+            );
+          }
+        } else if (data.count > 1) {
+          this.openModalDocuments();
+        } else {
+          this.onLoadToast(
+            'info',
+            'No disponible',
+            'No tiene documentos digitalizados.'
+          );
+        }
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'No se encontraron documentos asociados.'
+        );
+      },
+    });
+  }
+
+  changeWheelType(type: string) {
+    this.formControls.affairKey.setValue(null);
+    this.formControls.endTransferNumber.setValue(null);
+    this.getTransferors({ page: 1, text: '' });
+    if (['A', 'P'].includes(type)) {
+      this.initialCondition = 'A';
+    } else if (['AT', 'T'].includes(type)) {
+      this.initialCondition = type;
+    }
   }
 
   changeDictum(dictum: IOpinion) {
@@ -982,7 +1053,6 @@ export class JuridicalRecordUpdateComponent
   changeTransferor(event: ITransferente) {
     if (event?.id) {
       this.formControls.transference.setValue(event.id);
-      // this.updateGlobalVars('noTransferente', event.id);
     }
     this.formControls.stationNumber.setValue(null);
     this.formControls.autorityNumber.setValue(null);
@@ -996,64 +1066,42 @@ export class JuridicalRecordUpdateComponent
   }
 
   openModalDocuments() {
-    // this.openModalSelect(
-    //   {
-    //     title: 'Folios Relacionados al Expediente',
-    //     columnsType: { ...DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS },
-    //     service: this.docRegisterService,
-    //     dataObservableFn: this.docRegisterService.getDocuments,
-    //     filters: [
-    //       {
-    //         field: 'flyerNumber',
-    //         value: this.wheelNumber.value,
-    //       },
-    //       {
-    //         field: 'scanStatus',
-    //         value: 'ESCANEADO',
-    //       },
-    //     ],
-    //     selectOnClick: true,
-    //   },
-    //   this.selectDocument
-    // );
+    this.openModalSelect(
+      {
+        title: 'Folios Relacionados al Expediente',
+        columnsType: { ...DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS },
+        service: this.docRegisterService,
+        dataObservableFn: this.docRegisterService.getDocuments,
+        filters: [
+          {
+            field: 'flyerNumber',
+            value: this.formControls.wheelNumber.value,
+          },
+          {
+            field: 'scanStatus',
+            value: 'ESCANEADO',
+          },
+        ],
+        selectOnClick: true,
+      },
+      this.selectDocument
+    );
   }
 
-  // selectDocument(
-  //   document: IDocuments,
-  //   self: DocumentsReceptionRegisterComponent
-  // ) {
-  //   if (document) {
-  //     console.log(document);
-  //     self.documentMessage();
-  //   }
-  // }
-
-  openModalAreas() {
-    // this.openModalSelect(
-    //   {
-    //     title: 'Área',
-    //     columnsType: { ...DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS },
-    //     service: this.docRegisterService,
-    //     dataObservableFn: this.docRegisterService.getDepartaments,
-    //     searchFilter: { field: 'description', operator: SearchFilter.LIKE },
-    //     selectOnClick: true,
-    //   },
-    //   this.selectArea
-    // );
+  selectDocument(document: IDocuments, self: JuridicalRecordUpdateComponent) {
+    if (document) {
+      console.log(document);
+      self.documentMessage();
+    }
   }
 
-  // selectArea(areaData: IDepartment, self: DocumentsReceptionRegisterComponent) {
-  //   const delegation = areaData.delegation as IDelegation;
-  //   const subdelegation = areaData.numSubDelegation as ISubdelegation;
-  //   self.formControls.departamentDestinyNumber.setValue(areaData.id);
-  //   self.formControls.destinationArea.setValue(areaData.description);
-  //   self.formControls.delDestinyNumber.setValue(delegation.id);
-  //   self.formControls.delegationName.setValue(delegation.description);
-  //   self.formControls.subDelDestinyNumber.setValue(subdelegation.id);
-  //   self.formControls.subDelegationName.setValue(subdelegation.description);
-  //   self.getPublicMinistries({ page: 1, text: '' });
-  //   self.getUsers({ page: 1, text: '' });
-  // }
+  documentMessage() {
+    this.onLoadToast(
+      'info',
+      'Enlace no disponible',
+      'El enlace al documento no se encuentra disponible'
+    );
+  }
 
   openModalSelect(
     context?: Partial<SelectListFilteredModalComponent>,
@@ -1070,182 +1118,202 @@ export class JuridicalRecordUpdateComponent
   }
 
   getUniqueKey(lparams: ListParams) {
-    // const param = new FilterParams();
-    // param.addFilter('uniqueCve', Number(lparams.text));
-    // this.docRegisterService.getUniqueKeyData(param.getParams()).subscribe({
-    //   next: data => {
-    //     this.uniqueKeys = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.users = new DefaultSelect();
-    //   },
-    // });
+    const param = new FilterParams();
+    param.addFilter('uniqueCve', Number(lparams.text));
+    this.docRegisterService.getUniqueKeyData(param.getParams()).subscribe({
+      next: data => {
+        this.uniqueKeys = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.uniqueKeys = new DefaultSelect();
+      },
+    });
   }
 
   getCities(lparams: ListParams) {
-    // this.docRegisterService.getCities(lparams).subscribe({
-    //   next: data => {
-    //     this.cities = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.cities = new DefaultSelect();
-    //   },
-    // });
+    this.docRegisterService.getCities(lparams).subscribe({
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.cities = new DefaultSelect();
+      },
+    });
   }
 
-  // getDynamicTables(
-  //   id: number | string,
-  //   params: ListParams
-  // ): Observable<IListResponse<TvalTable1Data>> {
-  //   return this.docRegisterService.getDynamicTables(id, params);
-  // }
+  getDynamicTables(
+    id: number | string,
+    params: ListParams
+  ): Observable<IListResponse<TvalTable1Data>> {
+    return this.docRegisterService.getDynamicTables(id, params);
+  }
 
   getFederalEntities(params: ListParams) {
-    // let elements$ = this.getDynamicTables(1, params);
-    // elements$.subscribe({
-    //   next: data => {
-    //     this.federalEntities = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.federalEntities = new DefaultSelect();
-    //   },
-    // });
+    let elements$ = this.getDynamicTables(1, params);
+    elements$.subscribe({
+      next: data => {
+        this.federalEntities = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.federalEntities = new DefaultSelect();
+      },
+    });
   }
 
   getTransferors(lparams: ListParams) {
-    // const body = {
-    //   active: ['1', '2'],
-    //   nameTransferent: lparams.text,
-    // };
-    // this.transferorLoading = true;
-    // this.docRegisterService.getActiveTransferents(body).subscribe({
-    //   next: data => {
-    //     this.transferors = new DefaultSelect(data.data, data.count);
-    //     this.transferorLoading = false;
-    //   },
-    //   error: () => {
-    //     this.transferors = new DefaultSelect();
-    //     this.transferorLoading = false;
-    //   },
-    // });
+    const body = {
+      active: ['1', '2'],
+      nameTransferent: lparams.text,
+    };
+    this.transferorLoading = true;
+    this.docRegisterService.getActiveTransferents(body).subscribe({
+      next: data => {
+        this.transferors = new DefaultSelect(data.data, data.count);
+        this.transferorLoading = false;
+      },
+      error: () => {
+        this.transferors = new DefaultSelect();
+        this.transferorLoading = false;
+      },
+    });
   }
 
   getStations(lparams: ListParams) {
-    // const params = new FilterParams();
-    // params.page = lparams.page;
-    // params.limit = lparams.limit;
-    // if (lparams?.text.length > 0)
-    //   params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
-    // if (this.endTransferNumber.value != null)
-    //   params.addFilter('idTransferent', this.endTransferNumber.value.id);
-    // this.stationLoading = true;
-    // this.docRegisterService.getStations(params.getParams()).subscribe({
-    //   next: data => {
-    //     this.stations = new DefaultSelect(data.data, data.count);
-    //     this.stationLoading = false;
-    //   },
-    //   error: () => {
-    //     this.stations = new DefaultSelect();
-    //     this.stationLoading = false;
-    //   },
-    // });
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
+    if (this.formControls.endTransferNumber.value != null)
+      params.addFilter(
+        'idTransferent',
+        this.formControls.endTransferNumber.value.id
+      );
+    this.stationLoading = true;
+    this.docRegisterService.getStations(params.getParams()).subscribe({
+      next: data => {
+        this.stations = new DefaultSelect(data.data, data.count);
+        this.stationLoading = false;
+      },
+      error: () => {
+        this.stations = new DefaultSelect();
+        this.stationLoading = false;
+      },
+    });
   }
 
   getAuthorities(lparams: ListParams) {
-    // const params = new FilterParams();
-    // params.page = lparams.page;
-    // params.limit = lparams.limit;
-    // if (lparams?.text.length > 0)
-    //   params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
-    // if (this.endTransferNumber.value != null)
-    //   params.addFilter('idTransferer', this.endTransferNumber.value.id);
-    // if (this.stationNumber.value != null)
-    //   params.addFilter('idStation', this.stationNumber.value.id);
-    // this.docRegisterService.getAuthorities(params.getParams()).subscribe({
-    //   next: data => {
-    //     this.authorities = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.authorities = new DefaultSelect();
-    //   },
-    // });
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
+    if (this.formControls.endTransferNumber.value != null)
+      params.addFilter(
+        'idTransferer',
+        this.formControls.endTransferNumber.value.id
+      );
+    if (this.formControls.stationNumber.value != null)
+      params.addFilter('idStation', this.formControls.stationNumber.value.id);
+    this.docRegisterService.getAuthorities(params.getParams()).subscribe({
+      next: data => {
+        this.authorities = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.authorities = new DefaultSelect();
+      },
+    });
   }
 
   getInstitutions(lparams: ListParams) {
-    //
+    this.fileUpdateService.getInstitutions(lparams).subscribe({
+      next: data => {
+        this.institutions = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.institutions = new DefaultSelect();
+      },
+    });
   }
 
   getPublicMinistries(lparams: ListParams) {
-    // const params = new FilterParams();
-    // params.page = lparams.page;
-    // params.limit = lparams.limit;
-    // if (lparams?.text.length > 0)
-    //   params.addFilter('description', lparams.text, SearchFilter.LIKE);
-    // //TODO: Filtros comentados para prubeas
-    // // if (this.cityNumber.value != null)
-    // //   params.addFilter('idCity', this.cityNumber.value.idCity);
-    // // if (this.delDestinyNumber.value != null)
-    // //   params.addFilter('noDelegation', this.delDestinyNumber.value);
-    // // if (this.subDelDestinyNumber.value != null)
-    // //   params.addFilter('noSubDelegation', this.subDelDestinyNumber.value);
-    // this.docRegisterService.getPublicMinistries(params.getParams()).subscribe({
-    //   next: data => {
-    //     this.publicMinistries = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.publicMinistries = new DefaultSelect();
-    //   },
-    // });
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    //TODO: Filtros comentados para pruebas
+    // if (this.cityNumber.value != null)
+    //   params.addFilter('idCity', this.cityNumber.value.idCity);
+    // if (this.delDestinyNumber.value != null)
+    //   params.addFilter('noDelegation', this.delDestinyNumber.value);
+    // if (this.subDelDestinyNumber.value != null)
+    //   params.addFilter('noSubDelegation', this.subDelDestinyNumber.value);
+    this.docRegisterService.getPublicMinistries(params.getParams()).subscribe({
+      next: data => {
+        this.publicMinistries = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.publicMinistries = new DefaultSelect();
+      },
+    });
   }
 
   getCrimes(params: ListParams) {
-    // let elements$ = this.getDynamicTables(2, params);
-    // elements$.subscribe({
-    //   next: data => {
-    //     this.crimes = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.crimes = new DefaultSelect();
-    //   },
-    // });
+    let elements$ = this.getDynamicTables(2, params);
+    elements$.subscribe({
+      next: data => {
+        this.crimes = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.crimes = new DefaultSelect();
+      },
+    });
   }
 
   getCourts(lparams: ListParams) {
-    // this.docRegisterService.getCourts(lparams).subscribe({
-    //   next: data => {
-    //     this.courts = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.courts = new DefaultSelect();
-    //   },
-    // });
+    this.docRegisterService.getCourts(lparams).subscribe({
+      next: data => {
+        this.courts = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.courts = new DefaultSelect();
+      },
+    });
   }
 
   getDefendants(lparams: ListParams) {
-    // this.docRegisterService.getDefendants(lparams).subscribe({
-    //   next: data => {
-    //     this.defendants = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.defendants = new DefaultSelect();
-    //   },
-    // });
+    this.docRegisterService.getDefendants(lparams).subscribe({
+      next: data => {
+        this.defendants = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.defendants = new DefaultSelect();
+      },
+    });
   }
 
   getReceptionWays(params: ListParams) {
-    // let elements$ = this.getDynamicTables(9, params);
-    // elements$.subscribe({
-    //   next: data => {
-    //     this.receptionWays = new DefaultSelect(data.data, data.count);
-    //   },
-    //   error: () => {
-    //     this.receptionWays = new DefaultSelect();
-    //   },
-    // });
+    let elements$ = this.getDynamicTables(9, params);
+    elements$.subscribe({
+      next: data => {
+        this.receptionWays = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.receptionWays = new DefaultSelect();
+      },
+    });
   }
 
   getAffairs(params: ListParams) {
-    //
+    this.fileUpdateService.getAffairs(params).subscribe({
+      next: data => {
+        this.affairs = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.affairs = new DefaultSelect();
+      },
+    });
   }
 
   getDictums(params: ListParams) {
@@ -1253,7 +1321,9 @@ export class JuridicalRecordUpdateComponent
       next: data => {
         this.dictums = new DefaultSelect(data.data, data.count);
       },
-      error: () => {},
+      error: () => {
+        this.dictums = new DefaultSelect();
+      },
     });
   }
 }

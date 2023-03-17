@@ -7,6 +7,7 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import { CityService } from '../../../../core/services/catalogs/city.service';
 import {
   PHONE_PATTERN,
   STRING_PATTERN,
@@ -28,7 +29,8 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private minpubService: MinPubService
+    private minpubService: MinPubService,
+    private cityService: CityService
   ) {
     super();
   }
@@ -109,7 +111,7 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   }
 
   getFromSelect(params: ListParams) {
-    this.minpubService.getCities(params).subscribe((data: any) => {
+    this.cityService.getAll(params).subscribe((data: any) => {
       this.items = new DefaultSelect(data.data, data.count);
     });
   }
