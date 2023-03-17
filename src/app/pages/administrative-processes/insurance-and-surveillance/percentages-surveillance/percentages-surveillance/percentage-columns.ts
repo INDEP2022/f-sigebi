@@ -1,15 +1,15 @@
 export const PERCENTAGE_COLUMNS = {
-  process: {
+  cveProcess: {
     title: 'Proceso',
     type: 'number',
     sort: false,
   },
-  delegation: {
+  delegationNumber: {
     title: 'Delegación',
     type: 'string',
     sort: false,
   },
-  type: {
+  delegationType: {
     title: 'Tipo',
     type: 'number',
     sort: false,

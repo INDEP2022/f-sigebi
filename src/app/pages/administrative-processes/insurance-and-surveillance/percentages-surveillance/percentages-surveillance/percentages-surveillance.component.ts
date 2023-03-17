@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { showQuestion } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { VigProcessPercentages } from 'src/app/core/models/ms-survillance/survillance';
+import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { PERCENTAGE_COLUMNS } from './percentage-columns';
 
@@ -13,14 +19,143 @@ export class PercentagesSurveillanceComponent
   extends BasePage
   implements OnInit
 {
-  percentages: any[] = [];
+  // percentages: VigProcessPercentages[] = [];
+  // @ViewChild(Ng2SmartTableComponent) percentageTable: Ng2SmartTableComponent;
+  sources = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  constructor() {
+  dialogPercentageRef: BsModalRef;
+  editDialogData: VigProcessPercentages | null = null;
+  @ViewChild('dialogPercentage') dialogPercentageTemplateRef: TemplateRef<any>;
+  form = new FormGroup({
+    percentage: new FormControl('', [Validators.required]),
+    cveProcess: new FormControl('', [Validators.required]),
+    delegationNumber: new FormControl('', [Validators.required]),
+    delegationType: new FormControl('', [Validators.required]),
+  });
+  constructor(
+    private survillanceService: SurvillanceService,
+    private dialogService: BsModalService
+  ) {
     super();
     this.settings.columns = PERCENTAGE_COLUMNS;
     this.settings.actions.delete = true;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.params.subscribe(res => {
+      this.getPercentages(res);
+    });
+  }
+
+  getPercentages(listParams: ListParams): void {
+    this.loading = true;
+    this.survillanceService.getVigProcessPercentages(listParams).subscribe({
+      next: response => {
+        // this.percentages = response.data;
+        this.sources.load(response.data);
+
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  onEditConfirm(event: { data: VigProcessPercentages }): void {
+    console.log(event);
+    this.editDialogData = event.data;
+    this.form.patchValue(event.data);
+    this.openDialogPercentage();
+  }
+
+  onDeleteConfirm(event: { data: VigProcessPercentages }): void {
+    console.log(event);
+    showQuestion({
+      text: '¿Está seguro de eliminar el registro?',
+      title: 'Eliminar',
+    }).then(result => {
+      if (!result?.isConfirmed) {
+        return;
+      }
+      this.editDialogData = event.data;
+      this.deleteInServerPercentage(event.data.cveProcess as any);
+      console.log(result);
+    });
+  }
+
+  deleteInServerPercentage(id: number): void {
+    this.loading = true;
+    this.survillanceService.deleteVigProcessPercentages(id).subscribe({
+      next: response => {
+        console.log(response);
+        this.loading = false;
+        this.sources.remove(this.editDialogData);
+        this.editDialogData = null;
+        this.totalItems--;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  openDialogPercentage(): void {
+    this.dialogPercentageRef = this.dialogService.show(
+      this.dialogPercentageTemplateRef,
+      {
+        class: 'modal-xl',
+      }
+    );
+  }
+
+  closeDialogPercentage(): void {
+    this.dialogPercentageRef.hide();
+    this.form.reset();
+    this.editDialogData = null;
+  }
+
+  saveInServerPercentage(id?: number): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const values = this.form.value as VigProcessPercentages;
+    this.loading = true;
+    if (this.editDialogData) {
+      this.survillanceService
+        .putVigProcessPercentages(this.editDialogData.cveProcess as any, values)
+        .subscribe({
+          next: response => {
+            console.log(response);
+            this.loading = false;
+            // if (response.data) {
+            this.sources.update(this.editDialogData, values);
+            // this.sources.refresh();
+            // }
+          },
+          error: err => {
+            this.loading = false;
+          },
+        });
+      return;
+    }
+    this.survillanceService.postVigProcessPercentages(values).subscribe({
+      next: response => {
+        console.log(response);
+        if (response.data) {
+          // this.percentages.push(response.data);
+          this.sources.append(response.data);
+          // this.sources.refresh();
+        }
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import { environment } from 'src/environments/environment';
-import Swal, { type SweetAlertOptions } from 'sweetalert2';
+import Swal, { SweetAlertResult, type SweetAlertOptions } from 'sweetalert2';
 
 type SwalOptions = Partial<SweetAlertOptions> & Required<{ text: string }>;
 
@@ -28,8 +28,10 @@ export function downloadReport(
   });
 }
 
-export function showToast({ ...data }: SwalOptions): void {
-  Swal.fire({
+export function showToast({
+  ...data
+}: SwalOptions): Promise<SweetAlertResult<any>> {
+  return Swal.fire({
     icon: 'success',
     toast: true,
     position: 'top-end',
@@ -40,6 +42,33 @@ export function showToast({ ...data }: SwalOptions): void {
     cancelButtonText: 'Cancelar',
     showCloseButton: false,
     buttonsStyling: false,
+    ...data,
+  });
+}
+
+export function showAlert<T = any>({
+  ...data
+}: SwalOptions): Promise<SweetAlertResult<T>> {
+  return Swal.fire({ icon: 'success', position: 'center', ...data });
+}
+
+type SwalQuestionType = {
+  isConfirmed: boolean;
+  isDenied: boolean;
+  isDismissed: boolean;
+  value?: boolean;
+  dismiss?: string;
+};
+
+export function showQuestion({
+  ...data
+}: SwalOptions): Promise<SweetAlertResult<SwalQuestionType>> {
+  return showAlert({
+    icon: 'question',
+    showCancelButton: true,
+    showConfirmButton: true,
+    confirmButtonText: 'Si, eliminar',
+    cancelButtonText: 'No, cancelar',
     ...data,
   });
 }

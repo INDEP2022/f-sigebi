@@ -1,6 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">PORCENTAGES</h5>
+    <h5 class="title">PORCENTAJES</h5>
+    <button
+      type="button"
+      class="btn btn-sm btn-success shadow-none"
+      (click)="openDialogPercentage()">
+      Agregar
+      <i class="fas fa-plus"></i>
+    </button>
   </div>
 
   <div body>
@@ -10,7 +17,9 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="percentages">
+            [source]="sources"
+            (edit)="onEditConfirm($event)"
+            (delete)="onDeleteConfirm($event)">
           </ng2-smart-table>
         </div>
       </div>
@@ -20,3 +29,72 @@
       [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>
+
+<ng-template #dialogPercentage>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left font-size-16">
+      {{ editDialogData ? 'Editando Porcentajes' : 'Agregando Porcentajes' }}
+    </h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeDialogPercentage()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body form-material" [formGroup]="form">
+    <form-field [control]="form.get('cveProcess')" label="Proceso">
+      <input type="text" formControlName="cveProcess" class="form-control" />
+    </form-field>
+    <form-field [control]="form.get('delegationNumber')" label="Delegación">
+      <input
+        type="text"
+        formControlName="delegationNumber"
+        class="form-control" />
+    </form-field>
+    <form-field [control]="form.get('delegationType')" label="Tipo Delegación">
+      <input
+        type="text"
+        formControlName="delegationType"
+        class="form-control" />
+    </form-field>
+    <!-- <form-field [control]="form.get('description')" label="Delegación">
+      <ng-select
+        (change)="closeDialogPercentage($event)"
+        class="form-control"
+        formControlName="description">
+        <ng-option [value]="type.id" *ngFor="let type of expenseType">{{
+          type.description
+        }}</ng-option>
+      </ng-select>
+    </form-field> -->
+    <!-- <app-delegation-shared [form]="form">
+
+    </app-delegation-shared> -->
+    <form-field [control]="form.get('percentage')" label="Porcentaje">
+      <input
+        max="100"
+        type="number"
+        formControlName="percentage"
+        class="form-control" />
+    </form-field>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="loading"
+      type="button"
+      class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
+      (click)="saveInServerPercentage()">
+      Guardar
+      <i class="fas fa-paper-plane"></i>
+    </button>
+    <button
+      type="button"
+      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
+      (click)="closeDialogPercentage()">
+      Cerrar
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</ng-template>

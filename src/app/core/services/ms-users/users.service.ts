@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDepartment } from '../../models/catalogs/department.model';
 import { ISegUsers } from '../../models/ms-users/seg-users-model';
+import { IUserAccess } from '../../models/ms-users/user-access';
 
 @Injectable({
   providedIn: 'root',
@@ -67,6 +68,13 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<ISegUsers>>(
       `${UserEndpoints.SegUsers}?filter.email=$ilike:@indep.gob.mx`,
       params
+    );
+  }
+
+  getAccessUsers(_params: _Params) {
+    return this.get<IListResponse<IUserAccess>>(
+      UserEndpoints.VigSupervisionAccess,
+      _params
     );
   }
 }
