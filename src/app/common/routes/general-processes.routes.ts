@@ -40,6 +40,10 @@ export const GENERAL_PROCESSES_ROUTES = [
         link: '/pages/general-processes/documents-viewer',
       },
       {
+        label: 'Bitacora del sistema',
+        link: '/pages/general-processes/system-log',
+      },
+      {
         label: 'Indicadores',
         subItems: [
           {
@@ -77,6 +81,10 @@ export const GENERAL_PROCESSES_ROUTES = [
           {
             label: 'Mantenimiento de Incidentes',
             link: '/pages/general-processes/indicators/incident-maintenance',
+          },
+          {
+            label: 'Bitácora del sismtea',
+            link: '/pages/general-processes/system-log',
           },
           {
             label: 'Historico de Indicadores',

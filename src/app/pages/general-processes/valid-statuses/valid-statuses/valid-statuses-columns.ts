@@ -1,25 +1,31 @@
+import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
+
 export const VALID_STATUSES_COLUMNS = {
-  operacion: {
+  description: {
     title: 'Operación',
     sort: false,
   },
-  inicial: {
+  status: {
     title: 'Estatus Inicial',
     sort: false,
   },
-  descripcion: {
+  statusGood: {
     title: 'Descripción',
     sort: false,
+    valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
+      goodStatus?.description,
   },
-  final: {
+  statusFinal: {
     title: 'Estatus Final',
     sort: false,
   },
   descripcion2: {
     title: 'Descripción',
     sort: false,
+    valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
+      row.statusFinal,
   },
-  extDominio: {
+  processExtSun: {
     title: 'Proceso Ext Dominio',
     sort: false,
   },
