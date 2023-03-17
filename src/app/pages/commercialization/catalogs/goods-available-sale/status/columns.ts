@@ -10,26 +10,26 @@ export const COLUMNS = {
   goodStatus: {
     title: 'Estatus',
     sort: false,
-    filter: false,
+    filter: true,
   },
   description: {
     title: 'Descripción',
     sort: false,
-    filter: false,
+    filter: true,
   },
   processStatus: {
     title: 'Estatus del proceso',
     sort: false,
-    filter: false,
+    filter: true,
   },
   quantity: {
     title: 'Cantidad',
     sort: false,
-    filter: false,
+    filter: true,
   },
   transferentDestiny: {
     title: 'Destino',
     sort: false,
-    filter: false,
+    filter: true,
   },
 };
