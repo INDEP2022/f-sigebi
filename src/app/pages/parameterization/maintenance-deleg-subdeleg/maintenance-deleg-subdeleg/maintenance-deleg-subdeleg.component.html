@@ -6,11 +6,6 @@
   </div>
   <div body>
     <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-6">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
@@ -32,8 +27,9 @@
             <app-columns-select [(settings)]="settings2"></app-columns-select>
             <div>
               <button
+                id="new-sd"
                 (click)="openForm()"
-                class="btn btn-primary active btn-sm ml-3">
+                class="btn btn-primary active btn-sm ml-3 disabled">
                 Nuevo
               </button>
             </div>

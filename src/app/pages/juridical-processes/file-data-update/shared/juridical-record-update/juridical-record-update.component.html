@@ -127,15 +127,15 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="affair == null"
-            (click)="sentToDocumentsManagement()">
+            [disabled]="affair == null || dictOffice == ''"
+            (click)="sendToDocumentsManagement()">
             Oficio de desahogo
           </button>
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="dictum == ''"
-            (click)="sentToJuridicalRuling()">
+            [disabled]="dictum == '' || affair == null || dictOffice != 'D'"
+            (click)="sendToJuridicalRuling()">
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
         </div>
@@ -181,7 +181,7 @@
       <div class="row pt-4" *ngIf="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('expedientTransferenceNumber')"
-          label="Exp Transfer">
+          label="Exp. Transfer">
           <input
             type="text"
             formControlName="expedientTransferenceNumber"
@@ -554,7 +554,7 @@
             outline
             type="button"
             class="mr-2 btn btn-sm active btn-primary"
-            (click)="sentToShiftChange()">
+            (click)="sendToShiftChange()">
             Reasignaci&oacute;n de Turno
           </button>
           <button

@@ -5,16 +5,32 @@ import { IStateOfRepublic } from './state-of-republic.model';
 
 export interface ISafe {
   idSafe?: number | null;
-  description: string;
-  ubication: string;
-  manager: string;
-  registerNumber: number | null | string;
-  stateCode: number | null | string;
+  description?: string;
+  ubication?: string;
+  manager?: string;
+  registerNumber?: number | null | string;
+  stateCode?: number | null | string;
   stateDetail?: IStateOfRepublic;
-  cityCode: number | null | string;
+  cityCode?: number | null | string;
   cityDetail?: ICity;
-  municipalityCode: number | null | string;
+  municipalityCode?: number | null | string;
   municipalityDetail?: IMunicipality;
-  localityCode: number | null | string;
+  localityCode?: number | null | string;
+  localityDetail?: ILocality;
+}
+
+export interface ISafe2 {
+  idSafe?: number | null;
+  description?: string;
+  ubication?: string;
+  manager?: string;
+  registerNumber?: number | null | string;
+  stateCode?: number | null | string;
+  stateDetail?: IStateOfRepublic;
+  cityCode?: number | null | string;
+  cityDetail?: string | ICity;
+  municipalityCode?: number | null | string;
+  municipalityDetail?: IMunicipality;
+  localityCode?: number | null | string;
   localityDetail?: ILocality;
 }

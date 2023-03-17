@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
@@ -35,7 +36,8 @@ export class OtherCurrenciesComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private delegationService: DelegationService,
     private subdelegationService: SubdelegationService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private currencyService: DynamicTablesService
   ) {
     super();
   }
@@ -87,9 +89,9 @@ export class OtherCurrenciesComponent extends BasePage implements OnInit {
   }
 
   public getCurrencies(event: any) {
-    // this.currencyService.getAll(params).subscribe(data => {
-    //   this.currencies = new DefaultSelect(data.data, data.count);
-    // });
+    this.currencyService.getTvalTable5ByTable(3).subscribe(data => {
+      this.currencies = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getDelegations(params: ListParams) {

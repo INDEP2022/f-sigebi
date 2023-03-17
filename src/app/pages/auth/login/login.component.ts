@@ -34,26 +34,28 @@ export class LoginComponent implements OnInit {
     localStorage.setItem('token', access_token);
     this.router.navigate(['pages/home']);
     localStorage.setItem('token_expires', '1664834519768');*/
-    this.authService.getToken(username, password).subscribe({
-      next: data => {
-        token = data;
-      },
-      complete: () => {
-        localStorage.setItem('token', token.access_token);
-        if (this.authService.existToken()) {
-          let uidUser = this.authService.decodeToken().sub;
-          this.authService.getRoles(uidUser).subscribe({
-            next: data => {
-              roles = data;
-            },
-            complete: () => {
-              localStorage.setItem('username', username);
-              localStorage.setItem('roles', JSON.stringify(roles));
-              this.router.navigate(['pages/general-processes/goods-tracker']);
-            },
-          });
-        }
-      },
-    });
+    this.authService
+      .getToken(username, encodeURIComponent(password))
+      .subscribe({
+        next: data => {
+          token = data;
+        },
+        complete: () => {
+          localStorage.setItem('token', token.access_token);
+          if (this.authService.existToken()) {
+            let uidUser = this.authService.decodeToken().sub;
+            this.authService.getRoles(uidUser).subscribe({
+              next: data => {
+                roles = data;
+              },
+              complete: () => {
+                localStorage.setItem('username', username);
+                localStorage.setItem('roles', JSON.stringify(roles));
+                this.router.navigate(['pages/general-processes/goods-tracker']);
+              },
+            });
+          }
+        },
+      });
   }
 }

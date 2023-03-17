@@ -1,12 +1,18 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ILocality } from 'src/app/core/models/catalogs/locality.model';
+import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
+import { ISafe2 } from 'src/app/core/models/catalogs/safe.model';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 
@@ -15,23 +21,33 @@ import { SafeService } from '../../../../core/services/catalogs/safe.service';
   templateUrl: './vault-detail.component.html',
   styles: [],
 })
-export class VaultDetailComponent implements OnInit {
-  loading: boolean = false;
-  status: string = 'Nueva';
+export class VaultDetailComponent extends BasePage implements OnInit {
+  vaultForm: ModelForm<ISafe2>;
+  vault: ISafe2;
+
+  valueCity: ICity;
+  valueState: IStateOfRepublic;
+  valueMunicipality: IMunicipality;
+  valueLocality: ILocality;
+
+  title: string = 'Catálogo de Bóvedas';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
-  vault: any;
 
-  public states = new DefaultSelect();
-  public cities = new DefaultSelect();
-  public municipalities = new DefaultSelect();
-  public localities = new DefaultSelect();
+  public states = new DefaultSelect<IStateOfRepublic>();
+  public cities = new DefaultSelect<ICity>();
+  public municipalities = new DefaultSelect<IMunicipality>();
+  public localities = new DefaultSelect<ILocality>();
 
-  @Output() refresh = new EventEmitter<true>();
+  safes1 = new DefaultSelect();
+  safes2 = new DefaultSelect();
+  safes3 = new DefaultSelect();
+  safes4 = new DefaultSelect();
 
-  public get id() {
-    return this.form.get('idSafe');
-  }
+  cityValue: ICity;
+  municipalityValue: IMunicipality;
+  localityValue: ILocality;
+  stateValue: IStateOfRepublic;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -40,56 +56,47 @@ export class VaultDetailComponent implements OnInit {
     private cityService: CityService,
     private municipalityService: MunicipalityService,
     private localityService: LocalityService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
   prepareForm() {
-    this.form = this.fb.group({
-      idSafe: ['', Validators.required],
-      manager: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
-      ],
-      description: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
-      ],
-      ubication: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
-      ],
-      registerNumber: [null, Validators.compose([Validators.pattern('')])],
-      municipalityCode: [null, Validators.compose([Validators.pattern('')])],
-      localityCode: [null, Validators.compose([Validators.pattern('')])],
-      stateCode: [
-        null,
-        Validators.compose([Validators.pattern(STRING_PATTERN)]),
-      ],
-      cityCode: [null, Validators.compose([Validators.pattern('')])],
+    this.vaultForm = this.fb.group({
+      idSafe: [null, []],
+      manager: [null, [Validators.required]],
+      description: [null, [Validators.required]],
+      ubication: [null, [Validators.required]],
+      municipalityCode: [null, []],
+      localityCode: [null, []],
+      stateCode: [null, []],
+      cityCode: [null, []],
+      cityDetail: [null, []],
+      localityDetail: [null, []],
+      stateDetail: [null, []],
+      municipalityDetail: [null, []],
     });
-    if (this.edit) {
-      this.status = 'Actualizar';
-      const { descState, nameCity, municipalityName, localityName } =
-        this.vault;
-      this.form.patchValue(this.vault);
-      this.id.disable();
-      //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
-      // this.states = new DefaultSelect([descState], 1);
-      this.cities = new DefaultSelect([nameCity], 1);
-      // this.municipalities = new DefaultSelect([municipalityName], 1);
-      // this.localities = new DefaultSelect([localityName], 1);
+    if (this.vault != null) {
+      this.edit = true;
+      this.valueCity = this.vault.cityDetail as ICity;
+      this.valueState = this.vault.stateDetail as IStateOfRepublic;
+      this.valueMunicipality = this.vault.municipalityDetail as IMunicipality;
+      this.valueLocality = this.vault.localityDetail as ILocality;
+      this.vaultForm.patchValue(this.vault);
+
+      this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
+      this.vaultForm.controls['stateDetail'].setValue(
+        this.valueState.descCondition
+      );
+      this.vaultForm.controls['localityDetail'].setValue(
+        this.valueLocality.nameLocation
+      );
+      this.vaultForm.controls['municipalityDetail'].setValue(
+        this.valueMunicipality.nameMunicipality
+      );
     }
   }
 
@@ -97,37 +104,55 @@ export class VaultDetailComponent implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
-  close() {
-    this.modalRef.hide();
+  update() {
+    this.loading = true;
+    this.safeService.update(this.vault.idSafe, this.vaultForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.onLoadToast('info', 'Opss..', 'Dato duplicado');
+        this.loading = false;
+        console.log(error);
+      },
+    });
   }
 
   create() {
     this.loading = true;
-    this.safeService.create(this.form.value).subscribe(
+    this.safeService.create2(this.vaultForm.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
   }
 
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
+  close() {
     this.modalRef.hide();
   }
 
-  update() {
-    this.loading = true;
-
-    this.safeService.update(this.vault.idSafe, this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 
   getStates(params: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      this.states = new DefaultSelect(data.data, data.count);
-    });
+    this.stateService.getAll(params).subscribe(
+      (data: any) => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
   }
 
   getCities(params: ListParams) {
@@ -146,5 +171,28 @@ export class VaultDetailComponent implements OnInit {
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
     });
+  }
+
+  onValuesChange1(safeChange1: ICity) {
+    this.cityValue = safeChange1;
+    this.vaultForm.controls['cityCode'].setValue(safeChange1.idCity);
+    this.safes1 = new DefaultSelect();
+  }
+  onValuesChange2(safeChange2: IMunicipality) {
+    this.valueMunicipality = safeChange2;
+    this.vaultForm.controls['municipalityCode'].setValue(
+      safeChange2.idMunicipality
+    );
+    this.safes2 = new DefaultSelect();
+  }
+  onValuesChange3(safeChange3: ILocality) {
+    this.localityValue = safeChange3;
+    this.vaultForm.controls['localityCode'].setValue(safeChange3.id);
+    this.safes3 = new DefaultSelect();
+  }
+  onValuesChange4(safeChange4: IStateOfRepublic) {
+    this.valueState = safeChange4;
+    this.vaultForm.controls['stateCode'].setValue(safeChange4.id);
+    this.safes4 = new DefaultSelect();
   }
 }

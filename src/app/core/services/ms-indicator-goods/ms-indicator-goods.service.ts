@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { EIndicatorGoodsEndpoints } from 'src/app/common/constants/endpoints/ms-indicatorgoods-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -21,33 +22,51 @@ export class MsIndicatorGoodsService extends HttpService {
     this.microservice = EIndicatorGoodsEndpoints.BasePath;
   }
 
+  getById(goodNumber: string, actNumber: string) {
+    return this.post(this.endpoint + '/id', { goodNumber, actNumber });
+  }
+
+  deleteById(goodNumber: string, actNumber: string) {
+    return this.delete(this.endpoint, { goodNumber, actNumber });
+  }
+
   update(model: IDetailIndicatorGood) {
     return this.put(this.endpoint, model);
   }
 
-  // updateMassive(
-  //   selecteds: {
-  //     fec_aprobacion_x_admon: string;
-  //     fec_indica_usuario_aprobacion: string;
-  //     no_bien: string;
-  //   }[],
-  //   numberProceedings: number
-  // ) {
-  //   return forkJoin(
-  //     selecteds.map(selected => {
-  //       return this.getById(+selected.no_bien, numberProceedings).pipe(
-  //         mergeMap(detail => {
-  //           return this.put(this.endpoint, {
-  //             ...detail,
-  //             approvedDateXAdmon: selected.fec_aprobacion_x_admon,
-  //             dateIndicatesUserApproval: selected.fec_indica_usuario_aprobacion,
-  //             numberGood: selected.no_bien,
-  //           });
-  //         })
-  //       );
-  //     })
-  //   );
-  // }
+  getCountDictationByAct(area: string, acta: string) {
+    return this.get<IListResponse<{ count: number }>>(
+      this.endpoint + '/getCountDictation/' + area + '/' + acta
+    ).pipe(
+      map(x => {
+        return x.data[0].count;
+      })
+    );
+  }
+
+  updateMassive(
+    selecteds: {
+      fec_aprobacion_x_admon: string;
+      fec_indica_usuario_aprobacion: string;
+      no_bien: string;
+    }[],
+    numberProceedings: number
+  ) {
+    return forkJoin(
+      selecteds.map(selected => {
+        return this.getById(selected.no_bien, numberProceedings + '').pipe(
+          mergeMap(detail => {
+            return this.put(this.endpoint, {
+              ...detail,
+              approvedXAdmonDate: selected.fec_aprobacion_x_admon,
+              dateIndicatesUserApproval: selected.fec_indica_usuario_aprobacion,
+              numberGood: selected.no_bien,
+            });
+          })
+        );
+      })
+    );
+  }
 
   getGoodsByProceeding(params?: ListParams) {
     return this.get<IListResponse<IGoodsByProceeding>>(
