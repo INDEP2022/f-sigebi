@@ -25,7 +25,7 @@ export class StateOfRepublicService implements ICrudMethods<IStateOfRepublic> {
   }
 
   getById(id: string | number): Observable<IStateOfRepublic> {
-    return this.stateOfRepublicRepository.getById(this.route, id);
+    return this.stateOfRepublicRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IStateOfRepublic): Observable<IStateOfRepublic> {

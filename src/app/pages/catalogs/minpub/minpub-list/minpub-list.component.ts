@@ -32,11 +32,15 @@ export class MinpubListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = MINIPUB_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
+      actions: {
+        ...this.settings.actions,
+        delete: true,
+        add: false,
+      },
     };
   }
 

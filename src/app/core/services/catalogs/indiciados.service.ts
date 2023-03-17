@@ -4,22 +4,32 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
+import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IIndiciados } from '../../models/catalogs/indiciados.model';
 @Injectable({
   providedIn: 'root',
 })
-export class IndiciadosService implements ICrudMethods<IIndiciados> {
+export class IndiciadosService
+  extends HttpService
+  implements ICrudMethods<IIndiciados>
+{
   private readonly route: string = ENDPOINT_LINKS.Indiciados;
   private readonly route2: string = 'catalog/indiciados/id';
-  constructor(private indiciadosRepository: Repository<IIndiciados>) {}
+  constructor(private indiciadosRepository: Repository<IIndiciados>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IIndiciados>> {
     return this.indiciadosRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IIndiciados> {
-    return this.indiciadosRepository.getById(this.route, id);
+    const segments = ENDPOINT_LINKS.Indiciados.split('/');
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route);
+    // return this.indiciadosRepository.getById(this.route, id);
   }
 
   create(model: IIndiciados): Observable<IIndiciados> {

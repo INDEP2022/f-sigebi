@@ -3537,9 +3537,38 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       validLastRequest: false,
     };
     console.log(this.infoDataValidation, this.proceso);
+    // Llenar campo de valid estatus
+    if (
+      (this.proceso == 1 && this.infoDataValidation.dataRow.status != 'ROP') ||
+      (this.proceso == 2 && this.infoDataValidation.dataRow.status != 'ROP') ||
+      (this.proceso == 4 && this.infoDataValidation.dataRow.status != 'ROP')
+    ) {
+      this.infoDataValidation.dataRow['valida_status'] = 0;
+    } else if (this.infoDataValidation.dataRow.estatus) {
+      if (
+        this.proceso == 3 &&
+        this.infoDataValidation.dataRow.estatus != 'ROP'
+      ) {
+        this.infoDataValidation.validLastRequest = true;
+      } else {
+        this.infoDataValidation.objInsertResponse['valida_status'] = 1;
+      }
+    } else {
+      this.infoDataValidation.objInsertResponse['valida_status'] = 1;
+    }
     // EXISTE ASUNTO SAT
     if (this.proceso == 2) {
-      this.getGoodById(this.infoDataValidation, 'general');
+      if (this.infoDataValidation.objInsertResponse['valida_status'] == 1) {
+        this.getGoodById(this.infoDataValidation, 'general');
+      } else {
+        error = this.agregarError(
+          error,
+          ERROR_ESTATUS_GENERAL(count + 1, this.proceso)
+        );
+        this.infoDataValidation.error = this.infoDataValidation.error; // Setear error
+        this.infoDataValidation.validLastRequest = false; // Respuesta incorrecta
+        this.processUploadEndGeneral(this.infoDataValidation);
+      }
     } else {
       if (this.proceso == 1 || this.proceso == 3 || this.proceso == 4) {
         this.getVolanteNotificacion(this.infoDataValidation, 'general'); // Obtener volantes de notificaciones

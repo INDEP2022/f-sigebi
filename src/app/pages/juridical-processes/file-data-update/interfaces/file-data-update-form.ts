@@ -54,7 +54,7 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
     Validators.pattern(STRING_PATTERN),
   ]),
   affairKey: new FormControl<IAffair>(null),
-  affair: new FormControl<string | number>(null),
+  affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null),
   priority: new FormControl<string>(null),
   wheelNumber: new FormControl<number>(null),

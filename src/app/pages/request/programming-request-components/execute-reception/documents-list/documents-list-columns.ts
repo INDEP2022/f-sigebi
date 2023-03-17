@@ -1,35 +1,35 @@
 export const DOCUMENTS_LIST_COLUMNS = {
-  numberDocument: {
-    title: 'No° documento',
+  ddocName: {
+    title: 'Nombre documento',
     type: 'number',
     sort: false,
   },
 
-  numberGestion: {
-    title: 'No° gestión',
+  xidExpediente: {
+    title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
 
-  titleDocument: {
+  ddocTitle: {
     title: 'Titulo del documento',
     type: 'string',
     sort: false,
   },
 
-  typeDocument: {
+  typeDocName: {
     title: 'Tipo de documento',
     type: 'string',
     sort: false,
   },
 
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
 
-  creationDate: {
+  dInDate: {
     title: 'Fecha creación',
     type: 'string',
     sort: false,

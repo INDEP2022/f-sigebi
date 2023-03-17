@@ -14,7 +14,6 @@ import { IAffair } from '../../../../core/models/catalogs/affair.model';
 import { IAuthority } from '../../../../core/models/catalogs/authority.model';
 import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-republic.model';
 import { IStation } from '../../../../core/models/catalogs/station.model';
-import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
 import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
@@ -36,6 +35,9 @@ export class RequestInTurnFormComponent implements OnInit {
   searchForm: ModelForm<any>;
   requestInTurn: IRequestInTurn;
   checked: string = 'checked';
+  stateId: number = null;
+  transferenceId: number = null;
+  stationId: number = null;
 
   loading: boolean = false;
 
@@ -61,11 +63,8 @@ export class RequestInTurnFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initialForm();
-    this.getTransferente(new ListParams());
     this.getStateOfRepublic(new ListParams());
-    this.getStation(new ListParams());
     this.getAffair(new ListParams());
-    this.getAuthority(new ListParams());
   }
 
   initialForm(): void {
@@ -89,10 +88,36 @@ export class RequestInTurnFormComponent implements OnInit {
       ascertainment: [null, [Validators.maxLength(40)]],
       cause: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+
     if (this.requestInTurn != null) {
       this.edit = true;
       this.searchForm.patchValue(this.searchForm);
     }
+
+    this.reactiveFormCalls();
+  }
+
+  reactiveFormCalls() {
+    this.searchForm.controls['stateOfRepublic'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.stateId = data;
+          this.getTransferente(new ListParams());
+        }
+      }
+    );
+    this.searchForm.controls['transfer'].valueChanges.subscribe((data: any) => {
+      if (data) {
+        this.transferenceId = data;
+        this.getStation(new ListParams());
+      }
+    });
+    this.searchForm.controls['station'].valueChanges.subscribe((data: any) => {
+      if (data) {
+        this.stationId = data;
+        this.getAuthority(new ListParams());
+      }
+    });
   }
 
   getRegionalDelegationId() {
@@ -101,10 +126,9 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getTransferente(params?: ListParams) {
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
     this.transferenteSevice
-      .getAll(params)
-      .subscribe((data: IListResponse<ITransferente>) => {
+      .getByIdState(this.stateId)
+      .subscribe((data: any) => {
         this.selectTransfer = new DefaultSelect(data.data, data.count);
       });
   }
@@ -119,7 +143,8 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getStation(params?: ListParams) {
-    params.text = params.text == null ? '' : params.text;
+    params['filter.stationName'] = `$ilike:${params.text}`;
+    params['filter.idTransferent'] = `$eq:${this.transferenceId}`;
     this.stationService
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
@@ -129,6 +154,9 @@ export class RequestInTurnFormComponent implements OnInit {
 
   getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
+    params['filter.idStation'] = `$eq:${this.stationId}`;
+    params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
+    debugger;
     this.authorityService
       .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
