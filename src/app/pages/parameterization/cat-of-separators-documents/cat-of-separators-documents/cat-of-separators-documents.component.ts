@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SeparatorsDocuments } from 'src/app/core/models/ms-documents/document-separators';
 import { DocumentsSeparatorsService } from 'src/app/core/services/ms-documents-separators/documents-separators.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -20,6 +24,8 @@ export class CatOfSeparatorsDocumentsComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   separatorsDocuments: SeparatorsDocuments[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private documentsSeparatorsService: DocumentsSeparatorsService,
     private modalService: BsModalService
@@ -35,17 +41,50 @@ export class CatOfSeparatorsDocumentsComponent
       },
       columns: SEPARATORS_DOCUMENTS_COLUMNS,
     };
+    this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            // filter.field == 'id'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getDateDocumentsSeparators();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDateDocumentsSeparators());
   }
   private getDateDocumentsSeparators() {
     this.loading = true;
-    this.documentsSeparatorsService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.documentsSeparatorsService.getAll(params).subscribe({
       next: response => {
         this.separatorsDocuments = response.data;
+        this.data.load(this.separatorsDocuments);
+        this.data.refresh();
         this.totalItems = response.count != undefined ? response.count : 0;
         this.loading = false;
       },

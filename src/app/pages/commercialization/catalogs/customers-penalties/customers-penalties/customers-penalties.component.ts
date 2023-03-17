@@ -25,6 +25,7 @@ export class CustomersPenaltiesComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         ...this.settings.actions,
         add: false,

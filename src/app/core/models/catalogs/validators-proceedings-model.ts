@@ -1,7 +1,7 @@
 export interface IValidatorsProceedings {
-  certificateType: string;
+  proceedingsType: string;
   secVal: number;
   descVal: string;
   scriptVal: string;
-  registryNumber: number;
+  numRegister: number;
 }

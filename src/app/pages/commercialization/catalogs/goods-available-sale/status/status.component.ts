@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { takeUntil } from 'rxjs';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { data } from './data';
@@ -12,22 +11,27 @@ import { data } from './data';
   templateUrl: './status.component.html',
   styles: [],
 })
-export class StatusComponent extends BasePage implements OnInit {
+export class StatusComponent
+  extends BasePageWidhtDinamicFilters
+  implements OnInit
+{
   comercializationGoods: any[] = [];
   goodsAFSD = data;
 
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-
   rowSelected: boolean = false;
   selectedRow: any = null;
+
+  status: any;
 
   //Columns
   columns = COLUMNS;
 
   constructor(private goodService: GoodService) {
     super();
-    this.settings = {
+
+    this.service = this.goodService;
+
+    /* this.settings = {
       ...this.settings,
       actions: {
         ...this.settings.actions,
@@ -35,23 +39,14 @@ export class StatusComponent extends BasePage implements OnInit {
         edit: true,
         delete: true,
       },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent:
-          '<i class="bx bxs-save me-1 text-success mx-2" ></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      add: {
-        addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent:
-          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate: true,
-      },
       mode: 'inline',
+      hideSubHeader: false,
+      columns: COLUMNS,
+    }; */
+    this.service = this.goodService;
+    this.ilikeFilters = ['description'];
+    this.settings = {
+      ...this.settings,
       hideSubHeader: false,
       columns: COLUMNS,
     };
@@ -61,6 +56,9 @@ export class StatusComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getStatusGood());
+
+    this.dinamicFilterUpdate();
+    this.searchParams();
   }
 
   getStatusGood() {

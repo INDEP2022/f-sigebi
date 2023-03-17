@@ -38,7 +38,7 @@ export class CalendarService implements ICrudMethods<ICalendar> {
     return this.calendarRepository.update(this.route, id, model);
   }
 
-  remove(model: string): Observable<Object> {
+  remove(model: any): Observable<Object> {
     console.log(model);
     return this.calendarRepository.remove3(this.route, model);
   }

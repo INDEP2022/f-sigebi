@@ -44,21 +44,21 @@ export class MaintenanceDocumentValidatorsModalComponent
   }
   private prepareForm() {
     this.validatorsProceedingsForm = this.fb.group({
-      certificateType: [null, [Validators.required]],
+      proceedingsType: [null, [Validators.required]],
       secVal: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       descVal: [null, [Validators.required]],
       scriptVal: [null, [Validators.required]],
-      registryNumber: [null],
+      numRegister: [null],
     });
     if (this.validatorsProceedings != null) {
       console.log('editar');
       this.edit = true;
       this.validatorsProceedingsForm.patchValue(this.validatorsProceedings);
     }
-    this.validatorsProceedingsForm.controls['certificateType'].setValue('0');
+    this.validatorsProceedingsForm.controls['proceedingsType'].setValue('0');
   }
   close() {
     this.modalRef.hide();

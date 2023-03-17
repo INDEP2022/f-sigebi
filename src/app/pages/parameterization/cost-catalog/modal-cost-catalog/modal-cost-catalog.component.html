@@ -13,7 +13,6 @@
               [class.disabled]="edit"
               formControlName="keyServices" />
           </form-field>
-          <!-- <app-goods-status-shared [form]="form"></app-goods-status-shared> -->
         </div>
         <div class="col-md-8">
           <form-field
@@ -74,6 +73,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
+          [loading]="loading"
           (click)="edit ? putCatalog() : postCatalog()"></confirm-button>
       </div>
       <div class="m-3">

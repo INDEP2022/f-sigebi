@@ -10,24 +10,28 @@
           <form-field [control]="form.get('gasto')">
             <ngx-select
               [form]="form"
-              [data]="concepts"
-              bindLabel="name"
-              label="Concepto Gasto"
-              value="id"
               (fetchItems)="getCostConcept($event)"
-              control="gasto"></ngx-select>
+              [data]="concepts"
+              value="id"
+              bindLabel="description"
+              label="Concepto Gasto"
+              [control]="'gasto'"
+              (change)="getCostConcept($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('al')">
             <ngx-select
               [form]="form"
-              [data]="concepts"
-              bindLabel="name"
-              label="Al"
-              value="id"
               (fetchItems)="getCostConcept($event)"
-              control="al"></ngx-select>
+              [data]="concepts"
+              value="id"
+              bindLabel="description"
+              label="Al"
+              [control]="'al'"
+              (change)="getCostConcept($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -53,11 +57,14 @@
         </div>
       </div>
 
-      <div class="row mt-4 float-right">
-        <div class="">
-          <button type="submit" class="btn btn-primary btn-sm active mx-4">
-            IMPRIMIR
-          </button>
+      <div class="row margin-input">
+        <div class="col-md-1">
+          <confirm-button
+            text="IMPRIMIR"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
         </div>
       </div>
     </form>

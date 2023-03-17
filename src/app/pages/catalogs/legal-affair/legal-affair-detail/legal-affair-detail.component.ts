@@ -38,6 +38,7 @@ export class LegalAffairDetailComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      status: [null, []],
     });
     if (this.legalAffair != null) {
       this.edit = true;

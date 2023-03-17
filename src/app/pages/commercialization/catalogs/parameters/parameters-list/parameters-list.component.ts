@@ -4,7 +4,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
@@ -31,6 +34,8 @@ export class ParametersListComponent extends BasePage implements OnInit {
   //Columns
   columns = COLUMNS;
 
+  columnFilters: any = [];
+
   constructor(
     private modalService: BsModalService,
     private parameterModService: ParameterModService
@@ -38,6 +43,7 @@ export class ParametersListComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         ...this.settings.actions,
         add: false,
@@ -49,6 +55,27 @@ export class ParametersListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getParameters();
+        }
+      });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getParameters());
@@ -59,6 +86,7 @@ export class ParametersListComponent extends BasePage implements OnInit {
     this.parameterModService.getAll(this.params.getValue()).subscribe(
       response => {
         this.parametersD = response.data;
+        this.data.load(this.parametersD);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -95,9 +123,9 @@ export class ParametersListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.parameterModService.remove(parameter.idValue).subscribe(
+        this.parameterModService.newRemove(parameter).subscribe(
           response => {
-            console.log('eliminado con exito');
+            this.getParameters();
           },
           error => (this.loading = false)
         );
