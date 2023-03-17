@@ -119,45 +119,62 @@ export const dataBatchColum = {
     type: 'string',
     sort: true,
   },
+  button: {
+    title: 'Button',
+    type: 'custom',
+  },
 };
-
 export const SUBTYPE = {
-  // id: {
-  //   title: 'Subtipo',
-  //   sort: false,
-  //   filter: false,
-  // },
-
+  id: {
+    title: 'Subtipo',
+    sort: false,
+    filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.id;
+    },
+  },
   creationUser: {
     title: 'Usuario',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.creationUser;
+    },
   },
   creationDate: {
     title: 'Fecha de creación',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.creationDate;
+    },
   },
   noPhotography: {
     title: 'Numero de fotografías',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.noPhotography;
+    },
   },
   descriptionPhotography: {
     title: 'descripción de foto',
     sort: false,
     filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.descriptionPhotography;
+    },
   },
   idTypeGood: {
     type: 'list',
-    // id: {
-    //   title: 'Tipo',
-    //   sort: false,
-    //   filter: false,
-    //   valuePrepareFunction: (cell: any, row: any) => {
-    //     return row.idTypeGood.id;
-    //   },
-    // },
+    id: {
+      title: 'Tipo',
+      sort: false,
+      filter: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idTypeGood.id;
+      },
+    },
     nameGoodType: {
       title: 'Nombre de Tipo',
       sort: false,
@@ -171,14 +188,14 @@ export const SUBTYPE = {
 
 export const TYPE = {
   idTypeGood: {
-    // id: {
-    //   title: 'Tipo de Bien',
-    //   sort: false,
-    //   filter: false,
-    //   valuePrepareFunction: (cell: any, row: any) => {
-    //     return row.idTypeGood.id;
-    //   },
-    // },
+    id: {
+      title: 'Tipo de Bien',
+      sort: false,
+      filter: false,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.idTypeGood.id;
+      },
+    },
     nameGoodType: {
       title: 'Nombre de Bien',
       sort: false,

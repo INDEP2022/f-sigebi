@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -14,10 +14,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PublicationPhotographsModalComponent } from '../publication-photographs-modal/publication-photographs-modal.component';
 import {
-  dataBatchColum,
-  numStoreColumn,
   PUBLICATION_PHOTO1,
   PUBLICATION_PHOTO2,
+  SUBTYPE,
+  TYPE,
 } from './publication-photographs-columns';
 
 @Component({
@@ -87,14 +87,14 @@ export class PublicationPhotographsComponent
 
     this.settings4 = {
       ...TABLE_SETTINGS,
-      columns: { ...dataBatchColum },
+      columns: { ...SUBTYPE },
       noDataMessage: 'No se encontrarón registros',
     };
 
     this.settings3 = {
       ...TABLE_SETTINGS,
       actions: false,
-      columns: { ...numStoreColumn },
+      columns: { ...TYPE },
       noDataMessage: 'No se encontrarón registros',
     };
   }
@@ -102,20 +102,11 @@ export class PublicationPhotographsComponent
   ngOnInit(): void {
     this.getCve({ page: 1, text: '' });
     // this.data1.load(this.dataBatch);
-    this.prepareForm();
-    this.getBatch();
+
+    this.getSubtype();
     this.settings4.actions.delete = true;
     this.settings4.actions.edit = true;
     // this.getSubtype();
-  }
-
-  private prepareForm() {
-    this.form = this.fb.group({
-      picture: [null, [Validators.required]],
-      // favorite: [null, [Validators.required]],
-      id: [null],
-      noConsec: [null],
-    });
   }
 
   data: any[] = [
