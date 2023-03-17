@@ -1,14 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
+import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
+import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { BrandsSubBrandsService } from '../brands-sub-brands.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -16,12 +15,10 @@ import { COLUMNS } from './columns';
   templateUrl: './brands-sub-brands-form.component.html',
   styles: [],
 })
-export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
-  data: LocalDataSource = new LocalDataSource();
-
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-
+export class BrandsSubBrandsFormComponent
+  extends BasePageWidhtDinamicFilters
+  implements OnInit
+{
   status: string = 'Nueva';
   edit: boolean = false;
 
@@ -34,9 +31,12 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private sanitizer: DomSanitizer,
-    private brandServices: BrandsSubBrandsService
+    private brandServices: ParameterBrandsService,
+    private subBrandService: ParameterSubBrandsService
   ) {
     super();
+    this.service = this.subBrandService;
+
     this.settings = {
       ...this.settings,
       actions: {
@@ -71,13 +71,16 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    const field = `filter.idBrand`;
+    if (this.brand)
+      this.columnFilters[field] = `${SearchFilter.EQ}:${this.brand.id}`;
     this.prepareForm();
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      brand: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      description: [
+      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      brandDescription: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -87,18 +90,19 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
       //console.log(this.brand)
       this.status = 'Actualizar';
       this.form.patchValue(this.brand);
-      this.data.load(this.brand.subbrands);
-      this.data.refresh();
+      this.getData();
+      // this.data.load(this.brand.subbrands);
+      // this.data.refresh();
     }
   }
 
   onSaveConfirm(event: any) {
     const body = {
-      idBrand: this.form.get('brand').value,
+      idBrand: this.form.get('id').value,
       idSubBrand: event.newData.subBrand,
       subBrandDescription: event.newData.description,
     };
-    this.brandServices.putSubBrands(body).subscribe({
+    this.subBrandService.create(body).subscribe({
       next: (respSubBrand: any) => {
         if (respSubBrand) {
           event.confirm.resolve();
@@ -110,11 +114,11 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
 
   onAddConfirm(event: any) {
     const body = {
-      idBrand: this.form.get('brand').value,
-      idSubBrand: event.newData.subBrand,
-      subBrandDescription: event.newData.description,
+      idBrand: this.form.get('id').value,
+      idSubBrand: event.newData.idSubBrand,
+      subBrandDescription: event.newData.subBrandDescription,
     };
-    this.brandServices.postSubBrands(body).subscribe({
+    this.subBrandService.create(body).subscribe({
       next: (respSubBrand: any) => {
         if (respSubBrand) {
           event.confirm.resolve();
@@ -125,8 +129,14 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   onDeleteConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+    this.subBrandService
+      .remove({ idBrand: this.brand.id, idSubBrand: event.data.idSubBrand })
+      .subscribe({
+        next: response => {
+          event.confirm.resolve();
+          this.onLoadToast('success', 'Elemento Eliminado', '');
+        },
+      });
   }
 
   confirm() {
@@ -156,11 +166,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   updateBrand() {
-    const body = {
-      id: this.form.get('brand').value,
-      brandDescription: this.form.get('description').value,
-    };
-    this.brandServices.PutBrand(body.id, body).subscribe({
+    this.brandServices.update(this.form.value.id, this.form.value).subscribe({
       next: (resp: any) => {
         if (resp.statusCode === 200) {
           return this.handleSuccess();
@@ -170,11 +176,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   createBrand() {
-    const body = {
-      id: this.form.get('brand').value,
-      brandDescription: this.form.get('description').value,
-    };
-    this.brandServices.postBrands(body).subscribe({
+    this.brandServices.create(this.form.value).subscribe({
       next: (resp: any) => {
         if (resp) {
           return this.handleSuccess();

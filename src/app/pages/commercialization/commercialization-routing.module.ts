@@ -444,7 +444,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./release-letter-report/release-letter-report.module'))
         .ReleaseLetterReportModule,
-    data: { title: 'Reporte de Cartas de Liberacion' },
+    data: {
+      title: 'Reporte de Cartas de Liberacion',
+      screen: 'FCOMERCARTALIB',
+    },
   },
   {
     path: 'responsibility-letters-report',
@@ -454,14 +457,17 @@ const routes: Routes = [
           './responsibility-letters-report/responsibility-letters-report.module'
         )
       ).ResponsibilityLettersReportModule,
-    data: { title: 'Reporte de Cartas de Responsabilidad' },
+    data: {
+      title: 'Reporte de Cartas de Responsabilidad',
+      screen: 'FCOMERCARTARESP',
+    },
   },
   {
     path: 'layouts-configuration',
     loadChildren: async () =>
       (await import('./layouts-configuration/layouts-configuration.module'))
         .LayoutsConfigurationModule,
-    data: { title: 'Configuracion de Layouts' },
+    data: { title: 'Configuracion de Layouts', screen: ' FCOMERESPLAY' },
   },
   {
     path: 'property-adjudication-notification-report',
@@ -471,7 +477,10 @@ const routes: Routes = [
           './property-adjudication-notification-report/property-adjudication-notification-report.module'
         )
       ).PropertyAdjudicationNotificationReportModule,
-    data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
+    data: {
+      title: 'Reporte de Notificacion de Adjudicacion Inmuebles',
+      screen: 'FCOMERNOTIFICAINMU',
+    },
   },
   //Henry2
   {

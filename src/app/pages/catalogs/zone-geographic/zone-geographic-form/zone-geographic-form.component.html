@@ -5,60 +5,50 @@
   <div body>
     <form [formGroup]="zoneGeographicForm" class="form-material">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field
-            [control]="zoneGeographicForm.get('descripcion')"
+            [control]="zoneGeographicForm.get('description')"
             label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="descripcion"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="zoneGeographicForm.get('no_contrato')"
+            [control]="zoneGeographicForm.get('contractNumber')"
             label="No de contrato">
             <input
               type="number"
               class="form-control"
-              formControlName="no_contrato" />
+              formControlName="contractNumber" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="zoneGeographicForm.get('version')"
-            label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="zoneGeographicForm.get('tercero_especializado')"
+            [control]="zoneGeographicForm.get('thirdPartySpecialized')"
             label="Tercero especializado">
             <input
               type="text"
               class="form-control"
-              formControlName="tercero_especializado" />
+              formControlName="thirdPartySpecialized" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="zoneGeographicForm.get('iva')" label="Iva">
-            <input type="number" class="form-control" formControlName="iva" />
+          <form-field [control]="zoneGeographicForm.get('vat')" label="Iva">
+            <input type="number" class="form-control" formControlName="vat" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="zoneGeographicForm.get('estatus')"
+            [control]="zoneGeographicForm.get('status')"
             label="Estatus">
             <input
               type="number"
               class="form-control"
-              formControlName="estatus" />
+              formControlName="status" />
           </form-field>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -31,6 +31,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   subdelegationField: string = 'subdelegation';
   labelDelegation: string = 'Delegación Recibe';
   labelSubdelegation: string = 'Delegación Administra';
+  activeOne: boolean = false;
+  activeTwo: boolean = false;
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -41,13 +43,52 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private serviceProcVal: ProceedingsDeliveryReceptionService
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private r2: Renderer2
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+
+    this.form.get('delegacionRecibe').valueChanges.subscribe(res => {
+      const initial = document.getElementById('actaI');
+      const final = document.getElementById('actaF');
+      if (res != null) {
+        this.activeOne = true;
+        if (this.activeTwo) {
+          this.r2.removeClass(initial, 'disabled');
+          this.r2.removeClass(final, 'disabled');
+        } else {
+          this.r2.addClass(initial, 'disabled');
+          this.r2.addClass(final, 'disabled');
+        }
+      } else {
+        this.activeOne = false;
+        this.r2.addClass(initial, 'disabled');
+        this.r2.addClass(final, 'disabled');
+      }
+    });
+
+    this.form.get('subdelegation').valueChanges.subscribe(res => {
+      const initial = document.getElementById('actaI');
+      const final = document.getElementById('actaF');
+      if (res != null) {
+        this.activeTwo = true;
+        if (this.activeOne) {
+          this.r2.removeClass(initial, 'disabled');
+          this.r2.removeClass(final, 'disabled');
+        } else {
+          this.r2.addClass(initial, 'disabled');
+          this.r2.addClass(final, 'disabled');
+        }
+      } else {
+        this.activeTwo = false;
+        this.r2.addClass(initial, 'disabled');
+        this.r2.addClass(final, 'disabled');
+      }
+    });
   }
 
   prepareForm() {
@@ -76,19 +117,20 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     }
   }
 
-  getInitialProceedings(params: ListParams) {
+  getInitialProceedings(params: any) {
     this.serviceProcVal
       .getProceedingsByDelAndSub(
         this.form.get('delegacionRecibe').value,
         this.form.get('subdelegation').value.id,
-        params
+        'proceedingkey',
+        params.text.toUpperCase()
       )
       .subscribe(
-        res => {
+        (res: any) => {
           console.log(res);
           this.initialProceeding = new DefaultSelect(res.data, res.count);
         },
-        err => {
+        (err: any) => {
           console.log(err);
         }
       );
@@ -99,14 +141,15 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       .getProceedingsByDelAndSub(
         this.form.get('delegacionRecibe').value,
         this.form.get('subdelegation').value.id,
-        params
+        'proceedingkey',
+        params.text.toUpperCase()
       )
       .subscribe(
-        res => {
+        (res: any) => {
           console.log(res);
           this.finalProceeding = new DefaultSelect(res.data, res.count);
         },
-        err => {
+        (err: any) => {
           console.log(err);
         }
       );

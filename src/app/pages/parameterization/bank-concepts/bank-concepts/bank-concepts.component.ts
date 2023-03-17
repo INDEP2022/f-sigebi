@@ -29,10 +29,12 @@ export class BankConceptsComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...BANK_CONCEPTS_COLUMNS },

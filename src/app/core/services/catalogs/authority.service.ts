@@ -1,6 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthorityEndpoints } from 'src/app/common/constants/endpoints/authority-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
@@ -10,6 +11,7 @@ import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAuthority,
+  IAuthority2,
   IAuthorityIssuingParams,
   INoCityByAsuntoSAT,
 } from '../../models/catalogs/authority.model';
@@ -32,7 +34,7 @@ export class AuthorityService
   }
 
   getById(id: string | number): Observable<IAuthority> {
-    return this.authorityRepository.getById(this.route, id);
+    return this.authorityRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IAuthority): Observable<IAuthority> {
@@ -47,6 +49,7 @@ export class AuthorityService
     return this.authorityRepository.remove(this.route, id);
   }
 
+  //borrar
   postByIds(model: Object): Observable<IListResponse<IAuthority>> {
     const route = 'catalog/api/v1/authority/id';
     return this.httpClient.post<IListResponse<IAuthority>>(
@@ -55,7 +58,7 @@ export class AuthorityService
     );
   }
 
-  getAllFilter(params?: _Params) {
+  getAllFilter(params?: _Params): Observable<IListResponse<IAuthority>> {
     return this.get('authority', params);
   }
 
@@ -99,5 +102,33 @@ export class AuthorityService
       'catalog/api/v1/authority/authority-and-station?limit=10&page=1',
       body
     );
+  }
+  getAuthorityIssuingByAverPrevia(body: IAuthorityIssuingParams | any) {
+    return this.authorityRepository.getAuthorityIssuingByParams(
+      'catalog/api/v1/authority/authority-and-station?limit=1&page=1',
+      body
+    );
+  }
+
+  getAuthorityByTransferent(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IAuthority2>> {
+    const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}`;
+    return this.get(route, params);
+  }
+
+  create2(model: IAuthority) {
+    return this.post(AuthorityEndpoints.Authority, model);
+  }
+
+  update2(model: IAuthority) {
+    const route = `${AuthorityEndpoints.Authority}`;
+    return this.put(route, model);
+  }
+
+  remove2(id: number | string, model: Object) {
+    const route = `${AuthorityEndpoints.Authority}/${id}`;
+    return this.delete(route, model);
   }
 }

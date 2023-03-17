@@ -6,11 +6,6 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('id')" label="No Indiciado">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
           <form-field [control]="form.get('name')" label="Nombre">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
@@ -20,16 +15,12 @@
             <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
-      </div>
-      <div class="row margin-input">
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('noRegistration')"
-            label="Número de registro">
+          <form-field [control]="form.get('consecutive')" label="Consecutivo">
             <input
               type="text"
               class="form-control"
-              formControlName="noRegistration" />
+              formControlName="consecutive" />
           </form-field>
         </div>
       </div>

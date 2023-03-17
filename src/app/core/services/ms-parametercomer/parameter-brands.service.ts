@@ -29,7 +29,7 @@ export class ParameterBrandsService extends HttpService {
   }
 
   update(id: string | number, tpenalty: IBrand) {
-    const route = `${this.route}/id/${id}`;
+    const route = `${this.route}/${id}`;
     return this.put(route, tpenalty);
   }
 

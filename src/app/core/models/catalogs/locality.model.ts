@@ -10,3 +10,19 @@ export interface ILocality {
   modificationDate: Date;
   version: number;
 }
+
+export interface ILocality2 {
+  id: number;
+  stateKey: number;
+  municipalityId: number;
+  nameLocation: string;
+  ambitKey: number | string;
+  description: string;
+  delegationNumber: number;
+  registerNumber: number;
+  version: number;
+  creationUser: string;
+  creationDate: string;
+  editionUser: string;
+  modificationDate: string;
+}

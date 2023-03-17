@@ -25,6 +25,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   @Input() goodStatusField: string = 'goodStatus';
   @Input() labelStatus: string = 'Estatus Bienes';
   @Input() showGoodStatus: boolean = true;
+  @Input() multiple: boolean = false;
 
   status = new DefaultSelect<IGoodStatus>();
 

@@ -45,18 +45,17 @@ export class FlyerSubjectCatalogModelComponent
 
   private prepareForm() {
     this.affairTypeForm = this.fb.group({
-      code: [null, [Validators.required]],
+      code: [null, []],
       relationPropertyKey: [null, [Validators.required]],
       referralNoteType: [null, [Validators.required]],
       versionUser: [null, [Validators.required]],
-      idRegister: [null, [Validators.required]],
     });
     if (this.affairType != null) {
       this.id = this.affairType.code as unknown as IAffair;
       this.edit = true;
       console.log(this.affairType);
       this.affairTypeForm.patchValue(this.affairType);
-      this.affairTypeForm.controls['code'].setValue(this.id.id);
+      this.affairTypeForm.controls['code'].setValue(this.affairType.code);
     } else {
       console.log('Limpio', this.idF.id);
       this.affairTypeForm.controls['code'].setValue(this.idF.id);
@@ -81,16 +80,11 @@ export class FlyerSubjectCatalogModelComponent
 
   update() {
     this.loading = true;
-    this.affairTypeService
-      .update(
-        this.affairType.code,
-        this.affairType.referralNoteType,
-        this.affairTypeForm.value
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.affairTypeForm;
+    this.affairTypeService.newUpdate(this.affairTypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

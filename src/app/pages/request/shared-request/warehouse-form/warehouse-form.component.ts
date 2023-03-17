@@ -10,6 +10,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
 import { ICatThirdView } from 'src/app/core/models/ms-goods-inv/goods-inv.model';
+import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
@@ -17,10 +18,10 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { responsableUser } from './warehouse-data';
 
 @Component({
   selector: 'app-warehouse-form',
@@ -30,7 +31,7 @@ import { responsableUser } from './warehouse-data';
 export class WarehouseFormComponent extends BasePage implements OnInit {
   regDelData: IRegionalDelegation;
   warehouseForm: FormGroup = new FormGroup({});
-  responsiblesUsers = new DefaultSelect(responsableUser);
+  users = new DefaultSelect<IUserProcess>();
   typeTercero = new DefaultSelect<ICatThirdView>();
   states = new DefaultSelect<IStateOfRepublic>();
   municipalities = new DefaultSelect<IMunicipality>();
@@ -54,7 +55,8 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     private localityService: LocalityService,
     private goodsQueryService: GoodsQueryService,
     private stateService: DelegationStateService,
-    private programmingService: ProgrammingRequestService
+    private programmingService: ProgrammingRequestService,
+    private userProcessService: UserProcessService
   ) {
     super();
   }
@@ -116,7 +118,11 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     });
   }
 
-  getResponsibleUserSelect(responsibleUser: ListParams) {}
+  getResponsibleUserSelect(params: ListParams) {
+    this.userProcessService.getAll(params).subscribe(data => {
+      console.log('usuarios responsables', data);
+    });
+  }
 
   getTypeTerceroSelect(params: ListParams) {
     params.page = 0;

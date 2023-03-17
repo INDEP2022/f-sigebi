@@ -1,27 +1,21 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import {
-  baseMenu,
-  routesJuridicalProcesses,
-} from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Example } from 'src/app/core/models/catalogs/example';
+  JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS,
+  JURIDICAL_FILE_UPDATE_SEARCH_FIELDS,
+} from '../interfaces/columns';
+import { IJuridicalFileDataUpdateForm } from '../interfaces/file-data-update-form';
+import { JuridicalFileUpdateService } from '../services/juridical-file-update.service';
 
 /** SERVICE IMPORTS */
-import { ExampleService } from 'src/app/core/services/catalogs/example.service';
-
-/** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-file-data-update',
@@ -32,78 +26,50 @@ export class FileDataUpdateComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
-  public readonly flyerId: number = null;
-  flyerForm: FormGroup;
-  items = new DefaultSelect<Example>();
-  linkDictaminacionesJuridicas: string =
-    baseMenu + routesJuridicalProcesses[0].link;
-  linkReaccionacionTurno: string =
-    '/pages/documents-reception/flyers-registration/shift-change';
-  linkOficioRelacionado: string =
-    '/pages/documents-reception/flyers-registration/related-document-management';
-
-  public optionsTipoVolante = [
-    { value: 'Administrativo', label: 'Administrativo' },
-    { value: 'Procesal', label: 'Procesal' },
-    { value: 'Admin. Trans', label: 'Admin. Trans' },
-    { value: 'Transferente', label: 'Transferente' },
-  ];
-
+  searchMode: boolean = false;
+  confirmSearch: boolean = false;
+  formData: Partial<IJuridicalFileDataUpdateForm> = null;
+  selectedRow: INotification;
+  columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
+  fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
-    private exampleService: ExampleService
+    private modalService: BsModalService,
+    private router: Router,
+    public fileUpdateService: JuridicalFileUpdateService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
-    const id = this.activateRoute.snapshot.paramMap.get('id');
-    if (id) this.flyerId = Number(id);
   }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.prepareForm();
+    //
   }
 
-  prepareForm() {
-    this.flyerForm = this.fb.group({
-      noVolante: [this.flyerId, [Validators.required]],
-      tipoVolante: [null, [Validators.required]],
-      fecRecepcion: [null],
-      noConsecutivoDiario: [null],
-      actaCircunst: [null, [Validators.pattern(STRING_PATTERN)]],
-      averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
-      causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      cveAmparo: [null],
-      cveTocaPenal: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      cveOficioExterno: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      fecOficioExterno: [null],
-      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-      noExpediente: [null],
-      remitenteExterno: [null, [Validators.pattern(STRING_PATTERN)]],
-      asunto: [null, [Validators.pattern(STRING_PATTERN)]],
-      desahogoAsunto: [null, [Validators.pattern(STRING_PATTERN)]],
-      ciudad: [null, [Validators.pattern(STRING_PATTERN)]],
-      entidadFed: [null],
-      claveUnica: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      transferente: [null],
-      emisora: [null],
-      autoridad: [null],
-      institucion: [null],
-      minPub: [null],
-      juzgado: [null],
-      indicado: [null],
-      delito: [null],
-      recepcion: [null],
-      area: [null],
-      del: [null],
-      destinatario: [null, [Validators.pattern(STRING_PATTERN)]],
-      justificacion: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
+  returnToFlyers() {
+    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
   }
 
-  getFromSelect(params: ListParams) {
-    this.exampleService.getAll(params).subscribe(data => {
-      this.items = new DefaultSelect(data.data, data.count);
-    });
+  checkSearchMode(searchMode: boolean) {
+    this.searchMode = searchMode;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  confirm(confirm: boolean) {
+    this.confirmSearch = confirm;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  search(formData: Partial<IJuridicalFileDataUpdateForm>) {
+    this.formData = formData;
+    this.changeDetectorRef.detectChanges();
+    console.log(formData);
+  }
+
+  selectData(data: INotification) {
+    this.selectedRow = data;
+    this.changeDetectorRef.detectChanges();
+    console.log(data);
   }
 }

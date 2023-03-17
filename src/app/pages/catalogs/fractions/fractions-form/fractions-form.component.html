@@ -9,13 +9,20 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('code')" label="Codigo">
-            <input type="text" class="form-control" formControlName="code" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              (change)="codeFraction()" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('level')" label="Nivel">
-            <input type="text" class="form-control" formControlName="level" />
+            <input
+              type="text"
+              class="form-control disabled"
+              formControlName="level" />
           </form-field>
         </div>
       </div>
@@ -75,7 +82,7 @@
           [control]="fractionForm.get('relevantTypeId')"
           label="Tipo relevante">
           <input
-            type="text"
+            type="number"
             class="form-control"
             formControlName="relevantTypeId" />
         </form-field>
@@ -128,7 +135,7 @@
           label="Codigo Fracci&oacute;n">
           <input
             type="text"
-            class="form-control"
+            class="form-control disabled"
             formControlName="fractionCode" />
         </form-field>
       </div>
@@ -138,7 +145,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!fractionForm.valid"
+          [disabled]="fractionForm.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

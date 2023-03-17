@@ -12,6 +12,7 @@ import { IAppraisers } from '../../models/catalogs/appraisers.model';
 })
 export class AppraisersService implements ICrudMethods<IAppraisers> {
   private readonly route: string = ENDPOINT_LINKS.appraiser;
+  private readonly route2: string = 'catalog/appraisers/id';
   constructor(private appraisersRepository: Repository<IAppraisers>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IAppraisers>> {
@@ -29,6 +30,9 @@ export class AppraisersService implements ICrudMethods<IAppraisers> {
   }
 
   update(id: string | number, model: IAppraisers): Observable<Object> {
-    return this.appraisersRepository.update(this.route, id, model);
+    return this.appraisersRepository.update(this.route2, id, model);
+  }
+  remove(id: string | number): Observable<Object> {
+    return this.appraisersRepository.remove(this.route2, id);
   }
 }

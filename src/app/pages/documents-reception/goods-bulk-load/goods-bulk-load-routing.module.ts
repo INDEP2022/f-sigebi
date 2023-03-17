@@ -9,17 +9,12 @@ const routes: Routes = [
   },
   {
     // CARGA MASIVA SAT
-    path: 'sat/:ASUNTO_SAT/:P_NO_EXPEDIENTE/:P_NO_OFICIO/:P_NO_VOLANTE/:P_SAT_TIPO_EXP/:P_INDICADOR_SAT',
+    path: ':tipo/:ASUNTO_SAT/:P_NO_EXPEDIENTE/:P_NO_OFICIO/:P_NO_VOLANTE/:P_SAT_TIPO_EXP/:P_INDICADOR_SAT',
     component: GoodsBulkLoadComponent,
   },
   {
     // CARGA MASIVA PGR
-    path: 'pgr/:P_NO_EXPEDIENTE/:P_AV_PREVIA/:P_NO_VOLANTE',
-    component: GoodsBulkLoadComponent,
-  },
-  {
-    // CARGA MASIVA GENERAL DE BIENES
-    path: 'general/:IDEN/:NO_TRANSFERENTE/:NO_VOLANTE/:DESALOJO/:P_NO_OFICIO/:ASUNTO_SAT',
+    path: ':tipo/:P_NO_EXPEDIENTE/:P_AV_PREVIA/:P_NO_VOLANTE',
     component: GoodsBulkLoadComponent,
   },
 ];

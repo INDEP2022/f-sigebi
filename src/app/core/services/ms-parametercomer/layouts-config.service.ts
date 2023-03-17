@@ -4,10 +4,13 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { environment } from 'src/environments/environment';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
 import {
   IComerLayouts,
   IComerLayoutsH,
+  IL,
+  ILay,
 } from '../../models/ms-parametercomer/parameter';
 
 @Injectable({
@@ -34,26 +37,48 @@ export class LayoutsConfigService extends HttpService {
     const route = `${this.endpointH}/${id}`;
     return this.get(route);
   }
-  create(layout: number) {
+  getById(params?: ListParams) {
+    const route = `${this.endpoint}}`;
+    return this.get(route, params);
+  }
+
+  create(layout: IL) {
     const route = `${this.endpoint}`;
     return this.post(route, layout);
   }
-
-  update(id: number, tiie: IComerLayouts) {
-    const route = `${this.endpointH}/${id}`;
-    return this.put(route, tiie);
-  }
-  findOne(id: number) {
-    const route = `${this.endpoint}/find-one`;
-    return this.post(route, id);
-  }
-
-  // remove(id: string | number) {
-  //   const route = `${this.endpoint}/${id}`;
-  //   return this.delete(route);
+  // create(layout: IComerLayouts) {
+  //   const route = `${this.endpointH}`;
+  //   return this.post(route, layout);
   // }
+  add(layout: number) {
+    const url = `${environment.API_URL}parametercomer/api/v1/comer-layouts-t`;
+    return this.htpp.post(url, layout);
+  }
 
-  createH(layout: IComerLayoutsH) {
+  // update(layout: IComerLayouts) {
+  //   const route = `${this.endpoint}`;
+  //   return this.put(route, layout);
+  // }
+  // update(layout: IComerLayouts) {
+  //   const route = `${this.endpoint}`;
+  //   return this.put(route, layout);
+  // }
+  update(id: string | number, layout: IComerLayouts) {
+    const route = `${this.endpointH}/${id}`;
+    return this.put(route, layout);
+  }
+
+  findOne(idLayout: ILay) {
+    const route = `${this.endpoint}/find-one`;
+    return this.post(route, idLayout);
+  }
+
+  remove(id: IL) {
+    const route = `${this.endpoint}`;
+    return this.delete(route, id);
+  }
+
+  createH(layout: IComerLayouts) {
     return this.post(this.endpointH, layout);
   }
 }

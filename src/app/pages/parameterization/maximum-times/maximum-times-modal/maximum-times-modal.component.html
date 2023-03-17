@@ -26,17 +26,25 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-check label="Activar" for="activated">
-            <input id="activated" type="checkbox" formControlName="activated" />
+          <form-check label="Activar" for="activatedBool">
+            <input
+              id="activatedBool"
+              type="checkbox"
+              formControlName="activatedBool" />
           </form-check>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
-          <app-user-shared
-            [form]="maximumTimesForm"
-            [userField]="'user'"
-            [label]="'Usuario'"></app-user-shared>
+          <form-field
+            label="Usuario"
+            [control]="maximumTimesForm.get('userName')">
+            <input
+              class="form-control"
+              formControlName="userName"
+              type="text"
+              (click)="openUsers()" />
+          </form-field>
         </div>
       </div>
     </form>

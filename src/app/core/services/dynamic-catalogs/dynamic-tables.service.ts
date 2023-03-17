@@ -40,6 +40,12 @@ export class DynamicTablesService extends HttpService {
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
+    console.log(
+      this.get<IListResponse<ITablesData>>(
+        DynamicCatalogEndpoint.DinamicTables,
+        params
+      )
+    );
     return this.get<IListResponse<ITablesData>>(
       DynamicCatalogEndpoint.DinamicTables,
       params
@@ -60,4 +66,11 @@ export class DynamicTablesService extends HttpService {
       params
     );
   }
+
+  getTvalTable5ByTable(id: number | string) {
+    const fullRoute = `${DynamicCatalogEndpoint.getTvalTable5ByTable}/${id}`;
+    return this.get<IListResponse<TvalTable1Data>>(fullRoute);
+  }
+
+  /* getfindTvaltable1ByTableKey() */
 }

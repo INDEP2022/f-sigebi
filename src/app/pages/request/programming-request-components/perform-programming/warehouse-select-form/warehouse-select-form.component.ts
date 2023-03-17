@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -20,7 +21,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
   }
@@ -37,7 +39,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   getWarehouses(params: ListParams) {
-    this.warehouseService.getAll(params).subscribe(data => {
+    this.goodsQueryService.getCatStoresView(params).subscribe(data => {
+      console.log('alamcenes relacionados con transferente', data);
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }

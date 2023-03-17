@@ -5,6 +5,7 @@
         <ngx-select
           (fetchItems)="getGoodStatus($event)"
           [data]="status"
+          [multiple]="multiple"
           [form]="form"
           value="status"
           bindLabel="description"
@@ -16,3 +17,16 @@
     </div>
   </div>
 </ng-container>
+<!-- 
+
+  <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [searchOnInit]="true"
+        control="status"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
+ -->

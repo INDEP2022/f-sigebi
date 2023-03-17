@@ -10,6 +10,9 @@ export const FINANCIAL_INDICATORS_COLUMNS = {
   description: {
     title: 'Descripción',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
   formula: {
     title: 'Formula',

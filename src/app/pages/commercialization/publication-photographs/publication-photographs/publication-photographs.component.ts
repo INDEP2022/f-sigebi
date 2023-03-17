@@ -1,12 +1,21 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IPhotographMedia } from 'src/app/core/models/catalogs/photograph-media.model';
+import { BatchService } from 'src/app/core/services/catalogs/batch.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { PhotographMediaService } from 'src/app/core/services/catalogs/photograph-media.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DATA } from './data';
+import { PublicationPhotographsModalComponent } from '../publication-photographs-modal/publication-photographs-modal.component';
 import {
+  dataBatchColum,
+  numStoreColumn,
   PUBLICATION_PHOTO1,
   PUBLICATION_PHOTO2,
 } from './publication-photographs-columns';
@@ -29,15 +38,16 @@ export class PublicationPhotographsComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-
+  dataBatch: any;
+  subtype: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  batchList: any;
   selectedCve: any = null;
   cveItems = new DefaultSelect();
   totalItems: number = 0;
-
+  picture: IPhotographMedia;
   data1: LocalDataSource = new LocalDataSource();
-  dataAllotment = DATA;
+  // dataAllotment = DATA;
 
   data2: LocalDataSource = new LocalDataSource();
   rowSelected: boolean = false;
@@ -48,11 +58,20 @@ export class PublicationPhotographsComponent
 
   settings1;
   settings2;
+  settings3;
+  settings4;
 
   columns: any[] = [];
   @Output() refresh = new EventEmitter<true>();
+  @Output() onConfirm = new EventEmitter<any>();
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private batchService: BatchService,
+    private photographMediaService: PhotographMediaService,
+    private modalService: BsModalService,
+    private goodSubtypeService: GoodSubtypeService
+  ) {
     super();
     this.settings1 = {
       ...this.settings,
@@ -65,18 +84,37 @@ export class PublicationPhotographsComponent
       actions: false,
       columns: { ...PUBLICATION_PHOTO2 },
     };
+
+    this.settings4 = {
+      ...TABLE_SETTINGS,
+      columns: { ...dataBatchColum },
+      noDataMessage: 'No se encontrarón registros',
+    };
+
+    this.settings3 = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: { ...numStoreColumn },
+      noDataMessage: 'No se encontrarón registros',
+    };
   }
 
   ngOnInit(): void {
     this.getCve({ page: 1, text: '' });
-    this.data1.load(this.dataAllotment);
+    // this.data1.load(this.dataBatch);
     this.prepareForm();
+    this.getBatch();
+    this.settings4.actions.delete = true;
+    this.settings4.actions.edit = true;
+    // this.getSubtype();
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      favorite: [null, [Validators.required]],
-      id: [null, [Validators.required]],
+      picture: [null, [Validators.required]],
+      // favorite: [null, [Validators.required]],
+      id: [null],
+      noConsec: [null],
     });
   }
 
@@ -116,14 +154,89 @@ export class PublicationPhotographsComponent
   }
 
   selectRow(row: any) {
-    this.data2.load(row.goods); //Sub
+    this.data2.load(row.numStore); //Sub
     this.data2.refresh();
-    this.rowAllotment = row.allotment; //primary
+    this.rowAllotment = row.id; //primary
     this.rowSelected = true;
   }
 
   selectRowGood() {
     this.rowSelectedGood = true;
+  }
+  getBatch() {
+    this.loading = true;
+    this.batchService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.batchList = data;
+        this.dataBatch = this.batchList.data;
+        this.totalItems = data.count;
+        console.log(this.dataBatch);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  getSubtype() {
+    this.loading = true;
+    this.goodSubtypeService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.subtype = data;
+        this.dataBatch = this.subtype.data;
+        this.totalItems = data.count;
+        console.log(this.dataBatch);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  openForm(provider?: IPhotographMedia) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getBatch();
+      },
+    };
+    this.modalService.show(PublicationPhotographsModalComponent, modalConfig);
+  }
+
+  openModal(context?: Partial<PublicationPhotographsModalComponent>) {
+    const modalRef = this.modalService.show(
+      PublicationPhotographsModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+
+  showIdLayout(event: any) {
+    //enseña lo que elegistes en el input
+    console.log(event.idLayout);
+    console.log(event.idLayout);
+  }
+  showDeleteAlert(id: number) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.photographMediaService.remove(id).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Layout eliminado', '');
+            this.getBatch();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.loading = false;
+          },
+        });
+      }
+    });
   }
 
   //Carrusel de fotografías

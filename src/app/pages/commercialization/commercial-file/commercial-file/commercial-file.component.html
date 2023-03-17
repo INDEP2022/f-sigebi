@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">
@@ -8,43 +8,39 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-3">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
           <form-field [control]="form.get('noGood')" label="No. Bien">
             <input type="text" class="form-control" formControlName="noGood" />
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid">
-              Ficha comercial
-            </button>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid">
-              Ficha T&eacute;cnica
-            </button>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid">
-              Ingresos y Egresos
-            </button>
-          </div>
+          <!-- <app-goods-table-shared [form]="form" [disabled]="statusActaValue !== 'ABIERTA'"></app-goods-table-shared> -->
         </div>
       </div>
     </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Ficha comercial"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="fcom()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <confirm-button
+          text="Ficha t&eacute;cnica"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="ftec()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <confirm-button
+          text="Ingresos y Egresos"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="fie()"></confirm-button>
+      </div>
+    </div>
   </div>
 </app-card>

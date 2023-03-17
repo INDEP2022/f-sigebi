@@ -7,26 +7,6 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-            [control]="cityForm.get('noRegister')"
-            label="N&uacute;mero de Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noRegister" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="cityForm.get('idCity')" label="Id de Ciudad">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idCity" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field
             [control]="cityForm.get('nameCity')"
             label="Nombre de la Ciudad">
             <input
@@ -36,8 +16,17 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="cityForm.get('state')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="state" />
+          <form-field [control]="cityForm.get('state')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="cityForm"
+              control="state"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (fetchItems)="getStates($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -63,7 +52,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="cityForm.get('legendOffice')" label="Oficina">
+          <form-field
+            [control]="cityForm.get('legendOffice')"
+            label="Leyenda de oficio">
             <input
               type="text"
               class="form-control"

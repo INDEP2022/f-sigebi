@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { OpinionsListComponent } from 'src/app/pages/catalogs/opinions/opinions-list/opinions-list.component';
 import { CatRelationshipOpinionModalComponent } from '../cat-relationship-opinion-modal/cat-relationship-opinion-modal.component';
 import {
+  AFFAIR_COLUMNS,
   AFFAIR_TYPE_COLUMNS,
   DICTA_COLUMNS,
 } from './relationship-opinion-columns';
@@ -20,7 +23,6 @@ import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -31,16 +33,17 @@ export class CatRelationshipOpinionComponent
   extends BasePage
   implements OnInit
 {
-  affairForm: ModelForm<IAffair>;
   data: LocalDataSource = new LocalDataSource();
-  data2: LocalDataSource = new LocalDataSource();
-  form: FormGroup = new FormGroup({});
+  columns: IAffair[] = [];
+  columnFilters: any = [];
 
-  affairTypesList: IAffairType[] = [];
+  affairs: IAffair;
+  affairTypeList: IAffairType[] = [];
+
+  data2: LocalDataSource = new LocalDataSource();
+
   rAsuntDicList: IRAsuntDic[] = [];
   affairTypes: IAffairType;
-
-  id: IAffair;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -48,9 +51,15 @@ export class CatRelationshipOpinionComponent
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
 
-  settings2;
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems3: number = 0;
 
-  dataRAsuntDic: LocalDataSource = new LocalDataSource();
+  settings2;
+  settings3;
+
+  loading1 = this.loading;
+  loading2 = this.loading;
+  loading3 = this.loading;
 
   constructor(
     private fb: FormBuilder,
@@ -62,10 +71,17 @@ export class CatRelationshipOpinionComponent
     super();
     this.settings = {
       ...this.settings,
+      //hideSubHeader: false,
+      actions: false,
+      columns: { ...AFFAIR_COLUMNS },
+    };
+
+    this.settings2 = {
+      ...this.settings,
       actions: false,
       columns: { ...AFFAIR_TYPE_COLUMNS },
     };
-    this.settings2 = {
+    this.settings3 = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
@@ -77,96 +93,111 @@ export class CatRelationshipOpinionComponent
     };
   }
 
+  //Caga las columnas de búsqueda de asuntos
   ngOnInit(): void {
-    this.prepareForm();
-  }
-
-  private prepareForm() {
-    this.affairForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      description: [{ value: null, disabled: true }],
-    });
-    // this.form = this.fb.group({
-    //   code: [null, [Validators.required]],
-    //   dictum: [null, [Validators.required]],
-    //   flyerType: [null, [Validators.required]],
-    // });
-  }
-
-  //Llenar inputs con id de affair
-  getAffairById(): void {
-    let _id = this.affairForm.controls['id'].value;
-    this.loading = true;
-    this.affairService.getById(_id).subscribe(
-      response => {
-        //TODO: Validate Response
-        if (response !== null) {
-          this.affairForm.patchValue(response);
-          this.affairForm.updateValueAndValidity();
-          this.getTypesByAffairId(response.id);
-        } else {
-          //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontraron registros', '');
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'city'
+              ? (field = `filter.${filter.field}.nameCity`)
+              : (field = `filter.${filter.field}`);
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getAffairAll();
         }
+      });
 
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
-  }
-
-  //Traer datos a la tabla tipo de asuntos con id de asunto
-  getTypesByAffairId(id: string | number): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffairTypes(id));
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRAsuntDic());
+      .subscribe(() => this.getAffairAll());
   }
 
-  getAffairTypes(id: string | number): void {
-    this.affairTypeService.getByAffair(id, this.params.getValue()).subscribe(
-      response => {
-        //console.log(response);
-        let data = response.data.map((item: IAffairType) => {
-          return item;
-        });
-        this.data.load(data);
-        this.totalItems = response.count;
+  //Trae todos los asuntos
+  getAffairAll() {
+    this.loading1 = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.affairService.getAll(params).subscribe({
+      next: response => {
+        this.columns = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(this.columns);
+        this.data.refresh();
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => {
+        this.loading1 = false;
+      },
+    });
+  }
+
+  //Selecciona fila de tabla de asuntos
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.affairTypeList = [];
+    this.affairs = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAffairTypes()),
+      this.getRAsuntDic();
+  }
+
+  //Trae los tipos de asuntos por el Id del asunto seleccionado
+  getAffairTypes(): void {
+    this.loading2 = true;
+    const idAffair = { ...this.affairs };
+    this.affairTypeService
+      .getByAffair(idAffair.id, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          this.affairTypeList = response.data;
+          this.totalItems2 = response.count;
+          this.loading2 = false;
+        },
+        error: error => (this.loading2 = false),
+      });
   }
 
   //Traer datos de r asunt tipo al seleccionar fila de la tabla tipo de asunto
 
   getRAsuntDic() {
-    let _id = this.affairForm.controls['id'].value;
-    this.loading = true;
-    this.RAsuntDicService.getByCode(_id).subscribe({
+    this.loading3 = true;
+    const idAffair = { ...this.affairs };
+    this.RAsuntDicService.getByCode(idAffair.id).subscribe({
       next: response => {
         console.log(response);
         this.rAsuntDicList = response.data;
-        this.totalItems2 = response.count;
-        this.loading = false;
+        this.totalItems3 = response.count;
+        this.loading3 = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.loading3 = false),
     });
-  }
-
-  handleSuccess() {
-    const message: string = 'encontrado';
-    this.onLoadToast('success', this.form.value, `${message} Correctamente`);
-    this.loading = false;
   }
 
   openForm(rAsuntDic?: IRAsuntDic) {
     console.log(rAsuntDic);
+    const idAffair = { ...this.affairs };
     let affairType = this.affairTypes;
     let config: ModalOptions = {
       initialState: {
+        idAffair,
         rAsuntDic,
         affairType,
         callback: (next: boolean) => {},

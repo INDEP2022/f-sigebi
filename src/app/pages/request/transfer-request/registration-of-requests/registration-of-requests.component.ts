@@ -9,6 +9,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -24,19 +25,22 @@ import { StationService } from '../../../../core/services/catalogs/station.servi
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { SelectTypeUserComponent } from '../select-type-user/select-type-user.component';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
+import { RegistrationHelper } from './registrarion-of-request-helper.component';
 
 @Component({
   selector: 'app-registration-of-requests',
   templateUrl: './registration-of-requests.component.html',
   styleUrls: ['./registration-of-requests.component.scss'],
+  providers: [RegistrationHelper],
 })
 export class RegistrationOfRequestsComponent
   extends BasePage
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
-  registRequestForm: ModelForm<IRequest>;
+  registRequestForm: ModelForm<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
   parameter: any;
@@ -77,7 +81,7 @@ export class RegistrationOfRequestsComponent
 
   constructor(
     public fb: FormBuilder,
-    public modalRef: BsModalRef,
+    private bsModalRef: BsModalRef,
     public modalService: BsModalService,
     public route: ActivatedRoute,
     public router: Router,
@@ -90,7 +94,9 @@ export class RegistrationOfRequestsComponent
     private delegationService: RegionalDelegationService,
     private authorityService: AuthorityService,
     private goodService: GoodService,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private goodEstateService: RealStateService,
+    private registrationHelper: RegistrationHelper
   ) {
     super();
   }
@@ -104,6 +110,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
+    this.dinamyCallFrom();
   }
 
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
@@ -119,8 +126,10 @@ export class RegistrationOfRequestsComponent
   }
 
   prepareForm() {
+    //formulario de solicitudes
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
+      recordId: [null],
       paperNumber: [null, [Validators.required]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
@@ -155,14 +164,16 @@ export class RegistrationOfRequestsComponent
       circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
       lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
       tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
+      protectNumber: [null],
     });
   }
 
   getRequest(id: any) {
     this.requestService.getById(id).subscribe((data: any) => {
       let request = data;
-      //verifica si la solicitud tiene expediente si no tiene no muestra el tab asociar expediente
+      //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
       this.isExpedient = request.recordId ? true : false;
+
       request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
@@ -182,12 +193,8 @@ export class RegistrationOfRequestsComponent
     const delegationService = this.delegationService.getById(
       request.regionalDelegationId
     );
-    let ids = {
-      idAuthority: Number(request.authorityId),
-      idTransferer: Number(request.transferenceId),
-      idStation: Number(request.stationId),
-    };
-    const authorityervice = this.authorityService.postByIds(ids);
+
+    const authorityervice = this.authorityService.getById(request.authorityId);
 
     forkJoin([
       stateOfRepublicService,
@@ -308,6 +315,17 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  //obtiene el bien inmueble
+  getGoodRealEstate(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodEstateService.getById(id).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
+  }
+
   finish() {
     this.requestData.requestStatus = 'FINALIZADA';
     const typeCommit = 'finish';
@@ -341,10 +359,9 @@ export class RegistrationOfRequestsComponent
   }
 
   confirm() {
-    console.log(this.registRequestForm.getRawValue());
     const typeCommit = 'confirm-request';
-    this.msgAvertanceModal(
-      '',
+    this.msgSaveModal(
+      'Aceptar',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       undefined,
@@ -352,187 +369,17 @@ export class RegistrationOfRequestsComponent
     );
   }
 
-  async confirmMethod() {
-    debugger;
-    const idTrandference = Number(this.requestData.transferenceId);
-    let validoOk = false;
+  //metodo que guarda la verificacion
+  public async confirmMethod() {
+    const result = await this.registrationHelper.validateForm(this.requestData);
 
-    const previousInquiry = this.requestData.previousInquiry;
-    const circumstantialRecord = this.requestData.circumstantialRecord;
-    const lawsuit = this.requestData.lawsuit;
-    const protectNumber = this.requestData.protectNumber;
-    const tocaPenal = this.requestData.tocaPenal;
-    const paperNumber = this.requestData.paperNumber; //no oficio
-    const transferenceFile = this.requestData.transferenceFile; //transferente expediente //pregunar si es ese campo o idTransferent
-    const typeRecord = this.requestData.typeRecord; //tipo expediente
-    const paperDate = this.requestData.paperDate; // fecha oficio
-    const trialType = this.requestData.trialType;
-    const urgentPriority = this.requestData.urgentPriority;
-    const priorityDate = this.requestData.priorityDate;
-
-    //Todo: verificar y obtener documentos de la solicitud
-
-    /*if (this.requestData.recordId === null) {
-      this.message(
-        'error',
-        'Error',
-        'La solicitud no tiene Expediente asociado'
-      );
-    }*/
-
-    //Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-
-    if (previousInquiry === 'Y' && priorityDate === null) {
-      this.message(
-        'error',
-        'Error',
-        'Se marco la solicitud como urgente, se debe tener una fecha prioridad'
-      );
+    if (result === true) {
+      this.cambiarTipoUsuario(this.requestData);
     }
-    if (idTrandference === 1) {
-      if (paperNumber === '' || paperDate == null) {
-        this.message(
-          'error',
-          'Error',
-          'Para la transferente FGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
-        );
-      } else if (circumstantialRecord === '' && previousInquiry === '') {
-        this.message(
-          'error',
-          'Error',
-          'Para la transferente FGR se debe tener al menos Acta Circunstancial o Averiguación Previa'
-        );
-      } else {
-        validoOk = true;
-      }
-    }
+  }
 
-    if (idTrandference === 3) {
-      if (paperNumber === '' || paperDate == null) {
-        this.message(
-          'error',
-          'Error',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
-        );
-      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
-        this.message(
-          'error',
-          'Error',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
-        );
-      } else {
-        validoOk = true;
-      }
-    }
-
-    if (
-      idTrandference === 120 ||
-      idTrandference === 536 ||
-      idTrandference === 752
-    ) {
-      if (
-        // transferenceFile === '' || //consultar este campo
-        typeRecord === '' ||
-        paperNumber === '' ||
-        paperDate == null
-      ) {
-        this.message(
-          'error',
-          'Error',
-          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
-        );
-      } else {
-        validoOk = true;
-      }
-    }
-
-    if (
-      !(idTrandference === 1) &&
-      !(idTrandference === 3) &&
-      !(idTrandference === 120) &&
-      !(idTrandference === 536) &&
-      !(idTrandference === 752)
-    ) {
-      if (paperNumber === '' || paperDate == null) {
-        this.message(
-          'error',
-          'Error',
-          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
-        );
-      } else {
-        validoOk = true;
-      }
-    }
-
-    let goods: any = null;
-
-    if (validoOk === true) {
-      goods = await this.getGoodQuantity(Number(this.requestData.id));
-      if (goods.count < 1) {
-        this.message(
-          'error',
-          'Error',
-          'La solicitud no cuenta con bienes a transferir'
-        );
-      } else {
-        //validar bienes
-        let sinDireccion: boolean = false;
-        let sinTipoRelevante: boolean = false;
-        let sinCantidad: boolean = false;
-        let sinDestinoT: boolean = false;
-        let sinUnidadM: boolean = false;
-        let sinDescripcionT: boolean = false;
-        let codigoFraccion: any = null;
-        let faltaClasificacion: boolean = false;
-        // variables para validaci�n de atributos por tipo de bien LIRH 06/02/2021
-        const tipoRelVehiculo: boolean = false;
-        const tipoRelAeronave: boolean = false;
-        const tipoRelEmbarca: boolean = false;
-        const tipoRelInmueble: boolean = false;
-        const tipoRelJoya: boolean = false;
-        const existBienInm: boolean = false;
-
-        for (let i = 0; i < goods.data.length; i++) {
-          const good = goods.data[i];
-          if (good.addressId == null && good.idGoodProperty == null) {
-            sinDireccion = true;
-            break;
-          } else if (good.goodTypeId == null) {
-            sinTipoRelevante = true;
-            break;
-          } else if (
-            good.quantity == null ||
-            (good.quantity != null && Number.parseInt(good.quantity) < 1)
-          ) {
-            sinCantidad = true;
-            break;
-          } else if (good.transferentDestiny == null) {
-            sinDestinoT = true;
-            break;
-          } else if (good.ligieUnit == null) {
-            sinUnidadM = true;
-            break;
-          } else if (good.goodDescription == null) {
-            sinDescripcionT = true;
-            break;
-          }
-
-          // Se valida si la clasificacion tenga 8 caracteres
-          if (good.fractionId !== null) {
-            const fractionCode: any = await this.getFractionCode(
-              good.fractionId
-            );
-            if (fractionCode == null || fractionCode.length != 8) {
-              faltaClasificacion = true;
-              break;
-            }
-          } else {
-            faltaClasificacion = true;
-            break;
-          }
-        }
-      }
-    }
+  cambiarTipoUsuario(request: any) {
+    this.openModal(SelectTypeUserComponent, request, 'commit-request');
   }
 
   saveClarification(): void {
@@ -546,27 +393,6 @@ export class RegistrationOfRequestsComponent
 
   signDictum() {
     this.openModal(GenerateDictumComponent, '', 'approval-request');
-  }
-
-  msgAvertanceModal(
-    btnTitle: string,
-    message: string,
-    title: string,
-    typeMsg: any,
-    typeCommit: string
-  ) {
-    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.msgSaveModal(
-          this.btnTitle,
-          '¿Deseas turnar la solicitud con Folio:....?',
-          'Confirmación',
-          undefined,
-          typeCommit
-        );
-      }
-    });
   }
 
   msgSaveModal(
@@ -613,11 +439,16 @@ export class RegistrationOfRequestsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalRef = this.modalService.show(component, config);
+    this.bsModalRef = this.modalService.show(component, config);
 
-    this.modalRef.content.event.subscribe((res: any) => {
-      // cargarlos en el formulario
+    /*  this.BsModal.content.event.subscribe((res: any) => {
       console.log(res);
+    }); */
+  }
+
+  dinamyCallFrom() {
+    this.registRequestForm.valueChanges.subscribe(data => {
+      this.requestData = data;
     });
   }
 }

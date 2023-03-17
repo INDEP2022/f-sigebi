@@ -1,5 +1,5 @@
 export enum MassiveExpedientEndpoints {
   Base = 'massiveexpedient',
-  DepurateExpedient = 'application/delete-expedient',
-  DeleteExpedient = 'application/depurate-expedient',
+  DepurateExpedient = 'massive-expedient/application/depurate-expedient',
+  DeleteExpedient = 'massive-expedient/application/delete-expedient',
 }

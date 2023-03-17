@@ -62,7 +62,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       let isPresent: boolean = false;
-      const text = this.form.get('name').value;
+      const text = this.form.controls['name'].value;
       await this.searchProficient(text).then(resp => {
         const values = resp.filter(data => data.name === text);
         isPresent = values.length > 0 ? true : false;
@@ -101,7 +101,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
   handleSuccess() {
     this.onLoadToast(
       'success',
-      `Se ha ${this.edit ? 'actualizado' : 'guardado'} correctament`,
+      `Se ha ${this.edit ? 'actualizado' : 'guardado'} correctamente`,
       ''
     );
     this.loading = false;

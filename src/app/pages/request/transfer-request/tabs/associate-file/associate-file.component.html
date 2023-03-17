@@ -24,7 +24,7 @@
             class="form-group form-secondary form-static-label">
             <ng-select
               class="form-control"
-              formControlName="user"
+              formControlName="inaiUser"
               [clearable]="false"
               [items]="users"
               [virtualScroll]="true"
@@ -65,7 +65,7 @@
             class="form-group form-secondary form-static-label">
             <ng-select
               class="form-control"
-              formControlName="unit"
+              formControlName="inaiUnit"
               [clearable]="false"
               [items]="units"
               [virtualScroll]="true"
@@ -106,7 +106,7 @@
             class="form-group form-secondary form-static-label">
             <ng-select
               class="form-control"
-              formControlName="file"
+              formControlName="inaiFile"
               [clearable]="false"
               [items]="files"
               [virtualScroll]="true"
@@ -125,7 +125,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Codificaci&oacute;n&#58;</label>
-            <span> {{ codificacion }} </span>
+            <span> {{ associateFileForm.get('fullCoding').value }} </span>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@
             class="form-group form-secondary form-static-label">
             <ng-select
               class="form-control"
-              formControlName="disposition"
+              formControlName="provisionInai"
               [clearable]="false"
               [items]="dispositions"
               [virtualScroll]="true"
@@ -166,14 +166,16 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Periodo de reserva&#58;</label>
-            <span> {{ periodoRecerva }} </span>
+            <span>
+              {{ associateFileForm.get('reservePeriodInai').value }}
+            </span>
           </div>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="associateFileForm.get('functionary')">
+          <!-- <form-field [control]="associateFileForm.get('functionary')">
             <ngx-select
               [form]="associateFileForm"
               control="functionary"
@@ -182,13 +184,34 @@
               bindLabel="id"
               label="Funcionario"
               (fetchItems)="getFunctionarySelect($event)"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <div
+            [formGroup]="associateFileForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="inaiOfficial"
+              [clearable]="false"
+              [items]="users"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="Nombre"
+              bindValue="usrID">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{ item.Nombre }}
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label">Funcionario</label>
+          </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Clasificaci&oacute;n&#58;</label>
-            <span> Publico** </span>
+            <span>
+              {{ associateFileForm.get('clasificationInai').value }}
+            </span>
           </div>
         </div>
       </div>
@@ -196,11 +219,11 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="associateFileForm.get('fileDate')"
+            [control]="associateFileForm.get('expedientDate')"
             label="Fecha expediente">
             <input
               class="form-control"
-              formControlName="fileDate"
+              formControlName="expedientDate"
               bsDatepicker />
           </form-field>
         </div>
@@ -210,7 +233,9 @@
             <label class="col-lg-5 text-right"
               >Secci&oacute;n docuemental&#58;</label
             >
-            <span> Interposicion de recursos administrativos** </span>
+            <span>
+              {{ associateFileForm.get('documentarySectionInai').value }}
+            </span>
           </div>
         </div>
       </div>
@@ -218,11 +243,11 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="associateFileForm.get('reservationDate')"
+            [control]="associateFileForm.get('reserveDateInai')"
             label="Fecha de reserva">
             <input
               class="form-control"
-              formControlName="reservationDate"
+              formControlName="reserveDateInai"
               bsDatepicker />
           </form-field>
         </div>
@@ -230,15 +255,22 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Serie documental&#58;</label>
-            <span> Interposicion de recursos administrativos**</span>
+            <span>
+              {{ associateFileForm.get('documentarySeriesInai').value }}</span
+            >
           </div>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="associateFileForm.get('fojas')" label="Fojas">
-            <input type="text" class="form-control" formControlName="fojas" />
+          <form-field
+            [control]="associateFileForm.get('sheetsInai')"
+            label="Fojas">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sheetsInai" />
           </form-field>
         </div>
 
@@ -247,7 +279,7 @@
             <label class="col-lg-5 text-right"
               >Vigencia del archivo de tr&aacute;mite&#58;</label
             >
-            <span> {{ vigenciaTramite }} </span>
+            <span> {{ associateFileForm.get('vaProcedureInai').value }} </span>
           </div>
         </div>
       </div>
@@ -255,9 +287,12 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="associateFileForm.get('legajos')"
+            [control]="associateFileForm.get('filesInai')"
             label="Legajos">
-            <input type="text" class="form-control" formControlName="legajos" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="filesInai" />
           </form-field>
         </div>
 
@@ -266,7 +301,9 @@
             <label class="col-lg-5 text-right"
               >Vigencia de archivo de concentraci&oacute;n&#58;</label
             >
-            <span> {{ vigenciaConcentracion }} </span>
+            <span>
+              {{ associateFileForm.get('vaConcentrationInai').value }}
+            </span>
           </div>
         </div>
       </div>
@@ -284,7 +321,9 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right">Valores documentales&#58;</label>
-            <span> Legal </span>
+            <span>
+              {{ associateFileForm.get('documentaryValueInai').value }}
+            </span>
           </div>
         </div>
       </div>
@@ -295,12 +334,16 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!associateFileForm.valid"
           [loading]="loading"
+          [btnSmall]="true"
+          [text]="'Generar Caratula'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

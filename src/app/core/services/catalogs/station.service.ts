@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Station } from 'src/app/common/constants/endpoints/station-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IStation } from '../../models/catalogs/station.model';
+import { IStation, IStation2 } from '../../models/catalogs/station.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -25,7 +26,7 @@ export class StationService
   }
 
   getById(id: string | number): Observable<IStation> {
-    return this.stationRepository.getById(this.route, id);
+    return this.stationRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IStation): Observable<IStation> {
@@ -47,5 +48,13 @@ export class StationService
   search(params: ListParams) {
     var route = 'station/search';
     return this.get(route, params);
+  }
+
+  getStationByTransferent(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IStation2>> {
+    const route = `${Station.Station}?filter.idTransferent=${id}`;
+    return this.get(route);
   }
 }

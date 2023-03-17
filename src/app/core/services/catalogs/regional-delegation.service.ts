@@ -30,7 +30,7 @@ export class RegionalDelegationService
   }
 
   getById(id: string | number): Observable<IRegionalDelegation> {
-    return this.regionalDelegationRepository.getById(this.route, id);
+    return this.regionalDelegationRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IRegionalDelegation): Observable<IRegionalDelegation> {
@@ -38,10 +38,10 @@ export class RegionalDelegationService
   }
 
   update(id: string | number, model: IRegionalDelegation): Observable<Object> {
-    return this.regionalDelegationRepository.update(this.route, id, model);
+    return this.regionalDelegationRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.regionalDelegationRepository.remove(this.route, id);
+    return this.regionalDelegationRepository.newRemove(this.route, id);
   }
 }

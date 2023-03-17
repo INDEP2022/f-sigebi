@@ -59,4 +59,8 @@ export class InterfacefgrService extends HttpService {
       })
     );
   }
+
+  getCityByAsuntoSat(body: { pgrOffice: string }) {
+    return this.post(InterfacefgrEndPoints.cityByAsuntoSat, body);
+  }
 }

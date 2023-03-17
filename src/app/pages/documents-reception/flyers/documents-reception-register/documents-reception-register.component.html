@@ -3,14 +3,12 @@
     <div class="d-flex justify-content-between">
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
-        <!-- <button
-          class="btn btn-secondary btn-sm active mr-2"
-          (click)="showTrackRecords()">
-          Antecedentes
-        </button> -->
-        <!-- <button class="btn btn-info btn-sm active" (click)="chooseOther()">
-          Seleccionar volante
-        </button> -->
+        <button
+          *ngIf="changeFlyerOption || flyerEditMode"
+          class="btn btn-primary active btn-sm"
+          (click)="chooseOther()">
+          Seleccionar Volante
+        </button>
       </div>
     </div>
   </div>
@@ -24,16 +22,13 @@
         <div class="col-md-7">
           <div class="d-flex">
             <div>
-              <a
-                [routerLink]="[
-                  '/pages/documents-reception/flyers-registration/record-update',
-                  12345
-                ]"
+              <button
                 outline
                 class="btn btn-primary btn-sm mr-3 active"
-                size="small">
+                size="small"
+                (click)="sendToRecordUpdate()">
                 Antecedentes
-              </a>
+              </button>
             </div>
 
             <div
@@ -139,6 +134,7 @@
               <button
                 type="button"
                 class="ml-5 btn btn-secondary active btn-sm"
+                [disabled]="!canViewDocuments"
                 (click)="viewDocuments()">
                 <i class="bx bx-file"></i>
               </button>
@@ -218,7 +214,7 @@
                 [control]="documentsReceptionForm.get('identifierExp')"
                 label="Ident. Exp">
                 <input
-                  type="number"
+                  type="text"
                   formControlName="identifierExp"
                   class="form-control"
                   readonly />
@@ -247,7 +243,7 @@
           <form-check
             *ngIf="initialCondition != 'A'"
             class="col-md-6"
-            label="Desalojov"
+            label="Desalojo"
             for="desalojov-check">
             <input
               id="desalojov-check"
@@ -422,14 +418,22 @@
                 [form]="documentsReceptionForm"
                 [data]="uniqueKeys"
                 (fetchItems)="getUniqueKey($event)"
-                value="uniqueCve"
                 bindLabel="uniqueCve"
                 control="uniqueKey"
-                label="Clave única 3 niveles"
-                (change)="setUniqueKeyData($event)"
+                label="Clave &uacute;nica 3 niveles"
+                (change)="setUniqueKeyData($event, true)"
                 termMaxLength="5">
               </ngx-select>
             </form-field>
+
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openModalKeys()">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
+            </div>
 
             <form-field
               class="col-md-6"
@@ -438,23 +442,24 @@
                 [form]="documentsReceptionForm"
                 [data]="cities"
                 (fetchItems)="getCities($event)"
-                bindLabel="nameCity"
+                bindLabel="nameAndId"
                 control="cityNumber"
                 label="Ciudad"
                 [searchOnInit]="true"
                 (change)="cityChange($event)"
-                termMaxLength="60">
+                termMaxLength="60"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
 
-            <div class="col-md-2">
+            <!-- <div class="col-md-2">
               <button
                 type="button"
                 class="btn btn-secondary btn-sm active"
                 (click)="clearCityState()">
                 <i class="bx bxs-eraser bx-sm float-icon"></i>
               </button>
-            </div>
+            </div> -->
           </div>
 
           <div class="row pt-5">
@@ -465,11 +470,12 @@
                 [form]="documentsReceptionForm"
                 [data]="federalEntities"
                 (fetchItems)="getFederalEntities($event)"
-                bindLabel="value"
+                bindLabel="otKeyAndValue"
                 control="entFedKey"
                 label="Ent. Fed"
                 [searchOnInit]="true"
-                termMaxLength="80">
+                termMaxLength="80"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
 
@@ -480,12 +486,13 @@
                 [form]="documentsReceptionForm"
                 (fetchItems)="getTransferors($event)"
                 [data]="transferors"
-                bindLabel="nameTransferent"
+                bindLabel="nameAndId"
                 control="endTransferNumber"
                 label="Transferente"
                 [searchOnInit]="true"
                 (change)="changeTransferor($event)"
-                termMaxLength="200">
+                termMaxLength="200"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
           </div>
@@ -498,11 +505,14 @@
                 [form]="documentsReceptionForm"
                 [data]="stations"
                 (fetchItems)="getStations($event)"
-                bindLabel="stationName"
+                bindLabel="nameAndId"
                 control="stationNumber"
                 label="Emisora"
                 [searchOnInit]="true"
-                termMaxLength="100">
+                (change)="changeStation($event)"
+                termMaxLength="100"
+                [showTooltip]="true"
+                [readonly]="transferorLoading || stationLoading">
               </ngx-select>
             </form-field>
 
@@ -513,12 +523,13 @@
                 [form]="documentsReceptionForm"
                 [data]="authorities"
                 (fetchItems)="getAuthorities($event)"
-                bindLabel="authorityName"
+                bindLabel="nameAndId"
                 control="autorityNumber"
                 label="Autoridad"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface"
-                termMaxLength="400">
+                [readonly]="pgrInterface || stationLoading || transferorLoading"
+                termMaxLength="400"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
           </div>
@@ -531,11 +542,12 @@
                 [form]="documentsReceptionForm"
                 [data]="publicMinistries"
                 (fetchItems)="getPublicMinistries($event)"
-                bindLabel="description"
+                bindLabel="nameAndId"
                 control="minpubNumber"
                 [searchOnInit]="true"
                 label="Min. P&uacute;blico"
-                termMaxLength="100">
+                termMaxLength="100"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
 
@@ -546,7 +558,7 @@
                 [form]="documentsReceptionForm"
                 [data]="crimes"
                 (fetchItems)="getCrimes($event)"
-                bindLabel="value"
+                bindLabel="otKeyAndValue"
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
@@ -565,11 +577,12 @@
                 [form]="documentsReceptionForm"
                 [data]="courts"
                 (fetchItems)="getCourts($event)"
-                bindLabel="description"
+                bindLabel="nameAndId"
                 control="courtNumber"
                 label="Juzgado"
                 [searchOnInit]="true"
-                termMaxLength="100">
+                termMaxLength="100"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
           </div>
@@ -582,11 +595,12 @@
                 [form]="documentsReceptionForm"
                 [data]="defendants"
                 (fetchItems)="getDefendants($event)"
-                bindLabel="name"
+                bindLabel="nameAndId"
                 control="indiciadoNumber"
                 [label]="taxpayerLabel"
                 [searchOnInit]="true"
-                termMaxLength="1000">
+                termMaxLength="1000"
+                [showTooltip]="true">
               </ngx-select>
             </form-field>
 
@@ -597,7 +611,7 @@
                 [form]="documentsReceptionForm"
                 [data]="receptionWays"
                 (fetchItems)="getReceptionWays($event)"
-                bindLabel="value"
+                bindLabel="otKeyAndValue"
                 control="viaKey"
                 label="V&iacute;a Recepci&oacute;n"
                 [searchOnInit]="true"
@@ -615,6 +629,7 @@
                 type="text"
                 formControlName="destinationArea"
                 class="form-control"
+                [title]="departmentName"
                 readonly />
             </form-field>
 
@@ -636,6 +651,7 @@
                 type="text"
                 formControlName="delegationName"
                 class="form-control"
+                [title]="delegationName"
                 readonly />
             </form-field>
 
@@ -647,6 +663,7 @@
                 type="text"
                 formControlName="subDelegationName"
                 class="form-control"
+                [title]="subDelegationName"
                 readonly />
             </form-field>
           </div>
@@ -659,7 +676,7 @@
                 [form]="documentsReceptionForm"
                 [data]="managementAreas"
                 (fetchItems)="getManagementAreas($event)"
-                bindLabel="description"
+                bindLabel="nameAndId"
                 control="estatusTramite"
                 label="Gestión Destino"
                 [searchOnInit]="true"
@@ -678,7 +695,7 @@
             [form]="flyerCopyRecipientForm"
             [data]="users"
             (fetchItems)="getUsers($event)"
-            bindLabel="user"
+            bindLabel="userAndName"
             control="copyuser"
             label="En atención"
             [searchOnInit]="true"
@@ -692,7 +709,7 @@
             [form]="flyerCopyCppForm"
             [data]="usersCopy"
             (fetchItems)="getUsersCopy($event)"
-            bindLabel="user"
+            bindLabel="userAndName"
             control="copyuser"
             label="C.P.P."
             [searchOnInit]="true"
@@ -717,11 +734,6 @@
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
-        <div class="m-3">
-          <button type="button" class="btn btn-danger active" (click)="clear()">
-            Limpiar
-          </button>
-        </div>
         <div
           class="m-3"
           *ngIf="
@@ -729,13 +741,6 @@
             pgrInterface ||
             satInterface
           ">
-          <!-- <button
-            type="button"
-            class="btn btn-primary active"
-            (click)="goodsCaptureCheck()"
-            [disabled]="procedureBlocked">
-            Siguiente
-          </button> -->
           <confirm-button
             text="Siguiente"
             loadingText="Cargando"

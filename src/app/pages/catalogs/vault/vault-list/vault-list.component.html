@@ -4,7 +4,7 @@
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
-        <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
           Nueva
         </button>
       </div>
@@ -12,11 +12,6 @@
   </div>
 
   <div body>
-    <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
-      </div>
-    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -24,7 +19,7 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="vaults"
-            (edit)="edit($event.data)"
+            (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)">
           </ng2-smart-table>
         </div>

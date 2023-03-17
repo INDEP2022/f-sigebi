@@ -12,81 +12,92 @@
         <label class="text-right"
           >Usuario creaci&oacute;n de programaci&oacute;n&#58;</label
         >
-        <span> David Baez </span>
+        <span> {{ programming?.creationUser }} </span>
       </div>
     </div>
 
-    <div class="row pt-3">
-      <h5 class="title">Programaci&oacute;n</h5>
+    <div class="row pt-5">
       <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
-          <div class="form-group">
-            <label class="col-lg-5 text-right"
-              >Delegaci&oacute;n regional&#58;</label
-            >
-            <span> NOROESTE </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Transferente&#58;</label>
-            <span> SAT - comercio exterior </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Emisora&#58;</label>
-            <span> AGA </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Autoridad&#58;</label>
-            <span> Administración de la aduana de Nuevo Laredo </span>
-          </div>
-        </form>
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Delegaci&oacute;n regional&#58;</label
+          >
+          <span class="fs-4">
+            {{ programming?.regionalDelegationNumber }}
+          </span>
+        </div>
       </div>
-
       <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Correo transferente&#58;</label>
-            <span> OST12363@SAE.GOB.MX </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right"
-              >Fecha page operativo&#58;</label
-            >
-            <span> 11-oct-2022 00:00 </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
-            <span> 12-oct-2022 00:00 </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Direcci&oacute;n&#58;</label>
-            <span> Domicilio desconocido </span>
-          </div>
-        </form>
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Correo transferente&#58;</label>
+          <span class="fs-4">{{ programming?.emailTransfer }}</span>
+        </div>
       </div>
-
       <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
-            <span> Diverso </span>
-          </div>
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Ciudad&#58;</label>
+          <span class="fs-4"> {{ programming?.city }} </span>
+        </div>
+      </div>
+    </div>
 
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Ciudad&#58;</label>
-            <span> Nuevo Laredo </span>
-          </div>
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Transferente&#58;</label>
+          <span class="fs-4"> {{ programming?.tranferId }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Fecha inicio operativo&#58;</label>
+          <span class="fs-4"> {{ programming?.startDate }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
+          <span class="fs-4"> {{ programming?.endDate }}</span>
+        </div>
+      </div>
+    </div>
 
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Observaci&oacute;n&#58;</label>
-            <span> Ninguna </span>
-          </div>
-        </form>
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Emisora&#58;</label>
+          <span class="fs-4"> {{ programming?.stationId }} </span>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label class="col-lg-3 text-right">Dirección&#58;</label>
+          <span class="fs-4"> {{ programming?.address }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Autoridad&#58;</label>
+          <span class="fs-4"> {{ programming?.autorityId }} </span>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label class="col-lg-3 text-right">Observación&#58;</label>
+          <span class="fs-4"> {{ programming?.observation }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
+          <span class="fs-3"> {{ programming?.typeRelevantId }} </span>
+        </div>
       </div>
     </div>
 
@@ -95,15 +106,14 @@
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Almac&eacute;n&#58;</label>
-          <span> Nombre de Almacén test </span>
+          <span> {{ programming?.storeId }} </span>
         </div>
       </div>
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
           <span>
-            Boulevard José López Portillo No° 200, Apodaca, Nuevo León, C.P.
-            66613
+            {{ ubicationWarehouse }}
           </span>
         </div>
       </div>
@@ -114,7 +124,7 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="userData">
+        [source]="usersData">
       </ng2-smart-table>
     </div>
 
@@ -183,6 +193,16 @@
 
       <div class="col-lg-5">
         <search-bar placeholder="Número de gestión"> </search-bar>
+      </div>
+      <div class="row">
+        <div class="btn-toolbar justify-content-end">
+          <button
+            (click)="getReportGoods()"
+            class="btn btn-primary btn-sm active">
+            Buscar
+          </button>
+          <button class="btn btn-danger btn-sm active">Limpiar</button>
+        </div>
       </div>
     </div>
 
@@ -309,7 +329,7 @@
       <h5 class="title">Bienes seleccionados</h5>
       <div class="md-tabs">
         <tabset>
-          <tab heading="Transportable(0)" id="tab1">
+          <tab heading="Recibos" id="tab1">
             <div class="row">
               <div class="d-flex justify-content-end">
                 <app-columns-select
@@ -357,21 +377,38 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settingsTranGoods"
-              [source]="tranGoods">
+              [source]="guardGoods">
             </ng2-smart-table>
             <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
+              [params]="paramsGuard"
+              [totalItems]="totalItemsGuard"></app-pagination>
           </tab>
-          <tab heading="Almacén SAE(0)">
+          <tab [heading]="headingWarehouse">
+            <div class="row d-flex justify-content-end">
+              <div class="btn-toolbar pt-5">
+                <app-columns-select
+                  [(settings)]="settingsGoodsGoods"></app-columns-select>
+                <button class="btn btn-primary btn-sm active ml-2">
+                  Asignar Acta
+                </button>
+
+                <button class="btn btn-pink btn-sm active">
+                  Adjuntar documentos
+                </button>
+                <button class="btn btn-pink btn-sm active">
+                  Integrar fotografia
+                </button>
+              </div>
+            </div>
+
             <ng2-smart-table
               [attr.class]="'table-bordered'"
-              [settings]="settingsTranGoods"
-              [source]="tranGoods">
+              [settings]="settingsGoodsGoods"
+              [source]="goodsWarehouse">
             </ng2-smart-table>
             <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
+              [params]="paramsGoodsWarehouse"
+              [totalItems]="totalItemsWarehouse"></app-pagination>
           </tab>
 
           <tab heading="Reprogramación(0)">
@@ -407,3 +444,6 @@
     </div>
   </div>
 </app-card>
+
+<!--Estado conservación sae-->
+<!--Estado conservación -->

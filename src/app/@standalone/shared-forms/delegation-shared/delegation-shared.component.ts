@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -31,8 +38,8 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
 
-  @Input() labelDelegation: string = 'Delegaci&oacute;n';
-  @Input() labelSubdelegation: string = 'Sub Delegaci&oacute;n';
+  @Input() labelDelegation: string = 'Delegación';
+  @Input() labelSubdelegation: string = 'Sub Delegación';
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
@@ -53,12 +60,27 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   constructor(
     private service: DelegationService,
     private serviceSubDeleg: SubdelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private render: Renderer2
   ) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.showSubdelegation) {
+      this.form.get(this.delegationField).valueChanges.subscribe(res => {
+        const sfield = document.getElementById('sdele');
+        if (res != null) {
+          this.render.removeClass(sfield, 'disabled');
+        } else {
+          this.render.addClass(sfield, 'disabled');
+          this.form.get(this.subdelegationField).setValue(null);
+        }
+      });
+    } else {
+      console.log('no');
+    }
+  }
 
   getDelegations(params: ListParams) {
     this.service.getAll(params).subscribe(

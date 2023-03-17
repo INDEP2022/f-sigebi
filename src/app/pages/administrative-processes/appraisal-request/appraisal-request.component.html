@@ -5,29 +5,35 @@
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="form.get('noRequest')" label="No. Solicitud">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noRequest"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-6"></div>
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('requestDate')"
-            label="Fecha de solicitud">
-            <input
-              type="text"
-              formControlName="requestDate"
-              placeholder="Fecha de solicitud"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
+      <div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field [control]="form.get('noRequest')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getRequestAppraisalAll($event)"
+                [data]="noRequest"
+                value="id"
+                bindLabel="id"
+                label="No. Solicitud"
+                [control]="'noRequest'"
+                (change)="getRequestAppraisalById()">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6"></div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('requestDate')"
+              label="Fecha de solicitud">
+              <input
+                type="text"
+                formControlName="requestDate"
+                placeholder="Fecha de solicitud"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
         </div>
       </div>
       <div class="row margin-input">
@@ -35,12 +41,14 @@
           <form-field [control]="form.get('noPerito')">
             <ngx-select
               [form]="form"
-              [data]="peritos"
-              bindLabel="name"
-              label="No. Perito"
-              value="id"
               (fetchItems)="getPeritos($event)"
-              control="noPerito"></ngx-select>
+              [data]="peritos"
+              value="id"
+              bindLabel="id"
+              label="No. Perito"
+              [control]="'noPerito'"
+              (change)="getPeritos($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -50,12 +58,14 @@
           <form-field [control]="form.get('institution')">
             <ngx-select
               [form]="form"
-              [data]="institutions"
-              bindLabel="name"
-              label="Institución"
-              value="id"
               (fetchItems)="getInstitutions($event)"
-              control="institution"></ngx-select>
+              [data]="institutions"
+              value="id"
+              bindLabel="id"
+              label="Institución"
+              [control]="'institution'"
+              (change)="getInstitutions($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -90,36 +100,42 @@
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
-              [data]="delegation"
-              bindLabel="name"
-              label="Delegacíon"
-              value="id"
               (fetchItems)="getDelegations($event)"
-              control="delegation"></ngx-select>
+              [data]="delegation"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
-              [data]="subdelegation"
-              bindLabel="name"
-              label="Subdelegación"
-              value="id"
               (fetchItems)="getSubdelegations($event)"
-              control="subdelegation"></ngx-select>
+              [data]="subdelegation"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('department')">
             <ngx-select
               [form]="form"
-              [data]="department"
-              bindLabel="name"
-              label="Departamento"
-              value="id"
               (fetchItems)="getDepartments($event)"
-              control="department"></ngx-select>
+              [data]="department"
+              value="id"
+              bindLabel="description"
+              label="Departamento"
+              [control]="'department'"
+              (change)="getDepartments($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -154,36 +170,42 @@
           <form-field [control]="form.get('requestedDelegation')">
             <ngx-select
               [form]="form"
-              [data]="delegation"
-              bindLabel="name"
-              label="Delegacíon"
-              value="id"
               (fetchItems)="getDelegations($event)"
-              control="requestedDelegation"></ngx-select>
+              [data]="delegation"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'requestedDelegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('requestedSubdelegation')">
             <ngx-select
               [form]="form"
-              [data]="subdelegation"
-              bindLabel="name"
-              label="Subdelegación"
-              value="id"
               (fetchItems)="getSubdelegations($event)"
-              control="requestedSubdelegation"></ngx-select>
+              [data]="subdelegation"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'requestedSubdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('requestedDepartment')">
             <ngx-select
               [form]="form"
-              [data]="department"
-              bindLabel="name"
-              label="Departamento"
-              value="id"
               (fetchItems)="getDepartments($event)"
-              control="requestedDepartment"></ngx-select>
+              [data]="department"
+              value="id"
+              bindLabel="description"
+              label="Departamento"
+              [control]="'requestedDepartment'"
+              (change)="getDepartments($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -191,7 +213,6 @@
         <form-field [control]="form.get('observations')" label="Observaciones">
           <textarea
             rows="3"
-            placeholder="Observaciones"
             class="form-control"
             formControlName="observations"></textarea>
         </form-field>
@@ -202,10 +223,10 @@
           <form-field [control]="form.get('costCurrency')">
             <ngx-select
               [form]="form"
-              [data]="appraisalCurrency"
-              bindLabel="name"
+              [data]="currency"
+              bindLabel="otKey1"
               label="Moneda del Costo"
-              value="id"
+              value="otKey1"
               (fetchItems)="getCurrencies($event)"
               control="costCurrency"></ngx-select>
           </form-field>
@@ -214,10 +235,10 @@
           <form-field [control]="form.get('appraisalCurrency')">
             <ngx-select
               [form]="form"
-              [data]="appraisalCurrency"
-              bindLabel="name"
+              [data]="currency"
+              bindLabel="otKey1"
               label="Moneda del avalúo"
-              value="id"
+              value="otKey1"
               (fetchItems)="getCurrencies($event)"
               control="appraisalCurrency"></ngx-select>
           </form-field>
@@ -229,7 +250,7 @@
           <div class="col-md-4">
             <div class="row margin-input">
               <div class="col-md-1 mb-4">
-                <button type="submit" class="btn btn-secondary btn-sm active">
+                <button (click)="add()" class="btn btn-secondary btn-sm active">
                   Asignar bienes
                 </button>
               </div>
@@ -260,9 +281,12 @@
             </div>
             <div class="row margin-input">
               <div class="col-md-1">
-                <button type="submit" class="btn btn-primary btn-sm active">
-                  Generar archivo
-                </button>
+                <confirm-button
+                  text="Generar archivo"
+                  [disabled]="form.invalid"
+                  [loading]="loading"
+                  (confirm)="send()">
+                </confirm-button>
               </div>
             </div>
           </div>

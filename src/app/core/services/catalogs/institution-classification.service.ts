@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { InstitutionClasificationEndpoints } from 'src/app/common/constants/endpoints/institution-clasification-endpoint';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -10,12 +12,16 @@ import { IInstitutionClassification } from '../../models/catalogs/institution-cl
   providedIn: 'root',
 })
 export class InstitutionClasificationService
+  extends HttpService
   implements ICrudMethods<IInstitutionClassification>
 {
   private readonly route: string = ENDPOINT_LINKS.InstitutionClasification;
   constructor(
     private institutionClasificationRepository: Repository<IInstitutionClassification>
-  ) {}
+  ) {
+    super();
+    this.microservice = InstitutionClasificationEndpoints.BasePage;
+  }
 
   getAll(
     params?: ListParams
@@ -47,7 +53,18 @@ export class InstitutionClasificationService
     );
   }
 
+  newUpdate(model: IInstitutionClassification): Observable<Object> {
+    return this.institutionClasificationRepository.newUpdate(this.route, model);
+  }
+
   remove(id: string | number): Observable<Object> {
     return this.institutionClasificationRepository.remove(this.route, id);
+  }
+
+  getAll2(
+    params?: ListParams | string
+  ): Observable<IListResponse<IInstitutionClassification>> {
+    const route = `${InstitutionClasificationEndpoints.InstitutionClasification}`;
+    return this.get<IListResponse<IInstitutionClassification>>(route, params);
   }
 }

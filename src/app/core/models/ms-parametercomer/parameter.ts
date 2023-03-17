@@ -14,7 +14,7 @@ export interface IBrand {
 export interface ISubBrands {
   idBrand: string;
   idSubBrand: string;
-  subBrandDescription: string;
+  subBrandDescription?: string;
 }
 
 export interface ITiieV1 {
@@ -38,7 +38,7 @@ export interface IComerLayoutsH {
 }
 
 export interface IComerLayouts {
-  idLayout: number;
+  idLayout: IComerLayoutsH;
   idConsec: number;
   position: number;
   column: string;
@@ -54,4 +54,15 @@ export interface IComerLayouts {
 
 export interface ILay {
   idLayout: number;
+  idConsec: number;
+}
+
+export interface IL {
+  idLayout: number;
+}
+
+export interface IPhoto {
+  id: number;
+  route: URL;
+  status: string;
 }

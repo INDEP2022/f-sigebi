@@ -106,9 +106,9 @@ export interface INotificationInquiry {
   criminalCase: string;
   entFedKey: string;
   indiciadoNumber: number;
-  minpubNumber: number;
+  minpubNumber: number | string;
   cityNumber: number;
-  courtNumber: number;
+  courtNumber: number | string;
   transference: number;
   stationNumber: number;
   autorityNumber: number;
@@ -118,6 +118,10 @@ export interface INotificationTransferentIndiciadoCityGetData {
   city: number;
   indiciado: number;
   transferent: number;
+}
+
+export interface ItVolanteNotificacionesByNoExpedient {
+  wheel: string;
 }
 
 export interface INotificationTransferentIndiciadoCity {

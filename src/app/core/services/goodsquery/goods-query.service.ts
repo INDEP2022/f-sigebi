@@ -9,7 +9,10 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
-import { IAttribClassifGoods } from '../../models/ms-goods-query/attributes-classification-good';
+import {
+  IAttribClassifGoods,
+  IUnityByClasif,
+} from '../../models/ms-goods-query/attributes-classification-good';
 
 @Injectable({
   providedIn: 'root',
@@ -127,8 +130,14 @@ export class GoodsQueryService extends HttpService {
   // }
 
   getClasifXUnitByClasifNum(clasifNum: number) {
-    return this.httpClient.get(
+    return this.httpClient.get<IListResponse<IUnityByClasif>>(
       `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getClasifXUnit/${clasifNum}`
+    );
+  }
+
+  getZStatusCatPhasePart(status: string) {
+    return this.httpClient.get<IListResponse<any>>(
+      `${environment.API_URL}goodsquery/api/v1/z-status-cat-phase-part/check-status-masiv/${status}`
     );
   }
 
@@ -136,6 +145,14 @@ export class GoodsQueryService extends HttpService {
     return this.goodQueryRepository.getAllPaginated(
       this.atributeClassificationGood,
       params
+    );
+  }
+
+  getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
+    const route = `goodsquery/api/v1/views/cat-store-view`;
+    const params = this.makeParams(_params);
+    return this.httpClient.get<IListResponse<any>>(
+      `${environment.API_URL}${route}?${params}`
     );
   }
 
