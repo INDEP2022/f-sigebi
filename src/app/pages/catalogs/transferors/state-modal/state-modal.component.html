@@ -5,24 +5,41 @@
   <div body>
     <form class="form-material" [formGroup]="stateForm">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
             label="Nombre transferente"
-            [control]="stateForm.get('nametransferent')">
+            [control]="stateForm.get('nameTransferee')">
             <input
               type="text"
               class="form-control"
-              formControlName="nametransferent" />
+              formControlName="nameTransferee"
+              readonly />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
+          <form-field [control]="stateForm.get('stateKey')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="stateForm"
+              control="stateKey"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (fetchItems)="getStates($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row" *ngIf="stateForm.get('stateKey').value === 'oculto'">
+        <div class="col-md-6">
           <form-field
-            label="Estado"
-            [control]="stateForm.get('nametransferent')">
+            label="ID Transferente"
+            [control]="stateForm.get('idTransferee')">
             <input
               type="text"
               class="form-control"
-              formControlName="nametransferent" />
+              formControlName="idTransferee" />
           </form-field>
         </div>
       </div>
@@ -31,7 +48,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'"></confirm-button>
+        <confirm-button
+          [type]="'button'"
+          [disabled]="stateForm.invalid"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

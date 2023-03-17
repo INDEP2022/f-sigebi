@@ -7,6 +7,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ISingleTable,
+  ITable,
   ITables,
   ITablesData,
   TvalTable1Data,
@@ -39,8 +40,8 @@ export class DynamicTablesService extends HttpService {
     return this.get<ISingleTable>(route);
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<ITables>> {
-    return this.get<IListResponse<ITablesData>>(
+  getAll(params?: ListParams): Observable<IListResponse<ITable>> {
+    return this.get<IListResponse<ITable>>(
       DynamicCatalogEndpoint.DinamicTables,
       params
     );
@@ -60,5 +61,11 @@ export class DynamicTablesService extends HttpService {
       params
     );
   }
+
+  getTvalTable5ByTable(id: number | string) {
+    const fullRoute = `${DynamicCatalogEndpoint.getTvalTable5ByTable}/${id}`;
+    return this.get<IListResponse<TvalTable1Data>>(fullRoute);
+  }
+
   /* getfindTvaltable1ByTableKey() */
 }

@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  model: {
+  modelComment: {
     title: 'Modelo',
     sort: false,
     width: '80%',

@@ -6,11 +6,11 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IState } from 'src/app/core/models/catalogs/state-model';
 import {
-  ITransferente,
-  ITransferenteSae,
-} from 'src/app/core/models/catalogs/transferente.model';
+  IState,
+  IStateByTransferent,
+} from 'src/app/core/models/catalogs/state-model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { StateModalComponent } from '../state-modal/state-modal.component';
@@ -23,7 +23,7 @@ import { STATE_COLUMS, TRANSFERENT_STATE_COLUMNS } from './columns';
   styles: [],
 })
 export class TransferorsListComponent extends BasePage implements OnInit {
-  columns: ITransferenteSae[] = [];
+  columns: ITransferente[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
@@ -41,6 +41,9 @@ export class TransferorsListComponent extends BasePage implements OnInit {
   loading3 = this.loading;
 
   settings2;
+
+  rowSelected: boolean = false;
+  selectedRow: any = null;
 
   constructor(
     private modalService: BsModalService,
@@ -64,13 +67,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     this.settings2 = {
       ...this.settings,
       hideSubHeader: true,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
-        add: false,
-        position: 'right',
-      },
+      actions: false,
       columns: { ...STATE_COLUMS },
     };
   }
@@ -108,7 +105,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
   }
 
   //Tabla de transferentes
-  getTransferents() {
+  getTransferents(id?: number) {
     this.loading1 = true;
     let params = {
       ...this.params.getValue(),
@@ -128,7 +125,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
   }
 
   //Modal del formulario para actualizar un transferente
-  openForm(transferorsState?: ITransferenteSae) {
+  openForm(transferorsState?: ITransferente) {
     let config: ModalOptions = {
       initialState: {
         transferorsState,
@@ -157,29 +154,57 @@ export class TransferorsListComponent extends BasePage implements OnInit {
   getStateByTransferent(id?: number) {
     this.loading2 = true;
     const idTrans = { ...this.transferents };
-    this.transferenteSaeService.getStateByTransferent(idTrans.id).subscribe({
-      next: response => {
-        this.stateList = response.data;
-        this.totalItems2 = response.count;
-        this.loading2 = false;
-      },
-      error: error => (this.loading2 = false),
-    });
+    this.transferenteSaeService
+      .getStateByTransferent(idTrans.id, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          this.stateList = response.data;
+          this.totalItems2 = response.count;
+          this.loading2 = false;
+        },
+        error: error => (this.showNullRegister(), (this.loading = false)),
+      });
   }
 
-  //Modal del formulario para actualizar un transferente
-  openForm2(state?: IState) {
+  //Modal del formulario para actualizar un estado
+  openForm2(stateByTransferent?: IStateByTransferent) {
+    const idTrans = { ...this.transferents };
+    let transferentsI = this.transferents;
     let config: ModalOptions = {
       initialState: {
-        state,
+        stateByTransferent,
+        transferentsI,
+        idTrans,
         callback: (next: boolean) => {
-          if (next) this.getTransferents();
-          console.log('cerrando');
+          if (next) this.getTransferents(idTrans.id);
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(StateModalComponent, config);
+  }
+
+  //Msj de que no existe estado de transferente
+  showNullRegister() {
+    this.alertQuestion(
+      'warning',
+      'Transferente sin Estado',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm2();
+      }
+    });
+  }
+
+  //Muestra información de la fila seleccionada de Transferentes
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
+  }
+
+  resetScreen() {
+    this.rowSelected = false;
   }
 }

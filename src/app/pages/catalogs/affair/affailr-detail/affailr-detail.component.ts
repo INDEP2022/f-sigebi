@@ -53,7 +53,7 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.affairService.create(this.affairForm.value).subscribe({
+    this.affairService.create2(this.affairForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -61,10 +61,12 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.affairService.update(this.affair.id, this.affairForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.affairService
+      .update2(this.affair.id, this.affairForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

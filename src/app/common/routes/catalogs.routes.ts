@@ -148,7 +148,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/generics',
       },
       {
-        label: 'Instituciones Emisoras',
+        label: 'Autoridades Emisoras',
         link: '/pages/catalogs/issuing-institution',
       },
       {

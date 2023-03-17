@@ -48,9 +48,6 @@ export class ProeficientService
   }
 
   searchText(params?: ListParams) {
-    return this.proeficientRepository.getAllPaginated(
-      this.route.concat('/search'),
-      params
-    );
+    return this.proeficientRepository.getAllPaginated(this.route, params);
   }
 }

@@ -55,6 +55,11 @@ export class AffairTypeRepository<T> implements IAffairTypeMethods<T> {
     );
   }
 
+  newUpdate(formData: Object) {
+    const fullRoute = `${this.ms}/`;
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
   create(route: string, formData: Object) {
     const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.post<T>(`${fullRoute}`, formData);

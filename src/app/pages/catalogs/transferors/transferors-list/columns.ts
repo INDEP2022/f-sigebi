@@ -38,12 +38,20 @@ export const TRANSFERENT_STATE_COLUMNS = {
 };
 
 export const STATE_COLUMS = {
-  nametransferent: {
+  transferent: {
     title: 'Transferente',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.nameTransferent;
+    },
+    width: '50%',
   },
-  statekey: {
+  state: {
     title: 'Estado',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.descCondition;
+    },
+    width: '50%',
   },
 };

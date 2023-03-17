@@ -48,8 +48,6 @@ export class CatFinancialInformationAttributesComponent
         delete: true,
         position: 'right',
       },
-
-      //hideSubHeader: false,
       columns: { ...FINANCIAL_INFO_ATTR_COLUMNS },
     };
   }
@@ -99,8 +97,6 @@ export class CatFinancialInformationAttributesComponent
 
         this.data.load(this.columns);
         this.data.refresh();
-        // this.attributesFinancialInfo = response.data;
-        // this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),

@@ -15,4 +15,6 @@ export const PHONE_PATTERN = '^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$';
 export const KEYGENERATION_PATTERN = '[a-zA-Z0-9\\s\\-\\/]*';
 export const NAME_PATTERN = '^[A-Za-z\\áéíóúÁÉÍÓÚñÑ\\ \\.]+$';
 
+export const NUMBERS_BY_COMMA = '^(d+,?)+$';
+
 //'^[A-ZÑa-zñáéíóúÁÉÍÓÚ'° ]+$'

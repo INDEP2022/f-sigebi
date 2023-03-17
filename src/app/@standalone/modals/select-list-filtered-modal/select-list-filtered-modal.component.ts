@@ -11,6 +11,7 @@ import {
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { IUserRowSelectEvent } from '../../../core/interfaces/ng2-smart-table.interface';
 
 @Component({
   selector: 'app-select-list-filtered-modal',
@@ -142,7 +143,7 @@ export class SelectListFilteredModalComponent
     this.modalRef.hide();
   }
 
-  selectEvent(event: any) {
+  selectEvent(event: IUserRowSelectEvent<any>) {
     console.log(event);
     if (this.settings.selectMode === 'multi') {
       this.selectRow(event.selected);

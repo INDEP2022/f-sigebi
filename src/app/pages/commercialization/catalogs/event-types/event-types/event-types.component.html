@@ -2,17 +2,14 @@
   <div class="ch-content" header>
     <h5 class="title">TIPOS DE EVENTO</h5>
     <div>
-      <button
-        (click)="add()"
-        [disabled]="newId == 0"
-        class="btn btn-primary active btn-sm ml-3">
+      <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
         Nuevo
       </button>
     </div>
   </div>
   <div body>
     <div class="row mb-3 mt-3">
-      <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline">
+      <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline">
         <div class="row">
           <div class="form-material col-12">
             <search-bar
@@ -20,7 +17,7 @@
               [filterField]="searchFilter"></search-bar>
           </div>
         </div>
-      </div>
+      </div>-->
       <div
         class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline"
         *ngIf="rowSelected">
@@ -61,7 +58,7 @@
         </div>
       </div>
     </div>
-    <app-pagination [filterParams]="params" [totalItems]="totalItems">
+    <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
     <!--INFO EVENT TYPE-->
     <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
