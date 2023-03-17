@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SaveValuesEndpoints } from 'src/app/common/constants/endpoints/save-values-endpoint';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +11,15 @@ import { ISaveValue } from '../../models/catalogs/save-value.model';
 @Injectable({
   providedIn: 'root',
 })
-export class SaveValueService implements ICrudMethods<ISaveValue> {
+export class SaveValueService
+  extends HttpService
+  implements ICrudMethods<ISaveValue>
+{
   private readonly route: string = ENDPOINT_LINKS.SaveValue;
-  constructor(private saveValueRepository: Repository<ISaveValue>) {}
+  constructor(private saveValueRepository: Repository<ISaveValue>) {
+    super();
+    this.microservice = SaveValuesEndpoints.BaseaPath;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<ISaveValue>> {
     return this.saveValueRepository.getAllPaginated(this.route, params);
@@ -35,5 +43,10 @@ export class SaveValueService implements ICrudMethods<ISaveValue> {
 
   getCveSaveValues(params: ListParams) {
     return this.saveValueRepository.getAllPaginated(this.route, params);
+  }
+
+  remove2(model: ISaveValue) {
+    const route = `${SaveValuesEndpoints.SaveValue}`;
+    return this.delete(route, model);
   }
 }

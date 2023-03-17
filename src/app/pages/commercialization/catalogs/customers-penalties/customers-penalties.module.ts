@@ -17,9 +17,14 @@ import { CustomersPenaltiesRoutingModule } from './customers-penalties-routing.m
 //Components
 import { AddPenaltiesComponent } from './add-penalties/add-penalties.component';
 import { CustomersPenaltiesComponent } from './customers-penalties/customers-penalties.component';
+import { HistoryCustomersPenaltiesComponent } from './customers-penalties/history-customers-penalties/history-customers-penalties.component';
 
 @NgModule({
-  declarations: [CustomersPenaltiesComponent, AddPenaltiesComponent],
+  declarations: [
+    CustomersPenaltiesComponent,
+    AddPenaltiesComponent,
+    HistoryCustomersPenaltiesComponent,
+  ],
   imports: [
     CommonModule,
     CustomersPenaltiesRoutingModule,

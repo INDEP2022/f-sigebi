@@ -16,7 +16,7 @@ export class ShelvessService extends HttpService {
 
   constructor(private shelvesRepository: ShelvesRepository<IShelves>) {
     super();
-    this.microservice = 'catalog';
+    this.microservice = ShelvesEndpoints.BasePage;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IShelves>> {
@@ -40,10 +40,6 @@ export class ShelvessService extends HttpService {
     return this.shelvesRepository.getAllPaginated(this.route.Post, params);
   }
 
-  //  update(model: IShelves): Observable<Object> {
-  //     return this.shelvesRepository.update(this.route2, model);
-  //   }
-
   update(id: string | number, formData: IShelves): Observable<Object> {
     return this.shelvesRepository.update(this.route.Put, id, formData);
   }
@@ -52,9 +48,8 @@ export class ShelvessService extends HttpService {
     return this.shelvesRepository.create(this.route2, model);
   }
 
-  /*getGoodsByRecordId(recordId: number) {
-    return this.goodRepository.getAllPaginated(
-      'good/good/getidReferenceGood/' + recordId
-    );
-  }*/
+  remove(model: IShelves) {
+    const route = `${ShelvesEndpoints.Shelves}`;
+    return this.delete(route, model);
+  }
 }

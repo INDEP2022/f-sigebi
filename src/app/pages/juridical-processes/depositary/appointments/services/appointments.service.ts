@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
+import {
+  IDescriptionByNoGoodBody,
+  IFromGoodsAndExpedientsBody,
+} from 'src/app/core/models/good/good.model';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -35,5 +38,9 @@ export class AppointmentsService {
 
   getExpedientByNoExpedient(noExpedient: string | number) {
     return this.msExpedientService.getById(noExpedient);
+  }
+
+  getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
+    return this.msGoodService.getFromGoodsAndExpedients(body);
   }
 }

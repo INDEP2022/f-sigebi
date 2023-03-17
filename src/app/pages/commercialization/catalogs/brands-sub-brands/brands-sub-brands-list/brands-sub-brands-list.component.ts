@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { COLUMNS } from './columns';
 //Components
@@ -9,7 +8,6 @@ import { BrandsSubBrandsFormComponent } from '../brands-sub-brands-form/brands-s
 import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DATA } from './data';
 
 @Component({
   selector: 'app-brands-sub-brands-list',
@@ -21,8 +19,6 @@ export class BrandsSubBrandsListComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-  dataBrands = DATA;
-  data2: LocalDataSource = new LocalDataSource();
   //dataSubBrands: any = [];
   // settings2;
   rowBrand: string = null;
@@ -35,23 +31,17 @@ export class BrandsSubBrandsListComponent
   ) {
     super();
     this.service = this.brandService;
-    this.ilikeFilters = ['brandDescription'];
+    // this.ilikeFilters = ['brandDescription'];
     this.settings = {
       ...this.settings,
       columns: COLUMNS,
     };
-
+    this.prepareForm();
     // this.settings2 = {
     //   ...this.settings,
     //   actions: false,
     //   columns: COLUMNS2,
     // };
-  }
-
-  ngOnInit(): void {
-    this.prepareForm();
-    this.dinamicFilterUpdate();
-    this.searchParams();
   }
 
   private prepareForm(): void {

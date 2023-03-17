@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -12,7 +13,10 @@ import { IZoneGeographic } from '../../models/catalogs/zone-geographic.model';
 @Injectable({
   providedIn: 'root',
 })
-export class DelegationService implements ICrudMethods<IDelegation> {
+export class DelegationService
+  extends HttpService
+  implements ICrudMethods<IDelegation>
+{
   private readonly route: string = ENDPOINT_LINKS.Delegation;
   private readonly statesRoute = ENDPOINT_LINKS.StateOfRepublic;
   private readonly zonesRoute = ENDPOINT_LINKS.ZoneGeographic;
@@ -21,7 +25,10 @@ export class DelegationService implements ICrudMethods<IDelegation> {
 
     private statesRepository: Repository<IStateOfRepublic>,
     private zonesRepository: Repository<IZoneGeographic>
-  ) {}
+  ) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
@@ -53,5 +60,9 @@ export class DelegationService implements ICrudMethods<IDelegation> {
 
   getZones(params: ListParams) {
     return this.zonesRepository.getAllPaginated(this.zonesRoute, params);
+  }
+
+  getAllFiltered(params: _Params) {
+    return this.get<IListResponse<IDelegation>>('delegation', params);
   }
 }

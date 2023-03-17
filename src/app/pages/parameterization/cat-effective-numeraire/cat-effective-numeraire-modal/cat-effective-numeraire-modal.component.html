@@ -4,24 +4,26 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="numeraryCategoriesForm">
-      <div class="row pt-5">
-        <form-field
-          [control]="numeraryCategoriesForm.get('description')"
-          label="Descripci&oacute;n">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="description" />
-        </form-field>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
+      <div class="row">
+        <div class="col-md-4">
           <form-field
             [control]="numeraryCategoriesForm.get('id')"
             label="Categoria">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="numeraryCategoriesForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-3">
           <form-field
             [control]="numeraryCategoriesForm.get('enterExit')"

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IStatus,
@@ -28,5 +28,9 @@ export class ScreenStatusService extends HttpService {
       `${this.endpoint.StatusXScreen}`,
       filters
     );
+  }
+
+  getAllFiltered(params: _Params) {
+    return this.get<IListResponse<IStatusXScreen>>('status-x-screen', params);
   }
 }

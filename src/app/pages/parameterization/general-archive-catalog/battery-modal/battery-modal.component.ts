@@ -43,7 +43,7 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.batteryForm = this.fb.group({
       storeCode: [null, []],
-      idBattery: [null, [Validators.required]],
+      idBattery: [null, []],
       description: [null, [Validators.required]],
       status: [
         null,
@@ -83,7 +83,7 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.batterysService
-      .update(this.battery.idBattery, this.batteryForm.value)
+      .update2(this.battery.idBattery, this.batteryForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

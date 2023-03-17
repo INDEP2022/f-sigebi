@@ -26,11 +26,11 @@ export interface ISafe2 {
   manager?: string;
   registerNumber?: number | null | string;
   stateCode?: number | null | string;
-  stateDetail?: IStateOfRepublic;
+  stateDetail?: string | IStateOfRepublic;
   cityCode?: number | null | string;
   cityDetail?: string | ICity;
   municipalityCode?: number | null | string;
-  municipalityDetail?: IMunicipality;
+  municipalityDetail?: string | IMunicipality;
   localityCode?: number | null | string;
-  localityDetail?: ILocality;
+  localityDetail?: string | ILocality;
 }
