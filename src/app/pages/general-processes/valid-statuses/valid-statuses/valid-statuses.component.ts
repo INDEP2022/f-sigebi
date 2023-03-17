@@ -29,7 +29,7 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     // ? FACTREFACTAENTREC usar este parametro como ejemplo
     screenStatus: 'FACTREFACTAENTREC',
   };
-  helpText = 'No hay ayudata para esta pantalla';
+  helpText = 'No hay ayuda para esta pantalla';
   screenCtrl = new FormControl<string>({ value: null, disabled: true });
   helpCtrol = new FormControl<string>(null);
   params = new BehaviorSubject(new FilterParams());
