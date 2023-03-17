@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { COLUMNS } from './columns';
@@ -50,28 +49,6 @@ export class StatusComponent
       hideSubHeader: false,
       columns: COLUMNS,
     };
-  }
-
-  ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getStatusGood());
-
-    this.dinamicFilterUpdate();
-    this.searchParams();
-  }
-
-  getStatusGood() {
-    this.loading = true;
-    this.goodService.getAll(this.params.getValue()).subscribe(
-      response => {
-        console.log(response);
-        this.comercializationGoods = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
   }
 
   onSaveConfirm(event: any) {
