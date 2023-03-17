@@ -18,6 +18,7 @@ import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dy
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { TdesAtribService } from 'src/app/core/services/ms-parametergood/tdescatrib.service';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-attributes-reg-logical-tables',
@@ -30,15 +31,24 @@ export class AttributesRegLogicalTablesComponent
 {
   tdescAtrib: ITdescAtrib[] = [];
   logicTables: any[] = [];
+
   totalItems: number = 0;
   totalItems2: number = 0;
+
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   form: FormGroup = new FormGroup({});
 
   data: ITablesData;
 
   settings2;
+
+  loading1 = this.loading;
+  loading2 = this.loading;
+
+  rowSelected: boolean = false;
+  selectedRow: any = null;
 
   constructor(
     private modalService: BsModalService,
@@ -51,16 +61,17 @@ export class AttributesRegLogicalTablesComponent
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...LOG_TAB_COLUMNS },
       actions: false,
+      columns: { ...LOG_TAB_COLUMNS },
     };
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...ATT_REG_LOG_TAB_COLUMNS },
@@ -84,12 +95,12 @@ export class AttributesRegLogicalTablesComponent
   }
 
   getAllTables() {
-    this.loading = true;
+    this.loading1 = true;
     this.dynamicTablesService.getAll(this.params.getValue()).subscribe(res => {
       console.log(res);
       this.totalItems = res.count;
       this.logicTables = res.data;
-      this.loading = false;
+      this.loading1 = false;
     });
   }
 
@@ -109,14 +120,14 @@ export class AttributesRegLogicalTablesComponent
   }
 
   getRegisterAttribute(table: ITablesData) {
-    this.loading = true;
+    this.loading2 = true;
     this.parameterGoodService.getById(table.table).subscribe({
       next: response => {
         this.tdescAtrib = response.data;
         this.totalItems2 = response.count;
-        this.loading = false;
+        this.loading2 = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.showNullRegister(), (this.loading2 = false)),
     });
   }
 
@@ -136,22 +147,40 @@ export class AttributesRegLogicalTablesComponent
     );
   }
 
-  // showDeleteAlert(tdescAtrib: ITdescAtrib) {
-  //   this.alertQuestion(
-  //     'warning',
-  //     'Eliminar',
-  //     '¿Desea eliminar este registro?'
-  //   ).then(question => {
-  //     if (question.isConfirmed) {
-  //       this.delete(tdescAtrib.idNmTable);
-  //       Swal.fire('Borrado', '', 'success');
-  //     }
-  //   });
-  // }
+  showNullRegister() {
+    this.alertQuestion(
+      'warning',
+      'Tabla sin atributos',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm();
+      }
+    });
+  }
 
-  // delete(id: number) {
-  //   this.parameterGoodService.remove(id).subscribe({
-  //     next: () => this.getRegisterAttribute(),
-  //   });
-  // }
+  showDeleteAlert2(tdescAtrib: ITdescAtrib) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eborrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(tdescAtrib);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(tdescAtrib: ITdescAtrib) {
+    this.parameterGoodService.remove(tdescAtrib).subscribe({
+      next: () => this.getRegisterAttribute(this.data),
+    });
+  }
+
+  //Muestra información de la fila seleccionada de tabla logica
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
+  }
 }

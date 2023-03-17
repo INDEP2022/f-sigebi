@@ -30,11 +30,7 @@ export const LOCKERS_COLUMNS = {
     sort: false,
     filter: false,
   },
-  numRegister: {
-    title: 'No. Registro',
-    sort: false,
-    filter: false,
-  },
+
   // shelf: {
   //   title: 'Shelf',
   //   sort: false,

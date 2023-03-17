@@ -6,7 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ILocality } from 'src/app/core/models/catalogs/locality.model';
 import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
-import { ISafe2 } from 'src/app/core/models/catalogs/safe.model';
+import { ISafe, ISafe2 } from 'src/app/core/models/catalogs/safe.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
@@ -22,7 +22,7 @@ import { SafeService } from '../../../../core/services/catalogs/safe.service';
   styles: [],
 })
 export class VaultDetailComponent extends BasePage implements OnInit {
-  vaultForm: ModelForm<ISafe2>;
+  vaultForm: ModelForm<ISafe>;
   vault: ISafe2;
 
   valueCity: ICity;
@@ -78,6 +78,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       localityDetail: [null, []],
       stateDetail: [null, []],
       municipalityDetail: [null, []],
+      registerNumber: [null, []],
     });
     if (this.vault != null) {
       this.edit = true;
@@ -91,9 +92,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.vaultForm.controls['stateDetail'].setValue(
         this.valueState.descCondition
       );
-      this.vaultForm.controls['localityDetail'].setValue(
-        this.valueLocality.nameLocation
-      );
+      this.vaultForm.controls['localityDetail'].setValue(this.valueLocality.id);
       this.vaultForm.controls['municipalityDetail'].setValue(
         this.valueMunicipality.nameMunicipality
       );
@@ -109,7 +108,11 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.safeService.update(this.vault.idSafe, this.vaultForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
-        this.onLoadToast('info', 'Opss..', 'Dato duplicado');
+        this.onLoadToast(
+          'info',
+          'Opss..',
+          'No se completó su solicitud, contactar al administrador'
+        );
         this.loading = false;
         console.log(error);
       },
@@ -118,10 +121,10 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.safeService.create2(this.vaultForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.safeService.create2(this.vaultForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   close() {

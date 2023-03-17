@@ -58,7 +58,7 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      status: [null, [Validators.pattern(STRING_PATTERN)]],
+      status: [null, [Validators.required]],
       dateBegOperation: [null, []],
       dateFinalOperation: [{ value: null, disabled: true }, []],
       assignor: [null, [Validators.pattern(STRING_PATTERN)]],

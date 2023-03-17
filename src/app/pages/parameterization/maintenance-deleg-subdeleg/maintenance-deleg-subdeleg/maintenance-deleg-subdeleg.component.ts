@@ -58,6 +58,7 @@ export class MaintenanceDelegSubdelegComponent
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...SUBDELEGATION_COLUMNS },

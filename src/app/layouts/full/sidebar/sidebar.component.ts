@@ -110,6 +110,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       paths.push(links[i]['pathname']);
     }
     var itemIndex = paths.indexOf(window.location.pathname);
+
     if (itemIndex === -1) {
       const strIndex = window.location.pathname.lastIndexOf('/');
       const item = window.location.pathname.substr(0, strIndex).toString();
@@ -117,9 +118,11 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     } else {
       menuItemEl = links[itemIndex];
     }
+
     if (menuItemEl) {
       menuItemEl.classList.add('active');
       const parentEl = menuItemEl.parentElement;
+
       if (parentEl) {
         parentEl.classList.add('mm-active');
         const parent2El = parentEl.parentElement.closest('ul');
@@ -127,7 +130,8 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
           parent2El.classList.add('mm-show');
           const parent3El = parent2El.parentElement;
           if (parent3El && parent3El.id !== 'side-menu') {
-            parent3El.classList.add('mm-active');
+            //se agrega parentElement por app dinamico
+            parent3El.parentElement.classList.add('mm-active');
             const childAnchor = parent3El.querySelector('.has-arrow');
             const childDropdown = parent3El.querySelector('.has-dropdown');
             if (childAnchor) {
@@ -138,10 +142,13 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
             }
             const parent4El = parent3El.parentElement;
             if (parent4El && parent4El.id !== 'side-menu') {
-              parent4El.classList.add('mm-show');
+              //se agrega parentElement por app dinamico
+              parent4El.parentElement.classList.add('mm-show');
+
               const parent5El = parent4El.parentElement;
               if (parent5El && parent5El.id !== 'side-menu') {
-                parent5El.classList.add('mm-active');
+                //se agrega parentElement por app dinamico
+                parent5El.parentElement.classList.add('mm-active');
                 const childanchor = parent5El.querySelector('.is-parent');
                 if (childanchor && parent5El.id !== 'side-menu') {
                   childanchor.classList.add('mm-active');
@@ -150,12 +157,25 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
                 /*IF MENU NIVEL 3*/
                 const parent6El = parent5El.parentElement;
                 if (parent6El && parent6El.id !== 'side-menu') {
-                  parent6El.classList.add('mm-show');
-                  parent6El.classList.add('mm-active');
+                  //se agrega parentElement por app dinamico
+                  parent6El.parentElement.classList.add('mm-show');
+                  parent6El.parentElement.classList.add('mm-active');
                   const childanchor = parent6El.querySelector('.is-parent');
                   if (childanchor && parent6El.id !== 'side-menu') {
                     childanchor.classList.add('mm-show');
                     childanchor.classList.add('mm-active');
+                  }
+
+                  const parent7El = parent5El.parentElement;
+                  if (parent7El && parent7El.id !== 'side-menu') {
+                    //se agrega parentElement por app dinamico
+                    parent7El.parentElement.classList.add('mm-show');
+                    parent7El.parentElement.classList.add('mm-active');
+                    const childanchor = parent7El.querySelector('.is-parent');
+                    if (childanchor && parent7El.id !== 'side-menu') {
+                      childanchor.classList.add('mm-show');
+                      childanchor.classList.add('mm-active');
+                    }
                   }
                 }
               }
