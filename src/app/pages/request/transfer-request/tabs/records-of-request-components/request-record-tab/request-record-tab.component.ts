@@ -45,8 +45,8 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         this.getAffair(this.requestForm.controls['affair'].value);
       }
 
-      //establece el campo urgente
       if (this.requestForm.controls['urgentPriority'].value) {
+        //establece el campo urgente
         this.priorityString = this.requestForm.controls['urgentPriority'].value;
 
         this.priority =

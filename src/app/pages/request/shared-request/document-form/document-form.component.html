@@ -6,14 +6,16 @@
     <form [formGroup]="documentForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field
-            [control]="documentForm.get('typeDocument')"
-            label="Tipo de documento">
-            <select class="form-control" formControlName="typeDocument">
-              <option [value]="null">Seleccione un documento</option>
-              <option [value]="1">documento</option>
-              <option [value]="2">documento</option>
-            </select>
+          <form-field [control]="documentForm.get('ddocType')">
+            <ngx-select
+              [form]="documentForm"
+              control="ddocType"
+              [data]="typesDocuments"
+              value="id"
+              bindLabel="stationName"
+              label="Tipo de documento"
+              (fetchItems)="getDocType($event)">
+            </ngx-select>
           </form-field>
         </div>
 
@@ -30,18 +32,43 @@
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-6">
+        <div class="col-md-8">
           <form-field
-            [control]="documentForm.get('titleDocument')"
+            [control]="documentForm.get('ddocTitle')"
             label="T&iacute;tulo del documento">
             <input
               type="text"
               class="form-control"
-              formControlName="titleDocument" />
+              formControlName="ddocTitle" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xidExpediente')"
+            label="No&#46; Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xidExpediente"
+              readonly />
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xidSolicitud')"
+            label="No&#46; Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xidSolicitud"
+              readonly />
+          </form-field>
+        </div>
+        <!-- <div class="col-md-6">
           <form-field
             [control]="documentForm.get('numberGestion')"
             label="No&#46; de gesti&oacute;n">
@@ -51,19 +78,17 @@
               formControlName="numberGestion"
               readonly />
           </form-field>
-        </div>
-      </div>
+        </div> -->
 
-      <div class="row pt-4">
-        <div class="col-md-6">
+        <!--  <div class="col-md-6">
           <form-field
             [control]="documentForm.get('noSIAB')"
             label="No&#46; SIAB">
             <input type="text" class="form-control" formControlName="noSIAB" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('responsible')"
             label="Responsable">
@@ -73,10 +98,8 @@
               formControlName="responsible" />
           </form-field>
         </div>
-      </div>
 
-      <div class="row pt-4">
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('delegation')"
             label="Delegaci&oacute;n regional">
@@ -88,7 +111,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('taxpayer')"
             label="Contribuyente">
@@ -98,10 +121,8 @@
               formControlName="taxpayer" />
           </form-field>
         </div>
-      </div>
 
-      <div class="row pt-4">
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field [control]="documentForm.get('state')" label="Estado">
             <select class="form-control" formControlName="state">
               <option [value]="null">Seleccione un estado</option>
@@ -111,7 +132,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('numberOffice')"
             label="No&#46; oficio">
@@ -121,10 +142,8 @@
               formControlName="numberOffice" />
           </form-field>
         </div>
-      </div>
 
-      <div class="row pt-4">
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('transferent')"
             label="Transferente">
@@ -136,7 +155,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <!-- <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('numberProgramming')"
             label="No&#46; programación">
@@ -146,17 +165,14 @@
               formControlName="numberProgramming"
               readonly />
           </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-6">
+        </div> -->
+        <div class="space col-md-6">
           <form-field [control]="documentForm.get('sender')" label="Remitente">
             <input type="text" class="form-control" formControlName="sender" />
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <!-- <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('programmingFolio')"
             label="Folio programaci&oacute;n">
@@ -166,11 +182,8 @@
               formControlName="programmingFolio"
               readonly />
           </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-6">
+        </div> -->
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('senderCharge')"
             label="Cargo remitente">
@@ -181,7 +194,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('comments')"
             label="Comentarios">
