@@ -21,6 +21,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
+              [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="data"
               (edit)="openForm($event.data)"

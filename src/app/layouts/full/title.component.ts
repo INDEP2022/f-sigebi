@@ -1,20 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'title',
   template: ``,
 })
-export class TitleComponent {
+export class TitleComponent implements OnDestroy {
+  $unSubscribe = new Subject<void>();
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title
   ) {
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.$unSubscribe)
+      )
       .subscribe(() => {
         let currentRoute = this.route.root;
         let title = '';
@@ -32,5 +37,9 @@ export class TitleComponent {
           this.titleService.setTitle(title + ' | SIGEBI');
         }
       });
+  }
+  ngOnDestroy(): void {
+    this.$unSubscribe.next();
+    this.$unSubscribe.complete();
   }
 }

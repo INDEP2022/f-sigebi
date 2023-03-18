@@ -4,8 +4,8 @@ export const PERSON_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  personNumber: {
-    title: 'Numero Persona',
+  personName: {
+    title: 'Nombre corto',
     type: 'string',
     sort: false,
   },
@@ -127,11 +127,6 @@ export const PERSON_COLUMNS = {
   precedent0ther: {
     title: 'Otros Antecedentes',
     type: 'string',
-    sort: false,
-  },
-  registryNumber: {
-    title: 'Número Registro',
-    type: 'number',
     sort: false,
   },
   email: {

@@ -14,12 +14,12 @@ export const CLARIFICATION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  creationUser: {
+  userCreation: {
     title: 'Creado por',
     type: 'string',
     sort: false,
   },
-  editionUser: {
+  userModification: {
     title: 'Modificado por',
     type: 'string',
     sort: false,

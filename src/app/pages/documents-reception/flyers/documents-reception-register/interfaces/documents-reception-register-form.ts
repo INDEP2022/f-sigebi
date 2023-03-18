@@ -318,7 +318,7 @@ export interface IGlobalFlyerRegistration {
 export interface IDocReceptionFlyersRegistrationParams {
   pGestOk: number;
   pNoVolante: number;
-  pSatTipoExp: string; //No necesario si existe global
+  pSatTipoExp: string;
   pNoTramite: number;
   noTransferente: number;
   pIndicadorSat: number;

@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SearchUserFormComponent } from 'src/app/pages/request/programming-request-components/schedule-reception/search-user-form/search-user-form.component';
 import { RegistrationOfInterestComponent } from '../registration-of-interest.component';
+
 @Component({
   selector: 'app-registration-of-interest-modal',
   templateUrl: './registration-of-interest-modal.component.html',
@@ -95,7 +96,10 @@ export class RegistrationOfInterestModalComponent
       callback: (data: any) => {
         if (data) {
           data.map((item: any) => {
-            this.providerForm.get('user').setValue(item.user);
+            console.log(item);
+            this.providerForm
+              .get('user')
+              .setValue(item.firstName + ' ' + item.lastName);
           });
         }
       },

@@ -14,7 +14,7 @@ export interface IBrand {
 export interface ISubBrands {
   idBrand: string;
   idSubBrand: string;
-  subBrandDescription: string;
+  subBrandDescription?: string;
 }
 
 export interface ITiieV1 {

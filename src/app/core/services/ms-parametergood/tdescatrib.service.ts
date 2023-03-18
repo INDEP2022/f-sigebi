@@ -15,7 +15,7 @@ export class TdesAtribService extends HttpService {
     private parametergoodRepository: ParametergoodRepository<ITdescAtrib>
   ) {
     super();
-    this.microservice = ParameterGoodEndpoints.Parametergood;
+    this.microservice = ParameterGoodEndpoints.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ITdescAtrib>> {
@@ -34,6 +34,11 @@ export class TdesAtribService extends HttpService {
   update(tdescAtrib: ITdescAtrib) {
     const route = `${ParameterGoodEndpoints.TDescAtrib}`;
     return this.put(route, tdescAtrib);
+  }
+
+  remove(tdescAtrib: ITdescAtrib) {
+    const route = `${ParameterGoodEndpoints.TDescAtrib}`;
+    return this.delete(route, tdescAtrib);
   }
 
   /*getById(id: string | number): Observable<ITdescAtrib> {

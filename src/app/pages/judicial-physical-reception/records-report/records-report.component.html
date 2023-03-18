@@ -53,6 +53,8 @@
               <form-field [control]="form.get('actaInicial')">
                 <ngx-select
                   (fetchItems)="getInitialProceedings($event)"
+                  class="disabled"
+                  id="actaI"
                   bindLabel="proceedingkey"
                   control="actaInicial"
                   label="Acta Inicial"
@@ -67,7 +69,9 @@
               <form-field [control]="form.get('actaFinal')">
                 <ngx-select
                   (fetchItems)="getFinalProceedings($event)"
+                  id="actaF"
                   control="actaFinal"
+                  class="disabled"
                   bindLabel="proceedingkey"
                   label="Acta Final"
                   [form]="form"

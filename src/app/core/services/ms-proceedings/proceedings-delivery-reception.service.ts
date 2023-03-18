@@ -4,7 +4,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
@@ -134,7 +134,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll(
-    params?: ListParams | string
+    params?: _Params
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,

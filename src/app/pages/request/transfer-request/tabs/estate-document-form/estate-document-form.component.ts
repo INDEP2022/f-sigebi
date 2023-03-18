@@ -110,6 +110,12 @@ export class EstateDocumentFormComponent
     }
   }
 
+  clean() {
+    this.documentsEstData = [];
+    this.searchForm.reset();
+    this.requestId = null;
+  }
+
   search() {
     this.paginator();
   }
@@ -139,17 +145,26 @@ export class EstateDocumentFormComponent
           const physicalStatus = await this.getPhysicalStatus(
             item.physicalStatus
           );
+          item['requestId'] = item.requestId.id;
           item['physicalStatusName'] = physicalStatus;
           const destiny = await this.getDestiny(item.physicalStatus);
           item['destinyName'] = destiny;
-          const fraction = await this.getFraction(item.fractionId);
-          item['fractionName'] = fraction;
+          if (item.fractionId) {
+            //const fraction = await this.getFraction(item.fractionId);
+            item['fractionName'] = item.fractionId.description;
+          } else {
+            item['fractionName'] = '';
+          }
         });
 
         Promise.all(result).then(data => {
           this.documentsEstData = resp.data;
           this.loading = false;
         });
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
       },
     });
   }
