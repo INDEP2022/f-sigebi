@@ -35,6 +35,7 @@
         <div class="col-md-12">
           <div class="btn-group" dropdown>
             <button
+              *ngIf="dataSelect.columname"
               id="button-basic"
               dropdownToggle
               type="button"
@@ -48,6 +49,9 @@
               class="dropdown-menu"
               role="menu"
               aria-labelledby="button-basic">
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="trabajar()">Trabajar</a>
+              </li>
               <li role="menuitem">
                 <a class="dropdown-item" href="#">Turnar</a>
               </li>
@@ -81,7 +85,8 @@
         <div class="col-md-12 md-tabs">
           <ng2-smart-table
             [settings]="settings"
-            [source]="dataTable"></ng2-smart-table>
+            [source]="dataTable"
+            (userRowSelect)="selectEvent($event)"></ng2-smart-table>
           <app-pagination></app-pagination>
         </div>
       </div>
