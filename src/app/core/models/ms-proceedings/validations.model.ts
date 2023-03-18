@@ -15,6 +15,6 @@ export interface IValidations {
 }
 
 export interface TransferProceeding {
-  numFile: number;
-  typeProceeding: string;
+  numFile: any;
+  typeProceedings: string;
 }
