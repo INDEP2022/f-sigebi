@@ -25,6 +25,10 @@ export class CustomerService extends HttpService {
     this.microservice = CustomersEndpoint.Customer;
   }
 
+  getAll(params?: string): Observable<IListResponse<ICustomer>> {
+    return this.get<IListResponse<ICustomer>>(this.endpointClients, params);
+  }
+
   getAllClients(params?: string): Observable<IListResponse<ICustomer>> {
     return this.get<IListResponse<ICustomer>>(this.endpointClients, params);
   }

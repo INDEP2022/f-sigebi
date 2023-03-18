@@ -26,13 +26,22 @@ export const FRACTIONS_COLUMNS = {
     sort: false,
   },
 
-  normId: {
+  norms: {
     title: 'Norma',
     type: 'string',
     valuePrepareFunction: (nom: INorm) => {
       return nom?.norm;
     },
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      //TODO:Validate FILTER
+      let column = cell.norm;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 
   clasificationId: {

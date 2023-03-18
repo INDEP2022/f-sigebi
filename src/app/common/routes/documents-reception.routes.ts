@@ -44,7 +44,7 @@ export const DOCUMENTS_RECEPTION_ROUTES = [
         link: '/pages/documents-reception/sat-subjects-register',
       },
       {
-        label: 'Buzón de asuntos PGR',
+        label: 'Buzón de asuntos FGR',
         link: '/pages/documents-reception/subjects-register',
       },
       /*##NO SE MIGRA##*/

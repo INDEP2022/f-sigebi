@@ -10,6 +10,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -42,7 +43,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
     private delegationStateService: DelegationStateService,
     private requestService: RequestService,
     private goodDomiciliesService: GoodDomiciliesService,
-    private municipeService: MunicipalityService
+    private municipeService: MunicipalityService,
+    private stationService: StationService
   ) {
     super();
     this.settings = {
@@ -153,7 +155,13 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
           item['regionalDelegationName'] = item.delegation.description;
           item['stateName'] = item.state.descCondition;
           item['transferentName'] = item.transferent.name;
-          item['stationName'] = item.emisora.stationName;
+
+          if (item.stationId) {
+            const stationName = await this.getStation(item.stationId);
+            item['stationName'] = stationName;
+          } else {
+            item['stationName'] = '';
+          }
           item['authorityName'] = item.authority.authorityName;
           let domicilie: any = {};
           if (item.idAddress !== null) {
@@ -217,6 +225,19 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
         next: resp => {
           const municipaly = resp.data[0].nameMunicipality;
           resolve(municipaly);
+        },
+      });
+    });
+  }
+
+  getStation(stationId: string) {
+    return new Promise((resolve, reject) => {
+      this.stationService.getById(stationId).subscribe({
+        next: resp => {
+          resolve(resp.stationName);
+        },
+        error: error => {
+          resolve('');
         },
       });
     });

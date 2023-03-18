@@ -70,7 +70,7 @@ export class BrandsSubBrandsFormComponent
     };
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     const field = `filter.idBrand`;
     if (this.brand)
       this.columnFilters[field] = `${SearchFilter.EQ}:${this.brand.id}`;

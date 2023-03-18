@@ -61,7 +61,7 @@
                 [form]="documentsReceptionForm"
                 [data]="identifiers"
                 (fetchItems)="getIdentifiers($event)"
-                bindLabel="description"
+                bindLabel="nameAndId"
                 control="identifier"
                 label="Identificador"
                 [searchOnInit]="true"
@@ -589,7 +589,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-4"
               [control]="documentsReceptionForm.get('indiciadoNumber')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -603,6 +603,15 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
+
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openModalDefendant()">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
+            </div>
 
             <form-field
               class="col-md-6"

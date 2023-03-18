@@ -40,6 +40,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.initComponent();
   }
 
   prepareForm() {
@@ -77,4 +78,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       ccp6: [null],
     });
   }
+
+  initComponent() {}
 }

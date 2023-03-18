@@ -321,7 +321,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Gestión Trámites PGR')
+              NOT_FOUND_MESSAGE('Gestión Trámites FGR')
             );
           }
           this.loadingGestionPgr = false;
@@ -360,7 +360,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Transferencias PGR')
+              NOT_FOUND_MESSAGE('Transferencias FGR')
             );
           }
           this.loadingPgrTransferencia = false;
@@ -395,8 +395,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.excelService.export(data, {
       filename:
         opcion == 'gestion'
-          ? `GestionPgr__Listado_Tramites_PGR${new Date().getTime()}`
-          : `PgrTransferencia_Listado_Cves_PGR${new Date().getTime()}`,
+          ? `GestionFGR__Listado_Tramites_FGR${new Date().getTime()}`
+          : `FGRTransferencia_Listado_Cves_FGR${new Date().getTime()}`,
     });
   }
 
@@ -431,13 +431,13 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           if (data.base64) {
             this.downloadFile(
               data.base64,
-              `GestionSat__Listado_Tramites_PGR${new Date().getTime()}`
+              `GestionSat__Listado_Tramites_FGR${new Date().getTime()}`
             );
           } else {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Gestión Trámites PGR')
+              NOT_FOUND_MESSAGE('Gestión Trámites FGR')
             );
           }
           this.downloading = false;
@@ -476,12 +476,12 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       .subscribe({
         next: (data: any) => {
           if (data.base64) {
-            this.downloadFile(data.base64, 'Listado_Cves_PGR');
+            this.downloadFile(data.base64, 'Listado_Cves_FGR');
           } else {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Transferencias PGR')
+              NOT_FOUND_MESSAGE('Transferencias FGR')
             );
           }
           this.downloadingTransferente = false;

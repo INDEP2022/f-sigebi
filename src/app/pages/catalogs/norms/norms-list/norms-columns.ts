@@ -1,3 +1,5 @@
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const NORMS_COLUMNS = {
   id: {
     title: 'Registro',
@@ -21,8 +23,13 @@ export const NORMS_COLUMNS = {
   },
   characteristics: {
     title: 'Características',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      value !== null ? (value = value) : (value = '');
+      return value;
+    },
   },
   merchandise: {
     title: 'Mercancías',
