@@ -90,6 +90,10 @@ export class SelectAddressComponent extends BasePage implements OnInit {
           this.loading = false;
         });
       },
+      error: error => {
+        console.log('Domicillio de bienes ', error.error.message);
+        this.loading = false;
+      },
     });
   }
 
