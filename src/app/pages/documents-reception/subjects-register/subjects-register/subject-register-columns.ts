@@ -30,7 +30,7 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
     sort: false,
   },
   officeNumber: {
-    title: 'Oficio PGR',
+    title: 'Oficio FGR',
     type: 'string',
     sort: false,
   },
@@ -48,12 +48,12 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
 
 const PGR_TRANSFERS_COLUMNS = {
   pgrGoodNumber: {
-    title: 'PGR No. Bien',
+    title: 'FGR No. Bien',
     type: 'number',
     sort: false,
   },
   office: {
-    title: 'PGR Oficio',
+    title: 'FGR Oficio',
     type: 'string',
     sort: false,
   },

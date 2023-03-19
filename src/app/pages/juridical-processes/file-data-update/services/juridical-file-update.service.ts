@@ -14,6 +14,7 @@ import { IssuingInstitutionService } from '../../../../core/services/catalogs/is
 import { OpinionService } from '../../../../core/services/catalogs/opinion.service';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
 import { RTdictaAarusrService } from '../../../../core/services/ms-convertiongood/r-tdicta-aarusr.service';
+import { DocumentsService } from '../../../../core/services/ms-documents/documents.service';
 import { CopiesXFlierService } from '../../../../core/services/ms-flier/copies-x-flier.service';
 import { NotificationService } from '../../../../core/services/ms-notification/notification.service';
 import { MJobManagementService } from '../../../../core/services/ms-office-management/m-job-management.service';
@@ -37,7 +38,8 @@ export class JuridicalFileUpdateService extends HttpService {
     private subDelegationService: SubdelegationService,
     private flyerCopiesService: CopiesXFlierService,
     private rtdictaUserService: RTdictaAarusrService,
-    private mJobManagementService: MJobManagementService
+    private mJobManagementService: MJobManagementService,
+    private documentsService: DocumentsService
   ) {
     super();
   }
@@ -135,12 +137,14 @@ export class JuridicalFileUpdateService extends HttpService {
     );
   }
 
-  getDictum(id: string | number) {
-    return this.opinionService.getById(id).pipe(
+  getDictum(params: string) {
+    return this.opinionService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,
-          nameAndId: `${data.id} - ${data.description}`,
+          data: data.data.map(d => {
+            return { ...d, nameAndId: `${d.id} - ${d.description}` };
+          }),
         };
       })
     );
@@ -187,5 +191,9 @@ export class JuridicalFileUpdateService extends HttpService {
 
   getJobManagements(params: string) {
     return this.mJobManagementService.getAllFiltered(params);
+  }
+
+  getDocuments(params: string) {
+    return this.documentsService.getAllFilter(params);
   }
 }

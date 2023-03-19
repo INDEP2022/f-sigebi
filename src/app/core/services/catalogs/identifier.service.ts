@@ -4,21 +4,31 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
+import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IIdentifier } from '../../models/catalogs/identifier.model';
 @Injectable({
   providedIn: 'root',
 })
-export class IdentifierService implements ICrudMethods<IIdentifier> {
+export class IdentifierService
+  extends HttpService
+  implements ICrudMethods<IIdentifier>
+{
   private readonly route: string = ENDPOINT_LINKS.Identifier;
-  constructor(private identifierRepository: Repository<IIdentifier>) {}
+  constructor(private identifierRepository: Repository<IIdentifier>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IIdentifier>> {
     return this.identifierRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IIdentifier> {
-    return this.identifierRepository.getById(this.route, id);
+    const segments = this.route.split('/');
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route);
+    // return this.identifierRepository.getById(this.route, id);
   }
 
   create(model: IIdentifier): Observable<IIdentifier> {
