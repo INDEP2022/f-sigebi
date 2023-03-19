@@ -108,7 +108,7 @@
                 [control]="detailAssets.get('fileeNumber')"
                 label="No&#46; Exp&#46; de la transferente">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="fileeNumber" />
               </form-field>
@@ -160,7 +160,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <!--  <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('unitMeasure')"
                 label="Unid&#46; Medida Transferente">
@@ -170,6 +170,17 @@
                   formControlName="unitMeasure"
                   [readOnly]="true" />
               </form-field>
+            </div> -->
+            <div class="col-md-4">
+              <ngx-select
+                [form]="detailAssets"
+                control="unitMeasure"
+                (fetchItems)="getTransferentUnit($event)"
+                [data]="selectTansferUnitMeasure"
+                label="Unid&#46; Medida Transferente"
+                [searchable]="true"
+                bindLabel="unitMeasureTl"
+                value="unitMeasureTl"></ngx-select>
             </div>
             <div class="col-md-4">
               <form-field

@@ -130,7 +130,7 @@ export class RegistrationOfRequestsComponent
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
       recordId: [null],
-      paperNumber: [null, [Validators.required]],
+      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
       transferenceId: [null],
@@ -143,28 +143,73 @@ export class RegistrationOfRequestsComponent
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [{ value: null, disabled: true }],
-      paperDate: [null, Validators.required],
+      paperDate: [null, [Validators.required]],
       typeRecord: [null],
-      publicMinistry: [null, [Validators.pattern(STRING_PATTERN)]],
-      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]], //nombre remitente
-      holderCharge: [null, [Validators.pattern(STRING_PATTERN)]], //cargo remitente
-      phoneOfOwner: [null, Validators.pattern(PHONE_PATTERN)], //telefono remitente
-      emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]], //email remitente
-      court: [null, [Validators.pattern(STRING_PATTERN)]],
-      crime: [null, [Validators.pattern(STRING_PATTERN)]],
+      publicMinistry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      nameOfOwner: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], //nombre remitente
+      holderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], //cargo remitente
+      phoneOfOwner: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(30)],
+      ], //telefono remitente
+      emailOfOwner: [
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+      ], //email remitente
+      court: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      crime: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       receiptRoute: [null],
-      destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
-      indicatedTaxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
+      destinationManagement: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      indicatedTaxpayer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       affair: [null],
-      transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferEntNotes: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       transferenceFile: [null],
       previousInquiry: [null],
-      trialType: [null],
-      circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
-      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
-      tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      protectNumber: [null],
+      trialType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      circumstantialRecord: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      lawsuit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      tocaPenal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      protectNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
     });
   }
 

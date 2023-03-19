@@ -132,6 +132,16 @@
                 </div>
               </div>
             </div>
+            <div class="row pt-2">
+              <div
+                class="col-md-4"
+                *ngIf="registRequestForm?.get('recordId').value !== null">
+                <div>
+                  <label for="">No&#46; Expediente&#58;</label>
+                  {{ registRequestForm?.get('recordId').value }}
+                </div>
+              </div>
+            </div>
           </div>
         </app-card>
 
