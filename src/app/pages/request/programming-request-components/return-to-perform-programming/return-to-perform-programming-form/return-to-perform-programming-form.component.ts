@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { addDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { minDate } from 'src/app/common/validations/date.validators';
@@ -59,6 +59,7 @@ export class ReturnToPerformProgrammingFormComponent
   goodsInfoTrans: any[] = [];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
+  paramsGoodsProg = new BehaviorSubject<ListParams>(new ListParams());
   usersToProgramming: LocalDataSource = new LocalDataSource();
   estatesList: LocalDataSource = new LocalDataSource();
   goodsTranportables: LocalDataSource = new LocalDataSource();
@@ -73,12 +74,14 @@ export class ReturnToPerformProgrammingFormComponent
   idStation: any;
   idAuthority: any;
   idTypeRelevant: any;
+  idRegionalDelegation: any;
   warehouse = new DefaultSelect<IWarehouse>();
   form: FormGroup = new FormGroup({});
   formGoods: FormGroup = new FormGroup({});
   settingUser = { ...this.settings, ...SettingUserTable };
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+  paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   programmingId: number = 0;
   totalItems: number = 0;
   totalItemsUsers: number = 0;
@@ -184,6 +187,7 @@ export class ReturnToPerformProgrammingFormComponent
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
         this.programming = data;
+        this.idRegionalDelegation = data.regionalDelegationNumber;
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.idAuthority = data.autorityId;
@@ -259,13 +263,18 @@ export class ReturnToPerformProgrammingFormComponent
   }
 
   getAuthority() {
-    const filterColumns = {
-      idAuthority: Number(this.programming.autorityId),
-      idTransferer: Number(this.idTransferent),
-      idStation: Number(this.idStation),
-    };
-    return this.authorityService.postByIds(filterColumns).subscribe(data => {
-      this.programming.autorityId = data['authorityName'];
+    this.paramsAuthority.getValue()['filter.idAuthority'] =
+      this.programming.autorityId;
+    this.paramsAuthority.getValue()['filter.idTransferer'] = this.idTransferent;
+    this.paramsAuthority.getValue()['filter.idStation'] = this.idStation;
+
+    this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
+      next: response => {
+        let authority = response.data.find(res => {
+          return res;
+        });
+        this.programming.autorityId = authority.authorityName;
+      },
     });
   }
 
@@ -304,14 +313,17 @@ export class ReturnToPerformProgrammingFormComponent
   getUsersProgramming() {
     this.loading = true;
     this.params.getValue()['filter.programmingId'] = this.programmingId;
-
     this.programmingService
       .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          console.log('users', response);
-          this.usersToProgramming.load(response.data);
-          //this.totalItemsUsers = this.usersData.length;
+          const usersData = response.data.map(items => {
+            items.userCharge = items.charge.description;
+            return items;
+          });
+
+          this.usersToProgramming.load(usersData);
+          this.totalItems = this.usersToProgramming.count();
           this.loading = false;
         },
         error: error => (this.loading = false),
@@ -356,20 +368,17 @@ export class ReturnToPerformProgrammingFormComponent
 
   openForm(userData?: any) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
+    const idProgramming = this.programmingId;
     config.initialState = {
       userData,
-      callback: (data: IUser, create: boolean) => {
+      idProgramming,
+      callback: (data: boolean, create: boolean) => {
         if (data && create) {
-          console.log(data);
-          this.usersToProgramming.getElements().then(item => {
-            item.push(data);
-            this.usersToProgramming.load(item);
-          });
-        } else {
-          this.usersToProgramming.find(userData).then((item: IUser) => {
-            this.usersToProgramming.update(item, data);
-          });
+          this.onLoadToast('success', 'Usuario creado correctamente', '');
+          this.getUsersProgramming();
+        } else if (data) {
+          this.onLoadToast('success', 'Usuario modificado correctamente', '');
+          this.getUsersProgramming();
         }
       },
     };
@@ -444,19 +453,10 @@ export class ReturnToPerformProgrammingFormComponent
 
   getProgGoods() {
     this.loadingGoods = true;
-
-    //Cambiar cuando se hagan pruebas reales//
-    /*const filterColumns: Object = {
-      transferent: Number(this.idTransferent),
-      station: Number(this.idStation),
-      authority: Number(this.idAuthority),
-      relevantType: Number(this.idTypeRelevant),
-    }; */
-
     const filterColumns: Object = {
-      regionalDelegation: 11,
-      transferent: 120,
-      relevantType: 8,
+      regionalDelegation: Number(this.idRegionalDelegation),
+      transferent: Number(this.idTransferent),
+      relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
 
@@ -464,10 +464,7 @@ export class ReturnToPerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          response.data.filter(items => {
-            console.log(items.statusGood == 'APROBADO');
-          });
-          /*const filterData = response.data.map(items => {
+          const goodsFilter = response.data.map(items => {
             if (items.physicalState == 1) {
               items.physicalState = 'BUENO';
               return items;
@@ -475,14 +472,54 @@ export class ReturnToPerformProgrammingFormComponent
               items.physicalState = 'MALO';
               return items;
             }
-          }); */
-
-          /*this.estatesList.load(filterData);
-          this.totalItems = response.count;
-          this.loadingGoods = false; */
+          });
+          console.log(goodsFilter);
+          this.filterGoodsProgramming(goodsFilter);
+          this.loadingGoods = false;
         },
         error: error => (this.loadingGoods = false),
       });
+  }
+
+  filterGoodsProgramming(goods: any[]) {
+    this.paramsGoodsProg.getValue()['filter.programmingId'] =
+      this.programmingId;
+    this.programmingService
+      .getGoodsProgramming(this.paramsGoodsProg.getValue())
+      .pipe(
+        catchError(error => {
+          if (error.status == 400) {
+            this.GoodsProgramming(goods);
+          }
+          return throwError(() => error);
+        })
+      )
+      .subscribe(data => {
+        const filter = goods.filter(good => {
+          const index = data.data.findIndex(
+            _good => _good.goodId == good.goodNumber
+          );
+          return index >= 0 ? false : true;
+        });
+
+        if (filter.length > 0) {
+          this.estatesList.load(filter);
+          this.totalItems = this.estatesList.count();
+          this.loadingGoods = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'No hay bienes disponibles para programar',
+            ''
+          );
+        }
+      });
+  }
+
+  //bienes ya programados
+  GoodsProgramming(goodsFilter: any) {
+    this.estatesList.load(goodsFilter);
+    this.totalItems = goodsFilter.count;
   }
 
   clear() {
@@ -557,7 +594,7 @@ export class ReturnToPerformProgrammingFormComponent
   /*-----------------Goods in warehouse---------------------------*/
   getGoodsWarehouse(data: IGoodProgramming[]) {
     const filter = data.filter(item => {
-      return item.status == 'EN_ALMACÉN';
+      return item.status == 'EN_ALMACEN';
     });
 
     filter.map(items => {

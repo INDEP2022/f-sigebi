@@ -3,12 +3,15 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IReception } from 'src/app/core/models/ms-reception-good/reception-good.model';
+import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -19,16 +22,22 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
 import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
+import { GenerateReceiptGuardFormComponent } from '../../shared-components-programming/generate-receipt-guard-form/generate-receipt-guard-form.component';
+import { GoodsReceiptsFormComponent } from '../../shared-components-programming/goods-receipts-form/goods-receipts-form.component';
 import { DocumentsListComponent } from '../documents-list/documents-list.component';
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
-import { RECEIPT_COLUMNS } from './columns/minute-columns';
+import {
+  RECEIPT_COLUMNS,
+  RECEIPT_GUARD_COLUMNS,
+} from './columns/minute-columns';
 import { receipts, tranGoods } from './execute-reception-data';
 
 @Component({
@@ -39,6 +48,7 @@ import { receipts, tranGoods } from './execute-reception-data';
 export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   isDropup = true;
   goods: any[] = [];
+  receiptGuards: IReception[] = [];
   goodsGuard: IGood[] = [];
   goodsWareh: IGood[] = [];
   goodsSelect: IGood[] = [];
@@ -46,6 +56,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsProceeding = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
+  paramsReception = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   goodsWarehouse: LocalDataSource = new LocalDataSource();
@@ -88,6 +99,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     },
   };
 
+  settingsReceiptsGuards = {
+    ...this.settings,
+    actions: {
+      delete: true,
+      edit: true,
+      columnTitle: 'Generar recibo resguardo',
+      position: 'right',
+    },
+
+    edit: {
+      editButtonContent:
+        '<i class="fa fa-book" text-warning aria-hidden="true"></i> Ver bienes',
+    },
+
+    delete: {
+      deleteButtonContent:
+        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Generar recibo',
+    },
+
+    columns: RECEIPT_GUARD_COLUMNS,
+  };
+
   usersData: LocalDataSource = new LocalDataSource();
   //Cambiar a modelos//
   guardGoods: LocalDataSource = new LocalDataSource();
@@ -108,7 +141,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private warehouseService: WarehouseService,
     private goodsQueryService: GoodsQueryService,
     private goodService: GoodService,
-    private proccedingService: ProceedingsService
+    private proccedingService: ProceedingsService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private receptionService: ReceptionGoodService
   ) {
     super();
     this.settings = {
@@ -123,8 +158,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.showDataProgramming();
+    this.showReceiptsGuard();
 
     this.paramsGuard
       .pipe(takeUntil(this.$unSubscribe))
@@ -325,7 +362,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getGoodsProgramming(this.paramsGuard.getValue())
       .subscribe(data => {
-        console.log('información', data);
         this.getGoodsGuards(data.data);
         this.getGoodsWarehouse(data.data);
       });
@@ -347,6 +383,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           this.goodsGuard.push(response);
+          console.log('Bienes', response);
           this.guardGoods.load(this.goodsGuard);
           this.totalItemsGuard = this.guardGoods.count();
           this.headingGuard = `Resguardo(${this.guardGoods.count()})`;
@@ -386,13 +423,134 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   //Verificar si hay actas abiertas y relacionadas a la programación//
   checkProccedingsExist() {
     this.paramsProceeding.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+    this.paramsProceeding.getValue()['filter.idPrograming'] =
+      this.programmingId;
+
     this.proccedingService
       .getProceedings(this.paramsProceeding.getValue())
-      .subscribe({
-        next: response => {
-          console.log('res', response);
+      .pipe(
+        catchError(error => {
+          if (error.status == 400) {
+            this.createProceeding();
+          } else {
+            this.showProceedings();
+          }
+          return throwError(() => error);
+        })
+      )
+      .subscribe(data => {
+        console.log(data);
+      });
+  }
+
+  //----------------Creando actas----------------------------------
+  createProceeding() {
+    const formData: Object = {
+      id: '108',
+      idPrograming: Number(this.programmingId),
+      status: null,
+    };
+
+    console.log(formData);
+    this.proccedingService.createProceedings(formData).subscribe({
+      next: response => {
+        this.onLoadToast(
+          'success',
+          'Bienes agregados a el acta correctamente',
+          ''
+        );
+        console.log('Acta creada', response);
+        this.generateReceipt(response.id);
+      },
+    });
+  }
+
+  //----------------Mostrando actas-------------------------------
+  showProceedings() {
+    console.log('Mostrando actas');
+  }
+
+  //Generando el recibo resguardo y los bienes del recibo resguardo
+  generateReceipt(idProceeding: number) {
+    //Primero se crea el recibo
+    const formData: Object = {
+      id: 456400,
+      programmingId: Number(this.programmingId),
+      receiptDate: '2023-03-16',
+      typeReceipt: 'RESGUARDO',
+      actId: Number(idProceeding),
+      statusReceiptGuard: 'ABIERTO',
+      creationUser: 'sigebiadmon',
+      creationDate: new Date(),
+      modificationUser: 'sigebiadmon',
+      modificationDate: new Date(),
+    };
+
+    this.receptionService.createReception(formData).subscribe({
+      next: response => {
+        this.assingGoodsGuards(response.id);
+      },
+    });
+  }
+
+  //Se insertan los bienes a ese recibo
+  assingGoodsGuards(receiptId: number) {
+    this.goodsSelect.forEach(item => {
+      const formData: Object = {
+        receiptGuardId: Number(receiptId),
+        idGood: item.id,
+        creationUser: 'sigebiadmon',
+        creationDate: '2023-03-16',
+        modificationUser: 'sigebiadmon',
+        modificationDate: '2023-03-16',
+        version: 1,
+      };
+
+      this.receptionService.createReceptionGoods(formData).subscribe({
+        next: () => {
+          this.showReceiptsGuard();
         },
       });
+    });
+  }
+
+  //Mostrando recibo
+  showReceiptsGuard() {
+    this.paramsReception.getValue()['filter.typeReceipt'] = 'RESGUARDO';
+    this.paramsReception.getValue()['filter.programmingId'] =
+      this.programmingId;
+    return this.receptionService
+      .getReceptions(this.paramsReception.getValue())
+      .subscribe({
+        next: response => {
+          this.receiptGuards = response.data;
+          console.log('recibos', response.data);
+        },
+      });
+  }
+
+  //Bienes asociados a recibo
+  showGoodsReceipt(receipt: IReceipt) {
+    const receiptId = receipt.id;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptId,
+      callBack: (data: boolean) => {},
+    };
+
+    this.modalService.show(GoodsReceiptsFormComponent, config);
+  }
+
+  //Generar recibo//
+  generateReceiptGuard(receipt: IReceipt) {
+    const receiptId = receipt.id;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptId,
+      callBack: (data: boolean) => {},
+    };
+
+    this.modalService.show(GenerateReceiptGuardFormComponent, config);
   }
 
   /*-----------------Bienes en almacén---------------------------*/

@@ -13,6 +13,11 @@ import { ICatThirdView } from '../../models/ms-goods-inv/goods-inv.model';
 export class ProgrammingRequestService {
   constructor(private http: HttpClient) {}
 
+  deleteUserProgramming(formData: any) {
+    const route = `programminggood/api/v1/programming-users`;
+    return this.http.delete(`${environment.API_URL}${route}`, formData);
+  }
+
   getUserInfo() {
     return this.http.get(`${environment.api_external_userInfo}`);
   }
@@ -70,11 +75,6 @@ export class ProgrammingRequestService {
   updateProgramming(id: number, formData: Object) {
     const route = `programminggood/api/v1/programming/${id}`;
     return this.http.put(`${environment.API_URL}/${route}`, formData);
-  }
-
-  deleteUserProgramming(formData: Object) {
-    const route = `programminggood/api/v1/programming-users`;
-    return this.http.delete(`${environment.API_URL}/${route}`, formData);
   }
 
   private makeParams(params: ListParams): HttpParams {

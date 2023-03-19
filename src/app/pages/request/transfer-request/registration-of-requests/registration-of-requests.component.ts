@@ -4,7 +4,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { forkJoin } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -51,6 +50,7 @@ export class RegistrationOfRequestsComponent
   saveClarifiObject: boolean = false;
   bsValue = new Date();
   isExpedient: boolean = false;
+  infoRequest: IRequest;
 
   //tabs
   tab1: string = '';
@@ -170,19 +170,54 @@ export class RegistrationOfRequestsComponent
 
   getRequest(id: any) {
     this.requestService.getById(id).subscribe((data: any) => {
-      let request = data;
+      this.infoRequest = data;
+      this.getTransferent(data.transferenceId);
+      this.getRegionalDelegation(data.regionalDelegationId);
+      this.getStateOfRepublic(data.keyStateOfRepublic);
+      this.getAuthority(data.authorityId);
+      this.getStation(data.stationId);
       //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
-      this.isExpedient = request.recordId ? true : false;
+      this.isExpedient = data.recordId ? true : false;
 
-      request.receptionDate = new Date().toISOString();
+      /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.registRequestForm.patchValue(request);
-      this.getData(request);
+      this.getData(request); */
     });
   }
 
-  getData(request: any) {
+  getTransferent(idTransferent: number) {
+    this.transferentService.getById(idTransferent).subscribe(data => {
+      this.transferentName = data.nameTransferent;
+    });
+  }
+
+  getRegionalDelegation(idDelegation: number) {
+    this.delegationService.getById(idDelegation).subscribe(data => {
+      this.delegationName = data.description;
+    });
+  }
+
+  getStateOfRepublic(idState: number) {
+    this.stateOfRepublicService.getById(idState).subscribe(data => {
+      this.stateOfRepublicName = data.descCondition;
+    });
+  }
+
+  getAuthority(idAuthority: number) {
+    this.authorityService.getById(idAuthority).subscribe(data => {
+      this.authorityName = data.authorityName;
+    });
+  }
+
+  getStation(idStation: number) {
+    this.stationService.getById(idStation).subscribe(data => {
+      this.stationName = data.stationName;
+    });
+  }
+
+  /*getData(request: any) {
     const stateOfRepublicService = this.stateOfRepublicService.getById(
       request.keyStateOfRepublic
     );
@@ -220,7 +255,7 @@ export class RegistrationOfRequestsComponent
         console.log(error);
       }
     );
-  }
+  } */
 
   setView(path: string): void {
     switch (path) {
@@ -343,7 +378,6 @@ export class RegistrationOfRequestsComponent
       .update(this.requestData.id, this.requestData)
       .subscribe({
         next: resp => {
-          console.log(resp);
           if (resp.statusCode !== null) {
             this.message('error', 'Error', 'Ocurrio un error al guardar');
           }

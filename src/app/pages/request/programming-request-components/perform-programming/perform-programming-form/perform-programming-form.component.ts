@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { addDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
@@ -111,6 +111,7 @@ export class PerformProgrammingFormComponent
   paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsWarehouseGoods: number = 0;
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  paramsGoodsProg = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
   loadGoods: boolean = false;
   settingUser = { ...this.settings, ...SettingUserTable };
@@ -154,7 +155,7 @@ export class PerformProgrammingFormComponent
         name: {
           title: 'Selección bienes',
           sort: false,
-          position: 'right',
+          position: 'left',
           type: 'custom',
           valuePrepareFunction: (user: any, row: any) =>
             this.isGoodSelected(row),
@@ -171,11 +172,14 @@ export class PerformProgrammingFormComponent
   }
 
   ngOnInit(): void {
+    this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.getInfoUserLog();
     this.getProgrammingData();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
+    this.showUsersProgramming();
+    this.getGoodsProgTrans();
   }
 
   //Información de el usuario logeado//
@@ -308,35 +312,23 @@ export class PerformProgrammingFormComponent
   listUsers() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     const typeUser = this.dataProgramming.typeUser;
+    const idProgramming = this.idProgramming;
     config.initialState = {
       typeUser,
-      callback: (data: any) => {
-        if (data) this.saveUsersProgramming(data);
+      idProgramming,
+      callback: (data: boolean) => {
+        if (data) {
+          this.onLoadToast(
+            'success',
+            'Usuario agregado a la programación correctamente',
+            ''
+          );
+          this.showUsersProgramming();
+        }
       },
     };
 
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
-  }
-
-  saveUsersProgramming(users: any[]) {
-    users.map(info => {
-      let user: Object = {
-        programmingId: this.idProgramming,
-        user: info.firstName,
-        email: info.email,
-        version: 1,
-      };
-      this.programmingService.createUsersProgramming(user).subscribe({
-        next: res => {
-          this.onLoadToast(
-            'success',
-            'Úsuarios agregados a la programación correctamente',
-            ''
-          );
-          this.showUsersProgramming();
-        },
-      });
-    });
   }
 
   //Mostrar lista de uusarios afiliados a la programación
@@ -345,7 +337,13 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getUsersProgramming(this.paramsUsers.getValue())
       .subscribe(data => {
-        this.usersToProgramming.load(data.data);
+        const userData = data.data.map(items => {
+          console.log('items', items.charge.description);
+          items.userCharge = items.charge?.description;
+          console.log('userData', items);
+        });
+        //this.usersToProgramming.load(data.data);
+        this.totalItemsUsers = data.count;
       });
   }
 
@@ -526,43 +524,54 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-          this.estatesList.load(goodsFilter);
-          this.totalItems = response.count;
+
+          this.filterGoodsProgramming(goodsFilter);
           this.loadingGoods = false;
         },
         error: error => (this.loadingGoods = false),
       });
   }
 
-  //Filtrar bienes ya programados//
-  /*filterGoodsProgramming(goods: any[]) {
-    this.params.getValue()['filter.programmingId'] = this.idProgramming;
-    return this.programmingService.getGoodsProgramming(this.params.getValue()).pipe(
-      catchError(error => {
-        if (error.status == 400) {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.onLoadToast('error', 'Error', 'Ocurrio un error al actualizar');
+  filterGoodsProgramming(goods: any[]) {
+    this.paramsGoodsProg.getValue()['filter.programmingId'] =
+      this.idProgramming;
+    this.programmingService
+      .getGoodsProgramming(this.paramsGoodsProg.getValue())
+      .pipe(
+        catchError(error => {
+          if (error.status == 400) {
+            this.GoodsProgramming(goods);
+          }
+          return throwError(() => error);
+        })
+      )
+      .subscribe(data => {
+        const filter = goods.filter(good => {
+          const index = data.data.findIndex(
+            _good => _good.goodId == good.goodNumber
+          );
+          return index >= 0 ? false : true;
+        });
+
+        if (filter.length > 0) {
+          this.estatesList.load(filter);
+          this.totalItems = this.estatesList.count();
+          this.loadingGoods = false;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'No hay bienes disponibles para programar',
+            ''
+          );
         }
-        return throwError(() => error);
-      }),
-      tap(() => {
-        this.onLoadToast('error', 'Error', 'Ocurrio un error al actualizar');
-      })
-    )
+      });
+  }
 
-    .subscribe(data => {
-      console.log('Todos los bienes', goods)
-      const filter = goods.filter(good => {
-        const index = data.data.findIndex(_good => _good.goodId == good.goodNumber)
-        return index >= 0 ? false : true;
-      })
-      console.log(filter);
-      this.estatesList.load(filter);
-      this.totalItems = this.estatesList.count();
-      this.loadingGoods = false;
-
-    }) 
-  } */
+  //bienes ya programados
+  GoodsProgramming(goodsFilter: any) {
+    this.estatesList.load(goodsFilter);
+    this.totalItems = goodsFilter.count;
+  }
 
   sendTransportable() {
     if (this.goodSelect.length) {
@@ -596,12 +605,13 @@ export class PerformProgrammingFormComponent
         version: '1',
         status: 'EN_TRANSPORTABLE',
       };
-      this.programmingGoodService
-        .createGoodsService(formData)
-        .subscribe(() => {});
+      this.programmingGoodService.createGoodsService(formData).subscribe({
+        next: () => {},
+      });
     });
 
     this.changeStatusGoodTrans();
+    this.getProgGoods();
   }
 
   /*------------Cambiar status del bien a transportable ------------------*/
@@ -613,9 +623,9 @@ export class PerformProgrammingFormComponent
         programmationStatus: 'EN_TRANSPORTABLE',
       };
 
-      this.programmingGoodService
-        .updateGoodByBody(formData)
-        .subscribe(() => {});
+      this.programmingGoodService.updateGoodByBody(formData).subscribe({
+        next: () => {},
+      });
     });
     this.getGoodsProgTrans();
   }
@@ -628,6 +638,7 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getGoodsProgramming(this.paramsTransportableGoods.getValue())
       .subscribe(data => {
+        console.log('data', data);
         this.getGoodsTransportable(data.data);
       });
   }
@@ -652,16 +663,9 @@ export class PerformProgrammingFormComponent
           this.goodsInfoTrans.push(response);
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
-          this.removeGoodsProgTrans();
         },
       });
     });
-  }
-
-  /*-------------Remover bienes ya seleccionados------------------*/
-  removeGoodsProgTrans() {
-    console.log('goodsAddressView', this.estatesList);
-    console.log('goods transportables', this.goodsTranportables);
   }
 
   /*------------ Enviar datos a resguardo ----------------------*/
@@ -699,6 +703,7 @@ export class PerformProgrammingFormComponent
         .subscribe(() => {});
     });
     this.changeStatusGoodGuard();
+    this.getProgGoods();
   }
 
   /*------------Cambio de status a resguardo ------------------*/
@@ -729,12 +734,12 @@ export class PerformProgrammingFormComponent
   }
 
   //Filtrar información por resguardo//
-  async getGoodsGuards(data: IGoodProgramming[]) {
+  getGoodsGuards(data: IGoodProgramming[]) {
     const filterTrans = data.filter(item => {
       return item.status == 'EN_RESGUARDO';
     });
 
-    await filterTrans.map((items: any) => {
+    filterTrans.map((items: any) => {
       this.goodService.getById(items.goodId).subscribe({
         next: response => {
           if (response.saePhysicalState == 1)
@@ -788,6 +793,7 @@ export class PerformProgrammingFormComponent
     });
 
     this.changeStatusGoodWarehouse();
+    this.getProgGoods();
   }
 
   //Cambio de status en la programación//
@@ -826,7 +832,7 @@ export class PerformProgrammingFormComponent
       return item.status == 'EN_ALMACEN';
     });
 
-    await filterTrans.map((items: any) => {
+    filterTrans.map((items: any) => {
       this.goodService.getById(items.goodId).subscribe({
         next: response => {
           if (response.saePhysicalState == 1)
@@ -841,6 +847,7 @@ export class PerformProgrammingFormComponent
           this.goodsInfoWarehouse.push(response);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+          this.goodSelect = [];
         },
       });
     });
@@ -942,11 +949,12 @@ export class PerformProgrammingFormComponent
       '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log('user', user);
         const userObject: Object = {
-          programmingId: user.programmingId,
+          programmingId: Number(user.programmingId),
           email: user.email,
         };
-        console.log('Eliminar', userObject);
+
         this.programmingService
           .deleteUserProgramming(userObject)
           .subscribe(() => {

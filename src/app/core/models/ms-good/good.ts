@@ -103,7 +103,7 @@ export interface IGood {
   insertHcDate?: Date;
   extDomProcess?: string;
   requestId?: number | number;
-  goodTypeId?: number;
+  goodTypeId?: number | string;
   subTypeId?: number;
   goodStatus?: string;
   idGoodProperty?: number;

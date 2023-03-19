@@ -58,6 +58,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   };
 
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   goodsInfoTrans: any[] = [];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
@@ -155,13 +156,18 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   getAuthority() {
-    const filterColumns = {
-      idAuthority: Number(this.programming.autorityId),
-      idTransferer: Number(this.idTransferent),
-      idStation: Number(this.idStation),
-    };
-    return this.authorityService.postByIds(filterColumns).subscribe(data => {
-      this.programming.autorityId = data['authorityName'];
+    this.paramsAuthority.getValue()['filter.idAuthority'] =
+      this.programming.autorityId;
+    this.paramsAuthority.getValue()['filter.idTransferer'] = this.idTransferent;
+    this.paramsAuthority.getValue()['filter.idStation'] = this.idStation;
+
+    this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
+      next: response => {
+        let authority = response.data.find(res => {
+          return res;
+        });
+        this.programming.autorityId = authority.authorityName;
+      },
     });
   }
 
@@ -188,9 +194,12 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          console.log('Usuarios', response);
-          this.usersData.load(response.data);
+          const usersData = response.data.map(items => {
+            items.userCharge = items.charge.description;
+            return items;
+          });
 
+          this.usersData.load(usersData);
           this.totalItems = this.usersData.count();
           this.loading = false;
         },

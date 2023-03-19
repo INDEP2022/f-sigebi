@@ -42,6 +42,8 @@ export class UserFormComponent extends BasePage implements OnInit {
 
     if (this.userData != null) {
       this.edit = true;
+      if (this.userData.userCharge)
+        this.userData.userCharge = this.userData.charge.keyId;
       this.userForm.patchValue(this.userData);
     }
   }

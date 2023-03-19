@@ -90,3 +90,15 @@ export interface IGoodProgrammingSelect {
   typeTransfer: string;
   unitMeasurement: string;
 }
+
+export interface IGoodInfo {
+  goodId: number;
+  uniqueKey: string;
+  fileNumber: string;
+  description: string;
+  descriptionGoodSae: string;
+  quantity: number;
+  unitMeasure: string;
+  physicalStatus: number | string;
+  reprogrammationNumber: number;
+}

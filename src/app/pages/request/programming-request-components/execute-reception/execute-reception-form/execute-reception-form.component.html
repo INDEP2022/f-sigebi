@@ -364,16 +364,27 @@
                 Asignar Acta
               </button>
             </div>
+            <div class="row">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsGuardGoods"
+                [source]="guardGoods"
+                (userRowSelect)="goodsSelects($event.selected)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsGuard"
+                [totalItems]="totalItemsGuard"></app-pagination>
+            </div>
 
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsGuardGoods"
-              [source]="guardGoods"
-              (userRowSelect)="goodsSelects($event.selected)">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="paramsGuard"
-              [totalItems]="totalItemsGuard"></app-pagination>
+            <div class="row pt-5">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards"
+                (edit)="showGoodsReceipt($event.data)"
+                (delete)="generateReceiptGuard($event.data)">
+              </ng2-smart-table>
+            </div>
           </tab>
 
           <!--Bien a almacén-->
@@ -395,15 +406,24 @@
                 </button>
               </div>
             </div>
+            <div class="row">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsWarehouseGoods"
+                [source]="goodsWarehouse">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsGoodsWarehouse"
+                [totalItems]="totalItemsWarehouse"></app-pagination>
+            </div>
 
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsWarehouseGoods"
-              [source]="goodsWarehouse">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="paramsGoodsWarehouse"
-              [totalItems]="totalItemsWarehouse"></app-pagination>
+            <div class="row pt-5">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards">
+              </ng2-smart-table>
+            </div>
           </tab>
         </tabset>
       </div>
