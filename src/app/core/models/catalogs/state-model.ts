@@ -8,7 +8,7 @@ export interface IStateByTransferent {
 }
 
 export interface IState {
-  id: number;
+  id: string;
   descCondition: string;
   codeCondition: string;
   registrationNumber: number;

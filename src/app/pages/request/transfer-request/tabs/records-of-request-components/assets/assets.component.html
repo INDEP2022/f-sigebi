@@ -50,20 +50,6 @@
         <input
           type="file"
           name="file"
-          #fileVehiculo
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event, 'vehiculo')" />
-        <input
-          type="file"
-          name="file"
-          #fileMercancia
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event, 'mercancia')" />
-        <input
-          type="file"
-          name="file"
           #fileInmueble
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -96,50 +82,11 @@
               </a>
             </li>
             <!-- sub menu de importacion -->
-            <li
-              role="menuitem"
-              dropdown
-              triggers="mouseover"
-              placement="left"
-              container="body">
-              <a
-                dropdownToggle
-                class="dropdown-item dropdown-toggle"
-                (click)="(false)"
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="fileInmueble.click()"
                 ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
-                <span class="caret"></span
-              ></a>
-              <ul *dropdownMenu class="dropdown-menu" role="menu">
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    routerLink="."
-                    fragment="nested-dropdowns"
-                    (click)="fileVehiculo.click()"
-                    >Vehiculos</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    routerLink="."
-                    fragment="nested-dropdowns"
-                    (click)="fileMercancia.click()"
-                    >Mercancia</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    routerLink="."
-                    fragment="nested-dropdowns"
-                    (click)="fileInmueble.click()"
-                    >Inmueble</a
-                  >
-                </li>
-              </ul>
+              </a>
             </li>
-
             <li class="divider dropdown-divider"></li>
             <li role="menuitem">
               <a class="dropdown-item" style="color: red" (click)="delete()">

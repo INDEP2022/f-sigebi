@@ -16,10 +16,4 @@ export const IDENTIFIER_COLUMNS = {
     type: 'string',
     sort: false,
   },
-
-  noRegistration: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: false,
-  },
 };

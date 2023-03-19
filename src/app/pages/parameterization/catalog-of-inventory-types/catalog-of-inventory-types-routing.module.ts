@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CatalogOfInventoryTypesComponent } from './catalog-of-inventory-types/catalog-of-inventory-types.component';
+import { ListTypeOfInventoryComponent } from './list-type-of-inventory/list-type-of-inventory.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: CatalogOfInventoryTypesComponent,
+    component: ListTypeOfInventoryComponent,
   },
 ];
 

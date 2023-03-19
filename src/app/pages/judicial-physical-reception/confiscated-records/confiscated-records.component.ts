@@ -10,6 +10,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -247,13 +248,15 @@ export class ConfiscatedRecordsComponent implements OnInit {
     const acta = this.form.get('acta');
     if (acta.value != null) {
       this.enableElement('transfer');
+      this.fillActTwo();
       if (
         acta.value === 'A' &&
         transfer.value != null &&
-        transfer.value.keyTransferent != 'PGR' &&
-        transfer.value.keyTransferent != 'PJF'
+        transfer.value.transferentKey != 'PGR' &&
+        transfer.value.transferentKey != 'PJF'
       ) {
         transfer.setValue(null);
+        this.fillActTwo();
       }
     }
   }
@@ -289,6 +292,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
     let codeNoty: number;
     filterNoty.addFilter('expedientNumber', this.form.get('expediente').value);
     this.serviceNoty.getAllFilter(filterNoty.getParams()).subscribe(res => {
+      console.log(res);
       const uniqueArray = res.data.filter(
         (product: any, index: any, self: any) =>
           index ===
@@ -297,7 +301,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
           )
       );
       codeNoty = uniqueArray[0]['endTransferNumber'];
-      const paramsF = new FilterParams();
+
+      /* const paramsF = new FilterParams();
       paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
       this.serviceTransferente
         .getAllWithFilter(paramsF.getParams())
@@ -313,9 +318,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
               )
           );
           this.transferSelect = new DefaultSelect(uniqueArray);
-        });
+        }); */
     });
-    /* */
   }
 
   //
@@ -332,11 +336,19 @@ export class ConfiscatedRecordsComponent implements OnInit {
           this.serviceExpedient
             .getById(this.form.get('expediente').value)
             .subscribe(res => {
+              let model: TransferProceeding = {
+                numFile: res.transferNumber as number,
+                typeProceedings: res.expedientType,
+              };
               if (res.expedientType === 'T') {
                 this.records = ['RT'];
               } else {
                 this.records = ['A', 'NA', 'D', 'NS'];
               }
+
+              this.serviceProcVal.getTransfer(model).subscribe(res => {
+                this.transferSelect = new DefaultSelect(res.data, res.count);
+              });
               this.enableElement('acta');
             });
         },
@@ -353,7 +365,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value.keyTransferent
+        ? this.form.get('transfer').value.transferentkey
         : '') +
       '/' +
       (this.form.get('ident').value != null

@@ -6,11 +6,6 @@
   </div>
   <div body>
     <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params0"></search-bar>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-12">
         <div class="ch-content">
           <h5 class="title"></h5>
@@ -29,8 +24,10 @@
         <div class="table-responsive pt-3">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
+              [attr.class]="'table-bordered'"
               [settings]="settingsSaveValues"
               [source]="saveValuesList"
+              (delete)="showDeleteAlert1($event.data)"
               (edit)="openFormSaveValues($event.data)"
               (userRowSelect)="
                 rowsSelectedSaveValues($event)
@@ -64,9 +61,11 @@
           <div class="table-responsive pt-3">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
+                [attr.class]="'table-bordered'"
                 [settings]="settingsBattery"
                 [source]="batteryList"
                 (edit)="openFormBattery($event.data)"
+                (delete)="showDeleteAlert2($event.data)"
                 (userRowSelect)="rowsSelectedBattery($event)"></ng2-smart-table>
             </div>
           </div>
@@ -90,9 +89,11 @@
           <div class="table-responsive pt-3">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
+                [attr.class]="'table-bordered'"
                 [settings]="settingsShelves"
                 [source]="shelvesList"
                 (edit)="openFormShelves($event.data)"
+                (delete)="showDeleteAlert3($event.data)"
                 (userRowSelect)="rowsSelectedShelves($event)"></ng2-smart-table>
             </div>
           </div>
@@ -116,8 +117,10 @@
           <div class="table-responsive pt-3">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
+                [attr.class]="'table-bordered'"
                 [settings]="settingsLockers"
                 [source]="lockerList"
+                (delete)="showDeleteAlert4($event.data)"
                 (edit)="openFormLocker($event.data)"></ng2-smart-table>
             </div>
           </div>

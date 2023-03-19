@@ -102,6 +102,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       delete request.emisora;
       delete request.state;
       delete request.proceedings;
+      delete request.regionalDelegation;
     }
   }
 
@@ -124,7 +125,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
       this.requestService.update(request.id, request as IRequest).subscribe(
         (data: any) => {
-          console.log(data);
+          //console.log(data);
           if (data.statusCode != 200) {
             this.message(
               'error',

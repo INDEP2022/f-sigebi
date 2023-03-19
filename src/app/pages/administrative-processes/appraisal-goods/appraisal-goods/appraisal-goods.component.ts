@@ -55,7 +55,6 @@ export class AppraisalGoodsComponent extends BasePage implements OnInit {
   }
 
   send() {
-    console.log(this.form.value);
     this.loading = true;
     // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONADBBIENESSAVA.pdf?PARAMFORM=NO&PN_DELEG=` +
     //   this.form.controls['delegation'].value +

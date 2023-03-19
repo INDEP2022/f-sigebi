@@ -22,6 +22,7 @@ import { ILocker } from 'src/app/core/models/catalogs/locker.model';
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Component modal
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
+import Swal from 'sweetalert2';
 import { BatteryModalComponent } from '../battery-modal/battery-modal.component';
 import { LockersModalComponent } from '../lockers-modal/lockers-modal.component';
 import { SaveValuesModalComponent } from '../save-values-modal/save-values-modal.component';
@@ -88,7 +89,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...SAVEVALUES_COLUMNS },
@@ -98,7 +99,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...BATTERY_COLUMNS },
@@ -108,7 +109,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...SHELVES_COLUMNS },
@@ -118,7 +119,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...LOCKERS_COLUMNS },
@@ -160,6 +161,27 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.modalService.show(SaveValuesModalComponent, modalConfig);
   }
 
+  //msj de alerta para eliminar un guardavalor
+  showDeleteAlert1(saveValues?: ISaveValue) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(saveValues);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //método para borrar registro de guardavalor
+  delete(saveValues?: ISaveValue) {
+    this.saveValueService.remove2(saveValues).subscribe({
+      next: () => this.getSaveValues(),
+    });
+  }
+
   //Evento al seleccionar fila de tabla Guardavaluo
   rowsSelectedSaveValues(event: any) {
     this.idSaveValues = event.data;
@@ -182,8 +204,23 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
           this.totalItems2 = response.count;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => (
+          this.showNullRegisterBattery(), (this.loading = false)
+        ),
       });
+  }
+
+  //Msj de que no existe bateria del guardavalor seleccionado
+  showNullRegisterBattery() {
+    this.alertQuestion(
+      'warning',
+      'Guardavalor sin bateria',
+      '¿Desea agregarlas ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openFormBattery();
+      }
+    });
   }
 
   //Abrir formulario de Batterias
@@ -198,6 +235,27 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(BatteryModalComponent, modalConfig);
+  }
+
+  //msj de alerta para eliminar una Bateria
+  showDeleteAlert2(battery?: IBattery) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete2(battery);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //método para borrar registro de Batteria
+  delete2(battery?: IBattery) {
+    this.batterysService.remove(battery.idBattery).subscribe({
+      next: () => this.getSaveValues(),
+    });
   }
 
   //Evento al seleccionar fila de Batteria
@@ -228,8 +286,23 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
           this.totalItems2 = response.count;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => (
+          this.showNullRegisterShelves(), (this.loading = false)
+        ),
       });
+  }
+
+  //Msj de que no existe estantes de la bateria seleccionada
+  showNullRegisterShelves() {
+    this.alertQuestion(
+      'warning',
+      'Bateria sin estantes ',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openFormShelves();
+      }
+    });
   }
 
   //Abrir formulario de Estantes
@@ -247,6 +320,28 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(ShelvesModalComponent, modalConfig);
+  }
+
+  //msj de alerta para eliminar un estante
+  showDeleteAlert3(shelves?: IShelves) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete3(shelves);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //método para borrar registro de estante
+  delete3(shelves?: IShelves) {
+    console.log('estante:', shelves);
+    this.shelvessService.remove(shelves).subscribe({
+      next: () => this.getSaveValues(),
+    });
   }
 
   //Evento al seleccionar fila de Shelves
@@ -282,8 +377,21 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
           this.totalItems2 = response.count;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => (this.showNullRegisterLocker(), (this.loading = false)),
       });
+  }
+
+  //Msj de que no existe casilleros del estante seleccionado
+  showNullRegisterLocker() {
+    this.alertQuestion(
+      'warning',
+      'Estante sin casilleros',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openFormLocker();
+      }
+    });
   }
 
   //Abrir formulario de casilleros
@@ -303,5 +411,26 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(LockersModalComponent, modalConfig);
+  }
+
+  //msj de alerta para eliminar un Casillero
+  showDeleteAlert4(locker?: ILocker) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete4(locker);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //método para borrar registro de casillero
+  delete4(locker?: ILocker) {
+    this.lockersService.remove(locker).subscribe({
+      next: () => console.log('ok'),
+    });
   }
 }

@@ -19,6 +19,7 @@
 export interface IJuridicalFileDataUpdateParams {
   pGestOk: number;
   pNoTramite: number;
+  dictamen: boolean;
 }
 
 export interface IJuridicalRulingParams {
@@ -48,4 +49,9 @@ export interface IJuridicalRelatedDocumentManagementParams {
   expediente: number;
   pGestOk: number;
   pNoTramite: number;
+}
+
+export interface IJuridicalShiftChangeParams {
+  iden: number;
+  exp: number;
 }

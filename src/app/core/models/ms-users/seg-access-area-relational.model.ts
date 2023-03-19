@@ -9,7 +9,7 @@ export interface IUserAccessAreaRelational {
   departamentNumber: number;
   user: string;
   assigned: string;
-  registryNumber: number;
+  registryNumber?: number;
   delegation1Number: number;
   departament1Number: number;
   lastActive: number;

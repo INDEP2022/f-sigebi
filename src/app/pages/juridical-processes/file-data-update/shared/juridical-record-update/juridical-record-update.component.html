@@ -46,7 +46,8 @@
               <input
                 type="radio"
                 formControlName="wheelType"
-                [value]="option.value" />
+                [value]="option.value"
+                (change)="changeWheelType(option.value)" />
             </form-radio>
           </div>
         </div>
@@ -127,15 +128,15 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="affair == null"
-            (click)="sentToDocumentsManagement()">
+            [disabled]="affair == null || dictOffice == ''"
+            (click)="sendToDocumentsManagement()">
             Oficio de desahogo
           </button>
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="dictum == ''"
-            (click)="sentToJuridicalRuling()">
+            [disabled]="dictum == '' || affair == null || dictOffice != 'D'"
+            (click)="sendToJuridicalRuling()">
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
         </div>
@@ -181,7 +182,7 @@
       <div class="row pt-4" *ngIf="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('expedientTransferenceNumber')"
-          label="Exp Transfer">
+          label="Exp. Transfer">
           <input
             type="text"
             formControlName="expedientTransferenceNumber"
@@ -235,7 +236,7 @@
           [control]="fileDataUpdateForm.get('officeExternalKey')"
           label="No. Oficio">
           <input
-            type="number"
+            type="text"
             formControlName="officeExternalKey"
             class="form-control" />
         </form-field>
@@ -263,7 +264,8 @@
           <textarea
             rows="4"
             formControlName="observations"
-            class="form-control"></textarea>
+            class="form-control"
+            [readonly]="searchMode"></textarea>
         </form-field>
       </div>
     </div>
@@ -490,14 +492,14 @@
             readonly />
         </form-field>
 
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="openModalAreas()">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-5">
         <form-field
@@ -533,7 +535,8 @@
           <input
             type="text"
             formControlName="userRecipient"
-            class="form-control" />
+            class="form-control"
+            [readonly]="searchMode" />
         </form-field>
       </div>
 
@@ -549,29 +552,41 @@
       </div>
 
       <div class="row">
-        <div>
-          <button
-            outline
-            type="button"
-            class="mr-2 btn btn-sm active btn-primary"
-            (click)="sentToShiftChange()">
-            Reasignaci&oacute;n de Turno
-          </button>
-          <button
-            outline
-            type="button"
-            class="mr-2 btn-sm active btn-primary"
-            [disabled]="wheelNumber == null || dictum == ''"
-            (click)="sendToRelatedDocumentsManagement()">
-            Oficio Relacionado
-          </button>
-          <button
-            outline
-            type="button"
-            class="mr-2 btn-sm active btn-primary"
-            (click)="openFlyerCopies()">
-            Captura de copias
-          </button>
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="wheelNumber == null || expedientNumber == null"
+              (click)="openToShiftChange()">
+              Reasignaci&oacute;n de Turno
+            </button>
+          </div>
+          <div>
+            <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="wheelNumber == null || dictum == ''"
+              (click)="sendToRelatedDocumentsManagement()">
+              Oficio Relacionado
+            </button>
+          </div>
+          <div>
+            <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="
+                userRecipient == null ||
+                delDestinyNumber == null ||
+                dictum != ''
+              "
+              (click)="openFlyerCopies()">
+              Captura de copias
+            </button>
+          </div>
         </div>
       </div>
     </div>

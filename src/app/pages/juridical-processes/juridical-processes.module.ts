@@ -10,11 +10,18 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 /** ROUTING MODULE */
 import { JuridicalProcessesRoutingModule } from './juridical-processes-routing.module';
+import { FormSearchHandlerModule } from './shared/form-search-handler/form-search-handler.module';
 
 /** COMPONENTS IMPORTS */
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, JuridicalProcessesRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    JuridicalProcessesRoutingModule,
+    SharedModule,
+    FormSearchHandlerModule,
+  ],
+  exports: [FormSearchHandlerModule],
 })
 export class JuridicalProcessesModule {}

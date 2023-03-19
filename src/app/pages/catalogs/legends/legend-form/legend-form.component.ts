@@ -40,10 +40,7 @@ export class LegendFormComponent extends BasePage implements OnInit {
       userModification: [null, [Validators.pattern(STRING_PATTERN)]],
       modificationDate: [null, [Validators.pattern(STRING_PATTERN)]],
       legend: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      version: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       status: [
         '1',
         Validators.compose([

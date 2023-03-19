@@ -228,7 +228,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
-        error: error => (this.loading2 = false),
+        error: error => (this.showNullRegister1(), (this.loading2 = false)),
       });
   }
 
@@ -292,15 +292,16 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   getAuthorityByTransferent(id?: number) {
     this.loading3 = true;
     const idEmi = { ...this.stations };
+    const idTrans = { ...this.transferents };
     this.authorityService
-      .getAuthorityByTransferent(idEmi.id, this.params3.getValue())
+      .getAuthorityByTransferent(idEmi.id, idTrans.id, this.params3.getValue())
       .subscribe({
         next: response => {
           this.authorityList = response.data;
           this.totalItems3 = response.count;
           this.loading3 = false;
         },
-        error: error => (this.loading3 = false),
+        error: error => (this.showNullRegister2(), (this.loading3 = false)),
       });
   }
 
@@ -339,6 +340,32 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   delete3(id?: number, authority?: IAuthority2) {
     this.authorityService.remove2(id, authority).subscribe({
       next: () => this.getAuthorityByTransferent(),
+    });
+  }
+
+  //Msj de que no existe emisora del transferente seleccionado
+  showNullRegister1() {
+    this.alertQuestion(
+      'warning',
+      'Transferente sin emisoras',
+      '¿Desea agregarlas ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm2();
+      }
+    });
+  }
+
+  //Msj de que no existe autoridades de la emisora seleccionada
+  showNullRegister2() {
+    this.alertQuestion(
+      'warning',
+      'Emisora sin Autoridades',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm3();
+      }
     });
   }
 

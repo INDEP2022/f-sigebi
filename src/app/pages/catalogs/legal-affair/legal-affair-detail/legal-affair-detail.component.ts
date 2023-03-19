@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
 import { LegalAffairService } from 'src/app/core/services/catalogs/legal-affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-legal-affair-detail',
@@ -33,7 +34,11 @@ export class LegalAffairDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.legalAffairForm = this.fb.group({
       id: [null, []],
-      legalAffair: [null, []],
+      legalAffair: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, []],
     });
     if (this.legalAffair != null) {
       this.edit = true;

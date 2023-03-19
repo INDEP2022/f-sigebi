@@ -44,34 +44,30 @@ export class AttributesRegLogicalTablesModalComponent
 
   private prepareForom() {
     this.tdescAtribForm = this.fb.group({
-      keyAtrib: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      idNmTable: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      keyAtrib: [null, []],
+      idNmTable: [null, []],
       descriptionAtrib: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      swFormat: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      swFormat: [null, [Validators.pattern(STRING_PATTERN)]],
       longMax: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.max(80),
+          Validators.min(1),
+        ],
       ],
       longMin: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.max(80),
+          Validators.min(1),
+        ],
       ],
-      registerNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      registerNumber: [null, []],
     });
     if (this.tdescAtrib != null) {
       this.edit = true;

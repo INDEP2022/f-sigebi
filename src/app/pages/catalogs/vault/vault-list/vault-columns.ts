@@ -1,11 +1,6 @@
 export const VAULT_COLUMNS = {
   idSafe: {
-    title: 'Registro',
-    type: 'string',
-    sort: false,
-  },
-  manager: {
-    title: 'Encargado',
+    title: 'No. Bóvedas',
     type: 'string',
     sort: false,
   },
@@ -19,29 +14,41 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'No. de registro',
-    type: 'number',
-    sort: false,
-  },
-  municipalityCode: {
-    title: 'Municipio',
+  manager: {
+    title: 'Responsable',
     type: 'string',
     sort: false,
   },
-  localityCode: {
-    title: 'Localidad',
-    type: 'string',
-    sort: false,
-  },
-  stateCode: {
-    title: 'Entidad',
-    type: 'string',
-    sort: false,
-  },
-  cityCode: {
+  cityDetail: {
     title: 'Ciudad',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.nameCity;
+    },
+  },
+  stateDetail: {
+    title: 'Entidad',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.descCondition;
+    },
+  },
+  municipalityDetail: {
+    title: 'Municipio',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.nameMunicipality;
+    },
+  },
+  localityDetail: {
+    title: 'Localidad',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.nameLocation;
+    },
   },
 };
