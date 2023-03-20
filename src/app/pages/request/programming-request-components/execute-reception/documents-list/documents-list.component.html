@@ -48,17 +48,6 @@
                 (fetchItems)="getRegionalDelegatioin($event)"></ngx-select>
             </form-field>
           </div>
-
-          <!-- <div class="col-md-4">
-            <form-field
-              [control]="documentForm.get('noSiab')"
-              label="No&#46; SIAB">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noSiab" />
-            </form-field>
-          </div> -->
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('xresponsable')"
@@ -170,6 +159,18 @@
                 readonly />
             </form-field>
           </div>
+          <!-- documentos solicitud -->
+          <div class="col-md-4" *ngIf="typeDoc === 'doc-bien'">
+            <form-field
+              [control]="documentForm.get('xidBien')"
+              label="No&#46; Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidBien"
+                readonly />
+            </form-field>
+          </div>
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('xnoOficio')"
@@ -190,7 +191,16 @@
                 formControlName="xremitente" />
             </form-field>
           </div>
-
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xidSIAB')"
+              label="No&#46; SIAB">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidSIAB" />
+            </form-field>
+          </div>
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('xcargoRemitente')"

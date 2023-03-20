@@ -544,62 +544,42 @@ export class DetailAssetsTabComponentComponent
       case 1:
         this.getGoodEstateTab();
         this.getGoodEstate();
+        this.closeTabs();
         this.immovablesAssets = true;
-        this.carsAssets = false;
-        this.boatAssets = false;
-        this.aircraftAssets = false;
-        this.jewelerAssets = false;
-        this.otherAssets = false;
         break;
       case 2:
+        this.closeTabs();
         this.carsAssets = true;
-        this.immovablesAssets = false;
-        this.boatAssets = false;
-        this.aircraftAssets = false;
-        this.jewelerAssets = false;
-        this.otherAssets = false;
         break;
       case 3:
+        this.closeTabs();
         this.boatAssets = true;
-        this.immovablesAssets = false;
-        this.carsAssets = false;
-        this.aircraftAssets = false;
-        this.jewelerAssets = false;
-        this.otherAssets = false;
         break;
       case 4:
+        this.closeTabs();
         this.aircraftAssets = true;
-        this.immovablesAssets = false;
-        this.carsAssets = false;
-        this.boatAssets = false;
-        this.jewelerAssets = false;
-        this.otherAssets = false;
         break;
       case 5:
+        this.closeTabs();
         this.jewelerAssets = true;
-        this.immovablesAssets = false;
-        this.carsAssets = false;
-        this.boatAssets = false;
-        this.aircraftAssets = false;
-        this.otherAssets = false;
         break;
       case 8:
+        this.closeTabs();
         this.otherAssets = true;
-        this.immovablesAssets = false;
-        this.carsAssets = false;
-        this.boatAssets = false;
-        this.aircraftAssets = false;
-        this.jewelerAssets = false;
         break;
       default:
-        this.immovablesAssets = false;
-        this.carsAssets = false;
-        this.boatAssets = false;
-        this.aircraftAssets = false;
-        this.jewelerAssets = false;
-        this.otherAssets = false;
+        this.closeTabs();
         break;
     }
+  }
+
+  closeTabs() {
+    this.immovablesAssets = false;
+    this.carsAssets = false;
+    this.boatAssets = false;
+    this.aircraftAssets = false;
+    this.jewelerAssets = false;
+    this.otherAssets = false;
   }
 
   async save() {

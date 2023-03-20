@@ -61,8 +61,9 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       ],
       xidSolicitud: [null],
       xidExpediente: [null],
+      xidBien: [null],
       //numberGestion: [5296016],
-      noSIAB: [null],
+      xidSIAB: [null],
       xresponsable: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -76,7 +77,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       xestado: [null],
-      numberOffice: [null],
+      xnoOficio: [null],
       xidTransferente: [null],
       //numberProgramming: [5397],
       xremitente: [
@@ -167,30 +168,50 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         const doctype = this.documentForm.controls['xtipoDocumento'].value;
         const docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
-        let body: any = {};
 
-        body['ddocTitle'] = this.documentForm.controls['ddocTitle'].value;
-        body['ddocAuthor'] = '';
-        body['ddocType'] = '';
-        body['ddocCreator'] = '';
-        body['ddocName'] = docName;
-        body['dID'] = '';
-        body['dSecurityGroup'] = 'Public';
-        body['dDocAccount'] = '';
-        body['dInDate'] = '';
-        body['dDocId'] = '';
-        body['dDocId'] = '';
-        body['dDocId'] = '';
-
-        /* this.wcontentService.addDocumentToContent(docName,'pdf',this.file).subscribe({
-          next:resp => {
-
+        const form = this.documentForm.getRawValue();
+        for (const key in form) {
+          if (form[key] === null) {
+            form[key] = '';
           }
-        }) */
+        }
+        form['ddocName'] = docName;
+        form['dSecurityGroup'] = 'Public';
+        form['xNivelRegistroNSBDB'] = 'Expediente';
+        form['xNombreProceso'] = 'Captura Solicitud';
+        delete form['document'];
 
-        this.onLoadToast('success', 'Documento creado correctamente', '');
+        this.wcontentService
+          .addDocumentToContent(
+            docName,
+            '.pdf',
+            JSON.stringify(form),
+            this.file,
+            '.pdf'
+          )
+          .subscribe({
+            next: resp => {
+              console.log(resp);
+              if (resp.status === 'OK') {
+                this.onLoadToast(
+                  'success',
+                  'Documento Guardado',
+                  'El documento guardo correctamente'
+                );
 
-        this.close();
+                this.close();
+              } else {
+                this.onLoadToast(
+                  'error',
+                  'Error',
+                  'Ocurrio un error al guardar el documento'
+                );
+                console.log(resp);
+              }
+            },
+          });
+
+        /**/
       }
     });
   }
