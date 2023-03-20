@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
+import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 
@@ -14,7 +16,10 @@ import { IGood } from '../../models/good/good.model';
  */
 export class GoodService implements ICrudMethods<IGood> {
   private readonly route: string = 'pendiente/parametros';
-  constructor(private goodRepository: Repository<IGood>) {}
+  constructor(
+    private goodRepository: Repository<IGood>,
+    private http: HttpClient
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IGood>> {
     return this.goodRepository.getAllPaginated('good/good', params);
@@ -71,6 +76,11 @@ export class GoodService implements ICrudMethods<IGood> {
 
   update(id: string | number, model: IGood): Observable<Object> {
     return this.goodRepository.update('good/good', id, model);
+  }
+
+  updateByBody(formData: Object) {
+    const route = `good/api/v1/good`;
+    return this.http.put(`${environment.API_URL}/${route}`, formData);
   }
 
   getByExpedientAndStatus(

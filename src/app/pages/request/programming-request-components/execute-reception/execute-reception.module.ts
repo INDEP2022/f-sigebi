@@ -4,6 +4,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DocumentsListComponent } from './documents-list/documents-list.component';
+import { EditGoodFormComponent } from './edit-good-form/edit-good-form.component';
 import { ExecuteReceptionFormComponent } from './execute-reception-form/execute-reception-form.component';
 import { ExecuteReceptionRoutingModule } from './execute-reception-routing.module';
 import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form.component';
@@ -13,6 +14,7 @@ import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form
     ExecuteReceptionFormComponent,
     DocumentsListComponent,
     ReschedulingFormComponent,
+    EditGoodFormComponent,
   ],
   imports: [
     CommonModule,
