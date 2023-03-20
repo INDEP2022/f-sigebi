@@ -9,32 +9,33 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionGoodSae: {
+  decriptionGoodSae: {
     title: 'Descripción de Bien SAE',
     type: 'string',
     sort: false,
   },
-  typeAsset: {
+
+  goodTypeId: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
-  fraction: {
+  fractionId: {
     title: 'Fracción',
     type: 'string',
     sort: false,
   },
-  quantityTransfer: {
+  quantity: {
     title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
-  ligieUnitMeasure: {
+  ligieUnit: {
     title: 'Unidad de Medida Ligia',
     type: 'string',
     sort: false,
   },
-  transferUnitMeasure: {
+  unitMeasure: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
@@ -44,12 +45,12 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  physicalState: {
+  physicalStatus: {
     title: 'Estado fisico',
     type: 'string',
     sort: false,
   },
-  conservationState: {
+  stateConservation: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
@@ -59,7 +60,8 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  destinyTransfer: {
+
+  transferentDestiny: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

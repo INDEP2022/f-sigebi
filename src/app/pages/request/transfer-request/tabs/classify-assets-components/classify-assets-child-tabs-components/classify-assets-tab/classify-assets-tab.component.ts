@@ -16,6 +16,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -102,22 +103,22 @@ export class ClassifyAssetsTabComponent
       goodTypeId: [null],
       color: [null],
       goodDescription: [null],
-      quantity: [1],
+      quantity: [1, [Validators.required]],
       duplicity: ['N'],
-      capacity: [null, [Validators.required]],
-      volume: [null],
+      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
+      volume: [null, [Validators.pattern(STRING_PATTERN)]],
       fileeNumber: [null],
-      useType: [null],
+      useType: [null, [Validators.pattern(STRING_PATTERN)]],
       physicalStatus: [null],
       stateConservation: [null],
-      origin: [null, [Validators.required]],
+      origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       goodClassNumber: [null],
       ligieUnit: [null],
       appraisal: [null],
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
       compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [null],
+      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
       brand: [null, [Validators.required]],
@@ -207,6 +208,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
+      error: error => {
+        console.log('Capitulo: ', error.error.message[0]);
+      },
     });
   }
 
@@ -238,6 +242,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
+      error: error => {
+        console.log('Nivel 1: ', error.error.message[0]);
+      },
     });
   }
 
@@ -264,6 +271,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieLevel2
           );
         }
+      },
+      error: error => {
+        console.log('Nivel 2: ', error.error.message[0]);
       },
     });
   }
@@ -292,6 +302,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
+      error: error => {
+        console.log('Nivel 3: ', error.error.message[0]);
+      },
     });
   }
 
@@ -318,6 +331,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieLevel4
           );
         }
+      },
+      error: error => {
+        console.log('Nivel 4: ', error.error.message[0]);
       },
     });
   }

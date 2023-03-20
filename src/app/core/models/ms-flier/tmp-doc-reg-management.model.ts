@@ -2,11 +2,11 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 
 export interface ICopiesxFlier {
-  copyNumber: string;
+  copyNumber: string | number;
   copyuser: string;
   persontype: FlyerPersontype;
   flierNumber: number;
-  registryNumber?: string;
+  registryNumber?: number;
   notification?: INotification;
 }
 

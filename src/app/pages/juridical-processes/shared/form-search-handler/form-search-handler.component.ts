@@ -130,6 +130,7 @@ export class FormSearchHandlerComponent
 
   cancelSearch() {
     this.searchMode = false;
+    this.searchConfirm = false;
     this.onSearchStart.emit(false);
   }
 
@@ -148,8 +149,12 @@ export class FormSearchHandlerComponent
             this.loading = false;
             this.modalLoaded = true;
             this.changeDetectorRef.detectChanges();
-            if (!this.modal.isShown) {
+            if (!this.modal.isShown && data.count > 1) {
               this.modal.show();
+            } else if (data.count == 1) {
+              this.onSearchStart.emit(false);
+              this.onConfirmSearch.emit(false);
+              this.onSelect.emit(data.data[0]);
             }
           } else {
             this.columns = [];
@@ -270,7 +275,8 @@ export class FormSearchHandlerComponent
   }
 
   close() {
-    this.title = 'Closed';
+    this.onSearchStart.emit(false);
+    this.onConfirmSearch.emit(false);
     this.modal.hide();
   }
 
@@ -279,6 +285,8 @@ export class FormSearchHandlerComponent
     this.selectedRow = row.data;
     this.rowSelected = true;
     if (this.selectOnClick) {
+      this.onSearchStart.emit(false);
+      this.onConfirmSearch.emit(false);
       this.onSelect.emit(this.selectedRow);
       this.modal.hide();
     }
@@ -286,6 +294,8 @@ export class FormSearchHandlerComponent
 
   confirm() {
     if (!this.rowSelected) return;
+    this.onSearchStart.emit(false);
+    this.onConfirmSearch.emit(false);
     this.onSelect.emit(this.selectedRow);
     this.modal.hide();
   }

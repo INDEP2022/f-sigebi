@@ -1,4 +1,5 @@
 import { FieldToSearch } from '../../shared/form-search-handler/form-search-handler.component';
+
 export const JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS = {
   wheelNumber: {
     title: 'No. Volante',
@@ -161,3 +162,24 @@ export const JURIDICAL_FILE_UPDATE_SEARCH_FIELDS: FieldToSearch[] = [
     nestedObjField: 'id',
   },
 ];
+
+export const JURIDICAL_FILE_UPDATE_FLYER_COPIES_COLUMNS = {
+  copyuser: {
+    title: 'Usuario',
+    type: 'number',
+    sort: false,
+  },
+  userDetail: {
+    title: 'Nombre',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.name;
+    },
+  },
+  type: {
+    title: 'Tipo',
+    type: 'string',
+    sort: false,
+  },
+};

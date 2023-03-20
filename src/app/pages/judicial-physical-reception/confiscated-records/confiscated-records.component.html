@@ -76,13 +76,12 @@
             <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
-                  (fetchItems)="getTransferentData($event)"
                   (change)="verifyTransferenteAndAct()"
                   class="disabled"
                   id="transfer"
                   control="transfer"
                   label="Transfer"
-                  bindLabel="keyTransferent"
+                  bindLabel="transferentkey"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
                 <!-- <input
