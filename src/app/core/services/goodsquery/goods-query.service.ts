@@ -81,11 +81,17 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  //realiza un Post para obtener los ligies
   getUnitLigie(params: Object): Observable<any> {
     return this.goodQueryRepository.getUnitLigie(
       this.routeLigieUnitMeasure,
       params
     );
+  }
+
+  //realiza un Get para obtener las unidades
+  getUnitLigies(params: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(this.routeLigieUnitMeasure, params);
   }
 
   getZipCode(

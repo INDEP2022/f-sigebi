@@ -1,6 +1,7 @@
 export interface IGoodProgramming {
   id: number;
   typeGoodId: string;
+  goodId: number;
   subTypeGoodId: string;
   startDate: Date;
   endDate: Date;
@@ -55,6 +56,7 @@ export interface IView {
 }
 
 export interface IGoodProgrammingSelect {
+  id: string;
   addressGood: number;
   aliasWarehouse: string;
   code: number;
@@ -87,4 +89,16 @@ export interface IGoodProgrammingSelect {
   transferFile: number;
   typeTransfer: string;
   unitMeasurement: string;
+}
+
+export interface IGoodInfo {
+  goodId: number;
+  uniqueKey: string;
+  fileNumber: string;
+  description: string;
+  descriptionGoodSae: string;
+  quantity: number;
+  unitMeasure: string;
+  physicalStatus: number | string;
+  reprogrammationNumber: number;
 }

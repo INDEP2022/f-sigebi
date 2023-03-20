@@ -9,10 +9,12 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import Swal from 'sweetalert2';
@@ -67,7 +69,9 @@ export class AssetsComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private requestHelperService: RequestHelperService,
     private excelService: ExcelService,
-    private menageService: MenageService
+    private menageService: MenageService,
+    private procedureManagementService: ProcedureManagementService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -229,20 +233,23 @@ export class AssetsComponent extends BasePage implements OnInit {
 
   onFileChange(event: any, type?: string) {
     console.log(event.target.files[0]);
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    //fileReader.onload = () => this.readExcel(fileReader.result);
+    const file = event.target.files[0];
+    const user = this.authService.decodeToken().preferred_username;
+    this.uploadFile(file, this.requestObject.id, user);
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
-    try {
-      this.data = this.excelService.getData<ExcelFormat>(binaryExcel);
-      console.log(this.data);
-    } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
-    }
+  uploadFile(file: File, request: string, user: string) {
+    this.procedureManagementService
+      .uploadExcelMassiveChargeGoods(file, request, user)
+      .subscribe({
+        next: resp => {
+          if (resp.statusCode === 200) {
+            this.message('success', 'Archivos cargados', `${resp.message}`);
+          } else {
+            this.message('error', 'Error al guardar', `${resp.message}`);
+          }
+        },
+      });
   }
 
   newAsset(): void {

@@ -2,5 +2,10 @@ export interface IUser {
   id?: number;
   user: string;
   email: string;
-  charge: string;
+  userCharge: string;
+  charge: UserCharge;
+}
+
+export interface UserCharge {
+  description: string;
 }

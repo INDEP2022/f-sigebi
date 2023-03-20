@@ -120,7 +120,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCOMERCARTALIB.pdf?ID_LOTE=${params.ID_LOTE}&OFICIO_CARTALIB=${params.OFICIO_CARTALIB}&DIRIGIDO_A=${params.DIRIGIDO_A}&PUESTO=${params.PUESTO}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&NO_FACTURA=${params.NO_FACTURA}&FECHA_FACTURA=${params.FECHA_FACTURA}&PARRAFO2=${params.PARRAFO2}&FIRMANTE=${params.FIRMANTE}&PARRAFO2=${params.PARRAFO2}&PUESTOFIRMA=${params.PUESTOFIRMA}&CCP1=${params.CCP1}&CCP2=${params.CCP2}&CCP1=${params.CCP1}&PUESTOCCP1=${params.PUESTOCCP1}&PUESTOCCP2=${params.PUESTOCCP2}&FECHA_CARTA=${params.FECHA_CARTA}`;
 
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);

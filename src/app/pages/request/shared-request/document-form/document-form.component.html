@@ -6,13 +6,13 @@
     <form [formGroup]="documentForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="documentForm.get('ddocType')">
+          <form-field [control]="documentForm.get('xtipoDocumento')">
             <ngx-select
               [form]="documentForm"
-              control="ddocType"
+              control="xtipoDocumento"
               [data]="typesDocuments"
-              value="id"
-              bindLabel="stationName"
+              value="ddocType"
+              bindLabel="ddescription"
               label="Tipo de documento"
               (fetchItems)="getDocType($event)">
             </ngx-select>
@@ -26,7 +26,8 @@
             <input
               type="file"
               class="form-control"
-              formControlName="document" />
+              formControlName="document"
+              (change)="uploadFile($event)" />
           </form-field>
         </div>
       </div>
@@ -45,7 +46,7 @@
       </div>
 
       <div class="row">
-        <div class="space col-md-6">
+        <div class="space col-md-6" *ngIf="typeDoc === 'doc-expediente'">
           <form-field
             [control]="documentForm.get('xidExpediente')"
             label="No&#46; Expediente">
@@ -57,7 +58,7 @@
           </form-field>
         </div>
 
-        <div class="space col-md-6">
+        <div class="space col-md-6" *ngIf="typeDoc === 'doc-solicitud'">
           <form-field
             [control]="documentForm.get('xidSolicitud')"
             label="No&#46; Solicitud">
@@ -90,45 +91,50 @@
 
         <div class="space col-md-6">
           <form-field
-            [control]="documentForm.get('responsible')"
+            [control]="documentForm.get('xresponsable')"
             label="Responsable">
             <input
               type="text"
               class="form-control"
-              formControlName="responsible" />
+              formControlName="xresponsable" />
           </form-field>
         </div>
 
         <div class="space col-md-6">
           <form-field
-            [control]="documentForm.get('delegation')"
+            [control]="documentForm.get('xdelegacionRegional')"
             label="Delegaci&oacute;n regional">
             <input
               type="text"
               class="form-control"
-              formControlName="delegation"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="regionalDelegacionName"
               readonly />
           </form-field>
         </div>
 
         <div class="space col-md-6">
           <form-field
-            [control]="documentForm.get('taxpayer')"
+            [control]="documentForm.get('xcontribuyente')"
             label="Contribuyente">
             <input
               type="text"
               class="form-control"
-              formControlName="taxpayer" />
+              formControlName="xcontribuyente" />
           </form-field>
         </div>
 
-        <div class="space col-md-6">
-          <form-field [control]="documentForm.get('state')" label="Estado">
-            <select class="form-control" formControlName="state">
-              <option [value]="null">Seleccione un estado</option>
-              <option [value]="1">estado</option>
-              <option [value]="2">estado</option>
-            </select>
+        <div class="col-md-6">
+          <form-field [control]="documentForm.get('xestado')">
+            <ngx-select
+              [form]="documentForm"
+              control="xestado"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (fetchItems)="getState($event)">
+            </ngx-select>
           </form-field>
         </div>
 
@@ -143,15 +149,17 @@
           </form-field>
         </div>
 
-        <div class="space col-md-6">
-          <form-field
-            [control]="documentForm.get('transferent')"
-            label="Transferente">
-            <select class="form-control" formControlName="transferent">
-              <option [value]="null">Seleccione un transferente</option>
-              <option [value]="1">transferente</option>
-              <option [value]="2">transferente</option>
-            </select>
+        <div class="col-md-6">
+          <form-field [control]="documentForm.get('xidTransferente')">
+            <ngx-select
+              [form]="documentForm"
+              control="xidTransferente"
+              [data]="transferents"
+              value="id"
+              bindLabel="nameTransferent"
+              label="Transferente"
+              (fetchItems)="getTransferents($event)">
+            </ngx-select>
           </form-field>
         </div>
 
@@ -167,8 +175,13 @@
           </form-field>
         </div> -->
         <div class="space col-md-6">
-          <form-field [control]="documentForm.get('sender')" label="Remitente">
-            <input type="text" class="form-control" formControlName="sender" />
+          <form-field
+            [control]="documentForm.get('xremitente')"
+            label="Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xremitente" />
           </form-field>
         </div>
 
@@ -185,22 +198,22 @@
         </div> -->
         <div class="space col-md-6">
           <form-field
-            [control]="documentForm.get('senderCharge')"
+            [control]="documentForm.get('xcargoRemitente')"
             label="Cargo remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="senderCharge" />
+              formControlName="xcargoRemitente" />
           </form-field>
         </div>
 
         <div class="space col-md-6">
           <form-field
-            [control]="documentForm.get('comments')"
+            [control]="documentForm.get('xcomments')"
             label="Comentarios">
             <textarea
               class="form-control"
-              formControlName="comments"></textarea>
+              formControlName="xcomments"></textarea>
           </form-field>
         </div>
       </div>
