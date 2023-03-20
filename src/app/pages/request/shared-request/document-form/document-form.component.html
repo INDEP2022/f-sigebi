@@ -69,6 +69,17 @@
               readonly />
           </form-field>
         </div>
+        <div class="space col-md-6" *ngIf="typeDoc === 'doc-bien'">
+          <form-field
+            [control]="documentForm.get('xidBien')"
+            label="No&#46; Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xidBien"
+              readonly />
+          </form-field>
+        </div>
         <!-- <div class="col-md-6">
           <form-field
             [control]="documentForm.get('numberGestion')"
@@ -81,13 +92,7 @@
           </form-field>
         </div> -->
 
-        <!--  <div class="col-md-6">
-          <form-field
-            [control]="documentForm.get('noSIAB')"
-            label="No&#46; SIAB">
-            <input type="text" class="form-control" formControlName="noSIAB" />
-          </form-field>
-        </div> -->
+        <!--  -->
 
         <div class="space col-md-6">
           <form-field
@@ -100,6 +105,13 @@
           </form-field>
         </div>
 
+        <div class="space col-md-6" *ngIf="typeDoc === 'doc-bien'">
+          <form-field
+            [control]="documentForm.get('xidSIAB')"
+            label="No&#46; SIAB">
+            <input type="text" class="form-control" formControlName="xidSIAB" />
+          </form-field>
+        </div>
         <div class="space col-md-6">
           <form-field
             [control]="documentForm.get('xdelegacionRegional')"
@@ -140,12 +152,12 @@
 
         <div class="space col-md-6">
           <form-field
-            [control]="documentForm.get('numberOffice')"
+            [control]="documentForm.get('xnoOficio')"
             label="No&#46; oficio">
             <input
               type="text"
               class="form-control"
-              formControlName="numberOffice" />
+              formControlName="xnoOficio" />
           </form-field>
         </div>
 
