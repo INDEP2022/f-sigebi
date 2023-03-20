@@ -322,7 +322,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     this.workService.getSatOfficeType(officeNumber).subscribe({
       next: (resp: any) => {
-        if (resp.data) {
+        if (resp.data.length > 0) {
           console.log(resp.data);
           this.P_SAT_TIPO_EXP = resp.data[0].satTypeProceedings;
           console.log(this.P_SAT_TIPO_EXP);
@@ -360,6 +360,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             );
           }
           this.loading = false;
+        } else {
+          this.alert(
+            'info',
+            'Sin clave de pantalla',
+            'La clave de pantalla no ha sido encontrada'
+          );
         }
       },
       error: error => (this.loading = false),
