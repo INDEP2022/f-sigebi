@@ -3,6 +3,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -18,7 +19,8 @@ export class DocumentShowComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private regDelegationService: RegionalDelegationService,
     private stateService: StateOfRepublicService,
-    private transferetService: TransferenteService
+    private transferetService: TransferenteService,
+    private wcontentService: WContentService
   ) {
     super();
   }

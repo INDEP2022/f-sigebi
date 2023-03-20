@@ -27,13 +27,15 @@ export class WContentService extends HttpWContentService {
     nombreDoc: string,
     contentType: string,
     docData: any,
-    file: File
+    file: File,
+    extension: string
   ): Observable<any> {
     const formData = new FormData();
     formData.append('nombreDocumento', nombreDoc);
     formData.append('contentType', contentType);
     formData.append('docData', docData);
     formData.append('archivo', file);
+    formData.append('extension', extension);
     return this.post<any>(WContentEndpoint.AddDocumentToContent, formData);
   }
 
@@ -48,6 +50,13 @@ export class WContentService extends HttpWContentService {
   getDocumentos(body: Object): Observable<IListResponse<IWContent>> {
     return this.post<IListResponse<IWContent>>(
       WContentEndpoint.GetDocSol,
+      body
+    );
+  }
+
+  getImgGood(body: IWContent): Observable<IListResponse<IWContent>> {
+    return this.post<IListResponse<IWContent>>(
+      WContentEndpoint.GetImgGood,
       body
     );
   }

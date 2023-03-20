@@ -102,10 +102,10 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
     const typeRelevant = this.searchForm.controls['typeRelevant'].value;
 
     if (code != null) {
-      params['filter.fractionCode'] = `$eq:${code}`;
+      params['filter.code'] = `$eq:${code}`;
     }
     if (description != null) {
-      params['filter.description'] = `$eq:${description}`;
+      params['filter.description'] = `$ilike:${description}`;
     }
     if (typeRelevant != null) {
       params['filter.relevantTypeId'] = `$eq:${typeRelevant}`;
