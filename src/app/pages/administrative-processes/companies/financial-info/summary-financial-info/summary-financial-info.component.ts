@@ -153,6 +153,8 @@ export class SummaryFinancialInfoComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.form.reset();
+    this.checkedListFI = [];
+    this.checkedListFA = [];
   }
 
   removeItem(id: string, tags: string): void {
