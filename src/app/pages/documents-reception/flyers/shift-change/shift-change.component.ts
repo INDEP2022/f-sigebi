@@ -5,6 +5,8 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -14,7 +16,6 @@ import {
   SearchFilter,
 } from '../../../../common/repository/interfaces/list-params';
 import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table.interface';
-import { IOpinion } from '../../../../core/models/catalogs/opinion.model';
 import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import { IProceedingDeliveryReception } from '../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { IUserAccessAreaRelational } from '../../../../core/models/ms-users/seg-access-area-relational.model';
@@ -84,11 +85,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   });
   users = new DefaultSelect<IUserAccessAreaRelational>();
   data = SHIFT_CHANGE_EXAMPLE_DATA;
-  dictumColumns: IOpinion[] = [];
+  dictumColumns: IDictation[] = [];
   dictumSettings = { ...this.settings };
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
-  selectedDictums: IOpinion[] = [];
+  selectedDictums: IDictation[] = [];
   selectedProceedings: IProceedingDeliveryReception[] = [];
   notifData: INotification = null;
   pageParams: IJuridicalShiftChangeParams = null;
@@ -101,7 +102,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     private notifService: NotificationService,
     private affairService: AffairService,
     private fileUpdateService: JuridicalFileUpdateService,
-    private proceedingsDelRecService: ProceedingsDeliveryReceptionService
+    private proceedingsDelRecService: ProceedingsDeliveryReceptionService,
+    private dictationService: DictationService
   ) {
     super();
     this.dictumSettings = {
@@ -189,6 +191,19 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   getDictums() {
     // TODO: llenar dictamenes al tener filtros dinamicos
+    const param = new FilterParams();
+    param.addFilter('wheelNumber', this.pageParams.iden);
+    this.dictationService.getAllWithFilters(param.getParams()).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          console.log(data.data);
+          this.dictumColumns = data.data;
+        }
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
   }
 
   getProceedings() {
@@ -231,7 +246,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.modalService.show(ShiftChangeHistoryComponent, modalConfig);
   }
 
-  selectDictums(event: IUserRowSelectEvent<IOpinion>) {
+  selectDictums(event: IUserRowSelectEvent<IDictation>) {
     console.log(event);
     this.selectedDictums = event.selected;
   }

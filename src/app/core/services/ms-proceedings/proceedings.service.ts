@@ -11,6 +11,7 @@ import { IUpdateProceedings } from './../../models/ms-proceedings/update-proceed
   providedIn: 'root',
 })
 export class ProceedingsService extends HttpService {
+  private readonly route = ProceedingsEndpoints.Proceedings;
   private readonly endpoint = ProceedingsEndpoints.ProeedingsDevolution;
   showErrorObs = new BehaviorSubject<boolean>(true);
   constructor() {
@@ -45,6 +46,14 @@ export class ProceedingsService extends HttpService {
     return this.get<IListResponse<IProceedings>>(
       `${this.endpoint}?filter.fileNumber=${fileNumber}`
     );
+  }
+
+  getProceedings(params?: ListParams): Observable<IListResponse<IProceedings>> {
+    return this.get<IListResponse<IProceedings>>(`${this.route}`, params);
+  }
+
+  createProceedings(formData: Object) {
+    return this.post(this.route, formData);
   }
 
   remove(proceedingsNumb: number) {

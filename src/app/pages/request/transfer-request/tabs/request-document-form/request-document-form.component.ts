@@ -1,10 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
@@ -35,9 +36,11 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   idDelegReg: number = 0;
   columns = EXPEDIENT_DOC_REQ_COLUMNS;
+  rowSelected: any = null;
 
   constructor(
     private modalService: BsModalService,
+    private bsParentModalRef: BsModalRef,
     private fb: FormBuilder,
     private regionalDelegationService: RegionalDelegationService,
     private delegationStateService: DelegationStateService,
@@ -84,11 +87,17 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
     this.changeTab.emit(object);
   }
 
+  //abrir ver documetnos
   showDocsEst() {
-    const showDoctsEst = this.modalService.show(DocumentsListComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    if (!this.rowSelected) {
+      this.message(
+        'info',
+        'Error',
+        'Seleccione un data para poder ver sus documentos'
+      );
+      return;
+    }
+    this.openModal(DocumentsListComponent, 'doc-solicitud', this.rowSelected);
   }
 
   getRegionalDelegationSelect(params: ListParams) {
@@ -133,7 +142,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   }
 
   builtFilter(formFilter: any) {
-    this.params.value.addFilter('requestStatus', 'A_TURNAR');
+    //this.params.value.addFilter('requestStatus', 'A_TURNAR');
+    this.params.value.addFilter('id', 0, SearchFilter.GT);
     for (const key in formFilter) {
       if (formFilter[key] !== null) {
         this.params.value.addFilter(key, formFilter[key]);
@@ -152,7 +162,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
             item.applicationDate
           ).toLocaleDateString();
           item['paperDate'] = new Date(item.paperDate).toLocaleDateString();
-          item['regionalDelegationName'] = item.delegation.description;
+          item['regionalDelegationName'] =
+            item.regionalDelegation.description ?? '';
           item['stateName'] = item.state.descCondition;
           item['transferentName'] = item.transferent.name;
 
@@ -241,6 +252,33 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  selectRow(event: any) {
+    this.rowSelected = event.data;
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
+  }
+
+  openModal(component: any, typeDoc: string, parameters?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        parameter: parameters,
+        typeDoc: typeDoc,
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsParentModalRef = this.modalService.show(component, config);
+
+    /*this.bsModalRef.content.event.subscribe((res: any) => {
+      this.matchLevelFraction(res);
+    });*/
   }
 
   reactiveFormCalls() {

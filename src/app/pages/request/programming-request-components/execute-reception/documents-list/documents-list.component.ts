@@ -16,7 +16,11 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
-import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
+import {
+  DOCUMENTS_LIST_COLUMNS,
+  DOCUMENTS_LIST_EST_COLUMNS,
+  DOCUMENTS_LIST_REQ_COLUMNS,
+} from './documents-list-columns';
 
 @Component({
   selector: 'documents-list',
@@ -27,6 +31,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   documentsData: any[] = [];
   showForm: boolean = false;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
+  totalItems: number = 0;
   documentForm: FormGroup = new FormGroup({});
   typeDocuments = new DefaultSelect();
   tranferences = new DefaultSelect();
@@ -51,10 +56,8 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.actions.delete = true;
-
     this.settings = {
       ...this.settings,
-      columns: DOCUMENTS_LIST_COLUMNS,
       edit: { editButtonContent: '<i class="fa fa fa-file"></i>' },
       delete: {
         deleteButtonContent: '<i class="fa fa-eye text-info mx-2"></i>',
@@ -65,13 +68,16 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('lista documentos');
+    console.log(this.parameter);
     this.prepareForm();
     this.request = this.parameter as IRequest;
-    console.log(this.request);
     this.getTypeDocumentSelect(new ListParams());
     this.getRegionalDelegatioin(new ListParams());
     //establece los campos por el tipo de documento
     this.setTypeDocument();
+    //establece las columnas
+    this.settingColumns();
     //buscar
     this.search();
     this.formReactiveCalls();
@@ -91,13 +97,14 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       xidTransferente: [null],
       xtipoTransferencia: [null, [Validators.pattern(STRING_PATTERN)]],
       xidExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidSolicitud: [null],
+      xidBien: [null],
       xnoOficio: [null, [Validators.pattern(STRING_PATTERN)]],
       xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
 
-      noSiab: [null],
-      noGestion: [5296016],
+      xidSIAB: [null],
     });
   }
 
@@ -106,12 +113,30 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       this.documentForm.controls['xidExpediente'].setValue(
         this.parameter.recordId
       );
+    } else if (this.typeDoc === 'doc-solicitud') {
+      this.documentForm.controls['xidSolicitud'].setValue(this.parameter.id);
+    } else if (this.typeDoc === 'doc-bien') {
+      this.documentForm.controls['xidBien'].setValue(this.parameter.goodId);
+    }
+  }
+
+  settingColumns() {
+    if (this.typeDoc === 'doc-expediente') {
+      this.settings.columns = DOCUMENTS_LIST_COLUMNS;
+    } else if (this.typeDoc === 'doc-solicitud') {
+      this.settings.columns = DOCUMENTS_LIST_REQ_COLUMNS;
+    } else if (this.typeDoc === 'doc-bien') {
+      this.settings.columns = DOCUMENTS_LIST_EST_COLUMNS;
     }
   }
 
   search() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData();
+      if (this.typeDoc !== 'doc-bien') {
+        this.getData();
+      } else {
+        this.getGoodData();
+      }
     });
   }
 
@@ -126,8 +151,32 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         });
 
         Promise.all(result).then(data => {
-          console.log(data);
           this.documentsData = resp.data;
+          this.totalItems = resp.count;
+          this.loading = false;
+        });
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
+  }
+
+  //obtener los files del bien
+  getGoodData() {
+    this.loading = true;
+    const form = this.documentForm.getRawValue();
+    this.wcontetService.getImgGood(form).subscribe({
+      next: resp => {
+        let result = resp.data.map(async (item: any) => {
+          const typeDocument = await this.getTypeDocument(item.xtipoDocumento);
+          item['typeDocumentName'] = typeDocument;
+        });
+
+        Promise.all(result).then(data => {
+          this.documentsData = resp.data;
+          this.totalItems = resp.count;
           this.loading = false;
         });
       },
@@ -140,17 +189,20 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   //añadir documentos
   uploadFiles() {
-    this.openModal(DocumentFormComponent, this.typeDoc, this.request);
+    this.openModal(DocumentFormComponent, this.typeDoc, this.parameter);
   }
 
   getTypeDocument(id: string) {
     return new Promise((resolve, reject) => {
       if (id) {
         let params = new ListParams();
-        params['filter.ddocType'] = `$eq:${id}`;
+        //params['filter.ddocType'] = `$eq:${id}`;
         this.wcontetService.getDocumentTypes(params).subscribe({
           next: (resp: any) => {
-            resolve(resp.ddescription);
+            const result = resp.data.filter((x: any) => {
+              return x.ddocType === id;
+            });
+            resolve(result[0].ddescription);
           },
         });
       } else {
@@ -174,8 +226,8 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   //ver detalle del documento
   showDocument(event: any) {
-    const expedient = event.data;
-    this.openModal(DocumentShowComponent, this.typeDoc, expedient);
+    const data = event.data;
+    this.openModal(DocumentShowComponent, this.typeDoc, data);
   }
 
   //ver documento
@@ -207,7 +259,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     this.delegationStateService.getAll(params).subscribe({
       next: resp => {
         let state = resp.data.map(x => x.stateCode).filter(x => x != undefined);
-        console.log(state);
         this.states = new DefaultSelect(state, state.length);
       },
     });

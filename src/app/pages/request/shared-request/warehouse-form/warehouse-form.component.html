@@ -22,8 +22,9 @@
               control="responsibleUser"
               [data]="users"
               value="id"
-              bindLabel="name"
-              label="Usuario reponsable"></ngx-select>
+              bindLabel="firstName"
+              label="Usuario reponsable"
+              (fetchItems)="getResponsibleUserSelect($event)"></ngx-select>
           </form-field>
         </div>
       </div>

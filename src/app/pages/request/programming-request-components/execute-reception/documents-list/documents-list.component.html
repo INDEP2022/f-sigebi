@@ -48,17 +48,6 @@
                 (fetchItems)="getRegionalDelegatioin($event)"></ngx-select>
             </form-field>
           </div>
-
-          <!-- <div class="col-md-4">
-            <form-field
-              [control]="documentForm.get('noSiab')"
-              label="No&#46; SIAB">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noSiab" />
-            </form-field>
-          </div> -->
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('xresponsable')"
@@ -145,6 +134,8 @@
                 readonly />
             </form-field>
           </div> -->
+
+          <!-- documentos expediente -->
           <div class="col-md-4" *ngIf="typeDoc === 'doc-expediente'">
             <form-field
               [control]="documentForm.get('xidExpediente')"
@@ -153,6 +144,30 @@
                 type="text"
                 class="form-control"
                 formControlName="xidExpediente"
+                readonly />
+            </form-field>
+          </div>
+          <!-- documentos solicitud -->
+          <div class="col-md-4" *ngIf="typeDoc === 'doc-solicitud'">
+            <form-field
+              [control]="documentForm.get('xidSolicitud')"
+              label="No&#46; Solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidSolicitud"
+                readonly />
+            </form-field>
+          </div>
+          <!-- documentos solicitud -->
+          <div class="col-md-4" *ngIf="typeDoc === 'doc-bien'">
+            <form-field
+              [control]="documentForm.get('xidBien')"
+              label="No&#46; Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidBien"
                 readonly />
             </form-field>
           </div>
@@ -176,7 +191,16 @@
                 formControlName="xremitente" />
             </form-field>
           </div>
-
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xidSIAB')"
+              label="No&#46; SIAB">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidSIAB" />
+            </form-field>
+          </div>
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('xcargoRemitente')"
@@ -224,18 +248,26 @@
         class="btn btn-info btn-sm active">
         <i class="fa fa-times"></i> cancelar
       </button>
+    </div>
+    <div class="row pt-4">
       <div class="d-flex justify-content-end">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="settings"
-        [source]="documentsData"
-        (edit)="showDocument($event)"
-        (delete)="viewDocument($event)">
-      </ng2-smart-table>
+    <div class="row pt-4">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          style="overflow-y: scroll; height: 30rem"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="documentsData"
+          (edit)="showDocument($event)"
+          (delete)="viewDocument($event)">
+        </ng2-smart-table>
+      </div>
+      <!-- <app-pagination
+  [filterParams]="params"
+  [totalItems]="totalItems"></app-pagination> -->
     </div>
   </div>
   <div footer>

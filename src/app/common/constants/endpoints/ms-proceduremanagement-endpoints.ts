@@ -9,3 +9,8 @@ export enum ProcedureManagementEndPoints {
   ReportViewsPgr = `views/file-procedure-mng`,
   ReportTranferenciaPgrViews = `views/file-transference`,
 }
+
+export enum MassiveChargeGoods {
+  base = 'massivegood',
+  MassiveChargeGoodExcel = 'massive-charge-goods/massive-property-excel',
+}

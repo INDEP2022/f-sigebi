@@ -8,15 +8,15 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 import { EventEmitter, Output } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
 import { IAuthority } from '../../../../core/models/catalogs/authority.model';
-import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-republic.model';
 import { IStation } from '../../../../core/models/catalogs/station.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
 import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
-import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 
@@ -35,6 +35,7 @@ export class RequestInTurnFormComponent implements OnInit {
   searchForm: ModelForm<any>;
   requestInTurn: IRequestInTurn;
   checked: string = 'checked';
+  deleRegionalId: number = null;
   stateId: number = null;
   transferenceId: number = null;
   stationId: number = null;
@@ -46,13 +47,15 @@ export class RequestInTurnFormComponent implements OnInit {
   selectState = new DefaultSelect<any>();
   selectAffeir = new DefaultSelect<any>();
   selectTransfer = new DefaultSelect<any>();
+  selectRegDele = new DefaultSelect<any>();
 
   transferenteSevice = inject(TransferenteService);
-  stateOfRepublic = inject(StateOfRepublicService);
+  delegationStateService = inject(DelegationStateService);
   stationService = inject(StationService);
   affairService = inject(AffairService);
   authorityService = inject(AuthorityService);
   authService = inject(AuthService);
+  regDelegationService = inject(RegionalDelegationService);
 
   filters: any = [];
 
@@ -63,6 +66,9 @@ export class RequestInTurnFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initialForm();
+    this.deleRegionalId = Number(this.authService.decodeToken().department);
+
+    this.getRegionalDelegationId(new ListParams());
     this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
   }
@@ -71,22 +77,26 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm = this.fb.group({
       dateRequest: [null],
       dateJob: [null],
+      regionalDelegationId: [null],
       stateOfRepublic: [null],
       transfer: [null],
       station: [null],
       authority: [null],
       expedient: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       affair: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       acta: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      ascertainment: [null, [Validators.maxLength(40)]],
-      cause: [null, [Validators.pattern(STRING_PATTERN)]],
+      ascertainment: [null, [Validators.maxLength(30)]],
+      cause: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
     });
 
     if (this.requestInTurn != null) {
@@ -98,6 +108,15 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   reactiveFormCalls() {
+    this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.deleRegionalId = data;
+          this.getStateOfRepublic(new ListParams());
+        }
+      }
+    );
+
     this.searchForm.controls['stateOfRepublic'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
@@ -120,26 +139,36 @@ export class RequestInTurnFormComponent implements OnInit {
     });
   }
 
-  getRegionalDelegationId() {
-    const id = this.authService.decodeToken().department;
-    return id;
+  getRegionalDelegationId(params: ListParams) {
+    //const id = this.authService.decodeToken().department;
+    //return id;
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.regDelegationService.getAll(params).subscribe({
+      next: resp => {
+        this.selectRegDele = new DefaultSelect(resp.data, resp.count);
+      },
+    });
   }
 
   getTransferente(params?: ListParams) {
-    this.transferenteSevice
-      .getByIdState(this.stateId)
-      .subscribe((data: any) => {
-        this.selectTransfer = new DefaultSelect(data.data, data.count);
-      });
+    params['filter.status'] = `$eq:${1}`;
+    params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    this.transferenteSevice.getAll(params).subscribe((data: any) => {
+      this.selectTransfer = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getStateOfRepublic(params?: ListParams) {
-    params.text = params.text == null ? '' : params.text;
-    this.stateOfRepublic
-      .getAll(params)
-      .subscribe((data: IListResponse<IStateOfRepublic>) => {
-        this.selectState = new DefaultSelect(data.data, data.count);
-      });
+    params['filter.regionalDelegation'] = `$eq:${this.deleRegionalId}`;
+    this.delegationStateService.getAll(params).subscribe((data: any) => {
+      let result = data.data
+        .map((x: any) => {
+          return x.stateCode;
+        })
+        .filter((x: any) => x != undefined);
+
+      this.selectState = new DefaultSelect(result, result.length);
+    });
   }
 
   getStation(params?: ListParams) {
@@ -156,7 +185,6 @@ export class RequestInTurnFormComponent implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.stationId}`;
     params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
-    debugger;
     this.authorityService
       .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
@@ -187,13 +215,14 @@ export class RequestInTurnFormComponent implements OnInit {
   reset(): void {
     this.searchForm.reset();
     this.resetForm.emit(true);
+    this.deleRegionalId = Number(this.authService.decodeToken().department);
   }
 
   getFormChanges() {
     var params = new ListParams();
 
     //filtro de la delegacion regional
-    const delegationId = this.getRegionalDelegationId();
+    const delegationId = this.deleRegionalId;
     params['filter.regionalDelegationId'] = `$eq:${delegationId}`;
 
     //filtro estado solicitudes por tunar
