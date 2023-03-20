@@ -3,6 +3,7 @@ export enum ProcedureManagementEndPoints {
   ManagamentProcessSat = `views/management-process-sat`,
   ManagamentProcessPgr = `views/management-process-pgr`,
   ManagamentArea = `management-area`,
+  ManagamentGroupWork = `management-group-work`,
   ReportViews = `views/file-procedure-sat`,
   ReportTranferenciaViews = `views/file-transference-sat`,
   ReportViewsPgr = `views/file-procedure-mng`,

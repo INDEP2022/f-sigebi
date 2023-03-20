@@ -13,6 +13,7 @@ export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
   search?: string = '';
+  //sortBy?: string;
   private filters: string[] = [];
 
   constructor(filter?: FilterParams) {
@@ -20,6 +21,7 @@ export class FilterParams {
       this.page = filter.page ?? 1;
       this.limit = filter.limit ?? 10;
       this.search = filter.search ?? '';
+      //this.sortBy = filter.sortBy ?? '';
       this.filters = filter.filters ?? [];
     }
   }

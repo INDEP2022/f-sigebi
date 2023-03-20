@@ -8,6 +8,7 @@ import {
   IManagamentProcessPgr,
   IManagamentProcessSat,
   IManagementArea,
+  IManagementGroupWork,
   IProceduremanagement,
 } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 
@@ -69,6 +70,15 @@ export class ProcedureManagementService extends HttpService {
     );
   }
 
+  getManagamentGroupWork(
+    params?: string
+  ): Observable<IListResponse<IManagementGroupWork>> {
+    return this.get<IListResponse<IManagementGroupWork>>(
+      ProcedureManagementEndPoints.ManagamentGroupWork,
+      params
+    );
+  }
+
   getManagementAreasFiltered(
     params?: string
   ): Observable<IListResponse<IManagementArea>> {
@@ -91,6 +101,7 @@ export class ProcedureManagementService extends HttpService {
       })
     );
   }
+
   getReportTransferenciaSat(
     params: ListParams
   ): Observable<IListResponse<IManagamentProcessSat>> {
@@ -118,6 +129,7 @@ export class ProcedureManagementService extends HttpService {
       })
     );
   }
+
   getReportTransferenciaPgr(
     params: ListParams
   ): Observable<IListResponse<IManagamentProcessSat>> {
