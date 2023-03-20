@@ -499,7 +499,7 @@ export class DocumentsReceptionRegisterComponent
       this.alert(
         'info',
         'Tipo de Trámite',
-        'Este registro es parte de la interfaz del PGR, en automático se mostrarán los datos correspondientes.'
+        'Este registro es parte de la interfaz del FGR, en automático se mostrarán los datos correspondientes.'
       );
       this.fillFormSatPgr(
         typeManagement,
@@ -3095,7 +3095,7 @@ export class DocumentsReceptionRegisterComponent
             this.onLoadToast(
               'error',
               'Error',
-              'Error al buscar el oficio del PGR'
+              'Error al buscar el oficio del FGR'
             );
           },
         });
@@ -3153,7 +3153,7 @@ export class DocumentsReceptionRegisterComponent
     this.alert(
       'info',
       'Información',
-      'El asunto registrado por la PGR contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
+      'El asunto registrado por la FGR contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
     );
     this.router.navigateByUrl(
       `pages/documents-reception/goods-bulk-load${route}`

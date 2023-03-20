@@ -429,7 +429,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Calado en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.capacity === null) {
+            } /* else if (good.capacity === null) {
               //capacidad
               tipoRelEmbarca = true;
               this.message(
@@ -438,7 +438,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Capacidad en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.length === null) {
+            } */ else if (good.length === null) {
               //eslora
               tipoRelEmbarca = true;
               this.message(
