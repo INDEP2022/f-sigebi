@@ -9,9 +9,4 @@ export const TURN_SELECTED_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  employeeType: {
-    title: 'Tipo Empleado',
-    type: 'string',
-    sort: false,
-  },
 };

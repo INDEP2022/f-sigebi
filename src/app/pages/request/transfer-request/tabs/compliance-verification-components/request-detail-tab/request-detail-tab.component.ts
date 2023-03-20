@@ -6,8 +6,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { IRequest } from 'src/app/core/models/requests/request.model';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -26,42 +28,53 @@ export class RequestDetailTabComponent
   public receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
   priority: any = null;
-
-  constructor(public fb: FormBuilder) {
+  idRequest: number = 0;
+  infoRequest: IRequest;
+  constructor(
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private requestService: RequestService
+  ) {
     super();
+    this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   ngOnInit(): void {
-    //this.prepareForm();
     this.reactiveFormCalls();
+    this.showDataProg();
   }
 
   ngOnChanges(changes: SimpleChanges): void {}
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
-      priority: [{ value: true, disabled: true }],
-      infoProvenance: ['Mensajeria'],
-      receptDate: [{ value: '', disabled: true }],
+      priority: [null],
+      infoProvenance: [null],
+      receptDate: [null],
       officeDate: [null, Validators.required],
-      typeExpedient: ['PAMA'],
-      nameSender: ['LUIS RENTERA'],
-      senderCharge: ['ADMINISTRADOR'],
-      phoneSender: [123456789],
-      emailSender: ['test@gmail.com'],
-      publicMinister: ['MINISTRO TRANSFERENTE'],
-      tribunal: ['JUZGADO TRANSFERENTE'],
-      crime: ['DEUTO CAPTURA'],
-      typeReception: [{ value: 'FISICO', disabled: true }], //esta campo depende de que tipo de recepcion es el formulario
+      typeExpedient: [null],
+      nameSender: [null],
+      senderCharge: [null],
+      phoneSender: [null],
+      emailSender: [null],
+      publicMinister: [null],
+      tribunal: [null],
+      crime: [null],
+      typeReception: [null], //esta campo depende de que tipo de recepcion es el formulario
       destinationManage: [null],
       contributor: [null],
-      subject: [
-        { value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true },
-      ],
+      subject: [null],
       transExpedient: [null],
       typeTransfer: [null],
       transferEntityNotes: [null],
       observations: [null],
+    });
+  }
+
+  showDataProg() {
+    this.requestService.getById(this.idRequest).subscribe((data: any) => {
+      console.log(data);
+      this.infoRequest = data;
     });
   }
 

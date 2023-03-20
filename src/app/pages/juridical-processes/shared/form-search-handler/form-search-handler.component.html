@@ -1,15 +1,14 @@
 <div class="mr-2">
-  <div class="d-inline mr-2">
+  <div class="d-inline mr-2" *ngIf="!searchMode && !loading">
     <button
       type="button"
       class="btn btn-primary active btn-sm"
-      *ngIf="!searchMode && !loading"
       (click)="enableSearchMode()">
       <i class="bx bx-search-alt bx-sm float-icon"></i>
     </button>
   </div>
-  <div class="d-inline mr-2">
-    <div class="btn-group" *ngIf="searchMode && !loading">
+  <div class="d-inline mx-2" *ngIf="searchMode && !loading">
+    <div class="btn-group">
       <button
         type="button"
         class="btn btn-primary btn-sm"
@@ -24,20 +23,15 @@
       </button>
     </div>
   </div>
-  <div class="d-inline mr-2">
-    <button
-      type="button"
-      class="btn btn-primary btn-sm"
-      *ngIf="this.loading"
-      disabled>
+  <div class="d-inline mx-2" *ngIf="this.loading">
+    <button type="button" class="btn btn-primary btn-sm" disabled>
       <i class="bx bx-loader-alt bx-spin bx-sm float-icon"></i>
     </button>
   </div>
-  <div class="d-inline mr-2">
+  <div class="d-inline mx-2" *ngIf="modalLoaded">
     <button
       type="button"
       class="btn btn-primary btn-sm active"
-      *ngIf="modalLoaded"
       [disabled]="this.loading"
       (click)="openModalSearch()">
       <i class="bx bx-list-plus bx-sm float-icon"></i>

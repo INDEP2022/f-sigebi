@@ -4,17 +4,30 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
+import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IOpinion } from '../../models/catalogs/opinion.model';
 @Injectable({
   providedIn: 'root',
 })
-export class OpinionService implements ICrudMethods<IOpinion> {
+export class OpinionService
+  extends HttpService
+  implements ICrudMethods<IOpinion>
+{
   private readonly route: string = ENDPOINT_LINKS.Opinion;
-  constructor(private opinionRepository: Repository<IOpinion>) {}
+  constructor(private opinionRepository: Repository<IOpinion>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IOpinion>> {
     return this.opinionRepository.getAllPaginated(this.route, params);
+  }
+
+  getAllFiltered(params?: string): Observable<IListResponse<IOpinion>> {
+    const segments = ENDPOINT_LINKS.Opinion.split('/');
+    const route = `${segments[1]}`;
+    return this.get<IListResponse<IOpinion>>(route, params);
   }
 
   getById(id: string | number): Observable<IOpinion> {
