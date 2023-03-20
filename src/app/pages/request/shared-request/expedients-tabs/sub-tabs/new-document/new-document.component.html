@@ -5,18 +5,19 @@
   <div body>
     <form class="form-material" [formGroup]="newDocForm">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <ngx-select
             [form]="newDocForm"
             control="docType"
             (fetchItems)="getTypeDoc($event)"
             [data]="selectTypeDoc"
             label="Tipo de Documento"
-            value="docType"></ngx-select>
+            value="docType"
+            bindLabel="ddescription"></ngx-select>
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-7">
+        <div class="col-md-12">
           <form-field
             [control]="newDocForm.get('docFile')"
             label="Cargo Remitento">
@@ -29,7 +30,7 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-7">
+        <div class="col-md-12">
           <form-field
             [control]="newDocForm.get('docTit')"
             label="&#42;T&iacute;tulo del Documento">
@@ -41,8 +42,8 @@
         <div class="col-md-6">
           <p for="">
             <span *ngIf="typeDoc === 'doc-request'"
-              >No&#46; Solicitud&#58;</span
-            >
+              >No&#46; Solicitud&#58; {{ request?.id }}
+            </span>
             <span *ngIf="typeDoc === 'doc-expedient'"
               >No&#46; Expediente&#58;</span
             >
@@ -65,7 +66,7 @@
         <div class="col-md-6">
           <p for="">
             Delegaci&oacute;n Regional&#58;
-            <span>{{ newDocForm.get('regDelega').value }}</span>
+            <span>{{ regDelName }}</span>
           </p>
         </div>
         <div class="col-md-6">
@@ -79,12 +80,12 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
-            Estado&#58; <span>{{ newDocForm.get('state').value }}</span>
+            Estado&#58; <span>{{ stateName }}</span>
           </p>
         </div>
         <div class="col-md-6">
           <p for="">
-            Transferente&#58; <span>{{ newDocForm.get('tranfe').value }}</span>
+            Transferente&#58; <span>{{ nameTransferent }}</span>
           </p>
         </div>
       </div>
@@ -146,7 +147,7 @@
         [isAnimated]="true"
         [collapse]="!toggleSearch">
         <div *ngIf="newDocForm.contains('returnOpinionFolio')" class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
+          <div class="col-md-12">
             <form-field
               [control]="newDocForm.get('returnOpinionFolio')"
               label="Folio Dictamen Devolución">

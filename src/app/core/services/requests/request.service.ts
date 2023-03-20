@@ -20,7 +20,7 @@ export class RequestService extends HttpService {
 
   getById(id: string | number) {
     const route = `${ENDPOINT_LINKS.request}/${id}`;
-    return this.get<IListResponse<IRequest>>(route);
+    return this.get(route);
   }
 
   create(request: IRequest) {

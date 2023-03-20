@@ -13,7 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class SeeInformationComponent extends BasePage implements OnInit {
   title: string = 'Información del Documento';
   infoForm: ModelForm<IRequest>;
-  info: any = [];
+  info: any;
   typeInfo: string = '';
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {

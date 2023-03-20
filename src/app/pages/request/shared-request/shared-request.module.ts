@@ -7,6 +7,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { QuillModule } from 'ngx-quill';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FileUploadModule } from 'src/app/utils/file-upload/file-upload.module';
 import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
 import { AssociateFileComponent } from './associate-file/associate-file.component';
@@ -181,6 +182,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CollapseModule.forRoot(),
     BsDatepickerModule.forRoot(),
     QuillModule.forRoot(),
+    FileUploadModule,
   ],
   exports: [
     RequestFormComponent,

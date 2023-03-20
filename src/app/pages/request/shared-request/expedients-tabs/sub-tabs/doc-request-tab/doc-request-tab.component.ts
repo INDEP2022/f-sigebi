@@ -9,12 +9,13 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -50,59 +51,26 @@ export class DocRequestTabComponent
   selectDocType = new DefaultSelect<any>();
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: searchTable[] = [];
+  paragraphs: any[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
   selectRegDelegation = new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
-
-  public data: any[] = [
-    {
-      id: 1,
-      noDoc: 'SAE15545',
-      noReq: '27448',
-      docTit: 'Solicitud_27448',
-      docType: 'SOLICITUD DE TRANSFERENCIA',
-      author: 'ALEJANDRO',
-      dateCrea: '10/10/2022',
-    },
-    {
-      id: 2,
-      noDoc: 'SAE15335',
-      noReq: '27328',
-      docTit: 'Solicitud_27328',
-      docType: 'SOLICITUD DE TRANSFERENCIA',
-      author: 'ALEJANDRO',
-      dateCrea: '01/10/2022',
-    },
-    {
-      id: 2,
-      noDoc: 'SAE15335',
-      noReq: '27328',
-      docTit: 'Solicitud_27328',
-      docType: 'SOLICITUD DE TRANSFERENCIA',
-      author: 'ALEJANDRO',
-      dateCrea: '01/10/2022',
-    },
-    {
-      id: 2,
-      noDoc: 'SAE15335',
-      noReq: '27328',
-      docTit: 'Solicitud_27328',
-      docType: 'SOLICITUD DE TRANSFERENCIA',
-      author: 'ALEJANDRO',
-      dateCrea: '01/10/2022',
-    },
-  ];
+  idRequest: number = 0;
 
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private activatedRoute: ActivatedRoute,
+    private wContentService: WContentService
   ) {
     super();
+    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+      'id'
+    ) as unknown as number;
   }
 
   ngOnInit(): void {
@@ -121,8 +89,8 @@ export class DocRequestTabComponent
       ...this.columns.button,
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick1.subscribe((data: any) => {
-          console.log(data);
-          this.openDetail();
+          console.log(data.dDocName);
+          this.openDetail(data.dDocName);
         }),
           instance.btnclick2.subscribe((data: any) => {
             this.openDoc();
@@ -165,7 +133,14 @@ export class DocRequestTabComponent
   }
 
   getData() {
-    this.paragraphs = this.data;
+    const body = {
+      xidSolicitud: this.idRequest,
+    };
+    console.log('solicitud', body);
+    this.wContentService.getDocumentos(body).subscribe(data => {
+      console.log('doc sol', data);
+      this.paragraphs = data.data;
+    });
   }
 
   getDocType(event: any) {}
@@ -176,8 +151,8 @@ export class DocRequestTabComponent
     this.docRequestForm.reset();
   }
 
-  openDetail(): void {
-    this.openModalInformation('', 'detail');
+  openDetail(documentName: string): void {
+    this.openModalInformation(documentName, 'detail');
   }
 
   openDoc(): void {
@@ -188,13 +163,14 @@ export class DocRequestTabComponent
     this.modalRef.hide();
   }
 
-  openNewDocument(request?: IRequest) {
+  openNewDocument() {
+    const idrequest = this.idRequest;
     let typeDoc = this.typeDoc;
     //console.log(this.typeDoc);
 
     let config: ModalOptions = {
       initialState: {
-        request,
+        idrequest,
         typeDoc: typeDoc,
         callback: (next: boolean) => {
           if (next) this.getData();
@@ -228,7 +204,7 @@ export class DocRequestTabComponent
   getTransfe(event: any) {}
 
   setTypeColumn() {
-    if (this.displayName === 'validateEyeVisitResult') {
+    /*if (this.displayName === 'validateEyeVisitResult') {
       this.columns.noReq.title = 'No. Expediente';
     } else {
       if (this.typeDoc === 'request-assets') {
@@ -236,8 +212,10 @@ export class DocRequestTabComponent
       } else {
         this.columns.noReq.title = 'No. Solicitud';
       }
-    }
+    } */
   }
+
+  showDocument() {}
 
   setTitle(value: string) {
     switch (value) {
