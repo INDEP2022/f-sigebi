@@ -1,1 +1,10 @@
-<p>registers-table works!</p>
+<div class="row">
+  <ng2-smart-table
+    [settings]="settings"
+    [source]="registers"
+    (userRowSelect)="onSelectTable($event.data)"></ng2-smart-table>
+
+  <app-pagination
+    [filterParams]="params"
+    [totalItems]="totalItems"></app-pagination>
+</div>

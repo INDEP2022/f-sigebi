@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IBinnacle } from '../../models/ms-audit/binnacle.model';
 import { ITableLog } from '../../models/ms-audit/table-log.model';
 
 @Injectable({
@@ -21,6 +22,11 @@ export class SeraLogService extends HttpService {
   getDynamicTables(params: _Params, body: any) {
     return of(dyamicExample);
   }
+
+  getAllByRegisterNum(registerNum: string | number, params: _Params) {
+    const route = `get-info-audit-by-register-number/${registerNum}`;
+    return this.get<IListResponse<IBinnacle>>(route, params);
+  }
 }
 
 const dyamicExample = {
@@ -29,6 +35,12 @@ const dyamicExample = {
     {
       no_registro: 843134374,
       id_cliente: 1382362,
+      nom_razon: 'Maria Ana',
+      rfc: 'HECA590409L32',
+    },
+    {
+      no_registro: 843134375,
+      id_cliente: 1382363,
       nom_razon: 'Maria Ana',
       rfc: 'HECA590409L32',
     },

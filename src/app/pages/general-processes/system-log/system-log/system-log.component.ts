@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   catchError,
   map,
+  of,
   switchMap,
   takeUntil,
   tap,
@@ -14,6 +15,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IBinnacle } from 'src/app/core/models/ms-audit/binnacle.model';
 import { ITableField } from 'src/app/core/models/ms-audit/table-field.model';
 import { ITableLog } from 'src/app/core/models/ms-audit/table-log.model';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
@@ -34,12 +36,16 @@ import { TABLE_LOGS_COLUMNS } from '../utils/table-logs-columns';
 export class SystemLogComponent extends BasePage implements OnInit {
   params = new BehaviorSubject(new FilterParams());
   dynamicParams = new BehaviorSubject(new FilterParams());
+  binnacleParams = new BehaviorSubject(new FilterParams());
   rowSelected: ITableLog = null;
   tableLogs: ITableLog[] = [];
   dynamicRegisters: any[] = [];
   totalLogs = 0;
   totalDynamic = 0;
   filterFields: ITableField[] = [];
+  binnacleLogs: IBinnacle[] = [];
+  totalBinnacle = 0;
+  registerNum: number = null;
   filterForm = this.fb.group({
     filter: this.fb.array<
       FormGroup<{
@@ -54,6 +60,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
   });
   registerSettings: any;
   private readonly origin: string;
+  dynamicColumns: any = null;
   constructor(
     private tablesLogService: TablesLogService,
     private screenTableService: ScreenTableService,
@@ -84,6 +91,12 @@ export class SystemLogComponent extends BasePage implements OnInit {
     this.dynamicParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       if (this.rowSelected) {
         this.getDynamicRegisters(params).subscribe();
+      }
+    });
+
+    this.binnacleParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      if (this.registerNum) {
+        this.getBinnacleLogs(params).subscribe();
       }
     });
   }
@@ -139,8 +152,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
       }),
       tap(response => {
         this.filterFields = response.data;
-        const columns = generateColumnsFromFields(response.data);
-        this.registerSettings = { ...this.registerSettings, columns };
+        this.dynamicColumns = generateColumnsFromFields(response.data);
       })
     );
   }
@@ -192,6 +204,34 @@ export class SystemLogComponent extends BasePage implements OnInit {
 
   onRegisterSelect(row: any) {
     const { no_registro } = row;
+    this.registerNum = no_registro;
+    const params = new FilterParams();
+    this.binnacleParams.next(params);
+  }
+
+  getBinnacleLogs(params: FilterParams) {
+    if (!this.registerNum) {
+      return of();
+    }
+    this.hideError();
+    return this.seraLogService
+      .getAllByRegisterNum(this.registerNum, params.getParams())
+      .pipe(
+        catchError(error => {
+          if (error.status >= 500) {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al obtener los registros de la bitacora'
+            );
+          }
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.binnacleLogs = response.data;
+          this.totalBinnacle = response.count;
+        })
+      );
   }
 }
 

@@ -25,8 +25,12 @@
         </system-log-form>
       </div>
     </div>
-
-    <div class="row">
+    <system-log-registers-table
+      [columns]="dynamicColumns"
+      [params]="dynamicParams"
+      [totalItems]="totalDynamic"
+      [registers]="dynamicRegisters"></system-log-registers-table>
+    <!-- <div class="row">
       <ng2-smart-table
         [settings]="registerSettings"
         [source]="dynamicRegisters"
@@ -35,6 +39,6 @@
       <app-pagination
         [filterParams]="dynamicParams"
         [totalItems]="totalDynamic"></app-pagination>
-    </div>
+    </div> -->
   </div>
 </app-card>
