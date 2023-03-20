@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 //BasePage
-
+import { DatePipe } from '@angular/common';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -27,9 +27,9 @@ export class FinancialInformationReportComponent
     this.form = this.fb.group({
       date1: [null, Validators.required],
       date2: [null, Validators.required],
-      date3: [null],
+      date3: [null, Validators.required],
       noBien: [null, Validators.required],
-      PC_INDI: [null],
+      // PC_INDI: [null],
     });
   }
   confirm(): void {
@@ -40,11 +40,11 @@ export class FinancialInformationReportComponent
       day: 'numeric',
     };
     let params = {
-      PF_FECUNO: this.event.toLocaleDateString('es-ES'),
-      PF_FECDOS: this.event.toLocaleDateString('es-ES'),
+      PF_FECUNO: new DatePipe('en-EN').transform(this.event, 'dd/MM/yyyy'),
+      PF_FECDOS: new DatePipe('en-EN').transform(this.event, 'dd/MM/yyyy'),
       PN_BIEN: this.form.controls['noBien'].value,
-      PC_ATRI: this.form.controls['date3'].value,
-      PC_INDI: this.form.controls['PC_INDI'].value,
+      PF_FECTRE: new DatePipe('en-EN').transform(this.event, 'dd/MM/yyyy'),
+      // PC_INDI: this.form.controls['PC_INDI'].value,
     };
 
     //this.showSearch = true;
@@ -53,9 +53,9 @@ export class FinancialInformationReportComponent
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONADBRESUMFIAN.pdf?PF_FECUNO=${params.PF_FECUNO}&PF_FECDOS=${params.PF_FECDOS}&PN_BIEN=${params.PN_BIEN}&PC_ATRI=${params.PC_ATRI}&PC_INDI=${params.PC_INDI}`;
-    //const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, 'RCONADBRESUMFIAN.pdf');
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONADBINFORFINAN.pdf?PF_FECUNO=${params.PF_FECUNO}&PF_FECDOS=${params.PF_FECDOS}&PN_BIEN=${params.PN_BIEN}&PF_FECTRE=${params.PF_FECTRE}`;
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdfttps://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    window.open(pdfurl, 'RCONADBINFORFINAN.pdf');
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
