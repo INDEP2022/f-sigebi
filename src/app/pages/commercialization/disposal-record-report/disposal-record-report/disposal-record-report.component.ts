@@ -18,7 +18,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   minDate: Date;
 
   pdfurl =
-    'https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing';
+    'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
   constructor(
     private fb: FormBuilder,
@@ -106,7 +106,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERDESACTAENAJEN.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${paramsPN_SUBDELEGACION}&PN_EXPINI=${params.PN_EXPINI}&PN_EXPFIN=${params.PN_EXPFIN}&PC_ACTA=${params.PC_ACTA}&PF_ELABIN=${params.PF_ELABIN}&PF_ELABFIN=${params.PF_ELABFIN}&PN_ACTAINI=${params.PN_ACTAINI}&PN_ACTAFIN=${params.PN_ACTAFIN}&PN_ACTAFIN=${params.PN_ACTAFIN}`;
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'FGERDESACTAENAJEN.pdf');
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
