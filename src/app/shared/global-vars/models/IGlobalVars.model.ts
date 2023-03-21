@@ -24,4 +24,12 @@ export interface IGlobalVars {
   noTransferente: string | number;
   gNoVolante: string | number;
   varDic: string;
+  //TODO: HOLOGAR MODELO DE VARIABLES GLOBALES
+  EXPEDIENTE?: string | number;
+  TIPO_DIC?: string | number;
+  VOLANTE?: string | number;
+  CONSULTA?: string;
+  TIPO_VO?: string | number;
+  P_GEST_OK?: string | number;
+  P_NO_TRAMITE?: string | number;
 }

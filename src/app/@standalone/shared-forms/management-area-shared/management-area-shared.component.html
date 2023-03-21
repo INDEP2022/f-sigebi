@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showManagementArea">
+    <div class="col-md-12">
+      <form-field [control]="form.get(managementAreaField)">
+        <ngx-select
+          (fetchItems)="getManagementAreas($event)"
+          [data]="managementAreas"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Área"
+          [control]="managementAreaField"
+          (change)="onManagementAreasChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>
