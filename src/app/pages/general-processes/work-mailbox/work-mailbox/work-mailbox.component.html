@@ -177,7 +177,20 @@
                 <a class="dropdown-item" href="#">Bienes</a>
               </li>
               <li role="menuitem">
-                <a class="dropdown-item" href="#">Historial</a>
+                <a
+                  class="dropdown-item"
+                  [class.disabled]="!selectedRow"
+                  (click)="viewFlyerHistory()"
+                  >Historial</a
+                >
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  [class.disabled]="!selectedRow"
+                  (click)="viewIndicatorsHistory()"
+                  >Historico Indicadores</a
+                >
               </li>
             </ul>
           </div>

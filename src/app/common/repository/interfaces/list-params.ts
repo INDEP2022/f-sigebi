@@ -63,7 +63,9 @@ class DynamicFilter {
 
   getParams() {
     if (this.value == SearchFilter.NULL) {
-      return `filter.${this.field}=${SearchFilter.NULL}`;
+      return `filter.${this.field}=${this.operator ? this.operator + ':' : ''}${
+        SearchFilter.NULL
+      }`;
     }
     return `filter.${this.field}=${this.operator}:${this.value}`;
   }
@@ -81,6 +83,7 @@ export enum SearchFilter {
   GTE = '$gte',
   LTE = '$lte',
   BTW = '$btw',
+  OR = '$or',
 }
 
 export interface DynamicFilterLike {

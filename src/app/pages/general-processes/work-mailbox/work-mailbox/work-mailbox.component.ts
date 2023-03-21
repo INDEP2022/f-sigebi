@@ -21,8 +21,22 @@ import { WorkMailboxService } from '../work-mailbox.service';
 //Models
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 /*Redux NgRX Global Vars Service*/
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
+import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { isEmpty } from 'src/app/utils/validations/is-empty';
+import { MailboxModalTableComponent } from '../components/mailbox-modal-table/mailbox-modal-table.component';
+import { FLYER_HISTORY_COLUMNS } from '../utils/flyer-history-columns';
+import { INDICATORS_HISTORY_COLUMNS } from '../utils/indicators-history-columns';
+import {
+  FLYER_HISTORY_TITLE,
+  INDICATORS_HISTORY_TITLE,
+} from '../utils/modal-titles';
+import { NO_INDICATORS_FOUND } from '../utils/work-mailbox-messages';
 import { WORK_MAILBOX_COLUMNS2 } from './work-mailbox-columns';
 
 @Component({
@@ -83,7 +97,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private procedureManagementService: ProcedureManagementService,
     private router: Router,
     private globalVarsService: GlobalVarsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private historicalProcedureManagementService: HistoricalProcedureManagementService,
+    private modalService: BsModalService,
+    private goodsQueryService: GoodsQueryService,
+    private historyIndicatorService: HistoryIndicatorService
   ) {
     super();
     this.settings.actions = false;
@@ -434,5 +452,59 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
+  }
+
+  viewFlyerHistory() {
+    const $obs = this.historicalProcedureManagementService.getAllFiltered;
+    const service = this.historicalProcedureManagementService;
+    const columns = FLYER_HISTORY_COLUMNS;
+    const title = FLYER_HISTORY_TITLE;
+    const params = new FilterParams();
+    params.addFilter('procedureNumber', this.selectedRow.processNumber);
+    const $params = new BehaviorSubject(params);
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+      },
+    };
+    this.modalService.show(MailboxModalTableComponent, config);
+  }
+
+  viewIndicatorsHistory() {
+    if (
+      isEmpty(this.selectedRow.proceedingsNumber) &&
+      isEmpty(this.selectedRow.flierNumber)
+    ) {
+      this.onLoadToast('warning', 'Advertencia', NO_INDICATORS_FOUND);
+      return;
+    }
+
+    const $obs = this.historyIndicatorService.getHistoryIndicatorView;
+    const service = this.historyIndicatorService;
+    const columns = INDICATORS_HISTORY_COLUMNS;
+    const title = INDICATORS_HISTORY_TITLE;
+    const params = new FilterParams();
+    const body = {
+      proceedingsNum: this.selectedRow.proceedingsNumber,
+      flierNum: this.selectedRow.flierNumber,
+    };
+    const $params = new BehaviorSubject(params);
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        body,
+      },
+    };
+    this.modalService.show(MailboxModalTableComponent, config);
   }
 }
