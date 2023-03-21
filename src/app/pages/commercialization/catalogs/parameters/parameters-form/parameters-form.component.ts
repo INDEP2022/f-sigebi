@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
@@ -23,7 +29,8 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private parameterModService: ParameterModService
+    private parameterModService: ParameterModService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -47,13 +54,18 @@ export class ParametersFormComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       idDirection: [null, [Validators.required]],
-      eventTypeId: [null, [Validators.required]],
+      eventTypeId: [null, []],
     });
 
     if (this.parameter) {
       //console.log(this.brand)
       this.edit = true;
       this.form.patchValue(this.parameter);
+    }
+
+    if (!this.edit) {
+      const iParam = document.getElementById('idP');
+      this.render.removeClass(iParam, 'disabled');
     }
   }
 
@@ -84,6 +96,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.form.value);
     this.parameterModService.update(this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)

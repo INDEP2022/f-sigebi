@@ -10,12 +10,15 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { WarehouseFilterService } from 'src/app/core/services/ms-warehouse-filter/warehouse-filter.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -27,7 +30,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './confiscated-records.component.html',
   styleUrls: ['confiscated-rcords.component.scss'],
 })
-export class ConfiscatedRecordsComponent implements OnInit {
+export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
     rowClassFunction: (row: { data: { status: any } }) =>
@@ -117,8 +120,11 @@ export class ConfiscatedRecordsComponent implements OnInit {
   itemsSelect = new DefaultSelect();
   warehouseSelect = new DefaultSelect();
   transferSelect = new DefaultSelect();
+  adminSelect = new DefaultSelect();
+  recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
+  openProceeding = false;
 
   constructor(
     private fb: FormBuilder,
@@ -128,8 +134,11 @@ export class ConfiscatedRecordsComponent implements OnInit {
     private serviceProcVal: ProceedingsDeliveryReceptionService,
     private serviceTransferente: TransferenteService,
     private serviceNoty: NotificationService,
-    private serviceExpedient: ExpedientService
-  ) {}
+    private serviceExpedient: ExpedientService,
+    private serviceRNomencla: ParametersService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     moment.locale('es');
@@ -149,8 +158,8 @@ export class ConfiscatedRecordsComponent implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      averPrev: [null, [Validators.required]],
-      causaPenal: [null, [Validators.required]],
+      averPrev: [null, []],
+      causaPenal: [null, []],
       acta: [null, [Validators.required]],
       transfer: [null, [Validators.required]],
       ident: [null, [Validators.required]],
@@ -172,7 +181,7 @@ export class ConfiscatedRecordsComponent implements OnInit {
       fecEntBien: [null, [Validators.required]],
       fecElab: [null, [Validators.required]],
       fecReception: [null, [Validators.required]],
-      fecCaptura: [null, [Validators.required]],
+      fecCaptura: [null, []],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       recibe2: [
         null,
@@ -186,21 +195,12 @@ export class ConfiscatedRecordsComponent implements OnInit {
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
-      edoFisico: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      requerido: [false, [Validators.required]],
-      almacen: [null, [Validators.required]],
-      boveda: [null, [Validators.required]],
-      estatusPrueba: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      etiqueta: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      edoFisico: [null, [, Validators.pattern(STRING_PATTERN)]],
+      requerido: [false, []],
+      almacen: [null, []],
+      boveda: [null, []],
+      estatusPrueba: [null, [, Validators.pattern(STRING_PATTERN)]],
+      etiqueta: [null, [, Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -247,13 +247,15 @@ export class ConfiscatedRecordsComponent implements OnInit {
     const acta = this.form.get('acta');
     if (acta.value != null) {
       this.enableElement('transfer');
+      this.fillActTwo();
       if (
         acta.value === 'A' &&
         transfer.value != null &&
-        transfer.value.keyTransferent != 'PGR' &&
-        transfer.value.keyTransferent != 'PJF'
+        transfer.value.transferentKey != 'PGR' &&
+        transfer.value.transferentKey != 'PJF'
       ) {
         transfer.setValue(null);
+        this.fillActTwo();
       }
     }
   }
@@ -284,39 +286,26 @@ export class ConfiscatedRecordsComponent implements OnInit {
     );
   }
 
-  getTransferentData(params: ListParams) {
-    const filterNoty = new FilterParams();
-    let codeNoty: number;
-    filterNoty.addFilter('expedientNumber', this.form.get('expediente').value);
-    this.serviceNoty.getAllFilter(filterNoty.getParams()).subscribe(res => {
-      console.log(res);
-      const uniqueArray = res.data.filter(
-        (product: any, index: any, self: any) =>
-          index ===
-          self.findIndex(
-            (p: any) => p.endTransferNumber === product.endTransferNumber
-          )
-      );
-      codeNoty = uniqueArray[0]['endTransferNumber'];
+  getAdmin(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', params.text, SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+      res => {
+        this.adminSelect = new DefaultSelect(res.data, res.count);
+      },
+      err => console.log(err)
+    );
+  }
 
-      /* const paramsF = new FilterParams();
-      paramsF.addFilter('keyTransferent', params.text, SearchFilter.ILIKE);
-      this.serviceTransferente
-        .getAllWithFilter(paramsF.getParams())
-        .subscribe((res: any) => {
-          const uniqueArray = res.data.filter(
-            (product: any, index: any, self: any) =>
-              index ===
-              self.findIndex(
-                (p: any) =>
-                  p.keyTransferent === product.keyTransferent &&
-                  p.indcap != 'E' &&
-                  p.id == codeNoty
-              )
-          );
-          this.transferSelect = new DefaultSelect(uniqueArray);
-        }); */
-    });
+  getRecibe(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', params.text, SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+      res => {
+        this.recibeSelect = new DefaultSelect(res.data, res.count);
+      },
+      err => console.log(err)
+    );
   }
 
   //
@@ -328,18 +317,40 @@ export class ConfiscatedRecordsComponent implements OnInit {
       })
       .subscribe({
         next: (res: any) => {
-          this.form.get('ident').setValue('ADM');
-          this.dataGoods.load(res.data);
-          this.serviceExpedient
-            .getById(this.form.get('expediente').value)
-            .subscribe(res => {
-              if (res.expedientType === 'T') {
-                this.records = ['RT'];
-              } else {
-                this.records = ['A', 'NA', 'D', 'NS'];
-              }
-              this.enableElement('acta');
-            });
+          const dataTry = res.data.filter((item: any) => {
+            item.status != 'ADM';
+          });
+          console.log(res);
+          console.log(dataTry);
+
+          if (res.data.length > 0) {
+            this.form.get('ident').setValue('ADM');
+            this.dataGoods.load(res.data);
+            this.serviceExpedient
+              .getById(this.form.get('expediente').value)
+              .subscribe(res => {
+                let model: TransferProceeding = {
+                  numFile: res.transferNumber as number,
+                  typeProceedings: res.expedientType,
+                };
+                if (res.expedientType === 'T') {
+                  this.records = ['RT'];
+                } else {
+                  this.records = ['A', 'NA', 'D', 'NS'];
+                }
+
+                this.serviceProcVal.getTransfer(model).subscribe(res => {
+                  this.transferSelect = new DefaultSelect(res.data, res.count);
+                });
+                this.enableElement('acta');
+              });
+          } else {
+            this.alert(
+              'warning',
+              'Sin bienes válidos',
+              'El número de expediente registrado no tiene bienes válidos'
+            );
+          }
         },
         error: (err: any) => {
           console.error(err);
@@ -347,14 +358,44 @@ export class ConfiscatedRecordsComponent implements OnInit {
       });
   }
 
+  //Function
+
+  zeroAdd(number: number, lengthS: number) {
+    if (number != null) {
+      const stringNum = number.toString();
+      let newString = '';
+      if (stringNum.length < lengthS) {
+        lengthS = lengthS - stringNum.length;
+        for (let i = 0; i < lengthS; i++) {
+          newString = newString + '0';
+        }
+        newString = newString + stringNum;
+        return newString;
+      } else {
+        return stringNum;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  tryFunc() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', 'V', SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(res => {
+      console.log(res);
+    });
+  }
+
   //"Acta 2"
 
   fillActTwo() {
+    /*     console.log(this.form.get('admin').value.delegation); */
     const nameAct =
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value.keyTransferent
+        ? this.form.get('transfer').value.transferentkey
         : '') +
       '/' +
       (this.form.get('ident').value != null
@@ -362,20 +403,24 @@ export class ConfiscatedRecordsComponent implements OnInit {
         : '') +
       '/' +
       (this.form.get('recibe').value != null
-        ? this.form.get('recibe').value
+        ? this.form.get('recibe').value.delegation
         : '') +
       '/' +
       (this.form.get('admin').value != null
-        ? this.form.get('admin').value
+        ? this.form.get('admin').value.delegation
         : '') +
       '/' +
       (this.form.get('folio').value != null
-        ? this.form.get('folio').value
+        ? this.zeroAdd(this.form.get('folio').value, 5)
         : '') +
       '/' +
-      (this.form.get('year').value != null ? this.form.get('year').value : '') +
+      (this.form.get('year').value != null
+        ? this.form.get('year').value.toString().substr(2, 2)
+        : '') +
       '/' +
-      (this.form.get('mes').value != null ? this.form.get('mes').value : '');
+      (this.form.get('mes').value != null
+        ? this.zeroAdd(this.form.get('mes').value, 2)
+        : '');
     this.form.get('acta2').setValue(nameAct);
   }
 
@@ -390,10 +435,14 @@ export class ConfiscatedRecordsComponent implements OnInit {
       this.form.get('folio').value != null
     ) {
       const paramsF = new FilterParams();
-      paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+      paramsF.addFilter(
+        'keysProceedings',
+        this.form.get('acta2').value,
+        SearchFilter.ILIKE
+      );
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          console.log(res);
+          console.log(res.data[0]['typeProceedings']);
           console.log('existe');
         },
         err => {

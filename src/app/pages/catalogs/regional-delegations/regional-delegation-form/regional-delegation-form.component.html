@@ -10,7 +10,7 @@
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div> -->
-        <div class="col-md-8">
+        <div class="col-md-12">
           <form-field
             [control]="regionalDelegationForm.get('description')"
             label="Descripci&oacute;n">
@@ -20,7 +20,7 @@
               formControlName="description" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field
             [control]="regionalDelegationForm.get('registerNumber')"
             label="N&uacute;mero de registro">
@@ -29,7 +29,7 @@
               class="form-control"
               formControlName="registerNumber" />
           </form-field>
-        </div>
+        </div>-->
       </div>
       <!-- ------ -->
       <div class="row pt-5">
@@ -45,7 +45,7 @@
               [form]="regionalDelegationForm"
               [data]="selectGeoZone"
               bindLabel="id"
-              label="ID Zona Geografica"
+              label="Id zona geogr&aacute;fica"
               control="idGeographicZona">
             </ngx-select>
           </form-field>
@@ -76,7 +76,7 @@
         <div class="col-md-4">
           <form-field
             [control]="regionalDelegationForm.get('keyZone')"
-            label="clave de la zona">
+            label="Clave de la zona">
             <input type="text" class="form-control" formControlName="keyZone" />
           </form-field>
         </div>

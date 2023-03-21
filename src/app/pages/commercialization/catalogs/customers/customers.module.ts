@@ -11,6 +11,7 @@ import { CustomersRoutingModule } from './customers-routing.module';
 //Components
 import { CustomersBlackListComponent } from './customers-black-list/customers-black-list.component';
 import { CustomersListComponent } from './customers-list/customers-list.component';
+import { CustomersRepresentantsListComponent } from './customers-list/customers-representants-list/customers-representants-list.component';
 import { CustomersModalComponent } from './customers-modal/customers-modal.component';
 import { CustomersWhiteListComponent } from './customers-white-list/customers-white-list.component';
 import { RepresentativesModalComponent } from './representatives-modal/representatives-modal.component';
@@ -22,6 +23,7 @@ import { RepresentativesModalComponent } from './representatives-modal/represent
     CustomersWhiteListComponent,
     CustomersModalComponent,
     RepresentativesModalComponent,
+    CustomersRepresentantsListComponent,
   ],
   imports: [
     CommonModule,

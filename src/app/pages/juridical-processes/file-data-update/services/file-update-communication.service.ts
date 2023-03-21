@@ -4,6 +4,7 @@ import {
   IJuridicalFileDataUpdateParams,
   IJuridicalRelatedDocumentManagementParams,
   IJuridicalRulingParams,
+  IJuridicalShiftChangeParams,
 } from '../interfaces/file-data-update-parameters';
 
 @Injectable({
@@ -17,19 +18,28 @@ export class FileUpdateCommunicationService {
   private _juridicalRelatedDocumentManagementParams: IJuridicalRelatedDocumentManagementParams =
     null;
 
+  private _juridicalShiftChangeParams: IJuridicalShiftChangeParams = null;
+
   constructor() {}
 
   get fileDataUpdateParams() {
     return { ...this._fileDataUpdateParams };
   }
+
   get juridicalRulingParams() {
     return { ...this._juridicalRulingParams };
   }
+
   get juridicalDocumentManagementParams() {
     return { ...this._juridicalDocumentManagementParams };
   }
+
   get juridicalRelatedDocumentManagementParams() {
     return { ...this._juridicalRelatedDocumentManagementParams };
+  }
+
+  get juridicalShiftChangeParams() {
+    return { ...this._juridicalShiftChangeParams };
   }
 
   set fileDataUpdateParams(params: IJuridicalFileDataUpdateParams) {
@@ -50,5 +60,9 @@ export class FileUpdateCommunicationService {
     params: IJuridicalRelatedDocumentManagementParams
   ) {
     this._juridicalRelatedDocumentManagementParams = params;
+  }
+
+  set juridicalShiftChangeParams(params: IJuridicalShiftChangeParams) {
+    this._juridicalShiftChangeParams = params;
   }
 }

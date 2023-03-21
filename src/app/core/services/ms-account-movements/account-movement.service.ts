@@ -22,4 +22,8 @@ export class AccountMovementService extends HttpService {
   update(movement: any) {
     return this.put(`account-movements`, movement);
   }
+
+  create(movement: any) {
+    return this.post('account-movements', movement);
+  }
 }

@@ -1,0 +1,14 @@
+<ng-container [formGroup]="form">
+  <ng-container formArrayName="filter">
+    <form class="form-material">
+      <ng-container *ngFor="let filterForm of filter.controls; let i = index">
+        <div class="row pt-4">
+          <system-log-field [form]="filterForm"></system-log-field>
+        </div>
+        <div class="row pt-4">
+          <ng-content></ng-content>
+        </div>
+      </ng-container>
+    </form>
+  </ng-container>
+</ng-container>

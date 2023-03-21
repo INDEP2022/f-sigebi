@@ -1,23 +1,41 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { HELP_SCREEN } from 'src/app/utils/constants/main-routes';
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
 })
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   element: any;
+  screenCode: string = null;
   userName: string;
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
+  $unSubscribe = new Subject<void>();
+
+  get currentScreen() {
+    return this.screenCodeService.$id.getValue();
+  }
 
   constructor(
     @Inject(DOCUMENT) private document: any,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private screenCodeService: ScreenCodeService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   openMobileMenu: boolean;
@@ -87,5 +105,19 @@ export class TopbarComponent implements OnInit {
         this.document.msExitFullscreen();
       }
     }
+  }
+
+  help() {
+    if (!this.currentScreen) {
+      return;
+    }
+    this.router.navigate([HELP_SCREEN], {
+      queryParams: { screen: this.currentScreen },
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.$unSubscribe.next();
+    this.$unSubscribe.complete();
   }
 }

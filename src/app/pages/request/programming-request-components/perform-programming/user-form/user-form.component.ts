@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, NAME_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -18,10 +19,12 @@ export class UserFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   userForm: FormGroup = new FormGroup({});
   chargesUsers = new DefaultSelect<IGeneric>();
+  idProgramming: number;
   constructor(
     private modalService: BsModalRef,
     private fb: FormBuilder,
-    private genericService: GenericService
+    private genericService: GenericService,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
   }
@@ -35,11 +38,12 @@ export class UserFormComponent extends BasePage implements OnInit {
       user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
       email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       userCharge: [null, [Validators.required]],
-      keyId: [null],
     });
 
     if (this.userData != null) {
       this.edit = true;
+      if (this.userData.userCharge)
+        this.userData.userCharge = this.userData.charge.keyId;
       this.userForm.patchValue(this.userData);
     }
   }
@@ -52,7 +56,7 @@ export class UserFormComponent extends BasePage implements OnInit {
   }
 
   chargeSelect(item: IGeneric) {
-    this.userForm.get('keyId').setValue(item.keyId);
+    //this.userForm.get('keyId').setValue(item.keyId);
   }
 
   confirm() {
@@ -68,12 +72,19 @@ export class UserFormComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.loading = true;
-        this.onLoadToast('success', 'Usuario creado correctamente', '');
-        const create: boolean = true;
-        this.modalService.content.callback(this.userForm.value, create);
-        this.close();
-      } else {
-        this.close();
+        let formData: Object = {
+          programmingId: Number(this.idProgramming),
+          email: this.userForm.get('email').value,
+          user: this.userForm.get('user').value,
+          userCharge: this.userForm.get('userCharge').value,
+        };
+        this.programmingService.createUsersProgramming(formData).subscribe({
+          next: res => {
+            const create: boolean = true;
+            this.modalService.content.callback(true, create);
+            this.close();
+          },
+        });
       }
     });
   }
@@ -85,11 +96,21 @@ export class UserFormComponent extends BasePage implements OnInit {
       '¿Deseas editar el usuario?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.loading = true;
-        this.onLoadToast('success', 'Usuario editado correctamente', '');
-        this.modalService.content.callback(this.userForm.value);
-        this.close();
+        console.log(this.userForm.value);
+        let formData: Object = {
+          programmingId: Number(this.idProgramming),
+          email: this.userForm.get('email').value,
+          user: this.userForm.get('user').value,
+          userCharge: this.userForm.get('userCharge').value,
+        };
+        this.programmingService.updateUserProgramming(formData).subscribe({
+          next: res => {
+            this.loading = true;
+            this.onLoadToast('success', 'Usuario editado correctamente', '');
+            this.modalService.content.callback(true);
+            this.close();
+          },
+        });
       }
     });
   }

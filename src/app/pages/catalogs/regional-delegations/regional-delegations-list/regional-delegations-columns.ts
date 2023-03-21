@@ -1,3 +1,5 @@
+import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
+
 export const REGIONAL_DELEGATIONS_COLUMNS = {
   id: {
     title: 'Registro',
@@ -14,12 +16,20 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  idGeographicZona: {
+  zoneGeographic: {
     title: 'Zona geográfica',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: IZoneGeographic) => {
       return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   version: {

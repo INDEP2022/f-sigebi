@@ -30,6 +30,7 @@ import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
@@ -127,6 +128,7 @@ export class DetailAssetsTabComponentComponent
   parameterBrandsService = inject(ParameterBrandsService);
   parameterSubBrandsService = inject(ParameterSubBrandsService);
   menageService = inject(MenageService);
+  goodsInvService = inject(GoodsInvService);
 
   isDisabled: boolean = true; //desabilita el campo domicilio
   menajeSelected: any;
@@ -173,6 +175,7 @@ export class DetailAssetsTabComponentComponent
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
+    this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
     this.isSavingData();
 
@@ -182,17 +185,17 @@ export class DetailAssetsTabComponentComponent
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
-      this.domicileForm.controls['regionalDelegationId'].setValue(
+      /* this.domicileForm.controls['regionalDelegationId'].setValue(
         this.requestObject.regionalDelegationId
-      );
-      this.getStateOfRepublic(
+      ); */
+      /*  this.getStateOfRepublic(
         new ListParams(),
         this.requestObject.keyStateOfRepublic
       );
       this.getMunicipaly(
         new ListParams(),
         this.requestObject.keyStateOfRepublic
-      );
+      ); */
     }
 
     //console.log('detalle del objeto enviado');
@@ -205,7 +208,7 @@ export class DetailAssetsTabComponentComponent
     //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
-      warehouseAlias: ['DOMICILIO TRANSFERENTE'],
+      warehouseAlias: [],
       wayref2Key: [null],
       wayref3Key: [null],
       statusKey: [null],
@@ -300,7 +303,7 @@ export class DetailAssetsTabComponentComponent
   getState(event: any) {}
 
   getMunicipaly(params: ListParams, keyState?: number) {
-    params['stateKey'] = keyState;
+    params['filter.stateKey'] = `$eq:${keyState}`;
     params['limit'] = 20;
     this.municipeSeraService.getAll(params).subscribe({
       next: data => {
@@ -314,8 +317,8 @@ export class DetailAssetsTabComponentComponent
 
   getLocality(params: ListParams, municipalityId?: number, stateKey?: number) {
     params.limit = 20;
-    params['municipalityId'] = municipalityId;
-    params['stateKey'] = stateKey;
+    params['filter.municipalityId'] = `$eq:${municipalityId}`;
+    params['filter.stateKey'] = `$eq:${stateKey}`;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);
@@ -359,6 +362,19 @@ export class DetailAssetsTabComponentComponent
           this.selectCP = new DefaultSelect(data.data, data.count);
         },
       });
+  }
+
+  getTransferentUnit(params: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.goodsInvService.getCatUnitMeasureView(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.selectTansferUnitMeasure = new DefaultSelect(
+          resp.data,
+          resp.count
+        );
+      },
+    });
   }
 
   getBrand(params: ListParams) {
@@ -528,32 +544,42 @@ export class DetailAssetsTabComponentComponent
       case 1:
         this.getGoodEstateTab();
         this.getGoodEstate();
+        this.closeTabs();
         this.immovablesAssets = true;
         break;
       case 2:
+        this.closeTabs();
         this.carsAssets = true;
         break;
       case 3:
+        this.closeTabs();
         this.boatAssets = true;
         break;
       case 4:
+        this.closeTabs();
         this.aircraftAssets = true;
         break;
       case 5:
+        this.closeTabs();
         this.jewelerAssets = true;
         break;
       case 8:
+        this.closeTabs();
         this.otherAssets = true;
         break;
       default:
-        this.immovablesAssets = false;
-        this.carsAssets = false;
-        this.boatAssets = false;
-        this.aircraftAssets = false;
-        this.jewelerAssets = false;
-        this.otherAssets = false;
+        this.closeTabs();
         break;
     }
+  }
+
+  closeTabs() {
+    this.immovablesAssets = false;
+    this.carsAssets = false;
+    this.boatAssets = false;
+    this.aircraftAssets = false;
+    this.jewelerAssets = false;
+    this.otherAssets = false;
   }
 
   async save() {

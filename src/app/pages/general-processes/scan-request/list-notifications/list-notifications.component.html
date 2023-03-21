@@ -1,0 +1,35 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Lista Expedientes</h5>
+      <div class="buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar [track]="'all'" style="min-height: 300px">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              class="table-responsive"
+              [settings]="settings"
+              [source]="dataNotification.data"
+              (edit)="formDataNoti($event.data)">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [filterParams]="filterParamsDocuments"
+      [totalItems]="dataNotification.count">
+    </app-pagination>
+  </div>
+</app-modal>

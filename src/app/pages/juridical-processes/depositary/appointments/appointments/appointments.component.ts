@@ -16,7 +16,10 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** COMPONENTS IMPORTS */
 import { BehaviorSubject } from 'rxjs';
-import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
+import {
+  IDescriptionByNoGoodBody,
+  IFromGoodsAndExpedientsBody,
+} from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   KEYGENERATION_PATTERN,
@@ -322,27 +325,31 @@ export class AppointmentsComponent
   }
 
   /**
-   * INCIDENCIA 538
+   * INCIDENCIA 538 -- PENDIENTE -- 03/16/2023
    * Obtener los datos del bien de acuerdo al status DEP
    */
   async getFromGoodsAndExpedients() {
-    // const params: ListParams = {
-    //   page: this.params.getValue().page,
-    //   limit: 10,
-    // };
-    // this.params.getValue().getParams();
-    // params['filter.goodId'] = this.form.get('noBien').value;
-    // params['filter.status'] = 'DEP';
-    // await this.appointmentsService.getGoodByParams(params).subscribe({
-    //   next: res => {
-    //     console.log(res);
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.alert('warning', 'Número de Bien', 'El número de Bien no existe.');
-    //   },
-    // });
-    this.getStatusGoodByNoGood();
+    let paramsGoodExpedient: IFromGoodsAndExpedientsBody = {
+      goodNumber: this.noBien,
+      page: 1,
+      limit: 10,
+    };
+    await this.appointmentsService
+      .getFromGoodsAndExpedients(paramsGoodExpedient)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          this.getStatusGoodByNoGood();
+        },
+        error: err => {
+          console.log(err);
+          this.alert(
+            'warning',
+            'Número de Bien',
+            'El número de Bien no existe.'
+          );
+        },
+      });
   }
 
   /**

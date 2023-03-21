@@ -4,11 +4,11 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CoverExpedientService } from 'src/app/core/services/ms-cover-expedient/cover-expedient.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
@@ -44,7 +44,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private expedientSamiService: ExpedientSamiService,
     private requestHelperService: RequestHelperService,
-    private authService: AuthService
+    private wcontetService: WContentService
   ) {
     super();
   }
@@ -55,7 +55,16 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
-    console.log(this.authService.decodeToken());
+    console.log(this.parameter.getRawValue());
+
+    /* let parameters = {
+      xIdTransferente: request.transferenceId,
+      xidExpediente: '',
+      xidSolicitud: request.id,
+      xestado: request.keyStateOfRepublic,
+      tipoUse: 'AsociarExpedient',
+      xNombreProceso: 'Captura Solicitud',
+    }; */
   }
   formsChanges() {
     this.associateFileForm.controls['inaiUser'].valueChanges.subscribe(data => {
@@ -118,29 +127,62 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   confirm() {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
-    expedient.creationUser = this.authService.decodeToken().preferred_username;
-    expedient.creationDate = new Date().toISOString();
-    expedient.modificationUser =
-      this.authService.decodeToken().preferred_username;
-    expedient.modificationDate = new Date().toISOString();
 
+    const body = {
+      funcionario: this.associateFileForm.controls['inaiOfficial'].value, //'inaiOfficial', //20
+      usrID: this.associateFileForm.controls['inaiUser'].value, //10539
+      fojas: this.associateFileForm.controls['sheetsInai'].value, //12
+      arhId: this.associateFileForm.controls['inaiFile'].value, //96827
+      legajos: this.associateFileForm.controls['filesInai'].value, //133
+      fechaExpediente: this.setDate(
+        this.associateFileForm.controls['expedientDate'].value
+      ), //22/03/2023
+      nombreExpediente: '',
+      ddcid: this.ddcId, //900
+      fechaReserva: this.setDate(
+        this.associateFileForm.controls['reserveDateInai'].value
+      ), //25/03/2023
+    };
+    console.log(expedient);
+    /*  this.externalExpedientService.insertExpedient(body).subscribe({
+      next: resp => {
+
+      }
+    }) */
     this.expedientSamiService.create(expedient).subscribe({
       next: expedient => {
         if (expedient.id) {
+          debugger;
           request.recordId = expedient.id;
-          this.requestService.update(request.id, request).subscribe({
+
+          /*//actualiza la solicitud
+    this.requestService.update(request.id, request).subscribe({
             next: resp => {
               if (resp.id) {
-                this.message(
-                  'success',
-                  'Expediente Asociado',
-                  'Se asocio el expediente correctamente'
-                );
-                this.closeAssociateExpedientTab();
-                this.close();
+                 let wcontent: IWContent = {};
+                wcontent.ddocTitle = 'Public';
+                wcontent.ddocTitle = `Caratula del Expediente ${resp.recordId}`;
+                wcontent.xdelegacionRegional = resp.regionalDelegationId;
+                wcontent.xestado = resp.stationId;
+                wcontent.xidTransferente = resp.transferenceId;
+                wcontent.xnoOficio = resp.paperNumber;
+                wcontent.xremitente = resp.nameOfOwner;
+                wcontent.xnivelRegistroNSBDB = 'Expediente';
+                wcontent.xidExpediente = resp.recordId;
+                wcontent.xidSolicitud = resp.id;
+                wcontent.xcargoRemitente = resp.holderCharge;
+                wcontent.xcontribuyente = resp.contribuyente_indiciado ?? '';
+                wcontent.xtipoDocumento = '';
+                wcontent.xnombreProceso = 'Captura Solicitud';
+
+
+
+
+                //this.closeAssociateExpedientTab();
+                //this.close();
               }
             },
-          });
+          });*/
         } else {
           this.message(
             'error',
@@ -150,6 +192,13 @@ export class AssociateFileComponent extends BasePage implements OnInit {
         }
       },
     });
+  }
+
+  setDate(date: Date) {
+    debugger;
+    const newDate =
+      date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    return newDate;
   }
 
   close() {

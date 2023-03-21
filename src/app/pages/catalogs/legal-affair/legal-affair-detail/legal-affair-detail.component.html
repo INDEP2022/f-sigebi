@@ -25,6 +25,20 @@
           </form-field>
         </div>
       </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Status" [control]="legalAffairForm.get('status')">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Activo</ng-option>
+              <ng-option value="0">Inactivo</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>

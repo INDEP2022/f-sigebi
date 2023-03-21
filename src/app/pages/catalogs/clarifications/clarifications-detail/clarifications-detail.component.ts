@@ -46,11 +46,14 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
         ],
       ],
       active: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.minLength(1)],
+        '1',
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       version: [
-        null,
+        1,
         [Validators.pattern(NUMBERS_PATTERN), Validators.minLength(1)],
       ],
       modificationDate: [null],
@@ -60,7 +63,6 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
     });
     if (this.clarification != null) {
       this.edit = true;
-      console.log(this.clarification);
       this.clarificationForm.patchValue(this.clarification);
     }
   }
