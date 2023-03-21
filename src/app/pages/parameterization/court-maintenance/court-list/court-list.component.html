@@ -25,7 +25,7 @@
               [attr.class]="'table-bordered table-responsive'"
               class="table-responsive"
               [settings]="settings"
-              [source]="dataCourt.data"
+              [source]="data"
               (edit)="formDataCourt($event.data)"
               (delete)="deleteCourt($event.data.id)">
             </ng2-smart-table>
@@ -33,7 +33,7 @@
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="dataCourt.count">
+    <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
   </div>
 </app-modal>
