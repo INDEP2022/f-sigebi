@@ -36,7 +36,10 @@ import {
   FLYER_HISTORY_TITLE,
   INDICATORS_HISTORY_TITLE,
 } from '../utils/modal-titles';
-import { NO_INDICATORS_FOUND } from '../utils/work-mailbox-messages';
+import {
+  NO_FLYER_NUMBER,
+  NO_INDICATORS_FOUND,
+} from '../utils/work-mailbox-messages';
 import { WORK_MAILBOX_COLUMNS2 } from './work-mailbox-columns';
 
 @Component({
@@ -506,5 +509,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(MailboxModalTableComponent, config);
+  }
+
+  viewPictures() {
+    if (!this.selectedRow?.flierNumber) {
+      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      return;
+    }
   }
 }
