@@ -5,44 +5,57 @@
   <div body>
     <form [formGroup]="departmentForm" class="form-material">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="departmentForm.get('id')" label="ID">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
-
-        <div class="col-md-4 offset-md-1">
+        <div class="col-md-4">
           <form-field [control]="departmentForm.get('numDelegation')">
             <ngx-select
+              [searchOnInit]="true"
               [form]="departmentForm"
-              control="numDelegation"
+              (fetchItems)="getDelegations($event)"
               [data]="delegations"
               value="id"
               bindLabel="description"
               label="Delegaci&oacute;n"
-              (fetchItems)="getDelegations($event)"></ngx-select>
+              [control]="'numDelegation'"
+              (change)="onDelegationsChange($event)">
+            </ngx-select>
           </form-field>
         </div>
-
         <div class="col-md-4">
           <form-field [control]="departmentForm.get('numSubDelegation')">
             <ngx-select
               [form]="departmentForm"
-              control="numSubDelegation"
+              (fetchItems)="getSubDelegations($event)"
               [data]="subdelegations"
               value="id"
               bindLabel="description"
-              label="Subdelegaci&oacute;n"
-              (fetchItems)="getSubdelegations($event)"></ngx-select>
+              label="Sub Delegaci&oacute;n"
+              [control]="'numSubDelegation'"
+              (change)="onSubDelegationsChange($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
             [control]="departmentForm.get('dsarea')"
             label="Descripci&oacute;n de &aacute;rea">
             <input type="text" class="form-control" formControlName="dsarea" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -52,20 +65,9 @@
             [control]="departmentForm.get('lastOffice')"
             label="&Uacute;ltimo oficio">
             <input
-              type="text"
-              class="form-control"
-              formControlName="lastOffice" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field
-            [control]="departmentForm.get('numRegister')"
-            label="No. Registro">
-            <input
               type="number"
               class="form-control"
-              formControlName="numRegister" />
+              formControlName="lastOffice" />
           </form-field>
         </div>
 
@@ -75,12 +77,12 @@
           </form-field>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
             [control]="departmentForm.get('depDelegation')"
             label="Dependencia entre Delegaciones">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="depDelegation" />
           </form-field>
@@ -108,17 +110,6 @@
               formControlName="phaseEdo" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-5">
-        <form-field
-          [control]="departmentForm.get('description')"
-          label="Descripci&oacute;n">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="description" />
-        </form-field>
       </div>
     </form>
   </div>

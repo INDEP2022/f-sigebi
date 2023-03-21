@@ -32,7 +32,7 @@
             <input type="number" class="form-control" formControlName="type" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field
             [control]="clarificationForm.get('active')"
             label="Activo">
@@ -41,7 +41,26 @@
               class="form-control"
               formControlName="active" />
           </form-field>
+        </div>-->
+        <div class="col-md-4 d-flex">
+          <form-radio label="Activo">
+            <input type="radio" formControlName="active" value="1" />
+          </form-radio>
+          <form-radio label="Inactivo">
+            <input type="radio" formControlName="active" value="0" />
+          </form-radio>
         </div>
+        <!--<div class="col-md-4">
+          <form-field
+            [control]="clarificationForm.get('active')"
+            label="Activo">
+            <select class="form-control" formControlName="active">
+              <option [value]="null">Seleccione un estatus</option>
+              <option value="1">Activo</option>
+              <option value="1">Inactivo</option>
+            </select>
+          </form-field>
+        </div>-->
         <div class="col-md-4">
           <form-field
             [control]="clarificationForm.get('version')"

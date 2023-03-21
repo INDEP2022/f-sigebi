@@ -12,7 +12,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -50,7 +50,7 @@ export class VerifyComplianceTabComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
 
-  detailArray: ModelForm<IGood>;
+  detailArray: IFormGroup<IGood>;
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
   goodsSelected: any = [];

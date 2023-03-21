@@ -4,9 +4,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { forkJoin } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
@@ -40,7 +39,7 @@ export class RegistrationOfRequestsComponent
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
-  registRequestForm: ModelForm<IRequest>; //solicitudes
+  registRequestForm: IFormGroup<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
   parameter: any;
@@ -51,6 +50,7 @@ export class RegistrationOfRequestsComponent
   saveClarifiObject: boolean = false;
   bsValue = new Date();
   isExpedient: boolean = false;
+  infoRequest: IRequest;
 
   //tabs
   tab1: string = '';
@@ -130,7 +130,7 @@ export class RegistrationOfRequestsComponent
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
       recordId: [null],
-      paperNumber: [null, [Validators.required]],
+      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
       transferenceId: [null],
@@ -143,83 +143,163 @@ export class RegistrationOfRequestsComponent
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [{ value: null, disabled: true }],
-      paperDate: [null, Validators.required],
+      paperDate: [null, [Validators.required]],
       typeRecord: [null],
-      publicMinistry: [null, [Validators.pattern(STRING_PATTERN)]],
-      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]], //nombre remitente
-      holderCharge: [null, [Validators.pattern(STRING_PATTERN)]], //cargo remitente
-      phoneOfOwner: [null, Validators.pattern(PHONE_PATTERN)], //telefono remitente
-      emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]], //email remitente
-      court: [null, [Validators.pattern(STRING_PATTERN)]],
-      crime: [null, [Validators.pattern(STRING_PATTERN)]],
+      publicMinistry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      nameOfOwner: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], //nombre remitente
+      holderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], //cargo remitente
+      phoneOfOwner: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(30)],
+      ], //telefono remitente
+      emailOfOwner: [
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+      ], //email remitente
+      court: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      crime: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       receiptRoute: [null],
-      destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
-      indicatedTaxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
+      destinationManagement: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      indicatedTaxpayer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       affair: [null],
-      transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferEntNotes: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       transferenceFile: [null],
       previousInquiry: [null],
-      trialType: [null],
-      circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
-      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
-      tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      protectNumber: [null],
+      trialType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      circumstantialRecord: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      lawsuit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      tocaPenal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      protectNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
     });
   }
 
   getRequest(id: any) {
     this.requestService.getById(id).subscribe((data: any) => {
-      let request = data;
+      this.infoRequest = data;
+      this.getTransferent(data.transferenceId);
+      this.getRegionalDelegation(data.regionalDelegationId);
+      this.getStateOfRepublic(data.keyStateOfRepublic);
+      this.getAuthority(data.authorityId);
+      this.getStation(data.stationId);
       //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
-      this.isExpedient = request.recordId ? true : false;
+      this.isExpedient = data.recordId ? true : false;
 
-      request.receptionDate = new Date().toISOString();
+      this.registRequestForm.patchValue(data);
+      /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
-      this.registRequestForm.patchValue(request);
-      this.getData(request);
+      this.getData(request); */
     });
   }
 
-  getData(request: any) {
-    const stateOfRepublicService = this.stateOfRepublicService.getById(
-      request.keyStateOfRepublic
-    );
-    const transferentService = this.transferentService.getById(
-      request.transferenceId
-    );
-    const stationService = this.stationService.getById(request.stationId);
-    const delegationService = this.delegationService.getById(
-      request.regionalDelegationId
-    );
+  // private getData({
+  //   idTransferent,
+  //   regionalDelegationId,
+  //   keyStateOfRepublic,
+  //   authorityId,
+  //   stationId,
+  // }: any) {
+  //   const obsTransferent = this.transferentService.getById(idTransferent);
+  //   const obsDelegation = this.delegationService.getById(regionalDelegationId);
+  //   const obsStateOfRepublic =
+  //     this.stateOfRepublicService.getById(keyStateOfRepublic);
+  //   const obsAuthority = this.authorityService.getById(authorityId);
+  //   const obsStation = this.stationService.getById(stationId);
+  //   forkJoin([
+  //     obsTransferent,
+  //     obsDelegation,
+  //     obsStateOfRepublic,
+  //     obsAuthority,
+  //     obsStation,
+  //   ]).subscribe({
+  //     next: ([transferent, delegation, stateRepublic, authority, station]) => {
+  //       if (transferent) {
+  //         this.transferentName = transferent.nameTransferent;
+  //       }
+  //       if (delegation) {
+  //         this.delegationName = delegation.description;
+  //       }
+  //       if (stateRepublic) {
+  //         this.stateOfRepublicName = stateRepublic.descCondition;
+  //       }
+  //       if (authority) {
+  //         this.authorityName = authority.authorityName;
+  //       }
+  //       if (station) {
+  //         this.stationName = station.stationName;
+  //       }
+  //     },
+  //   });
+  // }
 
-    const authorityervice = this.authorityService.getById(request.authorityId);
+  getTransferent(idTransferent: number) {
+    this.transferentService.getById(idTransferent).subscribe(data => {
+      this.transferentName = data.nameTransferent;
+    });
+  }
 
-    forkJoin([
-      stateOfRepublicService,
-      transferentService,
-      stationService,
-      delegationService,
-      authorityervice,
-    ]).subscribe(
-      ([_state, _transferent, _station, _delegation, _authority]) => {
-        let state = _state as any;
-        let transferent = _transferent as any;
-        let station = _station as any;
-        let delegation = _delegation as any;
-        let authority = _authority as any;
+  getRegionalDelegation(idDelegation: number) {
+    this.delegationService.getById(idDelegation).subscribe(data => {
+      this.delegationName = data.description;
+    });
+  }
 
-        this.stateOfRepublicName = state.descCondition;
-        this.transferentName = transferent.nameTransferent;
-        this.stationName = station.stationName;
-        this.delegationName = delegation.description;
-        this.authorityName = authority.authorityName;
-      },
-      error => {
-        console.log(error);
-      }
-    );
+  getStateOfRepublic(idState: number) {
+    this.stateOfRepublicService.getById(idState).subscribe(data => {
+      this.stateOfRepublicName = data.descCondition;
+    });
+  }
+
+  getAuthority(idAuthority: number) {
+    this.authorityService.getById(idAuthority).subscribe(data => {
+      this.authorityName = data.authorityName;
+    });
+  }
+
+  getStation(idStation: number) {
+    this.stationService.getById(idStation).subscribe(data => {
+      this.stationName = data.stationName;
+    });
   }
 
   setView(path: string): void {
@@ -343,7 +423,6 @@ export class RegistrationOfRequestsComponent
       .update(this.requestData.id, this.requestData)
       .subscribe({
         next: resp => {
-          console.log(resp);
           if (resp.statusCode !== null) {
             this.message('error', 'Error', 'Ocurrio un error al guardar');
           }
@@ -447,7 +526,9 @@ export class RegistrationOfRequestsComponent
   }
 
   dinamyCallFrom() {
+    console.log(this.registRequestForm);
     this.registRequestForm.valueChanges.subscribe(data => {
+      console.log(data);
       this.requestData = data;
     });
   }

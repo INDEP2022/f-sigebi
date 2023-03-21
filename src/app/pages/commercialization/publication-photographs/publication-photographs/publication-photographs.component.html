@@ -153,11 +153,18 @@
           <h5 class="title">Bienes del lote {{ rowAllotment }}</h5>
         </div>
         <div class="table-responsive">
+          <!-- <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings3"
+            [source]="dataBatch" #fileInput
+            (click)="fileInput.click()"></ng2-smart-table> -->
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings3"
-            [source]="dataBatch"></ng2-smart-table>
+            [source]="dataBatch"
+            #fileInput></ng2-smart-table>
         </div>
       </div>
 

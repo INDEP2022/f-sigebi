@@ -3,6 +3,6 @@ export interface IIndiciados {
   name?: string;
   noRegistration?: number;
   curp: string;
-  consecutive: number;
+  consecutive?: number;
   nameAndId?: string;
 }

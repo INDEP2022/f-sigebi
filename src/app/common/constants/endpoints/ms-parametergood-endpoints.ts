@@ -6,4 +6,5 @@ export enum ParameterGoodEndpoints {
   Parameters = 'Parameters',
   ParameterMaintenace = 'parametergood/parameters',
   CategorzacionAutomNumerario = 'categorzacion-autom-numerario',
+  rNomecla = 'r-nomencla',
 }
