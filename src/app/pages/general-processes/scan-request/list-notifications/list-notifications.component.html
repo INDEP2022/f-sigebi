@@ -1,7 +1,7 @@
 <app-modal>
   <div class="w-100" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
-      <h5 class="modal-title">Lista juzgados</h5>
+      <h5 class="modal-title">Lista Expedientes</h5>
       <div class="buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
@@ -12,11 +12,6 @@
   </div>
 
   <div body>
-    <div class="row">
-      <div class="form-material col-md-8">
-        <search-bar [params]="params"></search-bar>
-      </div>
-    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -25,15 +20,16 @@
               [attr.class]="'table-bordered table-responsive'"
               class="table-responsive"
               [settings]="settings"
-              [source]="data"
-              (edit)="formDataCourt($event.data)"
-              (delete)="deleteCourt($event.data.id)">
+              [source]="dataNotification.data"
+              (edit)="formDataNoti($event.data)">
             </ng2-smart-table>
           </ng-scrollbar>
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <app-pagination
+      [filterParams]="filterParamsDocuments"
+      [totalItems]="dataNotification.count">
     </app-pagination>
   </div>
 </app-modal>

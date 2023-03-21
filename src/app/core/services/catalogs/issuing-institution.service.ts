@@ -40,7 +40,10 @@ export class IssuingInstitutionService
   }
 
   getById(id: string | number): Observable<IIssuingInstitution> {
-    return this.issuingInstitutionRepository.getById(this.route, id);
+    const segments = this.route.split('/');
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route);
+    // return this.issuingInstitutionRepository.getById(this.route, id);
   }
 
   create(model: IIssuingInstitution): Observable<IIssuingInstitution> {

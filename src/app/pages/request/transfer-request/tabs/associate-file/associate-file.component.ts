@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IWContent } from 'src/app/core/models/ms-wcontent/wcontent.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -129,17 +128,38 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
 
+    const body = {
+      funcionario: this.associateFileForm.controls['inaiOfficial'].value, //'inaiOfficial', //20
+      usrID: this.associateFileForm.controls['inaiUser'].value, //10539
+      fojas: this.associateFileForm.controls['sheetsInai'].value, //12
+      arhId: this.associateFileForm.controls['inaiFile'].value, //96827
+      legajos: this.associateFileForm.controls['filesInai'].value, //133
+      fechaExpediente: this.setDate(
+        this.associateFileForm.controls['expedientDate'].value
+      ), //22/03/2023
+      nombreExpediente: '',
+      ddcid: this.ddcId, //900
+      fechaReserva: this.setDate(
+        this.associateFileForm.controls['reserveDateInai'].value
+      ), //25/03/2023
+    };
+    console.log(expedient);
+    /*  this.externalExpedientService.insertExpedient(body).subscribe({
+      next: resp => {
+
+      }
+    }) */
     this.expedientSamiService.create(expedient).subscribe({
       next: expedient => {
         if (expedient.id) {
           debugger;
           request.recordId = expedient.id;
 
-          //actualiza la solicitud
-          this.requestService.update(request.id, request).subscribe({
+          /*//actualiza la solicitud
+    this.requestService.update(request.id, request).subscribe({
             next: resp => {
               if (resp.id) {
-                let wcontent: IWContent = {};
+                 let wcontent: IWContent = {};
                 wcontent.ddocTitle = 'Public';
                 wcontent.ddocTitle = `Caratula del Expediente ${resp.recordId}`;
                 wcontent.xdelegacionRegional = resp.regionalDelegationId;
@@ -155,20 +175,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                 wcontent.xtipoDocumento = '';
                 wcontent.xnombreProceso = 'Captura Solicitud';
 
-                //TODO: GENERAR REPORTE
 
-                //guarda el reporte en el contet
-                this.wcontetService
-                  .addDocumentToContent('titulo', '.txt', wcontent, null)
-                  .subscribe({
-                    next: resp => {},
-                  });
+
 
                 //this.closeAssociateExpedientTab();
                 //this.close();
               }
             },
-          });
+          });*/
         } else {
           this.message(
             'error',
@@ -178,6 +192,13 @@ export class AssociateFileComponent extends BasePage implements OnInit {
         }
       },
     });
+  }
+
+  setDate(date: Date) {
+    debugger;
+    const newDate =
+      date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    return newDate;
   }
 
   close() {

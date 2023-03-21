@@ -132,7 +132,7 @@ export enum ENDPOINT_LINKS {
   DocumentsForDictumType = 'documents/api/v1/documents-for-dictum',
   DocumentSeparators = 'documents/document-separator',
   DocumentsType = 'documents-types/',
-  DinamicTables = 'dynamiccatalog/dinamic-tables',
+  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { TypesOfClaimsService } from '../types-of-claims.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { TypesOfClaimsService } from '../types-of-claims.service';
   templateUrl: './modal-type-of-claims.component.html',
   styles: [],
 })
-export class ModalTypeOfClaimsComponent implements OnInit {
+export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
   title: string = 'TIPO DE SINIESTRO';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
@@ -20,7 +21,9 @@ export class ModalTypeOfClaimsComponent implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private claimService: TypesOfClaimsService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -48,7 +51,7 @@ export class ModalTypeOfClaimsComponent implements OnInit {
     this.claimService.PutClaim(this.allotment.id, body).subscribe({
       next: (resp: any) => {
         if (resp) {
-          this.refresh.emit(true);
+          this.handleSuccess(), this.refresh.emit(true);
           this.close();
         }
       },
@@ -65,13 +68,19 @@ export class ModalTypeOfClaimsComponent implements OnInit {
     this.claimService.postClaims(body).subscribe({
       next: (resp: any) => {
         if (resp) {
-          this.refresh.emit(true);
+          this.handleSuccess(), this.refresh.emit(true);
           this.close();
         }
       },
     });
   }
-
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    // this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
   close() {
     this.modalRef.hide();
   }
