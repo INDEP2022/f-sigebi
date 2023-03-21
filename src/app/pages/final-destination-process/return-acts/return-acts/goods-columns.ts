@@ -1,5 +1,5 @@
-export const COLUMNS = {
-  goodId: {
+export const GOODS_COLUMNS = {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -19,9 +19,19 @@ export const COLUMNS = {
     type: 'number',
     sort: false,
   },
-  amountReturned: {
+  appraisedValue: {
     title: 'Importe',
     type: 'number',
+    sort: false,
+  },
+  //   proceeding: {                      NO VIENE EN LA RESPUESTA DEL ENPOINT GOOD USADO
+  //     title: 'proceeding',
+  //     type: 'string',
+  //     sort: false,
+  //   },
+  status: {
+    title: 'Estatus',
+    type: 'string',
     sort: false,
   },
 };

@@ -1,10 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATION_COLUMNS } from './clarifications-columns';
 
@@ -60,8 +70,13 @@ var data2 = [
   templateUrl: './clarifications.component.html',
   styles: [],
 })
-export class ClarificationsComponent extends BasePage implements OnInit {
-  params = new BehaviorSubject<ListParams>(new ListParams());
+export class ClarificationsComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
+  @Input() requestObject: any;
+  goodForm: IFormGroup<IGood>;
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   assetsArray: any[] = [];
   assetsSelected: any[] = [];
@@ -72,13 +87,23 @@ export class ClarificationsComponent extends BasePage implements OnInit {
   detailArray: any;
   typeDoc: string = 'clarification';
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private readonly fb: FormBuilder,
+    private readonly goodService: GoodService
+  ) {
     super();
   }
 
-  ngOnInit(): void {
-    console.log(this.rowSelected);
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getData();
+      // this.getClarifications();
+    });
+  }
 
+  ngOnInit(): void {
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -86,14 +111,83 @@ export class ClarificationsComponent extends BasePage implements OnInit {
       columns: CLARIFICATION_COLUMNS,
     };
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getData();
-      this.getClarifications();
+    this.prepareForm();
+  }
+  private prepareForm() {
+    this.goodForm = this.fb.group({
+      id: [null],
+      goodId: [null],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
+      requestId: [null],
+      goodTypeId: [null],
+      color: [null],
+      goodDescription: [null],
+      quantity: [1, [Validators.required]],
+      duplicity: ['N'],
+      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
+      volume: [null, [Validators.pattern(STRING_PATTERN)]],
+      fileeNumber: [null],
+      useType: [null, [Validators.pattern(STRING_PATTERN)]],
+      physicalStatus: [null],
+      stateConservation: [null],
+      origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      goodClassNumber: [null],
+      ligieUnit: [null],
+      appraisal: [null],
+      destiny: [null], //preguntar Destino ligie
+      transferentDestiny: [null],
+      compliesNorm: ['N'], //cumple norma
+      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      unitMeasure: [null], // preguntar Unidad Medida Transferente
+      saeDestiny: [null],
+      brand: [null, [Validators.required]],
+      subBrand: [null, [Validators.required]],
+      armor: [null],
+      model: [null, [Validators.required]],
+      doorsNumber: [null],
+      axesNumber: [null, [Validators.required]],
+      engineNumber: [null, [Validators.required]], //numero motor
+      tuition: [null, [Validators.required]],
+      serie: [null, [Validators.required]],
+      chassis: [null],
+      cabin: [null],
+      fitCircular: ['N', [Validators.required]],
+      theftReport: ['N', [Validators.required]],
+      addressId: [null],
+      operationalState: [null, [Validators.required]],
+      manufacturingYear: [null, [Validators.required]],
+      enginesNumber: [null, [Validators.required]], // numero de motores
+      flag: [null, [Validators.required]],
+      openwork: [null, [Validators.required]],
+      sleeve: [null],
+      length: [null, [Validators.required]],
+      shipName: [null, [Validators.required]],
+      publicRegistry: [null, [Validators.required]], //registro public
+      ships: [null],
+      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
+      airplaneType: [null, [Validators.required]],
+      caratage: [null, [Validators.required]], //kilatage
+      material: [null, [Validators.required]],
+      weight: [null, [Validators.required]],
+      fractionId: [null],
     });
   }
 
   getData() {
-    this.assetsArray = data;
+    console.log(this.requestObject);
+    this.params.value.addFilter('requestId', this.requestObject.id);
+    const filter = this.params.getValue().getParams();
+    this.goodService.getAll(filter).subscribe({
+      next: ({ data }) => {
+        this.assetsArray = [...data];
+        console.log(data);
+      },
+    });
   }
 
   getClarifications() {
@@ -103,7 +197,8 @@ export class ClarificationsComponent extends BasePage implements OnInit {
   clicked(event: any) {
     console.log('one row');
     this.rowSelected = event;
-    console.log(this.rowSelected);
+    this.goodForm.patchValue({ ...event });
+    console.log(event);
   }
 
   selectAll(event?: any) {
@@ -142,7 +237,7 @@ export class ClarificationsComponent extends BasePage implements OnInit {
 
   newClarification() {
     if (this.assetsSelected.length === 0) {
-      this.message('Error', 'Debes seleccionar al menos un bien!');
+      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
     } else {
       this.openForm();
     }
@@ -152,7 +247,7 @@ export class ClarificationsComponent extends BasePage implements OnInit {
     if (this.clariArraySelected.length === 1) {
       this.openForm(this.clariArraySelected);
     } else {
-      this.message('Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
     }
   }
 
@@ -169,22 +264,5 @@ export class ClarificationsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ClarificationFormTabComponent, config);
-  }
-
-  message(title: string, text: string) {
-    Swal.fire({
-      title: title,
-      text: text,
-      icon: undefined,
-      width: 300,
-      showCancelButton: false,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#b38e5d',
-      confirmButtonText: 'Aceptar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        return;
-      }
-    });
   }
 }

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 
 import {
   ListParams,
@@ -96,30 +98,35 @@ export class MinpubListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<MinpubFormComponent>) {
-    const modalRef = this.modalService.show(MinpubFormComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getExample();
-    });
-  }
-
   openForm(minpub?: IMinpub) {
-    this.openModal({ minpub });
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      minpub,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
+      },
+    };
+    this.modalService.show(MinpubFormComponent, modalConfig);
   }
 
-  delete(batch: IMinpub) {
+  //Msj de alerta para borrar minpub
+  showDeleteAlert(batch: IMinpub) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(batch.id);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  //método para borrar transferente
+  delete(id: number) {
+    this.minpubService.remove(id).subscribe({
+      next: () => this.getExample(),
     });
   }
 }

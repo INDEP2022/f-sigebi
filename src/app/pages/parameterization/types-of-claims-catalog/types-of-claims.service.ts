@@ -19,12 +19,12 @@ export class TypesOfClaimsService {
   }
 
   PutClaim(idClaim: string, body: any) {
-    const url = `${environment.API_URL}catalog/api/v1/type-sinisters/${idClaim}`;
+    const url = `${environment.API_URL}catalog/api/v1/type-sinisters`;
     return this.htpp.put(url, body);
   }
 
   deleteClaims(idClaim: string) {
-    const url = `${environment.API_URL}catalog/api/v1/type-sinisters/${idClaim}`;
+    const url = `${environment.API_URL}catalog/api/v1/type-sinisters`;
     return this.htpp.delete(url);
   }
 }
