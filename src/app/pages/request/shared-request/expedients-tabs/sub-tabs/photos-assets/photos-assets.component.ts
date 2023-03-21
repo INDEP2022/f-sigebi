@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { TABLE_SETTINGS } from '../../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
@@ -41,12 +45,23 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  idRequest: number = 0;
   columns = LIST_ASSETS_COLUMNS;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private goodService: GoodService,
+    private activatedRoute: ActivatedRoute,
+    private goodTypeService: GoodTypeService,
+    private typeRelevantService: TypeRelevantService
+  ) {
     super();
+    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+      'id'
+    ) as unknown as number;
   }
 
   ngOnInit(): void {
@@ -68,6 +83,51 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       },
     };
     this.initFilterForm();
+    this.getGoodsRequest();
+  }
+
+  getGoodsRequest() {
+    this.paramsGoods.getValue()['filter.requestId'] = this.idRequest;
+    this.goodService.getAll(this.paramsGoods.getValue()).subscribe({
+      next: async (data: any) => {
+        const filterGoodType = data.data.map(async (item: any) => {
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeId'] = goodType;
+          item['requestId'] = this.idRequest;
+
+          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          if (item['stateConservation'] == 1)
+            item['stateConservation'] = 'BUENO';
+          if (item['stateConservation'] == 2)
+            item['stateConservation'] = 'MALO';
+          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+
+          const fraction = item['fractionId'];
+          item['fractionId'] = fraction.description;
+        });
+
+        Promise.all(filterGoodType).then(x => {
+          this.totalItems = data.data;
+          this.paragraphs = data.data;
+          this.loading = false;
+        });
+      },
+    });
+  }
+
+  getGoodType(goodTypeId: number) {
+    return new Promise((resolve, reject) => {
+      if (goodTypeId !== null) {
+        this.typeRelevantService.getById(goodTypeId).subscribe({
+          next: (data: any) => {
+            resolve(data.description);
+          },
+        });
+      } else {
+        resolve('');
+      }
+    });
   }
 
   initFilterForm() {
@@ -97,9 +157,11 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   openModal(component: any, data?: any): void {
+    const idRequest = this.idRequest;
     let config: ModalOptions = {
       initialState: {
         information: data,
+        idRequest,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
