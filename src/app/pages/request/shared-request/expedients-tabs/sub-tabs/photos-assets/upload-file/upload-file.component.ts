@@ -50,21 +50,6 @@ export class UploadFileComponent implements OnInit {
 
   saveImage(fileEvent: FileUploadEvent) {
     this.filesImages.push(fileEvent.file);
-    for (let i = 0; i < this.filesImages.length; i++) {
-      this.filesImages.map(items => {
-        const formData: Object = {
-          xidBien: this.information.id,
-          xidcProfile: 'NSBDB_Gral',
-          dDocAuthor: 'tecastaneda',
-          xnombreProceso: 'Clasificar Bien',
-          xidTransferente: this.idTrans,
-          src: items,
-        };
-        this.wContentService.addImages(formData).subscribe(data => {
-          console.log('Fotografia guardada', data);
-        });
-      });
-    }
   }
 
   selectFile(event: any) {

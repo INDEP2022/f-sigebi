@@ -114,23 +114,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         });
       },
     });
-
-    /*.subscribe(data => {
-      const requestChange = data.data.map(items => {
-        items.requestId = this.idRequest;
-        return items;
-      });
-
-      console.log('cambiar', requestChange);
-      requestChange.map(items => {
-        console.log(items.goodTypeId);
-        this.goodTypeService.getById({
-          next: async (data:any) => 
-        })
-      });
-      this.paragraphs = requestChange;
-      this.totalItems = data.count; 
-    }); */
   }
 
   getGoodType(goodTypeId: number) {

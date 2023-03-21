@@ -30,6 +30,7 @@ import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-t
 import { SeeInformationComponent } from './expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 import { ExpedientsRequestTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/expedients-request-tab.component';
 import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/good-doc-tab.component';
+import { ShowDocumentsGoodComponent } from './expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/new-document.component';
 import { PhotosActionComponent } from './expedients-tabs/sub-tabs/photos-assets/actions/see-action/photos-action.component';
 import { SeePhotoComponent } from './expedients-tabs/sub-tabs/photos-assets/actions/see-photo/see-photo.component';
@@ -172,6 +173,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     OpenPhotosComponent,
     SeePhotoComponent,
     ResultVisitsComponent,
+    ShowDocumentsGoodComponent,
   ],
   imports: [
     CommonModule,

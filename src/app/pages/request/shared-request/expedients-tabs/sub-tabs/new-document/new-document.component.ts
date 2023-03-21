@@ -13,6 +13,8 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IUploadEvent } from 'src/app/utils/file-upload/components/file-upload.component';
+import { FileUploadEvent } from 'src/app/utils/file-upload/interfaces/file-event';
 
 @Component({
   selector: 'app-new-document',
@@ -25,12 +27,16 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   selectTypeDoc = new DefaultSelect<IRequest>();
   request: any;
   idrequest: number = 0;
+  idGood: number = 0;
   typeDoc: string = '';
   selectedFile: File;
   toggleSearch: boolean = true;
   regDelName: string = '';
   stateName: string = '';
   nameTransferent: string = '';
+  idTransferent: number = 0;
+  regionalDelId: number = 0;
+  stateId: number = 0;
   paramsDocTypes = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     public fb: FormBuilder,
@@ -45,8 +51,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.typeDoc);
-    console.log('ss', this.idrequest);
+    console.log(this.idrequest);
     this.initForm();
     this.getInfoRequest();
     this.typedocuments();
@@ -60,12 +65,12 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       docType: [null],
       docFile: [null],
       docTit: [null, [Validators.pattern(STRING_PATTERN)]],
-      noExpedient: [null],
+      //noExpedient: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      regDelega: [],
+      //regDelega: [],
       noOfi: [null],
-      state: [],
-      tranfe: [],
+      //state: [],
+      //tranfe: [],
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -80,6 +85,10 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   getInfoRequest() {
     this.requestService.getById(this.idrequest).subscribe(data => {
       console.log('data', data);
+      this.idTransferent = data.transferenceId;
+      this.regionalDelId = data.regionalDelegationId;
+      this.stateId = data.keyStateOfRepublic;
+
       this.request = data;
       this.getRegionalDelegation(data.regionalDelegationId);
       this.getstate(data.keyStateOfRepublic);
@@ -117,15 +126,85 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getTypeDoc(event: any) {}
 
-  confirm() {
-    console.log(this.newDocForm.value);
+  loadDocument(uploadEvent: IUploadEvent) {
+    const { index, fileEvents } = uploadEvent;
+    fileEvents.forEach(fileEvent => {
+      this.document(fileEvent);
+    });
+  }
+
+  document(fileEvent: FileUploadEvent) {
+    console.log('documento', fileEvent.file);
   }
 
   selectFile(event: any) {
-    this.selectedFile = event.target.files;
+    this.selectedFile = event.target.files[0];
+    console.log('documento', this.selectedFile);
+  }
+
+  confirm() {
+    if (this.typeDoc == 'good') {
+      const formData = {
+        dDocAuthor: 'weblogic',
+        dDocType: this.newDocForm.get('docType').value,
+        dSecurityGroup: 'Public',
+        dInDate: new Date(),
+        xidExpediente: '35015',
+        xidSolicitud: this.idrequest,
+        ddocCreator: 'weblogic',
+        xidcProfile: 'NSBDB_Gral',
+        xidTransferente: this.idTransferent,
+        xdelegacionRegional: this.regionalDelId,
+        xidBien: this.idGood,
+        xestado: this.stateId,
+        dDocTitle: this.newDocForm.get('docTit').value,
+        xremitente: this.newDocForm.get('sender').value,
+        xcargoRemitente: this.newDocForm.get('senderCharge').value,
+        xresponsable: this.newDocForm.get('responsible').value,
+        xComments: this.newDocForm.get('observations').value,
+        xNombreProceso: 'Clasificar Bien',
+        xnoOficio: this.newDocForm.get('noOfi').value,
+        xfolioDictamenDevolucion:
+          this.newDocForm.get('returnOpinionFolio').value,
+        xcontribuyente: this.newDocForm.get('contributor').value,
+      };
+
+      console.log(console.log(formData));
+      const docName = 'SAE88234';
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          '.pdf',
+          JSON.stringify(formData),
+          this.selectedFile,
+          '.pdf'
+        )
+        .subscribe({
+          next: resp => {
+            console.log('documento', resp);
+
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+    }
   }
 
   close() {
     this.modalRef.hide();
   }
 }
+
+/*Tipo de registro solicitud y expediente
+    {
+    "key": "archivo",
+	"type": "file",
+	"src": "275165981_651534709411056_3504201958037214315_n.jpg",
+    "xidBien": 5457931,
+    "xidcProfile": "NSBDB_Gral",
+    "dDocAuthor": "tecastaneda",
+    "xnombreProceso": "Clasificar Bien",
+    "xidTransferente": 120
+} */

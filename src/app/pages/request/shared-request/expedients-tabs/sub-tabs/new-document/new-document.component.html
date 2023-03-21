@@ -18,9 +18,7 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
-          <form-field
-            [control]="newDocForm.get('docFile')"
-            label="Cargo Remitento">
+          <form-field [control]="newDocForm.get('docFile')" label="Carga">
             <input
               type="file"
               class="form-control"
@@ -48,7 +46,7 @@
               >No&#46; Expediente&#58;</span
             >
             <span *ngIf="typeDoc === 'good'">No&#46; Bien&#58;</span>
-            <span>{{ newDocForm.get('noExpedient').value }}</span>
+            <span>{{ idGood }}</span>
           </p>
         </div>
         <div class="col-md-6">
