@@ -71,7 +71,10 @@ export class DepartamentService implements ICrudMethods<IDepartment> {
   }
 
   update2(model: IDepartment): Observable<Object> {
-    return this.departamentRepository.update3('departament', model);
+    return this.departamentRepository.update3(
+      'catalog/api/v1/departament',
+      model
+    );
   }
 
   getByDelIds(model: Partial<IDepartment>): Observable<IDepartment> {
