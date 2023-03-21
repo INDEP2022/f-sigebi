@@ -47,12 +47,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     let partials = this.endpoint;
     console.log(partials);
     /* this.microservice = partials[0]; */
-    console.log(
-      this.get<IListResponse<IValidations>>(partials[1], params).pipe(
-        tap(() => (this.microservice = ''))
-      )
-    );
-    return this.get<IListResponse<IValidations>>(partials[1], params).pipe(
+    return this.get<IListResponse<IValidations>>(partials, params).pipe(
       tap(() => (this.microservice = ''))
     );
   }
