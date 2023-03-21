@@ -25,7 +25,7 @@ export class GoodTypeService implements ICrudMethods<IGoodType> {
   }
 
   getById(id: string | number): Observable<IGoodType> {
-    return this.goodTypeRepository.getById(this.route, id);
+    return this.goodTypeRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IGoodType): Observable<IGoodType> {

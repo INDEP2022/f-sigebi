@@ -24,13 +24,14 @@
             [source]="data"
             (edit)="openForm2($event.data)"
             (delete)="showDeleteAlert($event.data)"
-            (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+            (userRowSelect)="rowsSelected($event)"
+            (rowSelect)="selectRow($event.data)"></ng2-smart-table>
           <app-pagination
             [params]="params"
             [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
-      <div class="row pt-6">
+      <div class="row pt-6" *ngIf="rowSelected">
         <div class="ch-content" header>
           <h5 class="title"></h5>
           <div class="col-md-5 buttons">

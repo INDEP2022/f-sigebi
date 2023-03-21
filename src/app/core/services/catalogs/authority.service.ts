@@ -112,9 +112,10 @@ export class AuthorityService
 
   getAuthorityByTransferent(
     id: string | number,
+    id2: string | number,
     params?: ListParams
   ): Observable<IListResponse<IAuthority2>> {
-    const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}`;
+    const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}&filter.idTransferer=${id2}`;
     return this.get(route, params);
   }
 

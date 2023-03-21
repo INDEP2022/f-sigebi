@@ -53,7 +53,6 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.loading = true;
-        this.onLoadToast('success', 'Almacén Seleccionado correctamente', '');
         this.modalRef.content.callback(this.form.value);
         this.close();
       } else {

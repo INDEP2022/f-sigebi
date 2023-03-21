@@ -62,10 +62,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">Fecha de Solicitud&#58;</label>
-                  {{
-                    registRequestForm.get('applicationDate').value
-                      | date: 'dd/MM/yyyy'
-                  }}
+                  {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                 </div>
               </div>
               <div class="col-md-4">
@@ -77,7 +74,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">No&#46; Solicitud&#58;</label>
-                  {{ registRequestForm.get('id').value }}
+                  {{ infoRequest?.id }}
                 </div>
               </div>
             </div>
@@ -129,6 +126,16 @@
                 <div>
                   <label for="">Autoridad&#58;</label>
                   {{ authorityName }}
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div
+                class="col-md-4"
+                *ngIf="registRequestForm?.get('recordId').value !== null">
+                <div>
+                  <label for="">No&#46; Expediente&#58;</label>
+                  {{ registRequestForm?.get('recordId').value }}
                 </div>
               </div>
             </div>

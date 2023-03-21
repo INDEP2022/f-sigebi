@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
+
 @Component({
   selector: 'app-search-user-form',
   templateUrl: './search-user-form.component.html',
@@ -17,6 +20,8 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   usersData: LocalDataSource = new LocalDataSource();
   loadUsersData: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  idProgramming: number = 0;
   totalItems: number = 0;
   typeUser: string = '';
   userInfo: any[] = [];
@@ -25,7 +30,9 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private programmingGoodService: ProgrammingGoodService,
-    private userProcessService: UserProcessService
+    private userProcessService: UserProcessService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
     this.settings = {
@@ -62,6 +69,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showHideErrorInterceptorService.showHideError(false);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsers());
@@ -69,14 +77,44 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-    console.log('Tipo de usuario', this.typeUser);
     this.params.getValue()['search'] = this.params.getValue().text;
     this.params.getValue()['filter.employeeType'] = this.typeUser;
     this.userProcessService.getAll(this.params.getValue()).subscribe(data => {
-      this.usersData.load(data.data);
+      this.filterUsersProg(data.data);
       this.totalItems = data.count;
-      this.loading = false;
     });
+  }
+
+  //Filtrar los usuarios que ya estén programados
+  filterUsersProg(users: any[]) {
+    console.log('dont', users);
+    this.paramsUsers.getValue()['filter.programmingId'] = 8426;
+    this.programmingGoodService
+      .getUsersProgramming(this.paramsUsers.getValue())
+      .pipe(
+        catchError(error => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          if (error.status == 400) {
+            this.userProgramming(users);
+          }
+          return throwError(() => error);
+        })
+      )
+      .subscribe(data => {
+        const filter = users.filter(user => {
+          const index = data.data.findIndex(_user => _user.email == user.email);
+          return index >= 0 ? false : true;
+        });
+        console.log(data);
+        this.totalItems = this.totalItems - data.count;
+        this.usersData.load(filter);
+        this.loading = false;
+      });
+  }
+
+  userProgramming(data: any) {
+    this.usersData.load(data);
+    this.loading = false;
   }
 
   sendUser(user: any, selected: boolean) {
@@ -91,10 +129,21 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    if (this.userInfo) {
-      this.removeUsersSelected(this.userInfo);
-      this.modalRef.content.callback(this.userInfo);
-      this.close();
+    console.log('Usuario a guardar', this.userInfo);
+    if (this.userInfo.length > 0) {
+      this.userInfo.map(info => {
+        let user: Object = {
+          programmingId: this.idProgramming,
+          user: info.firstName,
+          email: info.email,
+          version: 1,
+        };
+
+        this.programmingService.createUsersProgramming(user).subscribe(data => {
+          this.modalRef.content.callback(true);
+          this.modalRef.hide();
+        });
+      });
     } else {
       this.onLoadToast(
         'warning',
@@ -102,14 +151,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
         'Debes seleccionar al menos un usuario'
       );
     }
-  }
-
-  removeUsersSelected(userInfo: any) {
-    this.usersData.getElements().then(items => {
-      userInfo.map((itemsRemove: any) => {
-        this.usersData.remove(itemsRemove);
-      });
-    });
   }
 
   close() {

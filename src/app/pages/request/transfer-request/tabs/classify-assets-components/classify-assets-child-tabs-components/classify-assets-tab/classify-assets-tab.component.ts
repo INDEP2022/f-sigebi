@@ -16,6 +16,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -37,6 +38,7 @@ export class ClassifyAssetsTabComponent
   classiGoodsForm: ModelForm<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
+  private listAdvancedFractions: any = [];
 
   public selectSection: any;
   public selectChapter = new DefaultSelect<any>();
@@ -102,22 +104,22 @@ export class ClassifyAssetsTabComponent
       goodTypeId: [null],
       color: [null],
       goodDescription: [null],
-      quantity: [1],
+      quantity: [1, [Validators.required]],
       duplicity: ['N'],
-      capacity: [null, [Validators.required]],
-      volume: [null],
+      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
+      volume: [null, [Validators.pattern(STRING_PATTERN)]],
       fileeNumber: [null],
-      useType: [null],
+      useType: [null, [Validators.pattern(STRING_PATTERN)]],
       physicalStatus: [null],
       stateConservation: [null],
-      origin: [null, [Validators.required]],
+      origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       goodClassNumber: [null],
       ligieUnit: [null],
       appraisal: [null],
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
       compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [null],
+      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
       brand: [null, [Validators.required]],
@@ -158,6 +160,22 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  setFractions(listReverse: any) {
+    const fractions = [
+      'ligieSection',
+      'ligieChapter',
+      'ligieLevel1',
+      'ligieLevel2',
+      'ligieLevel3',
+      'ligieLevel4',
+    ];
+
+    for (let i = 0; i < listReverse.length; i++) {
+      const id = listReverse[i];
+      this.classiGoodsForm.controls[fractions[i]].setValue(id);
+    }
+  }
+
   getSection(params: ListParams, id?: number) {
     if (this.advSearch === false) {
       params['filter.level'] = '$eq:' + 0;
@@ -170,9 +188,10 @@ export class ClassifyAssetsTabComponent
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
-          this.classiGoodsForm.controls['ligieSection'].setValue(
-            data.data[0].id
-          );
+          this.listAdvancedFractions.push(data.data[0].id);
+          const listReverse = this.listAdvancedFractions.reverse();
+          //estable los id para ser visualizados
+          this.setFractions(listReverse);
           this.advSearch = false;
         }
 
@@ -195,9 +214,7 @@ export class ClassifyAssetsTabComponent
         this.selectChapter = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
-          this.classiGoodsForm.controls['ligieChapter'].setValue(
-            data.data[0].id
-          );
+          this.listAdvancedFractions.push(data.data[0].id);
           this.getSection(new ListParams(), data.data[0].parentId);
         }
 
@@ -206,6 +223,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieChapter
           );
         }
+      },
+      error: error => {
+        console.log('Capitulo: ', error.error.message[0]);
       },
     });
   }
@@ -226,9 +246,7 @@ export class ClassifyAssetsTabComponent
         this.selectLevel1 = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
-          this.classiGoodsForm.controls['ligieLevel1'].setValue(
-            data.data[0].id
-          );
+          this.listAdvancedFractions.push(data.data[0].id);
           this.getChapter(new ListParams(), data.data[0].parentId);
         }
 
@@ -237,6 +255,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieLevel1
           );
         }
+      },
+      error: error => {
+        console.log('Nivel 1: ', error.error.message[0]);
       },
     });
   }
@@ -253,9 +274,7 @@ export class ClassifyAssetsTabComponent
         this.selectLevel2 = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
-          this.classiGoodsForm.controls['ligieLevel2'].setValue(
-            data.data[0].id
-          );
+          this.listAdvancedFractions.push(data.data[0].id);
           this.getLevel1(new ListParams(), data.data[0].parentId);
         }
 
@@ -264,6 +283,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieLevel2
           );
         }
+      },
+      error: error => {
+        console.log('Nivel 2: ', error.error.message[0]);
       },
     });
   }
@@ -280,9 +302,7 @@ export class ClassifyAssetsTabComponent
         this.selectLevel3 = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
-          this.classiGoodsForm.controls['ligieLevel3'].setValue(
-            data.data[0].id
-          );
+          this.listAdvancedFractions.push(data.data[0].id);
           this.getLevel2(new ListParams(), data.data[0].parentId);
         }
 
@@ -291,6 +311,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieLevel3
           );
         }
+      },
+      error: error => {
+        console.log('Nivel 3: ', error.error.message[0]);
       },
     });
   }
@@ -307,9 +330,7 @@ export class ClassifyAssetsTabComponent
         this.selectLevel4 = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
-          this.classiGoodsForm.controls['ligieLevel4'].setValue(
-            data.data[0].id
-          );
+          this.listAdvancedFractions.push(data.data[0].id);
           this.getLevel3(new ListParams(), data.data[0].parentId);
         }
 
@@ -318,6 +339,9 @@ export class ClassifyAssetsTabComponent
             this.good.ligieLevel4
           );
         }
+      },
+      error: error => {
+        console.log('Nivel 4: ', error.error.message[0]);
       },
     });
   }

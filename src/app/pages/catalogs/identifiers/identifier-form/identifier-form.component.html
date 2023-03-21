@@ -1,21 +1,21 @@
 <app-modal>
   <div header>
     <h5 class="modal-title">
-      {{ edit ? 'Editar identificador' : 'Nuevo identificador' }}
+      <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
     </h5>
   </div>
 
   <div body>
     <form [formGroup]="identifierForm" class="form-material">
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-3">
           <form-field
             [control]="identifierForm.get('id')"
             label="C&oacute;digo">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
             [control]="identifierForm.get('description')"
             label="Descripci&oacute;n">
@@ -25,23 +25,11 @@
               formControlName="description" />
           </form-field>
         </div>
-
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="identifierForm.get('keyview')"
             label="Clave vista">
             <input type="text" class="form-control" formControlName="keyview" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field
-            [control]="identifierForm.get('noRegistration')"
-            label="N&uacute;mero de registro">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noRegistration" />
           </form-field>
         </div>
       </div>
@@ -53,7 +41,7 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!identifierForm.valid"
-          [loading]="loading"
+          [type]="'button'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

@@ -63,4 +63,9 @@ export class ReportService extends HttpService {
       `http://reportsqa.indep.gob.mx/catalog/api/v1//batch/search=${text}`
     );
   }
+  getGoodType() {
+    return this.httpClient.get(
+      `http://sigebimsqa.indep.gob.mx/catalog/api/v1/good-type`
+    );
+  }
 }

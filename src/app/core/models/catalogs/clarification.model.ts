@@ -6,6 +6,6 @@ export interface IClarification {
   creationDate: Date | null;
   editionUser: string | null;
   modificationDate: Date | null;
-  version: number | null;
-  active: number | null;
+  version: number | string | null;
+  active: number | string | null;
 }

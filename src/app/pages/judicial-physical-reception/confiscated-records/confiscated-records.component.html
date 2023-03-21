@@ -30,6 +30,7 @@
                 (click)="getGoodsByExpedient()">
                 Buscar
               </button>
+
               <!-- <form-field
                 [control]="form.get('averPrev')"
                 label="Averiguaci&oacute;n Previa">
@@ -76,13 +77,12 @@
             <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
-                  (fetchItems)="getTransferentData($event)"
                   (change)="verifyTransferenteAndAct()"
                   class="disabled"
                   id="transfer"
                   control="transfer"
                   label="Transfer"
-                  bindLabel="keyTransferent"
+                  bindLabel="transferentkey"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
                 <!-- <input
@@ -104,29 +104,45 @@
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('recibe')" label="Recibe">
-                <input
-                  type="number"
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  (change)="fillActTwo()"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
+                <!--   <input
+                  type="text"
                   class="form-control"
                   formControlName="recibe"
-                  (ngModelChange)="fillActTwo()" />
+                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('admin')" label="Admin">
-                <input
-                  type="number"
+              <form-field [control]="form.get('admin')">
+                <ngx-select
+                  (fetchItems)="getAdmin($event)"
+                  (change)="fillActTwo()"
+                  control="admin"
+                  label="Admin"
+                  bindLabel="delegation"
+                  [data]="adminSelect"
+                  [form]="form"></ngx-select>
+                <!--       <input
+                  type="text"
                   class="form-control"
                   formControlName="admin"
-                  (ngModelChange)="fillActTwo()" />
+                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
             <div class="col">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   formControlName="folio"
                   (ngModelChange)="fillActTwo()" />
@@ -310,6 +326,7 @@
             <div class="col-md-12">
               <button
                 type="button"
+                [disabled]="!form.valid"
                 class="my-1 mx-2 btn btn-info active btn-sm">
                 Abrir Carta
               </button>

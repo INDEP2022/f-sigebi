@@ -148,11 +148,6 @@
                   value="id"></ngx-select>
               </div>
             </div>
-            <div class="row pt-4" *ngIf="authorityName">
-              <p style="color: blue">
-                <strong>Autoridad: </strong> {{ authorityName }}
-              </p>
-            </div>
           </div>
         </div>
       </app-card>
@@ -208,7 +203,7 @@
               </form-radio>
             </div>
             <div class="col-sm-1">
-              <form-radio label="SAE">
+              <form-radio label="INDEP">
                 <input
                   type="radio"
                   formControlName="targetUserType"

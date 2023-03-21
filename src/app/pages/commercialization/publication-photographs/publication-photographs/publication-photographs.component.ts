@@ -1,8 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPhotographMedia } from 'src/app/core/models/catalogs/photograph-media.model';
@@ -11,11 +12,12 @@ import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.
 import { PhotographMediaService } from 'src/app/core/services/catalogs/photograph-media.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { PublicationPhotographsModalComponent } from '../publication-photographs-modal/publication-photographs-modal.component';
 import {
-  dataBatchColum,
-  numStoreColumn,
   PUBLICATION_PHOTO1,
   PUBLICATION_PHOTO2,
+  SUBTYPE,
+  TYPE,
 } from './publication-photographs-columns';
 
 @Component({
@@ -67,7 +69,7 @@ export class PublicationPhotographsComponent
     private fb: FormBuilder,
     private batchService: BatchService,
     private photographMediaService: PhotographMediaService,
-    private modalRef: BsModalRef,
+    private modalService: BsModalService,
     private goodSubtypeService: GoodSubtypeService
   ) {
     super();
@@ -85,15 +87,14 @@ export class PublicationPhotographsComponent
 
     this.settings4 = {
       ...TABLE_SETTINGS,
-      actions: false,
-      columns: { ...dataBatchColum },
+      columns: { ...SUBTYPE },
       noDataMessage: 'No se encontrarón registros',
     };
 
     this.settings3 = {
       ...TABLE_SETTINGS,
       actions: false,
-      columns: { ...numStoreColumn },
+      columns: { ...TYPE },
       noDataMessage: 'No se encontrarón registros',
     };
   }
@@ -101,18 +102,11 @@ export class PublicationPhotographsComponent
   ngOnInit(): void {
     this.getCve({ page: 1, text: '' });
     // this.data1.load(this.dataBatch);
-    this.prepareForm();
-    this.getBatch();
-    // this.getSubtype();
-  }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      picture: [null, [Validators.required]],
-      // favorite: [null, [Validators.required]],
-      id: [null],
-      noConsec: [null],
-    });
+    this.getSubtype();
+    this.settings4.actions.delete = true;
+    this.settings4.actions.edit = true;
+    // this.getSubtype();
   }
 
   data: any[] = [
@@ -187,34 +181,53 @@ export class PublicationPhotographsComponent
     });
   }
 
-  confirm() {
-    this.loading = false;
-    this.photographMediaService.create(this.form.value).subscribe({
-      next: data => {
-        this.picture = data;
-        console.log(this.picture);
-        this.rowSelected = true;
-        this.handleSuccess();
+  openForm(provider?: IPhotographMedia) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getBatch();
       },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-        return;
-      },
-    });
+    };
+    this.modalService.show(PublicationPhotographsModalComponent, modalConfig);
   }
 
-  handleSuccess() {
-    setTimeout(() => {
-      this.onLoadToast('success', 'fotografía creada correctamente', '');
-    }, 2000);
-    this.loading = false;
-    this.onConfirm.emit(true);
-    this.modalRef.content.callback(true);
-    this.close();
+  openModal(context?: Partial<PublicationPhotographsModalComponent>) {
+    const modalRef = this.modalService.show(
+      PublicationPhotographsModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
-  close() {
-    this.modalRef.hide();
+
+  showIdLayout(event: any) {
+    //enseña lo que elegistes en el input
+    console.log(event.idLayout);
+    console.log(event.idLayout);
+  }
+  showDeleteAlert(id: number) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.photographMediaService.remove(id).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Layout eliminado', '');
+            this.getBatch();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.loading = false;
+          },
+        });
+      }
+    });
   }
 
   //Carrusel de fotografías

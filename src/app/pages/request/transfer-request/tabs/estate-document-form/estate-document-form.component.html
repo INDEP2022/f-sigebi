@@ -73,7 +73,9 @@
     <i class="fa fa-search"></i> Buscar
   </button>
 
-  <button class="btn btn-danger btn-sm active">Limpiar</button>
+  <button class="btn btn-danger btn-sm active" (click)="clean()">
+    Limpiar
+  </button>
 </div>
 
 <div class="row">
@@ -89,10 +91,10 @@
   <div class="row pt-4">
     <div [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table
+        (rowSelect)="selectRow($event)"
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
-        [source]="documentsEstData"
-        (userRowSelect)="selectDocument($event)">
+        [source]="documentsEstData">
       </ng2-smart-table>
     </div>
   </div>

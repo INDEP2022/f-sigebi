@@ -4,7 +4,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IValidations } from '../../models/ms-proceedings/validations.model';
+import {
+  IValidations,
+  TransferProceeding,
+} from '../../models/ms-proceedings/validations.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,16 +34,20 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
+  getTransfer(
+    model: TransferProceeding
+  ): Observable<IListResponse<IValidations>> {
+    return this.post<IListResponse<IValidations>>(
+      `${this.endpoint}/get-transferent-number-key-and-name`,
+      model
+    );
+  }
+
   getByFilter(params?: string): Observable<IListResponse<IValidations>> {
     let partials = this.endpoint;
     console.log(partials);
     /* this.microservice = partials[0]; */
-    console.log(
-      this.get<IListResponse<IValidations>>(partials[1], params).pipe(
-        tap(() => (this.microservice = ''))
-      )
-    );
-    return this.get<IListResponse<IValidations>>(partials[1], params).pipe(
+    return this.get<IListResponse<IValidations>>(partials, params).pipe(
       tap(() => (this.microservice = ''))
     );
   }

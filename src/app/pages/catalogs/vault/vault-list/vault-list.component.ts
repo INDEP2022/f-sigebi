@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
@@ -17,6 +17,7 @@ import { VAULT_COLUMNS } from './vault-columns';
 })
 export class VaultListComponent extends BasePage implements OnInit {
   vaults: ISafe[] = [];
+  values: ISafe;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -37,7 +38,7 @@ export class VaultListComponent extends BasePage implements OnInit {
 
   getVaults() {
     this.loading = true;
-    this.safeService.getAll(this.params.getValue()).subscribe(
+    this.safeService.getAll2(this.params.getValue()).subscribe(
       response => {
         this.vaults = response.data;
         this.totalItems = response.count;
@@ -47,23 +48,23 @@ export class VaultListComponent extends BasePage implements OnInit {
     );
   }
 
-  add() {
-    this.openModal();
-  }
-
-  openModal(context?: Partial<VaultDetailComponent>) {
-    const modalRef = this.modalService.show(VaultDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getVaults();
-    });
-  }
-
-  edit(vault: ISafe) {
-    this.openModal({ edit: true, vault });
+  openForm(vault?: ISafe) {
+    const modalConfig = MODAL_CONFIG;
+    const valueState = { ...this.values };
+    const valueCity = { ...this.values };
+    const valueMunicipality = { ...this.values };
+    const valueLocality = { ...this.values };
+    modalConfig.initialState = {
+      vault,
+      valueCity,
+      valueState,
+      valueMunicipality,
+      valueLocality,
+      callback: (next: boolean) => {
+        if (next) this.getVaults();
+      },
+    };
+    this.modalService.show(VaultDetailComponent, modalConfig);
   }
 
   showDeleteAlert(vaults: ISafe) {
@@ -80,7 +81,7 @@ export class VaultListComponent extends BasePage implements OnInit {
   }
 
   delete(id: number) {
-    this.safeService.remove(id).subscribe({
+    this.safeService.remove2(id).subscribe({
       next: () => this.getVaults(),
     });
   }

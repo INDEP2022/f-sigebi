@@ -15,7 +15,7 @@ export class ParametersService extends HttpService {
     private parametergoodRepository: ParametergoodRepository<IParameters>
   ) {
     super();
-    this.microservice = ParameterGoodEndpoints.Parametergood;
+    this.microservice = ParameterGoodEndpoints.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IParameters>> {
@@ -25,5 +25,9 @@ export class ParametersService extends HttpService {
   getById(id: string | number) {
     const route = `${ParameterGoodEndpoints.Parameters}/${id}`;
     return this.get<IListResponse<IParameters>>(route);
+  }
+
+  getRNomencla(params?: string): Observable<IListResponse<IParameters>> {
+    return this.get<IListResponse<IParameters>>(this.route.rNomecla, params);
   }
 }

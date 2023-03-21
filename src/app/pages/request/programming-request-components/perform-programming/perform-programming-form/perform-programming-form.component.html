@@ -276,6 +276,9 @@
         (edit)="openForm($event.data)"
         (delete)="delete($event.data)">
       </ng2-smart-table>
+      <app-pagination
+        [params]="paramsUsers"
+        [totalItems]="totalItemsUsers"></app-pagination>
     </div>
 
     <div class="row pt-5" *ngIf="showForm">

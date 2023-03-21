@@ -49,81 +49,81 @@
       <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">Fecha de Recepci&oacute;n&#58;</label>
-          {{ requestForm?.get('receptionDate').value | date: 'dd/MM/yyyy' }}
+          {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
         </div>
         <div class="col-md-4">
-          <label class="label">Fecha de Oficion&#58;</label>
-          {{ requestForm?.get('paperDate').value | date: 'dd/MM/yyyy' }}
+          <label class="label">Fecha de Oficio&#58;</label>
+          {{ infoRequest?.paperDate | date: 'dd/MM/yyyy' }}
         </div>
         <div class="col-md-4">
           <label class="label">Tipo Expediente&#58;</label>
-          {{ requestForm?.get('typeRecord').value }}
+          {{ infoRequest?.typeRecord }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">Nombre del Remitente&#58;</label>
-          {{ requestForm?.get('nameOfOwner').value }}
+          {{ infoRequest?.nameOfOwner }}
         </div>
         <div class="col-md-4">
           <label class="label">Cargo del Remitente&#58;</label>
-          {{ requestForm?.get('holderCharge').value }}
+          {{ infoRequest?.holderCharge }}
         </div>
         <div class="col-md-4">
           <label class="label">Tel&eacute;fono del Remitente&#58;</label>
-          {{ requestForm?.get('phoneOfOwner').value }}
+          {{ infoRequest?.phoneOfOwner }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">Email del Remitente&#58;</label>
-          {{ requestForm?.get('emailOfOwner').value }}
+          {{ infoRequest?.emailOfOwner }}
         </div>
         <div class="col-md-4">
           <label class="label">Juzgado&#58;</label>
-          {{ requestForm?.get('court').value }}
+          {{ infoRequest?.court }}
         </div>
         <div class="col-md-4">
           <label class="label">Delito&#58;</label>
-          {{ requestForm?.get('crime').value }}
+          {{ infoRequest?.crime }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">V&iacute;a de Recepci&oacute;n&#58;</label
-          >{{ requestForm?.get('receiptRoute').value }}
+          >{{ infoRequest?.receiptRoute }}
         </div>
         <div class="col-md-4">
           <label class="label">Gesti&oacute;n de Destino&#58;</label>
-          {{ requestForm?.get('destinationManagement').value }}
+          {{ infoRequest?.destinationManagement }}
         </div>
         <div class="col-md-4">
           <label class="label">Contribuyente y&#47;o Indiciado&#58;</label>
-          {{ requestForm?.get('indicatedTaxpayer').value }}
+          {{ infoRequest?.indicatedTaxpayer }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">Asunto&#58;</label>
-          {{ requestForm?.get('affair').value }}
+          {{ infoRequest?.affair }}
         </div>
         <div class="col-md-4">
           <label class="label">Expediente Transferente&#47;PAMA&#58;</label>
-          {{ requestForm?.get('transferenceFile').value || '' }}
+          {{ infoRequest?.transferenceFile }}
         </div>
         <div class="col-md-4">
           <label class="label">Tipo Transferencia&#58;</label>
-          {{ requestForm?.get('typeRecord').value }}
+          {{ infoRequest?.typeRecord }}
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">Notas Entidad Transferente&#58;</label>
-          {{ requestForm?.get('transferEntNotes').value }}
+          {{ infoRequest?.transferEntNotes }}
         </div>
         <div class="col-md-8">
           <label class="label">Observaciones&#58;</label>
-          {{ requestForm?.get('observations').value }}
+          {{ infoRequest?.observations }}
         </div>
       </div>
     </form>

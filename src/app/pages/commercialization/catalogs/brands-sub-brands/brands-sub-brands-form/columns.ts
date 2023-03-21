@@ -1,11 +1,11 @@
 export const COLUMNS = {
-  subBrand: {
+  idSubBrand: {
     title: 'Sub Marca',
     sort: false,
     filter: false,
     editable: true,
   },
-  description: {
+  subBrandDescription: {
     title: 'Descripción',
     sort: false,
     editable: true,

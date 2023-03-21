@@ -9,7 +9,13 @@ export interface proceedingsType {
 export interface IValidations {
   numProceedings: number | null;
   proceedingsType: proceedingsType;
+  typeProceedings: string;
   resultValue: string | null;
   secVal: number | null;
   statusValue: number | null;
+}
+
+export interface TransferProceeding {
+  numFile: any;
+  typeProceedings: string;
 }

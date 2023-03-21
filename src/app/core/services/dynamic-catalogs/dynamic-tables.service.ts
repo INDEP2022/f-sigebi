@@ -7,6 +7,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ISingleTable,
+  ITable,
   ITables,
   ITablesData,
   TvalTable1Data,
@@ -39,14 +40,8 @@ export class DynamicTablesService extends HttpService {
     return this.get<ISingleTable>(route);
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<ITables>> {
-    console.log(
-      this.get<IListResponse<ITablesData>>(
-        DynamicCatalogEndpoint.DinamicTables,
-        params
-      )
-    );
-    return this.get<IListResponse<ITablesData>>(
+  getAll(params?: ListParams): Observable<IListResponse<ITable>> {
+    return this.get<IListResponse<ITable>>(
       DynamicCatalogEndpoint.DinamicTables,
       params
     );
