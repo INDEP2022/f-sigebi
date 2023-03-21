@@ -63,4 +63,8 @@ export class CoverExpedientService extends HttpService {
       `${CoverExpedientEndpoints.CompleteDisposition}/${ddcId}`
     );
   }
+
+  insertExpedient(body: Object): Observable<any> {
+    return this.post<any>(`${CoverExpedientEndpoints.InsertExpedient}`, body);
+  }
 }

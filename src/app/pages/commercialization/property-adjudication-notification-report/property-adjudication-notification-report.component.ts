@@ -121,7 +121,7 @@ export class PropertyAdjudicationNotificationReportComponent
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERNOTIFICAINMU.pdf?DESTYPE=${params.DESTYPE}&P_EVENTO=${params.P_EVENTO}`;
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, ' FCOMERNOTIFICAINMU.pdf');
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
