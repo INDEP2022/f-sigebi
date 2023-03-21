@@ -6,32 +6,22 @@
     <form class="form-material" [formGroup]="minpubForm">
       <div class="row">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="minpubForm.get('id')" label="Registro">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="minpubForm.get('descripcion')"
+            [control]="minpubForm.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="descripcion" />
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="minpubForm.get('manager')" label="Responsable">
+            <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="minpubForm.get('responsable')"
-            label="Responsable">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="responsable" />
-          </form-field>
-        </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <ngx-select
             [form]="minpubForm"
@@ -40,53 +30,50 @@
             bindLabel="nameCity"
             value="idCity"
             (fetchItems)="getFromSelect($event)"
-            control="no_ciudad">
+            control="cityNumber">
           </ngx-select>
         </div>
-      </div>
-      <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="minpubForm.get('colonia')" label="Colonia">
-            <input type="text" class="form-control" formControlName="colonia" />
+          <form-field [control]="minpubForm.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="minpubForm.get('codigo_postal')"
+            [control]="minpubForm.get('zipCode')"
             label="C&oacute;digo postal">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="codigo_postal" />
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="minpubForm.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="minpubForm.get('calle')" label="Calle">
-            <input type="text" class="form-control" formControlName="calle" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="pt-sm-5 pt-md-2">
           <div class="row">
             <div class="col-12 col-md-6">
               <form-field
-                [control]="minpubForm.get('no_interior')"
+                [control]="minpubForm.get('insideNumber')"
                 label="Número interior">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="no_interior" />
+                  formControlName="insideNumber" />
               </form-field>
             </div>
             <div class="col-12 col-md-6">
               <form-field
-                [control]="minpubForm.get('no_exterior')"
+                [control]="minpubForm.get('outNumber')"
                 label="N&uacute;mero exterior">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="no_exterior" />
+                  formControlName="outNumber" />
               </form-field>
             </div>
           </div>
@@ -95,22 +82,19 @@
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="minpubForm.get('deleg_munic')"
+            [control]="minpubForm.get('delegNunic')"
             label="Delegaci&oacute;n municipal">
             <input
               type="text"
               class="form-control"
-              formControlName="deleg_munic" />
+              formControlName="delegNunic" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="minpubForm.get('telefono')"
+            [control]="minpubForm.get('phone')"
             label="Tel&eacute;fono">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="telefono" />
+            <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
       </div>
