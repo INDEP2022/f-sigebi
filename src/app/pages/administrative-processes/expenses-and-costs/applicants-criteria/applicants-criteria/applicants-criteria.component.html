@@ -4,14 +4,12 @@
   </div>
 
   <div body>
-    <div class="row mt-4 float-right">
-      <div class="">
-        <button type="button" class="btn btn-primary btn-sm active mx-4">
-          INICIALIZAR INFORME
-        </button>
-        <button type="button" class="btn btn-primary btn-sm active mx-4">
-          CANCELAR INFORME
-        </button>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button text="Imprimir" (confirm)="confirm()">
+          </confirm-button>
+        </div>
       </div>
     </div>
   </div>

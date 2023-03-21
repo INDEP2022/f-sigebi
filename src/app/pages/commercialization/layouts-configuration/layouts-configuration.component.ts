@@ -129,6 +129,19 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
         console.log(this.structureLayout);
         this.rowSelected = true;
         this.valid = true;
+        this.layoutsConfigService.getByIdH(this.idLayout).subscribe({
+          next: data => {
+            this.layoutDuplicated = data;
+            console.log(this.layoutDuplicated);
+            this.rowSelected = true;
+            this.valid = true;
+          },
+          error: error => {
+            this.loading = false;
+            this.onLoadToast('error', 'Layout no existe!!', '');
+            return;
+          },
+        });
       },
       error: error => {
         this.loading = false;
@@ -144,16 +157,26 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
 
   duplicar() {
     this.loading = false;
-    this.layoutsConfigService.create(this.layout).subscribe({
+    this.layoutsConfigService.createH(this.layout).subscribe({
       next: data => {
-        console.log('creado' + this.structureLayout);
+        console.log('creado' + data);
         this.valid = true;
         this.rowSelected = true;
-        // this.layoutsConfigService.update(this.provider.id, this.structureLayout).subscribe({
-        //   next: data => this.handleSuccess(),
-        //   error: error => this.loading = false,
-        // });
         this.handleSuccess();
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+        return;
+      },
+    });
+  }
+  duplicaLayout() {
+    this.layoutsConfigService.create(this.layoutDuplicated).subscribe({
+      next: data1 => {
+        console.log('creado' + data1);
+        this.rowSelected = true;
+        this.valid = true;
       },
       error: error => {
         this.loading = false;
