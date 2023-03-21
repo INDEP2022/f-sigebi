@@ -41,6 +41,7 @@ export class CourtService extends HttpService implements ICrudMethods<ICourt> {
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.courtRepository.remove(this.route, id);
+    const route2 = `${this.route}/id/`;
+    return this.courtRepository.remove(route2, id);
   }
 }
