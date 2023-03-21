@@ -15,33 +15,28 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-cities-shared
-            [form]="form"
-            (state)="getState($event)"></app-cities-shared>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('entity')" label="Entidad Federativa">
-            <input type="text" class="form-control" formControlName="entity" />
+          <form-field [control]="form.get('city')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="city"
+              [data]="cities"
+              value="idCity"
+              bindLabel="nameCity"
+              label="Ciudad/Entidad"
+              (fetchItems)="getCiities($event)"
+              (change)="onValuesChange($event)">
+            </ngx-select>
           </form-field>
         </div>
+
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-          <form-field
-            label="Delegaci&oacute;n"
-            [control]="form.get('delegation')">
+          <form-field label="court" [control]="form.get('court')">
             <input
               type="text"
               class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-          <form-field
-            label="Sub Delegaci&oacute;n"
-            [control]="form.get('subDelegation')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subDelegation" />
+              formControlName="court"
+              readonly />
           </form-field>
         </div>
       </div>

@@ -39,11 +39,15 @@ export class WContentService extends HttpWContentService {
     return this.post<any>(WContentEndpoint.AddDocumentToContent, formData);
   }
 
-  getDocumentTypes(params: ListParams): Observable<IDocTypes> {
-    return this.get<IDocTypes>(WContentEndpoint.DocumentTypes);
+  addImages(formData: Object) {
+    return this.post(WContentEndpoint.AddImagesTocontent, formData);
   }
 
-  getDocumentos(body: IWContent): Observable<IListResponse<IWContent>> {
+  getDocumentTypes(params: ListParams): Observable<IListResponse<IDocTypes>> {
+    return this.get<IListResponse<IDocTypes>>(WContentEndpoint.DocumentTypes);
+  }
+
+  getDocumentos(body: Object): Observable<IListResponse<IWContent>> {
     return this.post<IListResponse<IWContent>>(
       WContentEndpoint.GetDocSol,
       body

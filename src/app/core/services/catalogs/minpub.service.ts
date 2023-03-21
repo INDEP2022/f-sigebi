@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { MinPubEndpoints } from 'src/app/common/constants/endpoints/minpub-endpoint';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
@@ -18,7 +19,7 @@ export class MinPubService
   private readonly route: string = ENDPOINT_LINKS.MinPub;
   constructor(private minPubRepository: Repository<IMinpub>) {
     super();
-    this.microservice = 'catalog';
+    this.microservice = MinPubEndpoints.BasePage;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IMinpub>> {
@@ -46,5 +47,10 @@ export class MinPubService
 
   remove(id: string | number): Observable<Object> {
     return this.minPubRepository.remove(this.route, id);
+  }
+
+  update2(model: IMinpub) {
+    const route = MinPubEndpoints.MinPub;
+    return this.put(route, model);
   }
 }
