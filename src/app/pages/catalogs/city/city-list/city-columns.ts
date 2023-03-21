@@ -8,9 +8,6 @@ export const CITY_COLUMNS = {
     title: 'Nombre',
     type: 'string',
     sort: false,
-    filter: {
-      config: {},
-    },
   },
   state: {
     title: 'Entidad Federativa',
@@ -25,13 +22,13 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noSubDelegation: {
-    title: 'Subdelegación',
+  legendOffice: {
+    title: 'Leyenda Oficio',
     type: 'string',
     sort: false,
   },
-  legendOffice: {
-    title: 'Leyenda Oficio',
+  noSubDelegation: {
+    title: 'Subdelegación',
     type: 'string',
     sort: false,
   },

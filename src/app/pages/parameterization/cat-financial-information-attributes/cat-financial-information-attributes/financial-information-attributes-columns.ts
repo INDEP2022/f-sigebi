@@ -54,5 +54,17 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
 
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Tipo',
+        list: [
+          { value: 'GEN', title: 'Genérico' },
+          { value: 'UTB', title: 'Utilidad bruta' },
+          { value: 'UTO', title: 'Utilidad de operación' },
+          { value: 'UTN', title: 'Utilidad neta' },
+        ],
+      },
+    },
   },
 };
