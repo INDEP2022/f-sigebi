@@ -26,4 +26,8 @@ export class ParametersService extends HttpService {
     const route = `${ParameterGoodEndpoints.Parameters}/${id}`;
     return this.get<IListResponse<IParameters>>(route);
   }
+
+  getRNomencla(params?: string): Observable<IListResponse<IParameters>> {
+    return this.get<IListResponse<IParameters>>(this.route.rNomecla, params);
+  }
 }
