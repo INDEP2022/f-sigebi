@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -19,7 +20,13 @@ import { COLUMNSLIST } from '../court-maintenance/columns';
   styles: [],
 })
 export class CourtListComponent extends BasePage implements OnInit {
+  columns: ICourt[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+
+  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+
   dataCourt: IListResponse<ICourt> = {} as IListResponse<ICourt>;
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -32,18 +39,45 @@ export class CourtListComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...COLUMNSLIST },
     };
-    this.dataCourt.count = 0;
+    this.totalItems = 0;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'city'
+              ? (field = `filter.${filter.field}.nameCity`)
+              : (field = `filter.${filter.field}`);
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getCourts();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getCourts());
@@ -51,9 +85,17 @@ export class CourtListComponent extends BasePage implements OnInit {
 
   getCourts() {
     this.loading = true;
-    this.courtService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.courtService.getAll(params).subscribe({
       next: response => {
-        this.dataCourt = response;
+        this.columns = response.data;
+        this.totalItems = response.count || 0;
+
+        this.data.load(this.columns);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (

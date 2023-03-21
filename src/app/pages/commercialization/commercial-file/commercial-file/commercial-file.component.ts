@@ -15,7 +15,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class CommercialFileComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
-  pdfurl = `https://drive.google.com/file/d/1PwfG-hqQzsL4ZSGheQJHkHsWJDsW0hwG/view?usp=sharing`; //window.URL.createObjectURL(blob);
+  pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+  // pdfurl = `https://drive.google.com/file/d/1PwfG-hqQzsL4ZSGheQJHkHsWJDsW0hwG/view?usp=sharing`; //window.URL.createObjectURL(blob);
   @Input() statusActaValue: string;
   constructor(
     private fb: FormBuilder,
@@ -45,7 +46,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FINFFICHACOMERCIAL.pdf?Lst_path_report=${params.Lst_path_report}`;
-    const pdfurl = `https://drive.google.com/file/d/16ICZVk6MSV4EMTE7Uf2og6MnAIJcsICr/view?usp=share_link`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'FINFFICHACOMERCIAL.pdf');
 
     setTimeout(() => {
@@ -66,7 +67,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FINFFICHACOMERCIAL.pdf?Lst_path_report=${params.Lst_path_report}`;
-    const pdfurl = `https://drive.google.com/file/d/1t4qx3hbB6tId63UP9n8LxS9EOE-F97Bl/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'FINFFICHACOMERCIAL.pdf');
 
     setTimeout(() => {
@@ -87,7 +88,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FINFFICHACOMERCIAL.pdf?Lst_path_report=${params.Lst_path_report}`;
-    const pdfurl = `https://drive.google.com/file/d/1PwfG-hqQzsL4ZSGheQJHkHsWJDsW0hwG/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'FINFFICHACOMERCIAL.pdf');
 
     setTimeout(() => {

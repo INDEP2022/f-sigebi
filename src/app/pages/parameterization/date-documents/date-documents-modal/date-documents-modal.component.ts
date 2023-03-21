@@ -102,7 +102,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
         this.stateNumber.id
       );
     } else {
-      this.dateDocumentsModalForm.controls['userReceipt'].setValue(
+      this.dateDocumentsModalForm.controls['userInsertion'].setValue(
         this.authService.decodeToken().preferred_username
       );
     }

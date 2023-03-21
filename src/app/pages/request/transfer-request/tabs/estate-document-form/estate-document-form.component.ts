@@ -6,7 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -42,9 +42,11 @@ export class EstateDocumentFormComponent
   showSearchForm: boolean = false;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
+  rowSelected: any = null;
 
   constructor(
     private modalService: BsModalService,
+    private bsParentModalRef: BsModalRef,
     private fb: FormBuilder,
     private typeRelevantService: TypeRelevantService,
     private goodServices: GoodService,
@@ -55,7 +57,6 @@ export class EstateDocumentFormComponent
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
       columns: EXPEDIENT_DOC_EST_COLUMNS,
     };
   }
@@ -82,6 +83,10 @@ export class EstateDocumentFormComponent
     });
   }
 
+  selectRow(event: any) {
+    this.rowSelected = event.data;
+  }
+
   getGoodTypeSelect(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
     this.typeRelevantService.getAll(params).subscribe({
@@ -91,15 +96,17 @@ export class EstateDocumentFormComponent
     });
   }
 
+  //abrir ver documentos
   showDocsEstValidate() {
-    if (!this.documentSelect) {
-      alert('Selecciona un documento');
-    } else {
-      const showDoctsEst = this.modalService.show(DocumentsListComponent, {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      });
+    if (!this.rowSelected) {
+      this.message(
+        'info',
+        'Error',
+        'Seleccione un data para poder ver sus documentos'
+      );
+      return;
     }
+    this.openModal(DocumentsListComponent, 'doc-bien', this.rowSelected);
   }
 
   selectDocument(selectDocument?: any) {
@@ -217,5 +224,28 @@ export class EstateDocumentFormComponent
         resolve('');
       }
     });
+  }
+
+  openModal(component: any, typeDoc: string, parameters?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        parameter: parameters,
+        typeDoc: typeDoc,
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsParentModalRef = this.modalService.show(component, config);
+
+    /*this.bsModalRef.content.event.subscribe((res: any) => {
+      this.matchLevelFraction(res);
+    });*/
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }

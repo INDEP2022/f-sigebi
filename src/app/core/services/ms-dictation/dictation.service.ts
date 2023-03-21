@@ -9,6 +9,7 @@ import { IDictation } from '../../models/ms-dictation/dictation-model';
   providedIn: 'root',
 })
 export class DictationService extends HttpService {
+  private readonly route = DictationEndpoints;
   constructor() {
     super();
     this.microservice = DictationEndpoints.BasePath;
@@ -25,5 +26,28 @@ export class DictationService extends HttpService {
     const filter = `?page=1&filters[0]={"property":"no_bien","comparison":"EQUAL","value":"3182885"}`;
     const route = `${DictationEndpoints.DictationXGood1}?page=1&filters[0]={"property":"no_bien","comparison":"EQUAL","value":"${id}"}`;
     return this.get(route);
+  }
+
+  getAllWithFilters(params?: string): Observable<IListResponse<IDictation>> {
+    return this.get<IListResponse<IDictation>>(this.route.Dictation, params);
+  }
+
+  getById(body: {
+    id: string | number;
+    typeDict: string;
+  }): Observable<IDictation> {
+    return this.get(this.route.Dictation, body);
+  }
+
+  create(body: IDictation) {
+    return this.post(this.route.Dictation, body);
+  }
+
+  update(body: Partial<IDictation>) {
+    return this.put(this.route.Dictation, body);
+  }
+
+  remove(body: { id: string | number; typeDict: string }) {
+    return this.delete(this.route.Dictation, body);
   }
 }
