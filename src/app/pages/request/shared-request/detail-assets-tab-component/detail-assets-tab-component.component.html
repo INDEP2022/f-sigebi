@@ -1169,7 +1169,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-2">
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('consSurfaceMts')"
                 label="Mts&#46; Construidos de Terreno">
@@ -1402,6 +1402,18 @@
                   type="text"
                   class="form-control"
                   formControlName="coOwnership" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('ownershipPercentage')"
+                label="% de Copropietario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="ownershipPercentage" />
               </form-field>
             </div>
           </div>
