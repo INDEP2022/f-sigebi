@@ -60,19 +60,19 @@
                 id="selectOne"
                 (change)="selectOne($event)" />
             </td>
-            <td>{{ detail.noManagement }}</td>
-            <td>{{ detail.assetsDescripTransfer }}</td>
-            <td>{{ detail.assetsDescripSAE }}</td>
-            <td>{{ detail.typeAsset }}</td>
-            <td>{{ detail.fraction }}</td>
-            <td>{{ detail.quantityTransfer }}</td>
-            <td>{{ detail.ligieUnitMeasure }}</td>
-            <td>{{ detail.transferUnitMeasure }}</td>
+            <td>{{ detail.goodId }}</td>
+            <td>{{ detail.descriptionGoodSae }}</td>
+            <td>{{ detail.goodDescription }}</td>
+            <td>{{ detail.goodTypeId }}</td>
+            <td>{{ detail.fractionId.description }}</td>
+            <td>{{ detail.quantity }}</td>
+            <td>{{ detail.ligieUnit }}</td>
+            <td>{{ detail.unitMeasure }}</td>
             <td>{{ detail.uniqueKey }}</td>
-            <td>{{ detail.physicalState }}</td>
-            <td>{{ detail.conservationState }}</td>
+            <td>{{ detail.physicalStatus }}</td>
+            <td>{{ detail.stateConservation }}</td>
             <td>{{ detail.destinyLigie }}</td>
-            <td>{{ detail.destinyTransfer }}</td>
+            <td>{{ detail.transferentDestiny }}</td>
           </tr>
         </tbody>
       </table>
@@ -116,6 +116,7 @@
     <app-detail-assets-tab-component
       [detailAssets]="goodForm"
       [typeDoc]="typeDoc"
+      [requestObject]="requestObject"
       *ngIf="rowSelected"></app-detail-assets-tab-component>
   </div>
 </div>

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
@@ -97,6 +97,10 @@ export class ClarificationsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getData();
+      // this.getClarifications();
+    });
   }
 
   ngOnInit(): void {
@@ -107,10 +111,6 @@ export class ClarificationsComponent
       columns: CLARIFICATION_COLUMNS,
     };
 
-    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-    //   this.getData();
-    //   this.getClarifications();
-    // });
     this.prepareForm();
   }
   private prepareForm() {
@@ -179,6 +179,7 @@ export class ClarificationsComponent
   }
 
   getData() {
+    console.log(this.requestObject);
     this.params.value.addFilter('requestId', this.requestObject.id);
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
@@ -195,7 +196,7 @@ export class ClarificationsComponent
 
   clicked(event: any) {
     console.log('one row');
-    // this.rowSelected = event;
+    this.rowSelected = event;
     this.goodForm.patchValue({ ...event });
     console.log(event);
   }
