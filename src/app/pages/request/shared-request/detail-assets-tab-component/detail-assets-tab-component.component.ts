@@ -37,6 +37,7 @@ import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -74,6 +75,8 @@ export class DetailAssetsTabComponentComponent
   destinyLigie: string = '';
   addressId: number = null;
   bsEvaluoDate: any;
+  bsCertifiDate: any;
+  bsPffDate: any;
   brandId: string = '';
   circulate: boolean = false;
   circulateString: string = 'N';
@@ -239,7 +242,10 @@ export class DetailAssetsTabComponentComponent
     this.goodDomicilieForm = this.fb.group({
       id: [null],
       description: [null],
-      status: [null],
+      status: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       propertyType: [null, [Validators.required]],
       surfaceMts: [0, [Validators.required]],
       consSurfaceMts: [0, [Validators.required]],
@@ -247,24 +253,43 @@ export class DetailAssetsTabComponentComponent
       pubRegProperty: [null, [Validators.required]],
       appraisalValue: [0, [Validators.required]],
       appraisalDate: [null],
-      certLibLien: [null],
-      guardCustody: [null],
+      certLibLien: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      guardCustody: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       vigilanceRequired: [null],
-      vigilanceLevel: [null],
-      mtsOfiWarehouse: [null],
-      bedrooms: [null],
-      bathroom: [null],
-      kitchen: [null],
-      diningRoom: [null],
-      livingRoom: [null],
-      study: [null],
-      espPark: [null],
+      vigilanceLevel: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      mtsOfiWarehouse: [null, [Validators.maxLength(5)]],
+      bedrooms: [null, [Validators.maxLength(5)]],
+      bathroom: [null, [Validators.maxLength(5)]],
+      kitchen: [null, [Validators.maxLength(5)]],
+      diningRoom: [null, [Validators.maxLength(5)]],
+      livingRoom: [null, [Validators.maxLength(5)]],
+      study: [null, [Validators.maxLength(5)]],
+      espPark: [null, [Validators.maxLength(5)]],
       userCreation: [null],
       creationDate: [null],
       addressId: [null],
       userModification: [null],
       modificationDate: [null],
       forProblems: [null, [Validators.required]],
+      certLibLienDate: [null],
+      pffDate: [null],
+      gravFavorThird: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      attachment: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
     });
   }
 
@@ -538,7 +563,26 @@ export class DetailAssetsTabComponentComponent
       );
     }
   }
+  changeCertiviDateEvent(event: any) {
+    this.bsCertifiDate =
+      this.bsCertifiDate !== undefined ? this.bsCertifiDate : event;
 
+    if (this.bsCertifiDate) {
+      let date = new Date(this.bsCertifiDate);
+      this.goodDomicilieForm.controls['certLibLienDate'].setValue(
+        date.toISOString()
+      );
+    }
+  }
+
+  changeCertiviffDateEvent(event: any) {
+    this.bsPffDate = this.bsPffDate !== undefined ? this.bsPffDate : event;
+
+    if (this.bsPffDate) {
+      let date = new Date(this.bsPffDate);
+      this.goodDomicilieForm.controls['pffDate'].setValue(date.toISOString());
+    }
+  }
   displayTypeTapInformation(typeRelevantId: number) {
     switch (typeRelevantId) {
       case 1:

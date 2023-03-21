@@ -224,10 +224,10 @@ export class RegistrationOfRequestsComponent
       //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
       this.isExpedient = data.recordId ? true : false;
 
+      this.registRequestForm.patchValue(data);
       /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
-      this.registRequestForm.patchValue(request);
       this.getData(request); */
     });
   }

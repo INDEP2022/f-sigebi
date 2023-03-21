@@ -56,7 +56,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.getTransferent();
     this.getRegionalDelegation();
     console.log(this.parameter.getRawValue());
-
+    this.call();
     /* let parameters = {
       xIdTransferente: request.transferenceId,
       xidExpediente: '',
@@ -66,6 +66,95 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       xNombreProceso: 'Captura Solicitud',
     }; */
   }
+
+  call() {
+    debugger;
+    this.wcontetService.callReportFile('Etiqueta_INAI', '4325').subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        //const file = resp;
+        /*let Filetype = 'pdf';
+        let binary = '';
+        const bytes = new Uint8Array(resp);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const file = window.btoa(binary);
+        const mimType =
+          Filetype === 'pdf'
+            ? 'application/pdf'
+            : Filetype === 'xlsx'
+            ? 'application/xlsx'
+            : Filetype === 'pptx'
+            ? 'application/pptx'
+            : Filetype === 'csv'
+            ? 'application/csv'
+            : Filetype === 'docx'
+            ? 'application/docx'
+            : Filetype === 'jpg'
+            ? 'application/jpg'
+            : Filetype === 'png'
+            ? 'application/png'
+            : '';
+        const url = `data:${mimType};base64,` + file;
+
+        console.log(url);
+
+        const arr = url.split(',');
+        if (arr.length < 2) {
+          return undefined;
+        }
+        const mimeArr = arr[0].match(/:(.*?);/);
+        if (!mimeArr || mimeArr.length < 2) {
+          return undefined;
+        }
+        const mime = mimeArr[1];
+        const buff = Buffer.from(arr[1], 'base64');
+        let res = new File([buff], '.pdf', { type: mime });
+
+        console.log(res);*/
+        const form = {
+          ddocTitle: 'Caratula del Expediente test',
+          ddocAuthor: '',
+          ddocType: '',
+          ddocCreator: '',
+          ddocName: 'REPORTE_10620230319',
+          dID: '',
+          dSecurityGroup: 'Public',
+          dDocAccount: '',
+          dDocId: '',
+          dInDate: '08-May-2022',
+          dOutDate: '',
+          dRevLabel: '',
+          xIdcProfile: '',
+          xDelegacionRegional: 3,
+          xidTransferente: '',
+          xidBien: '',
+          xidExpediente: '35015',
+          xidSolicitud: '39567',
+        };
+
+        /* this.wcontetService
+          .addDocumentToContent(
+            'Contents',
+            '.pdf',
+            JSON.stringify(form),
+            resp,
+            'pdf'
+          )
+          .subscribe({
+            next: resp => {
+              console.log(resp);
+            },
+          }); */
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
   formsChanges() {
     this.associateFileForm.controls['inaiUser'].valueChanges.subscribe(data => {
       if (data) {
@@ -128,34 +217,112 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
 
-    const body = {
-      funcionario: this.associateFileForm.controls['inaiOfficial'].value, //'inaiOfficial', //20
+    /*  const body = {
+      funcionario: this.associateFileForm.controls['inaiOfficial'].value, //'inaiOfficial', //69
       usrID: this.associateFileForm.controls['inaiUser'].value, //10539
-      fojas: this.associateFileForm.controls['sheetsInai'].value, //12
+      fojas: this.associateFileForm.controls['sheetsInai'].value, //2
       arhId: this.associateFileForm.controls['inaiFile'].value, //96827
-      legajos: this.associateFileForm.controls['filesInai'].value, //133
+      legajos: this.associateFileForm.controls['filesInai'].value, //22
       fechaExpediente: this.setDate(
         this.associateFileForm.controls['expedientDate'].value
       ), //22/03/2023
-      nombreExpediente: '',
+      nombreExpediente:
+        'EXPEDIENTE ' +
+        37411 +
+        '. TRANSFERENTE: ' +
+        this.parameter.value.transferenceId,
       ddcid: this.ddcId, //900
       fechaReserva: this.setDate(
         this.associateFileForm.controls['reserveDateInai'].value
       ), //25/03/2023
-    };
-    console.log(expedient);
-    /*  this.externalExpedientService.insertExpedient(body).subscribe({
-      next: resp => {
+    }; */
 
-      }
-    }) */
     this.expedientSamiService.create(expedient).subscribe({
+      next: resp => {
+        const expedient = resp;
+        if (expedient.id) {
+          /* const body = {};
+                this.externalExpedientService.insertExpedient(body).subscribe({
+                  next: resp => { */
+
+          const leagueName = new Date().toISOString();
+          const requestUpdate = {
+            id: request.id,
+            recordId: expedient.id,
+            fileLeagueType: 'CREACION',
+            fileLeagueDate: leagueName,
+          };
+          this.requestService
+            .update(requestUpdate.id, requestUpdate)
+            .subscribe({
+              next: resp => {
+                const solicitud = resp;
+                debugger;
+                if (solicitud.id) {
+                  //llama al reporte
+                  this.wcontetService
+                    .callReportFile('Etiqueta_INAI', solicitud.id)
+                    .subscribe({
+                      next: resp => {
+                        const file: any = resp;
+                        const docName = `Reporte_${94}${this.getDocNameDate}`;
+                        const body = {
+                          ddocTitle:
+                            'Caratula del Expediente ' + solicitud.recordId,
+                          ddocAuthor: '',
+                          ddocType: '',
+                          ddocCreator: '',
+                          ddocName: docName,
+                          dID: '',
+                          dSecurityGroup: 'Public',
+                          dDocAccount: '',
+                          dDocId: '',
+                          dInDate: this.setDate(new Date()),
+                          dOutDate: '',
+                          dRevLabel: '',
+                          xIdcProfile: '',
+                          xDelegacionRegional: solicitud.regionalDelegacionId,
+                          xidTransferente: solicitud.transferenceId ?? '',
+                          xidBien: '',
+                          xidExpediente: solicitud.recordId,
+                          xidSolicitud: solicitud.id,
+                          xNombreProceso: 'Captura Solicitud',
+                          xestado: solicitud.stationId ?? '',
+                          xnoOficio: solicitud.paperNumber ?? '',
+                          xremitente: solicitud.nameOfOwner ?? '',
+                          xnivelRegistroNSBDB: 'Expediente',
+                          xcargoRemitente: solicitud.holderCharge ?? '',
+                          xtipoDocumento: '94',
+                          xcontribuyente:
+                            solicitud.contribuyente_indiciado ?? '',
+                        };
+                        const form = JSON.stringify(body);
+                        this.wcontetService
+                          .addDocumentToContent('', '.pdf', form, file, 'pdf')
+                          .subscribe({
+                            next: resp => {
+                              console.log(resp);
+                            },
+                          });
+                      },
+                    });
+                }
+              },
+            });
+
+          /*  }
+                }) */
+        }
+      },
+    });
+
+    /* this.expedientSamiService.create(expedient).subscribe({
       next: expedient => {
         if (expedient.id) {
           debugger;
-          request.recordId = expedient.id;
+          request.recordId = expedient.id;*/
 
-          /*//actualiza la solicitud
+    /*//actualiza la solicitud
     this.requestService.update(request.id, request).subscribe({
             next: resp => {
               if (resp.id) {
@@ -183,7 +350,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
               }
             },
           });*/
-        } else {
+    /*  } else {
           this.message(
             'error',
             'Error en el expediente',
@@ -191,13 +358,19 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           );
         }
       },
-    });
+    });*/
   }
 
   setDate(date: Date) {
-    debugger;
     const newDate =
       date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    return newDate;
+  }
+
+  getDocNameDate() {
+    const date = new Date();
+    const newDate = date.getFullYear();
+    +'' + date.getMonth() + '' + date.getDate();
     return newDate;
   }
 

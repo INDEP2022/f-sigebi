@@ -86,7 +86,7 @@ export class GeneralDocumentsFormComponent
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.requestForm.valueChanges.subscribe((data: any) => {
-      //console.log(this.requestForm.getRawValue());
+      console.log(this.requestForm.getRawValue());
     });
   }
 
