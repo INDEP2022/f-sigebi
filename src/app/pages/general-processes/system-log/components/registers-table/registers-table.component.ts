@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -23,11 +22,17 @@ export class RegistersTableComponent
   @Input() params: BehaviorSubject<FilterParams>;
   @Input() totalItems = 0;
   @Input() registers: any[] = [];
-  constructor(private seraLogService: SeraLogService) {
+  registerNum: number = null;
+  constructor() {
     super();
     this.settings = { ...this.settings, actions: false };
   }
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['registers']) {
+      if (this.registers?.length == 0) {
+        this.registerNum = null;
+      }
+    }
     if (changes['columns']) {
       if (this.columns) {
         const columns = {
@@ -43,4 +48,18 @@ export class RegistersTableComponent
   }
 
   ngOnInit(): void {}
+
+  onSelectTable(row: any) {
+    const { no_registro } = row;
+    if (!no_registro) {
+      this.registerNum = null;
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'El dato no tiene el número de registro'
+      );
+      return;
+    }
+    this.registerNum = Number(no_registro);
+  }
 }
