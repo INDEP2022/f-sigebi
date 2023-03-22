@@ -1,18 +1,8 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -21,70 +11,38 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { NewDocumentComponent } from '../new-document/new-document.component';
-import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
-import { SeeInformationComponent } from './see-information/see-information.component';
-
-interface searchTable {
-  noDoc: string;
-  noReq: string;
-  docTit: string;
-  docType: string;
-  author: string;
-  dateCrea: string;
-}
+import { DOC_REQUEST_TAB_COLUMNS } from '../../doc-request-tab/doc-request-tab-columns';
+import { SeeInformationComponent } from '../../doc-request-tab/see-information/see-information.component';
+import { NewDocumentComponent } from '../../new-document/new-document.component';
 
 @Component({
-  selector: 'app-doc-request-tab',
-  templateUrl: './doc-request-tab.component.html',
-  styleUrls: ['./doc-request-tab.component.scss'],
+  selector: 'app-show-documents-good',
+  templateUrl: './show-documents-good.component.html',
+  styles: [],
 })
-export class DocRequestTabComponent
-  extends BasePage
-  implements OnInit, OnChanges
-{
-  @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
-  @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
-  container: ViewContainerRef;
-  @Input() typeDoc = '';
-  @Input() displayName: string = '';
-  title: string = '';
-  showSearchForm: boolean = false;
-  selectDocType = new DefaultSelect<any>();
-  docRequestForm: ModelForm<any>;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   columns = DOC_REQUEST_TAB_COLUMNS;
-  parameter: any;
-  type: string = '';
+  @Input() typeDoc = '';
+  showSearchForm: boolean = true;
+  docRequestForm: ModelForm<any>;
+  selectDocType = new DefaultSelect<any>();
   selectRegDelegation = new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  paragraphs: any[] = [];
+  idGood: number;
   idRequest: number = 0;
 
   constructor(
-    public fb: FormBuilder,
-    public modalService: BsModalService,
     private modalRef: BsModalRef,
-    private activatedRoute: ActivatedRoute,
+    private fb: FormBuilder,
+    private modalService: BsModalService,
     private wContentService: WContentService,
     private sanitizer: DomSanitizer
   ) {
     super();
-    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
-  }
 
-  ngOnInit(): void {
-    console.log(this.typeDoc);
-    this.typeDoc = this.type ? this.type : this.typeDoc;
-    if (this.typeDoc === 'doc-request') {
-      //hacer visible la vista principal y no el ng-template
-      this.container.createEmbeddedView(this.template);
-    }
-    this.prepareForm();
-    this.setTypeColumn();
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -99,16 +57,11 @@ export class DocRequestTabComponent
           });
       },
     };
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    let onChangeCurrentValue = changes['typeDoc'].currentValue;
-    this.typeDoc = onChangeCurrentValue;
-    this.setTitle(onChangeCurrentValue);
+  ngOnInit(): void {
+    this.prepareForm();
+    this.getDocuemntByGood();
   }
 
   prepareForm(): void {
@@ -134,26 +87,45 @@ export class DocRequestTabComponent
     });
   }
 
-  getData() {
-    const body = {
+  getDocuemntByGood() {
+    const filter: Object = {
+      xidBien: this.idGood,
       xidSolicitud: this.idRequest,
     };
-    this.wContentService.getDocumentos(body).subscribe(data => {
-      this.paragraphs = data.data;
+    this.wContentService.getDocumentos(filter).subscribe({
+      next: response => {
+        console.log('documentos bienes', response);
+        this.paragraphs = response.data;
+      },
     });
-  }
-
-  getDocType(event: any) {}
-
-  search(): void {}
-
-  cleanForm(): void {
-    this.docRequestForm.reset();
   }
 
   openDetail(data: any): void {
     this.openModalInformation(data, 'detail');
   }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SeeInformationComponent, config);
+  }
+
+  getDocType(event: any) {}
+
+  getRegDelegation(event: any) {}
+
+  getState(event: any) {}
+
+  getTransfe(event: any) {}
+
+  search(): void {}
 
   openDoc(docName: string): void {
     this.wContentService.obtainFile(docName).subscribe(data => {
@@ -190,22 +162,16 @@ export class DocRequestTabComponent
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  close() {
-    this.modalRef.hide();
-  }
-
   openNewDocument() {
     const idrequest = this.idRequest;
-    let typeDoc = this.typeDoc;
-    //console.log(this.typeDoc);
+    const idGood = this.idGood;
 
     let config: ModalOptions = {
       initialState: {
         idrequest,
-        typeDoc: typeDoc,
-        callback: (next: boolean) => {
-          if (next) this.getData();
-        },
+        typeDoc: 'good',
+        idGood,
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -213,52 +179,11 @@ export class DocRequestTabComponent
     this.modalService.show(NewDocumentComponent, config);
   }
 
-  private openModalInformation(data: any, typeInfo: string) {
-    let config: ModalOptions = {
-      initialState: {
-        data,
-        typeInfo,
-        callback: (next: boolean) => {
-          if (next) this.getData();
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(SeeInformationComponent, config);
+  close() {
+    this.modalRef.hide();
   }
 
-  getRegDelegation(event: any) {}
-
-  getState(event: any) {}
-
-  getTransfe(event: any) {}
-
-  setTypeColumn() {
-    /*if (this.displayName === 'validateEyeVisitResult') {
-      this.columns.noReq.title = 'No. Expediente';
-    } else {
-      if (this.typeDoc === 'request-assets') {
-        this.columns.noReq.title = 'No. Bien';
-      } else {
-        this.columns.noReq.title = 'No. Solicitud';
-      }
-    } */
-  }
-
-  setTitle(value: string) {
-    switch (value) {
-      case 'doc-request':
-        this.title = 'Solicitudes';
-        break;
-      case 'doc-expedient':
-        this.title = 'Expedientes';
-        break;
-      case 'request-expedient':
-        this.title = '';
-        break;
-      default:
-        break;
-    }
+  cleanForm(): void {
+    this.docRequestForm.reset();
   }
 }

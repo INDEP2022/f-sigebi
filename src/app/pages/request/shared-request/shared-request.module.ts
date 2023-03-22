@@ -7,6 +7,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { QuillModule } from 'ngx-quill';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FileUploadModule } from 'src/app/utils/file-upload/file-upload.module';
 import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
 import { AssociateFileComponent } from './associate-file/associate-file.component';
@@ -29,6 +30,7 @@ import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-t
 import { SeeInformationComponent } from './expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 import { ExpedientsRequestTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/expedients-request-tab.component';
 import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/good-doc-tab.component';
+import { ShowDocumentsGoodComponent } from './expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/new-document.component';
 import { PhotosActionComponent } from './expedients-tabs/sub-tabs/photos-assets/actions/see-action/photos-action.component';
 import { SeePhotoComponent } from './expedients-tabs/sub-tabs/photos-assets/actions/see-photo/see-photo.component';
@@ -171,6 +173,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     OpenPhotosComponent,
     SeePhotoComponent,
     ResultVisitsComponent,
+    ShowDocumentsGoodComponent,
   ],
   imports: [
     CommonModule,
@@ -181,6 +184,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CollapseModule.forRoot(),
     BsDatepickerModule.forRoot(),
     QuillModule.forRoot(),
+    FileUploadModule,
   ],
   exports: [
     RequestFormComponent,
