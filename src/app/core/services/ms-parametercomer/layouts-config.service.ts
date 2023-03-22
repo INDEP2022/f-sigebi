@@ -42,14 +42,14 @@ export class LayoutsConfigService extends HttpService {
     return this.get(route, params);
   }
 
-  create(layout: IL) {
+  create(layout: IComerLayoutsH) {
+    const route = `${this.endpointH}`;
+    return this.post(route, layout);
+  }
+  createH(layout: IL) {
     const route = `${this.endpoint}`;
     return this.post(route, layout);
   }
-  // create(layout: IComerLayouts) {
-  //   const route = `${this.endpointH}`;
-  //   return this.post(route, layout);
-  // }
   add(layout: number) {
     const url = `${environment.API_URL}parametercomer/api/v1/comer-layouts-t`;
     return this.htpp.post(url, layout);
@@ -63,8 +63,8 @@ export class LayoutsConfigService extends HttpService {
   //   const route = `${this.endpoint}`;
   //   return this.put(route, layout);
   // }
-  update(id: string | number, layout: IComerLayouts) {
-    const route = `${this.endpointH}/${id}`;
+  update(layout: IComerLayouts) {
+    const route = `${this.endpoint}`;
     return this.put(route, layout);
   }
 
@@ -78,7 +78,15 @@ export class LayoutsConfigService extends HttpService {
     return this.delete(route, id);
   }
 
-  createH(layout: IComerLayouts) {
-    return this.post(this.endpointH, layout);
+  // createH(layout: IComerLayouts) {
+  //   return this.post(this.endpointH, layout);
+  // }
+
+  updateL(params: IComerLayouts) {
+    const route = `${this.endpoint}`;
+    // return this.put(route, params);
+    return this.httpClient.request<IComerLayoutsH>('update', route, {
+      body: params,
+    });
   }
 }
