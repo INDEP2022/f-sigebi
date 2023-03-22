@@ -55,8 +55,8 @@ export class AffairTypeService extends HttpService {
     return this.affairTypeRepository.getAffairTypebyAffair('', id, params);
   }
 
-  remove(id: string | number) {
-    const route = `${AffairTypeEndpoints.AffairType}/${id}`;
-    return this.delete(route);
+  remove(model: IAffairType) {
+    const route = `${AffairTypeEndpoints.AffairType}`;
+    return this.delete(route, model);
   }
 }

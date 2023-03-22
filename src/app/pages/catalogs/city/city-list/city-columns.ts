@@ -1,3 +1,5 @@
+import { IState } from 'src/app/core/models/catalogs/state-model';
+
 export const CITY_COLUMNS = {
   idCity: {
     title: 'No. Ciudad',
@@ -8,16 +10,21 @@ export const CITY_COLUMNS = {
     title: 'Nombre',
     type: 'string',
     sort: false,
-    filter: {
-      config: {},
-    },
   },
   state: {
     title: 'Entidad Federativa',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.descCondition;
+    valuePrepareFunction: (value: IState) => {
+      return value?.descCondition;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   noDelegation: {
@@ -25,13 +32,13 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noSubDelegation: {
-    title: 'Subdelegación',
+  legendOffice: {
+    title: 'Leyenda Oficio',
     type: 'string',
     sort: false,
   },
-  legendOffice: {
-    title: 'Leyenda Oficio',
+  noSubDelegation: {
+    title: 'Subdelegación',
     type: 'string',
     sort: false,
   },

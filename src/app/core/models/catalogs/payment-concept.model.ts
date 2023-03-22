@@ -1,5 +1,5 @@
 export interface IPaymentConcept {
   id?: number;
-  description: string;
-  numRegister: number;
+  description?: string;
+  numRegister?: number;
 }

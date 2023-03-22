@@ -13,6 +13,7 @@ export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
   search?: string = '';
+  //sortBy?: string;
   private filters: string[] = [];
 
   constructor(filter?: FilterParams) {
@@ -20,6 +21,7 @@ export class FilterParams {
       this.page = filter.page ?? 1;
       this.limit = filter.limit ?? 10;
       this.search = filter.search ?? '';
+      //this.sortBy = filter.sortBy ?? '';
       this.filters = filter.filters ?? [];
     }
   }
@@ -61,7 +63,9 @@ class DynamicFilter {
 
   getParams() {
     if (this.value == SearchFilter.NULL) {
-      return `filter.${this.field}=${SearchFilter.NULL}`;
+      return `filter.${this.field}=${this.operator ? this.operator + ':' : ''}${
+        SearchFilter.NULL
+      }`;
     }
     return `filter.${this.field}=${this.operator}:${this.value}`;
   }
@@ -79,6 +83,7 @@ export enum SearchFilter {
   GTE = '$gte',
   LTE = '$lte',
   BTW = '$btw',
+  OR = '$or',
 }
 
 export interface DynamicFilterLike {

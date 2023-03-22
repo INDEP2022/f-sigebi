@@ -4,8 +4,112 @@
   </div>
 
   <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-around">
+              <div>
+                <button
+                  [ngClass]="priority$ === 'toDo' ? 'btn-primary' : 'btn-light'"
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'toDo'">
+                  Ingresados
+                </button>
+              </div>
+              <div>
+                <button
+                  [ngClass]="
+                    priority$ === 'inProgress' ? 'btn-info' : 'btn-light'
+                  "
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'inProgress'">
+                  En Proceso
+                </button>
+              </div>
+              <div>
+                <button
+                  [ngClass]="priority$ === 'done' ? 'btn-success' : 'btn-light'"
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'done'">
+                  Salida
+                </button>
+              </div>
+              <div>
+                <button
+                  [ngClass]="
+                    priority$ === 'delayed' ? 'btn-warning' : 'btn-light'
+                  "
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'delayed'">
+                  Destiempo
+                </button>
+              </div>
+              <div>
+                <button
+                  class="btn btn-secondary btn-sm active"
+                  (click)="priority$ = null">
+                  Todos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="filterForm" class="form-material">
+              <!--<app-management-area-shared [form]="filterForm"></app-management-area-shared>-->
+              <div class="row pt-4">
+                <div class="col-md-6">
+                  <form-field [control]="filterForm.get('managementArea')">
+                    <ngx-select
+                      (fetchItems)="getGroupWork()"
+                      value="id"
+                      bindLabel="description"
+                      [form]="filterForm"
+                      control="managementArea"
+                      [data]="areas$"
+                      label="Área">
+                    </ngx-select>
+                  </form-field>
+                </div>
+              </div>
+            </form>
+
+            <!--<div class="row">
+              <div class="col-md-6">
+                <p>Usuario&#58; <b>Usuario</b></p>
+                <p>Buz&oacute;n de&#58; <b>&Aacute;rea</b></p>
+              </div>
+              <div class="col-md-6">
+                <form-check label="Ver tr&aacute;mites del Grupo">
+                  <input
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="verTramite" />
+                </form-check>
+                <form-check label="Actualizar Buz&oacute;n Autom&aacute;ticamente">
+                  <input
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="actualizarBuzon" />
+                </form-check>
+                <form-check label="Pendientes de Digitalizar">
+                  <input
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="pendientes" />
+                </form-check>
+              </div>
+            </div>-->
+          </div>
+        </div>
+      </div>
+    </div>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
+      <!--<div class="row">
         <div class="col-md-6">
           <p>Usuario&#58; <b>Usuario</b></p>
           <p>Buz&oacute;n de&#58; <b>&Aacute;rea</b></p>
@@ -30,9 +134,9 @@
               formControlName="pendientes" />
           </form-check>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
+      </div>-->
+      <div class="row justify-content-end">
+        <div class="col">
           <div class="btn-group" dropdown>
             <button
               id="button-basic"
@@ -48,6 +152,9 @@
               class="dropdown-menu"
               role="menu"
               aria-labelledby="button-basic">
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="work()">Trabajar</a>
+              </li>
               <li role="menuitem">
                 <a class="dropdown-item" href="#">Turnar</a>
               </li>
@@ -70,19 +177,43 @@
                 <a class="dropdown-item" href="#">Bienes</a>
               </li>
               <li role="menuitem">
-                <a class="dropdown-item" href="#">Historial</a>
+                <a
+                  class="dropdown-item"
+                  [class.disabled]="!selectedRow"
+                  (click)="viewFlyerHistory()"
+                  >Historial</a
+                >
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  [class.disabled]="!selectedRow"
+                  (click)="viewIndicatorsHistory()"
+                  >Historico Indicadores</a
+                >
               </li>
             </ul>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12 md-tabs">
-          <ng2-smart-table [settings]="settings"></ng2-smart-table>
-          <app-pagination></app-pagination>
+        <div class="col-3 text-end">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
+      <div class="row pt-4 mb-3 mt-3">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="dataTable"
+              (userRowSelect)="selectEvent($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
 
       <div class="row">
         <div class="col-md-6">

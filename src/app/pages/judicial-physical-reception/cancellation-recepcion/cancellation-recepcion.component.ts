@@ -106,11 +106,21 @@ export class CancellationRecepcionComponent implements OnInit {
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
   form: FormGroup;
-  records: string[] = ['A', 'NA', 'D', 'NS'];
+  records: string[] = ['C', 'NA', 'D', 'NS'];
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  //VALIDATE PROCEEDING
+  changeAct() {
+    console.log(this.form.get('acta').value);
+    if (this.form.get('acta').value === 'C') {
+      this.form.get('ident').setValue('CAN');
+    } else {
+      this.form.get('ident').setValue('SUS');
+    }
   }
 
   prepareForm() {
