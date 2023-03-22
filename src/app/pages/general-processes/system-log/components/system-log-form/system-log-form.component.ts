@@ -41,6 +41,7 @@ export class SystemLogFormComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fields']) {
+      this.removeAllItems();
       this.buildForm();
     }
   }
@@ -77,5 +78,11 @@ export class SystemLogFormComponent implements OnInit, OnChanges {
     }
     form.patchValue(field);
     return form;
+  }
+
+  removeAllItems() {
+    while (this.filter.length !== 0) {
+      this.filter.removeAt(0);
+    }
   }
 }

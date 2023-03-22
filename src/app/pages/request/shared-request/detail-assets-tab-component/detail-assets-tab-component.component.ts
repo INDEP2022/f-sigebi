@@ -16,7 +16,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import {
   IDomicilies,
   IGoodRealState,
@@ -53,7 +53,7 @@ export class DetailAssetsTabComponentComponent
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
-  @Input() detailAssets: ModelForm<any>; // bienes ModelForm
+  @Input() detailAssets: IFormGroup<any>; // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
@@ -61,9 +61,9 @@ export class DetailAssetsTabComponentComponent
   stateOfRepId: number = null;
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
-  domicileForm: ModelForm<IDomicilies>; //domicilio del bien
-  assetsForm: ModelForm<any>; //borrar
+  goodDomicilieForm: IFormGroup<IGoodRealState>; // bien inmueble
+  domicileForm: IFormGroup<IDomicilies>; //domicilio del bien
+  assetsForm: IFormGroup<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
@@ -172,6 +172,7 @@ export class DetailAssetsTabComponentComponent
     this.initForm();
     console.log('tipo de bien');
     console.log(this.typeDoc);
+    console.log(this.detailAssets);
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
@@ -199,7 +200,6 @@ export class DetailAssetsTabComponentComponent
     }
 
     //console.log('detalle del objeto enviado');
-    //console.log(this.detailAssets);
 
     //this.initInputs();
   }
@@ -465,7 +465,7 @@ export class DetailAssetsTabComponentComponent
       this.stateOfRepublicService.getById(keyState).subscribe({
         next: data => {
           this.selectState = new DefaultSelect([data]);
-          this.domicileForm.controls['statusKey'].setValue(data.id);
+          this.domicileForm.controls['statusKey'].setValue(Number(data.id));
         },
         /*error: error => {
           console.log(error);

@@ -120,11 +120,15 @@
           <form-field
             [control]="form.get('accountType_I')"
             label="Tipo de cuenta">
-            <select class="form-control" formControlName="accountType_I">
-              <option [value]="'CONCENTRADORA'">CONCENTRADORA</option>
-              <option [value]="'ASEGURADA'">ASEGURADA</option>
-              <option [value]="'DEVOLUCIONES'">DEVOLUCIONES</option>
-            </select>
+            <ng-select
+              formControlName="accountType_I"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="CONCENTRADORA">CONCENTRADORA</ng-option>
+              <ng-option value="ASEGURADA">ASEGURADA</ng-option>
+              <ng-option value="DEVOLUCIONES">DEVOLUCIONES</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
@@ -41,13 +42,21 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private documentServ: DocumentsService,
     private token: AuthService,
     private modalService: BsModalService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private route: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.createForm();
+    const param = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
+    if (param) {
+      this.filterParams
+        .getValue()
+        .addFilter('wheelNumber', param, SearchFilter.EQ);
+      this.getNotfications();
+    }
   }
 
   createFilter() {
@@ -345,6 +354,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
+      window.open(
+        'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf'
+      );
       //en espera del reporte TODO:
     } else {
       this.onLoadToast(
