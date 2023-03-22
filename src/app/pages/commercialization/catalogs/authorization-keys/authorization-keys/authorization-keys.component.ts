@@ -54,7 +54,6 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
       response => {
         //TODO: Validate Response
         if (response !== null) {
-          console.log(response.data);
           this.eventForm.patchValue(response.data[0]['id']);
           this.eventForm.updateValueAndValidity();
           let key = this.eventForm.controls['id'].value;
