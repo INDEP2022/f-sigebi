@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
@@ -40,6 +40,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
   totalLogs = 0;
   totalDynamic = 0;
   filterFields: ITableField[] = [];
+  registerNum: number = null;
   filterForm = this.fb.group({
     filter: this.fb.array<
       FormGroup<{
@@ -53,12 +54,15 @@ export class SystemLogComponent extends BasePage implements OnInit {
     >([]),
   });
   registerSettings: any;
-  private readonly origin: string;
+  private origin: string;
+  dynamicColumns: any = null;
+  dynamicLoading = false;
   constructor(
     private tablesLogService: TablesLogService,
     private screenTableService: ScreenTableService,
     private tableFieldsService: TableFieldsService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private seraLogService: SeraLogService
   ) {
@@ -69,9 +73,15 @@ export class SystemLogComponent extends BasePage implements OnInit {
       columns: TABLE_LOGS_COLUMNS,
     };
     this.registerSettings = { ...this.settings, columns: {} };
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['screen'];
+      });
   }
 
   ngOnInit(): void {
+    console.log(this.origin);
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -120,6 +130,8 @@ export class SystemLogComponent extends BasePage implements OnInit {
   }
 
   onSelectTable(row: ITableLog) {
+    this.dynamicRegisters = [];
+    this.totalDynamic = 0;
     this.rowSelected = null;
     this.getFilterFields(row.table).subscribe(() => {
       this.rowSelected = row;
@@ -138,9 +150,11 @@ export class SystemLogComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(response => {
-        this.filterFields = response.data;
-        const columns = generateColumnsFromFields(response.data);
-        this.registerSettings = { ...this.registerSettings, columns };
+        // TODO: Quitar el filtro cuando se arregle el endpoint
+        this.filterFields = response.data.filter(field => field.table == table);
+        this.dynamicColumns = generateColumnsFromFields(
+          response.data.filter(field => field.table == table)
+        );
       })
     );
   }
@@ -158,10 +172,12 @@ export class SystemLogComponent extends BasePage implements OnInit {
 
   getDynamicRegisters(params: FilterParams) {
     const filter = this.getFilter();
+    this.dynamicLoading = true;
     return this.seraLogService
       .getDynamicTables(params.getParams(), filter)
       .pipe(
         catchError(error => {
+          this.dynamicLoading = false;
           if (error.status >= 500) {
             this.onLoadToast(
               'error',
@@ -172,6 +188,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
           return throwError(() => error);
         }),
         tap(response => {
+          this.dynamicLoading = false;
           this.dynamicRegisters = response.data;
           this.totalDynamic = response.count;
         })
@@ -180,18 +197,14 @@ export class SystemLogComponent extends BasePage implements OnInit {
 
   getFilter() {
     const table = this.rowSelected.table;
-    const filter = this.filterForm.controls.filter.value
+    const filters = this.filterForm.controls.filter.value
       .map(filter => {
         const operator =
           MATCH_OPERATORS[filter.dataType] ?? MATCH_OPERATORS.DEFAULT;
         return { column: filter.column, value: filter.value, operator };
       })
       .filter(filter => !isEmpty(filter.value));
-    return { table, filter };
-  }
-
-  onRegisterSelect(row: any) {
-    const { no_registro } = row;
+    return { table, filters };
   }
 }
 

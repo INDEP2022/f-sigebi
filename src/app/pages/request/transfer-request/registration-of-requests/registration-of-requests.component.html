@@ -144,7 +144,7 @@
 
         <div class="row pt-2">
           <tabset class="md-tabs" #staticTabs>
-            <tab heading="{{ tab1 }}" id="tab1">
+            <tab [heading]="tab1" id="tab1">
               <!-- Registro de Solicitudes o bines -->
               <app-request-record-tab
                 *ngIf="requestRegistration"
@@ -182,7 +182,9 @@
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->
-              <app-clarifications *ngIf="validateDocument"></app-clarifications>
+              <app-clarifications
+                [requestObject]="requestData"
+                *ngIf="validateDocument"></app-clarifications>
               <!-- fin -->
               <!-- notificar aclaraciones o improcedencias -->
               <app-notification-assets-tab

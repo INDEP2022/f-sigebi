@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { TABLE_SETTINGS } from '../../../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../../../common/repository/interfaces/list-params';
 import { BasePage } from '../../../../../../../core/shared/base-page';
@@ -24,11 +25,15 @@ var data = [
 })
 export class OpenPhotosComponent extends BasePage implements OnInit {
   paragraphs: any[] = [];
+  information: any;
   columns = PHOTOS_TABLE_COLUMNS;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-  constructor(private bsModalRef: BsModalRef) {
+  constructor(
+    private bsModalRef: BsModalRef,
+    private wContentService: WContentService
+  ) {
     super();
   }
 
@@ -48,7 +53,16 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
       },
     };
     this.paragraphs = data;
+    console.log('dd', this.information);
   }
+
+  /*getImagesGood() {
+    this.wContentService
+      .getImagesByGood(this.information.id)
+      .subscribe(data => {
+        console.log('data', data);
+      });
+  } */
 
   close(): void {
     this.bsModalRef.hide();

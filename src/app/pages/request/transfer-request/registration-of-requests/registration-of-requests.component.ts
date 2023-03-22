@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
@@ -39,7 +39,7 @@ export class RegistrationOfRequestsComponent
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
-  registRequestForm: ModelForm<IRequest>; //solicitudes
+  registRequestForm: IFormGroup<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
   parameter: any;
@@ -224,13 +224,53 @@ export class RegistrationOfRequestsComponent
       //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
       this.isExpedient = data.recordId ? true : false;
 
+      this.registRequestForm.patchValue(data);
       /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
-      this.registRequestForm.patchValue(request);
       this.getData(request); */
     });
   }
+
+  // private getData({
+  //   idTransferent,
+  //   regionalDelegationId,
+  //   keyStateOfRepublic,
+  //   authorityId,
+  //   stationId,
+  // }: any) {
+  //   const obsTransferent = this.transferentService.getById(idTransferent);
+  //   const obsDelegation = this.delegationService.getById(regionalDelegationId);
+  //   const obsStateOfRepublic =
+  //     this.stateOfRepublicService.getById(keyStateOfRepublic);
+  //   const obsAuthority = this.authorityService.getById(authorityId);
+  //   const obsStation = this.stationService.getById(stationId);
+  //   forkJoin([
+  //     obsTransferent,
+  //     obsDelegation,
+  //     obsStateOfRepublic,
+  //     obsAuthority,
+  //     obsStation,
+  //   ]).subscribe({
+  //     next: ([transferent, delegation, stateRepublic, authority, station]) => {
+  //       if (transferent) {
+  //         this.transferentName = transferent.nameTransferent;
+  //       }
+  //       if (delegation) {
+  //         this.delegationName = delegation.description;
+  //       }
+  //       if (stateRepublic) {
+  //         this.stateOfRepublicName = stateRepublic.descCondition;
+  //       }
+  //       if (authority) {
+  //         this.authorityName = authority.authorityName;
+  //       }
+  //       if (station) {
+  //         this.stationName = station.stationName;
+  //       }
+  //     },
+  //   });
+  // }
 
   getTransferent(idTransferent: number) {
     this.transferentService.getById(idTransferent).subscribe(data => {
@@ -261,46 +301,6 @@ export class RegistrationOfRequestsComponent
       this.stationName = data.stationName;
     });
   }
-
-  /*getData(request: any) {
-    const stateOfRepublicService = this.stateOfRepublicService.getById(
-      request.keyStateOfRepublic
-    );
-    const transferentService = this.transferentService.getById(
-      request.transferenceId
-    );
-    const stationService = this.stationService.getById(request.stationId);
-    const delegationService = this.delegationService.getById(
-      request.regionalDelegationId
-    );
-
-    const authorityervice = this.authorityService.getById(request.authorityId);
-
-    forkJoin([
-      stateOfRepublicService,
-      transferentService,
-      stationService,
-      delegationService,
-      authorityervice,
-    ]).subscribe(
-      ([_state, _transferent, _station, _delegation, _authority]) => {
-        let state = _state as any;
-        let transferent = _transferent as any;
-        let station = _station as any;
-        let delegation = _delegation as any;
-        let authority = _authority as any;
-
-        this.stateOfRepublicName = state.descCondition;
-        this.transferentName = transferent.nameTransferent;
-        this.stationName = station.stationName;
-        this.delegationName = delegation.description;
-        this.authorityName = authority.authorityName;
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  } */
 
   setView(path: string): void {
     switch (path) {
@@ -526,7 +526,9 @@ export class RegistrationOfRequestsComponent
   }
 
   dinamyCallFrom() {
+    console.log(this.registRequestForm);
     this.registRequestForm.valueChanges.subscribe(data => {
+      console.log(data);
       this.requestData = data;
     });
   }
