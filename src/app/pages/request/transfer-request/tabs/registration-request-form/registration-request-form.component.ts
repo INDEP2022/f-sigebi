@@ -17,6 +17,7 @@ export class RegistrationRequestFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.requestForm);
   }
 
   prepareForm() {
