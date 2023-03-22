@@ -5,7 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { showQuestion } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { VigProcessPercentages } from 'src/app/core/models/ms-survillance/survillance';
+import { IVigProcessPercentages } from 'src/app/core/models/ms-survillance/survillance';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { PERCENTAGE_COLUMNS } from './percentage-columns';
@@ -22,10 +22,19 @@ export class PercentagesSurveillanceComponent
   // percentages: VigProcessPercentages[] = [];
   // @ViewChild(Ng2SmartTableComponent) percentageTable: Ng2SmartTableComponent;
   sources = new LocalDataSource();
+  processes = [
+    { name: 'Supervisión', value: 1 },
+    { name: 'Validación', value: 2 },
+  ];
+
+  delegationTypes = [
+    { name: 'Ferronal', value: 1 },
+    { name: 'Sae', value: 2 },
+  ];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   dialogPercentageRef: BsModalRef;
-  editDialogData: VigProcessPercentages | null = null;
+  editDialogData: IVigProcessPercentages | null = null;
   @ViewChild('dialogPercentage') dialogPercentageTemplateRef: TemplateRef<any>;
   form = new FormGroup({
     percentage: new FormControl('', [Validators.required]),
@@ -64,14 +73,14 @@ export class PercentagesSurveillanceComponent
     });
   }
 
-  onEditConfirm(event: { data: VigProcessPercentages }): void {
+  onEditConfirm(event: { data: IVigProcessPercentages }): void {
     console.log(event);
     this.editDialogData = event.data;
     this.form.patchValue(event.data);
     this.openDialogPercentage();
   }
 
-  onDeleteConfirm(event: { data: VigProcessPercentages }): void {
+  onDeleteConfirm(event: { data: IVigProcessPercentages }): void {
     console.log(event);
     showQuestion({
       text: '¿Está seguro de eliminar el registro?',
@@ -123,7 +132,7 @@ export class PercentagesSurveillanceComponent
       return;
     }
 
-    const values = this.form.value as VigProcessPercentages;
+    const values = this.form.value as IVigProcessPercentages;
     this.loading = true;
     if (this.editDialogData) {
       this.survillanceService
@@ -132,10 +141,8 @@ export class PercentagesSurveillanceComponent
           next: response => {
             console.log(response);
             this.loading = false;
-            // if (response.data) {
             this.sources.update(this.editDialogData, values);
-            // this.sources.refresh();
-            // }
+            this.closeDialogPercentage();
           },
           error: err => {
             this.loading = false;
@@ -146,10 +153,10 @@ export class PercentagesSurveillanceComponent
     this.survillanceService.postVigProcessPercentages(values).subscribe({
       next: response => {
         console.log(response);
-        if (response.data) {
-          // this.percentages.push(response.data);
-          this.sources.append(response.data);
-          // this.sources.refresh();
+        if (response) {
+          this.sources.append(response);
+          this.closeDialogPercentage();
+          this.totalItems++;
         }
         this.loading = false;
       },

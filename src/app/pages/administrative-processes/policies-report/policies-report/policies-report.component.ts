@@ -13,14 +13,26 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class PoliciesReportComponent {
-  form = new FormGroup({
+  formPoliceStartDate = new FormGroup({
     policy: new FormControl(null, [
       Validators.required,
       Validators.pattern(STRING_PATTERN),
     ]),
     startDate: new FormControl(null, Validators.required),
+  });
+  formFromTo = new FormGroup({
+    // policy: new FormControl(null, [
+    //   Validators.required,
+    //   Validators.pattern(STRING_PATTERN),
+    // ]),
+    // startDate: new FormControl(null, Validators.required),
     from: new FormControl(null, Validators.required),
     to: new FormControl(null, Validators.required),
+    // policySinister: new FormControl(null, Validators.required),
+    // startDateSinister: new FormControl(null, Validators.required),
+  });
+
+  formSinister = new FormGroup({
     policySinister: new FormControl(null, Validators.required),
     startDateSinister: new FormControl(null, Validators.required),
   });
@@ -42,6 +54,6 @@ export class PoliciesReportComponent {
   // }
 
   save() {
-    console.log(this.form.value);
+    // console.log(this.form.value);
   }
 }

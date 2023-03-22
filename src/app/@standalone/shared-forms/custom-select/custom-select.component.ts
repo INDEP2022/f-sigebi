@@ -119,7 +119,7 @@ export class CustomSelectComponent
       ...this.moreParams,
     };
     return this.http
-      .get(`${this.url}/${this.path}`, {
+      .get(`${this.url}${this.path}`, {
         params,
       })
       .pipe(catchError(() => of(null)));
@@ -161,9 +161,9 @@ export class CustomSelectComponent
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((text: string) => {
-          // if (!text) {
-          //   return of(this.items);
-          // }
+          if (text === null) {
+            return of(this.items);
+          }
           // console.log(text);
           this.page = 1;
           this.isLoading = true;

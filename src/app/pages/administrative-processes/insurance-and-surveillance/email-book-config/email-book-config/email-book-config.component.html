@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">LIBRETA DE DIRECCIONES ELECTRONICAS</h5>
+    <h5 class="title">LIBRETA DE DIRECCIONES ELECTRÓNICAS</h5>
   </div>
 
   <div body>
@@ -10,15 +10,29 @@
     <form [formGroup]="form" class="form-material">
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="form.get('regionalDelegation')">
-            <ngx-select
+          <form-field
+            class="form-group"
+            [control]="form.get('regionalDelegation')"
+            label="Delegación Regional">
+            <!-- <ngx-select
               [form]="form"
               [data]="regionalDelegations"
               bindLabel="name"
               label="Delegación Regional"
               value="id"
               (fetchItems)="getRegionalDelegations($event)"
-              control="regionalDelegation"></ngx-select>
+              control="regionalDelegation"></ngx-select> -->
+            <ng-custom-select
+              class="form-control"
+              path="catalog/api/v1/regional-delegation"
+              formControlName="regionalDelegation"
+              prefixSearch="$ilike"
+              paramSearch="filter.description"
+              formControlName="regionalDelegation">
+              <ng-template let-item>
+                {{ item.description }}
+              </ng-template>
+            </ng-custom-select>
           </form-field>
         </div>
       </div>

@@ -1,5 +1,5 @@
 <div body>
-  <form [formGroup]="form" class="form-material">
+  <form [formGroup]="form" (ngSubmit)="deleteInServer()" class="form-material">
     <div class="row mt-4">
       <div class="col-md-4">
         <form-field [control]="form.get('year')" label="Año">
@@ -22,15 +22,30 @@
         </form-field>
       </div>
       <div class="col-md-4">
-        <form-field [control]="form.get('delegation')">
+        <!-- <form-field [control]="form.get('delegation')">
           <ngx-select
             [form]="form"
             [data]="delegations"
             bindLabel="name"
-            label="DelegaciÓn"
+            label="Delegación"
             value="id"
             (fetchItems)="getDelegations($event)"
             control="delegation"></ngx-select>
+        </form-field> -->
+        <form-field
+          [control]="form.get('delegation')"
+          label="Delegación"
+          class="form-group">
+          <ng-custom-select
+            class="form-control"
+            path="catalog/api/v1/delegation"
+            formControlName="delegation"
+            prefixSearch="$ilike"
+            paramSearch="filter.description">
+            <ng-template let-item>
+              {{ item.description }}
+            </ng-template>
+          </ng-custom-select>
         </form-field>
       </div>
     </div>
@@ -46,12 +61,16 @@
             (fetchItems)="getProcesess($event)"
             control="process"></ngx-select>
         </form-field>
+        <!-- <app-processes-shared [form]="form"></app-processes-shared> -->
       </div>
     </div>
 
     <div class="row mt-4 float-right">
       <div class="">
-        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+        <button
+          [disabled]="isLoading"
+          type="submit"
+          class="btn btn-primary btn-sm active mx-4">
           ELIMINAR
         </button>
       </div>

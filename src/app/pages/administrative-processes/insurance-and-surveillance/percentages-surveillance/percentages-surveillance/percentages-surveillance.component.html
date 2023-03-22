@@ -45,19 +45,40 @@
   </div>
   <div class="modal-body form-material" [formGroup]="form">
     <form-field [control]="form.get('cveProcess')" label="Proceso">
-      <input type="text" formControlName="cveProcess" class="form-control" />
+      <!-- <input type="text" formControlName="cveProcess" class="form-control" /> -->
+      <ng-select formControlName="cveProcess" class="form-control">
+        <ng-option [value]="process.value" *ngFor="let process of processes">{{
+          process.name
+        }}</ng-option>
+      </ng-select>
     </form-field>
     <form-field [control]="form.get('delegationNumber')" label="Delegación">
-      <input
+      <!-- <input
         type="text"
         formControlName="delegationNumber"
-        class="form-control" />
+        class="form-control" /> -->
+      <ng-custom-select
+        class="form-control"
+        path="catalog/api/v1/delegation"
+        formControlName="delegationNumber"
+        prefixSearch="$ilike"
+        paramSearch="filter.description"
+        [isLoadInOnInit]="false">
+        <ng-template let-item>
+          {{ item.description }}
+        </ng-template>
+      </ng-custom-select>
     </form-field>
     <form-field [control]="form.get('delegationType')" label="Tipo Delegación">
-      <input
+      <!-- <input
         type="text"
         formControlName="delegationType"
-        class="form-control" />
+        class="form-control" /> -->
+      <ng-select formControlName="delegationType" class="form-control">
+        <ng-option [value]="type.value" *ngFor="let type of delegationTypes">{{
+          type.name
+        }}</ng-option>
+      </ng-select>
     </form-field>
     <!-- <form-field [control]="form.get('description')" label="Delegación">
       <ng-select

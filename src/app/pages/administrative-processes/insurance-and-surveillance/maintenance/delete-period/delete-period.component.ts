@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -7,29 +12,29 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './delete-period.component.html',
   styles: [],
 })
-export class DeletePeriodComponent implements OnInit {
-  form: FormGroup;
+export class DeletePeriodComponent {
+  form = new FormGroup({
+    year: new FormControl(null, Validators.required),
+    period: new FormControl(null, Validators.required),
+    delegation: new FormControl(null, Validators.required),
+    process: new FormControl(null, Validators.required),
+  });
 
   public delegations = new DefaultSelect();
   public procesess = new DefaultSelect();
 
+  isLoading = false;
+
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
-
-  prepareForm() {
-    this.form = this.fb.group({
-      year: [null, Validators.required],
-      period: [null, Validators.required],
-      delegation: [null, Validators.required],
-      process: [null, Validators.required],
-    });
-  }
-
-  save() {
+  deleteInServer() {
     console.log(this.form.value);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    // console.log(this.form.value);
   }
 
   public getDelegations(event: any) {

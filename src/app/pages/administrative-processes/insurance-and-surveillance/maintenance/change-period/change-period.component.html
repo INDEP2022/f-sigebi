@@ -1,5 +1,5 @@
 <div body>
-  <form [formGroup]="form" class="form-material">
+  <form [formGroup]="form" (ngSubmit)="deleteInServer()" class="form-material">
     <div class="row mt-4">
       <div class="col-md-6">
         <div class="ch-content" header>
@@ -26,7 +26,7 @@
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('delegation')">
+          <!-- <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
               [data]="delegations"
@@ -35,6 +35,21 @@
               value="id"
               (fetchItems)="getDelegations($event)"
               control="delegation"></ngx-select>
+          </form-field> -->
+          <form-field
+            [control]="form.get('delegation')"
+            label="Delegación"
+            class="form-group">
+            <ng-custom-select
+              class="form-control"
+              path="catalog/api/v1/delegation"
+              formControlName="delegation"
+              prefixSearch="$ilike"
+              paramSearch="filter.description">
+              <ng-template let-item>
+                {{ item.description }}
+              </ng-template>
+            </ng-custom-select>
           </form-field>
         </div>
         <div class="col-md-12">
@@ -75,7 +90,7 @@
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('delegation')">
+          <!-- <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
               [data]="delegations"
@@ -84,6 +99,21 @@
               value="id"
               (fetchItems)="getDelegations($event)"
               control="delegation"></ngx-select>
+          </form-field> -->
+          <form-field
+            [control]="form.get('delegationDestiny')"
+            label="Delegación"
+            class="form-group">
+            <ng-custom-select
+              class="form-control"
+              path="catalog/api/v1/delegation"
+              formControlName="delegationDestiny"
+              prefixSearch="$ilike"
+              paramSearch="filter.description">
+              <ng-template let-item>
+                {{ item.description }}
+              </ng-template>
+            </ng-custom-select>
           </form-field>
         </div>
         <div class="col-md-12">

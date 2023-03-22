@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { SurvillanceEndpoints } from 'src/app/common/constants/endpoints/ms-survillance';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { VigProcessPercentages } from '../../models/ms-survillance/survillance';
+import {
+  IVigBinnacle,
+  IVigProcessPercentages,
+} from '../../models/ms-survillance/survillance';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +18,28 @@ export class SurvillanceService extends HttpService {
   }
 
   getVigProcessPercentages(params?: _Params) {
-    return this.get<IListResponse<VigProcessPercentages>>(
+    return this.get<IListResponse<IVigProcessPercentages>>(
       this.route.VigProcessPercentages,
       params
     );
   }
 
-  postVigProcessPercentages(data: VigProcessPercentages) {
+  postVigProcessPercentages(data: IVigProcessPercentages) {
     return this.post(this.route.VigProcessPercentages, data);
   }
 
-  putVigProcessPercentages(id: number, data: VigProcessPercentages) {
+  putVigProcessPercentages(id: number, data: IVigProcessPercentages) {
     return this.put(`${this.route.VigProcessPercentages}/${id}`, data);
   }
 
   deleteVigProcessPercentages(id: number) {
     return this.delete(`${this.route.VigProcessPercentages}/${id}`);
+  }
+
+  getVigBinnacle(params?: _Params) {
+    return this.get<IListResponse<IVigBinnacle>>(
+      this.route.VigBinnacle,
+      params
+    );
   }
 }
