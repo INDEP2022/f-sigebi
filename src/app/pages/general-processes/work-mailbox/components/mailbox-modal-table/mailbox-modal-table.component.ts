@@ -15,6 +15,7 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { WorkMailboxService } from '../../work-mailbox.service';
 
 @Component({
   selector: 'app-mailbox-modal-table',
@@ -23,7 +24,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class MailboxModalTableComponent extends BasePage implements OnInit {
   $obs: (params?: _Params, body?: any) => Observable<IListResponse<any>>;
-  service: HistoricalProcedureManagementService | HistoryIndicatorService;
+  service:
+    | HistoricalProcedureManagementService
+    | HistoryIndicatorService
+    | WorkMailboxService;
   title: string = '';
   rows: any[] = [];
   totalItems = 0;

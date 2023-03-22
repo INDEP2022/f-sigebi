@@ -33,11 +33,17 @@ import { MailboxModalTableComponent } from '../components/mailbox-modal-table/ma
 import { FLYER_HISTORY_COLUMNS } from '../utils/flyer-history-columns';
 import { INDICATORS_HISTORY_COLUMNS } from '../utils/indicators-history-columns';
 import {
+  ANTECEDENTE_TITLE,
+  BIENES_TITLE,
   FLYER_HISTORY_TITLE,
   INDICATORS_HISTORY_TITLE,
 } from '../utils/modal-titles';
 import { NO_INDICATORS_FOUND } from '../utils/work-mailbox-messages';
-import { WORK_MAILBOX_COLUMNS2 } from './work-mailbox-columns';
+import {
+  WORK_ANTECEDENTES_COLUMNS,
+  WORK_BIENES_COLUMNS,
+  WORK_MAILBOX_COLUMNS2,
+} from './work-mailbox-columns';
 
 @Component({
   selector: 'app-work-mailbox',
@@ -194,6 +200,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     this.workService.getView(params).subscribe({
       next: (resp: any) => {
+        console.log(resp);
         if (resp.data) {
           this.data = resp.data;
           this.totalItems = resp.count || 0;
@@ -503,6 +510,58 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         title,
         $params,
         body,
+      },
+    };
+    this.modalService.show(MailboxModalTableComponent, config);
+  }
+
+  acptionBienes() {
+    // this.workService.getViewBienes('598154').subscribe({
+    //   next: (resp: any) => {
+    //     console.log(resp);
+    //   }
+    // })
+    const $obs = this.workService.getViewBienes;
+    const service = this.workService;
+    const columns = WORK_BIENES_COLUMNS;
+    const title = BIENES_TITLE;
+    const params = new FilterParams();
+    params.addFilter('file', this.selectedRow.processNumber);
+    const $params = new BehaviorSubject(params);
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+      },
+    };
+    this.modalService.show(MailboxModalTableComponent, config);
+  }
+
+  acptionAntecedente() {
+    // this.workService.getViewAntecedente('598154').subscribe({
+    //   next: (resp: any) => {
+    //     console.log(resp);
+    //   }
+    // })
+    const $obs = this.workService.getViewAntecedente;
+    const service = this.workService;
+    const columns = WORK_ANTECEDENTES_COLUMNS;
+    const title = ANTECEDENTE_TITLE;
+    const params = new FilterParams();
+    params.addFilter('.proceedingsNum', this.selectedRow.processNumber);
+    const $params = new BehaviorSubject(params);
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
       },
     };
     this.modalService.show(MailboxModalTableComponent, config);

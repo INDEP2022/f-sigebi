@@ -29,6 +29,56 @@ export const WORK_MAILBOX_COLUMNS = {
   },
 };
 
+export const WORK_BIENES_COLUMNS = {
+  goodNumber: {
+    title: 'No. Bienes',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
+  },
+  goodDescription: {
+    title: 'Descripción',
+    sort: false,
+  },
+  parentGoodMenajeNumber: {
+    title: 'No. bienes menaje',
+    sort: false,
+  },
+  goodStatus: {
+    title: 'Estatus',
+    sort: false,
+  },
+};
+
+export const WORK_ANTECEDENTES_COLUMNS = {
+  proceedingsNum: {
+    title: 'No. Antecedente',
+    sort: false,
+  },
+  flierNum: {
+    title: 'No. Volante',
+    sort: false,
+  },
+  attended: {
+    title: 'Aatendió',
+    sort: false,
+  },
+  registryUsr: {
+    title: 'USR registro',
+    sort: false,
+  },
+  type: {
+    title: 'Tipo',
+    sort: false,
+  },
+  armedTradeKey: {
+    title: 'Clave oficio',
+    sort: false,
+  },
+};
+
 export const WORK_MAILBOX_COLUMNS2 = {
   processNumber: {
     title: 'No. Trámite',
