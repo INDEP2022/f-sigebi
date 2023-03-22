@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -16,10 +16,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-import { AuthService } from '../../../../core/services/authentication/auth.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { WorkMailboxService } from '../work-mailbox.service';
 //Models
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 /*Redux NgRX Global Vars Service*/
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
@@ -44,6 +46,9 @@ import {
   WORK_BIENES_COLUMNS,
   WORK_MAILBOX_COLUMNS2,
 } from './work-mailbox-columns';
+
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-work-mailbox',
@@ -71,29 +76,67 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   //Filters
   priority$: string = null;
-  areas$: any = [];
+
   selectedArea: string;
+  //users$: any = [];
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   columnFilters: any = [];
 
-  form = this.fb.group({
+  form: FormGroup = this.fb.group({
     verTramite: [null],
     actualizarBuzon: [null],
     pendientes: [null],
     observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
   });
 
-  filterForm = this.fb.group({
+  filterForm: FormGroup = this.fb.group({
     managementArea: [null],
+    user: [null],
+    verTramite: [false],
+    actualizarBuzon: [true],
+    pendientes: [false],
+    predetermined: [true],
+    priority: [null],
+    processStatus: [null],
+    observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
   });
+
+  /*PERMISSION*/
+  groupNumber: number;
+  managementArea: string = null;
+  predetermined: string = null;
+  send: string = null;
+  turnar: string = null;
+  watch: string = null;
 
   /*Redux NgRX Global Vars Model*/
   globalVars: IGlobalVars;
 
   managementAreas = new DefaultSelect<IManagementArea>();
+  users$ = new DefaultSelect<ISegUsers>();
+  areas$ = new DefaultSelect<IManagementArea>();
+
+  get user() {
+    return this.filterForm.controls['user'];
+  }
+  get managementAreaF() {
+    return this.filterForm.controls['managementArea'];
+  }
+  get verTramite() {
+    return this.filterForm.controls['verTramite'];
+  }
+  get actualizarBuzon() {
+    return this.filterForm.controls['actualizarBuzon'];
+  }
+  get pendientes() {
+    return this.filterForm.controls['pendientes'];
+  }
+  get predeterminedF() {
+    return this.filterForm.controls['predetermined'];
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -107,7 +150,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private historicalProcedureManagementService: HistoricalProcedureManagementService,
     private modalService: BsModalService,
     private goodsQueryService: GoodsQueryService,
-    private historyIndicatorService: HistoryIndicatorService
+    private historyIndicatorService: HistoryIndicatorService,
+    private usersService: UsersService,
+
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings.actions = false;
@@ -158,16 +205,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          this.getData();
+          console.log(this.columnFilters);
+          if (this.predeterminedF.value) {
+            this.getUser();
+          } else {
+            this.getData();
+          }
         }
       });
 
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.predeterminedF.value) {
+        this.getUser();
+      } else {
+        this.getData();
+      }
+    });
 
     //this.getAreas();
-    this.getGroupWork();
+    //this.getGroupWork();
+
+    //this.loadPermissions();
     /*this.workService.getView().subscribe({
       next: (resp: any) => {
         console.log(resp);
@@ -191,13 +249,137 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });*/
   }
 
+  getUser(): void {
+    const token = this.authService.decodeToken();
+    let userId = token.preferred_username;
+    let params = new FilterParams();
+    params.addFilter('id', userId, SearchFilter.EQ);
+    this.usersService.getAllSegUsers(params.getParams()).subscribe({
+      next: data => {
+        this.filterParams.getValue().removeAllFilters();
+        this.filterForm.controls['user'].setValue(data.data[0]);
+        let $params = new ListParams();
+        this.getGroupWork($params, true);
+      },
+      error: () => {
+        //this.users$ = new DefaultSelect();
+      },
+    });
+  }
+
+  /*BUILD FILTERS*/
+  buildFilters(): void {
+    this.filterParams.getValue().removeAllFilters();
+    this.filterForm.controls['priority'].setValue(this.priority$);
+
+    let {
+      priority,
+      managementArea,
+      user,
+      verTramite,
+      actualizarBuzon,
+      pendientes,
+      predeterminedF,
+      processStatus,
+    } = this.filterForm.value;
+    console.log(this.filterForm.value);
+
+    console.log(priority);
+    let field = `filter.processStatus`;
+    if (managementArea !== null) {
+      switch (priority) {
+        case 'toDo':
+          processStatus = `${managementArea.id}I`;
+          break;
+        case 'inProgress':
+          processStatus = `${managementArea.id}P`;
+          break;
+        case 'done':
+          processStatus = `${managementArea.id}S`;
+          break;
+        case 'delayed':
+          processStatus = `${managementArea.id}D`;
+          break;
+        default:
+          processStatus = null;
+          break;
+      }
+      if (processStatus !== null) {
+        //this.filterParams.getValue().addFilter('processStatus',processStatus,SearchFilter.EQ);
+
+        this.columnFilters[field] = `$eq:${processStatus}`;
+      } else {
+        delete this.columnFilters[field];
+      }
+    } else {
+      delete this.columnFilters[field];
+    }
+
+    console.log(this.predeterminedF.value);
+    field = `filter.userATurn`;
+
+    if (this.predeterminedF.value) {
+      const token = this.authService.decodeToken();
+      let userId = 'FGAYTAN'; //token.preferred_username;
+      this.columnFilters[field] = `$eq:${userId}`;
+    } else {
+      delete this.columnFilters[field];
+    }
+
+    if (user !== null) {
+      field = `filter.userATurn`;
+      this.columnFilters[field] = `$eq:${user.id}`;
+    }
+
+    this.getData();
+  }
+
+  /*PROCEDURE PUP_CARGA_PERMISOS_BUZON*/
+  loadPermissions(): void {
+    /*const token = this.authService.decodeToken();
+    let userId = 'FGAYTAN'; //token.preferred_username;
+    const params = new FilterParams();
+    params.addFilter('user', userId);
+    params.addFilter('predetermined', 'S');*/
+    /*this.procedureManagementService
+      .getManagamentGroupWork(params.getParams())
+      .subscribe({
+        next: (resp) => {
+          if (resp.data) {
+            this.groupNumber = resp.data[0].groupNumber
+            this.managementArea = resp.data[0].managementArea
+            this.predetermined = resp.data[0].predetermined
+            this.send = resp.data[0].send
+            this.turnar = resp.data[0].turnar
+            this.watch = resp.data[0].watch
+
+            console.log(resp.data)
+          }
+        },
+        error: error => (this.loading = false),
+      })*/
+  }
+
   getData() {
+    /*console.log(this.filterParams.getValue());
+    let filters : FilterParams =this.filterParams.getValue()*/
+    console.log(this.predeterminedF.value);
+    let field = `filter.userATurn`;
+    if (this.predeterminedF.value) {
+      const token = this.authService.decodeToken();
+      let userId = 'FGAYTAN'; //token.preferred_username;
+      this.columnFilters[field] = `$eq:${userId}`;
+    } else {
+      delete this.columnFilters[field];
+    }
+
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
 
+    console.log(params);
     this.workService.getView(params).subscribe({
       next: (resp: any) => {
         console.log(resp);
@@ -205,10 +387,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           this.data = resp.data;
           this.totalItems = resp.count || 0;
           this.dataTable.load(resp.data);
+          this.dataTable.refresh();
           this.loading = false;
         }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        console.log(error);
+        this.dataTable.load([]);
+        this.dataTable.refresh(), (this.loading = false);
+      },
     });
   }
 
@@ -416,17 +603,24 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
   }
 
-  getGroupWork() {
+  getGroupWork($params: ListParams, predetermined?: boolean) {
     const token = this.authService.decodeToken();
     let userId = 'FGAYTAN'; //token.preferred_username;
     const params = new FilterParams();
-    params.addFilter('user', userId);
+    params.page = $params.page;
+    params.limit = $params.limit;
+
+    predetermined
+      ? (params.addFilter('predetermined', 'S'),
+        params.addFilter('user', userId))
+      : params.addFilter('user', userId);
+
     this.procedureManagementService
       .getManagamentGroupWork(params.getParams())
       .subscribe({
-        next: (resp: any) => {
-          if (resp.data) {
-            let groups = resp.data;
+        next: (respGW: any) => {
+          if (respGW.data) {
+            let groups = respGW.data;
             this.procedureManagementService
               .getManagamentArea({ limit: 20 })
               .subscribe({
@@ -451,7 +645,23 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   });
 
                   this.areas$ = new DefaultSelect(data, resp.count);
+
+                  //let managementArea=this.areas$.filter(ar=>ar.managementArea===groups.)
+                  console.log(data);
+                  predetermined
+                    ? this.filterForm.controls['managementArea'].setValue(
+                        data[0]
+                      )
+                    : this.filterForm.controls['managementArea'].setValue({});
+
+                  this.groupNumber = resp.data[0].groupNumber;
+                  this.managementArea = resp.data[0].managementArea;
+                  this.predetermined = resp.data[0].predetermined;
+                  this.send = resp.data[0].send;
+                  this.turnar = resp.data[0].turnar;
+                  this.watch = resp.data[0].watch;
                   console.log(this.areas$);
+                  this.getData();
                 },
                 error: error => (this.loading = false),
               });
@@ -565,5 +775,33 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(MailboxModalTableComponent, config);
+  
+  }
+
+  getUsers($params: ListParams) {
+    console.log($params);
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    //params.addFilter('assigned', 'S');
+    /*if (lparams?.text.length > 0)
+      
+    if (this.delDestinyNumber.value != null)
+      params.addFilter('delegationNumber', this.delDestinyNumber.value);
+    if (this.subDelDestinyNumber.value != null)
+      params.addFilter('subdelegationNumber', this.subDelDestinyNumber.value);*/
+    this.usersService.getAllSegUsers(params.getParams()).subscribe({
+      next: data => {
+        this.users$ = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.users$ = new DefaultSelect();
+      },
+    });
+    }
+  resetFilters(): void {
+    this.filterForm.reset();
+    this.getUser();
   }
 }

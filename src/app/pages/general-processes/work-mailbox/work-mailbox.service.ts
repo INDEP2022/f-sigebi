@@ -51,4 +51,55 @@ export class WorkMailboxService {
     const url = `${environment.API_URL}/notification/api/v1/notification?filter.wheelNumber=${wheelNumber}`;
     return this.htpp.get(url);
   }
+
+  /*getFile() {
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+      //'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    const url= 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43733'
+    return this.htpp.get(url,httpOptions)
+  }*/
+  /*getViewHistory () {
+    const url = `${environment.API_URL}historyindicator/api/v1/views/history-indicator-view`;
+
+    var raw = JSON.stringify({
+      "proceedingsNum": 642973,
+      "flierNum": 1206369
+    });
+    let newReq = this.request.clone();
+    const headers = new HttpHeaders();
+    newReq = this.request.clone({
+        headers: this.request.headers.set(
+          'body',
+          raw
+        ),
+    });
+
+    /*const httpOptions = {
+      method: 'GET',
+      headers: new HttpHeaders(),
+       "data": JSON.stringify({
+        "proceedingsNum": 642973,
+        "flierNum": 1206369
+      }),
+      redirect: 'follow'
+    };*/
+
+  /*newReq = this.request.clone({
+        headers: headers,
+    });*/
+  //this.htpp.options({requestOptions}).
+  /*return this.htpp.get(url);
+  }*/
+
+  //SERVICIO
+  /*getFile() {
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+      //'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    const url= 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43733'
+    return this.htpp.get(url,httpOptions)
+  }*/
 }

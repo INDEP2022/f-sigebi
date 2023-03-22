@@ -1,3 +1,5 @@
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const WORK_MAILBOX_COLUMNS = {
   columname: {
     title: 'Fecha',
@@ -147,10 +149,17 @@ export const WORK_MAILBOX_COLUMNS2 = {
   observation: {
     title: 'Observaciones',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      value !== null ? (value = value) : (value = '');
+    },
   },
   observationAdd: {
     title: 'Observaciones Add.',
     sort: false,
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      value !== null ? (value = value) : (value = '');
+    },
   },
   priority: {
     title: 'Prioridad',
