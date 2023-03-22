@@ -33,10 +33,13 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = TYPESWHAREHOUSE_COLUMS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
+      actions: {
+        ...this.settings.actions,
+        delete: true,
+        add: false,
+      },
       hideSubHeader: false,
     };
   }

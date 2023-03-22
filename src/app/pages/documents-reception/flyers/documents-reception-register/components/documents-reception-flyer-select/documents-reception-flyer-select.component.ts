@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { debounceTime, Subscription } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -31,11 +32,14 @@ export class DocumentsReceptionFlyerSelectComponent
   implements OnInit
 {
   flyerForm = this.fb.group({
-    flyerNumber: new FormControl<INotification>(null, [Validators.required]),
+    // flyerNumber: new FormControl<INotification>(null, [Validators.required]),
+    flyerNumber: new FormControl<string | number>(null, [Validators.required]),
   });
   flyers = new DefaultSelect<INotification>();
   callback?: (next: INotification) => void;
   globalVars: IGlobalVars;
+  obs: Subscription;
+  selectedFlyer: INotification = null;
   constructor(
     private fb: FormBuilder,
     private location: Location,
@@ -57,6 +61,9 @@ export class DocumentsReceptionFlyerSelectComponent
 
   ngOnInit(): void {
     this.getGlobalVars();
+    this.obs = this.flyerNumber.valueChanges
+      .pipe(debounceTime(700))
+      .subscribe(data => this.getNotification(data));
   }
 
   close() {
@@ -71,9 +78,37 @@ export class DocumentsReceptionFlyerSelectComponent
   }
 
   confirm() {
-    const flyerNumber = this.flyerForm.controls.flyerNumber.value;
-    this.modalRef.content.callback(flyerNumber);
+    // const flyerNumber = this.flyerForm.controls.flyerNumber.value;
+    // this.modalRef.content.callback(flyerNumber);
+    if (this.selectedFlyer == null) return;
+    this.modalRef.content.callback(this.selectedFlyer);
     this.modalRef.hide();
+  }
+
+  getNotification(flyer: number | string) {
+    if (flyer == null) return;
+    this.loading = true;
+    const flyerNumber = Number(flyer);
+    const params = new FilterParams();
+    params.addFilter('wheelNumber', flyerNumber);
+    this.notifService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          this.selectedFlyer = data.data[0];
+          this.flyerForm.controls['flyerNumber'].setErrors(null);
+          this.loading = false;
+        } else {
+          this.selectedFlyer = null;
+          this.flyerForm.controls['flyerNumber'].setErrors({ notFound: true });
+          this.loading = false;
+        }
+      },
+      error: () => {
+        this.selectedFlyer = null;
+        this.flyerForm.controls['flyerNumber'].setErrors({ notFound: true });
+        this.loading = false;
+      },
+    });
   }
 
   getNotifications(lparams: ListParams) {

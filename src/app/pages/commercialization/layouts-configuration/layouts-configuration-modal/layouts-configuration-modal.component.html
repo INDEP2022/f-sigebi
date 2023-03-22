@@ -5,11 +5,15 @@
   <div body>
     <form class="form-material" [formGroup]="providerForm">
       <div class="row">
-        <!-- <div class="col-md-3">
+        <div class="col-md-3">
           <form-field [control]="providerForm.get('idLayout')" label="Layout">
-            <input type="number" class="form-control" formControlName="idLayout" readonly />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idLayout"
+              readonly />
           </form-field>
-        </div> -->
+        </div>
         <div class="col-md-3">
           <form-field [control]="providerForm.get('idConsec')" label="idConsec">
             <input

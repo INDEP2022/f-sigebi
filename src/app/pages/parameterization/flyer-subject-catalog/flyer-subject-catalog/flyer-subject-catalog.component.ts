@@ -161,7 +161,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
           this.totalItems2 = response.count;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => (this.showNullRegister(), (this.loading = false)),
       });
   }
 
@@ -239,5 +239,24 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairTypeService.remove(id).subscribe({
       next: () => this.getAffairAll(),
     });
+  }
+
+  //Msj de que no existe volante de asunto
+  showNullRegister() {
+    this.alertQuestion(
+      'warning',
+      'Asunto sin volantes',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm();
+      }
+    });
+  }
+
+  //Muestra información de la fila seleccionada de asuntos
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 }

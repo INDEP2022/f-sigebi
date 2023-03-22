@@ -5,11 +5,11 @@ const ERROR_FORM = 'Completa los campos correctamente.';
 const ERROR_FORM_NOT_INSERT =
   'Completa al menos un campo de la busqueda para continuar.';
 const ERROR_FORM_SEARCH_OFICIO_AVERIGUACION_PREVIA =
-  'Buscando transferencias PGR por Oficio PGR y Averiguación Previa.';
+  'Buscando transferencias FGR por Oficio FGR y Averiguación Previa.';
 const ERROR_FORM_SEARCH_OFICIO_PGR =
-  'Buscando transferencias PGR por Oficio PGR.';
+  'Buscando transferencias FGR por Oficio FGR.';
 const ERROR_FORM_SEARCH_AVERIGUACION_PREVIA =
-  'Buscando transferencias PGR por Averiguación Previa.';
+  'Buscando transferencias FGR por Averiguación Previa.';
 const ERROR_EXPORT = 'No existen registros para exportar.';
 const ERROR_FORM_FECHA =
   'La fecha de inicio debe ser menor o igual a la fecha final.';

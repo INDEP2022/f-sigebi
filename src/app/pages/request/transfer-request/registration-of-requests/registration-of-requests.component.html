@@ -62,10 +62,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">Fecha de Solicitud&#58;</label>
-                  {{
-                    registRequestForm.get('applicationDate').value
-                      | date: 'dd/MM/yyyy'
-                  }}
+                  {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                 </div>
               </div>
               <div class="col-md-4">
@@ -77,7 +74,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">No&#46; Solicitud&#58;</label>
-                  {{ registRequestForm.get('id').value }}
+                  {{ infoRequest?.id }}
                 </div>
               </div>
             </div>
@@ -132,12 +129,22 @@
                 </div>
               </div>
             </div>
+            <div class="row pt-2">
+              <div
+                class="col-md-4"
+                *ngIf="registRequestForm?.get('recordId').value !== null">
+                <div>
+                  <label for="">No&#46; Expediente&#58;</label>
+                  {{ registRequestForm?.get('recordId').value }}
+                </div>
+              </div>
+            </div>
           </div>
         </app-card>
 
         <div class="row pt-2">
           <tabset class="md-tabs" #staticTabs>
-            <tab heading="{{ tab1 }}" id="tab1">
+            <tab [heading]="tab1" id="tab1">
               <!-- Registro de Solicitudes o bines -->
               <app-request-record-tab
                 *ngIf="requestRegistration"
@@ -175,7 +182,9 @@
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->
-              <app-clarifications *ngIf="validateDocument"></app-clarifications>
+              <app-clarifications
+                [requestObject]="requestData"
+                *ngIf="validateDocument"></app-clarifications>
               <!-- fin -->
               <!-- notificar aclaraciones o improcedencias -->
               <app-notification-assets-tab

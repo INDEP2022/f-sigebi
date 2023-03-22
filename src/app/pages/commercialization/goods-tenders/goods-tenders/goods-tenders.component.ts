@@ -18,7 +18,7 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
   minDate: Date;
 
   pdfurl =
-    'https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing';
+    'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
   constructor(
     private fb: FormBuilder,
@@ -95,7 +95,7 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERDESLICITXBIEN.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${params.PN_SUBDELEGACION}&NO_LICITACION1=${params.NO_LICITACION1}&DESC_LICIT=${params.DESC_LICIT}&PF_FECINI=${params.PF_FECINI}&PF_FECFIN=${params.PF_FECFIN}`;
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'FGERDESLICITXBIEN.pdf');
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');

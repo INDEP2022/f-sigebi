@@ -38,4 +38,9 @@ export class ParameterModService extends HttpService {
     const route = `${this.endpoint}/id/${id}`;
     return this.delete(route);
   }
+
+  newRemove(model: IParameter) {
+    const route = `${this.endpoint}`;
+    return this.delete(route, model);
+  }
 }

@@ -13,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   FilterParams,
   ListParams,
@@ -45,10 +46,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsModalRef: BsModalRef;
   checked: string = 'checked';
   userName: string = '';
-  idsObject: any = {
-    idTransferer: null,
-    idStation: null,
-  };
+  idTransferer: number = null;
+  idStation: number = null;
 
   selectRegionalDeleg = new DefaultSelect<any>();
   selectEntity = new DefaultSelect<any>();
@@ -72,7 +71,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   requestService = inject(RequestService);
 
   selectedRegDel: any = null;
-  authorityName: string = '';
 
   constructor(
     public fb: FormBuilder,
@@ -91,7 +89,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
-          this.idsObject.idTransferer = Number(data);
+          this.idTransferer = data;
           this.getStation(data);
         }
       }
@@ -100,23 +98,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
-          this.idsObject.idStation = Number(data);
-          this.getAuthority(new ListParams(), this.idsObject);
-        }
-      }
-    );
-
-    this.requestForm.controls['authorityId'].valueChanges.subscribe(
-      (data: any) => {
-        if (data) {
-          console.log(this.selectAuthority.data);
-          this.authorityName = this.selectAuthority.data.filter(
-            x => x.idAuthority === data
-          )[0].authorityName;
-
-          console.log(this.authorityName);
-        } else {
-          this.authorityName = '';
+          this.idStation = data;
+          this.getAuthority(new ListParams());
         }
       }
     );
@@ -126,7 +109,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm = this.fb.group({
       id: [null],
       applicationDate: [{ value: null, disabled: true }],
-      paperNumber: [null, [Validators.required, Validators.maxLength(40)]],
+      paperNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
       transferenceId: [null, Validators.required],
       keyStateOfRepublic: [null, Validators.required],
@@ -189,22 +179,26 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getStation(id: any) {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${id}`;
+    params['filter.stationName'] = `$ilike:${params.text}`;
     params.limit = 30;
     this.stationService.getAll(params).subscribe((data: IListResponse<any>) => {
       this.selectStation = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getAuthority(params: ListParams, paramsObject?: any) {
-    params.limit = 30;
+  getAuthority(params: ListParams) {
+    params['filter.authorityName'] = `$ilike:${params.text}`;
+    params['filter.idStation'] = `$eq:${this.idStation}`;
+    params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
     this.authorityService
-      .postByColumns(params, paramsObject)
+      .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });
   }
 
   getTransferent(params?: ListParams) {
+    params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
     this.transferentService
       .getAll(params)
@@ -245,12 +239,19 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   save() {
     this.loadingTurn = true;
-    this.requestForm.get('requestStatus').patchValue('POR_TURNAR');
-    this.requestForm.controls['applicationDate'].setValue(
-      new Date().toISOString().toString()
-    );
-    let form = this.requestForm.getRawValue();
-    this.requestService.create(form).subscribe(
+    const form = this.requestForm.getRawValue();
+
+    form.requestStatus = 'POR_TURNAR';
+    let date = this.requestForm.controls['applicationDate'].value;
+    form.applicationDate = date.toISOString();
+
+    let action = null;
+    if (form.id === null) {
+      action = this.requestService.create(form);
+    } else {
+      action = this.requestService.update(form.id, form);
+    }
+    action.subscribe(
       (data: any) => {
         this.loadingTurn = false;
         this.msgModal(
@@ -277,13 +278,18 @@ export class RequestFormComponent extends BasePage implements OnInit {
       return;
     }
 
-    this.requestForm.get('requestStatus').patchValue('A_TURNAR');
-    this.requestForm.controls['applicationDate'].setValue(
-      new Date().toISOString().toString()
-    );
-
     this.loadingTurn = true;
-    let form = this.requestForm.getRawValue();
+    debugger;
+    const form = this.requestForm.getRawValue();
+
+    form.requestStatus = 'A_TURNAR';
+    let date = this.requestForm.controls['applicationDate'].value;
+    form.applicationDate = date.toISOString();
+    //this.requestForm.get('requestStatus').patchValue('A_TURNAR');
+
+    /*this.requestForm.controls['applicationDate'].setValue(
+      new Date().toISOString().toString()
+    );*/
 
     let action = null;
     if (form.id === null) {

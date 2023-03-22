@@ -37,9 +37,4 @@ export class SubBrandsListComponent
       columns: COLUMNS2,
     };
   }
-
-  ngOnInit(): void {
-    this.dinamicFilterUpdate();
-    this.searchParams();
-  }
 }

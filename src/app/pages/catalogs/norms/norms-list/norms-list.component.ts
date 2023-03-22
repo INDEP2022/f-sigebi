@@ -55,8 +55,10 @@ export class NormsListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
             filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              ? ((searchFilter = SearchFilter.EQ),
+                (field = `filter.${filter.field}`))
+              : ((searchFilter = SearchFilter.ILIKE),
+                (field = `filter.${filter.field}`));
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -79,9 +81,14 @@ export class NormsListComponent extends BasePage implements OnInit {
     };
     this.normService.getAll(params).subscribe({
       next: response => {
-        this.columns = response.data;
-        this.getList();
-        this.totalItems = response.count;
+        //TODO:Solicitar que se regrese un array vacio cuando no hay elementos
+        if (typeof response.data !== 'undefined' && response.data.length > 0) {
+          this.columns = response.data;
+          this.totalItems = response.count || 0;
+          this.getList();
+        } else {
+          this.loading = false;
+        }
       },
       error: error => (this.loading = false),
     });

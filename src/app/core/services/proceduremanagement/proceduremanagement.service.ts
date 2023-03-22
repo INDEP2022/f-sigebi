@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { ProcedureManagementEndPoints } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
+import {
+  MassiveChargeGoods,
+  ProcedureManagementEndPoints,
+} from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -130,6 +133,21 @@ export class ProcedureManagementService extends HttpService {
         this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
       })
     );
+  }
+
+  uploadExcelMassiveChargeGoods(
+    data: any,
+    requestId: string,
+    user: string
+  ): Observable<any> {
+    this.microservice = MassiveChargeGoods.base;
+    const route = MassiveChargeGoods.MassiveChargeGoodExcel;
+    let formData = new FormData();
+    formData.append('file', data);
+    formData.append('request', requestId);
+    formData.append('user', user);
+
+    return this.post<any>(route, formData);
   }
 
   update(

@@ -35,66 +35,7 @@ const routes: Routes = [
       ).SamplingAssetsModule,
     data: { title: 'Muestreo Bienes', screen: 'MUESTREOBIENES' },
   },
-  {
-    path: 'verify-noncompliance',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/generate-formats-verify-noncompliance/generate-formats-verify-noncompliance.module'
-        )
-      ).GenerateFormatsVerifyNoncomplianceModule,
-    data: { title: 'Generar formatos para verificar el incumplimiento' },
-  },
-  {
-    path: 'verify-warehouse-assets',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/warehouse-verification/warehouse-verification.module'
-        )
-      ).WarehouseVerificationModule,
-    data: { title: 'Verificación de Bienes de Almacen' },
-  },
-  {
-    path: 'restitution-of-assets',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/restitution-assets-numeric-or-sort/restitution-assets-numeric-or-sort.module'
-        )
-      ).RestitutionAssetsNumericOrSortModule,
-    data: { title: 'Restitución de Bienes' },
-  },
-  {
-    path: 'assets-classification',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/assets-classification/assets-classification.module'
-        )
-      ).AssetsClassificationModule,
-    data: { title: 'Clasificacion de Bienes' },
-  },
-  {
-    path: 'deposit-payment-validations',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/deposit-payment-validations/deposit-payment-validations.module'
-        )
-      ).DepositPaymentValidationsModule,
-    data: { title: 'Validación de pagos de fichas de deposito' },
-  },
-  {
-    path: 'assets-approval',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/assets-approval/assets-approval.module'
-        )
-      ).AssetsApprovalModule,
-    data: { title: 'Aprobación de bienes' },
-  },
+  //Solicitud de transferencia
   {
     path: 'transfer-request',
     loadChildren: async () =>
@@ -102,6 +43,18 @@ const routes: Routes = [
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
   },
+  //Generacion de muestreo para supervicon (bienes)
+  {
+    path: 'generate-monitoring-sampling',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/generate-sampling-supervision.module'
+        )
+      ).GenerateSamplingSupervisionModule,
+    data: { title: 'Generar Muestreo Para Supervisión (Bienes)' },
+  },
+
   //Generacion de muestreo para supervicon (servicio ordenes)
   {
     path: 'generate-sampling-service-orders',
@@ -111,7 +64,7 @@ const routes: Routes = [
           './generate-sampling-supervision-service-orders/generate-sampling-supervision-service-orders.module'
         )
       ).GenerateSamplingSupervisionServiceOrdersModule,
-    data: { title: 'Solicitudes de transferencia' },
+    data: { title: 'Generar Muestreo para Supervision (Ordenes de servicio)' },
   },
   //Gestionar Bienes Similares
   {

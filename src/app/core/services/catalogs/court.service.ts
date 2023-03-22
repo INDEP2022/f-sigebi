@@ -1,29 +1,31 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
+import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ICourt } from '../../models/catalogs/court.model';
 @Injectable({
   providedIn: 'root',
 })
-export class CourtService implements ICrudMethods<ICourt> {
+export class CourtService extends HttpService implements ICrudMethods<ICourt> {
   private readonly route: string = ENDPOINT_LINKS.Court;
-  constructor(
-    private courtRepository: Repository<ICourt>,
-    private httpClient: HttpClient
-  ) {}
+  constructor(private courtRepository: Repository<ICourt>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<ICourt>> {
     return this.courtRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<ICourt> {
-    return this.courtRepository.getById(this.route, id);
+    const segments = this.route.split('/');
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route);
+    // return this.courtRepository.getById(this.route, id);
   }
 
   create(model: ICourt): Observable<ICourt> {
@@ -35,13 +37,11 @@ export class CourtService implements ICrudMethods<ICourt> {
   }
 
   updateCourt(model: ICourt) {
-    return this.httpClient.put(
-      `${environment.API_URL}catalog/api/v1/court`,
-      model
-    );
+    return this.put(`court`, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.courtRepository.remove(this.route, id);
+    const route2 = `${this.route}/id/`;
+    return this.courtRepository.remove(route2, id);
   }
 }

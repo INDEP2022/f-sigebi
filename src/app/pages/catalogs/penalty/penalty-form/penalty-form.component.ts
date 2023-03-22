@@ -35,19 +35,18 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       serviceType: [null, Validators.required],
       penaltyPercentage: [
         null,
-        Validators.required,
-        Validators.pattern(DOUBLE_PATTERN),
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
       ],
       equivalentDays: [
         null,
         [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
       ],
-      version: [null],
-      status: [null],
+      version: [1],
+      status: [1],
       contractNumber: [null, Validators.required],
     });
-    this.penaltyForm.controls['version'].setValue(1);
-    this.penaltyForm.controls['status'].setValue(1);
+    //this.penaltyForm.controls['version'].setValue(1);
+    //this.penaltyForm.controls['status'].setValue(1);
     if (this.penalty != null) {
       this.edit = true;
       this.penaltyForm.patchValue(this.penalty);

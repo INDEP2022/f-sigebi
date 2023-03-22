@@ -8,12 +8,17 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import { RdFShiftChangeComponent } from '../../documents-reception/flyers/shift-change/shift-change.component';
 import { FileDataUpdateComponent } from './file-data-update/file-data-update.component';
 
 const routes: Routes = [
   {
     path: '',
     component: FileDataUpdateComponent,
+  },
+  {
+    path: 'shift-change',
+    component: RdFShiftChangeComponent,
   },
 ];
 @NgModule({

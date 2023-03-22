@@ -184,6 +184,28 @@
                 </div>
             </div>
         -->
+      <div class="dropdown d-flex justify-content-end help-button-container">
+        <button
+          type="button"
+          class="btn header-item"
+          (click)="binnacle()"
+          tooltip="Bitácora del sistema"
+          placement="bottom">
+          <i
+            class="fa fa-book text-secondary custom-button"
+            aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="btn header-item"
+          (click)="help()"
+          tooltip="Ayuda"
+          placement="bottom">
+          <i
+            class="fa fa-question-circle text-info custom-button"
+            aria-hidden="true"></i>
+        </button>
+      </div>
       <div class="dropdown d-inline-block" dropdown>
         <button
           type="button"

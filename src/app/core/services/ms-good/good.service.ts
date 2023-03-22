@@ -7,6 +7,8 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDescriptionByNoGoodBody,
   IDescriptionByNoGoodResponse,
+  IFromGoodsAndExpedientsBody,
+  IFromGoodsAndExpedientsResponse,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
 import { IGood } from '../../models/ms-good/good';
@@ -158,6 +160,12 @@ export class GoodService extends HttpService {
   }
   getDescriptionGoodByNoGood(body: IDescriptionByNoGoodBody) {
     return this.post<IListResponse<IDescriptionByNoGoodResponse>>(
+      GoodEndpoints.DiStatusGood,
+      body
+    );
+  }
+  getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
+    return this.post<IListResponse<IFromGoodsAndExpedientsResponse>>(
       GoodEndpoints.DiStatusGood,
       body
     );

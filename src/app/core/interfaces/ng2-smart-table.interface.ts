@@ -6,10 +6,20 @@ export interface ICreateConfirmEvent<T> {
   confirm: IConfirm<T>;
 }
 
+export interface IDeleteExternalEvent<T> {
+  data: T;
+  source: DataSource;
+}
+
 export interface IDeleteConfirmEvent<T> {
   data: T;
   source: DataSource;
   confirm: IConfirm<T>;
+}
+
+export interface IEditExternalEvent<T> {
+  data: T;
+  source: DataSource;
 }
 
 export interface IEditConfirmEvent<T> {
