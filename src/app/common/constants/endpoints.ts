@@ -147,7 +147,7 @@ export enum ENDPOINT_LINKS {
   NumeraryCategories = 'numerary-categories',
   NumeraryCategoriesAutom = 'categorization-autom-numerary',
   tevents = 'event/comer-tevents',
-  usuxtpevents = 'event/comer-usuxtpevents',
+  usuxtpevents = 'event/application/paComerUsuxtpevents',
   security = 'security/seg-profile',
   //request
   request = 'request',

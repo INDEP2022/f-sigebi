@@ -124,7 +124,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
-  openProceeding = false;
 
   constructor(
     private fb: FormBuilder,
@@ -385,6 +384,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(res => {
       console.log(res);
     });
+  }
+
+  openProceeding() {
+    this.form.get('fecCaptura').setValue(new Date());
   }
 
   //"Acta 2"
