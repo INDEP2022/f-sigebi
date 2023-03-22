@@ -983,11 +983,12 @@ export class JuridicalRecordUpdateComponent
   }
 
   openToShiftChange() {
-    this.fileUpdateService.juridicalFileDataUpdateForm =
-      this.fileDataUpdateForm.value;
+    // this.fileUpdateService.juridicalFileDataUpdateForm =
+    //   this.fileDataUpdateForm.value;
     this.fileUpdComService.juridicalShiftChangeParams = {
       iden: this.formControls.wheelNumber.value,
       exp: this.formControls.expedientNumber.value,
+      pNoTramite: this.procedureId,
     };
     this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
   }
@@ -1294,7 +1295,12 @@ export class JuridicalRecordUpdateComponent
   }
 
   getInstitutions(lparams: ListParams) {
-    this.fileUpdateService.getInstitutions(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+    this.fileUpdateService.getInstitutions(params.getParams()).subscribe({
       next: data => {
         this.institutions = new DefaultSelect(data.data, data.count);
       },
