@@ -1,10 +1,12 @@
 <div class="d-flex flex-wrap mb-4" *ngIf="show">
   <div class="flex mb-2" *ngFor="let path of paths; let i = index">
-    <span class="tag font-weight-bold siab-color mr-3">
+    <span
+      class="tag font-weight-bold siab-color mr-1 text-truncate"
+      [title]="path">
       <i class="bx bx-folder" *ngIf="i == 0"></i> {{ path }}
     </span>
     <i
-      class="bx bx-chevron-right mr-3 font-weight-bold"
+      class="bx bx-chevron-right mr-1 font-weight-bold"
       *ngIf="i < paths.length - 1"></i>
   </div>
 </div>

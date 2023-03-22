@@ -16,10 +16,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
         font-size: 12px;
         background-color: rgb(157 36 73 / 50%);
         border-radius: 12px;
-        display: flex;
+        display: block;
         align-items: center;
         justify-content: center;
-        gap: 4px;
+        padding: 3px 10px;
+        max-width: 150px;
       }
 
       .flex {
