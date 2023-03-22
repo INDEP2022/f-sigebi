@@ -21,7 +21,11 @@ export class DeletePeriodComponent {
   });
 
   public delegations = new DefaultSelect();
-  public procesess = new DefaultSelect();
+  // public procesess = new DefaultSelect();
+  processes = [
+    { id: 1, name: 'Supervisión' },
+    { id: 2, name: 'Validación' },
+  ];
 
   isLoading = false;
 
@@ -33,19 +37,17 @@ export class DeletePeriodComponent {
       this.form.markAllAsTouched();
       return;
     }
-
-    // console.log(this.form.value);
   }
 
-  public getDelegations(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
-  }
+  // public getDelegations(event: any) {
+  //   // this.bankService.getAll(params).subscribe(data => {
+  //   //   this.banks = new DefaultSelect(data.data, data.count);
+  //   // });
+  // }
 
-  public getProcesess(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
-  }
+  // public getProcesess(event: any) {
+  //   // this.bankService.getAll(params).subscribe(data => {
+  //   //   this.banks = new DefaultSelect(data.data, data.count);
+  //   // });
+  // }
 }

@@ -31,6 +31,7 @@ export class PercentagesSurveillanceComponent
     { name: 'Ferronal', value: 1 },
     { name: 'Sae', value: 2 },
   ];
+
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   dialogPercentageRef: BsModalRef;
@@ -42,6 +43,7 @@ export class PercentagesSurveillanceComponent
     delegationNumber: new FormControl('', [Validators.required]),
     delegationType: new FormControl('', [Validators.required]),
   });
+
   constructor(
     private survillanceService: SurvillanceService,
     private dialogService: BsModalService
