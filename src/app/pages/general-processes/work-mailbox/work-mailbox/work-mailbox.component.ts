@@ -25,6 +25,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
@@ -35,7 +36,9 @@ import { INDICATORS_HISTORY_COLUMNS } from '../utils/indicators-history-columns'
 import {
   FLYER_HISTORY_TITLE,
   INDICATORS_HISTORY_TITLE,
+  RELATED_FOLIO_TITLE,
 } from '../utils/modal-titles';
+import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
@@ -104,7 +107,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private historicalProcedureManagementService: HistoricalProcedureManagementService,
     private modalService: BsModalService,
     private goodsQueryService: GoodsQueryService,
-    private historyIndicatorService: HistoryIndicatorService
+    private historyIndicatorService: HistoryIndicatorService,
+    private documentsService: DocumentsService
   ) {
     super();
     this.settings.actions = false;
@@ -516,5 +520,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
       return;
     }
+    // this.getDocumentsByFlyer(this.selectedRow?.flierNumber).subscribe();
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    const title = RELATED_FOLIO_TITLE;
+    const $params = new BehaviorSubject(params);
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+      },
+    };
+    // this.modalService.show(MailboxModalTableComponent, config);
   }
 }
