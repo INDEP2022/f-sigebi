@@ -3,6 +3,7 @@ export const IDENTIFIER_COLUMNS = {
     title: 'Código',
     type: 'string',
     sort: false,
+    width: '10%',
   },
 
   description: {

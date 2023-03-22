@@ -8,6 +8,7 @@ import { IInstitutionClassification } from 'src/app/core/models/catalogs/institu
 import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
 import Swal from 'sweetalert2';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
+import { InstitutionClasificationModalComponent } from '../institution-clasification-modal/institution-clasification-modal.component';
 import { IssuingInstitutionFormComponent } from '../issuing-institution-form/issuing-institution-form.component';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 import {
@@ -53,7 +54,12 @@ export class IssuingInstitutionListComponent
     this.settings = {
       ...this.settings,
       hideSubHeader: true,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        position: 'right',
+      },
       columns: { ...INSTITUTION_COLUMNS },
     };
     this.settings2 = {
@@ -76,17 +82,53 @@ export class IssuingInstitutionListComponent
   }
 
   getInstitutionClassification() {
-    this.loading = true;
+    this.loading1 = true;
     this.institutionClasificationService
       .getAll2(this.params.getValue())
       .subscribe({
         next: response => {
           this.institutionClassificationList = response.data;
           this.totalItems = response.count;
-          this.loading = false;
+          this.loading1 = false;
         },
-        error: error => (this.loading = false),
+        error: error => (this.loading1 = false),
       });
+  }
+
+  //Modal para actualizar las instituciones
+  openForm2(institute?: IInstitutionClassification) {
+    let config: ModalOptions = {
+      initialState: {
+        institute,
+        callback: (next: boolean) => {
+          if (next) this.getInstitutionClassification();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(InstitutionClasificationModalComponent, config);
+  }
+
+  //msj de alerta para borrar Clasificaciones instituciones
+  showDeleteAlert2(institute?: IInstitutionClassification) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete2(institute.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  //Método para borrar Clasificaciones instituciones
+  delete2(id: number) {
+    this.institutionClasificationService.remove(id).subscribe({
+      next: () => this.getInstitutionClassification(),
+    });
   }
 
   //Selecciona fila de tabla de transferente para ver los estados
@@ -111,10 +153,24 @@ export class IssuingInstitutionListComponent
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
-        error: error => (this.loading2 = false),
+        error: error => (this.showNullRegister1(), (this.loading2 = false)),
       });
   }
 
+  //Msj de que no existe autoridades emisoras para la institución seleccionado
+  showNullRegister1() {
+    this.alertQuestion(
+      'warning',
+      'Institución sin autoridades emisoras',
+      '¿Desea agregarlas ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm();
+      }
+    });
+  }
+
+  //Modal para actualizar las instituciones
   openForm(issuingInstitution?: IIssuingInstitution) {
     const idInstitute = { ...this.institutes };
     let config: ModalOptions = {
@@ -122,7 +178,7 @@ export class IssuingInstitutionListComponent
         issuingInstitution,
         idInstitute,
         callback: (next: boolean) => {
-          if (next) this.getIssuingInstitution();
+          if (next) this.getIssuingInstitution(idInstitute.id);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -137,6 +193,7 @@ export class IssuingInstitutionListComponent
     this.rowSelected = true;
   }
 
+  //msj de alerta para borrar autoridades emisoras
   showDeleteAlert(issuingInstitution?: IIssuingInstitution) {
     this.alertQuestion(
       'warning',
@@ -150,9 +207,13 @@ export class IssuingInstitutionListComponent
     });
   }
 
+  //Método para borrar autoridades emisoras
   delete(id: number) {
+    const idInstitute = { ...this.institutes };
     this.issuingInstitutionService.remove2(id).subscribe({
-      next: () => this.getIssuingInstitution(),
+      next: () => (
+        this.getIssuingInstitution(idInstitute.id), (this.loading2 = true)
+      ),
     });
   }
 
