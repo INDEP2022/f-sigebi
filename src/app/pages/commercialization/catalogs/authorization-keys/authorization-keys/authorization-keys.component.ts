@@ -50,11 +50,12 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
     let _id = this.eventForm.controls['id'].value;
     console.log(_id);
     this.loading = true;
-    this.comerEventosService.getById(_id).subscribe(
+    this.comerEventosService.getById2(_id).subscribe(
       response => {
         //TODO: Validate Response
         if (response !== null) {
-          this.eventForm.patchValue(response);
+          console.log(response.data);
+          this.eventForm.patchValue(response.data[0]['id']);
           this.eventForm.updateValueAndValidity();
           let key = this.eventForm.controls['id'].value;
           this.form.controls['txtEncrip'].setValue(key);

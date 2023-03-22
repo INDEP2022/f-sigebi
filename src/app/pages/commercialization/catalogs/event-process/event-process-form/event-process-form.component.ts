@@ -4,12 +4,15 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 //models
-import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  IComerEvent,
+  IComerEventRl,
+} from 'src/app/core/models/ms-event/event.model';
 //Services
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/maintenance-delegations/delegation.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -21,8 +24,9 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
   title: string = 'Evento';
   edit: boolean = false;
 
+  comerEventRlForm: ModelForm<IComerEventRl>;
   comerEventForm: ModelForm<IComerEvent>;
-  comerEvent: IComerEvent;
+  comerEvent: IComerEventRl;
 
   delegations = new DefaultSelect();
   typeEvent = new DefaultSelect();
@@ -41,6 +45,7 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.comerEventForm);
   }
 
   private prepareForm() {
@@ -74,10 +79,18 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
       tpsolavalId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       applyIva: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+
+    this.comerEventRlForm = this.fb.group({
+      eventDadId: [null, [Validators.required]],
+      registrationNumber: [null, [Validators.required]],
+      id: [this.comerEventForm, [Validators.required]],
+    });
+
     if (this.comerEvent != null) {
       this.edit = true;
       console.log(this.comerEvent);
-      this.comerEventForm.patchValue(this.comerEvent);
+      this.comerEventRlForm.patchValue(this.comerEvent);
+      this.comerEventForm.patchValue(this.comerEventRlForm.get('id').value);
     }
   }
 
@@ -98,9 +111,10 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
   }
 
   update() {
+    console.log(this.comerEventRlForm.value);
     this.loading = true;
     this.comerEventosService
-      .update(this.comerEvent.id, this.comerEventForm.value)
+      .update(this.comerEvent.id.id, this.comerEventRlForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
