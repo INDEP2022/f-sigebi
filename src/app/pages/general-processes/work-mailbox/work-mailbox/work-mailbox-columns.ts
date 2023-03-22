@@ -131,7 +131,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
   },
   descentfed: {
-    title: 'Descent. Fed',
+    title: 'Desc.Entidad Fed.',
     sort: false,
   },
   businessDays: {

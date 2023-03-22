@@ -173,73 +173,83 @@
           </form-check>
         </div>
       </div>-->
-      <div class="row justify-content-end">
-        <div class="col">
-          <div class="btn-group" dropdown>
-            <button
-              id="button-basic"
-              dropdownToggle
-              type="button"
-              class="btn btn-primary btn-sm active dropdown-toggle"
-              aria-controls="dropdown-basic">
-              Acciones <span class="caret"></span>
-            </button>
-            <ul
-              id="dropdown-basic"
-              *dropdownMenu
-              class="dropdown-menu"
-              role="menu"
-              aria-labelledby="button-basic">
-              <li role="menuitem">
-                <a class="dropdown-item" (click)="work()">Trabajar</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" (click)="acptionAntecedente()"
-                  >Antecedente</a
-                >
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" href="#">Turnar</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" href="#">Observaciones</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" href="#">Volante</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" href="#">Solicitud</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" href="#">Replicar</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" href="#">Im&aacute;genes</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" (click)="acptionBienes()">Bienes</a>
-              </li>
-              <li role="menuitem">
-                <a
-                  class="dropdown-item"
-                  [class.disabled]="!selectedRow"
-                  (click)="viewFlyerHistory()"
-                  >Historial</a
-                >
-              </li>
-              <li role="menuitem">
-                <a
-                  class="dropdown-item"
-                  [class.disabled]="!selectedRow"
-                  (click)="viewIndicatorsHistory()"
-                  >Historico Indicadores</a
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-3 text-end">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+    <div class="row justify-content-end">
+      <div class="col">
+        <div class="btn-group" dropdown>
+          <button
+            id="button-basic"
+            dropdownToggle
+            type="button"
+            class="btn btn-primary btn-sm active dropdown-toggle"
+            aria-controls="dropdown-basic">
+            Acciones <span class="caret"></span>
+          </button>
+          <ul
+            id="dropdown-basic"
+            *dropdownMenu
+            class="dropdown-menu"
+            role="menu"
+            aria-labelledby="button-basic">
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="workFunction('work')"
+                >Trabajar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('acptionAntecedente')"
+                >Antecedente</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Turnar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Observaciones</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Volante</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Solicitud</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Replicar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Im&aacute;genes</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="acptionBienes()">Bienes</a>
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('viewFlyerHistory')"
+                >Historial</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('viewIndicatorsHistory')"
+                >Hist&oacute;rico Indicadores</a
+              >
+            </li>
+          </ul>
         </div>
       </div>
       <div class="col-3 text-end">

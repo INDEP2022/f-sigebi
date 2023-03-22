@@ -48,7 +48,6 @@ import {
 } from './work-mailbox-columns';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-work-mailbox',
@@ -148,11 +147,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private globalVarsService: GlobalVarsService,
     private authService: AuthService,
     private historicalProcedureManagementService: HistoricalProcedureManagementService,
-    private modalService: BsModalService,
     private goodsQueryService: GoodsQueryService,
     private historyIndicatorService: HistoryIndicatorService,
     private usersService: UsersService,
-
     private modalService: BsModalService,
     private sanitizer: DomSanitizer
   ) {
@@ -188,10 +185,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               case 'processNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'status':
+              case 'processStatus':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'version':
+              /*case 'version':
                 searchFilter = SearchFilter.EQ;
                 break;*/
               default:
@@ -199,7 +196,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
             }
 
-            if (filter.search !== '') {
+            if (filter.search !== '' && filter.search.length >= 3) {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -322,14 +319,16 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = 'FGAYTAN'; //token.preferred_username;
       this.columnFilters[field] = `$eq:${userId}`;
+    } else if (user !== null) {
+      this.columnFilters[field] = `$eq:${user.id}`;
     } else {
       delete this.columnFilters[field];
     }
 
-    if (user !== null) {
+    /*if () {
       field = `filter.userATurn`;
-      this.columnFilters[field] = `$eq:${user.id}`;
-    }
+      
+    }*/
 
     this.getData();
   }
@@ -369,9 +368,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = 'FGAYTAN'; //token.preferred_username;
       this.columnFilters[field] = `$eq:${userId}`;
-    } else {
+    } /* else {
       delete this.columnFilters[field];
-    }
+    }*/
 
     this.loading = true;
     let params = {
@@ -394,7 +393,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.dataTable.load([]);
-        this.dataTable.refresh(), (this.loading = false);
+        this.totalItems = 0;
+        this.dataTable.refresh();
+        this.loading = false;
       },
     });
   }
@@ -775,7 +776,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(MailboxModalTableComponent, config);
-  
   }
 
   getUsers($params: ListParams) {
@@ -799,9 +799,53 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.users$ = new DefaultSelect();
       },
     });
-    }
+  }
+
   resetFilters(): void {
     this.filterForm.reset();
     this.getUser();
+  }
+
+  notAvailable(): void {
+    this.alertQuestion(
+      'info',
+      'No disponible',
+      'Funcionalidad no disponible en este momento'
+    );
+  }
+
+  workFunction(action: string): void {
+    if (this.selectedRow !== null) {
+      switch (action) {
+        case 'work':
+          this.work();
+          break;
+        case 'acptionAntecedente':
+          this.acptionAntecedente();
+          break;
+        case 'acptionBienes':
+          this.acptionBienes();
+          break;
+        case 'viewFlyerHistory':
+          this.viewFlyerHistory();
+          break;
+        case 'viewIndicatorsHistory':
+          this.viewIndicatorsHistory();
+          break;
+        default:
+          this.alertQuestion(
+            'info',
+            'No disponible',
+            'Funcionalidad no disponible en este momento'
+          );
+          break;
+      }
+    } else {
+      this.alertQuestion(
+        'info',
+        'No ha seleccionao ningún registro',
+        'Por favor seleccione un registro, para poder ejecutar la acción'
+      );
+    }
   }
 }
