@@ -17,7 +17,7 @@
     </div>
     <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-4">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-check label="Prioridad" for="urgentPriority">
             <input
               id="urgentPriority"
@@ -54,7 +54,7 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('receptionDate')"
             label="Fecha de Recepci&oacute;n">
@@ -67,7 +67,7 @@
               [disabled]="true" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('paperDate')"
             label="Fecha de Ofici&oacute;">
@@ -80,28 +80,7 @@
               (bsValueChange)="changeDateEvent($event)" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="typeRecord"
-            (fetchItems)="getTypeExpedient($event)"
-            [data]="selectTypeExpedient"
-            [searchable]="false"
-            label="Tipo Expediente"
-            bindLabel="description"
-            value="description">
-          </ngx-select>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="requestForm.get('publicMinistry')"
-            label="Ministerio P&uacute;blico">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="publicMinistry" />
-          </form-field>
-        </div>
+
         <!--<div class="col-md-3">
           <form-field
             [control]="requestForm.get('indicated')"
@@ -114,64 +93,19 @@
         </div>-->
       </div>
       <div class="row pt-4">
-        <div class="col-md-3">
-          <form-field
-            [control]="requestForm.get('nameOfOwner')"
-            label="Nombre del Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameOfOwner" />
-          </form-field>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="typeRecord"
+            (fetchItems)="getTypeExpedient($event)"
+            [data]="selectTypeExpedient"
+            [searchable]="false"
+            label="Tipo Expediente"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
         </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="requestForm.get('holderCharge')"
-            label="Cargo del Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="holderCharge" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono del Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="phoneOfOwner" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Email del Remitente">
-            <input
-              type="email"
-              class="form-control"
-              formControlName="emailOfOwner" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-4">
-        <!--<div class="col-md-3">
-          <form-field [control]="receptionForm.get('sender')" label="Remitente">
-            <input type="text" class="form-control" formControlName="sender" />
-          </form-field>
-        </div>-->
-        <div class="col-md-3">
-          <form-field [control]="requestForm.get('court')" label="Juzgado">
-            <input type="text" class="form-control" formControlName="court" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="requestForm.get('crime')" label="Delito">
-            <input type="text" class="form-control" formControlName="crime" />
-          </form-field>
-        </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('receiptRoute')"
             label="V&iacute;a de Recepci&oacute;n">
@@ -183,8 +117,19 @@
           </form-field>
         </div>
       </div>
+
       <div class="row pt-4">
-        <div class="col-md-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('nameOfOwner')"
+            label="Nombre del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameOfOwner" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('destinationManagement')"
             label="Gesti&oacute;n de Destino">
@@ -194,17 +139,20 @@
               formControlName="destinationManagement" />
           </form-field>
         </div>
-        <div class="col-md-3">
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('indicatedTaxpayer')"
-            label="Contribuyente y&#47;o Indiciado">
+            [control]="requestForm.get('holderCharge')"
+            label="Cargo del Remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="indicatedTaxpayer" />
+              formControlName="holderCharge" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
           <form-field [control]="requestForm.get('affair')" label="Asunto">
             <input
               type="text"
@@ -215,28 +163,19 @@
           </form-field>
         </div>
       </div>
+
       <div class="row pt-4">
-        <!--<div class="col-md-3">
+        <div class="col-md-4">
           <form-field
-            [control]="receptionForm.get('transExpedient')"
-            label="Expediente Transferente&#47;PAMA">
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono del Remitente">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="transExpedient" />
+              formControlName="phoneOfOwner" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="receptionForm.get('typeTransfer')"
-            label="Tipo Transferencia">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeTransfer" />
-          </form-field>
-        </div>-->
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('trialType')"
             label="Tipo Juicio">
@@ -246,17 +185,62 @@
               formControlName="trialType" />
           </form-field>
         </div>
-        <div class="col-md-3">
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('transferEntNotes')"
-            label="Notas Entidad Transferente">
+            [control]="requestForm.get('emailOfOwner')"
+            label="Email del Remitente">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="emailOfOwner" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('indicatedTaxpayer')"
+            label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
               class="form-control"
-              formControlName="transferEntNotes" />
+              formControlName="indicatedTaxpayer" />
           </form-field>
         </div>
-        <div class="col-md-5">
+      </div>
+
+      <div class="row pt-4">
+        <!--<div class="col-md-3">
+          <form-field [control]="receptionForm.get('sender')" label="Remitente">
+            <input type="text" class="form-control" formControlName="sender" />
+          </form-field>
+        </div>-->
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('court')" label="Juzgado">
+            <input type="text" class="form-control" formControlName="court" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('crime')" label="Delito">
+            <input type="text" class="form-control" formControlName="crime" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('publicMinistry')"
+            label="Ministerio P&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="publicMinistry" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('observations')"
             label="Observaciones">
@@ -269,6 +253,18 @@
         </div>
       </div>
 
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('transferEntNotes')"
+            label="Notas Entidad Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferEntNotes" />
+          </form-field>
+        </div>
+      </div>
       <div class="row pt-4">
         <div class="col-md-4" *ngIf="transferenceNumber === 1">
           <form-field
@@ -316,7 +312,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('protectNumber')"
-            label="Numero Amparo">
+            label="N&uacute;mero Amparo">
             <input
               type="text"
               class="form-control"

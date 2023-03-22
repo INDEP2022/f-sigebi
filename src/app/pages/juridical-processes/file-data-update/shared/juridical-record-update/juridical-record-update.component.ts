@@ -257,10 +257,14 @@ export class JuridicalRecordUpdateComponent
     }
     if (this.pageParams.dictamen) {
       // TODO: Integrar validaciones cuando se creo dictamen
-    } else if (!this.pageParams.dictamen) {
+    } else if (
+      this.pageParams.dictamen != null &&
+      this.pageParams.dictamen != undefined
+    ) {
       if (this.fileUpdateService.juridicalFileDataUpdateForm != null) {
         this.deactivateSearch();
       }
+      this.checkDictum();
     }
   }
 
@@ -286,6 +290,70 @@ export class JuridicalRecordUpdateComponent
         }
       },
       error: () => {},
+    });
+  }
+
+  checkDictum() {
+    const params = new FilterParams();
+    params.addFilter('wheelNumber', this.formControls.wheelNumber.value);
+    this.fileUpdateService.getDictation(params.getParams()).subscribe({
+      next: data => {
+        if (data.count == 0) {
+          this.checkMJobManagement();
+        }
+      },
+      error: () => {
+        this.checkMJobManagement();
+      },
+    });
+  }
+
+  checkMJobManagement() {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
+    this.fileUpdateService.getMJobManagement(params.getParams()).subscribe({
+      next: data => {
+        if (data.count == 0 && this.globals.varDic != null) {
+          this.fileUpdateService
+            .updateNotification(this.formControls.wheelNumber.value, {
+              dictumKey: this.globals.varDic,
+            })
+            .subscribe({
+              next: () => {},
+              error: () => {},
+            });
+        } else if (data.count == 0 && this.dictum != 'CONOCIMIENTO') {
+          this.fileUpdateService
+            .updateNotification(this.formControls.wheelNumber.value, {
+              dictumKey: null,
+            })
+            .subscribe({
+              next: () => {},
+              error: () => {},
+            });
+        }
+      },
+      error: () => {
+        if (this.globals.varDic != null) {
+          this.fileUpdateService
+            .updateNotification(this.formControls.wheelNumber.value, {
+              dictumKey: this.globals.varDic,
+            })
+            .subscribe({
+              next: () => {},
+              error: () => {},
+            });
+        } else if (this.dictum != 'CONOCIMIENTO') {
+          this.fileUpdateService
+            .updateNotification(this.formControls.wheelNumber.value, {
+              dictumKey: null,
+            })
+            .subscribe({
+              next: () => {},
+              error: () => {},
+            });
+        }
+      },
     });
   }
 
@@ -915,11 +983,12 @@ export class JuridicalRecordUpdateComponent
   }
 
   openToShiftChange() {
-    this.fileUpdateService.juridicalFileDataUpdateForm =
-      this.fileDataUpdateForm.value;
+    // this.fileUpdateService.juridicalFileDataUpdateForm =
+    //   this.fileDataUpdateForm.value;
     this.fileUpdComService.juridicalShiftChangeParams = {
       iden: this.formControls.wheelNumber.value,
       exp: this.formControls.expedientNumber.value,
+      pNoTramite: this.procedureId,
     };
     this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
   }
@@ -1226,7 +1295,12 @@ export class JuridicalRecordUpdateComponent
   }
 
   getInstitutions(lparams: ListParams) {
-    this.fileUpdateService.getInstitutions(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+    this.fileUpdateService.getInstitutions(params.getParams()).subscribe({
       next: data => {
         this.institutions = new DefaultSelect(data.data, data.count);
       },

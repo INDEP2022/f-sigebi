@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  noBien: {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -9,19 +9,19 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  proceso: {
+  extDomProcess: {
     title: 'Proceso',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  importe: {
+  amountReturned: {
     title: 'Importe',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
 };

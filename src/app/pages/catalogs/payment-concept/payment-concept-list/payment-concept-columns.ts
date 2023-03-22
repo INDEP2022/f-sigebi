@@ -9,9 +9,4 @@ export const PAYMENT_CONCEPT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numRegister: {
-    title: 'No. registro',
-    type: 'number',
-    sort: false,
-  },
 };

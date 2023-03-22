@@ -2,7 +2,7 @@ import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 
 export interface IGood {
-  id: string;
+  id: string | number;
   noInventoey?: any;
   idGood: string;
   description: string;
@@ -22,6 +22,7 @@ export interface IGood {
   fecOpinion?: any;
   proficientOpinion?: any;
   appraiserOpinion?: any;
+  goodTypeId: number;
   originSignals?: any;
   worthApraisal: string;
   Nodrawer?: any;
@@ -67,6 +68,7 @@ export interface IGood {
   NoProceedings: string;
   NoexpAssociated: string;
   NoRack: string;
+  requestId: number;
   NoStore: string;
   NoBatch: string;
   NoClasifGood: string;

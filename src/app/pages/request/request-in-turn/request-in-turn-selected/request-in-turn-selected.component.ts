@@ -63,6 +63,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   getUserList() {
+    debugger;
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);
@@ -102,6 +103,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       delete request.emisora;
       delete request.state;
       delete request.proceedings;
+      delete request.regionalDelegation;
     }
   }
 
@@ -124,7 +126,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
       this.requestService.update(request.id, request as IRequest).subscribe(
         (data: any) => {
-          console.log(data);
+          //console.log(data);
           if (data.statusCode != 200) {
             this.message(
               'error',

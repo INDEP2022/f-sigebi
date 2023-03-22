@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { RAsuntoDicEndpoints } from 'src/app/common/constants/endpoints/r-asunt-dict-endpoint';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
@@ -18,7 +19,7 @@ export class RAsuntDicService
   private readonly route2: string = 'r-asunt-dic';
   constructor(private rAsuntDicRepository: Repository<IRAsuntDic>) {
     super();
-    this.microservice = 'catalog';
+    this.microservice = RAsuntoDicEndpoints.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IRAsuntDic>> {
@@ -48,5 +49,10 @@ export class RAsuntDicService
   getByCode(code: string | number): Observable<IListResponse<IRAsuntDic>> {
     const route2 = `${this.route2}?filter.code=$eq:${code}`;
     return this.get<IListResponse<IRAsuntDic>>(route2);
+  }
+
+  remove2(model: IRAsuntDic) {
+    const route = `${RAsuntoDicEndpoints.RAsuntDic}`;
+    return this.delete(route, model);
   }
 }

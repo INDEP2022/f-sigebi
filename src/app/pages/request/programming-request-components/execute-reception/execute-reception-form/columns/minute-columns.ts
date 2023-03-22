@@ -18,6 +18,25 @@ export const RECEIPT_COLUMNS = {
   },
 };
 
+export const RECEIPT_GUARD_COLUMNS = {
+  receiptDate: {
+    title: 'Fecha recibo',
+    type: 'string',
+    sort: false,
+  },
+
+  typeReceipt: {
+    title: 'Tipo',
+    type: 'string',
+    sort: false,
+  },
+
+  statusReceiptGuard: {
+    title: 'Estatus Recibo',
+    type: 'string',
+    sort: false,
+  },
+};
 export const RECEIPT_COLUMNS_FORMALIZE = {
   receipt: {
     title: 'Recibo',

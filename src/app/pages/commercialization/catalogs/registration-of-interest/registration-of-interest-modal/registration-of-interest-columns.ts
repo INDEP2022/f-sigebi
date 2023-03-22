@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const COUNT_TIIE_COLUMNS = {
   // id: {
   //   title: 'Id',
@@ -28,6 +30,15 @@ export const COUNT_TIIE_COLUMNS = {
     title: 'Fecha de registro',
     type: 'string',
     sort: true,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+
+      var formatted = new DatePipe('en-EN').transform(
+        raw,
+        'dd/MM/yyyy, h:mm a'
+      );
+      return formatted;
+    },
   },
   user: {
     title: 'Usuario',
