@@ -1,41 +1,53 @@
 export const GOOD_DOCUMENTES_COLUMNS = {
-  noGestion: {
+  goodId: {
     title: 'No. Gestion',
     type: 'string',
     sort: false,
   },
-  goodsDescription: {
+  requestId: {
+    title: 'No. Solicitud',
+    type: 'string',
+    sort: false,
+  },
+  goodTypeId: {
+    title: 'Tipo Bien',
+    type: 'string',
+    sort: false,
+  },
+  uniqueKey: {
+    title: 'Clave Única',
+    type: 'string',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    type: 'string',
+    sort: false,
+  },
+
+  goodDescription: {
     title: 'Descripción del Bien Transferente',
     type: 'string',
     sort: false,
+    width: '200px',
   },
-  goodType: {
-    title: 'Tipo de Bien',
+  destiny: {
+    title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  physicalState: {
+  physicalStatus: {
     title: 'Estado Fisico',
     type: 'string',
     sort: false,
   },
-  conservaState: {
-    title: 'Estado de Concervación',
+  stateConservation: {
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
-    title: 'Unidad de Medida Transferente',
-    type: 'string',
-    sort: false,
-  },
-  tranferenceUnit: {
-    title: 'Unidad de la Transferencia',
-    type: 'string',
-    sort: false,
-  },
-  destinyLigie: {
-    title: 'Destino Ligie',
+  fractionId: {
+    title: 'Fracción',
     type: 'string',
     sort: false,
   },
