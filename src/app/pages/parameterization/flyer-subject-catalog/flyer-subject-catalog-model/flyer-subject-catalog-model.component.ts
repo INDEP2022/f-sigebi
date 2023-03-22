@@ -49,6 +49,7 @@ export class FlyerSubjectCatalogModelComponent
       relationPropertyKey: [null, [Validators.required]],
       referralNoteType: [null, [Validators.required]],
       versionUser: [null, [Validators.required]],
+      idRegister: [null, []],
     });
     if (this.affairType != null) {
       this.id = this.affairType.code as unknown as IAffair;

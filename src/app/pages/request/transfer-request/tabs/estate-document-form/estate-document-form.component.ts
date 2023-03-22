@@ -18,6 +18,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -43,6 +44,7 @@ export class EstateDocumentFormComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   rowSelected: any = null;
+  regionalDelegacionId: number = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -51,7 +53,8 @@ export class EstateDocumentFormComponent
     private typeRelevantService: TypeRelevantService,
     private goodServices: GoodService,
     private genericService: GenericService,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private requestService: RequestService
   ) {
     super();
     this.settings = {
@@ -68,9 +71,12 @@ export class EstateDocumentFormComponent
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['requestId'].currentValue) {
-      console.log(changes['requestId'].currentValue);
+      this.searchForm.controls['requestId'].setValue(this.requestId);
       this.params.value.addFilter('requestId', this.requestId);
       this.getData();
+      if (this.requestId !== null) {
+        this.getRequest();
+      }
     }
   }
 
@@ -85,6 +91,14 @@ export class EstateDocumentFormComponent
 
   selectRow(event: any) {
     this.rowSelected = event.data;
+  }
+
+  getRequest() {
+    this.requestService.getById(this.requestId).subscribe({
+      next: (resp: any) => {
+        this.regionalDelegacionId = resp.regionalDelegationId;
+      },
+    });
   }
 
   getGoodTypeSelect(params: ListParams) {
@@ -106,6 +120,7 @@ export class EstateDocumentFormComponent
       );
       return;
     }
+    this.rowSelected['regionalDelegacionId'] = this.regionalDelegacionId;
     this.openModal(DocumentsListComponent, 'doc-bien', this.rowSelected);
   }
 
@@ -140,6 +155,9 @@ export class EstateDocumentFormComponent
     this.buildFilters();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
+      if (this.requestId != null) {
+        this.getRequest();
+      }
     });
   }
 

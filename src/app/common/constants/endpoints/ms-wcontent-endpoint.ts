@@ -7,4 +7,7 @@ export enum WContentEndpoint {
   GetImgGood = 'wcc/get-img-good',
   GetDocSol = 'wcc/get-doc-sol',
   ObtainFile = 'wcc/obtain-file',
+  AddImagesToContent = 'wcc/addImagesToContent',
+  CallReport = 'processgoodreport',
+  ShowReport = 'report/showReport',
 }

@@ -97,7 +97,7 @@ const TABLE_SETTINGS: TableSettings = {
     confirmDelete: true,
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registrox',
+  noDataMessage: 'No se encontrarón registros',
   rowClassFunction: (row: any) => {},
 };
 @Component({

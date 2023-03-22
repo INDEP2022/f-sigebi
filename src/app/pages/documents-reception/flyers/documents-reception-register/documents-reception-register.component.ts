@@ -1270,11 +1270,12 @@ export class DocumentsReceptionRegisterComponent
 
   sendToRecordUpdate() {
     if (this.procedureId != undefined) {
-      this.fileUpdComService.fileDataUpdateParams = {
-        pGestOk: 1,
-        pNoTramite: this.procedureId,
-        dictamen: false,
-      };
+      // Habilitar si se desea que se cargue el volante automaticamente en Actualizacion de Expediente
+      // this.fileUpdComService.fileDataUpdateParams = {
+      //   pGestOk: 1,
+      //   pNoTramite: this.procedureId,
+      //   dictamen: false,
+      // };
     }
     this.router.navigateByUrl('/pages/juridical/file-data-update');
   }
