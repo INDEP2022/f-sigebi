@@ -67,7 +67,9 @@ export class CityListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'state':
-                searchFilter = SearchFilter.EQ;
+                filter.field == 'state';
+                field = `filter.${filter.field}.descCondition`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noDelegation':
                 searchFilter = SearchFilter.EQ;

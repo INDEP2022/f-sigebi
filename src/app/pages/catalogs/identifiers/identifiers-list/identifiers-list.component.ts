@@ -26,8 +26,18 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = IDENTIFIER_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...IDENTIFIER_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
