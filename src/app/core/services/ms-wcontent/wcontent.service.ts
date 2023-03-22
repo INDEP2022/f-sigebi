@@ -55,11 +55,15 @@ export class WContentService extends HttpWContentService {
     return this.post<any>(WContentEndpoint.AddImagesToContent, formData);
   }
 
-  getDocumentTypes(params: ListParams): Observable<IDocTypes> {
-    return this.get<IDocTypes>(WContentEndpoint.DocumentTypes);
+  addImages(formData: Object) {
+    return this.post(WContentEndpoint.AddImagesTocontent, formData);
   }
 
-  getDocumentos(body: IWContent): Observable<IListResponse<IWContent>> {
+  getDocumentTypes(params: ListParams): Observable<IListResponse<IDocTypes>> {
+    return this.get<IListResponse<IDocTypes>>(WContentEndpoint.DocumentTypes);
+  }
+
+  getDocumentos(body: Object): Observable<IListResponse<IWContent>> {
     return this.post<IListResponse<IWContent>>(
       WContentEndpoint.GetDocSol,
       body
@@ -73,8 +77,8 @@ export class WContentService extends HttpWContentService {
     );
   }
 
-  obtainFile(docName: string): Observable<any> {
-    return this.get<any>(WContentEndpoint.ObtainFile + '/' + docName);
+  obtainFile(docName: string) {
+    return this.get(WContentEndpoint.ObtainFile + '/' + docName);
   }
 
   callReportFile(reportName: string, idRequest: string) {
@@ -84,8 +88,7 @@ export class WContentService extends HttpWContentService {
       responseType: 'blob',
     });
     const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&idSolicitud=${idRequest}`;
-    //const url =
-    //  'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=10';
+
     return this.http.get(url, { responseType: 'blob' });
   }
 }

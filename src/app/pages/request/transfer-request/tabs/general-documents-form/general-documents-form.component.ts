@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -61,6 +63,8 @@ export class GeneralDocumentsFormComponent
   idTransferent: number = null;
   idStation: number = null;
   rowSelected: any;
+
+  private http = inject(HttpClient);
 
   constructor(
     private route: ActivatedRoute,
