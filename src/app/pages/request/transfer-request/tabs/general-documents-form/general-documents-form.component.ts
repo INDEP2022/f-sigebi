@@ -1,4 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -33,7 +41,10 @@ import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedien
   templateUrl: './general-documents-form.component.html',
   styleUrls: ['../../styles/search-document-form.scss'],
 })
-export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
+export class GeneralDocumentsFormComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() searchFileForm: FormGroup;
   @Input() requestForm: any;
   searchForm: ModelForm<IRequest>;
@@ -51,6 +62,9 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   idDelegReg: number = null;
   idTransferent: number = null;
   idStation: number = null;
+  rowSelected: any;
+
+  private http = inject(HttpClient);
 
   constructor(
     private route: ActivatedRoute,
@@ -64,7 +78,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     private transferenteService: TransferenteService,
     private stationService: StationService,
     private requestService: RequestService,
-    private bsModalRef: BsModalRef,
+    private bsParentModalRef: BsModalRef,
     private requestHelperService: RequestHelperService
   ) {
     super();
@@ -73,6 +87,11 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       actions: false,
       columns: EXPEDIENT_DOC_GEN_COLUMNS,
     };
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe((data: any) => {
+      console.log(this.requestForm.getRawValue());
+    });
   }
 
   ngOnInit(): void {
@@ -117,15 +136,28 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  newExpedient() {
-    this.openModal(AssociateFileComponent, this.requestForm);
+  //seleccionar fila
+  selectRow(event: any) {
+    this.rowSelected = event.data;
+    console.log(this.rowSelected);
   }
 
+  //abrir nuevo documento
+  newExpedient() {
+    this.openModal(AssociateFileComponent, 'doc-expediente', this.requestForm);
+  }
+
+  //abrir ver documentos
   showDocsEst() {
-    const showDoctsEst = this.modalService.show(DocumentsListComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    if (!this.rowSelected) {
+      this.message(
+        'info',
+        'Error',
+        'Seleccione un data para poder ver sus documentos'
+      );
+      return;
+    }
+    this.openModal(DocumentsListComponent, 'doc-expediente', this.rowSelected);
   }
 
   /* electronicSign() {
@@ -182,11 +214,18 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
           element['paperDate'] = new Date(
             element.paperDate
           ).toLocaleDateString();
-          element['regionalDelegationName'] = element.delegation.description;
-          element['stateName'] = element.state.descCondition;
-          element['transferentName'] = element.transferent.name;
-          element['stationName'] = element.emisora.stationName;
-          element['authorityName'] = element.authority.authorityName;
+          element['regionalDelegationName'] =
+            element.regionalDelegation !== null
+              ? element.regionalDelegation.description
+              : '';
+          element['stateName'] =
+            element.state !== null ? element.state.descCondition : '';
+          element['transferentName'] =
+            element.transferent !== null ? element.transferent.name : '';
+          element['stationName'] =
+            element.emisora !== null ? element.emisora.stationName : '';
+          element['authorityName'] =
+            element.authority !== null ? element.authority.authorityName : '';
         }
 
         this.documentsGenData = resp.data;
@@ -200,7 +239,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   builtFilter(form: any) {
-    this.params.value.addFilter('requestStatus', 'A_TURNAR');
+    //this.params.value.addFilter('requestStatus', 'A_TURNAR');
     this.params.value.addFilter('recordId', 0, SearchFilter.NOT);
     for (const key in form) {
       if (form[key] !== null) {
@@ -275,10 +314,11 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  openModal(component: any, parameters?: any) {
+  openModal(component: any, typeDoc: string, parameters?: any) {
     let config: ModalOptions = {
       initialState: {
         parameter: parameters,
+        typeDoc: typeDoc,
         callback: (next: boolean) => {
           //if(next) this.getExample();
         },
@@ -286,7 +326,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(component, config);
+    this.bsParentModalRef = this.modalService.show(component, config);
 
     /*this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
@@ -352,5 +392,9 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
         });*/
       }
     });
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }

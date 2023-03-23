@@ -86,6 +86,7 @@
       <div class="col-md-12">
         <ng-scrollbar track="all" style="min-height: 200px; border: none">
           <div [class]="loading ? 'table-loading' : ''">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"

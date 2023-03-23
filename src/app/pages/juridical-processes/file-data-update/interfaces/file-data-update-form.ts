@@ -54,7 +54,7 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
     Validators.pattern(STRING_PATTERN),
   ]),
   affairKey: new FormControl<IAffair>(null),
-  affair: new FormControl<string | number>(null),
+  affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null),
   priority: new FormControl<string>(null),
   wheelNumber: new FormControl<number>(null),
@@ -123,9 +123,9 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
   institutionNumber: new FormControl<IIssuingInstitution>(null),
   institutionName: new FormControl<string>(null),
   officeNumber: new FormControl<number>(null),
-  captureDate: new FormControl<Date>(new Date()),
+  captureDate: new FormControl<Date | string>(new Date()),
   wheelStatus: new FormControl<string>(null),
-  entryProcedureDate: new FormControl<Date>(new Date()),
+  entryProcedureDate: new FormControl<Date | string>(new Date()),
   registerNumber: new FormControl<number>(null),
   originNumber: new FormControl<number>(null),
   dictumKey: new FormControl<IOpinion>(null, Validators.required),
@@ -184,9 +184,9 @@ export interface IJuridicalFileDataUpdateForm {
   institutionNumber: IIssuingInstitution;
   institutionName: string;
   officeNumber: number;
-  captureDate: Date;
+  captureDate: Date | string;
   wheelStatus: string;
-  entryProcedureDate: Date;
+  entryProcedureDate: Date | string;
   registerNumber: number;
   originNumber: number;
   dictumKey: IOpinion;

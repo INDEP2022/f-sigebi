@@ -4,6 +4,12 @@
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
         <button
+          *ngIf="flyerReceptionMode"
+          class="btn btn-danger active btn-sm"
+          (click)="endProcess()">
+          <i class="bx bx-chevron-left float-icon"></i>Regresar
+        </button>
+        <button
           *ngIf="changeFlyerOption || flyerEditMode"
           class="btn btn-primary active btn-sm"
           (click)="chooseOther()">
@@ -61,7 +67,7 @@
                 [form]="documentsReceptionForm"
                 [data]="identifiers"
                 (fetchItems)="getIdentifiers($event)"
-                bindLabel="description"
+                bindLabel="nameAndId"
                 control="identifier"
                 label="Identificador"
                 [searchOnInit]="true"
@@ -315,9 +321,11 @@
             </form-field>
           </div>
 
-          <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
+          <div
+            class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}"
+            *ngIf="!pgrInterface">
             <form-field
-              *ngIf="!pgrInterface && initialCondition == 'T'"
+              *ngIf="initialCondition == 'T'"
               class="col-md-12"
               [control]="documentsReceptionForm.get('judgementType')"
               label="Tipo Juicio">
@@ -562,7 +570,6 @@
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface"
                 termMaxLength="80">
               </ngx-select>
             </form-field>
@@ -570,7 +577,6 @@
 
           <div class="row pt-5">
             <form-field
-              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('courtNumber')">
               <ngx-select
@@ -589,7 +595,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-4"
               [control]="documentsReceptionForm.get('indiciadoNumber')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -603,6 +609,15 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
+
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openModalDefendant()">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
+            </div>
 
             <form-field
               class="col-md-6"

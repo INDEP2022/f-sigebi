@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
 import { FullComponent } from './full.component';
@@ -26,6 +27,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     NgScrollbarModule,
     BsDropdownModule,
     RouterModule,
+    TooltipModule.forRoot(),
   ],
   exports: [FullComponent],
 })

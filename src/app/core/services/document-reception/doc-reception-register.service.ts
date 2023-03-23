@@ -3,7 +3,7 @@ import { map, Observable, tap } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
@@ -28,6 +28,7 @@ import { AuthorityService } from '../catalogs/authority.service';
 import { CourtService } from '../catalogs/court.service';
 import { DelegationService } from '../catalogs/delegation.service';
 import { DepartamentService } from '../catalogs/departament.service';
+import { IdentifierService } from '../catalogs/identifier.service';
 import { IndiciadosService } from '../catalogs/indiciados.service';
 import { MinPubService } from '../catalogs/minpub.service';
 import { StationService } from '../catalogs/station.service';
@@ -53,7 +54,8 @@ export class DocReceptionRegisterService extends HttpService {
     private procedureManageService: ProcedureManagementService,
     private indiciadosService: IndiciadosService,
     private goodParametersService: GoodParametersService,
-    private departamentService: DepartamentService
+    private departamentService: DepartamentService,
+    private identifierService: IdentifierService
   ) {
     super();
   }
@@ -110,6 +112,14 @@ export class DocReceptionRegisterService extends HttpService {
     let partials = ENDPOINT_LINKS.Identifier.split('/');
     this.microservice = partials[0];
     return this.get<IListResponse<IIdentifier>>(partials[1], params).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(i => {
+            return { ...i, nameAndId: `${i.id} - ${i.description}` };
+          }),
+        };
+      }),
       tap(() => (this.microservice = ''))
     );
   }
@@ -294,7 +304,7 @@ export class DocReceptionRegisterService extends HttpService {
       );
   }
 
-  getCities(params?: ListParams): Observable<IListResponse<ICity>> {
+  getCities(params?: _Params): Observable<IListResponse<ICity>> {
     let partials = ENDPOINT_LINKS.City.split('/');
     this.microservice = partials[0];
     const route = partials[1];
@@ -312,7 +322,10 @@ export class DocReceptionRegisterService extends HttpService {
   }
 
   getCity(id: string | number): Observable<ICity> {
-    return this.cityRepository.getById(ENDPOINT_LINKS.City, id).pipe(
+    const segments = ENDPOINT_LINKS.City.split('/');
+    this.microservice = segments[0];
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route).pipe(
       map(data => {
         return {
           ...data,
@@ -395,8 +408,9 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getCourts(params?: ListParams) {
-    return this.courtService.getAll(params).pipe(
+  getCourts(params?: _Params) {
+    // return this.courtService.getAll(params).pipe(
+    return this.courtService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,
@@ -419,11 +433,12 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getDefendants(params?: ListParams): Observable<IListResponse<IIndiciados>> {
-    let partials = ENDPOINT_LINKS.Indiciados.split('/');
-    this.microservice = partials[0];
-    const route = partials[1];
-    return this.get<IListResponse<IIndiciados>>(route, params).pipe(
+  getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {
+    // let partials = ENDPOINT_LINKS.Indiciados.split('/');
+    // this.microservice = partials[0];
+    // const route = partials[1];
+    // return this.get<IListResponse<IIndiciados>>(route, params).pipe(
+    return this.indiciadosService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,
@@ -449,5 +464,16 @@ export class DocReceptionRegisterService extends HttpService {
 
   getPhaseEdo() {
     return this.goodParametersService.getPhaseEdo();
+  }
+
+  getIdentifier(id: string | number) {
+    return this.identifierService.getById(id).pipe(
+      map(data => {
+        return {
+          ...data,
+          nameAndId: `${data.id} - ${data.description}`,
+        };
+      })
+    );
   }
 }

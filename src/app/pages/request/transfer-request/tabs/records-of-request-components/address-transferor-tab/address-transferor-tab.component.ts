@@ -54,6 +54,8 @@ export class AddressTransferorTabComponent
   isNewAddress: boolean = false;
   isreadOnly: boolean = true;
 
+  stateKey: string = '';
+
   stateOfRepublicService = inject(StateOfRepublicService);
   municipalySeraService = inject(MunicipalityService);
   localityService = inject(LocalityService);
@@ -85,6 +87,7 @@ export class AddressTransferorTabComponent
     }
     this.initForm();
     this.formReactiveCalls();
+    console.log('address');
   }
 
   initForm() {
@@ -155,8 +158,8 @@ export class AddressTransferorTabComponent
 
   //obtener los municipios
   getMunicipaly(params: ListParams, stateKey?: number) {
-    params['stateKey'] = stateKey;
-    params['limit'] = 20;
+    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
+    params['filter.nameMunicipality'] = `$ilike:${params.text}`;
     this.municipalySeraService.getAll(params).subscribe({
       next: data => {
         this.selectMunicipe = new DefaultSelect(data.data, data.count);
@@ -170,8 +173,8 @@ export class AddressTransferorTabComponent
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
     params.limit = 20;
-    params['municipalityId'] = municipalityId;
-    params['stateKey'] = this.keyStateOfRepublic;
+    params['filter.municipalityId'] = `$eq:${municipalityId}`;
+    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);

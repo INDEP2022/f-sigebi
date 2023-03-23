@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -42,6 +43,9 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   };
   isSelected: boolean = false;
 
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -50,9 +54,44 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     super();
     this.providerSettings.columns = PROVIDER_CATALOGS_PROVIDER_COLUMNS;
     this.searchFilter = { field: 'nameReason', operator: SearchFilter.ILIKE };
+    this.providerSettings = {
+      ...this.providerSettings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*  SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'providerId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(filter.search);
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getData();
+        }
+      });
+
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
     });
@@ -84,6 +123,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       this.providerService.getById(id.providerId).subscribe({
         next: response => {
           this.providerColumns = [response];
+          this.data.load(this.providerColumns);
           this.totalItems = 1;
           this.loading = false;
         },
@@ -99,6 +139,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
         .subscribe({
           next: response => {
             this.providerColumns = response.data;
+            this.data.load(this.providerColumns);
             this.totalItems = response.count;
             this.loading = false;
           },

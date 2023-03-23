@@ -29,7 +29,7 @@ export class SeeMoreComponent implements OnInit, ViewCell {
   fullText: string = '';
   visibleText: string = '';
   hiddenText: string = '';
-  textButton: string = 'Ver mas';
+  textButton: string = 'Ver m\u00E1s';
   maxLenght: number = 90;
   readingMore: boolean = false;
   constructor() {}

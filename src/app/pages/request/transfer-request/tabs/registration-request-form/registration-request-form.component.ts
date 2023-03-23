@@ -17,6 +17,7 @@ export class RegistrationRequestFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.requestForm);
   }
 
   prepareForm() {
@@ -61,6 +62,10 @@ export class RegistrationRequestFormComponent implements OnInit {
     if (event.changeTab === true) {
       this.docGoodRequestId = event.requestId;
       this.staticTabs.tabs[2].active = true;
+
+      setTimeout(() => {
+        this.docGoodRequestId = null;
+      }, 5000);
     }
   }
 }

@@ -48,7 +48,7 @@ export class ShelvessService extends HttpService {
     return this.shelvesRepository.create(this.route2, model);
   }
 
-  remove(model: IShelves) {
+  remove(model: Object) {
     const route = `${ShelvesEndpoints.Shelves}`;
     return this.delete(route, model);
   }

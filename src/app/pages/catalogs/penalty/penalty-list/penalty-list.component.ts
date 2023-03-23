@@ -50,6 +50,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
+            field = `filter.${filter.field}`;
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
@@ -76,9 +77,9 @@ export class PenaltyListComponent extends BasePage implements OnInit {
     this.penaltyService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
+        this.totalItems = response.count || 0;
         this.data.load(this.paragraphs);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -90,11 +91,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
       initialState: {
         penalty,
         callback: (next: boolean) => {
-          if (next) {
-            this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.getExample());
-          }
+          if (next) this.getExample();
         },
       },
       class: 'modal-lg modal-dialog-centered',

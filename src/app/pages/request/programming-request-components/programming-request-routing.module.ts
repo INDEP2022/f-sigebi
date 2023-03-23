@@ -18,7 +18,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'formalize-programming',
+    path: 'formalize-programming/:id',
     loadChildren: async () =>
       (await import('./formalize-programming/formalize-programming.module'))
         .FormalizeProgrammingModule,
@@ -33,14 +33,14 @@ const routes: Routes = [
   },
 
   {
-    path: 'schedule-notify',
+    path: 'schedule-notify/:id',
     loadChildren: async () =>
       (await import('./schedule-notify/schedule-notify.module'))
         .ScheduleNotifyModule,
   },
 
   {
-    path: 'validate-destiny',
+    path: 'validate-destiny/:id',
     loadChildren: async () =>
       (await import('./validate-destiny/validate-destiny.module'))
         .ValidateDestinyModule,

@@ -1,32 +1,35 @@
 import { BtnRequestComponent } from '../btn-request/btn-request.component';
 
 export const DOC_REQUEST_TAB_COLUMNS = {
-  noDoc: {
+  dDocId: {
     title: 'No. Documento',
     type: 'string',
     sort: false,
   },
-  noReq: {
+  xidSolicitud: {
     title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
-  docTit: {
+
+  ddocTitle: {
     title: 'Titulo del Documento',
     type: 'string',
     sort: false,
   },
-  docType: {
+
+  xtipoDocumento: {
     title: 'Tipo de Documento',
     type: 'string',
     sort: false,
   },
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
-  dateCrea: {
+
+  dInDate: {
     title: 'Fecha Creada',
     type: 'string',
     sort: false,

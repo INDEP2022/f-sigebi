@@ -32,7 +32,7 @@ export class WarehouseService
   }
 
   getById(id: string | number): Observable<IWarehouse> {
-    return this.warehouseRepository.getById(this.route, id);
+    return this.warehouseRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: any): Observable<IWarehouse> {

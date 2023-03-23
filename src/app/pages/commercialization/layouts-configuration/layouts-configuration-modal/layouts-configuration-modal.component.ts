@@ -32,7 +32,8 @@ export class LayoutsConfigurationModalComponent
   layout: IL;
   layoutList: IComerLayouts[] = [];
   @Output() onConfirm = new EventEmitter<any>();
-  @Input() structureLayout: any;
+  @Input()
+  structureLayout: IComerLayouts;
 
   constructor(
     private modalRef: BsModalRef,
@@ -45,12 +46,17 @@ export class LayoutsConfigurationModalComponent
     this.prepareForm();
     this.structureLayoutSelected = this.structureLayout;
     // this.inpuLayout = this.idLayout.toString().toUpperCase();
-    console.log(this.structureLayoutSelected);
+    console.log(this.structureLayout);
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       idLayout: [null],
+      // descLayout: [null, [Validators.required]],
+      // screenKey: [null, [Validators.required]],
+      // table: [null, [Validators.required]],
+      // criterion: [null, [Validators.required]],
+      indActive: [null],
       idConsec: [null],
       position: [
         null,
@@ -86,7 +92,7 @@ export class LayoutsConfigurationModalComponent
   create() {
     try {
       this.loading = false;
-      this.layoutsConfigService.create(this.structureLayout).subscribe({
+      this.layoutsConfigService.create(this.providerForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
@@ -105,15 +111,13 @@ export class LayoutsConfigurationModalComponent
       'Desea actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService
-          .update(this.provider.id, this.providerForm.value)
-          .subscribe({
-            next: data => this.handleSuccess(),
-            error: error => {
-              this.onLoadToast('error', 'layout', '');
-              this.loading = false;
-            },
-          });
+        this.layoutsConfigService.updateL(this.providerForm.value).subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.onLoadToast('error', 'layout', '');
+            this.loading = false;
+          },
+        });
       }
     });
   }

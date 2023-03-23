@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Buz&oacute;n de tramites PGR</h5>
+    <h5 class="title">Buz&oacute;n de tramites FGR</h5>
   </div>
 
   <div body>
@@ -31,7 +31,7 @@
         </form-field>
         <form-field
           [control]="pgrForm.get('officeNumber')"
-          label="PGR Oficio"
+          label="FGR Oficio"
           class="col-md-3">
           <input class="form-control" formControlName="officeNumber" />
         </form-field>
@@ -143,7 +143,7 @@
 
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Transferencias PGR</h5>
+    <h5 class="title">Transferencias FGR</h5>
   </div>
 
   <div body>
@@ -154,21 +154,21 @@
       <div class="row">
         <form-field
           [control]="pgrTransferForm.get('pgrGoodNumber')"
-          label="PGR No&#46; Bien"
+          label="FGR No&#46; Bien"
           class="col-md-3">
           <input class="form-control" formControlName="pgrGoodNumber" />
         </form-field>
 
         <form-field
           [control]="pgrTransferForm.get('saeGoodNumber')"
-          label="SAE No&#46; Bien"
+          label="INDEP No&#46; Bien"
           class="col-md-3">
           <input class="form-control" formControlName="saeGoodNumber" />
         </form-field>
 
         <form-field
           [control]="pgrTransferForm.get('status')"
-          label="SAE Estatus"
+          label="INDEP Estatus"
           class="col-md-3">
           <input class="form-control" formControlName="status" />
         </form-field>

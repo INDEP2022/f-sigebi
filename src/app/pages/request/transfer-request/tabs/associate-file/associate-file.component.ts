@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
@@ -9,11 +10,14 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CoverExpedientService } from 'src/app/core/services/ms-cover-expedient/cover-expedient.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
+import { OpenDescriptionComponent } from './open-description/open-description.component';
 
 @Component({
   selector: 'app-associate-file',
@@ -37,6 +41,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   constructor(
     private modalRef: BsModalRef,
+    private bsChildModalRef: BsModalRef,
     private fb: FormBuilder,
     private externalExpedientService: CoverExpedientService,
     private transferentService: TransferenteService,
@@ -44,6 +49,9 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private expedientSamiService: ExpedientSamiService,
     private requestHelperService: RequestHelperService,
+    private wcontetService: WContentService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
     private authService: AuthService
   ) {
     super();
@@ -55,8 +63,9 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
-    console.log(this.authService.decodeToken());
+    //this.call();
   }
+
   formsChanges() {
     this.associateFileForm.controls['inaiUser'].valueChanges.subscribe(data => {
       if (data) {
@@ -116,48 +125,260 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    let request = this.parameter.getRawValue() as IRequest;
+    if (!request.regionalDelegationId) {
+      this.onLoadToast(
+        'error',
+        '',
+        'Se requerier tener una delegacion regional'
+      );
+    } else if (!request.transferenceId) {
+      this.onLoadToast('error', '', 'Se requerier tener una transferente');
+    }
+    Swal.fire({
+      title: 'Generar Caratula',
+      text: 'Esta seguro de querer generar una caratula?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#b38e5d',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.generateCaratula();
+      }
+    });
+  }
+
+  generateCaratula() {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
-    expedient.creationUser = this.authService.decodeToken().preferred_username;
-    expedient.creationDate = new Date().toISOString();
-    expedient.modificationUser =
-      this.authService.decodeToken().preferred_username;
-    expedient.modificationDate = new Date().toISOString();
 
+    //guardar expediente
     this.expedientSamiService.create(expedient).subscribe({
-      next: expedient => {
+      next: resp => {
+        const expedient = resp;
+        //verifica si fecha de recerva es nula
         if (expedient.id) {
-          request.recordId = expedient.id;
-          this.requestService.update(request.id, request).subscribe({
+          let resevateDate = '';
+          if (expedient.reserveDateInai) {
+            resevateDate = this.getDocNameDate(
+              this.associateFileForm.controls['reserveDateInai'].value
+            );
+          } else {
+            resevateDate = '';
+          }
+          const body = {
+            funcionario: expedient['inaiOfficial'],
+            usrID: expedient['inaiUser'],
+            fojas: expedient['sheetsInai'],
+            arhId: expedient['inaiFile'],
+            legajos: expedient['filesInai'],
+            fechaExpediente: this.getDocNameDate(
+              this.associateFileForm.controls['expedientDate'].value
+            ),
+            nombreExpediente: `EXPEDIENTE ${expedient.id}. TRANSFERENTE: ${request.transferenceId}`,
+            ddcid: this.ddcId,
+            fechaReserva: resevateDate,
+          };
+          //insertar datos la caratula del expediente
+          this.externalExpedientService.insertExpedient(body).subscribe({
             next: resp => {
-              if (resp.id) {
-                this.message(
-                  'success',
-                  'Expediente Asociado',
-                  'Se asocio el expediente correctamente'
-                );
-                this.closeAssociateExpedientTab();
-                this.close();
+              if (resp.InsertaExpedienteResult.Insertado === true) {
+                const leagueName = new Date().toISOString();
+                const requestUpdate = {
+                  id: request.id,
+                  recordId: expedient.id,
+                  fileLeagueType: 'CREACION',
+                  fileLeagueDate: leagueName,
+                };
+                //actualizar solicitud
+                this.requestService
+                  .update(requestUpdate.id, requestUpdate)
+                  .subscribe({
+                    next: (resp: any) => {
+                      const solicitud = resp as any;
+                      if (solicitud.id) {
+                        //llamar al reporte caratula inai
+                        this.wcontetService
+                          .downloadCaratulaINAIFile(
+                            'Etiqueta_INAI',
+                            solicitud.id
+                          )
+                          .subscribe({
+                            next: resp => {
+                              const file: any = resp;
+                              const docName = `Reporte_${94}${this.getDocNameDate()}`;
+                              const body = {
+                                ddocTitle:
+                                  'Caratula del Expediente ' +
+                                  solicitud.recordId,
+                                ddocAuthor: '',
+                                ddocType: '',
+                                ddocCreator: '',
+                                ddocName: docName,
+                                dID: '',
+                                dSecurityGroup: 'Public',
+                                dDocAccount: '',
+                                dDocId: '',
+                                dInDate: this.setDate(new Date()),
+                                dOutDate: '',
+                                dRevLabel: '',
+                                xIdcProfile: '',
+                                xDelegacionRegional:
+                                  solicitud.regionalDelegationId,
+                                xidTransferente: solicitud.transferenceId ?? '',
+                                xidBien: '',
+                                xidExpediente: solicitud.recordId,
+                                xidSolicitud: solicitud.id,
+                                xNombreProceso: 'Captura Solicitud',
+                                xestado: solicitud.stationId ?? '',
+                                xnoOficio: solicitud.paperNumber ?? '',
+                                xremitente: solicitud.nameOfOwner ?? '',
+                                xnivelRegistroNSBDB: 'Expediente',
+                                xcargoRemitente: solicitud.holderCharge ?? '',
+                                xtipoDocumento: '94',
+                                xcontribuyente:
+                                  solicitud.contribuyente_indiciado ?? '',
+                              };
+                              const form = JSON.stringify(body);
+                              //se guarda el file y el documento
+                              this.wcontetService
+                                .addDocumentToContent(
+                                  docName,
+                                  '.pdf',
+                                  form,
+                                  file,
+                                  'pdf'
+                                )
+                                .subscribe({
+                                  next: resp => {
+                                    const reporteName = resp.dDocName;
+                                    console.log(reporteName);
+                                    //se arma los parametros y se habre un modal
+                                    const autoridad: any =
+                                      this.authService.decodeToken();
+                                    const parameters = {
+                                      idExpedient: expedient.id,
+                                      expedientDate: this.setDate(
+                                        this.associateFileForm.controls[
+                                          'expedientDate'
+                                        ].value
+                                      ),
+                                      usrCreation: autoridad.username,
+                                      dateCreation: this.setDate(new Date()),
+                                      docName: reporteName,
+                                    };
+                                    this.openModal(
+                                      OpenDescriptionComponent,
+                                      parameters
+                                    );
+                                    this.close();
+                                  },
+                                });
+                            },
+                          });
+                      } else {
+                        console.log('error');
+                        this.onLoadToast(
+                          'error',
+                          'Error',
+                          `No se inserto los datos el expediente!:
+                            ${resp.InsertaExpedienteResult.CodCompleta}`
+                        );
+                      }
+                    },
+                  });
               }
             },
           });
-        } else {
-          this.message(
-            'error',
-            'Error en el expediente',
-            'Ocurrio un erro al guardar el expediente'
-          );
         }
       },
     });
   }
 
-  close() {
-    this.modalRef.hide();
+  createPDF(resp: any, docName: string) {
+    const byteString = window.atob(resp);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([int8Array], { type: 'application/pdf' });
+    var downloadURL = window.URL.createObjectURL(blob);
+    // open the window
+    var newWin = window.open(downloadURL, `${docName}.pdf`);
+
+    /*const base64 = resp;
+      const linkSource = 'data:application/pdf;base64,' + base64;
+      const downloadLink = document.createElement('a');
+      const fileName = `${docName}.pdf`;
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();*/
+    //cierra la ventana de mensaje y oculta el tab
   }
 
-  closeAssociateExpedientTab() {
-    this.requestHelperService.associateExpedient(true);
+  setDate(date: Date) {
+    const newDate =
+      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    return newDate;
+  }
+
+  getDocNameDate(date?: any): string {
+    let newDate: any;
+    if (!date) {
+      const oldDate = new Date();
+      newDate =
+        oldDate.getFullYear() +
+        '' +
+        this.setMonths(oldDate.getMonth() + 1) +
+        '' +
+        oldDate.getDate();
+    } else {
+      const oldDate = date;
+      newDate =
+        oldDate.getFullYear() +
+        '' +
+        this.setMonths(oldDate.getMonth() + 1) +
+        '' +
+        oldDate.getDate();
+    }
+
+    return newDate.toString();
+  }
+
+  setMonths(month: number) {
+    let result = month.toString();
+    if (month === 1) {
+      result = '01';
+    } else if (month === 2) {
+      result = '02';
+    } else if (month === 3) {
+      result = '03';
+    } else if (month === 4) {
+      result = '04';
+    } else if (month === 5) {
+      result = '05';
+    } else if (month === 6) {
+      result = '06';
+    } else if (month === 7) {
+      result = '07';
+    } else if (month === 8) {
+      result = '08';
+    } else if (month === 9) {
+      result = '09';
+    }
+
+    return result;
+  }
+  convertdateNumeric(date: Date) {
+    return date.getFullYear() + '' + date.getMonth() + '' + date.getDate();
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
   getUserSelect(params: ListParams) {
@@ -257,5 +478,23 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.onLoadToast(header, title, body);
     }, 2000);
+  }
+
+  openModal(component: any, parameters?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        parameter: parameters,
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(component, config);
+
+    /*this.bsModalRef.content.event.subscribe((res: any) => {
+      this.matchLevelFraction(res);
+    });*/
   }
 }

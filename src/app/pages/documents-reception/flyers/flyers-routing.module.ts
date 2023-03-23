@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { DocumentsReceptionRegisterComponent } from './documents-reception-register/documents-reception-register.component';
 import { RecordUpdateComponent } from './record-update/record-update.component';
 import { RelatedDocumentsComponent } from './related-documents/related-documents.component';
-import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
 
 const routes: Routes = [
   {
@@ -18,10 +17,10 @@ const routes: Routes = [
   //   path: 'juridical-dictums/:id',
   //   // component: JuridicalDictumsComponent
   // },
-  {
-    path: 'shift-change/:id',
-    component: RdFShiftChangeComponent,
-  },
+  // {
+  //   path: 'shift-change/:id',
+  //   component: RdFShiftChangeComponent,
+  // },
   {
     path: 'related-document-management/:id',
     component: RelatedDocumentsComponent,
