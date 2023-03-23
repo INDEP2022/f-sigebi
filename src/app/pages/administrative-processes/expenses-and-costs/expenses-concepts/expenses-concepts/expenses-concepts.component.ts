@@ -61,4 +61,21 @@ export class ExpensesConceptsComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
+
+  send() {
+    console.log(this.form.value);
+    this.loading = true;
+    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCEPTOGASTO.pdf`;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
+  }
 }
