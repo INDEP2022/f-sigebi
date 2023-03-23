@@ -16,7 +16,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class RepresentativesModalComponent extends BasePage implements OnInit {
   representativeForm: ModelForm<IRepresentative>;
   representative: IRepresentative;
-
+  today: Date;
   title: string = 'Representante';
   edit: boolean = false;
 
@@ -26,6 +26,7 @@ export class RepresentativesModalComponent extends BasePage implements OnInit {
     private customerService: CustomerService
   ) {
     super();
+    this.today = new Date();
   }
 
   ngOnInit(): void {
