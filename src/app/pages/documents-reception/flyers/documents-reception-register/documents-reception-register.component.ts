@@ -3299,11 +3299,11 @@ export class DocumentsReceptionRegisterComponent
     this.docDataService.goodsBulkLoadPgrSaeParams = {
       pNoExpediente: this.formControls.expedientNumber.value,
       pNoVolante: this.formControls.wheelNumber.value,
-      pAvPrevia: this.formData.preliminaryInquiry,
+      pAvPrevia: this.formData.officeExternalKey,
     };
     console.log(this.docDataService.goodsBulkLoadPgrSaeParams);
     const preliminaryInquiry = encodeURIComponent(
-      this.formData.preliminaryInquiry
+      this.formData.officeExternalKey
     );
     const route = `/pgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
     console.log(`pages/documents-reception/goods-bulk-load${route}`);
