@@ -73,12 +73,10 @@
               "apexcharts",
               "simple-keyboard",
               "quill",
-              "crypto-js"
+              "crypto-js",
+              "src/assets/js/tiff.min.js"
             ],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/scss/bootstrap.scss",
               "src/scss/app.scss",
@@ -159,13 +157,8 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
             "scripts": []
           }
         }
@@ -174,8 +167,6 @@
   },
   "cli": {
     "analytics": false,
-    "schematicCollections": [
-      "@ngrx/schematics"
-    ]
+    "schematicCollections": ["@ngrx/schematics"]
   }
 }

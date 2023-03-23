@@ -21,12 +21,15 @@ import { WorkMailboxService } from '../work-mailbox.service';
 //Models
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 /*Redux NgRX Global Vars Service*/
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
@@ -41,16 +44,14 @@ import {
   RELATED_FOLIO_TITLE,
 } from '../utils/modal-titles';
 import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
-import {
-  NO_FLYER_NUMBER,
-  NO_INDICATORS_FOUND,
-} from '../utils/work-mailbox-messages';
+import { NO_INDICATORS_FOUND } from '../utils/work-mailbox-messages';
 import {
   WORK_ANTECEDENTES_COLUMNS,
   WORK_BIENES_COLUMNS,
   WORK_MAILBOX_COLUMNS2,
 } from './work-mailbox-columns';
 
+declare var Tiff: any;
 @Component({
   selector: 'app-work-mailbox',
   templateUrl: './work-mailbox.component.html',
@@ -74,7 +75,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   selectedRow: any = null;
   P_SAT_TIPO_EXP: string = '';
   satTypeProceedings: string = null;
-
+  testurl: any;
   //Filters
   priority$: string = null;
   areas$: any = [];
@@ -114,7 +115,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private goodsQueryService: GoodsQueryService,
     private historyIndicatorService: HistoryIndicatorService,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private fileBrowserService: FileBrowserService,
+    private sanatizer: DomSanitizer
   ) {
     super();
     this.settings.actions = false;
@@ -523,11 +526,19 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   viewPictures() {
-    if (!this.selectedRow?.flierNumber) {
-      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
-      return;
-    }
-    this.getDocumentsByFlyer(this.selectedRow?.flierNumber);
+    this.fileBrowserService
+      .getFileFromFolioAndName('424989', 'FU+000000000424989_0002.TIF')
+      .subscribe(response => {
+        const buffer = Buffer.from(response, 'base64');
+        const tiff = new Tiff({ buffer });
+        const canvas = tiff.toCanvas();
+        console.log(canvas);
+      });
+    // if (!this.selectedRow?.flierNumber) {
+    //   this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+    //   return;
+    // }
+    // this.getDocumentsByFlyer(this.selectedRow.flierNumber);
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
@@ -546,9 +557,35 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         columns,
         title,
         $params,
+        showConfirmButton: true,
       },
     };
-    this.modalService.show(MailboxModalTableComponent, config);
+    const modalRef = this.modalService.show(
+      MailboxModalTableComponent<IDocuments>,
+      config
+    );
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    if (document.associateUniversalFolio) {
+    } else {
+      this.getPicturesName(document);
+    }
+  }
+
+  getPicturesName(document: IDocuments) {
+    const { numberProceedings, id, mediumId } = document;
+    const sign = Number(id) < 0 ? '-' : '+';
+    const expedientPad = `${numberProceedings}`
+      .padStart(10, '0')
+      .replaceAll(' ', '');
+    const expedientPath = `EXP${expedientPad}`;
+    const folioPad = `${id}`.padStart(15, '0').replaceAll(' ', '');
+    const folioPath = `FU${sign}${folioPad}`;
+    console.log({ expedientPath, folioPath });
   }
 
   acptionBienes() {
@@ -574,7 +611,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         $params,
       },
     };
-    this.modalService.show(MailboxModalTableComponent, config);
+    const modalRef = this.modalService.show(MailboxModalTableComponent, config);
   }
 
   acptionAntecedente() {

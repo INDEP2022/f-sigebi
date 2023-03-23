@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-documents-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDocuments } from '../../models/ms-documents/documents';
 
@@ -22,9 +22,10 @@ export class DocumentsService extends HttpService {
     );
   }
 
-  getAllFilter(params?: string): Observable<IListResponse<IDocuments>> {
+  getAllFilter(params?: _Params): Observable<IListResponse<IDocuments>> {
     return this.get<IListResponse<IDocuments>>(
-      `${DocumentsEndpoints.Documents}?${params}`
+      `${DocumentsEndpoints.Documents}`,
+      params
     );
   }
 
