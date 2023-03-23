@@ -28,6 +28,8 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   regionalDelegacionName: string = '';
   idRegDelegation: number = null;
   file: File = null;
+  registerLvl = '';
+  isreadOnly = true;
 
   constructor(
     private fb: FormBuilder,
@@ -103,10 +105,25 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       this.documentForm.controls['xidExpediente'].setValue(
         this.parameter.recordId
       );
+      this.registerLvl = 'Expediente';
     } else if (this.typeDoc === 'doc-solicitud') {
       this.documentForm.controls['xidSolicitud'].setValue(this.parameter.id);
+      this.registerLvl = 'Solicitud';
     } else if (this.typeDoc === 'doc-bien') {
       this.documentForm.controls['xidBien'].setValue(this.parameter.goodId);
+      this.registerLvl = 'Bien';
+    } else if (this.typeDoc === 'doc-buscar') {
+      if (this.parameter) {
+        this.documentForm.controls['xidSolicitud'].setValue(
+          this.parameter.xidSolicitud
+        );
+        this.documentForm.controls['xidExpediente'].setValue(
+          this.parameter.xidExpediente
+        );
+        this.documentForm.controls['xidBien'].setValue(this.parameter.xidBien);
+        this.registerLvl = 'Expediente';
+        this.isreadOnly = false;
+      }
     }
   }
 
@@ -147,15 +164,19 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         this.parameter.regionalDelegation.description;
       this.getState(new ListParams());
     } else {
-      this.regDelegationService
-        .getById(this.parameter.regionalDelegacionId)
-        .subscribe({
-          next: resp => {
-            this.documentForm.controls['xdelegacionRegional'].setValue(resp.id);
-            this.regionalDelegacionName = resp.description;
-            this.getState(new ListParams());
-          },
-        });
+      let deleRegId = 0;
+      if (this.typeDoc === 'doc-buscar') {
+        deleRegId = this.parameter.xdelegacionRegional;
+      } else {
+        deleRegId = this.parameter.regionalDelegacionId;
+      }
+      this.regDelegationService.getById(deleRegId).subscribe({
+        next: resp => {
+          this.documentForm.controls['xdelegacionRegional'].setValue(resp.id);
+          this.regionalDelegacionName = resp.description;
+          this.getState(new ListParams());
+        },
+      });
     }
   }
 
@@ -196,7 +217,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         }
         form['ddocName'] = docName;
         form['dSecurityGroup'] = 'Public';
-        form['xNivelRegistroNSBDB'] = 'Expediente';
+        form['xNivelRegistroNSBDB'] = this.registerLvl;
         form['xNombreProceso'] = 'Captura Solicitud';
         delete form['document'];
 
@@ -205,7 +226,6 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         } else {
           this.saveGoodImgs(docName, '.img', form);
         }
-        /**/
       }
     });
   }
