@@ -31,6 +31,11 @@ export class ComerEventosService extends HttpService {
     return this.get<IComerEvent>(route);
   }
 
+  getById2(id: string | number, params?: ListParams) {
+    const route = `${this.endpoint}?filter.id=${id}`;
+    return this.get(route, params);
+  }
+
   create(comerEvent: IComerEvent) {
     return this.post(this.endpoint, comerEvent);
   }
