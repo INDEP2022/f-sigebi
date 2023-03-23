@@ -26,11 +26,16 @@ import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
+
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { MailboxModalTableComponent } from '../components/mailbox-modal-table/mailbox-modal-table.component';
 import { FLYER_HISTORY_COLUMNS } from '../utils/flyer-history-columns';
 import { INDICATORS_HISTORY_COLUMNS } from '../utils/indicators-history-columns';
@@ -39,8 +44,13 @@ import {
   BIENES_TITLE,
   FLYER_HISTORY_TITLE,
   INDICATORS_HISTORY_TITLE,
+  RELATED_FOLIO_TITLE,
 } from '../utils/modal-titles';
-import { NO_INDICATORS_FOUND } from '../utils/work-mailbox-messages';
+import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
+import {
+  NO_FLYER_NUMBER,
+  NO_INDICATORS_FOUND,
+} from '../utils/work-mailbox-messages';
 import {
   WORK_ANTECEDENTES_COLUMNS,
   WORK_BIENES_COLUMNS,
@@ -72,7 +82,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   selectedRow: any = null;
   P_SAT_TIPO_EXP: string = '';
   satTypeProceedings: string = null;
-
+  testurl: any;
   //Filters
   priority$: string = null;
 
@@ -149,6 +159,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private historicalProcedureManagementService: HistoricalProcedureManagementService,
     private goodsQueryService: GoodsQueryService,
     private historyIndicatorService: HistoryIndicatorService,
+    private documentsService: DocumentsService,
+    private fileBrowserService: FileBrowserService,
     private usersService: UsersService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer
@@ -327,7 +339,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     /*if () {
       field = `filter.userATurn`;
-      
+
     }*/
 
     this.getData();
@@ -753,6 +765,57 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(MailboxModalTableComponent, config);
   }
 
+  viewPictures() {
+    if (!this.selectedRow?.flierNumber) {
+      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      return;
+    }
+    this.getDocumentsByFlyer(this.selectedRow.flierNumber);
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    const title = RELATED_FOLIO_TITLE;
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        showConfirmButton: true,
+      },
+    };
+    const modalRef = this.modalService.show(
+      MailboxModalTableComponent<IDocuments>,
+      config
+    );
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
   acptionBienes() {
     // this.workService.getViewBienes('598154').subscribe({
     //   next: (resp: any) => {
@@ -776,7 +839,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         $params,
       },
     };
-    this.modalService.show(MailboxModalTableComponent, config);
+    const modalRef = this.modalService.show(MailboxModalTableComponent, config);
   }
 
   acptionAntecedente() {
@@ -813,7 +876,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     params.addFilter('name', $params.text, SearchFilter.LIKE);
     //params.addFilter('assigned', 'S');
     /*if (lparams?.text.length > 0)
-      
+
     if (this.delDestinyNumber.value != null)
       params.addFilter('delegationNumber', this.delDestinyNumber.value);
     if (this.subDelDestinyNumber.value != null)

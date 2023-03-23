@@ -69,12 +69,6 @@ const routes: Routes = [
         .DocumentsViewerModule,
   },
   {
-    path: 'system-log',
-    data: { screen: 'FCONGENBITACORA', title: 'Bitácora del sistema' },
-    loadChildren: async () =>
-      (await import('./system-log/system-log.module')).SystemLogModule,
-  },
-  {
     path: 'indicators',
     data: { screen: '', title: '' },
     loadChildren: async () =>
