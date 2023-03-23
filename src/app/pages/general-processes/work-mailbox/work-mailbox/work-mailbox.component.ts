@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -33,6 +33,8 @@ import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-bro
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
+
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { MailboxModalTableComponent } from '../components/mailbox-modal-table/mailbox-modal-table.component';
 import { FLYER_HISTORY_COLUMNS } from '../utils/flyer-history-columns';
 import { INDICATORS_HISTORY_COLUMNS } from '../utils/indicators-history-columns';
@@ -44,14 +46,18 @@ import {
   RELATED_FOLIO_TITLE,
 } from '../utils/modal-titles';
 import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
-import { NO_INDICATORS_FOUND } from '../utils/work-mailbox-messages';
+import {
+  NO_FLYER_NUMBER,
+  NO_INDICATORS_FOUND,
+} from '../utils/work-mailbox-messages';
 import {
   WORK_ANTECEDENTES_COLUMNS,
   WORK_BIENES_COLUMNS,
   WORK_MAILBOX_COLUMNS2,
 } from './work-mailbox-columns';
 
-declare var Tiff: any;
+const Tiff = require('tiff.js');
+
 @Component({
   selector: 'app-work-mailbox',
   templateUrl: './work-mailbox.component.html',
@@ -101,6 +107,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   globalVars: IGlobalVars;
 
   managementAreas = new DefaultSelect<IManagementArea>();
+
+  @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
 
   constructor(
     private fb: FormBuilder,
@@ -526,19 +534,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   viewPictures() {
-    this.fileBrowserService
-      .getFileFromFolioAndName('424989', 'FU+000000000424989_0002.TIF')
-      .subscribe(response => {
-        const buffer = Buffer.from(response, 'base64');
-        const tiff = new Tiff({ buffer });
-        const canvas = tiff.toCanvas();
-        console.log(canvas);
-      });
-    // if (!this.selectedRow?.flierNumber) {
-    //   this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
-    //   return;
-    // }
-    // this.getDocumentsByFlyer(this.selectedRow.flierNumber);
+    if (!this.selectedRow?.flierNumber) {
+      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      return;
+    }
+    this.getDocumentsByFlyer(this.selectedRow.flierNumber);
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
@@ -570,22 +570,18 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
     if (document.associateUniversalFolio) {
-    } else {
-      this.getPicturesName(document);
+      folio = document.associateUniversalFolio;
     }
-  }
-
-  getPicturesName(document: IDocuments) {
-    const { numberProceedings, id, mediumId } = document;
-    const sign = Number(id) < 0 ? '-' : '+';
-    const expedientPad = `${numberProceedings}`
-      .padStart(10, '0')
-      .replaceAll(' ', '');
-    const expedientPath = `EXP${expedientPad}`;
-    const folioPad = `${id}`.padStart(15, '0').replaceAll(' ', '');
-    const folioPath = `FU${sign}${folioPad}`;
-    console.log({ expedientPath, folioPath });
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 
   acptionBienes() {
