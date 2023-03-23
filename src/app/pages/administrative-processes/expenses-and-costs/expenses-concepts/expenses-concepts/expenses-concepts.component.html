@@ -18,5 +18,14 @@
     <app-pagination
       [params]="params"
       [totalItems]="totalItems"></app-pagination>
+    <div class="row mt-2">
+      <div class="col-md-2">
+        <confirm-button
+          text="IMPRIMIR REPORTE"
+          [loading]="loading"
+          (confirm)="send()">
+        </confirm-button>
+      </div>
+    </div>
   </div>
 </app-card>

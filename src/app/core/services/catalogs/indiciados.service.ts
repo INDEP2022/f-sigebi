@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -42,5 +43,10 @@ export class IndiciadosService
 
   remove(id: string | number): Observable<Object> {
     return this.indiciadosRepository.remove(this.route2, id);
+  }
+
+  getAllFiltered(params?: _Params): Observable<IListResponse<IIndiciados>> {
+    const segments = ENDPOINT_LINKS.Indiciados.split('/');
+    return this.get<IListResponse<IIndiciados>>(segments[1], params);
   }
 }

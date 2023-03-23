@@ -125,12 +125,43 @@
   <div class="ch-content" header>
     <h5 class="title">Publicaci&oacute;n de fotograf&iacute;as</h5>
   </div>
-
   <div body>
     <form class="form-material" [formGroup]="form">
       <div body>
         <div class="row">
-          <label for="">Lotes</label>
+          <label for="">Evento</label>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              (keyup)="findEvent($event)"
+              placeholder="Buscar evento" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Ubicación de Evento"
+            [control]="form.get('address')">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha de evento"
+            [control]="form.get('failureDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="failureDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Lugar" [control]="form.get('place')">
+            <input type="text" class="form-control" formControlName="place" />
+          </form-field>
         </div>
         <div class="row pt-2 scroll-table justify-content-center">
           <ng2-smart-table
