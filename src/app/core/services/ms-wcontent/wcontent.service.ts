@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WContentEndpoint } from 'src/app/common/constants/endpoints/ms-wcontent-endpoint';
@@ -81,13 +81,23 @@ export class WContentService extends HttpWContentService {
     return this.get(WContentEndpoint.ObtainFile + '/' + docName);
   }
 
-  callReportFile(reportName: string, idRequest: string) {
-    const httpOptions = new HttpHeaders({
-      //responseType: 'application/pdf',
-      //responseType: 'arraybuffer' as 'json',
-      responseType: 'blob',
-    });
+  downloadCaratulaINAIFile(reportName: string, idRequest: string) {
+    //const httpOptions = new HttpHeaders({
+    //responseType: 'application/pdf',
+    //responseType: 'arraybuffer' as 'json',
+    //responseType: 'blob',
+    //});
     const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&idSolicitud=${idRequest}`;
+
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  downloadTransferRequestFile(
+    reportName: string,
+    idRequest: string,
+    ciudad?: string
+  ) {
+    const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&ID_SOLICITUD=${ciudad}`;
 
     return this.http.get(url, { responseType: 'blob' });
   }
