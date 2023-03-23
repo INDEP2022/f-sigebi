@@ -14,6 +14,14 @@ export const ATT_REG_LOG_TAB_COLUMNS = {
   swFormat: {
     title: 'Formato',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'N') return 'Numérico';
+      if (value == 'V') return 'Alfanumérico';
+      if (value == 'D') return 'Fecha';
+      if (value == 'F') return 'Flotante';
+
+      return value;
+    },
   },
   longMax: {
     title: 'Longitud Máxima',

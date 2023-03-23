@@ -188,9 +188,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               case 'processStatus':
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'version':
+              case 'flierNumber':
                 searchFilter = SearchFilter.EQ;
-                break;*/
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -433,20 +433,34 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   };
 
                   //GET  FEC_CAPTURA
-                  this.workService
-                    .getNotificationsFilter(flierNumber)
-                    .subscribe({
-                      next: (resp: any) => {
-                        this.selectedRow = {
-                          ...this.selectedRow,
-                          dateFlier: resp.data[0]?.captureDate || null,
-                          wheelType: resp.data[0]?.wheelType || null,
-                        };
+                  if (flierNumber !== null) {
+                    this.workService
+                      .getNotificationsFilter(flierNumber)
+                      .subscribe({
+                        next: (resp: any) => {
+                          this.selectedRow = {
+                            ...this.selectedRow,
+                            dateFlier: resp.data[0]?.captureDate || null,
+                            wheelType: resp.data[0]?.wheelType || null,
+                          };
 
-                        //this.getSatOfficeType(officeNumber)
-                      },
-                      error: error => (this.loading = false),
-                    });
+                          //this.getSatOfficeType(officeNumber)
+                        },
+                        error: error => (this.loading = false),
+                      });
+                  } else {
+                    this.onLoadToast(
+                      'warning',
+                      '',
+                      'No se pudo cargar la fecha de captura'
+                    );
+                    this.selectedRow = {
+                      ...this.selectedRow,
+                      dateFlier: resp.data[0]?.captureDate || null,
+                      wheelType: resp.data[0]?.wheelType || null,
+                    };
+                  }
+
                   //
                   /*this.satInterface.getSatTransfer(body).subscribe({
                   next: (resp: any) => {
@@ -504,7 +518,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   '/pages/juridical/juridical-ruling/12345'
                 );
               } else {
-                console.log('No se puede llamar la Declaratoria de abandono');
+                this.alert(
+                  'info',
+                  `${resp.data[0].screenKey}`,
+                  'No se encuentra disponible en este momento'
+                );
               }
             } else if (resp.data[0].screenKey === 'FACTOFPREGRECDOCM') {
               console.log(this.docsDataService.flyersRegistrationParams);
@@ -522,6 +540,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 '/pages/documents-reception/flyers-registration'
               );
             } else {
+              this.alert(
+                'info',
+                `${resp.data[0].screenKey}`,
+                'No se encuentra disponible en este momento'
+              );
               console.log('other screenKey');
               //TODO:MAP SCREENS AND ROUTING
             }
@@ -535,51 +558,55 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     this.workService.getSatOfficeType(officeNumber).subscribe({
       next: (resp: any) => {
-        if (resp.data.length > 0) {
+        if (resp.data) {
           console.log(resp.data);
-          this.P_SAT_TIPO_EXP = resp.data[0].satTypeProceedings;
+          this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
           console.log(this.P_SAT_TIPO_EXP);
-          if (this.P_SAT_TIPO_EXP !== '') {
-            let typeManagement = this.selectedRow.typeManagement;
-            let folio = this.selectedRow.folioRep;
-            //TODO: CHECK BUZON
-            switch (typeManagement) {
-              case '2':
-                folio !== 0
-                  ? this.work2()
-                  : console.log(
-                      'Este tramite es un asunto SAT, no se puede trabajar hasta que se genere un folio de recepción...'
-                    );
-                break;
-              case '3':
-                folio !== 0
-                  ? this.work2()
-                  : console.log(
-                      'Este tramite es un asunto PGR, no se puede trabajar hasta que se genere un folio de recepción...'
-                    );
-                break;
-              default:
-                console.log('No es 2 ni 3, work()');
-                this.work2();
-                break;
-            }
-
-            //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
-          } else {
-            this.alert(
-              'info',
-              'Proceso incompleto',
-              'Este trámite no se puede trabajar'
-            );
+          // if (this.P_SAT_TIPO_EXP !== '') {
+          let typeManagement = this.selectedRow.typeManagement;
+          let folio = this.selectedRow.folioRep;
+          //TODO: CHECK BUZON
+          switch (typeManagement) {
+            case '2':
+              folio !== 0
+                ? this.work2()
+                : this.alert(
+                    'info',
+                    'Este trámite es un asunto SAT',
+                    'No se puede trabajar hasta que se genere un folio de recepción'
+                  );
+              break;
+            case '3':
+              folio !== 0
+                ? this.work2()
+                : this.alert(
+                    'info',
+                    'Este trámite es un asunto PGR',
+                    'No se puede trabajar hasta que se genere un folio de recepción'
+                  );
+              break;
+            default:
+              //console.log('No es 2 ni 3, work()');
+              this.work2();
+              break;
           }
-          this.loading = false;
+
+          //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
         } else {
+          this.alert(
+            'info',
+            'Proceso incompleto',
+            'Este trámite no se puede trabajar'
+          );
+        }
+        this.loading = false;
+        /*} else {
           this.alert(
             'info',
             'Sin clave de pantalla',
             'La clave de pantalla no ha sido encontrada'
           );
-        }
+        }*/
       },
       error: error => (this.loading = false),
     });

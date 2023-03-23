@@ -49,6 +49,8 @@ export class DocumentsReceptionDataService {
 
   private _flyerEditMode: boolean = false;
 
+  private _flyerReceptionMode: boolean = false;
+
   constructor() {}
 
   get flyersRegistrationParams() {
@@ -74,6 +76,10 @@ export class DocumentsReceptionDataService {
 
   get flyerEditMode() {
     return this._flyerEditMode;
+  }
+
+  get flyerReceptionMode() {
+    return this._flyerReceptionMode;
   }
 
   get trackRecordGoods() {
@@ -108,6 +114,10 @@ export class DocumentsReceptionDataService {
 
   set flyerEditMode(value: boolean) {
     this._flyerEditMode = value;
+  }
+
+  set flyerReceptionMode(value: boolean) {
+    this._flyerReceptionMode = value;
   }
 
   setFlyersRegParam<
