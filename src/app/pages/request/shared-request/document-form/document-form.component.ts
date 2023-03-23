@@ -189,7 +189,6 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   uploadFile(event: any) {
-    console.log(event.target.files[0]);
     this.file = event.target.files[0];
   }
 
@@ -242,8 +241,6 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
-          console.log(resp);
-
           this.onLoadToast(
             'success',
             'Documento Guardado',

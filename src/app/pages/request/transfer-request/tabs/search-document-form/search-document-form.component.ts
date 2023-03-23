@@ -205,7 +205,6 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
   }
   documentSelect(event: any) {
     this.rowSelected = event.data;
-    console.log(this.rowSelected);
   }
 
   //añadir nuevo documento

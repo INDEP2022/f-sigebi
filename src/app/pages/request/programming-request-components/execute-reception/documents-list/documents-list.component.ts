@@ -69,7 +69,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('lista documentos');
-    console.log(this.parameter);
     this.prepareForm();
     this.request = this.parameter as IRequest;
     this.getTypeDocumentSelect(new ListParams());
