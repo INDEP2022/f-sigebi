@@ -247,14 +247,14 @@ export const Lot = {
       },
     },
   },
-  eventId: {
+  events: {
     type: 'list',
     id: {
       title: 'Evento',
       type: 'number',
       sort: true,
       valuePrepareFunction: (cell: any, row: any) => {
-        return row.eventId.id;
+        return row.events.id;
       },
     },
   },
@@ -291,5 +291,43 @@ export const GoodPhoto = {
         data.row.to = data.toggle;
       });
     },
+  },
+};
+
+export const Events = {
+  id: {
+    title: 'Lote',
+    type: 'number',
+    sort: false,
+  },
+  address: {
+    title: 'Dirección de evento',
+    type: 'number',
+    sort: false,
+  },
+  failureDate: {
+    title: 'Fecha de evento',
+    type: 'string',
+    sort: false,
+  },
+  place: {
+    title: 'Lugar',
+    type: 'string',
+    sort: false,
+  },
+  eventDate: {
+    title: 'Fecha de evento',
+    type: 'string',
+    sort: false,
+  },
+  baseCost: {
+    title: 'Costo inicial',
+    type: 'number',
+    sort: false,
+  },
+  baseVendNumber: {
+    title: 'Venta inicial',
+    type: 'number',
+    sort: false,
   },
 };

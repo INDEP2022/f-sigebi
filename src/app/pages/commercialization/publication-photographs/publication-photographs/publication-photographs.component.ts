@@ -111,45 +111,32 @@ export class PublicationPhotographsComponent
   }
 
   ngOnInit(): void {
-    this.getCve({ page: 1, text: '' });
-    // this.data1.load(this.dataBatch);
-
-    this.getSubtype();
+    // this.getCve({ page: 1, text: '' });
+    // this.data1.load(this.dataBatch)
+    this.prepareForm();
     this.settings4.actions.delete = true;
     this.settings4.actions.edit = true;
     this.getAllLot();
   }
 
-  data: any[] = [
-    {
-      id: '9423',
-      description: 'DESTRU/COMDD/10-03/02',
-      type: 'REMESA',
-      status: 'EN PREPARACIÓN',
-    },
-    {
-      id: '7897',
-      description: 'CRCUL/COMDD/08-10/15',
-      type: 'SUBASTA',
-      status: 'EN SUBASTA',
-    },
-    {
-      id: '3242',
-      description: 'COMER/COMDD/09-21/74',
-      type: 'TIPO 03',
-      status: 'DONACIÓN',
-    },
-  ];
-
-  getCve(params: ListParams) {
-    if (params.text == '') {
-      this.cveItems = new DefaultSelect(this.data, 3);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.data.filter((i: any) => i.id == id)];
-      this.cveItems = new DefaultSelect(item[0], 1);
-    }
+  prepareForm() {
+    this.form = this.fb.group({
+      id: [null],
+      address: [null],
+      failureDate: [null],
+      place: [null],
+    });
   }
+
+  //  getCve(params: ListParams) {
+  //     if (params.text == '') {
+  //       this.cveItems = new DefaultSelect(this.data, 3);
+  //     } else {
+  //       const id = parseInt(params.text);
+  //       const item = [this.data.filter((i: any) => i.id == id)];
+  //       this.cveItems = new DefaultSelect(item[0], 1);
+  //     }
+  //   }
 
   selectCve(event: any) {
     this.selectedCve = event;
@@ -165,6 +152,16 @@ export class PublicationPhotographsComponent
   selectRowGood() {
     this.rowSelectedGood = true;
   }
+
+  findEvent(event: any) {
+    event.preventDefault();
+    console.log('funcion aqui');
+    // if (event.key === "Enter" || event.key === "Tab") {
+    //   event.preventDefault();
+    //   // My Functionality goes here
+    // }
+  }
+
   getBatch() {
     this.loading = true;
     this.batchService.getAll(this.params.getValue()).subscribe({
