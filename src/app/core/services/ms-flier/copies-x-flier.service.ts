@@ -41,7 +41,7 @@ export class CopiesXFlierService extends HttpService {
     return this.post(this.endpoint, body);
   }
 
-  update(body: ICopiesxFlier) {
+  update(body: Partial<ICopiesxFlier>) {
     const route = `${this.endpoint}`;
     return this.put(route, body);
   }

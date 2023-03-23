@@ -102,12 +102,12 @@
       </div>
     </form>
 
-    <div class="row pt-5">
+    <div class="row pt-5" *ngIf="form.get('attrib').value !== null">
       <div class="ch-content" header>
         <h5 class="title"></h5>
         <div class="col-md-5 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
-          <div *ngIf="form.get('attrib').value !== null">
+          <div>
             <button
               (click)="openForm()"
               class="btn btn-primary active btn-sm ml-3">

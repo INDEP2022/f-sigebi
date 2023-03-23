@@ -5,7 +5,7 @@ import { GoodsQueryEndpoints } from 'src/app/common/constants/endpoints/ms-good-
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AttribClassifGoodMethodsRepository } from 'src/app/common/repository/repositories/attrib-classif-good-repository';
 import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
@@ -160,6 +160,10 @@ export class GoodsQueryService extends HttpService {
     return this.httpClient.get<IListResponse<any>>(
       `${environment.API_URL}${route}?${params}`
     );
+  }
+
+  getHistoryIndicatorsView(params: _Params) {
+    return this.get('views/history-indicator-view', params);
   }
 
   private makeParams(params: ListParams): HttpParams {

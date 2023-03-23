@@ -50,8 +50,8 @@ export class IssuingInstitutionFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       manager: [null, [Validators.required]],
-      street: [null, [, Validators.pattern(STRING_PATTERN)]],
-      calle: [null, [, Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.pattern(STRING_PATTERN)]],
+      calle: [null, [Validators.pattern(STRING_PATTERN)]],
       numInside: [null, []],
       numExterior: [null, []],
       cologne: [null, []],
@@ -65,6 +65,7 @@ export class IssuingInstitutionFormComponent
     });
     if (this.issuingInstitution != null) {
       this.edit = true;
+      this.issuingInstitutionForm.patchValue(this.issuingInstitution);
       this.issuingInstitutionForm.controls['numClasif'].setValue(
         this.idInstitute.id
       );

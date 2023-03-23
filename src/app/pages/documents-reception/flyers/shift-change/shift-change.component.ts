@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
@@ -21,8 +20,11 @@ import { IProceedingDeliveryReception } from '../../../../core/models/ms-proceed
 import { IUserAccessAreaRelational } from '../../../../core/models/ms-users/seg-access-area-relational.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
 import { DocReceptionRegisterService } from '../../../../core/services/document-reception/doc-reception-register.service';
+import { CopiesXFlierService } from '../../../../core/services/ms-flier/copies-x-flier.service';
+import { HistoryOfficialService } from '../../../../core/services/ms-historyofficial/historyOfficial.service';
 import { NotificationService } from '../../../../core/services/ms-notification/notification.service';
 import { ProceedingsDeliveryReceptionService } from '../../../../core/services/ms-proceedings/proceedings-delivery-reception.service';
+import { ProcedureManagementService } from '../../../../core/services/proceduremanagement/proceduremanagement.service';
 import { IJuridicalShiftChangeParams } from '../../../juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { FileUpdateCommunicationService } from '../../../juridical-processes/file-data-update/services/file-update-communication.service';
 import { JuridicalFileUpdateService } from '../../../juridical-processes/file-data-update/services/juridical-file-update.service';
@@ -103,7 +105,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     private affairService: AffairService,
     private fileUpdateService: JuridicalFileUpdateService,
     private proceedingsDelRecService: ProceedingsDeliveryReceptionService,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private historyOfficeService: HistoryOfficialService,
+    private flyerCopiesService: CopiesXFlierService,
+    private procedureManageService: ProcedureManagementService
   ) {
     super();
     this.dictumSettings = {
@@ -153,11 +158,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           this.formControls.wheelNumber.setValue(notif.wheelNumber);
           this.formControls.externalRemitter.setValue(notif.externalRemitter);
           this.formControls.receiptDate.setValue(
-            format(new Date(notif.receiptDate), 'd/MM/yyyy')
+            format(new Date(notif.receiptDate), 'dd/MM/yyyy')
           );
           this.formControls.captureDate.setValue(
-            format(new Date(notif.captureDate), 'd/MM/yyyy')
+            format(new Date(notif.captureDate), 'dd/MM/yyyy')
           );
+          this.formControls.captureDate.disable();
+          this.formControls.receiptDate.disable();
           if (notif.affairKey != null)
             this.affairService.getById(notif.affairKey).subscribe({
               next: data => {
@@ -223,15 +230,151 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.turnForm.markAllAsTouched();
+    if (!this.turnForm.valid) {
+      this.turnForm.markAllAsTouched();
+      this.turnForm.updateValueAndValidity();
+      return;
+    }
+    const body = {
+      flyerNumber: this.notifData.wheelNumber,
+      reassignmentDate: format(new Date(), 'yyyy-MM-dd'),
+      officialNumber: this.notifData.officeNumber,
+      personPrevious: this.formControls.prevUser.value?.user,
+      areaDestinationPrevious: this.notifData.departamentDestinyNumber,
+      personNew: this.formControls.newUser.value?.user,
+      argument: this.formControls.argument.value,
+    };
+    // console.log(
+    //   this.turnForm.value,
+    //   body,
+    //   this.selectedDictums,
+    //   this.selectedProceedings
+    // );
+    this.loading = true;
+    this.historyOfficeService.create(body).subscribe({
+      next: () => {
+        this.updateFlyerCopy();
+      },
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        this.alert(
+          'error',
+          'Turno no actualizado',
+          'Hubo un error al actualizar el turno'
+        );
+      },
+    });
+  }
+
+  updateFlyerCopy() {
+    const body = {
+      copyNumber: 1,
+      flierNumber: this.notifData.wheelNumber,
+      copyuser: this.formControls.newUser.value?.user,
+    };
+    this.flyerCopiesService.update(body).subscribe({
+      next: () => {
+        this.updateNotification();
+      },
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        this.alert(
+          'error',
+          'Turno no actualizado',
+          'Hubo un error al actualizar el turno'
+        );
+      },
+    });
+  }
+
+  updateNotification() {
+    const body = {
+      delDestinyNumber: this.formControls.newUser.value?.delegationNumber,
+      subDelDestinyNumber: this.formControls.newUser.value?.subdelegationNumber,
+      departamentDestinyNumber:
+        this.formControls.newUser.value?.departamentNumber,
+    };
+    this.notifService.update(this.notifData.wheelNumber, body).subscribe({
+      next: () => {
+        this.updateProcedureUser();
+        this.updateDictums();
+        this.updateProceedings();
+        this.loading = false;
+        this.alert(
+          'success',
+          'Usuario Turnado Exitosamente',
+          `Se actualizó el usuario turnado al volante ${this.pageParams.iden}`
+        );
+      },
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        this.alert(
+          'error',
+          'Turno no actualizado',
+          'Hubo un error al actualizar el turno'
+        );
+      },
+    });
+  }
+
+  updateProcedureUser() {
+    this.procedureManageService
+      .update(this.pageParams.pNoTramite, {
+        userTurned: this.formControls.newUser.value?.user,
+      })
+      .subscribe({
+        next: () => {},
+        error: () => {},
+      });
+  }
+
+  updateDictums() {
+    if (this.selectedDictums.length > 0) {
+      this.selectedDictums.forEach(d => {
+        const body = {
+          id: d.id,
+          typeDict: d.typeDict,
+          delegationDictNumber: d.delegationDictNumber,
+        };
+        this.dictationService.update(body).subscribe({
+          next: () => {},
+          error: () => {},
+        });
+      });
+    }
+  }
+
+  updateProceedings() {
+    if (this.selectedProceedings.length > 0) {
+      this.selectedProceedings.forEach(p => {
+        const body = {
+          id: Number(p.id),
+          numDelegation2: this.notifData.delDestinyNumber,
+          elaborationDate: p.elaborationDate,
+          elaborate: p.elaborate,
+          numFile: p.numFile,
+          typeProceedings: p.typeProceedings,
+          captureDate: p.captureDate,
+        };
+        this.proceedingsDelRecService.update(p.id, body).subscribe({
+          next: () => {},
+          error: err => {
+            console.log(err);
+          },
+        });
+      });
+    }
   }
 
   return() {
     let params = this.fileUpdComService.fileDataUpdateParams;
     if (params == null) {
       params = {
-        pGestOk: null,
-        pNoTramite: null,
+        pGestOk: 1,
+        pNoTramite: this.pageParams.pNoTramite,
         dictamen: false,
       };
     } else {
@@ -242,8 +385,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   showHistory() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(ShiftChangeHistoryComponent, modalConfig);
+    this.modalService.show(ShiftChangeHistoryComponent, {
+      initialState: { flyerNumber: this.pageParams.iden },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
   selectDictums(event: IUserRowSelectEvent<IDictation>) {

@@ -63,3 +63,13 @@ export interface IManagementArea {
   managementNumber: number | null;
   nameAndId?: string;
 }
+
+export interface IManagementGroupWork {
+  groupNumber: number | null;
+  user: string | null;
+  turnar: string | null;
+  watch: string | null;
+  send: string | null;
+  managementArea: string | null;
+  predetermined: string | null;
+}

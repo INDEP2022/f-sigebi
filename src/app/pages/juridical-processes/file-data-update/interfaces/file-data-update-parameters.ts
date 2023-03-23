@@ -54,4 +54,5 @@ export interface IJuridicalRelatedDocumentManagementParams {
 export interface IJuridicalShiftChangeParams {
   iden: number;
   exp: number;
+  pNoTramite: number;
 }

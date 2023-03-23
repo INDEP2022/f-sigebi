@@ -35,6 +35,8 @@ export class MaintenanceDelegSubdelegModalComponent
   delegations = new DefaultSelect();
   phaseEdos = new DefaultSelect();
 
+  showDelegation: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -59,16 +61,13 @@ export class MaintenanceDelegSubdelegModalComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      dailyConNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      dateDailyCon: [null, [Validators.pattern(STRING_PATTERN)]],
+      //dailyConNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      //dateDailyCon: [null, [Validators.pattern(STRING_PATTERN)]],
       phaseEdo: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      registerNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      registerNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.subDelegation != null) {
       this.id = this.subDelegation.delegationNumber as IDelegation;
