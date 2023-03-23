@@ -153,13 +153,20 @@ export class PublicationPhotographsComponent
     this.rowSelectedGood = true;
   }
 
-  findEvent(event: any) {
-    event.preventDefault();
-    console.log('funcion aqui');
-    // if (event.key === "Enter" || event.key === "Tab") {
-    //   event.preventDefault();
-    //   // My Functionality goes here
-    // }
+  findEvent(x: any) {
+    // this.form.value.price = this.form.controls['price'].value;
+
+    let eventId = this.form.value.id;
+
+    if (this.form.value.eventId !== null) {
+      this.comerLotService.getById(eventId).subscribe({
+        next: data => {
+          console.log(data);
+          this.loading = false;
+        },
+        error: error => console.error,
+      });
+    }
   }
 
   getBatch() {
