@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DelegationsEndpoints } from 'src/app/common/constants/endpoints/delegation-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
@@ -27,7 +28,7 @@ export class DelegationService
     private zonesRepository: Repository<IZoneGeographic>
   ) {
     super();
-    this.microservice = 'catalog';
+    this.microservice = DelegationsEndpoints.BasePage;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
@@ -64,5 +65,28 @@ export class DelegationService
 
   getAllFiltered(params: _Params) {
     return this.get<IListResponse<IDelegation>>('delegation', params);
+  }
+
+  getAll2(
+    params?: ListParams | string
+  ): Observable<IListResponse<IDelegation>> {
+    return this.get<IListResponse<IDelegation>>(
+      DelegationsEndpoints.Delegation,
+      params
+    );
+  }
+
+  create2(model: IDelegation) {
+    return this.post(DelegationsEndpoints.Delegation, model);
+  }
+
+  update2(model: IDelegation) {
+    const route = `${DelegationsEndpoints.Delegation}`;
+    return this.put(route, model);
+  }
+
+  remove2(id: string | number, etapaEdo: string | number) {
+    const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
+    return this.delete(route);
   }
 }

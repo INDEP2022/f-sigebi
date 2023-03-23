@@ -31,10 +31,16 @@
           <form-field
             [control]="tdescAtribForm.get('swFormat')"
             label="Formato">
-            <input
-              type="text"
+            <ng-select
+              formControlName="swFormat"
+              [searchable]="false"
               class="form-control"
-              formControlName="swFormat" />
+              [clearable]="false">
+              <ng-option value="V">Alfanum&eacute;rico</ng-option>
+              <ng-option value="N">Num&eacute;rico</ng-option>
+              <ng-option value="F">Flotante</ng-option>
+              <ng-option value="D">Fecha</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4">

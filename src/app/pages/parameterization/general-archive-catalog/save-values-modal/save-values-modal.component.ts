@@ -35,7 +35,7 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.saveValuesForm = this.fb.group({
-      id: [null, []],
+      id: [null, [Validators.required]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
