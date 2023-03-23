@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -16,21 +16,17 @@ export class WorkMailboxService {
     return this.htpp.get(url, { params });
   }
 
-  getViewBienes(): Observable<any> {
+  getViewBienes(_params?: any): Observable<any> {
+    const params = this.getParams(_params);
     const url = `${environment.API_URL}trackergood/api/v1/trackergood/apps/goodtrackertmp`;
-    return this.htpp.get(url);
+    return this.htpp.get(url, { params });
   }
 
-  getViewAntecedente(): Observable<any> {
+  getViewAntecedente(_params?: any): Observable<any> {
+    const params = this.getParams(_params);
     const url = `${environment.API_URL}flier/api/v1/views/background-view`;
-    return this.htpp.get(url);
+    return this.htpp.get(url, { params });
   }
-
-  // getAllFiltered(
-  //   params?: _Params
-  // ): Observable<any> {
-  //   return this.htpp.get(  'historical-procedure-management');
-  // }
 
   getProcedureManagement(processNumber: number) {
     const url = `${environment.API_URL}proceduremanagement/api/v1/proceduremanagement/${processNumber}`;
@@ -51,4 +47,71 @@ export class WorkMailboxService {
     const url = `${environment.API_URL}/notification/api/v1/notification?filter.wheelNumber=${wheelNumber}`;
     return this.htpp.get(url);
   }
+
+  private getParams(rawParams: any) {
+    if (rawParams instanceof HttpParams) {
+      return rawParams;
+    }
+
+    if (typeof rawParams === 'string') {
+      return new HttpParams({ fromString: rawParams });
+    }
+
+    if (rawParams instanceof ListParams) {
+      return new HttpParams({ fromObject: rawParams });
+    }
+
+    return new HttpParams({ fromObject: rawParams });
+  }
+
+  /*getFile() {
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+      //'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    const url= 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43733'
+    return this.htpp.get(url,httpOptions)
+  }*/
+  /*getViewHistory () {
+    const url = `${environment.API_URL}historyindicator/api/v1/views/history-indicator-view`;
+
+    var raw = JSON.stringify({
+      "proceedingsNum": 642973,
+      "flierNum": 1206369
+    });
+    let newReq = this.request.clone();
+    const headers = new HttpHeaders();
+    newReq = this.request.clone({
+        headers: this.request.headers.set(
+          'body',
+          raw
+        ),
+    });
+
+    /*const httpOptions = {
+      method: 'GET',
+      headers: new HttpHeaders(),
+       "data": JSON.stringify({
+        "proceedingsNum": 642973,
+        "flierNum": 1206369
+      }),
+      redirect: 'follow'
+    };*/
+
+  /*newReq = this.request.clone({
+        headers: headers,
+    });*/
+  //this.htpp.options({requestOptions}).
+  /*return this.htpp.get(url);
+  }*/
+
+  //SERVICIO
+  /*getFile() {
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+      //'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    const url= 'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43733'
+    return this.htpp.get(url,httpOptions)
+  }*/
 }

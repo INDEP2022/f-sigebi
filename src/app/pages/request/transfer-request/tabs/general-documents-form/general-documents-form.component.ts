@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -62,6 +64,8 @@ export class GeneralDocumentsFormComponent
   idStation: number = null;
   rowSelected: any;
 
+  private http = inject(HttpClient);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -86,7 +90,7 @@ export class GeneralDocumentsFormComponent
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.requestForm.valueChanges.subscribe((data: any) => {
-      //console.log(this.requestForm.getRawValue());
+      console.log(this.requestForm.getRawValue());
     });
   }
 

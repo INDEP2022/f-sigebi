@@ -10,13 +10,13 @@ export interface IProccedingsDeliveryReception {
   witness1?: string;
   witness2?: string;
   typeProceedings?: string;
-  dateElaborationReceipt?: Date;
-  dateDeliveryGood?: Date;
+  dateElaborationReceipt?: Date | string;
+  dateDeliveryGood?: Date | string;
   responsible?: string;
   destructionMethod?: string;
   observations?: string;
   approvedXAdmon?: string;
-  approvalDateXAdmon?: Date;
+  approvalDateXAdmon?: Date | string;
   approvalUserXAdmon?: string;
   numRegister?: number;
   captureDate?: string;
@@ -31,12 +31,12 @@ export interface IProccedingsDeliveryReception {
   receiptKey?: string;
   comptrollerWitness?: string;
   numRequest?: number;
-  closeDate?: Date;
-  maxDate?: Date;
+  closeDate?: Date | string;
+  maxDate?: Date | string;
   indFulfilled?: number;
-  dateCaptureHc?: Date;
-  dateCloseHc?: Date;
-  dateMaxHc?: Date;
+  dateCaptureHc?: Date | string;
+  dateCloseHc?: Date | string;
+  dateMaxHc?: Date | string;
   receiveBy?: string;
   affair?: string;
 }

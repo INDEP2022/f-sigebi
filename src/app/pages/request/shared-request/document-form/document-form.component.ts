@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IWContent } from 'src/app/core/models/ms-wcontent/wcontent.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -33,7 +34,8 @@ export class DocumentFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private wcontentService: WContentService,
     private delegationStateService: DelegationStateService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private regDelegationService: RegionalDelegationService
   ) {
     super();
   }
@@ -102,9 +104,9 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         this.parameter.recordId
       );
     } else if (this.typeDoc === 'doc-solicitud') {
-      this.documentForm.controls['xidSolicitud'].setValue(
-        this.parameter.recordId
-      );
+      this.documentForm.controls['xidSolicitud'].setValue(this.parameter.id);
+    } else if (this.typeDoc === 'doc-bien') {
+      this.documentForm.controls['xidBien'].setValue(this.parameter.goodId);
     }
   }
 
@@ -121,7 +123,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   getState(params: ListParams) {
-    let id = this.parameter.regionalDelegation.id;
+    let id = this.documentForm.controls['xdelegacionRegional'].value;
     params['filter.regionalDelegation'] = `$eq:${id}`;
     this.delegationStateService.getAll(params).subscribe({
       next: resp => {
@@ -137,12 +139,24 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   setRegionalDelegacion() {
-    this.documentForm.controls['xdelegacionRegional'].setValue(
-      this.parameter.regionalDelegation.id
-    );
-    this.regionalDelegacionName = this.parameter.regionalDelegation.description;
-
-    this.getState(new ListParams());
+    if (this.parameter.regionalDelegation) {
+      this.documentForm.controls['xdelegacionRegional'].setValue(
+        this.parameter.regionalDelegation.id
+      );
+      this.regionalDelegacionName =
+        this.parameter.regionalDelegation.description;
+      this.getState(new ListParams());
+    } else {
+      this.regDelegationService
+        .getById(this.parameter.regionalDelegacionId)
+        .subscribe({
+          next: resp => {
+            this.documentForm.controls['xdelegacionRegional'].setValue(resp.id);
+            this.regionalDelegacionName = resp.description;
+            this.getState(new ListParams());
+          },
+        });
+    }
   }
 
   getDocType(params: ListParams) {
@@ -167,7 +181,12 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         const doctype = this.documentForm.controls['xtipoDocumento'].value;
-        const docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
+        let docName = '';
+        if (this.typeDoc !== 'doc-bien') {
+          docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
+        } else {
+          docName = 'Imagen_' + doctype + this.formatDate() + '.img';
+        }
 
         const form = this.documentForm.getRawValue();
         for (const key in form) {
@@ -181,39 +200,59 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         form['xNombreProceso'] = 'Captura Solicitud';
         delete form['document'];
 
-        this.wcontentService
-          .addDocumentToContent(
-            docName,
-            '.pdf',
-            JSON.stringify(form),
-            this.file,
-            '.pdf'
-          )
-          .subscribe({
-            next: resp => {
-              console.log(resp);
-              if (resp.status === 'OK') {
-                this.onLoadToast(
-                  'success',
-                  'Documento Guardado',
-                  'El documento guardo correctamente'
-                );
-
-                this.close();
-              } else {
-                this.onLoadToast(
-                  'error',
-                  'Error',
-                  'Ocurrio un error al guardar el documento'
-                );
-                console.log(resp);
-              }
-            },
-          });
-
+        if (this.typeDoc !== 'doc-bien') {
+          this.saveDocument(docName, '.pdf', form);
+        } else {
+          this.saveGoodImgs(docName, '.img', form);
+        }
         /**/
       }
     });
+  }
+
+  //sube documentos
+  saveDocument(docName: string, type: string, form: any) {
+    this.wcontentService
+      .addDocumentToContent(
+        docName,
+        type,
+        JSON.stringify(form),
+        this.file,
+        '.pdf'
+      )
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+
+          this.onLoadToast(
+            'success',
+            'Documento Guardado',
+            'El documento guardo correctamente'
+          );
+
+          this.close();
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
+
+  //sube imagenes
+  saveGoodImgs(docName: string, type: string, form: any) {
+    this.wcontentService
+      .addImagesToContent(docName, type, JSON.stringify(form), this.file)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Imagen Guardada',
+            'La imagen se guardo correctamente'
+          );
+
+          this.close();
+        },
+      });
   }
 
   close() {

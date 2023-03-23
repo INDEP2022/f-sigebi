@@ -63,6 +63,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   getUserList() {
+    debugger;
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);

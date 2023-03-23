@@ -183,3 +183,24 @@ export const JURIDICAL_FILE_UPDATE_FLYER_COPIES_COLUMNS = {
     sort: false,
   },
 };
+
+export const JURIDICAL_FILE_UPDATE_SHIFT_CHANGE_COLUMNS = {
+  flyerNumber: {
+    title: 'Usuario',
+    type: 'number',
+    sort: false,
+  },
+  userDetail: {
+    title: 'Nombre',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.name;
+    },
+  },
+  type: {
+    title: 'Tipo',
+    type: 'string',
+    sort: false,
+  },
+};
