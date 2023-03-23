@@ -214,3 +214,82 @@ export const TYPE = {
     },
   },
 };
+
+export const Lot = {
+  id: {
+    title: 'Lote',
+    type: 'number',
+    sort: false,
+  },
+  description: {
+    title: 'Description',
+    type: 'string',
+    sort: true,
+  },
+  statusVtantId: {
+    title: 'Estatus',
+    type: 'number',
+    sort: true,
+  },
+  customerId: {
+    title: 'Cliente',
+    type: 'string',
+    sort: true,
+  },
+  goodsNumber: {
+    type: 'list',
+    location: {
+      title: 'Bien',
+      type: 'string',
+      sort: true,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.goodsNumber.location;
+      },
+    },
+  },
+  eventId: {
+    type: 'list',
+    id: {
+      title: 'Evento',
+      type: 'number',
+      sort: true,
+      valuePrepareFunction: (cell: any, row: any) => {
+        return row.eventId.id;
+      },
+    },
+  },
+};
+export const GoodPhoto = {
+  goodsNumber: {
+    title: 'Photo',
+    type: 'number',
+    sort: true,
+  },
+  location: {
+    title: 'Ubicación de archivo',
+    type: 'string',
+    sort: true,
+  },
+  publicImgcatWeb: {
+    title: 'Pública',
+    type: 'number',
+    sort: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+  },
+  existsfs: {
+    title: 'Favoritos',
+    type: 'number',
+    sort: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+  },
+};

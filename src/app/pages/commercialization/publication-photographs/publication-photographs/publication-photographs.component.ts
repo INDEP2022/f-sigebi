@@ -7,6 +7,10 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPhotographMedia } from 'src/app/core/models/catalogs/photograph-media.model';
+import {
+  IComerLot,
+  IGoodPhoto,
+} from 'src/app/core/models/ms-parametercomer/parameter';
 import { BatchService } from 'src/app/core/services/catalogs/batch.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { PhotographMediaService } from 'src/app/core/services/catalogs/photograph-media.service';
@@ -19,6 +23,8 @@ import {
   SUBTYPE,
   TYPE,
 } from './publication-photographs-columns';
+
+import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 
 @Component({
   selector: 'app-publication-photographs',
@@ -39,6 +45,10 @@ export class PublicationPhotographsComponent
 {
   form: FormGroup = new FormGroup({});
   dataBatch: any;
+  lot: IComerLot;
+  lotList: IComerLot[] = [];
+  photography: IGoodPhoto;
+  photographyList: IGoodPhoto[] = [];
   subtype: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   batchList: any;
@@ -48,7 +58,7 @@ export class PublicationPhotographsComponent
   picture: IPhotographMedia;
   data1: LocalDataSource = new LocalDataSource();
   // dataAllotment = DATA;
-
+  idLot: number = 0;
   data2: LocalDataSource = new LocalDataSource();
   rowSelected: boolean = false;
   rowAllotment: string = null;
@@ -70,7 +80,8 @@ export class PublicationPhotographsComponent
     private batchService: BatchService,
     private photographMediaService: PhotographMediaService,
     private modalService: BsModalService,
-    private goodSubtypeService: GoodSubtypeService
+    private goodSubtypeService: GoodSubtypeService,
+    private comerLotService: ComerLotService
   ) {
     super();
     this.settings1 = {
@@ -106,7 +117,7 @@ export class PublicationPhotographsComponent
     this.getSubtype();
     this.settings4.actions.delete = true;
     this.settings4.actions.edit = true;
-    // this.getSubtype();
+    this.getAllLot();
   }
 
   data: any[] = [
@@ -180,6 +191,42 @@ export class PublicationPhotographsComponent
       error: error => (this.loading = false),
     });
   }
+  getAllLot() {
+    this.comerLotService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.lotList = data.data;
+        this.totalItems = data.count;
+        console.log(this.lotList);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  getById() {
+    this.comerLotService.getById(this.idLot).subscribe({
+      next: data => {
+        this.lot = data.data;
+        console.log(this.lot);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  userRowSelect(event: any) {
+    this.lot = event.data.id;
+    console.log(this.lot);
+    // this.comerLotService.getById(this.lot).subscribe({
+    //   next: data => {
+    //     this.lotList = data.data;
+    //     this.totalItems = data.count;
+    //     console.log(this.lotList);
+    //     this.loading = false;
+    //   },
+    //   error: error => (this.loading = false),
+    // });
+  }
+
+  getAllGoodPhoto() {}
 
   openForm(provider?: IPhotographMedia) {
     const modalConfig = MODAL_CONFIG;
