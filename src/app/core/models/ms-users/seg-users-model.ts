@@ -27,5 +27,6 @@ export interface ISegUsers {
   profileMimKey?: string;
   nameAd?: string;
   posPrevKey?: string;
+  userAndName?: string;
   usuario?: IUserAccessAreas;
 }
