@@ -7,8 +7,7 @@
           *ngIf="flyerReceptionMode"
           class="btn btn-danger active btn-sm"
           (click)="endProcess()">
-          <i class="bx bx-chevron-left"></i>
-          Regresar
+          <i class="bx bx-chevron-left float-icon"></i>Regresar
         </button>
         <button
           *ngIf="changeFlyerOption || flyerEditMode"
@@ -322,9 +321,11 @@
             </form-field>
           </div>
 
-          <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
+          <div
+            class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}"
+            *ngIf="!pgrInterface">
             <form-field
-              *ngIf="!pgrInterface && initialCondition == 'T'"
+              *ngIf="initialCondition == 'T'"
               class="col-md-12"
               [control]="documentsReceptionForm.get('judgementType')"
               label="Tipo Juicio">
@@ -340,7 +341,7 @@
               </ng-select>
             </form-field>
             <form-field
-              *ngIf="initialCondition != 'T' && !pgrInterface"
+              *ngIf="initialCondition != 'T'"
               class="col-md-12"
               [control]="documentsReceptionForm.get('touchPenaltyKey')"
               label="Toca Penal">
@@ -569,7 +570,6 @@
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface"
                 termMaxLength="80">
               </ngx-select>
             </form-field>
