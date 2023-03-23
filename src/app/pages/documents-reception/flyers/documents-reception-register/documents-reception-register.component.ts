@@ -84,6 +84,7 @@ import {
   DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM,
   DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM,
   DOCUMENTS_RECEPTION_REGISTER_FORM,
+  DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES,
   DOC_RECEPT_REG_FIELDS_TO_LISTEN,
   IDocReceptionFlyersRegistrationParams,
   IDocumentsReceptionData,
@@ -108,8 +109,8 @@ export class DocumentsReceptionRegisterComponent
   valuesChange: DocuentsReceptionRegisterFormChanges = {
     identifier: (value: string) => this.identifierChange(value),
     wheelType: (value: string) => this.wheelTypeChange(value),
-    departamentDestinyNumber: (value: string) =>
-      this.destinationAreaChange(value),
+    // departamentDestinyNumber: (value: string) =>
+    //   this.destinationAreaChange(value),
     affairKey: (value: string) => this.affairChange(value),
     judgementType: (value: string) => this.changeJudgement(value),
     stage: (value: string) => this.stageChange(value),
@@ -133,6 +134,7 @@ export class DocumentsReceptionRegisterComponent
   stationLoading: boolean = false;
   populatingForm: boolean = false;
   procedureId: number;
+  reprocessFlag: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -302,6 +304,22 @@ export class DocumentsReceptionRegisterComponent
       } else if (!this.docDataService.flyerEditMode) {
         this.selectFlyer();
       }
+    } else if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != this.docDataService.currentProcessId
+    ) {
+      this.docDataService.documentsReceptionRegisterForm = null;
+      this.documentsReceptionForm.reset();
+      this.flyerCopyRecipientForm.reset();
+      this.documentsReceptionForm = this.fb.group(
+        DOCUMENTS_RECEPTION_REGISTER_FORM
+      );
+      this.documentsReceptionForm.patchValue(
+        DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
+      );
+      this.reprocessFlag = true;
+      this.setDefaultValues();
+      this.setInitialConditions();
     }
     console.log(this.docDataService.documentsReceptionRegisterForm);
   }
@@ -394,6 +412,7 @@ export class DocumentsReceptionRegisterComponent
       (this.pageParams.pNoVolante !== null &&
         this.pageParams.pNoVolante !== undefined)
     ) {
+      this.docDataService.currentProcessId = this.pageParams.pNoTramite;
       this.docDataService.flyerReceptionMode = true;
       if (
         this.pageParams.pNoVolante === null ||
@@ -572,32 +591,43 @@ export class DocumentsReceptionRegisterComponent
       this.docRegisterService.getByTableKeyOtKey(9, 1).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
-      param = new FilterParams();
-      param.addFilter('id', depa);
-      param.addFilter('numDelegation', delegation);
-      this.docRegisterService
-        .getDepartamentsFiltered(param.getParams())
-        .subscribe({
-          next: data => {
-            if (data.data.length > 0) {
-              this.formControls.departamentDestinyNumber.setValue(
-                data.data[0].id
-              );
-              this.formControls.destinationArea.setValue(
-                data.data[0].description
-              );
-              const delegation = data.data[0].delegation as IDelegation;
-              this.formControls.delDestinyNumber.setValue(delegation.id);
-              this.formControls.delegationName.setValue(delegation.description);
-              const subdelegation = data.data[0]
-                .numSubDelegation as ISubdelegation;
-              this.formControls.subDelDestinyNumber.setValue(subdelegation.id);
-              this.formControls.subDelegationName.setValue(
-                subdelegation.description
-              );
-            }
-          },
-        });
+      this.docRegisterService.getPhaseEdo().subscribe({
+        next: data => {
+          param = new FilterParams();
+          param.addFilter('id', depa);
+          param.addFilter('numDelegation', delegation);
+          param.addFilter('phaseEdo', data.stagecreated);
+          console.log(param.getParams());
+          this.docRegisterService
+            .getDepartamentsFiltered(param.getParams())
+            .subscribe({
+              next: data => {
+                if (data.data.length > 0) {
+                  this.formControls.departamentDestinyNumber.setValue(
+                    data.data[0].id
+                  );
+                  this.formControls.destinationArea.setValue(
+                    data.data[0].description
+                  );
+                  const delegation = data.data[0].delegation as IDelegation;
+                  this.formControls.delDestinyNumber.setValue(delegation.id);
+                  this.formControls.delegationName.setValue(
+                    delegation.description
+                  );
+                  const subdelegation = data.data[0]
+                    .numSubDelegation as ISubdelegation;
+                  this.formControls.subDelDestinyNumber.setValue(
+                    subdelegation.id
+                  );
+                  this.formControls.subDelegationName.setValue(
+                    subdelegation.description
+                  );
+                }
+              },
+            });
+        },
+        error: () => {},
+      });
       param = new FilterParams();
       param.addFilter('id', 'DJ');
       this.docRegisterService
@@ -620,6 +650,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: () => {},
       });
+      this.destinationAreaChange();
     }
     if (typeManagement == 3) {
       this.formControls.wheelType.setValue('P');
@@ -706,6 +737,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: () => {},
       });
+      this.destinationAreaChange();
       this.formControls.circumstantialRecord.disable();
       this.formControls.protectionKey.disable();
       this.formControls.touchPenaltyKey.disable();
@@ -939,7 +971,7 @@ export class DocumentsReceptionRegisterComponent
     }
   }
 
-  destinationAreaChange(area: string) {
+  destinationAreaChange() {
     if (this.userRecipient.value?.user) {
       if (!this.populatingForm) {
         const param = new FilterParams();
@@ -1291,12 +1323,16 @@ export class DocumentsReceptionRegisterComponent
       this.canViewDocuments = true;
     }
     this.checkDailyEviction();
+    this.destinationAreaChange();
     this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
     console.log(this.procedureStatus);
   }
 
   selectFlyer() {
+    // this.alert('info', 'Ejemplo', 'Ejemplo alerta');
+    // this.onLoadToast('info', 'Ejemplo', 'Ejemplo Toast');
+    // this.onLoadToast('info', 'Ejemplo', 'Ejemplo Toast');
     this.changeFlyerOption = true;
     const modalConfig = {
       ...MODAL_CONFIG,
@@ -1907,6 +1943,7 @@ export class DocumentsReceptionRegisterComponent
     self.formControls.subDelegationName.setValue(subdelegation.description);
     self.getPublicMinistries({ page: 1, text: '' });
     self.getUsers({ page: 1, text: '' });
+    this.destinationAreaChange();
   }
 
   selectAffair(affair: IAffair, self: DocumentsReceptionRegisterComponent) {
@@ -2084,18 +2121,32 @@ export class DocumentsReceptionRegisterComponent
         });
       }
     }
+    console.log(
+      requiredErrors,
+      otherErrors,
+      this.documentsReceptionForm.invalid,
+      this.documentsReceptionForm.value
+    );
     let errorMsg: string = '';
     if (requiredErrors > 0) errorMsg = 'Complete todos los campos requeridos.';
     if (otherErrors > 0) errorMsg = 'Existen campos inválidos';
     if (requiredErrors > 0 && otherErrors > 0)
       errorMsg = 'Existen campos faltantes y/o inválidos';
-    if (this.documentsReceptionForm.invalid) {
+    if (
+      this.documentsReceptionForm.invalid &&
+      (requiredErrors > 0 || otherErrors > 0) &&
+      !this.reprocessFlag
+    ) {
       this.documentsReceptionForm.markAllAsTouched();
       this.documentsReceptionForm.updateValueAndValidity();
       this.onLoadToast('warning', 'Formulario Inválido', errorMsg);
       return false;
     }
-    if (this.flyerCopyRecipientForm.invalid) {
+    if (
+      this.flyerCopyRecipientForm.invalid &&
+      (requiredErrors > 0 || otherErrors > 0) &&
+      !this.reprocessFlag
+    ) {
       this.flyerCopyRecipientForm.markAllAsTouched();
       this.flyerCopyRecipientForm.updateValueAndValidity();
       this.onLoadToast(
