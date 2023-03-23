@@ -764,7 +764,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const columns = WORK_BIENES_COLUMNS;
     const title = BIENES_TITLE;
     const params = new FilterParams();
-    params.addFilter('file', this.selectedRow.processNumber);
+    params.addFilter('file', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
@@ -790,7 +790,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const columns = WORK_ANTECEDENTES_COLUMNS;
     const title = ANTECEDENTE_TITLE;
     const params = new FilterParams();
-    params.addFilter('.proceedingsNum', this.selectedRow.processNumber);
+    params.addFilter('proceedingsNum', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
