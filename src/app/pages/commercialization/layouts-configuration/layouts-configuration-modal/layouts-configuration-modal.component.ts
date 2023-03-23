@@ -52,6 +52,11 @@ export class LayoutsConfigurationModalComponent
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       idLayout: [null],
+      // descLayout: [null, [Validators.required]],
+      // screenKey: [null, [Validators.required]],
+      // table: [null, [Validators.required]],
+      // criterion: [null, [Validators.required]],
+      indActive: [null],
       idConsec: [null],
       position: [
         null,
@@ -100,10 +105,6 @@ export class LayoutsConfigurationModalComponent
     }
   }
   update() {
-    console.log(this.providerForm.value);
-    // let paramL: IComerLayouts = {
-    //     idLayout: this.providerForm.id
-    // }
     this.alertQuestion(
       'warning',
       'Actualizar',
