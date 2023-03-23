@@ -1,0 +1,10 @@
+<app-table-goods
+  [settingsTable]="settings"
+  [haveDelete]="false"
+  [statusActaValue]="statusActa"
+  [data]="data"
+  [totalItems]="totalItems"
+  (updateGoodsRow)="updateRow($event)"
+  (updateData)="updateData.emit($event)"
+  (rowsSelected)="rowsSelected.emit($event)">
+</app-table-goods>
