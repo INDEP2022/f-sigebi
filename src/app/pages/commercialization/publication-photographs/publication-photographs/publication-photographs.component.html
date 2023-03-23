@@ -128,57 +128,41 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div body>
+        <label for="">Ingrese No. lote</label
+        ><!-- {{events.id}} -->
         <div class="row">
-          <label for="">Evento</label>
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-12 col-md-6">
+              <search-bar-simple
+                (eventEmit)="findEvent($event)"
+                [label]="''"
+                [placeholder]="'N&uacute;mero de lote'">
+              </search-bar-simple>
+            </div>
+          </div>
+          <!-- 
+          <div class="col-md-3">
+            <form-field [control]="form.get('id')">
+              <input type="text" class="form-control" formControlName="id" (keydown)="findEvent($event)"
+                placeholder="Ingresa id de lote" />
+            </form-field>
+          </div> -->
         </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('id')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="id"
-              (keyup)="findEvent($event)"
-              placeholder="Buscar evento" />
-          </form-field>
+      </div>
+      <div body>
+        <div class="row">
+          <h5 class="title">Lotes</h5>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="Ubicación de Evento"
-            [control]="form.get('address')">
-            <input type="text" class="form-control" formControlName="address" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Fecha de evento"
-            [control]="form.get('failureDate')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="failureDate" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="Lugar" [control]="form.get('place')">
-            <input type="text" class="form-control" formControlName="place" />
-          </form-field>
-        </div>
-        <div class="row pt-2 scroll-table justify-content-center">
+        <div class="table-responsive">
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings4"
-            [source]="dataBatch"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event)"></ng2-smart-table>
-        </div>
-        <div class="row mt-5 d-flex justify-content-center">
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+            [source]="lotList"
+            #fileInput></ng2-smart-table>
         </div>
       </div>
-
+      <br /><br /><br />
       <div body>
         <div class="row">
           <h5 class="title">Bienes del lote {{ rowAllotment }}</h5>
