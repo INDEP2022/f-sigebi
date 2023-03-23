@@ -4,6 +4,13 @@
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
         <button
+          *ngIf="flyerReceptionMode"
+          class="btn btn-danger active btn-sm"
+          (click)="endProcess()">
+          <i class="bx bx-chevron-left"></i>
+          Regresar
+        </button>
+        <button
           *ngIf="changeFlyerOption || flyerEditMode"
           class="btn btn-primary active btn-sm"
           (click)="chooseOther()">

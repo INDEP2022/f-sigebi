@@ -278,6 +278,10 @@ export class DocumentsReceptionRegisterComponent
     return this.docDataService.flyerEditMode;
   }
 
+  get flyerReceptionMode() {
+    return this.docDataService.flyerReceptionMode;
+  }
+
   ngOnInit(): void {
     this.showHideErrorInterceptorService.showHideError(false);
     this.checkParams();
@@ -389,6 +393,7 @@ export class DocumentsReceptionRegisterComponent
       (this.pageParams.pNoVolante !== null &&
         this.pageParams.pNoVolante !== undefined)
     ) {
+      this.docDataService.flyerReceptionMode = true;
       if (
         this.pageParams.pNoVolante === null ||
         this.pageParams.pNoVolante === undefined
@@ -625,6 +630,7 @@ export class DocumentsReceptionRegisterComponent
       });
       this.getFieldsByManagementArea(typeManagement, subject, officeKey);
       this.formControls.preliminaryInquiry.setValue(subject);
+      this.formControls.officeExternalKey.setValue(officeKey);
       this.docRegisterService.getByTableKeyOtKey(9, 16).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
@@ -3379,6 +3385,7 @@ export class DocumentsReceptionRegisterComponent
     this.docDataService.goodsBulkLoadSatSaeParams = null;
     this.docDataService.goodsCaptureTempParams = null;
     this.docDataService.trackRecordGoods = [];
+    this.docDataService.flyerReceptionMode = false;
     this.router.navigateByUrl('pages/general-processes/work-mailbox');
   }
 }

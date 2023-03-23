@@ -51,7 +51,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   affairKey: new FormControl<string>(null, Validators.required),
   affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null, Validators.required),
-  priority: new FormControl<string>(null, Validators.required),
+  priority: new FormControl<string>('N', Validators.required),
   wheelNumber: new FormControl<number>(null),
   consecutiveNumber: new FormControl<number>(null),
   expedientNumber: new FormControl<number>(null),
