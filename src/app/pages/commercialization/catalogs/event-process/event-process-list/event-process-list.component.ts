@@ -11,12 +11,14 @@ import {
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
-import { EventProcessFormComponent } from '../event-process-form/event-process-form.component';
+import { EventTProcessFormComponent } from '../event-tprocess-form/event-tprocess-form.component';
 //Services
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
+import { IComerTpEventFull } from 'src/app/core/models/ms-event/event-type.model';
 import { IComerEventRl } from 'src/app/core/models/ms-event/event.model';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 
 @Component({
   selector: 'app-event-process-list',
@@ -36,7 +38,8 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private comerEventosService: ComerEventosService
+    private comerEventosService: ComerEventosService,
+    private comerTpEventsService: ComerTpEventosService
   ) {
     super();
     this.settings = {
@@ -46,7 +49,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         ...this.settings.actions,
         add: false,
         edit: true,
-        delete: true,
+        delete: false,
       },
       columns: COLUMNS,
     };
@@ -85,6 +88,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
       });
 
     this.prepareForm();
+    this.getEvents();
   }
 
   private prepareForm(): void {
@@ -102,7 +106,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
 
   getEventsByType(id: string | number): void {
     this.loading = true;
-    this.comerEventosService
+    this.comerTpEventsService
       .getEventsByType(id, this.params.getValue())
       .subscribe({
         next: response => {
@@ -155,7 +159,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     error ? console.log(error) : null;
   }
 
-  openForm(comerEvent?: IComerEventRl) {
+  openForm(comerEvent?: IComerTpEventFull) {
     console.log(comerEvent);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -164,6 +168,6 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         if (next) this.getEvents();
       },
     };
-    this.modalService.show(EventProcessFormComponent, modalConfig);
+    this.modalService.show(EventTProcessFormComponent, modalConfig);
   }
 }

@@ -17,35 +17,26 @@ export const COLUMNS = {
     title: 'Tipo',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.id.tpEventId;
+      return row.id.tpeventoId;
     },
   },
   StatusvtaId: {
     title: 'Estatus',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.id.StatusvtaId;
+      return row.id.statusvtaId;
     },
   },
-  phaseInmu: {
+  phase: {
     title: 'Fase',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.id.phaseInmu;
-    },
   },
   year: {
     title: 'Año',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.id.year;
-    },
   },
-  notificationDate: {
+  warrantyDate: {
     title: 'Fecha Garantía',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.id.notificationDate;
-    },
   },
 };
