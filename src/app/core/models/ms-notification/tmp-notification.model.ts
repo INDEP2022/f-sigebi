@@ -1,9 +1,9 @@
 export interface ITmpNotification {
   wheelNumber: number;
-  receiptDate: Date;
-  captureDate: Date;
+  receiptDate: string | Date;
+  captureDate: string | Date;
   officeExternalKey: string;
-  externalOfficeDate: Date;
+  externalOfficeDate: string | Date;
   externalRemitter: string;
   protectionKey: string;
   touchPenaltyKey: string;
@@ -39,15 +39,15 @@ export interface ITmpNotification {
   priority: string;
   wheelType: string;
   reserved: string;
-  entryProcedureDate: Date;
+  entryProcedureDate: string | Date;
   userInsert?: string;
   originNumber: number;
   stationNumber: number;
   autorityNumber: number;
   endTransferNumber: number;
   dailyEviction: number;
-  hcCaptureDate: Date;
-  hcEntryProcedureDate: Date;
-  desKnowingDate?: Date;
+  hcCaptureDate: string | Date;
+  hcEntryProcedureDate: string | Date;
+  desKnowingDate?: string | Date;
   affairSij: number;
 }

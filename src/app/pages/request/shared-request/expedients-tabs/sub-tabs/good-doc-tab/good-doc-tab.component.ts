@@ -14,7 +14,7 @@ import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents
 @Component({
   selector: 'app-good-doc-tab',
   templateUrl: './good-doc-tab.component.html',
-  styles: [],
+  styleUrls: ['./good-doc-tab.component.scss'],
 })
 export class GoodDocTabComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());

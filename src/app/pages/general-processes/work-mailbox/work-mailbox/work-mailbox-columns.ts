@@ -1,3 +1,5 @@
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const WORK_MAILBOX_COLUMNS = {
   columname: {
     title: 'Fecha',
@@ -25,6 +27,56 @@ export const WORK_MAILBOX_COLUMNS = {
   },
   columname7: {
     title: 'Urgente Volante',
+    sort: false,
+  },
+};
+
+export const WORK_BIENES_COLUMNS = {
+  goodNumber: {
+    title: 'No. Bienes',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
+  },
+  goodDescription: {
+    title: 'Descripción',
+    sort: false,
+  },
+  parentGoodMenajeNumber: {
+    title: 'No. bienes menaje',
+    sort: false,
+  },
+  goodStatus: {
+    title: 'Estatus',
+    sort: false,
+  },
+};
+
+export const WORK_ANTECEDENTES_COLUMNS = {
+  proceedingsNum: {
+    title: 'No. Antecedente',
+    sort: false,
+  },
+  flierNum: {
+    title: 'No. Volante',
+    sort: false,
+  },
+  attended: {
+    title: 'Aatendió',
+    sort: false,
+  },
+  registryUsr: {
+    title: 'USR registro',
+    sort: false,
+  },
+  type: {
+    title: 'Tipo',
+    sort: false,
+  },
+  armedTradeKey: {
+    title: 'Clave oficio',
     sort: false,
   },
 };
@@ -79,7 +131,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
   },
   descentfed: {
-    title: 'Descent. Fed',
+    title: 'Desc.Entidad Fed.',
     sort: false,
   },
   businessDays: {
@@ -97,10 +149,17 @@ export const WORK_MAILBOX_COLUMNS2 = {
   observation: {
     title: 'Observaciones',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      value !== null ? (value = value) : (value = '');
+    },
   },
   observationAdd: {
     title: 'Observaciones Add.',
     sort: false,
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      value !== null ? (value = value) : (value = '');
+    },
   },
   priority: {
     title: 'Prioridad',

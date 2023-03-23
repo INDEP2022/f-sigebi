@@ -49,6 +49,10 @@ export class DocumentsReceptionDataService {
 
   private _flyerEditMode: boolean = false;
 
+  private _flyerReceptionMode: boolean = false;
+
+  private _currentProcessId: number = null;
+
   constructor() {}
 
   get flyersRegistrationParams() {
@@ -76,8 +80,16 @@ export class DocumentsReceptionDataService {
     return this._flyerEditMode;
   }
 
+  get flyerReceptionMode() {
+    return this._flyerReceptionMode;
+  }
+
   get trackRecordGoods() {
     return { ...this._trackRecordGoods };
+  }
+
+  get currentProcessId() {
+    return this._currentProcessId;
   }
 
   set flyersRegistrationParams(params: IDocReceptionFlyersRegistrationParams) {
@@ -108,6 +120,14 @@ export class DocumentsReceptionDataService {
 
   set flyerEditMode(value: boolean) {
     this._flyerEditMode = value;
+  }
+
+  set flyerReceptionMode(value: boolean) {
+    this._flyerReceptionMode = value;
+  }
+
+  set currentProcessId(value: number) {
+    this._currentProcessId = value;
   }
 
   setFlyersRegParam<
