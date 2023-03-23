@@ -67,50 +67,50 @@ export class PublicationPhotographsModalComponent
     this.modalRef.hide();
   }
 
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
+  // confirm() {
+  //   this.edit ? this.update() : this.create();
+  // }
 
-  create() {
-    try {
-      this.loading = false;
-      this.publicationPhotographsService.create(this.photo).subscribe({
-        next: data => {
-          this.handleSuccess();
-        },
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-          return;
-        },
-      });
-    } catch {
-      console.error('Layout no existe');
-    }
-  }
-  update() {
-    this.alertQuestion(
-      'warning',
-      'Actualizar',
-      'Desea actualizar este layout?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.publicationPhotographsService
-          .update(this.provider.id, this.providerForm.value)
-          .subscribe({
-            next: data => this.handleSuccess(),
-            error: error => {
-              this.onLoadToast(
-                'error',
-                'No se puede adjuntar éste tipo de arhivos',
-                ''
-              );
-              this.loading = false;
-            },
-          });
-      }
-    });
-  }
+  // create() {
+  //   try {
+  //     this.loading = false;
+  //     this.publicationPhotographsService.create(this.photo).subscribe({
+  //       next: data => {
+  //         this.handleSuccess();
+  //       },
+  //       error: error => {
+  //         this.loading = false;
+  //         this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+  //         return;
+  //       },
+  //     });
+  //   } catch {
+  //     console.error('Layout no existe');
+  //   }
+  // }
+  // update() {
+  //   this.alertQuestion(
+  //     'warning',
+  //     'Actualizar',
+  //     'Desea actualizar este layout?'
+  //   ).then(question => {
+  //     if (question.isConfirmed) {
+  //       this.publicationPhotographsService
+  //         .update(this.provider.id, this.providerForm.value)
+  //         .subscribe({
+  //           next: data => this.handleSuccess(),
+  //           error: error => {
+  //             this.onLoadToast(
+  //               'error',
+  //               'No se puede adjuntar éste tipo de arhivos',
+  //               ''
+  //             );
+  //             this.loading = false;
+  //           },
+  //         });
+  //     }
+  //   });
+  // }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';

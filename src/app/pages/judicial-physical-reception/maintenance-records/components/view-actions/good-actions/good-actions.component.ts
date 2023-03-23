@@ -11,13 +11,28 @@ import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proc
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import {
+  ProceedingsDeliveryReceptionService,
+  ProceedingsDetailDeliveryReceptionService,
+} from 'src/app/core/services/ms-proceedings';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
 
 @Component({
   selector: 'app-good-actions',
   templateUrl: './good-actions.component.html',
-  styles: [],
+  styles: [
+    `
+      .selectGood {
+        display: flex;
+        width: 100%;
+        margin-left: 20px;
+        app-select-form {
+          margin-right: 15px;
+          width: calc(100% - 78px);
+        }
+      }
+    `,
+  ],
 })
 export class GoodActionsComponent extends AlertButton implements OnInit {
   @Input() statusActaValue: string;
@@ -25,19 +40,27 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Input() rowsSelected: IDetailProceedingsDeliveryReception[] = [];
   @Output() updateTable = new EventEmitter();
+  // @Output() addGoodEvent = new EventEmitter<IDetailProceedingsDeliveryReception>()
   form: FormGroup;
   loading = false;
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
+  // dataForAdd: IDetailProceedingsDeliveryReception[] = [];
+  selectedGood: any;
+
   paramsGoods = new FilterParams();
   operatorGoods = SearchFilter.IN;
   paramsControl = new FilterParams();
+
+  // totalItems = 0;
+  settings = { ...TABLE_SETTINGS };
   constructor(
     private fb: FormBuilder,
     private service: ProceedingsDetailDeliveryReceptionService,
     private goodTrackerService: GoodTrackerService,
     private modalService: BsModalService,
     private goodService: GoodService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private proceedingService: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.form = this.fb.group({
@@ -54,13 +77,35 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     return this.goodTrackerService.getAll(this.paramsGoods.getParams());
   }
 
-  addGood(row: any) {
-    console.log(row);
+  addGood() {
+    // console.log(row);
+    // this.dataForAdd.push({
+    //   numberProceedings: +this.nroActa,
+    //   numberGood: this.form.get('goodId').value,
+    //   amount: this.selectedGood.quantity,
+    //   received: 'S',
+    //   approvedDateXAdmon: firstFormatDate(new Date()),
+    //   approvedXAdmon: 'S',
+    //   approvedUserXAdmon: localStorage.getItem('username'),
+    //   dateIndicatesUserApproval: firstFormatDate(new Date()),
+    //   numberRegister: null,
+    //   reviewIndft: null,
+    //   correctIndft: null,
+    //   idftUser: null,
+    //   idftDate: null,
+    //   numDelegationIndft: null,
+    //   yearIndft: null,
+    //   monthIndft: null,
+    //   idftDateHc: null,
+    //   packageNumber: null,
+    //   exchangeValue: null,
+    // });
+    // this.totalItems++;
     this.service
       .create({
         numberProceedings: +this.nroActa,
         numberGood: this.form.get('goodId').value,
-        amount: row.quantity,
+        amount: this.selectedGood.quantity,
         received: 'S',
         approvedDateXAdmon: new Date(),
         approvedXAdmon: 'S',
@@ -92,8 +137,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   openModals() {
-    console.log(this.rowsSelected);
-    if (this.form.get('action').value === 1) {
+    console.log(this.rowsSelected, this.form.value);
+    if (this.form.get('action').value == '1') {
       this.openModalSelect(
         {
           titleColumnToReplace: 'bienes',
@@ -111,6 +156,12 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           },
           settings: { ...TABLE_SETTINGS },
           tableData: this.rowsSelected,
+          service: this.proceedingService,
+          dataObservableFn: this.proceedingService.getAll2,
+          idSelect: 'id',
+          labelSelect: 'id',
+          paramFilter: 'id',
+          operator: SearchFilter.ILIKE,
           form: this.fb.group({
             numberProceedings: [null, [Validators.required]],
           }),
@@ -155,7 +206,18 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     }
   }
 
-  replaceProceeding(newValue: any) {}
+  replaceProceeding(
+    newValue: { numberProceedings: string },
+    self: GoodActionsComponent
+  ) {
+    const goods = self.rowsSelected.map(good => good.numberGood);
+    let message = '';
+    goods.forEach((good, index) => {
+      message += good + (index < goods.length - 1 ? ',' : '');
+    });
+
+    this.updateTable.emit();
+  }
 
   replaceStatus(
     newValue: { status: string; justification: string },
@@ -169,6 +231,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     self.goodService.updateGoodStatusMassive(goods, newValue.status).subscribe({
       next: response => {
         self.onLoadToast('success', 'Estados Actualizados', message);
+        this.updateTable.emit();
       },
     });
   }

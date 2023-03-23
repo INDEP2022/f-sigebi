@@ -1,9 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { map } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
 import { IRepresentative } from 'src/app/core/models/catalogs/representative-model';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
@@ -52,6 +50,7 @@ export class CustomersRepresentantsListComponent
     this.service = this.customerService;
     this.settings = {
       ...this.settings,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -65,32 +64,28 @@ export class CustomersRepresentantsListComponent
 
   override getData() {
     if (this.client) {
+      if (!this.client.agentId) {
+        this.onLoadToast(
+          'warning',
+          'Cliente no tiene representante asociado',
+          ''
+        );
+        return;
+      }
+      console.log(this.client);
       this.loading = true;
-      let params = {
-        ...this.params.getValue(),
-        ...this.columnFilters,
-      };
       this.customerService
-        .getRepresentativeByClients(this.client.agentId, params)
-        .pipe(
-          map((data2: any) => {
-            let list: IListResponse<IRepresentative> =
-              {} as IListResponse<IRepresentative>;
-            const array2: IRepresentative[] = [{ ...data2 }];
-            list.data = array2;
-            return list;
-          })
-        )
+        .getRepresentativeByClients(this.client.agentId)
         .subscribe({
           next: response => {
             console.log(response);
-            let data = response.data.map((item: IRepresentative) => {
-              let data = item.dateBorn;
-              item.dateBorn = this.datePipe.transform(data, 'dd/MM/yyyy');
-              return item;
-            });
-            this.data.load(data);
-            this.totalItems = response.count;
+            // let data = response.data.map((item: IRepresentative) => {
+            //   let data = item.dateBorn;
+            //   item.dateBorn = this.datePipe.transform(data, 'dd/MM/yyyy');
+            //   return item;
+            // });
+            this.data.load(response.data);
+            this.totalItems = 1;
             this.loading = false;
           },
           error: error => {
