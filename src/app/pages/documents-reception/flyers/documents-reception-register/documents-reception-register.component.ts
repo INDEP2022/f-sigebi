@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, Observable, takeUntil } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
@@ -495,7 +496,7 @@ export class DocumentsReceptionRegisterComponent
     } else if (typeManagement == 3) {
       this.formControls.goodRelation.setValue('S');
       //TODO: Comentado para pruebas, descomentar al tener el buzon de tramites listo
-      // this.pgrInterface = true;
+      this.pgrInterface = true;
       this.alert(
         'info',
         'Tipo de Trámite',
@@ -686,6 +687,9 @@ export class DocumentsReceptionRegisterComponent
         },
         error: () => {},
       });
+      this.formControls.circumstantialRecord.disable();
+      this.formControls.protectionKey.disable();
+      this.formControls.touchPenaltyKey.disable();
     }
   }
 
@@ -1669,7 +1673,12 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getCourts(lparams: ListParams) {
-    this.docRegisterService.getCourts(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    this.docRegisterService.getCourts(params.getParams()).subscribe({
       next: data => {
         this.courts = new DefaultSelect(data.data, data.count);
       },
@@ -1680,7 +1689,12 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getDefendants(lparams: ListParams) {
-    this.docRegisterService.getDefendants(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+    this.docRegisterService.getDefendants(params.getParams()).subscribe({
       next: data => {
         this.defendants = new DefaultSelect(data.data, data.count);
       },
@@ -1691,7 +1705,12 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getCities(lparams: ListParams) {
-    this.docRegisterService.getCities(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    this.docRegisterService.getCities(params.getParams()).subscribe({
       next: data => {
         this.cities = new DefaultSelect(data.data, data.count);
       },
@@ -2995,15 +3014,22 @@ export class DocumentsReceptionRegisterComponent
           const notificationData: ITmpNotification = {
             ...this.formData,
             wheelNumber: this.formControls.wheelNumber.value,
-            externalOfficeDate: this.formData.externalOfficeDate as Date,
-            receiptDate: this.formData.receiptDate as Date,
-            hcCaptureDate: new Date(),
-            hcEntryProcedureDate: new Date(),
+            externalOfficeDate: format(
+              new Date(this.formData.externalOfficeDate),
+              'yyyy-MM-dd'
+            ),
+            receiptDate: format(
+              new Date(this.formData.receiptDate),
+              'yyyy-MM-dd'
+            ),
+            hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
+            hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
             affairSij,
             delegationNumber: this.userDelegation,
             subDelegationNumber: this.userSubdelegation,
           };
           console.log(this.formControls.wheelNumber.value);
+          console.log(notificationData);
           this.tmpNotificationService.create(notificationData).subscribe({
             next: () => {},
             error: err => {
@@ -3080,10 +3106,12 @@ export class DocumentsReceptionRegisterComponent
         this.formData.officeExternalKey,
         SearchFilter.LIKE
       );
+      console.log(param.getParams());
       this.interfacefgrService
         .getPgrTransferFiltered(param.getParams())
         .subscribe({
           next: data => {
+            console.log(data);
             if (data.count > 1) {
               this.sendToPgrBulkLoad();
             } else if (data.count <= 1) {
