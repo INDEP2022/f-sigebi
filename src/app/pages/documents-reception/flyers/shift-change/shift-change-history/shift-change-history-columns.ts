@@ -1,26 +1,41 @@
 export const SHIFT_CHANGE_HISTORY_COLUMNS = {
-  id: {
-    title: 'No Volante',
+  flyerNumber: {
+    title: 'No. Volante',
     type: 'string',
     sort: false,
   },
-  description: {
-    title: 'No Oficio',
+  officialNumber: {
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
-  nc1: {
+  reassignmentDate: {
     title: 'Fecha Reasignación',
     type: 'string',
     sort: false,
   },
-  nc2: {
+  personPrevious: {
     title: 'Persona Anterior',
     type: 'string',
     sort: false,
   },
-  nc3: {
-    title: 'Área anterior',
+  areaDestinationPrevious: {
+    title: 'Área Anterior',
+    type: 'string',
+    sort: false,
+  },
+  personNew: {
+    title: 'Persona Nueva',
+    type: 'string',
+    sort: false,
+  },
+  areaDestinationNew: {
+    title: 'Área Nueva',
+    type: 'string',
+    sort: false,
+  },
+  argument: {
+    title: 'Argumento',
     type: 'string',
     sort: false,
   },

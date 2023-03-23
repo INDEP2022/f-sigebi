@@ -38,10 +38,19 @@
           <div class="row">
             <div class="col">
               <form-field [control]="form.get('acta')" label="Acta 1">
-                <ngx-select
+                <select
+                  id="acta"
+                  class="form-control"
+                  formControlName="acta"
+                  (change)="changeAct()">
+                  <option *ngFor="let record of records" [value]="record">
+                    {{ record }}
+                  </option>
+                </select>
+                <!--   <ngx-select
                   control="acta"
                   [form]="form"
-                  [data]="itemsSelect"></ngx-select>
+                  [data]="itemsSelect"></ngx-select> -->
               </form-field>
             </div>
             <div class="col">
@@ -55,8 +64,8 @@
             <div class="col">
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
-                  type="number"
-                  class="form-control"
+                  type="text"
+                  class="form-control disabled"
                   formControlName="ident" />
               </form-field>
             </div>

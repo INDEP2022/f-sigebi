@@ -58,13 +58,32 @@ export class CityListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'idCity':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'nameCity':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'state':
+                filter.field == 'state';
+                field = `filter.${filter.field}.descCondition`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noDelegation':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'noSubDelegation':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'legendOffice':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
