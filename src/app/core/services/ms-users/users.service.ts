@@ -33,6 +33,11 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<any>>(UserEndpoints.SegAccessAreas, params);
   }
 
+  //TODO: HOMOLOGAR SERVICIOS getAllSegXAreas()
+  getAllSegXAreasByParams(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.SegAccessAreas, _params);
+  }
+
   getAllSegXAreasFind(params: ListParams) {
     return this.get<IListResponse<any>>(
       `${UserEndpoints.SegAccessAreas}/find-all-registers-users-access-by-areas-and-delegatons`,

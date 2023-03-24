@@ -93,6 +93,14 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processStatus: {
     title: 'Estatus',
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.processStatus;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   processSituation: {
     title: 'Situación Trámite',
@@ -109,6 +117,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processEntryDate: {
     title: 'Fecha Ingreso Trámite',
     sort: false,
+    filter: false,
   },
   flierNumber: {
     title: 'No. Volante',
@@ -125,6 +134,49 @@ export const WORK_MAILBOX_COLUMNS2 = {
   issueType: {
     title: 'Tipo de Asunto',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case '1':
+            value = 'Acta Circunstanciada';
+            return value;
+            break;
+          case '2':
+            value = 'Amparo';
+            return value;
+            break;
+          case '3':
+            value = 'Averiguación Previa';
+            return value;
+            break;
+          case '4':
+            value = 'Causa Penal';
+            return value;
+            break;
+          case '5':
+            value = 'Expediente Transferente';
+            return value;
+            break;
+          default:
+            value = 'S/N';
+            return value;
+            break;
+        }
+      }
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Tipo de Asunto',
+        list: [
+          { value: 1, title: 'Acta Circunstanciada' },
+          { value: 2, title: 'Amparo' },
+          { value: 3, title: 'Averiguación Previa' },
+          { value: 4, title: 'Causa Penal' },
+          { value: 5, title: 'Expediente Transferente' },
+        ],
+      },
+    },
   },
   officeNumber: {
     title: 'No. Oficio',
@@ -145,6 +197,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processLastDate: {
     title: 'Fecha Última Actualización',
     sort: false,
+    filter: false,
   },
   observation: {
     title: 'Observaciones',
@@ -172,14 +225,17 @@ export const WORK_MAILBOX_COLUMNS2 = {
   notaryAutDate: {
     title: 'Fecha Aut. Notario',
     sort: false,
+    filter: false,
   },
   rebellionDate: {
     title: 'Fecha Rebelión',
     sort: false,
+    filter: false,
   },
   takePressureDate: {
     title: 'Fecha Toma Poseción',
     sort: false,
+    filter: false,
   },
   areaATurn: {
     title: 'Área a Turnar',
