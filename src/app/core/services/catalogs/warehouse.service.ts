@@ -22,7 +22,6 @@ export class WarehouseService
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IWarehouse>> {
-    console.log(this.route);
     return this.warehouseRepository.getAllPaginated(this.route, params);
   }
 

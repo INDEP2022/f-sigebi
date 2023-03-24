@@ -39,8 +39,18 @@ export class WContentService extends HttpWContentService {
     return this.post<any>(WContentEndpoint.AddDocumentToContent, formData);
   }
 
-  addImages(formData: Object) {
-    return this.post(WContentEndpoint.AddImagesTocontent, formData);
+  addImages(
+    nombreDoc: string,
+    contentType: string,
+    docData: any,
+    file: File
+  ): Observable<any> {
+    const formData = new FormData();
+    formData.append('nombreDocumento', nombreDoc);
+    formData.append('contentType', contentType);
+    formData.append('docData', docData);
+    formData.append('archivo', file);
+    return this.post<any>(WContentEndpoint.AddImagesTocontent, formData);
   }
 
   getDocumentTypes(params: ListParams): Observable<IListResponse<IDocTypes>> {
@@ -53,12 +63,20 @@ export class WContentService extends HttpWContentService {
       body
     );
   }
-
+  findDocumentBySolicitud(idRequest: number) {
+    return this.get(
+      `${WContentEndpoint.DocByRequest}?idSolicitud=${idRequest}`
+    );
+  }
   getImgGood(body: IWContent): Observable<IListResponse<IWContent>> {
     return this.post<IListResponse<IWContent>>(
       WContentEndpoint.GetImgGood,
       body
     );
+  }
+
+  getObtainFile(docName: string) {
+    return this.get(`${WContentEndpoint.ObtainFile}/${docName}`);
   }
 
   obtainFile(docName: string): Observable<any> {

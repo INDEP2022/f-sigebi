@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -8,13 +9,12 @@ import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IUploadEvent } from 'src/app/utils/file-upload/components/file-upload.component';
-import { FileUploadEvent } from 'src/app/utils/file-upload/interfaces/file-event';
 
 @Component({
   selector: 'app-new-document',
@@ -27,6 +27,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   selectTypeDoc = new DefaultSelect<IRequest>();
   request: any;
   idrequest: number = 0;
+  idExpedient: number = 0;
   idGood: number = 0;
   typeDoc: string = '';
   selectedFile: File;
@@ -37,6 +38,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   idTransferent: number = 0;
   regionalDelId: number = 0;
   stateId: number = 0;
+  userLogName: string = '';
+  date: string = '';
   paramsDocTypes = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     public fb: FormBuilder,
@@ -45,18 +48,33 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     private regionalDelService: RegionalDelegationService,
     private stateOfrepublic: StateOfRepublicService,
     private transferentService: TransferenteService,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private programmingService: ProgrammingRequestService,
+    private datePipe: DatePipe
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log(this.idrequest);
+    this.getInfoUserLog();
     this.initForm();
     this.getInfoRequest();
     this.typedocuments();
+    this.obtainDate();
     //console.log('NEW DOC TIPO');
     //console.log(this.typeDoc);
+  }
+
+  obtainDate() {
+    const date = new Date();
+    this.date = this.datePipe.transform(date, 'yyyy_MM_dd');
+  }
+
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe((data: any) => {
+      this.userLogName = data.preferred_username;
+      console.log('usuario logeado', this.userLogName);
+    });
   }
 
   initForm(): void {
@@ -65,26 +83,19 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       docType: [null],
       docFile: [null],
       docTit: [null, [Validators.pattern(STRING_PATTERN)]],
-      //noExpedient: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      //regDelega: [],
       noOfi: [null],
-      //state: [],
-      //tranfe: [],
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      returnOpinionFolio: [null, [Validators.pattern(STRING_PATTERN)]],
     });
-    this.newDocForm.addControl(
-      'returnOpinionFolio',
-      new FormControl('', [Validators.required])
-    );
   }
 
   getInfoRequest() {
     this.requestService.getById(this.idrequest).subscribe(data => {
-      console.log('data', data);
+      console.log('tipo documento', data);
       this.idTransferent = data.transferenceId;
       this.regionalDelId = data.regionalDelegationId;
       this.stateId = data.keyStateOfRepublic;
@@ -100,7 +111,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.wContentService
       .getDocumentTypes(this.paramsDocTypes.getValue())
       .subscribe(data => {
-        console.log('data', data);
+        console.log('tp', data);
         this.selectTypeDoc = new DefaultSelect(data.data, data.count);
       });
   }
@@ -112,7 +123,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   getstate(id: number) {
-    console.log('estado', id);
     this.stateOfrepublic.getById(id).subscribe(data => {
       this.stateName = data.descCondition;
     });
@@ -126,37 +136,27 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getTypeDoc(event: any) {}
 
-  loadDocument(uploadEvent: IUploadEvent) {
-    const { index, fileEvents } = uploadEvent;
-    fileEvents.forEach(fileEvent => {
-      this.document(fileEvent);
-    });
-  }
-
-  document(fileEvent: FileUploadEvent) {
-    console.log('documento', fileEvent.file);
-  }
-
   selectFile(event: any) {
     this.selectedFile = event.target.files[0];
-    console.log('documento', this.selectedFile);
   }
 
   confirm() {
+    this.loading = true;
     if (this.typeDoc == 'good') {
       const formData = {
-        dDocAuthor: 'weblogic',
-        dDocType: this.newDocForm.get('docType').value,
-        dSecurityGroup: 'Public',
         dInDate: new Date(),
-        xidExpediente: '35015',
-        xidSolicitud: this.idrequest,
-        ddocCreator: 'weblogic',
+        dDocAuthor: this.userLogName,
+        dSecurityGroup: 'Public',
+        xidExpediente: this.idExpedient,
+        ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
+        xidSolicitud: this.idrequest,
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
+        xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
         xestado: this.stateId,
+        xtipoDocumento: this.newDocForm.get('docType').value,
         dDocTitle: this.newDocForm.get('docTit').value,
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
@@ -169,21 +169,130 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xcontribuyente: this.newDocForm.get('contributor').value,
       };
 
-      console.log(console.log(formData));
-      const docName = 'SAE88234';
+      this.modalRef.content.callback(true);
+      const extension = '.pdf';
+      const docName = `DOC_${this.date}${extension}`;
       this.wContentService
         .addDocumentToContent(
           docName,
-          '.pdf',
+          extension,
           JSON.stringify(formData),
           this.selectedFile,
-          '.pdf'
+          extension
+        )
+        .subscribe({
+          next: resp => {
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.loading = false;
+            this.close();
+            this.modalRef.content.callback(true);
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+    }
+
+    if (this.typeDoc == 'doc-request') {
+      const formData = {
+        dDocAuthor: this.userLogName,
+        dInDate: new Date(),
+        dSecurityGroup: 'Public',
+        ddocCreator: this.userLogName,
+        xidcProfile: 'NSBDB_Gral',
+        xnombreProceso: 'Clasificar Bien',
+        xidSolicitud: this.idrequest,
+        xnivelRegistroNSBDB: 'solicitud',
+        xidTransferente: this.idTransferent,
+        xdelegacionRegional: this.regionalDelId,
+        xestado: this.stateId,
+        xtipoDocumento: this.newDocForm.get('docType').value,
+        dDocTitle: this.newDocForm.get('docTit').value,
+        xremitente: this.newDocForm.get('sender').value,
+        xcargoRemitente: this.newDocForm.get('senderCharge').value,
+        xresponsable: this.newDocForm.get('responsible').value,
+        xComments: this.newDocForm.get('observations').value,
+        xnoOficio: this.newDocForm.get('noOfi').value,
+        xfolioDictamenDevolucion:
+          this.newDocForm.get('returnOpinionFolio').value,
+        xcontribuyente: this.newDocForm.get('contributor').value,
+      };
+
+      const extension = '.pdf';
+      const docName = `DOC_${this.date}${extension}`;
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe(data => {
+          console.log('documento guardado', data);
+          this.loading = false;
+          this.modalRef.content.callback(true);
+          this.close();
+        });
+
+      /*
+        .subscribe({
+          next: resp => {
+            console.log('documento guardado', resp);
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.loading = false;
+            this.modalRef.content.callback(true);
+            this.close();
+          },
+          error: error => {
+            console.log(error);
+          },
+        }); */
+    }
+
+    if (this.typeDoc == 'doc-expedient') {
+      const formData = {
+        dInDate: new Date(),
+        dSecurityGroup: 'Public',
+        xidcProfile: 'NSBDB_Gral',
+        xNombreProceso: 'Clasificar Bien',
+        xnivelRegistroNSBDB: 'expediente',
+        xestado: this.stateId,
+        dDocAuthor: this.userLogName,
+        xidExpediente: this.idExpedient,
+        ddocCreator: this.userLogName,
+        xidSolicitud: this.idrequest,
+        xidTransferente: this.idTransferent,
+        xdelegacionRegional: this.regionalDelId,
+        xtipoDocumento: this.newDocForm.get('docType').value,
+        dDocTitle: this.newDocForm.get('docTit').value,
+        xremitente: this.newDocForm.get('sender').value,
+        xcargoRemitente: this.newDocForm.get('senderCharge').value,
+        xresponsable: this.newDocForm.get('responsible').value,
+        xComments: this.newDocForm.get('observations').value,
+        xnoOficio: this.newDocForm.get('noOfi').value,
+        xfolioDictamenDevolucion:
+          this.newDocForm.get('returnOpinionFolio').value,
+        xcontribuyente: this.newDocForm.get('contributor').value,
+      };
+
+      const extension = '.pdf';
+      const docName = `DOC_${this.date}${extension}`;
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
         )
         .subscribe({
           next: resp => {
             console.log('documento', resp);
-
             this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.loading = false;
+            this.modalRef.content.callback(true);
+            this.close();
           },
           error: error => {
             console.log(error);
@@ -196,15 +305,3 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 }
-
-/*Tipo de registro solicitud y expediente
-    {
-    "key": "archivo",
-	"type": "file",
-	"src": "275165981_651534709411056_3504201958037214315_n.jpg",
-    "xidBien": 5457931,
-    "xidcProfile": "NSBDB_Gral",
-    "dDocAuthor": "tecastaneda",
-    "xnombreProceso": "Clasificar Bien",
-    "xidTransferente": 120
-} */

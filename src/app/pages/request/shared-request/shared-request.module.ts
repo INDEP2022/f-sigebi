@@ -28,6 +28,7 @@ import { ExpedientsTabsComponent } from './expedients-tabs/expedients-tabs.compo
 import { BtnRequestComponent } from './expedients-tabs/sub-tabs/btn-request/btn-request.component';
 import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab.component';
 import { SeeInformationComponent } from './expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
+import { DocExpedientTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/doc-expedient-tab/doc-expedient-tab.component';
 import { ExpedientsRequestTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/expedients-request-tab.component';
 import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/good-doc-tab.component';
 import { ShowDocumentsGoodComponent } from './expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
@@ -174,6 +175,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     SeePhotoComponent,
     ResultVisitsComponent,
     ShowDocumentsGoodComponent,
+    DocExpedientTabComponent,
   ],
   imports: [
     CommonModule,

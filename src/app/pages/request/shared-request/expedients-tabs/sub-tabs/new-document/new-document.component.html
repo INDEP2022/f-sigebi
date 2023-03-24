@@ -12,7 +12,7 @@
             (fetchItems)="getTypeDoc($event)"
             [data]="selectTypeDoc"
             label="Tipo de Documento"
-            value="docType"
+            value="ddocType"
             bindLabel="ddescription"></ngx-select>
         </div>
       </div>
@@ -43,10 +43,10 @@
               >No&#46; Solicitud&#58; {{ request?.id }}
             </span>
             <span *ngIf="typeDoc === 'doc-expedient'"
-              >No&#46; Expediente&#58;</span
+              >No&#46; Expediente&#58; {{ idExpedient }}</span
             >
             <span *ngIf="typeDoc === 'good'">No&#46; Bien&#58;</span>
-            <span>{{ idGood }}</span>
+            <span *ngIf="typeDoc === 'good'">{{ idGood }}</span>
           </p>
         </div>
         <div class="col-md-6">
@@ -139,13 +139,23 @@
         <h6 class="d-inline">Informaci&oacute;n Adicional</h6>
       </div>
       <div
-        *ngIf="newDocForm.contains('returnOpinionFolio')"
-        class="row mt-5"
         id="collapseAdditional"
         [isAnimated]="true"
-        [collapse]="!toggleSearch">
-        <div *ngIf="newDocForm.contains('returnOpinionFolio')" class="col-md-3">
-          <div class="col-md-12">
+        [collapse]="!toggleSearch"
+        class="pt-3">
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="newDocForm.get('returnOpinionFolio')"
+              label="Folio Dictamen Devolución">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="returnOpinionFolio" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
             <form-field
               [control]="newDocForm.get('returnOpinionFolio')"
               label="Folio Dictamen Devolución">

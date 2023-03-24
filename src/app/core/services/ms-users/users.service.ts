@@ -69,4 +69,6 @@ export class UsersService extends HttpService {
       params
     );
   }
+
+  getInfoUserLogued() {}
 }
