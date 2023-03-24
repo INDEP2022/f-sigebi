@@ -145,8 +145,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     if (params.text) {
       alert('busca');
     } else {
-      console.log('estado', this.idWarehouse);
-      //params['filter.stateCode'] = this.idWarehouse;
       this.warehouseService.getAll(params).subscribe({
         next: response => {
           this.warehouses = new DefaultSelect(response.data, response.count);
@@ -217,17 +215,14 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         information: data,
         idRequest,
         callback: (next: boolean) => {
-          //if (next){ this.getData();}
+          if (next) {
+            this.getGoodsRequest();
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
-
-    /*this.bsModelRef.content.event.subscribe((res: any) => {
-      // cargarlos en el formulario
-      console.log(res);
-    });*/
   }
 }

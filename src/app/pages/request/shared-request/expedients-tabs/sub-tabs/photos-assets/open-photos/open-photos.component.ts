@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -15,7 +16,7 @@ import { PHOTOS_TABLE_COLUMNS } from '../columns/photos-table-columns';
   styleUrls: ['./open-photos.component.scss'],
 })
 export class OpenPhotosComponent extends BasePage implements OnInit {
-  paragraphs: any[] = [];
+  paragraphs: LocalDataSource = new LocalDataSource();
   information: any;
   columns = PHOTOS_TABLE_COLUMNS;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -41,8 +42,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
       ...this.columns.actions,
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick.subscribe((data: any) => {
-          console.log(data.dDocName);
-          this.getImage(data.dDocNam);
+          this.getImage(data.dDocName);
         });
       },
     };
@@ -51,23 +51,22 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
   }
 
   getImagesGood() {
-    console.log(this.information);
     const idReq: Object = {
       xidSolicitud: this.information.requestId,
       xidBien: this.information.id,
     };
 
-    console.log(idReq);
     this.wContentService.getDocumentos(idReq).subscribe(data => {
-      console.log('img', data);
-      this.paragraphs = data.data;
-      this.totalItems = this.paragraphs.length;
+      const _data = data.data.filter((img: any) => {
+        if (img.dDocType == 'DigitalMedia') return img;
+      });
+      this.paragraphs.load(_data);
+      this.totalItems = this.paragraphs.count();
     });
   }
 
   getImage(docName: string) {
     this.wContentService.getObtainFile(docName).subscribe(data => {
-      console.log('data', data);
       let blob = this.dataURItoBlob(data);
       let file = new Blob([blob], { type: 'image/jpg' });
       const fileURL = URL.createObjectURL(file);

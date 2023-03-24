@@ -125,7 +125,7 @@ export class DocRequestTabComponent
       noOfice: [null],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: 157, disabled: true }],
+      noRequest: [{ value: this.idRequest, disabled: true }],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       regDelega: [null],
       state: [null],
@@ -184,10 +184,137 @@ export class DocRequestTabComponent
 
   search(): void {
     console.log(this.docRequestForm.value);
+    const tipoRelevante = this.docRequestForm.get('docType').value;
+    const titleDocument = this.docRequestForm.get('docTitle').value;
+    const contribuyente = this.docRequestForm.get('contributor').value;
+    const author = this.docRequestForm.get('author').value;
+    const remitente = this.docRequestForm.get('sender').value;
+    const senderCharge = this.docRequestForm.get('senderCharge').value;
+
+    if (tipoRelevante) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xtipoDocumento == tipoRelevante) return items;
+        });
+
+        console.log(filter);
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (contribuyente) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xcontribuyente == contribuyente) return items;
+        });
+
+        console.log(filter);
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (titleDocument) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.ddocTitle == titleDocument) return items;
+        });
+
+        console.log(filter);
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (author) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.dDocAuthor == author) return items;
+        });
+
+        console.log(filter);
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (remitente) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xremitente == remitente) return items;
+        });
+
+        console.log(filter);
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (senderCharge) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xcargoRemitente == senderCharge) return items;
+        });
+
+        console.log(filter);
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
   }
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.getData();
   }
 
   openDetail(data: any): void {
