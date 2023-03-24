@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -21,7 +21,6 @@ import { EXPEDIENT_DOC_SEA_COLUMNS } from '../registration-request-form/expedien
   styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class SearchDocumentFormComponent extends BasePage implements OnInit {
-  @Input() searchFileForm: FormGroup;
   searchForm: ModelForm<any>;
   typeDocuments = new DefaultSelect();
   regionalsDelegations = new DefaultSelect();
@@ -29,6 +28,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
   transferents = new DefaultSelect();
   showSearchForm: boolean = false;
   documentsSeaData: any[] = [];
+  rowSelected: any = null;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -203,16 +203,21 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
     this.searchForm.reset();
     this.documentsSeaData = [];
   }
+  documentSelect(event: any) {
+    this.rowSelected = event.data;
+  }
 
   //añadir nuevo documento
   newDocument() {
-    this.openModal(DocumentFormComponent, 'doc-buscar', '');
+    this.openModal(DocumentFormComponent, 'doc-buscar', this.rowSelected);
   }
 
+  //abrir detalle del documento
   showDocument(event: any) {
     this.openModal(DocumentShowComponent, 'doc-buscar', event.data);
   }
 
+  //abrir reporte
   deleteDocument(event: any) {
     this.loading = true;
     const docName = event.data.dDocName;

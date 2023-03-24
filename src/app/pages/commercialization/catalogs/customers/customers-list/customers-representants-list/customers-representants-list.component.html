@@ -18,9 +18,10 @@
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
         [source]="data"
+        (create)="openFormRepresentative()"
         (edit)="openFormRepresentative($event.data)">
       </ng2-smart-table>
     </div>
   </div>
 </div>
-<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+<!-- <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination> -->

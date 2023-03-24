@@ -9,6 +9,7 @@ import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.m
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
@@ -20,7 +21,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
-  data: any;
+  data: any; // parameters desde el padre
   typeAnnex: string;
 
   paragraphs: any[] = [];
@@ -34,12 +35,14 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private userProcessService = inject(UserProcessService);
   private transferentService = inject(TransferenteService);
   private requestService = inject(RequestService);
+  private wcontentService = inject(WContentService);
 
   constructor(private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
+    console.log(this.data);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -99,6 +102,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       const transferenteType = await this.getTransferent(transferente);
       if ('CE' !== transferenteType && 'TE' === typeUser) {
         this.warningTLP = true;
+      } else {
+        this.warningTLP = false;
       }
     }
   }
@@ -113,16 +118,47 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   async turnRequest() {
     if (this.user) {
-      //this.data.targetUserType = this.userForm.controls['typeUser'].value;
-      //this.data.targetUserType = this.user.id;
+      this.data.targetUserType = this.userForm.controls['typeUser'].value;
+      this.data.targetUserType = this.user.id;
 
-      //Todo: guardar solicitud
-      const isUpdated = await this.saveRequest(this.data as IRequest);
-
-      if (isUpdated === true) {
+      //Todo: enviar la solicitud
+      //const isUpdated = await this.saveRequest(this.data as IRequest);
+      if (true === true) {
         //TODO: generar o recuperar el reporte
-        //TODO: Guardarlo en el content
-        //TODO: Generar una nueva tarea en task  table
+        const report = await this.generateReport(
+          'SolicitudTransferencia',
+          this.data.id,
+          ''
+        );
+        if (report) {
+          let form: any = {};
+          form['ddocTitle'] = `Solicitud_${this.data.id}`;
+          form['xidExpediente'] = `Solicitud_${this.data.recordId}`;
+          form['ddocType'] = 'Document';
+          form['xNombreProceso'] = 'Captura Solicitud';
+          form['dSecurityGroup'] = 'Public';
+          form['xNivelRegistroNSBDB'] = 'Solicitud';
+          form['xTipoDocumento'] = '90';
+          form['xnoOficio'] = this.data.paperNumber;
+          form['xremitente'] = this.data.nameOfOwner;
+          form['xcargoRemitente'] = this.data.holderCharge;
+
+          if (this.data.stationId) {
+            form['xestado'] = this.data.stationId;
+          }
+          form['xidSolicitud'] = this.data.id;
+          if (this.data.transferenceId) {
+            form['transferenceId'] = this.data.transferenceId;
+          }
+
+          //TODO: Guardarlo en el content
+          const file: any = report;
+          const addToContent = await this.addDocumentToContent(form, file);
+          if (addToContent) {
+            const docName = addToContent;
+            //TODO: Generar una nueva tarea en task  table
+          }
+        }
       }
     } else {
       this.message(
@@ -157,6 +193,49 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           reject(false);
         },
       });
+    });
+  }
+
+  addDocumentToContent(form: any, file: any) {
+    return new Promise((resolve, reject) => {
+      //const body = {};
+      const docName = `Reporte_${94}20230321`; //perguntar
+
+      const body = JSON.stringify(form);
+
+      this.wcontentService
+        .addDocumentToContent(docName, '.pdf', body, file, '.pdf')
+        .subscribe({
+          next: resp => {
+            if (resp.dDocName) {
+              resolve(resp.dDocName);
+            } else {
+              resolve(null);
+            }
+          },
+          error: error => {
+            reject('error al guardar al content');
+          },
+        });
+    });
+  }
+
+  generateReport(nomReport: string, form: any, ciudad: string) {
+    return new Promise((resolve, reject) => {
+      this.wcontentService
+        .downloadTransferRequestFile(nomReport, form, ciudad)
+        .subscribe({
+          next: (resp: any) => {
+            if (resp) {
+              resolve(resp);
+            } else {
+              resolve(null);
+            }
+          },
+          error: error => {
+            reject('');
+          },
+        });
     });
   }
 

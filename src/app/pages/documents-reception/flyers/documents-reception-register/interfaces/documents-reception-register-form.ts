@@ -33,7 +33,7 @@ export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsTo
   [
     'identifier',
     'wheelType',
-    'departamentDestinyNumber',
+    // 'departamentDestinyNumber',
     'affairKey',
     'judgementType',
     'stage',
@@ -51,7 +51,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   affairKey: new FormControl<string>(null, Validators.required),
   affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null, Validators.required),
-  priority: new FormControl<string>(null, Validators.required),
+  priority: new FormControl<string>('N', Validators.required),
   wheelNumber: new FormControl<number>(null),
   consecutiveNumber: new FormControl<number>(null),
   expedientNumber: new FormControl<number>(null),
@@ -129,9 +129,9 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   institutionNumber: new FormControl<number>(200, Validators.required),
   institutionName: new FormControl<string>(null),
   officeNumber: new FormControl<number>(null),
-  captureDate: new FormControl<Date>(new Date()),
+  captureDate: new FormControl<Date | string>(new Date()),
   wheelStatus: new FormControl<string>(null),
-  entryProcedureDate: new FormControl<Date>(new Date()),
+  entryProcedureDate: new FormControl<Date | string>(new Date()),
   registerNumber: new FormControl<number>(null),
   originNumber: new FormControl<number>(null),
   dictumKey: new FormControl<string>(null),
@@ -193,9 +193,9 @@ export interface IDocumentsReceptionData {
   institutionNumber: number;
   institutionName: string;
   officeNumber: number;
-  captureDate: Date;
+  captureDate: string | Date;
   wheelStatus: string;
-  entryProcedureDate: Date;
+  entryProcedureDate: string | Date;
   registerNumber?: number;
   originNumber: number;
   dictumKey: string;
@@ -253,15 +253,24 @@ export interface IDocumentsReceptionRegisterForm {
   institutionNumber: number;
   institutionName: string;
   officeNumber: number;
-  captureDate: Date;
+  captureDate: Date | string;
   wheelStatus: string;
-  entryProcedureDate: Date;
+  entryProcedureDate: Date | string;
   registerNumber: number;
   originNumber: number;
   dictumKey: string;
   reserved: string;
   autoscan: string;
 }
+
+export const DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES = {
+  priority: 'N',
+  dailyEviction: false,
+  addressGeneral: false,
+  institutionNumber: 200,
+  captureDate: new Date(),
+  entryProcedureDate: new Date(),
+};
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
   copyNumber: new FormControl<string | number>(1, Validators.required),

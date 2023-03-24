@@ -7,7 +7,11 @@
       <div class="row">
         <div class="col-md-3">
           <form-field label="ID" [control]="representativeForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -49,7 +53,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateBorn" />
+              formControlName="dateBorn"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-3">

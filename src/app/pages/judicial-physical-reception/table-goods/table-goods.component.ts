@@ -21,6 +21,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     this._statusActaValue = value;
     this.updateSettingsGoods();
   }
+  @Input() haveDelete = true;
   @Input() data: any[] = [];
   @Input() totalItems: number = 0;
   @Input() settingsTable: any;
@@ -41,13 +42,19 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     });
   }
 
+  updateRow(event: any) {
+    let { newData, confirm } = event;
+    this.updateGoodsRow.emit(newData);
+    confirm.resolve(newData);
+  }
+
   private updateSettingsGoods(value = this.statusActaValue) {
     this.settingsTable = {
       ...this.settingsTable,
       actions: {
         ...this.settingsTable.actions,
         edit: value !== 'CERRADA',
-        delete: value !== 'CERRADA',
+        delete: this.haveDelete && value !== 'CERRADA',
       },
     };
     this.data = [...this.data];

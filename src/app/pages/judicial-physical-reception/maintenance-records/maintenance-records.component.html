@@ -3,12 +3,15 @@
     <h5 class="title">Mantenimiento de Actas</h5>
     <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"
+      [limit]="newLimit"
+      [maxSize]="1"></app-pagination>
   </div>
 
   <div body>
     <div>
       <app-proceeding-info
+        [loading]="loading"
         [info]="infoForm"
         (filterEvent)="getData($event)"
         (updateStatus)="statusActa = $event"></app-proceeding-info>
@@ -24,14 +27,24 @@
         [data]="data"
         [rowsSelected]="rowsSelected"
         (updateTable)="getGoods()"></app-good-actions>
-      <app-table-goods
+      <app-table-good-maintenance
+        [statusActa]="statusActa"
+        [data]="data"
+        [totalItems]="totalGoods"
+        (updateRowEvent)="getGoods()"
+        (updateData)="goodParams = $event; getGoods()"
+        (rowsSelected)="rowsSelected = $event">
+      </app-table-good-maintenance>
+      <app-warehouse-proceedings [statusActaValue]="statusActa">
+      </app-warehouse-proceedings>
+      <!-- <app-table-goods
         [settingsTable]="settings"
         [statusActaValue]="statusActa"
         [data]="data"
         [totalItems]="totalGoods"
         (updateData)="goodParams = $event; getGoods()"
         (rowsSelected)="rowsSelected = $event">
-      </app-table-goods>
+      </app-table-goods> -->
     </div>
   </div>
 </app-card>

@@ -56,6 +56,12 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     );
   }
 
+  update(detail: IDetailProceedingsDeliveryReception) {
+    return this.put(this.endpoint, {
+      ...detail,
+    });
+  }
+
   updateMasive(
     selecteds: {
       fec_aprobacion_x_admon: string;

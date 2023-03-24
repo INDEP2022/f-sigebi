@@ -5,23 +5,6 @@
   <div body>
     <form class="form-material" [formGroup]="subDelegationForm">
       <div class="row">
-        <div class="col-md-5" *ngIf="edit == false">
-          <form-field [control]="subDelegationForm.get('delegationNumber')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="subDelegationForm"
-              control="delegationNumber"
-              [data]="delegations"
-              value="id"
-              bindLabel="description"
-              label="No&#46; Delegaci&oacute;n"
-              (fetchItems)="getDelegations($event)"
-              (change)="onValuesChange($event)"
-              [readonly]="true">
-            </ngx-select>
-            <!-- <input type="number" class="form-control" formControlName="delegationNumber" /> -->
-          </form-field>
-        </div>
         <div class="col-md-3" *ngIf="edit == false">
           <form-field
             [control]="subDelegationForm.get('id')"
@@ -40,7 +23,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <div class="col-md-3">
           <form-field
             [control]="subDelegationForm.get('dailyConNumber')"
@@ -61,35 +44,34 @@
               formControlName="dateDailyCon" />
           </form-field>
         </div>
-        <div class="col-md-3" *ngIf="edit == false">
-          <form-field
-            [control]="subDelegationForm.get('phaseEdo')"
-            label="Etapa Edo">
-            <!-- <ngx-select 
-                [form]="subDelegationForm" 
-                control="phaseEdo" 
-                [data]="delegations" 
-                value="etapaEdo"
-                bindLabel="etapaEdo" 
-                label="Etapa Edo" 
-                (fetchItems)="getPhaseEdo($event)">
-              </ngx-select> -->
-            <input
-              type="number"
-              class="form-control"
-              formControlName="phaseEdo"
-              readonly />
+      </div> -->
+      <div class="row" *ngIf="showDelegation">
+        <div class="col-md-5" *ngIf="edit == false">
+          <form-field [control]="subDelegationForm.get('delegationNumber')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="subDelegationForm"
+              control="delegationNumber"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="No&#46; Delegaci&oacute;n"
+              (fetchItems)="getDelegations($event)"
+              (change)="onValuesChange($event)"
+              [readonly]="true">
+            </ngx-select>
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="subDelegationForm.get('registerNumber')"
-            label="No. Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registerNumber" />
-          </form-field>
+          <div class="col-md-3" *ngIf="edit == false">
+            <form-field
+              [control]="subDelegationForm.get('phaseEdo')"
+              label="Etapa Edo">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="phaseEdo"
+                readonly />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>
