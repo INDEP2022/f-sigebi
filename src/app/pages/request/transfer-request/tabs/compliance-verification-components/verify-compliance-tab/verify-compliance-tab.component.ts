@@ -6,6 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -20,7 +21,9 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { Articulo12, Articulo3 } from './articulos';
+import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
 import { DETAIL_ESTATE_COLUMNS } from './detail-estates-columns';
 import { VERIRY_COMPLIANCE_COLUMNS } from './verify-compliance-columns';
 
@@ -55,12 +58,18 @@ export class VerifyComplianceTabComponent
   article12and13array: Array<any> = new Array<any>();
   goodsSelected: any = [];
 
+  /* aclaraciones */
+  clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  clarificationData: any = [];
+  clarifyRowSelected: any = [];
+
   constructor(
     private fb: FormBuilder,
     private goodServices: GoodService,
     private typeRelevantService: TypeRelevantService,
     private genericService: GenericService,
-    private goodDomicilieService: GoodDomiciliesService
+    private goodDomicilieService: GoodDomiciliesService,
+    private bsModalservice: BsModalService
   ) {
     super();
   }
@@ -82,6 +91,19 @@ export class VerifyComplianceTabComponent
       },
     };
     this.initForm();
+
+    /* aclaraciones */
+    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
+    this.clarificationData = [
+      {
+        clarificationDate: '19-abr-2019',
+        clarificationType: 'Aclaración',
+        clarification: 'ACLARACIÓN EN NUMERO DE SERIE',
+        reason: 'No es legible',
+        status: 'NUEVA ACLARACION',
+        observations: '',
+      },
+    ];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -157,7 +179,44 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  rowSelected(event: any) {
+    this.clarifyRowSelected = event.selected;
+    console.log(event);
+  }
+
+  newClarification() {
+    if (this.goodsSelected.length === 0) {
+      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
+    } else {
+      this.openForm();
+    }
+  }
+
+  editForm() {
+    if (this.clarifyRowSelected.length === 1) {
+      this.openForm(this.clarifyRowSelected);
+    } else {
+      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+    }
+  }
+
+  openForm(event?: any): void {
+    let docClarification = event;
+    let config: ModalOptions = {
+      initialState: {
+        docClarification: docClarification,
+        callback: (next: boolean) => {
+          //if (next) this.getData();
+        },
+      },
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalservice.show(ClarificationFormTabComponent, config);
+  }
+
   setDescriptionGoodSae(data: any) {
+    console.log(data);
     this.goodData.map((item: any) => {
       if (item.id === data.data.id) {
         item.descriptionGoodSae = data.text;
@@ -259,7 +318,6 @@ export class VerifyComplianceTabComponent
   }
 
   selectGood(event: any) {
-    console.log('good', event);
     this.detailArray.reset();
     this.goodsSelected = event.selected;
     if (this.goodsSelected.length === 1) {
@@ -270,24 +328,37 @@ export class VerifyComplianceTabComponent
     }
   }
 
+  getClarifications() {}
+
   confirm() {
     if (
-      this.article3array.length == 3 &&
-      this.article12and13array.length >= 3
+      this.article3array.length !== 3 &&
+      this.article12and13array.length < 3
     ) {
-      this.msgModal(
-        'Clasificar Bien',
-        '¿Deseas turnar la solicitud con Folio: (Insertar el No. solicitud)',
-        'Confirmacion',
-        ''
-      );
-    } else {
       this.alert(
         'error',
         'Error',
         'Para que la solicitud sea procedente se deben seleccionar al menos los prmeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
       );
+      return;
     }
+
+    const goods = this.goodData;
+    goods.map((item: any) => {
+      let body: any = {};
+      body['id'] = item.id;
+      body['goodId'] = item.goodId;
+      body['descriptionGoodSae'] = item.descriptionGoodSae;
+      this.goodServices.update(body).subscribe({
+        next: resp => {
+          console.log(resp);
+        },
+      });
+    });
+  }
+
+  updateGood(good: any) {
+    return;
   }
 
   msgModal(btnTitle: string, message: string, title: string, typeMsg: any) {

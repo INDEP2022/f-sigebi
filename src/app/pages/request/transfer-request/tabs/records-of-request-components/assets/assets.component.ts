@@ -10,14 +10,17 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import Swal from 'sweetalert2';
+import { AdvancedSearchComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
@@ -59,7 +62,11 @@ export class AssetsComponent extends BasePage implements OnInit {
   menajeSelected: any;
   isSaveDomicilie: boolean = false;
   isSaveMenaje: boolean = false;
+  isSaveFraction: boolean = false;
   //typeDoc: string = '';
+  private idFractions: any = [];
+  private listGoodsFractions: any = [];
+  private fractionProperties: any = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -71,7 +78,9 @@ export class AssetsComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private menageService: MenageService,
     private procedureManagementService: ProcedureManagementService,
-    private authService: AuthService
+    private authService: AuthService,
+    private fractionService: FractionService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
   }
@@ -484,5 +493,309 @@ export class AssetsComponent extends BasePage implements OnInit {
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  /* Clasificacion Masiva */
+  masiveClasification() {
+    if (this.listgoodObjects.length === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
+
+    let config: ModalOptions = {
+      initialState: {
+        parameter: '',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modalSizeXL modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalServise.show(AdvancedSearchComponent, config);
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      this.idFractions = [];
+
+      /* this.listGoodsFractions = this.listgoodObjects;
+      for (let i = 0; i < this.listGoodsFractions.length; i++) {
+        const element = this.listGoodsFractions[i];
+        element['goodClassNumber'] = null;
+      } */
+      this.isSaveFraction = true;
+      this.matchLevelFraction(res);
+    });
+  }
+
+  setFractions(listReverse: any) {
+    const fractions = [
+      'ligieSection',
+      'ligieChapter',
+      'ligieLevel1',
+      'ligieLevel2',
+      'ligieLevel3',
+      'ligieLevel4',
+    ];
+    debugger;
+    this.listGoodsFractions = this.listgoodObjects;
+    console.log('antes', this.listGoodsFractions);
+    for (let j = 0; j < this.listGoodsFractions.length; j++) {
+      const good = this.listGoodsFractions[j];
+      good['goodClassNumber'] = this.fractionProperties['goodClassNumber'];
+      good['unitMeasure'] = this.fractionProperties['unitMeasure'];
+      good['ligieUnit'] = this.fractionProperties['ligieUnit'];
+
+      /* iteramos la calsificacion de fraccion */
+      for (let i = 0; i < listReverse.length; i++) {
+        const fractionsId = listReverse[i];
+        good[fractions[i]] = fractionsId;
+      }
+    }
+    console.log(this.listGoodsFractions);
+    this.isSaveFraction = false;
+  }
+
+  getNoClasifyGood(value: string) {
+    return new Promise((resolve, reject) => {
+      if (value) {
+        if (value.length >= 8) {
+          const fractionCode = { fraction: value };
+          this.goodsQueryService
+            .getUnitLigie(fractionCode)
+            .subscribe((data: any) => {
+              //guarda el no_clasify_good
+              if (data.clasifGoodNumber !== null) {
+                /* this.listGoodsFractions['goodClassNumber'] =
+                  data.clasifGoodNumber; */
+                resolve(data);
+              } else {
+                resolve(true);
+                this.message(
+                  'info',
+                  'clasificación de bien nula',
+                  'el bien seleccionado no tiene numero de clasificación de bien'
+                );
+              }
+            });
+        }
+      }
+    });
+  }
+
+  getUnit(data: any) {
+    //data.ligieUnit
+    return new Promise((resolve, reject) => {
+      this.goodsQueryService
+        .getLigieUnitDescription(data.ligieUnit)
+        .subscribe((data: any) => {
+          this.fractionProperties['unitMeasure'] = data.description;
+          this.fractionProperties['ligieUnit'] = data.description;
+          resolve(true);
+        });
+    });
+  }
+
+  matchLevelFraction(res: any) {
+    switch (Number(res.level)) {
+      case 5:
+        this.getLevel4(new ListParams(), res.id);
+        break;
+      case 4:
+        this.getLevel3(new ListParams(), res.id);
+        break;
+      case 3:
+        this.getLevel2(new ListParams(), res.id);
+        break;
+      case 2:
+        this.getLevel1(new ListParams(), res.id);
+        break;
+      case 1:
+        this.getChapter(new ListParams(), res.id);
+        break;
+      case 0:
+        this.getSection(new ListParams(), res.id);
+        break;
+      default:
+        break;
+    }
+  }
+
+  getSection(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        const listReverse = this.idFractions.reverse();
+        //estable los id para ser visualizados
+        this.setFractions(listReverse);
+      },
+    });
+  }
+
+  getChapter(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getSection(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {
+        console.log('Capitulo: ', error.error.message[0]);
+      },
+    });
+  }
+
+  getLevel1(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    delete params.text;
+    delete params.inicio;
+    delete params.pageSize;
+    delete params.take;
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getChapter(new ListParams(), fraction.parentId);
+      },
+      error: error => {
+        console.log('Nivel 1: ', error.error.message[0]);
+      },
+    });
+  }
+
+  getLevel2(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getLevel1(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {
+        console.log('Nivel 2: ', error.error.message[0]);
+      },
+    });
+  }
+
+  getLevel3(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getLevel2(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {
+        console.log('Nivel 3: ', error.error.message[0]);
+      },
+    });
+  }
+
+  getLevel4(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async (data: any) => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getLevel3(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {
+        console.log('Nivel 4: ', error.error.message[0]);
+      },
+    });
   }
 }
