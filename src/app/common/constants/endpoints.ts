@@ -157,4 +157,5 @@ export enum ENDPOINT_LINKS {
   GoodsQuery = 'goodsquery',
   ProgrammingGood = 'ProgrammingGood',
   DinamicTablesSelect = 'dynamiccatalog/dinamic-tables',
+  StrategyContract = 'contract/strategy-contract',
 }
