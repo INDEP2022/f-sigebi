@@ -11,6 +11,8 @@ import {
   IGoodPhoto,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 
+import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
+import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -19,8 +21,6 @@ import {
   PUBLICATION_PHOTO1,
   PUBLICATION_PHOTO2,
 } from './publication-photographs-columns';
-
-import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 
 @Component({
   selector: 'app-publication-photographs',
@@ -51,6 +51,7 @@ export class PublicationPhotographsComponent
   selectedCve: any = null;
   cveItems = new DefaultSelect();
   totalItems: number = 0;
+  totalItemsL: number = 0;
   data1: LocalDataSource = new LocalDataSource();
   // dataAllotment = DATA;
   idLot: number = 0;
@@ -73,7 +74,8 @@ export class PublicationPhotographsComponent
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private comerLotService: ComerLotService
+    private comerLotService: ComerLotService,
+    private publicationPhotographsService: PublicationPhotographsService
   ) {
     super();
     this.settings1 = {
@@ -90,6 +92,7 @@ export class PublicationPhotographsComponent
 
     this.settings4 = {
       ...TABLE_SETTINGS,
+      actions: false,
       columns: { ...Lot },
       noDataMessage: 'No se encontrarón registros',
     };
@@ -106,10 +109,8 @@ export class PublicationPhotographsComponent
     // this.getCve({ page: 1, text: '' });
     // this.data1.load(this.dataBatch)
     this.prepareForm();
-    this.settings4.actions.delete = true;
-    this.settings4.actions.edit = true;
     this.getAllLot();
-    this.getAllLot();
+    this.getAllPhotoGood();
   }
 
   prepareForm() {
@@ -118,6 +119,7 @@ export class PublicationPhotographsComponent
       address: [null],
       failureDate: [null],
       place: [null],
+      localization: [null],
     });
   }
 
@@ -160,32 +162,6 @@ export class PublicationPhotographsComponent
     }
   }
 
-  // getBatch() {
-  //   this.loading = true;
-  //   this.batchService.getAll(this.params.getValue()).subscribe({
-  //     next: data => {
-  //       this.batchList = data;
-  //       this.dataBatch = this.batchList.data;
-  //       this.totalItems = data.count;
-  //       console.log(this.dataBatch);
-  //       this.loading = false;
-  //     },
-  //     error: error => (this.loading = false),
-  //   });
-  // }
-  // getSubtype() {
-  //   this.loading = true;
-  //   this.goodSubtypeService.getAll(this.params.getValue()).subscribe({
-  //     next: data => {
-  //       this.subtype = data;
-  //       this.dataBatch = this.subtype.data;
-  //       this.totalItems = data.count;
-  //       console.log(this.dataBatch);
-  //       this.loading = false;
-  //     },
-  //     error: error => (this.loading = false),
-  //   });
-  // }
   getAllLot() {
     this.comerLotService.getAll().subscribe({
       next: data => {
@@ -197,6 +173,18 @@ export class PublicationPhotographsComponent
       error: error => (this.loading = false),
     });
   }
+  getAllPhotoGood() {
+    this.publicationPhotographsService.getAll().subscribe({
+      next: data => {
+        this.photographyList = data.data;
+        this.totalItemsL = data.count;
+        console.log(this.photographyList);
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
   getById() {
     this.comerLotService.getById(this.idLot).subscribe({
       next: data => {
@@ -221,7 +209,17 @@ export class PublicationPhotographsComponent
     // });
   }
 
-  getAllGoodPhoto() {}
+  // getAllGoodPhoto() {
+  //   this.comerLotService.getById(this.lot).subscribe({
+  //     next: data => {
+  //       this.lotList = data.data;
+  //       this.totalItems = data.count;
+  //       console.log(this.lotList);
+  //       this.loading = false;
+  //     },
+  //     error: error => (this.loading = false),
+  //   });
+  // }
 
   // openForm(provider?: IPhotographMedia) {
   //   const modalConfig = MODAL_CONFIG;
