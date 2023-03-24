@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -25,8 +26,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   title: string = 'Información General';
   newDocForm: ModelForm<IRequest>;
   selectTypeDoc = new DefaultSelect<IRequest>();
+  paramsDocTypes = new BehaviorSubject<ListParams>(new ListParams());
   request: any;
-  idrequest: number = 0;
+  idRequest: number = 0;
   idExpedient: number = 0;
   idGood: number = 0;
   typeDoc: string = '';
@@ -40,7 +42,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   stateId: number = 0;
   userLogName: string = '';
   date: string = '';
-  paramsDocTypes = new BehaviorSubject<ListParams>(new ListParams());
+  typeDocument: number = 0;
   constructor(
     public fb: FormBuilder,
     public modalRef: BsModalRef,
@@ -59,10 +61,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.getInfoUserLog();
     this.initForm();
     this.getInfoRequest();
-    this.typedocuments();
+    this.typedocuments(new ListParams());
     this.obtainDate();
-    //console.log('NEW DOC TIPO');
-    //console.log(this.typeDoc);
   }
 
   obtainDate() {
@@ -73,7 +73,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe((data: any) => {
       this.userLogName = data.preferred_username;
-      console.log('usuario logeado', this.userLogName);
     });
   }
 
@@ -90,11 +89,45 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       returnOpinionFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+
+      //Information adiotional
+      bank: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      keyValidate: [null, [Validators.pattern(STRING_PATTERN)]],
+      count: [null, [Validators.pattern(STRING_PATTERN)]],
+      dependecyEmitDoc: [null, [Validators.pattern(STRING_PATTERN)]],
+      depositDate: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioAct: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioActDes: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioActDev: [null, [Validators.pattern(STRING_PATTERN)]],
+      contractFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioDen: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioDicDes: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioDicRes: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioContract: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioDicDev: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioFac: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioNomb: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioSISE: [null, [Validators.pattern(STRING_PATTERN)]],
+      amount: [null, [Validators.pattern(STRING_PATTERN)]],
+      noAgreement: [null, [Validators.pattern(STRING_PATTERN)]],
+      noAutDes: [null, [Validators.pattern(STRING_PATTERN)]],
+      noConvColb: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioReg: [null, [Validators.pattern(STRING_PATTERN)]],
+      oficioNoAuth: [null, [Validators.pattern(STRING_PATTERN)]],
+      oficioNoAvaluo: [null, [Validators.pattern(STRING_PATTERN)]],
+      oficioNoCan: [null, [Validators.pattern(STRING_PATTERN)]],
+      oficioNoProg: [null, [Validators.pattern(STRING_PATTERN)]],
+      oficioNoSolAvaluo: [null, [Validators.pattern(STRING_PATTERN)]],
+      noOfNotification: [null, [Validators.pattern(STRING_PATTERN)]],
+      noRegistro: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   getInfoRequest() {
-    this.requestService.getById(this.idrequest).subscribe(data => {
+    this.requestService.getById(this.idRequest).subscribe(data => {
       console.log('tipo documento', data);
       this.idTransferent = data.transferenceId;
       this.regionalDelId = data.regionalDelegationId;
@@ -107,11 +140,10 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
-  typedocuments() {
+  typedocuments(params: ListParams) {
     this.wContentService
       .getDocumentTypes(this.paramsDocTypes.getValue())
       .subscribe(data => {
-        console.log('tp', data);
         this.selectTypeDoc = new DefaultSelect(data.data, data.count);
       });
   }
@@ -134,7 +166,10 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
-  getTypeDoc(event: any) {}
+  typeDocumentSelect(item: ITypeDocument) {
+    console.log(item.ddocType);
+    this.typeDocument = item.ddocType;
+  }
 
   selectFile(event: any) {
     this.selectedFile = event.target.files[0];
@@ -150,7 +185,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidExpediente: this.idExpedient,
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
-        xidSolicitud: this.idrequest,
+        xidSolicitud: this.idRequest,
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
         xnivelRegistroNSBDB: 'bien',
@@ -167,9 +202,36 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
         xcontribuyente: this.newDocForm.get('contributor').value,
+
+        //Información adicional
+        xbanco: this.newDocForm.get('bank').value,
+        xclaveValidacion: this.newDocForm.get('keyValidate').value,
+        xcuenta: this.newDocForm.get('count').value,
+        xdependenciaEmiteDoc: this.newDocForm.get('dependecyEmitDoc').value,
+        xfechaDeposito: this.newDocForm.get('depositDate').value,
+        xfolioActa: this.newDocForm.get('folioAct').value,
+        xfolioActaDestruccion: this.newDocForm.get('folioActDes').value,
+        xfolioActaDevolucion: this.newDocForm.get('folioActDev').value,
+        xfolioContrato: this.newDocForm.get('contractFolio').value,
+        xfolioDenuncia: this.newDocForm.get('folioDen').value,
+        xfolioDictamenDestruccion: this.newDocForm.get('folioDicDes').value,
+        xfolioFactura: this.newDocForm.get('folioFac').value,
+        xfolioNombramiento: this.newDocForm.get('folioNomb').value,
+        xfolioSISE: this.newDocForm.get('folioSISE').value,
+        xmonto: this.newDocForm.get('amount').value,
+        xnoAcuerdo: this.newDocForm.get('noAgreement').value,
+        xnoAutorizacionDestruccion: this.newDocForm.get('noAutDes').value,
+        xnoConvenioColaboracion: this.newDocForm.get('noConvColb').value,
+        xnoFolioRegistro: this.newDocForm.get('folioReg').value,
+        xnoOficioAutorizacion: this.newDocForm.get('oficioNoAuth').value,
+        xnoOficioAvaluo: this.newDocForm.get('oficioNoAvaluo').value,
+        xnoOficioCancelacion: this.newDocForm.get('oficioNoCan').value,
+        xnoOficioProgramacion: this.newDocForm.get('oficioNoProg').value,
+        xnoOficioSolAvaluo: this.newDocForm.get('oficioNoSolAvaluo').value,
+        xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
+        xnoRegistro: this.newDocForm.get('noRegistro').value,
       };
 
-      this.modalRef.content.callback(true);
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
       this.wContentService
@@ -184,8 +246,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             this.onLoadToast('success', 'Documento Guardado correctamente', '');
             this.loading = false;
-            this.close();
             this.modalRef.content.callback(true);
+            this.modalRef.hide();
           },
           error: error => {
             console.log(error);
@@ -201,7 +263,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
         xnombreProceso: 'Clasificar Bien',
-        xidSolicitud: this.idrequest,
+        xidSolicitud: this.idRequest,
         xnivelRegistroNSBDB: 'solicitud',
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
@@ -216,6 +278,34 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
         xcontribuyente: this.newDocForm.get('contributor').value,
+
+        //Información adicional
+        xbanco: this.newDocForm.get('bank').value,
+        xclaveValidacion: this.newDocForm.get('keyValidate').value,
+        xcuenta: this.newDocForm.get('count').value,
+        xdependenciaEmiteDoc: this.newDocForm.get('dependecyEmitDoc').value,
+        xfechaDeposito: this.newDocForm.get('depositDate').value,
+        xfolioActa: this.newDocForm.get('folioAct').value,
+        xfolioActaDestruccion: this.newDocForm.get('folioActDes').value,
+        xfolioActaDevolucion: this.newDocForm.get('folioActDev').value,
+        xfolioContrato: this.newDocForm.get('contractFolio').value,
+        xfolioDenuncia: this.newDocForm.get('folioDen').value,
+        xfolioDictamenDestruccion: this.newDocForm.get('folioDicDes').value,
+        xfolioFactura: this.newDocForm.get('folioFac').value,
+        xfolioNombramiento: this.newDocForm.get('folioNomb').value,
+        xfolioSISE: this.newDocForm.get('folioSISE').value,
+        xmonto: this.newDocForm.get('amount').value,
+        xnoAcuerdo: this.newDocForm.get('noAgreement').value,
+        xnoAutorizacionDestruccion: this.newDocForm.get('noAutDes').value,
+        xnoConvenioColaboracion: this.newDocForm.get('noConvColb').value,
+        xnoFolioRegistro: this.newDocForm.get('folioReg').value,
+        xnoOficioAutorizacion: this.newDocForm.get('oficioNoAuth').value,
+        xnoOficioAvaluo: this.newDocForm.get('oficioNoAvaluo').value,
+        xnoOficioCancelacion: this.newDocForm.get('oficioNoCan').value,
+        xnoOficioProgramacion: this.newDocForm.get('oficioNoProg').value,
+        xnoOficioSolAvaluo: this.newDocForm.get('oficioNoSolAvaluo').value,
+        xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
+        xnoRegistro: this.newDocForm.get('noRegistro').value,
       };
 
       const extension = '.pdf';
@@ -229,25 +319,10 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           extension
         )
         .subscribe(data => {
-          console.log('documento guardado', data);
           this.loading = false;
           this.modalRef.content.callback(true);
           this.close();
         });
-
-      /*
-        .subscribe({
-          next: resp => {
-            console.log('documento guardado', resp);
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.loading = false;
-            this.modalRef.content.callback(true);
-            this.close();
-          },
-          error: error => {
-            console.log(error);
-          },
-        }); */
     }
 
     if (this.typeDoc == 'doc-expedient') {
@@ -261,7 +336,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         dDocAuthor: this.userLogName,
         xidExpediente: this.idExpedient,
         ddocCreator: this.userLogName,
-        xidSolicitud: this.idrequest,
+        xidSolicitud: this.idRequest,
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
         xtipoDocumento: this.newDocForm.get('docType').value,
@@ -274,6 +349,34 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
         xcontribuyente: this.newDocForm.get('contributor').value,
+
+        //Información adicional
+        xbanco: this.newDocForm.get('bank').value,
+        xclaveValidacion: this.newDocForm.get('keyValidate').value,
+        xcuenta: this.newDocForm.get('count').value,
+        xdependenciaEmiteDoc: this.newDocForm.get('dependecyEmitDoc').value,
+        xfechaDeposito: this.newDocForm.get('depositDate').value,
+        xfolioActa: this.newDocForm.get('folioAct').value,
+        xfolioActaDestruccion: this.newDocForm.get('folioActDes').value,
+        xfolioActaDevolucion: this.newDocForm.get('folioActDev').value,
+        xfolioContrato: this.newDocForm.get('contractFolio').value,
+        xfolioDenuncia: this.newDocForm.get('folioDen').value,
+        xfolioDictamenDestruccion: this.newDocForm.get('folioDicDes').value,
+        xfolioFactura: this.newDocForm.get('folioFac').value,
+        xfolioNombramiento: this.newDocForm.get('folioNomb').value,
+        xfolioSISE: this.newDocForm.get('folioSISE').value,
+        xmonto: this.newDocForm.get('amount').value,
+        xnoAcuerdo: this.newDocForm.get('noAgreement').value,
+        xnoAutorizacionDestruccion: this.newDocForm.get('noAutDes').value,
+        xnoConvenioColaboracion: this.newDocForm.get('noConvColb').value,
+        xnoFolioRegistro: this.newDocForm.get('folioReg').value,
+        xnoOficioAutorizacion: this.newDocForm.get('oficioNoAuth').value,
+        xnoOficioAvaluo: this.newDocForm.get('oficioNoAvaluo').value,
+        xnoOficioCancelacion: this.newDocForm.get('oficioNoCan').value,
+        xnoOficioProgramacion: this.newDocForm.get('oficioNoProg').value,
+        xnoOficioSolAvaluo: this.newDocForm.get('oficioNoSolAvaluo').value,
+        xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
+        xnoRegistro: this.newDocForm.get('noRegistro').value,
       };
 
       const extension = '.pdf';
@@ -304,4 +407,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   close() {
     this.modalRef.hide();
   }
+
+  handleSuccess() {}
 }

@@ -51,6 +51,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   idRequest: number = 0;
   idExpedient: number = 0;
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
 
   constructor(
     public fb: FormBuilder,
@@ -150,6 +151,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
         Promise.all(info).then(x => {
           this.paragraphs = data.data;
+          this.totalItems = this.paragraphs.length;
         });
       },
     });

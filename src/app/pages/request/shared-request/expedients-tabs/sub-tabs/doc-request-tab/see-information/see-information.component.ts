@@ -44,20 +44,6 @@ export class SeeInformationComponent extends BasePage implements OnInit {
     this.getRegionalDelegation();
     this.getTransferent();
     this.getState();
-    this.getTypeDocument();
-  }
-
-  getTypeDocument() {
-    console.log('parce', this.data.xtipoDocumento);
-    this.wContentService
-      .getDocumentTypes(this.paramsDocTypes.getValue())
-      .subscribe(data => {
-        const typeDocument = data.data.filter(items => {
-          return items.ddocType == this.data.xtipoDocumento;
-        });
-
-        this.typeDocument = typeDocument[0].ddescription;
-      });
   }
 
   getRegionalDelegation() {

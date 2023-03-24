@@ -63,7 +63,7 @@ export class DocRequestTabComponent
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
-
+  totalItems: number = 0;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -144,6 +144,7 @@ export class DocRequestTabComponent
 
         Promise.all(info).then(x => {
           this.paragraphs.load(data.data);
+          this.totalItems = this.paragraphs.count();
           this.loading = false;
         });
       },
