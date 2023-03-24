@@ -1,12 +1,14 @@
 <app-select-modal-table-shared
   [form]="form"
   [disabled]="disabled"
+  [columnsType]="columnsType"
   [label]="label"
   [formField]="formField"
   [formFieldName]="formFieldName"
-  [labelName]="labelName"
   [service]="service"
-  [columnsType]="columnsType"
-  id="idWarehouse"
+  title="Delegaciones"
+  labelName="Descripción"
+  id="id"
   description="description"
-  title="Almacenes"></app-select-modal-table-shared>
+  searchField="id"
+  [operator]="operator"></app-select-modal-table-shared>

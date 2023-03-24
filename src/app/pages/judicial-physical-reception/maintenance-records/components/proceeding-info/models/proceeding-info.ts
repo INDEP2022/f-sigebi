@@ -12,7 +12,9 @@ export interface IProceedingInfo {
   address: string;
   observations: string;
   numDelegation1: string;
+  numDelegation1Description?: string;
   numDelegation2: string;
+  numDelegation2Description?: string;
   elaborationDate: any;
   closeDate: any;
   datePhysicalReception: any;
@@ -58,7 +60,9 @@ export function deliveryReceptionToInfo(
     address: item.address,
     observations: item.observations,
     numDelegation1: item.numDelegation1,
+    numDelegation1Description: '',
     numDelegation2: item.numDelegation2,
+    numDelegation2Description: '',
     elaborationDate: formatForIsoDate(item.elaborationDate),
     closeDate: formatForIsoDate(item.closeDate),
     datePhysicalReception: formatForIsoDate(item.datePhysicalReception),

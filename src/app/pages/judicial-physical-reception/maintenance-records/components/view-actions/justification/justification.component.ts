@@ -17,6 +17,9 @@ import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-
         .justificationText {
           margin-top: 2rem;
         }
+        form > div > div {
+          padding-right: 0px;
+        }
       }
     `,
   ],

@@ -88,7 +88,7 @@
       <div class="row mb-3">
         <form-field [control]="form.get('address')" label="Direcci&oacute;n">
           <textarea
-            rows="5"
+            rows="3"
             class="form-control"
             formControlName="address"
             [readonly]="loading"></textarea>
@@ -97,14 +97,26 @@
       <div class="row" style="margin-bottom: 1.25rem">
         <form-field [control]="form.get('observations')" label="Observaciones">
           <textarea
-            rows="5"
+            rows="3"
             class="form-control"
             formControlName="observations"
             [readonly]="loading"></textarea>
         </form-field>
       </div>
-      <div class="row mb-4">
-        <div class="col-md-6">
+      <div class="row">
+        <app-recibe-form
+          [form]="form"
+          [disabled]="loading"
+          label="Recibe"
+          formField="numDelegation1"
+          formFieldName="numDelegation1Description"></app-recibe-form>
+        <app-recibe-form
+          [form]="form"
+          [disabled]="loading"
+          label="Administra"
+          formField="numDelegation2"
+          formFieldName="numDelegation2Description"></app-recibe-form>
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('numDelegation1')" label="Recibe">
             <input
               type="text"
@@ -121,7 +133,7 @@
               formControlName="numDelegation2"
               [readonly]="loading" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="col-md-6 mt-5">
@@ -271,7 +283,8 @@
         </form-field>
       </div>
     </div>
-    <hr />
+    <hr
+      style="width: calc(100% - 30px); margin-left: auto; margin-right: auto" />
     <app-justification [formValue]="form.value"></app-justification>
   </div>
 </form>

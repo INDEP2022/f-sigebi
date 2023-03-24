@@ -26,6 +26,16 @@ import {
           padding: 0px;
         }
       }
+
+      app-recibe-form {
+        padding-right: 0px;
+        margin-bottom: 22px;
+      }
+      app-justification {
+        @media screen and (max-width: 576px) {
+          padding-right: 0px;
+        }
+      }
     `,
   ],
 })
@@ -73,6 +83,8 @@ export class ProceedingInfoComponent implements OnInit {
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       numDelegation1: [null],
       numDelegation2: [null],
+      numDelegation1Description: [null],
+      numDelegation2Description: [null],
       elaborationDate: [null],
       closeDate: [null],
       datePhysicalReception: [null],
