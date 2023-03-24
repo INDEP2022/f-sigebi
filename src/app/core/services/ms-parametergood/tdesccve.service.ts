@@ -26,10 +26,6 @@ export class TdescCveService extends HttpService {
     return this.parametergoodRepository.getAll(this.route.TDescCve, params);
   }
 
-  // create(id: string | number, tdescCve: ITdescCve) {
-  //   const route = `${ParameterGoodEndpoints.TDescCve}/${id}`;
-  //   return this.put(route, tdescCve);
-  // }
   create(model: ITdescCve): Observable<ITdescCve> {
     return this.parametergoodRepository.create(this.route.TDescCve, model);
   }
@@ -64,5 +60,10 @@ export class TdescCveService extends HttpService {
   update2(id: string | number, model: ITdescCve) {
     const route = `${ParameterGoodEndpoints.TDescCve}/${id}`;
     return this.put(route, model);
+  }
+
+  remove(id: string | number) {
+    const route = `${ParameterGoodEndpoints.TDescCve}/${id}`;
+    return this.delete(route);
   }
 }

@@ -42,7 +42,7 @@ export class CatFinancialInformationAttributesComponent
       ...this.settings,
       hideSubHeader: false,
       actions: {
-        columnTitle: 'Accione',
+        columnTitle: 'Acciones',
         add: false,
         edit: true,
         delete: true,

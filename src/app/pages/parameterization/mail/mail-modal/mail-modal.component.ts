@@ -10,7 +10,6 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
-  RFCCURP_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -43,8 +42,8 @@ export class MailModalComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       name: [null, [Validators.pattern(STRING_PATTERN)]],
-      rfc: [null, [Validators.pattern(RFCCURP_PATTERN)]],
-      curp: [null, [Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [null, [Validators.pattern(STRING_PATTERN)]],
+      curp: [null, [Validators.pattern(STRING_PATTERN)]],
       street: [null, [Validators.pattern(STRING_PATTERN)]],
       insideNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       suburb: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -59,7 +58,7 @@ export class MailModalComponent extends BasePage implements OnInit {
       // registryNumber: [null, []],
       email: [null, [Validators.pattern(EMAIL_PATTERN)]],
       userSirsae: [null, [Validators.pattern(STRING_PATTERN)]],
-      sendEmail: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      sendEmail: [null, [Validators.pattern(STRING_PATTERN)]],
       attribAsign: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       clkdetSirsae: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       exchangeAlias: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -68,7 +67,6 @@ export class MailModalComponent extends BasePage implements OnInit {
       profileMimKey: [null, [Validators.pattern(STRING_PATTERN)]],
       nameAd: [null, [Validators.pattern(STRING_PATTERN)]],
       posPrevKey: [null, [Validators.pattern(STRING_PATTERN)]],
-      usuario: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.segUsers != null) {
       this.delegationNumber = this.segUsers.usuario as IUserAccessAreas;
@@ -109,7 +107,7 @@ export class MailModalComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    // this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

@@ -17,7 +17,7 @@
     <!-- TABLA 1 -->
     <div class="row">
       <div class="table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading1 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="table-responsive">
-          <div [class]="loading ? 'table-loading' : ''">
+          <div [class]="loading2 ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
@@ -57,9 +57,6 @@
               [totalItems]="totalItems2"></app-pagination>
           </div>
         </div>
-        <app-pagination
-          [params]="params2"
-          [totalItems]="totalItems2"></app-pagination>
       </div>
     </div>
   </div>

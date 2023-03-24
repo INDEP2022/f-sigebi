@@ -165,7 +165,9 @@
               <button
                 class="m-4 btn btn-success btn-sm ml-2"
                 type="button"
-                [disabled]="procesandoUpload || procesandoPreload"
+                [disabled]="
+                  procesandoUpload || procesandoPreload || tipoCarga == 'pgr'
+                "
                 (click)="file.click()">
                 Abrir archivo Excel / CSV
               </button>

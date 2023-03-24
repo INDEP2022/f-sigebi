@@ -13,4 +13,5 @@ export const COMMON_VALIDATORS = {
   bienes: 0,
   volantes: 0,
   expedientes: 0,
+  menajes: 0,
 };
