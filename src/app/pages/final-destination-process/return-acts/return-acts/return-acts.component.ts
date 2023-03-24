@@ -10,11 +10,13 @@ import {
   catchError,
   concatMap,
   EMPTY,
+  from,
   map,
   of,
   switchMap,
   takeUntil,
   tap,
+  toArray,
 } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -162,6 +164,42 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
                 );
               return of(err);
             }),
+            concatMap((detail: any) => {
+              console.log(detail.data);
+              return from(detail.data).pipe(
+                concatMap((element: any) => {
+                  console.log(element);
+                  return this.goodService
+                    .getFromGoodsAndExpedients({
+                      goodNumber: Number(element?.numGoodId?.id),
+                    })
+                    .pipe(
+                      map((status_description: any) => {
+                        console.log('222222222: ', status_description);
+                        return {
+                          ...element,
+                          di_status_good:
+                            status_description.data[0].description,
+                        };
+                      })
+                    );
+                }),
+                toArray()
+              );
+            }),
+            // map((data: any) => {
+            //   for (let good of data?.data) {
+            //     this.goodService
+            //       .getFromGoodsAndExpedients({
+            //         goodNumber: Number(good.numGoodId.id),
+            //       })
+            //       .pipe(
+            //         tap((data: any) => {
+            //           good.di_status_good = data.data[0].description;
+            //         })
+            //       );
+            //   }
+            // }),
             concatMap((detailProceeding: any) =>
               this.getGoods().pipe(
                 map((goods: any) => ({
@@ -267,7 +305,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     console.log(detailProceedings);
     this.quantityDetailProceedings = detailProceedings?.count;
     let detailProceedingsData: any[] = [];
-    for (let detail of detailProceedings?.data) {
+    console.log(detailProceedings);
+    for (let detail of detailProceedings) {
       let data: any = {
         goodId: detail.good[0].id,
         description: detail.good[0].description,
