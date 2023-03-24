@@ -225,6 +225,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case 'processStatus':
                 searchFilter = SearchFilter.EQ;
+                filter.search = filter.search.toUpperCase();
                 break;
               case 'flierNumber':
                 searchFilter = SearchFilter.EQ;
@@ -304,7 +305,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         });
         this.filterForm.controls['user'].setValue(data.data[0]);
         let $params = new ListParams();
-        this.getGroupWork($params, true);
+        this.getGroupWork($params);
       },
       error: () => {
         //this.users$ = new DefaultSelect();
@@ -777,17 +778,18 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
   }
 
-  getGroupWork($params: ListParams, predetermined?: boolean) {
+  getGroupWork($params: ListParams) {
     const token = this.authService.decodeToken();
     let userId = token.preferred_username;
     const params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
+    let predetermined = this.predeterminedF.value;
 
     predetermined
       ? (params.addFilter('predetermined', 'S'),
         params.addFilter('user', userId))
-      : params.addFilter('user', userId);
+      : params.removeAllFilters();
 
     this.procedureManagementService
       .getManagamentGroupWork(params.getParams())
