@@ -20,8 +20,9 @@ export class PaginationComponent implements OnInit {
     new FilterParams()
   );
   @Input() totalItems: number = 0;
-  pageSizeOptions: number[] = [10, 25, 50, 100];
-  limit: FormControl = new FormControl(10);
+  @Input() maxSize: number = 5;
+  @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
+  @Input() limit: FormControl = new FormControl(10);
   constructor() {}
 
   ngOnInit(): void {}

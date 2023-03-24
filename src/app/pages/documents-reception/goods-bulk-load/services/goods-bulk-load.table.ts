@@ -107,6 +107,10 @@ export class GoodsBulkLoadService {
     }
   }
 
+  getDataPGRFromParams(params: string) {
+    return this.interfacefgrService.getPgrTransferFiltered(params);
+  }
+
   /**
    * Obtener las notificaciones de acuerdo al transferente, indiciado y la ciudad
    */
