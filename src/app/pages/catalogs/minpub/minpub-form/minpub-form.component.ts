@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,6 +23,8 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   title: string = 'MinPub';
   edit: boolean = false;
   minpub: IMinpub;
+  minpubValue: ICity;
+  idCity: ICity;
   items = new DefaultSelect();
   @Output() refresh = new EventEmitter<true>();
 
@@ -58,11 +61,25 @@ export class MinpubFormComponent extends BasePage implements OnInit {
       delegNunic: [null, [Validators.required]],
       phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
       registryNumber: [null, []],
+      city: [null, []],
+      nameCity: [null, []],
     });
     if (this.minpub != null) {
       this.edit = true;
+      //const idCity = this.minpub.idCity;
+      this.idCity = this.minpub.city as ICity;
+      console.log('Id Ciudad', this.idCity.idCity);
       this.minpubForm.patchValue(this.minpub);
+      this.minpubForm.controls['city'].setValue(this.idCity.idCity);
     }
+  }
+
+  onValuesChange(minpubChange: ICity) {
+    console.log(minpubChange);
+    this.minpubValue = minpubChange;
+
+    this.minpubForm.controls['nameCity'].setValue(minpubChange.nameCity);
+    this.items = new DefaultSelect();
   }
 
   close() {
@@ -97,6 +114,7 @@ export class MinpubFormComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
+  //Trae lista de ciudades
   getFromSelect(params: ListParams) {
     this.cityService.getAll(params).subscribe((data: any) => {
       this.items = new DefaultSelect(data.data, data.count);
