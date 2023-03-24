@@ -13,7 +13,7 @@ export interface IMinpub {
   cityNumber: number;
   phone: string;
   registryNumber: number;
-  idCity: number | ICity;
+  idCity: number;
   city: ICity;
   nameAndId?: string;
 }

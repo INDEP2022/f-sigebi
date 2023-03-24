@@ -13,19 +13,16 @@ import {
 } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-register-keys-logical-tables-modal',
-  templateUrl: './register-keys-logical-tables-modal.component.html',
+  selector: 'app-register-key-one-modal',
+  templateUrl: './register-key-one-modal.component.html',
   styles: [],
 })
-export class RegisterKeysLogicalTablesModalComponent
-  extends BasePage
-  implements OnInit
-{
+export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
   idCve: ITable;
 
-  title: string = 'Registro de claves para tablas logicas con 5 claves';
+  title: string = 'Registro de claves para tablas logicas con una clave';
   edit: boolean = false;
 
   _id: any;
@@ -50,26 +47,6 @@ export class RegisterKeysLogicalTablesModalComponent
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-
-      dsKey2: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      swFormat2: [null, [Validators.pattern(STRING_PATTERN)]],
-      longMin2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      longMax2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-
-      dsKey3: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      swFormat3: [null, [Validators.pattern(STRING_PATTERN)]],
-      longMin3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      longMax3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-
-      dsKey4: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      swFormat4: [null, [Validators.pattern(STRING_PATTERN)]],
-      longMin4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      longMax4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-
-      dsKey5: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      swFormat5: [null, [Validators.pattern(STRING_PATTERN)]],
-      longMin5: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      longMax5: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.tdescCve != null) {
       this.edit = true;
@@ -86,7 +63,7 @@ export class RegisterKeysLogicalTablesModalComponent
 
   confirm() {
     if (
-      this.tdescCveForm.controls['longMax1'].value >=
+      this.tdescCveForm.controls['longMax1'].value >
       this.tdescCveForm.controls['longMin1'].value
     ) {
       this.edit ? this.update() : this.create();
