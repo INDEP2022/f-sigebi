@@ -107,6 +107,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
       page: this.page,
       text: text ?? '',
       limit: this.selectSize,
+      search: text ?? '',
     };
     this.fetchItems.emit(params);
   }
