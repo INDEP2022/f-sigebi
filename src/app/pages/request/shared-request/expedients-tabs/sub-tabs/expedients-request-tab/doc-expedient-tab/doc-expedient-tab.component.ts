@@ -1,7 +1,6 @@
 import {
   Component,
   Input,
-  OnChanges,
   OnInit,
   SimpleChanges,
   TemplateRef,
@@ -11,7 +10,6 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -19,31 +17,20 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { NewDocumentComponent } from '../new-document/new-document.component';
-import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
-import { SeeInformationComponent } from './see-information/see-information.component';
-
-interface searchTable {
-  noDoc: string;
-  noReq: string;
-  docTit: string;
-  docType: string;
-  author: string;
-  dateCrea: string;
-}
+import { DOC_REQUEST_TAB_COLUMNS } from '../../doc-request-tab/doc-request-tab-columns';
+import { SeeInformationComponent } from '../../doc-request-tab/see-information/see-information.component';
+import { NewDocumentComponent } from '../../new-document/new-document.component';
 
 @Component({
-  selector: 'app-doc-request-tab',
-  templateUrl: './doc-request-tab.component.html',
-  styleUrls: ['./doc-request-tab.component.scss'],
+  selector: 'app-doc-expedient-tab',
+  templateUrl: './doc-expedient-tab.component.html',
+  styles: [],
 })
-export class DocRequestTabComponent
-  extends BasePage
-  implements OnInit, OnChanges
-{
+export class DocExpedientTabComponent extends BasePage implements OnInit {
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -54,8 +41,7 @@ export class DocRequestTabComponent
   selectDocType = new DefaultSelect<any>();
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: LocalDataSource = new LocalDataSource();
+  paragraphs: any[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
@@ -63,14 +49,18 @@ export class DocRequestTabComponent
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
+  idExpedient: number = 0;
+  paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
     private modalRef: BsModalRef,
     private activatedRoute: ActivatedRoute,
     private wContentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private requestService: RequestService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -79,13 +69,14 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.setTypeColumn();
-    this.getDocType(new ListParams());
+    console.log(this.typeDoc);
     this.typeDoc = this.type ? this.type : this.typeDoc;
     if (this.typeDoc === 'doc-request') {
+      //hacer visible la vista principal y no el ng-template
       this.container.createEmbeddedView(this.template);
     }
+    this.prepareForm();
+    this.setTypeColumn();
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -100,10 +91,7 @@ export class DocRequestTabComponent
           });
       },
     };
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    this.getRequestData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -125,27 +113,45 @@ export class DocRequestTabComponent
       noOfice: [null],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: this.idRequest, disabled: true }],
+      noRequest: [{ value: 157, disabled: true }],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+
+      /* Solicitud Transferencia */
       regDelega: [null],
       state: [null],
       tranfe: [null],
     });
   }
 
+  getRequestData() {
+    this.requestService.getById(this.idRequest).subscribe(data => {
+      this.idExpedient = data.recordId;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    });
+  }
+
   getData() {
-    this.loading = true;
-    this.wContentService.findDocumentBySolicitud(this.idRequest).subscribe({
+    const body = {
+      xidSolicitud: this.idRequest,
+      xidExpediente: this.idExpedient,
+    };
+
+    this.wContentService.getDocumentos(body).subscribe({
       next: async (data: any) => {
-        const info = data.data.map(async (items: any) => {
+        const filterTypeDoc = data.data.filter((items: any) => {
+          return items.xtipoDocumento;
+        });
+
+        const info = filterTypeDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
           items.xtipoDocumento = filter[0].ddescription;
         });
 
         Promise.all(info).then(x => {
-          this.paragraphs.load(data.data);
-          this.totalItems = this.paragraphs.count();
-          this.loading = false;
+          this.paragraphs = data.data;
+          this.totalItems = this.paragraphs.length;
         });
       },
     });
@@ -160,7 +166,7 @@ export class DocRequestTabComponent
 
         return data;
       });
-
+      console.log('aclareaciones', types);
       this.wContentService
         .getDocumentTypes(this.paramsTypeDoc.getValue())
         .subscribe(data => {
@@ -176,146 +182,12 @@ export class DocRequestTabComponent
     });
   }
 
-  getDocType(params: ListParams) {
-    this.wContentService.getDocumentTypes(params).subscribe(data => {
-      console.log('type doc', data);
-      this.selectDocType = new DefaultSelect(data.data, data.count);
-    });
-  }
+  getDocType(event: any) {}
 
-  search(): void {
-    console.log(this.docRequestForm.value);
-    const tipoRelevante = this.docRequestForm.get('docType').value;
-    const titleDocument = this.docRequestForm.get('docTitle').value;
-    const contribuyente = this.docRequestForm.get('contributor').value;
-    const author = this.docRequestForm.get('author').value;
-    const remitente = this.docRequestForm.get('sender').value;
-    const senderCharge = this.docRequestForm.get('senderCharge').value;
-
-    if (tipoRelevante) {
-      this.paragraphs.getElements().then(data => {
-        const filter = data.filter((items: any) => {
-          if (items.xtipoDocumento == tipoRelevante) return items;
-        });
-
-        console.log(filter);
-        if (filter.length > 0) {
-          this.onLoadToast(
-            'success',
-            'Documentos encontrados correctamente',
-            ''
-          );
-          this.paragraphs.load(filter);
-        } else {
-          this.onLoadToast('warning', 'Documentos no encontrados', '');
-        }
-      });
-    }
-
-    if (contribuyente) {
-      this.paragraphs.getElements().then(data => {
-        const filter = data.filter((items: any) => {
-          if (items.xcontribuyente == contribuyente) return items;
-        });
-
-        console.log(filter);
-        if (filter.length > 0) {
-          this.onLoadToast(
-            'success',
-            'Documentos encontrados correctamente',
-            ''
-          );
-          this.paragraphs.load(filter);
-        } else {
-          this.onLoadToast('warning', 'Documentos no encontrados', '');
-        }
-      });
-    }
-
-    if (titleDocument) {
-      this.paragraphs.getElements().then(data => {
-        const filter = data.filter((items: any) => {
-          if (items.ddocTitle == titleDocument) return items;
-        });
-
-        console.log(filter);
-        if (filter.length > 0) {
-          this.onLoadToast(
-            'success',
-            'Documentos encontrados correctamente',
-            ''
-          );
-          this.paragraphs.load(filter);
-        } else {
-          this.onLoadToast('warning', 'Documentos no encontrados', '');
-        }
-      });
-    }
-
-    if (author) {
-      this.paragraphs.getElements().then(data => {
-        const filter = data.filter((items: any) => {
-          if (items.dDocAuthor == author) return items;
-        });
-
-        console.log(filter);
-        if (filter.length > 0) {
-          this.onLoadToast(
-            'success',
-            'Documentos encontrados correctamente',
-            ''
-          );
-          this.paragraphs.load(filter);
-        } else {
-          this.onLoadToast('warning', 'Documentos no encontrados', '');
-        }
-      });
-    }
-
-    if (remitente) {
-      this.paragraphs.getElements().then(data => {
-        const filter = data.filter((items: any) => {
-          if (items.xremitente == remitente) return items;
-        });
-
-        console.log(filter);
-        if (filter.length > 0) {
-          this.onLoadToast(
-            'success',
-            'Documentos encontrados correctamente',
-            ''
-          );
-          this.paragraphs.load(filter);
-        } else {
-          this.onLoadToast('warning', 'Documentos no encontrados', '');
-        }
-      });
-    }
-
-    if (senderCharge) {
-      this.paragraphs.getElements().then(data => {
-        const filter = data.filter((items: any) => {
-          if (items.xcargoRemitente == senderCharge) return items;
-        });
-
-        console.log(filter);
-        if (filter.length > 0) {
-          this.onLoadToast(
-            'success',
-            'Documentos encontrados correctamente',
-            ''
-          );
-          this.paragraphs.load(filter);
-        } else {
-          this.onLoadToast('warning', 'Documentos no encontrados', '');
-        }
-      });
-    }
-  }
+  search(): void {}
 
   cleanForm(): void {
     this.docRequestForm.reset();
-    this.getData();
   }
 
   openDetail(data: any): void {
@@ -363,16 +235,17 @@ export class DocRequestTabComponent
 
   openNewDocument() {
     const idrequest = this.idRequest;
-    let typeDoc = 'doc-request';
+    let typeDoc = 'doc-expedient';
+    const idExpedient = this.idExpedient;
+    //console.log(this.typeDoc);
+
     let config: ModalOptions = {
       initialState: {
         idrequest,
+        idExpedient,
         typeDoc,
         callback: (next: boolean) => {
-          if (next == true) {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.getData();
-          }
+          if (next) this.getData();
         },
       },
       class: 'modal-lg modal-dialog-centered',

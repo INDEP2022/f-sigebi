@@ -20,7 +20,8 @@
                   class="text-color"
                   (click)="showSearchFilter = false"
                   *ngIf="showSearchFilter">
-                  <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar</a
+                  <i class="fa fa-angle-down" aria-hidden="true"> </i>
+                  Filtrar</a
                 >
               </p>
             </h5>
@@ -44,15 +45,15 @@
               </form-field>
             </div>
             <div class="col-md-5">
-              <form-field [control]="filterForm.get('typeAsset')">
+              <form-field [control]="filterForm.get('warehouse')">
                 <ngx-select
                   [form]="filterForm"
-                  control="typeAsset"
-                  [data]="typeAssetSelected"
-                  value="id"
-                  bindLabel="id"
+                  control="warehouse"
+                  [data]="warehouses"
+                  value="idWarehouse"
+                  bindLabel="description"
                   label="Almac&eacute;n"
-                  (fetchItems)="getTypeAsset($event)">
+                  (fetchItems)="getWarehouseSelect($event)">
                 </ngx-select>
               </form-field>
             </div>
@@ -84,16 +85,16 @@
     <!--    </div>-->
     <div class="row pt-4">
       <div class="col-md-12">
-        <ng-scrollbar track="all" style="min-height: 200px; border: none">
-          <div [class]="loading ? 'table-loading' : ''">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="paragraphs">
-            </ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+        <div [class]="loading ? 'table-loading' : ''">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (delete)="uploadFiles($event.data)"
+            (edit)="openPhotos($event.data)">
+          </ng2-smart-table>
+        </div>
       </div>
       <app-pagination
         [params]="params"
