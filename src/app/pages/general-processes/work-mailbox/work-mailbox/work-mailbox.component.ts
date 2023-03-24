@@ -412,7 +412,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           isSegAreas = resp;
           if (isSegAreas) {
             const token = this.authService.decodeToken();
-            let userId = 'FGAYTAN'; //token.preferred_username;
+            let userId = token.preferred_username;
             this.columnFilters[field] = `$eq:${userId}`;
           } else if (user !== null) {
             this.columnFilters[field] = `$eq:${user.id}`;
@@ -430,7 +430,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
       if (this.predeterminedF.value) {
         const token = this.authService.decodeToken();
-        let userId = 'FGAYTAN'; //token.preferred_username;
+        let userId = token.preferred_username; //'FGAYTAN'; //
         this.columnFilters[field] = `$eq:${userId}`;
       } else if (user !== null) {
         this.columnFilters[field] = `$eq:${user.id}`;
@@ -512,7 +512,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     let field = `filter.turnadoiUser`;
     if (this.predeterminedF.value) {
       const token = this.authService.decodeToken();
-      let userId = 'FGAYTAN'; //token.preferred_username;
+      let userId = token.preferred_username;
       this.columnFilters[field] = `$eq:${userId}`;
     } /* else {
       delete this.columnFilters[field];
@@ -779,7 +779,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   getGroupWork($params: ListParams, predetermined?: boolean) {
     const token = this.authService.decodeToken();
-    let userId = 'FGAYTAN'; //token.preferred_username;
+    let userId = token.preferred_username;
     const params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
