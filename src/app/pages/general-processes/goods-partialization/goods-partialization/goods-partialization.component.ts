@@ -279,7 +279,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   }
 
   handleErrorGoHome(error: string) {
-    this.alert('error', 'Error', error).then(() => {
+    this.alertInfo('error', 'Error', error).then(() => {
       if (this.goodNum || this.screen) {
         this.router.navigate([HOME_DEFAULT]);
       } else {

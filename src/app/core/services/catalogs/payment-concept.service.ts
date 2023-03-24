@@ -33,7 +33,7 @@ export class PaymentConceptService
   }
 
   update(id: string | number, model: IPaymentConcept) {
-    const route = `${ENDPOINT_LINKS.PaymentConcept}`;
+    const route = `${ENDPOINT_LINKS.PaymentConcept}/${id}`;
     return this.put(route, model);
   }
 
