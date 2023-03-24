@@ -393,11 +393,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    if (this.tipoCarga == 'pgr') {
+      return;
+    } else {
+      const files = (event.target as HTMLInputElement).files;
+      if (files.length != 1) throw 'No files selected, or more than of allowed';
+      const fileReader = new FileReader();
+      fileReader.readAsBinaryString(files[0]);
+      fileReader.onload = () => this.readExcel(fileReader.result);
+    }
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
