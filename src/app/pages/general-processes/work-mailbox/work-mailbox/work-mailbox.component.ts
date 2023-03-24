@@ -2,7 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  of,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -48,6 +56,7 @@ import {
 } from '../utils/modal-titles';
 import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
+  CONFIRM_CANCEL,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
@@ -58,6 +67,10 @@ import {
 } from './work-mailbox-columns';
 
 import { DomSanitizer } from '@angular/platform-browser';
+import { ScanDocumentsModalComponent } from 'src/app/@standalone/modals/scan-documents-modal/scan-documents-modal.component';
+import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
   selector: 'app-work-mailbox',
@@ -163,7 +176,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private fileBrowserService: FileBrowserService,
     private usersService: UsersService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private goodsParamerterService: GoodParametersService,
+    private notificationsService: NotificationService
   ) {
     super();
     this.settings.actions = false;
@@ -773,14 +788,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.getDocumentsByFlyer(this.selectedRow.flierNumber);
   }
 
-  getDocumentsByFlyer(flyerNum: string | number) {
+  openDocumentsModal(flyerNum: string | number, title: string) {
     const params = new FilterParams();
     params.addFilter('flyerNumber', flyerNum);
     const $params = new BehaviorSubject(params);
     const $obs = this.documentsService.getAllFilter;
     const service = this.documentsService;
     const columns = RELATED_FOLIO_COLUMNS;
-    const title = RELATED_FOLIO_TITLE;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -792,10 +806,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         showConfirmButton: true,
       },
     };
-    const modalRef = this.modalService.show(
+    return this.modalService.show(
       MailboxModalTableComponent<IDocuments>,
       config
     );
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = RELATED_FOLIO_TITLE;
+    const modalRef = this.openDocumentsModal(flyerNum, title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(document => this.getPicturesFromFolio(document));
@@ -814,6 +833,154 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
+  turnPaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    // TODO: descomentar cuando los permisos esten habilitados
+    // if(!this.turnar) {
+    //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
+    //   return
+    // }
+    const config: any = {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered',
+      initialState: {
+        callback: (user: any) => {
+          this.turnToUser(user);
+        },
+        paperwork: this.selectedRow,
+      },
+    };
+    this.modalService.show(TurnPaperworkComponent, config);
+  }
+
+  turnToUser(user: any) {
+    console.log(user);
+  }
+
+  async onCancelPaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    const result = await this.alertQuestion(
+      'question',
+      'Advertencia',
+      CONFIRM_CANCEL
+    );
+
+    if (result.isConfirmed) {
+      this.cancelPaperwork().subscribe();
+    }
+  }
+
+  cancelPaperwork() {
+    const { processNumber, turnadoiUser } = this.selectedRow;
+    const body = {
+      status: 'CNI',
+      userTurned: turnadoiUser,
+      situation: 1,
+    };
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al cancelar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.getData();
+      })
+    );
+  }
+
+  validDoc() {
+    this.getValidDocParamter().subscribe();
+  }
+
+  getValidDocParamter() {
+    return this.goodsParamerterService.getById('PATHVALDOCSAT').pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Error al Obtener el link para validar el archivo'
+        );
+        return throwError(() => error);
+      }),
+      tap(parameter => window.open(parameter.initialValue, '_blank'))
+    );
+  }
+
+  scanDocuments() {
+    if (!this.selectedRow?.flierNumber) {
+      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      return;
+    }
+    const title = RELATED_FOLIO_TITLE;
+    const modalRef = this.openDocumentsModal(
+      this.selectedRow?.flierNumber,
+      title
+    );
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.goToScanDocuments(document));
+  }
+
+  goToScanDocuments(document: IDocuments) {
+    const config = {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: false,
+    };
+    this.modalService.show(ScanDocumentsModalComponent, config);
+  }
+
+  replicate() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero elige un trámite');
+      return;
+    }
+    if (!this.selectedRow.flierNumber) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'El trámite no tiene un número de volante'
+      );
+      return;
+    }
+
+    this.getDocumentsCount().subscribe(count => {
+      if (count == 0) {
+        // this.notificationsService.
+      }
+    });
+  }
+
+  getDocumentsCount() {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('flyerNumber', this.selectedRow.flierNumber);
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          return of({ count: 0 });
+        }
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al replicar el folio'
+        );
+        return throwError(() => error);
+      }),
+      map(response => response.count)
+    );
   }
 
   acptionBienes() {
