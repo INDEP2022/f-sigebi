@@ -11,6 +11,12 @@
     "format": "prettier --write \"./src/**/*.{ts,json,html}\"",
     "server": "node --max_old_space_size=4048 ./node_modules/@angular/cli/bin/ng s"
   },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false,
+    "crypto": false
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^14.2.0",
@@ -49,6 +55,7 @@
     "screenfull": "^5.2.0",
     "simple-keyboard": "^3.4.187",
     "sweetalert2": "^11.4.34",
+    "tiff.js": "^1.0.0",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"

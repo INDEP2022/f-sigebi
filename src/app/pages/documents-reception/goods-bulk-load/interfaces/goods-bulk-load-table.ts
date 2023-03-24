@@ -242,3 +242,30 @@ export interface SatSaeNotificacionMuebles {
   unidad: string;
   viarecepcion: number;
 }
+
+export interface pgrDataView {
+  tipovolante: string | number; //COL1
+  remitente: string | number; //COL2
+  identificador: string | number; //COL3
+  asunto: string | number; //COL4
+  nooficio: string | number; //COL5
+  fecoficio: string | number; //COL6
+  exptrans: string | number; //COL7
+  descripcion: string | number; //COL8
+  ciudad: string | number; //COL9
+  entfed: string | number; //COL10
+  solicitante: string | number; //COL11
+  contribuyente: string | number; //COL12
+  transferente: string | number; //COL13
+  viarecepcion: string | number; //COL14
+  areadestino: string | number; //COL15
+  gestiondestino: string | number; //COL16
+  destinatario: string | number; //COL17
+  descbien: string | number; //COL18
+  cantidad: string | number; //COL19
+  unidad: string | number; //COL20
+  status: string | number; //COL21
+  clasif: string | number; //COL22
+  marca: string | number; //COL30
+  serie: string | number; //COL35
+}

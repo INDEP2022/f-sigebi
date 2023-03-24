@@ -33,7 +33,7 @@ export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsTo
   [
     'identifier',
     'wheelType',
-    'departamentDestinyNumber',
+    // 'departamentDestinyNumber',
     'affairKey',
     'judgementType',
     'stage',
@@ -262,6 +262,15 @@ export interface IDocumentsReceptionRegisterForm {
   reserved: string;
   autoscan: string;
 }
+
+export const DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES = {
+  priority: 'N',
+  dailyEviction: false,
+  addressGeneral: false,
+  institutionNumber: 200,
+  captureDate: new Date(),
+  entryProcedureDate: new Date(),
+};
 
 export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
   copyNumber: new FormControl<string | number>(1, Validators.required),

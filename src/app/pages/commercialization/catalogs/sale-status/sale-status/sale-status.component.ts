@@ -24,8 +24,6 @@ export class SaleStatusComponent
   implements OnInit
 {
   saleStatusD: IComerSaleStatus[];
-
-  rowSelected: boolean = false;
   selectedRow: IComerSaleStatus | null = null;
 
   //Columns
@@ -124,6 +122,9 @@ export class SaleStatusComponent
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        if (event.data.id === this.selectedRow.id) {
+          this.selectedRow = null;
+        }
         this.loading = true;
         this.saleStatusService.remove(event.data.id).subscribe({
           next: response => {
@@ -144,6 +145,5 @@ export class SaleStatusComponent
 
   selectRow(row: IComerSaleStatus): void {
     this.selectedRow = row;
-    this.rowSelected = true;
   }
 }
