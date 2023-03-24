@@ -11,6 +11,7 @@
             <div class="d-flex justify-content-between">
               <div>
                 <button
+                  [disabled]="managementAreaF.value == null"
                   [ngClass]="priority$ === 'toDo' ? 'btn-primary' : 'btn-light'"
                   class="btn btn-sm active"
                   (click)="priority$ = 'toDo'; buildFilters()">
@@ -19,6 +20,7 @@
               </div>
               <div>
                 <button
+                  [disabled]="managementAreaF.value == null"
                   [ngClass]="
                     priority$ === 'inProgress' ? 'btn-info' : 'btn-light'
                   "
@@ -29,6 +31,7 @@
               </div>
               <div>
                 <button
+                  [disabled]="managementAreaF.value == null"
                   [ngClass]="priority$ === 'done' ? 'btn-success' : 'btn-light'"
                   class="btn btn-sm active"
                   (click)="priority$ = 'done'; buildFilters()">
@@ -37,6 +40,7 @@
               </div>
               <div>
                 <button
+                  [disabled]="managementAreaF.value == null"
                   [ngClass]="
                     priority$ === 'delayed' ? 'btn-warning' : 'btn-light'
                   "
@@ -249,7 +253,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="viewPictures()"
+              <a class="dropdown-item" (click)="viewPictures()"
                 >Im&aacute;genes</a
               >
             </li>
