@@ -2898,7 +2898,13 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         );
         this.infoDataValidation.error = infoData.error; // Setear error
         infoData.validLastRequest = false; // Respuesta incorrecta
-        this.processUploadEndGeneral(infoData); // Terminar proceso
+        if (opcionValid == 'pgr') {
+          this.processUploadEndPgr(infoData); // Termina proceso
+        } else if (opcionValid == 'general') {
+          this.processUploadEndGeneral(infoData); // Terminar proceso
+        } else {
+          this.processUploadEndSat(infoData); // Termina proceso
+        }
       },
     });
   }
