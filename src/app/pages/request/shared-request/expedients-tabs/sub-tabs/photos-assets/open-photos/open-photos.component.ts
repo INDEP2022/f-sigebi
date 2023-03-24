@@ -58,7 +58,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     };
 
     console.log(idReq);
-    this.wContentService.getImgGood(idReq).subscribe(data => {
+    this.wContentService.getDocumentos(idReq).subscribe(data => {
       console.log('img', data);
       this.paragraphs = data.data;
       this.totalItems = this.paragraphs.length;
