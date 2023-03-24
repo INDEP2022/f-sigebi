@@ -5,17 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="paymentConceptForm">
       <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="paymentConceptForm.get('id')" label="Id">
+        <div class="col-md-12">
+          <form-field
+            [control]="paymentConceptForm.get('description')"
+            label="Descripci&oacute;n">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="id"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="description" />
           </form-field>
         </div>
-
+      </div>
+      <div class="row">
         <div class="col-md-4">
           <form-field
             [control]="paymentConceptForm.get('numRegister')"
@@ -26,18 +27,6 @@
               formControlName="numRegister"
               min="1"
               pattern="^[0-9]+" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-12">
-          <form-field
-            [control]="paymentConceptForm.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
           </form-field>
         </div>
       </div>

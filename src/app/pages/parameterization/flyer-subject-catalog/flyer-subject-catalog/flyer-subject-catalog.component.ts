@@ -73,7 +73,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...AFFAIR_TYPE_COLUMNS },
@@ -228,15 +228,15 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete2(affairType.code);
+        this.delete2(affairType);
         Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   //método para borrar registro de asunto
-  delete2(id: number) {
-    this.affairTypeService.remove(id).subscribe({
+  delete2(affairType?: IAffairType) {
+    this.affairTypeService.remove(affairType).subscribe({
       next: () => this.getAffairAll(),
     });
   }

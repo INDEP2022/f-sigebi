@@ -68,7 +68,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
       const docName = `IMG_${this.date}${contentType}`;
 
       this.wContentService
-        .addImages(
+        .addImagesToContent(
           docName,
           contentType,
           JSON.stringify(formData),

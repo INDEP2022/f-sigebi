@@ -8,4 +8,7 @@ export enum WContentEndpoint {
   GetDocSol = 'wcc/get-doc-sol',
   ObtainFile = 'wcc/obtain-file',
   DocByRequest = 'wcc/findDocumentsByIdSolicitud',
+  AddImagesToContent = 'wcc/addImagesToContent',
+  CallReport = 'processgoodreport',
+  ShowReport = 'report/showReport',
 }

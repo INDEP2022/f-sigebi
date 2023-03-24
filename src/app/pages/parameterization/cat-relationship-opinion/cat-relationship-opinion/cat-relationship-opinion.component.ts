@@ -23,6 +23,7 @@ import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -61,6 +62,9 @@ export class CatRelationshipOpinionComponent
   loading2 = this.loading;
   loading3 = this.loading;
 
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+
   constructor(
     private fb: FormBuilder,
     private affairService: AffairService,
@@ -71,22 +75,24 @@ export class CatRelationshipOpinionComponent
     super();
     this.settings = {
       ...this.settings,
-      //hideSubHeader: false,
+      hideSubHeader: false,
       actions: false,
       columns: { ...AFFAIR_COLUMNS },
     };
 
     this.settings2 = {
       ...this.settings,
+      hideSubHeader: true,
       actions: false,
       columns: { ...AFFAIR_TYPE_COLUMNS },
     };
     this.settings3 = {
       ...this.settings,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...DICTA_COLUMNS },
@@ -104,13 +110,22 @@ export class CatRelationshipOpinionComponent
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'idCity':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'processDetonate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -159,6 +174,12 @@ export class CatRelationshipOpinionComponent
       this.getRAsuntDic();
   }
 
+  //Muestra información de la fila seleccionada de asuntos
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
+  }
+
   //Trae los tipos de asuntos por el Id del asunto seleccionado
   getAffairTypes(): void {
     this.loading2 = true;
@@ -176,7 +197,6 @@ export class CatRelationshipOpinionComponent
   }
 
   //Traer datos de r asunt tipo al seleccionar fila de la tabla tipo de asunto
-
   getRAsuntDic() {
     this.loading3 = true;
     const idAffair = { ...this.affairs };
@@ -191,6 +211,7 @@ export class CatRelationshipOpinionComponent
     });
   }
 
+  //Abre modal para actualizar RasuntDic
   openForm(rAsuntDic?: IRAsuntDic) {
     console.log(rAsuntDic);
     const idAffair = { ...this.affairs };
@@ -207,6 +228,28 @@ export class CatRelationshipOpinionComponent
     };
     this.modalService.show(CatRelationshipOpinionModalComponent, config);
   }
+
+  //Elimina RasuntDic
+  showDeleteAlert(rAsuntDic?: IRAsuntDic) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(rAsuntDic);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(rAsuntDic?: IRAsuntDic) {
+    this.RAsuntDicService.remove2(rAsuntDic).subscribe({
+      next: () => this.getRAsuntDic(),
+    });
+  }
+
+  //Abre cat de Dictamen
 
   openDictum() {
     let config: ModalOptions = {

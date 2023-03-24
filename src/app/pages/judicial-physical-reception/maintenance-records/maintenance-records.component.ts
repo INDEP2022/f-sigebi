@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -13,7 +13,6 @@ import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IProceedingInfo } from './components/proceeding-info/models/proceeding-info';
 
@@ -35,80 +34,18 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   goodParams = new ListParams();
   loadingGoods = true;
   totalGoods = 0;
-
-  rowsSelected: any[];
+  newLimit = new FormControl(1);
+  rowsSelected: any[] = [];
   constructor(
     private fb: FormBuilder,
     private proceedingService: ProceedingsDeliveryReceptionService,
     private detailService: ProceedingsDetailDeliveryReceptionService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      selectMode: 'multi',
-      mode: 'inline',
-      edit: {
-        editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
-        saveButtonContent:
-          '<i class="fa fa-solid fa-check text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="fa fa-solid fa-ban text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      columns: {
-        numberGood: {
-          title: 'N° Bien',
-          sort: false,
-          editable: false,
-        },
-        amount: {
-          title: 'Cantidad',
-          sort: false,
-          editable: false,
-        },
-        description: {
-          title: 'Descripción',
-          sort: false,
-          editable: false,
-        },
-        approvedDateXAdmon: {
-          title: 'Fec. Aprobación',
-          sort: false,
-          editable: false,
-        },
-        approvedUserXAdmon: {
-          title: 'Usuario Aprobo por Admon',
-          sort: false,
-          editable: false,
-        },
-        dateIndicatesUserApproval: {
-          title: 'Fec. Indica Usuario Aprobación',
-          sort: false,
-          editable: false,
-        },
-        approvedXAdmon: {
-          title: 'Apr.',
-          sort: false,
-          editable: false,
-          type: 'custom',
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              console.log(data);
-              data.row.to = data.toggle;
-            });
-          },
-        },
-        received: {
-          title: 'Rec.',
-          sort: false,
-          type: 'custom',
-          editable: false,
-          renderComponent: CheckboxElementComponent,
-        },
-      },
-    };
+
     this.params.value.limit = 1;
+    // this.params.value.pageSize = 1;
+    // this.params.value.take = 1;
   }
 
   ngOnInit(): void {
@@ -137,6 +74,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           this.infoForm = response.data[0];
           this.statusActa = this.infoForm.statusProceedings;
           this.totalItems = response.count;
+          console.log(this.params.getValue());
           this.loading = false;
           this.getGoods();
         },
@@ -164,6 +102,10 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+
+  addGood(good: IDetailProceedingsDeliveryReception) {
+    this.data.push();
   }
 
   private fillParams(form: IProceedingInfo) {

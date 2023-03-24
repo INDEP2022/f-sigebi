@@ -33,6 +33,7 @@
             <div>
               <button
                 id="new-sd"
+                *ngIf="totalItems2 > 1 && totalItems2 < 5"
                 (click)="openForm()"
                 class="btn btn-primary active btn-sm ml-3">
                 Nuevo

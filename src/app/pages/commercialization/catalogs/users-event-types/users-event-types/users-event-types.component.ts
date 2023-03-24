@@ -29,6 +29,7 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       mode: '',
       columns: COLUMNS,
@@ -46,12 +47,13 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
   }
   getValuesAll(params?: ListParams, id?: number) {
     this.loading = true;
-    params['filter.idTpevent'] = id;
     this.userEventTypesService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
-        this.valuesList = response.data;
-        this.totalItems = response.count;
+        const newData = response.data.filter((item: any) => {
+          return item.id_tpevento === id;
+        });
+        this.valuesList = newData;
+        this.totalItems = newData.length;
         this.loading = false;
       },
       error: error => {
@@ -61,10 +63,14 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
     });
   }
   onTeventsChange(tevents: any) {
-    console.log(tevents);
-    this.events = tevents;
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getValuesAll(new ListParams(), this.events.id));
+    if (tevents != undefined) {
+      this.events = tevents;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getValuesAll(new ListParams(), this.events.id));
+    } else {
+      this.valuesList = [];
+      this.totalItems = 0;
+    }
   }
 }

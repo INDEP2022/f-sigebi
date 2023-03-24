@@ -50,15 +50,20 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   numBattery: IShelves;
   numShelf: IShelves;
 
-  params0 = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   params3 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
 
-  totalItems0: number = 0;
   totalItems1: number = 0;
   totalItems2: number = 0;
   totalItems3: number = 0;
+  totalItems4: number = 0;
+
+  loading1 = this.loading;
+  loading2 = this.loading;
+  loading3 = this.loading;
+  loading4 = this.loading;
 
   dataShelves: LocalDataSource = new LocalDataSource();
   dataBattery: LocalDataSource = new LocalDataSource();
@@ -128,23 +133,23 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     // this.prepareForm();
-    this.params0
+    this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSaveValues());
   }
 
   //Tabla GuardaValor Archivo Gral
   getSaveValues() {
-    this.loading = true;
-    this.saveValueService.getAll(this.params0.getValue()).subscribe({
+    this.loading1 = true;
+    this.saveValueService.getAll(this.params1.getValue()).subscribe({
       next: response => {
         console.log(response);
         this.saveValuesList = response.data;
-        this.totalItems0 = response.count;
-        this.loading = false;
+        this.totalItems1 = response.count;
+        this.loading1 = false;
       },
       error: error => {
-        this.loading = false;
+        this.loading1 = false;
         console.log(error);
       },
     });
@@ -170,7 +175,6 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(saveValues);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -178,7 +182,14 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de guardavalor
   delete(saveValues?: ISaveValue) {
     this.saveValueService.remove2(saveValues).subscribe({
-      next: () => this.getSaveValues(),
+      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      error: err => {
+        this.alertQuestion(
+          'error',
+          'No se puede eliminar Guardavalor',
+          'Primero elimine sus baterias disponibles'
+        );
+      },
     });
   }
 
@@ -186,7 +197,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   rowsSelectedSaveValues(event: any) {
     this.idSaveValues = event.data;
     this.batteryList = [];
-    this.params0
+    this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getBattery(this.idSaveValues));
     this.selectedSaveValues = true;
@@ -194,18 +205,18 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   //Método para traer registros de Baterias basados en ID de Guardavalor
   getBattery(idSaveValues: ISaveValue) {
-    this.loading = true;
+    this.loading2 = true;
     this.batterysService
-      .getByCveSaveValues(idSaveValues.id, this.params1.getValue())
+      .getByCveSaveValues(idSaveValues.id, this.params2.getValue())
       .subscribe({
         next: response => {
           console.log(response);
           this.batteryList = response.data;
           this.totalItems2 = response.count;
-          this.loading = false;
+          this.loading2 = false;
         },
         error: error => (
-          this.showNullRegisterBattery(), (this.loading = false)
+          this.showNullRegisterBattery(), (this.loading2 = false)
         ),
       });
   }
@@ -246,7 +257,6 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(battery);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -254,7 +264,14 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de Batteria
   delete2(battery?: IBattery) {
     this.batterysService.remove(battery.idBattery).subscribe({
-      next: () => this.getSaveValues(),
+      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      error: err => {
+        this.alertQuestion(
+          'error',
+          'No se puede eliminar Bateria',
+          'Primero elimine sus estantes disponibles'
+        );
+      },
     });
   }
 
@@ -263,7 +280,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.storeCode = event.data;
     this.idBattery = event.data;
     this.shelvesList = [];
-    this.params1
+    this.params3
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getShelves(this.storeCode, this.idBattery));
     this.selectedBattery = true;
@@ -271,23 +288,23 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   //Método para llenar tabla de registros basado en los filtros
   getShelves(battery1: IBattery, battery2: IBattery) {
-    this.loading = true;
+    this.loading3 = true;
     this.idSaveValues = battery1.storeCode as unknown as ISaveValue;
     this.shelvessService
       .getByCveSaveValues(
         this.idSaveValues.id,
         battery2.idBattery,
-        this.params2.getValue()
+        this.params3.getValue()
       )
       .subscribe({
         next: response => {
           console.log(response);
           this.shelvesList = response.data;
-          this.totalItems2 = response.count;
-          this.loading = false;
+          this.totalItems3 = response.count;
+          this.loading3 = false;
         },
         error: error => (
-          this.showNullRegisterShelves(), (this.loading = false)
+          this.showNullRegisterShelves(), (this.loading3 = false)
         ),
       });
   }
@@ -331,16 +348,30 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete3(shelves);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   //método para borrar registro de estante
   delete3(shelves?: IShelves) {
-    console.log('estante:', shelves);
-    this.shelvessService.remove(shelves).subscribe({
-      next: () => this.getSaveValues(),
+    const idKey = { ...this.idSaveValues };
+    const idBattery = { ...this.idBattery };
+
+    const formData: Object = {
+      key: idKey.id as string,
+      batteryNumber: Number(idBattery.idBattery),
+      id: Number(shelves.id),
+    };
+    console.log('key', formData);
+    this.shelvessService.remove(formData).subscribe({
+      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      error: err => {
+        this.alertQuestion(
+          'error',
+          'No se puede eliminar estante',
+          'Primero elimine sus casilleros disponibles'
+        );
+      },
     });
   }
 
@@ -350,7 +381,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.numBattery = event.data;
     this.numShelf = event.data;
     this.lockerList = [];
-    this.params3
+    this.params4
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() =>
         this.getLocker(this.saveValueKey, this.numBattery, this.numShelf)
@@ -360,7 +391,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   //Métodos para llenar tabla de Casilleros/Locker con ID de Guardavalor/SaveValues
   getLocker(saveValueKey: IShelves, numBattery: IShelves, numShelf: IShelves) {
-    this.loading = true;
+    this.loading4 = true;
     this.idSaveValues = saveValueKey.key as unknown as ISaveValue;
     this.idBattery = numBattery.batteryNumber as unknown as IBattery;
     this.lockersService
@@ -368,16 +399,18 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
         this.idSaveValues.id,
         this.idBattery.idBattery,
         numShelf.id,
-        this.params3.getValue()
+        this.params4.getValue()
       )
       .subscribe({
         next: response => {
           console.log(response);
           this.lockerList = response.data;
-          this.totalItems2 = response.count;
-          this.loading = false;
+          this.totalItems4 = response.count;
+          this.loading4 = false;
         },
-        error: error => (this.showNullRegisterLocker(), (this.loading = false)),
+        error: error => (
+          this.showNullRegisterLocker(), (this.loading4 = false)
+        ),
       });
   }
 
@@ -422,15 +455,18 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete4(locker);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   //método para borrar registro de casillero
   delete4(locker?: ILocker) {
-    this.lockersService.remove(locker).subscribe({
-      next: () => console.log('ok'),
+    this.lockersService.remove(locker.id).subscribe({
+      next: () => (
+        (this.loading4 = false),
+        Swal.fire('Borrado', '', 'success'),
+        this.getShelves(this.storeCode, this.idBattery)
+      ),
     });
   }
 }

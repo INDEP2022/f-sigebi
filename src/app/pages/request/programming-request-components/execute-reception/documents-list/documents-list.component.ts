@@ -69,7 +69,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('lista documentos');
-    console.log(this.parameter);
     this.prepareForm();
     this.request = this.parameter as IRequest;
     this.getTypeDocumentSelect(new ListParams());
@@ -132,11 +131,11 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   search() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      if (this.typeDoc !== 'doc-bien') {
-        this.getData();
-      } else {
+      /*if (this.typeDoc !== 'doc-bien') {*/
+      this.getData();
+      /*} else {
         this.getGoodData();
-      }
+      }*/
     });
   }
 
@@ -235,9 +234,18 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     const docName = event.data.dDocName;
     this.wcontetService.obtainFile(docName).subscribe({
       next: resp => {
-        const linkSource = 'data:application/pdf;base64,' + resp;
-        const downloadLink = document.createElement('a');
-        const fileName = `${docName}.pdf`;
+        let linkSource = '';
+        let downloadLink = null;
+        let fileName = '';
+        if (this.typeDoc !== 'doc-bien') {
+          linkSource = 'data:application/pdf;base64,' + resp;
+          downloadLink = document.createElement('a');
+          fileName = `${docName}.pdf`;
+        } else {
+          linkSource = 'data:image/png;base64,' + resp;
+          downloadLink = document.createElement('a');
+          fileName = `${docName}.png`;
+        }
 
         downloadLink.href = linkSource;
         downloadLink.download = fileName;

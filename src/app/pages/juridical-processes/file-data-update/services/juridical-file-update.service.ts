@@ -103,8 +103,8 @@ export class JuridicalFileUpdateService extends HttpService {
     );
   }
 
-  getInstitutions(params?: ListParams) {
-    return this.institutionService.getAll(params).pipe(
+  getInstitutions(params?: string) {
+    return this.institutionService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,

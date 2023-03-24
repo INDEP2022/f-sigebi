@@ -5,7 +5,7 @@ import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import Swal, {
@@ -97,7 +97,7 @@ const TABLE_SETTINGS: TableSettings = {
     confirmDelete: true,
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registrox',
+  noDataMessage: 'No se encontrarón registros',
   rowClassFunction: (row: any) => {},
 };
 @Component({
@@ -109,6 +109,8 @@ export abstract class BasePage implements OnDestroy {
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
+  alerts: SweetalertModel[] = [];
+  alertQueue = new BehaviorSubject<boolean>(false);
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
   private _showHide = inject(showHideErrorInterceptorService);
   private _activatedRoute = inject(ActivatedRoute);
@@ -134,6 +136,9 @@ export abstract class BasePage implements OnDestroy {
         })
       )
       .subscribe();
+    this.alertQueue.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      if (data) this.showAlerts();
+    });
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
@@ -144,10 +149,23 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
-    Swal.fire(sweetalert);
+    // Swal.fire(sweetalert);
+    this.alerts.push(sweetalert);
+    this.alertQueue.next(true);
   }
 
   protected alert(icon: SweetAlertIcon, title: string, text: string) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    // return Swal.fire(sweetalert);
+    this.alerts.push(sweetalert);
+    this.alertQueue.next(true);
+  }
+
+  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
     let sweetalert = new SweetalertModel();
     sweetalert.title = title;
     sweetalert.text = text;
@@ -195,5 +213,15 @@ export abstract class BasePage implements OnDestroy {
   ngOnDestroy(): void {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();
+  }
+
+  async showAlerts() {
+    if (this.alertQueue.getValue() && this.alerts.length > 0) {
+      while (this.alerts.length > 0) {
+        await Swal.fire(this.alerts[0]).then(() => {
+          this.alerts.splice(0, 1);
+        });
+      }
+    }
   }
 }

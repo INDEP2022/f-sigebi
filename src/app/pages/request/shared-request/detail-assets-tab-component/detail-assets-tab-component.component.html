@@ -16,8 +16,8 @@
       </ng-template>
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
-          <div class="row">
-            <div class="col-md-2" *ngIf="detailAssets.get('goodId').value">
+          <div class="row pt-4">
+            <div class="col-md-4" *ngIf="detailAssets.get('goodId').value">
               <form-field
                 [control]="detailAssets.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
@@ -28,7 +28,9 @@
                   [readOnly]="true" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('goodTypeId')"
                 label="Tipo Bien">
@@ -40,9 +42,7 @@
                   [readOnly]="true" />
               </form-field>
             </div>
-          </div>
-          <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field [control]="detailAssets.get('color')" label="Color">
                 <input
                   type="text"
@@ -50,7 +50,9 @@
                   formControlName="color" />
               </form-field>
             </div>
-            <div class="col-md-5">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('goodDescription')"
                 label="Descripci&oacute;n de bien Transferente">
@@ -59,7 +61,7 @@
                   formControlName="goodDescription"></textarea>
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('quantity')"
                 label="Cantidad de la Transferente">
@@ -72,7 +74,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-2">
+            <div class="col-md-4">
               <form-check label="Duplicidad" for="duplicity">
                 <input
                   id="duplicity"
@@ -83,7 +85,7 @@
                   [disabled]="disableDuplicity" />
               </form-check>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('capacity')"
                 label="Capacidad &#40;lts&#46;&#41;">
@@ -93,17 +95,9 @@
                   formControlName="capacity" />
               </form-field>
             </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('volume')"
-                label="Volumen m3">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="volume" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('fileeNumber')"
                 label="No&#46; Exp&#46; de la transferente">
@@ -113,20 +107,19 @@
                   formControlName="fileeNumber" />
               </form-field>
             </div>
-          </div>
-
-          <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
-                [control]="detailAssets.get('useType')"
-                label="Tipo de Uso">
+                [control]="detailAssets.get('volume')"
+                label="Volumen m3">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="useType" />
+                  formControlName="volume" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <ngx-select
                 [form]="detailAssets"
                 control="physicalStatus"
@@ -137,7 +130,19 @@
                 bindLabel="description"
                 value="keyId"></ngx-select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('useType')"
+                label="Tipo de Uso">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="useType" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <ngx-select
                 [form]="detailAssets"
                 control="stateConservation"
@@ -148,7 +153,7 @@
                 bindLabel="description"
                 value="keyId"></ngx-select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('origin')"
                 label="Procedencia">
@@ -160,28 +165,6 @@
             </div>
           </div>
           <div class="row pt-4">
-            <!--  <div class="col-md-4">
-              <form-field
-                [control]="detailAssets.get('unitMeasure')"
-                label="Unid&#46; Medida Transferente">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="unitMeasure"
-                  [readOnly]="true" />
-              </form-field>
-            </div> -->
-            <div class="col-md-4">
-              <ngx-select
-                [form]="detailAssets"
-                control="unitMeasure"
-                (fetchItems)="getTransferentUnit($event)"
-                [data]="selectTansferUnitMeasure"
-                label="Unid&#46; Medida Transferente"
-                [searchable]="true"
-                bindLabel="unitMeasureTl"
-                value="unitMeasureTl"></ngx-select>
-            </div>
             <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('ligieUnit')"
@@ -193,7 +176,7 @@
                   [readOnly]="true" />
               </form-field>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
               <form-check label="Avaluo" for="appraisal">
                 <input
                   id="appraisal"
@@ -204,7 +187,31 @@
               </form-check>
             </div>
           </div>
-
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="detailAssets"
+                control="unitMeasure"
+                (fetchItems)="getTransferentUnit($event)"
+                [data]="selectTansferUnitMeasure"
+                label="Unid&#46; Medida Transferente"
+                [searchable]="true"
+                bindLabel="unitMeasureTl"
+                value="unitMeasureTl"></ngx-select>
+            </div>
+            <div
+              class="col-md-3"
+              *ngIf="otherAssets === true || manejeAssets === true">
+              <form-check label="Cumple Norma" for="compliesNorm">
+                <input
+                  id="compliesNorm"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="complyNorm"
+                  (change)="handleCumpliesNormEvent($event)" />
+              </form-check>
+            </div>
+          </div>
           <div class="row pt-4">
             <div class="col-md-4">
               <form-field
@@ -229,7 +236,9 @@
                 bindLabel="description"
                 value="keyId"></ngx-select>
             </div>
-            <div class="col-md-3">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('notesTransferringEntity')"
                 label="Notas">
@@ -239,20 +248,7 @@
               </form-field>
             </div>
           </div>
-
           <div class="row pt-4">
-            <div
-              class="col-md-3"
-              *ngIf="otherAssets === true || manejeAssets === true">
-              <form-check label="Cumple Norma" for="compliesNorm">
-                <input
-                  id="compliesNorm"
-                  type="checkbox"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="complyNorm"
-                  (change)="handleCumpliesNormEvent($event)" />
-              </form-check>
-            </div>
             <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
               <ngx-select
                 [form]="detailAssets"
@@ -518,6 +514,19 @@
                 value="id"
                 bindLabel="id"></ngx-select>
             </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="detailAssets.get('tuition')"
+                label="Matr&iacute;cula">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="tuition" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
             <div class="col-md-4">
               <ngx-select
                 [form]="detailAssets"
@@ -528,7 +537,17 @@
                 value="idSubBrand"
                 bindLabel="idSubBrand"></ngx-select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
+              <form-field [control]="detailAssets.get('serie')" label="Serie">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="serie" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-check label="Blindaje" for="armor">
                 <input
                   id="armor"
@@ -538,69 +557,7 @@
                   (change)="handleArmor($event)" />
               </form-check>
             </div>
-          </div>
-
-          <div class="row pt-5">
-            <div class="col-md-2">
-              <form-field [control]="detailAssets.get('model')" label="Modelo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="model" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="detailAssets.get('doorsNumber')"
-                label="Num&#46; Puertas">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="doorsNumber" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="detailAssets.get('axesNumber')"
-                label="Num&#46; Ejes">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="axesNumber" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('engineNumber')"
-                label="Num&#46; Motor">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="engineNumber" />
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row pt-4">
-            <div class="col-md-2">
-              <form-field
-                [control]="detailAssets.get('tuition')"
-                label="Matr&iacute;cula">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="tuition" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="detailAssets.get('serie')" label="Serie">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="serie" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('chassis')"
                 label="Chasis">
@@ -610,7 +567,18 @@
                   formControlName="chassis" />
               </form-field>
             </div>
-            <div class="col-md-2">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field [control]="detailAssets.get('model')" label="Modelo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="model" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field [control]="detailAssets.get('cabin')" label="Cabina">
                 <input
                   type="number"
@@ -620,8 +588,18 @@
             </div>
           </div>
 
-          <div class="row pt-5">
-            <div class="col-md-3">
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('doorsNumber')"
+                label="Num&#46; Puertas">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="doorsNumber" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('origin')"
                 label="Procedencia">
@@ -629,6 +607,18 @@
                   type="text"
                   class="form-control"
                   formControlName="origin" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('axesNumber')"
+                label="Num&#46; Ejes">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="axesNumber" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -641,6 +631,19 @@
                   (change)="handleCirculateEvent($event)" />
               </form-check>
             </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('engineNumber')"
+                label="Num&#46; Motor">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="engineNumber" />
+              </form-field>
+            </div>
             <div class="col-md-4">
               <form-check label="Cuenta con reporte de robos" for="theftReport">
                 <input
@@ -650,12 +653,6 @@
                   [(ngModel)]="theftReport"
                   (change)="handleTheftReportEvent($event)" />
               </form-check>
-              <!-- <form-check label="Cuenta con Reporte de Robo" for="theftReport">
-                <input
-                  id="theftReport"
-                  type="checkbox"
-                  formControlName="theftReport" />
-              </form-check> -->
             </div>
           </div>
         </div>
@@ -672,7 +669,7 @@
             Los campos con <span>*</span> son requeridos
           </p>
           <div class="row pt-5">
-            <div class="col-md-2">
+            <div class="col-md-4">
               <form-check label="Blindaje" for="armor">
                 <input
                   id="armor"
@@ -682,91 +679,7 @@
                   (change)="handleArmor($event)" />
               </form-check>
             </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('engineNumber')"
-                label="Num&#46; Motor">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="engineNumber" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('tuition')"
-                label="Matr&iacute;cula">
-                <input
-                  type="string"
-                  class="form-control"
-                  formControlName="tuition" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="detailAssets.get('cabin')" label="Cabina">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="cabin" />
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row pt-4">
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('volume')"
-                label="Volumen&#40;m3&#41;">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="volume" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('origin')"
-                label="Procedencia">
-                <input
-                  type="string"
-                  class="form-control"
-                  formControlName="origin" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('useType')"
-                label="Tipo de Uso">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="useType" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="detailAssets.get('manufacturingYear')"
-                label="A&ntilde;o de Fabricaci&oacute;n">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="manufacturingYear" />
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row pt-4">
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('capacity')"
-                label="Capacidad &#40;lts&#41;">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="capacity" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('operationalState')"
                 label="Estado Operativo">
@@ -776,7 +689,19 @@
                   formControlName="operationalState" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('engineNumber')"
+                label="Num&#46; Motor">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="engineNumber" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('enginesNumber')"
                 label="Num&#46; Motores">
@@ -786,7 +711,20 @@
                   formControlName="enginesNumber" />
               </form-field>
             </div>
-            <div class="col-md-2">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('tuition')"
+                label="Matr&iacute;cula">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="tuition" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field [control]="detailAssets.get('flag')" label="Bandera">
                 <input
                   type="string"
@@ -797,7 +735,15 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field [control]="detailAssets.get('cabin')" label="Cabina">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="cabin" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('openwork')"
                 label="Calado">
@@ -807,7 +753,20 @@
                   formControlName="openwork" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('volume')"
+                label="Volumen&#40;m3&#41;">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="volume" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field [control]="detailAssets.get('length')" label="Eslora">
                 <input
                   type="string"
@@ -815,8 +774,20 @@
                   formControlName="length" />
               </form-field>
             </div>
+          </div>
 
-            <div class="col-md-3">
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('origin')"
+                label="Procedencia">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="origin" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field [control]="detailAssets.get('sleeve')" label="Manga">
                 <input
                   type="string"
@@ -824,7 +795,20 @@
                   formControlName="sleeve" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('useType')"
+                label="Tipo de Uso">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="useType" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('shipName')"
                 label="Nombre de Embarcaci&oacute;n">
@@ -837,7 +821,17 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('manufacturingYear')"
+                label="A&ntilde;o de Fabricaci&oacute;n">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="manufacturingYear" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('publicRegistry')"
                 label="Registro P&uacute;blico de la Embarcaci&oacute;n">
@@ -847,7 +841,20 @@
                   formControlName="publicRegistry" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('capacity')"
+                label="Capacidad &#40;lts&#41;">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="capacity" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('ships')"
                 label="Embarcaciones">
@@ -916,8 +923,8 @@
           <p class="msg-required">
             Los campos con <span>*</span> son requeridos
           </p>
-          <div class="row pt-5">
-            <div class="col-md-2">
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-check label="Blindaje" for="armor">
                 <input
                   id="armor"
@@ -927,65 +934,7 @@
                   (change)="handleArmor($event)" />
               </form-check>
             </div>
-            <div class="col-md-3">
-              <form-field [control]="detailAssets.get('model')" label="Modelo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="model" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('engineNumber')"
-                label="Num&#46; Motor">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="engineNumber" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('tuition')"
-                label="Matr&iacute;cula">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="tuition" />
-              </form-field>
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div class="col-md-3">
-              <form-field [control]="detailAssets.get('serie')" label="Serie">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="serie" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('origin')"
-                label="Procedencia">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="origin" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="detailAssets.get('useType')"
-                label="Tipo de Uso">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="useType" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('manufacturingYear')"
                 label="A&ntilde;o de Fabricaci&oacute;n">
@@ -996,8 +945,17 @@
               </form-field>
             </div>
           </div>
+
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field [control]="detailAssets.get('model')" label="Modelo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="model" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('operationalState')"
                 label="Estado Operativo">
@@ -1007,7 +965,20 @@
                   formControlName="operationalState" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('engineNumber')"
+                label="Num&#46; Motor">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="engineNumber" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('enginesNumber')"
                 label="Num&#46; Motores">
@@ -1017,7 +988,20 @@
                   formControlName="enginesNumber" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('tuition')"
+                label="Matr&iacute;cula">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="tuition" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('dgacRegistry')"
                 label="Registro Direcci&oacute;n Gral&#46; de Aeron&aacute;utica Civil">
@@ -1027,7 +1011,17 @@
                   formControlName="dgacRegistry" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field [control]="detailAssets.get('serie')" label="Serie">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="serie" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('airplaneType')"
                 label="Tipo de Avi&oacute;n">
@@ -1039,12 +1033,34 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('origin')"
+                label="Procedencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="origin" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field [control]="detailAssets.get('flag')" label="Bandera">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="flag" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('useType')"
+                label="Tipo de Uso">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="useType" />
               </form-field>
             </div>
           </div>
@@ -1071,104 +1087,7 @@
                   formControlName="description"></textarea>
               </form-field>
             </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="goodDomicilieForm.get('status')"
-                label="Estatus">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="status" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="goodDomicilieForm.get('propertyType')"
-                label="Tipo de Inmueble">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="propertyType" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="goodDomicilieForm.get('surfaceMts')"
-                label="Mts&#46; de Terreno">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="surfaceMts" />
-              </form-field>
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div class="col-md-2">
-              <form-field
-                [control]="goodDomicilieForm.get('consSurfaceMts')"
-                label="Mts&#46; Construidos de Terreno">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="consSurfaceMts" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="goodDomicilieForm.get('publicDeed')"
-                label="Escritura p&uacute;blica">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="publicDeed" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="goodDomicilieForm.get('pubRegProperty')"
-                label="Registro Público de Propiedad">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="pubRegProperty" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="goodDomicilieForm.get('appraisalValue')"
-                label="Valor Aval&uacute;o">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="appraisalValue" />
-              </form-field>
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div class="col-md-2">
-              <form-field
-                [control]="goodDomicilieForm.get('appraisalDate')"
-                label="Fecha de evaluo">
-                <input
-                  type="text"
-                  class="form-control"
-                  [bsValue]="bsEvaluoDate"
-                  #dp="bsDatepicker"
-                  bsDatepicker
-                  (bsValueChange)="changeDateEvaluoEvent($event)" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="goodDomicilieForm.get('certLibLien')"
-                label="Certificado de Liberaci&oacute;n de Gravamen">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="certLibLien" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('guardCustody')"
                 label="Guarda Custodia">
@@ -1178,7 +1097,20 @@
                   formControlName="guardCustody" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('status')"
+                label="Estatus">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="status" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('vigilanceRequired')"
                 label="Requiere Vigilancia">
@@ -1189,8 +1121,19 @@
               </form-field>
             </div>
           </div>
+
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('propertyType')"
+                label="Tipo de Inmueble">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="propertyType" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('vigilanceLevel')"
                 label="Nivel de Vigilancia">
@@ -1200,7 +1143,20 @@
                   formControlName="vigilanceLevel" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('surfaceMts')"
+                label="Mts&#46; de Terreno">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="surfaceMts" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('mtsOfiWarehouse')"
                 label="Metros de Bodega">
@@ -1210,7 +1166,20 @@
                   formControlName="mtsOfiWarehouse" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('consSurfaceMts')"
+                label="Mts&#46; Construidos de Terreno">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="consSurfaceMts" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('bedrooms')"
                 label="Habitaciones">
@@ -1220,7 +1189,20 @@
                   formControlName="bedrooms" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('publicDeed')"
+                label="Escritura p&uacute;blica">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="publicDeed" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('bathroom')"
                 label="Ba&ntilde;o">
@@ -1233,7 +1215,17 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('pubRegProperty')"
+                label="Registro Público de Propiedad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="pubRegProperty" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('kitchen')"
                 label="Cocina">
@@ -1243,17 +1235,20 @@
                   formControlName="kitchen" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-field
-                [control]="goodDomicilieForm.get('diningRoom')"
-                label="Comedor">
+                [control]="goodDomicilieForm.get('appraisalValue')"
+                label="Valor Aval&uacute;o">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="diningRoom" />
+                  formControlName="appraisalValue" />
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('livingRoom')"
                 label="Sala">
@@ -1263,7 +1258,46 @@
                   formControlName="livingRoom" />
               </form-field>
             </div>
-            <div class="col-md-3">
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('appraisalDate')"
+                label="Fecha de Avaluo">
+                <input
+                  type="text"
+                  class="form-control"
+                  [bsValue]="bsEvaluoDate"
+                  #dp="bsDatepicker"
+                  bsDatepicker
+                  (bsValueChange)="changeDateEvaluoEvent($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('diningRoom')"
+                label="Comedor">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="diningRoom" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('certLibLien')"
+                label="Certificado de Liberaci&oacute;n de Gravamen">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="certLibLien" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('study')"
                 label="Estudio">
@@ -1276,7 +1310,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="goodDomicilieForm.get('espPark')"
                 label="Espacio de Estacionamiento">
@@ -1288,12 +1322,262 @@
             </div>
             <div class="col-md-4">
               <form-field
+                [control]="goodDomicilieForm.get('pffDate')"
+                label="Fecha de Paso al Fiscal">
+                <input
+                  type="text"
+                  class="form-control"
+                  [bsValue]="bsPffDate"
+                  #dp="bsDatepicker"
+                  bsDatepicker
+                  (bsValueChange)="changeCertiviffDateEvent($event)" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('certLibLienDate')"
+                label="Fecha de Certificado de Liberacion de Gravamen">
+                <input
+                  type="text"
+                  class="form-control"
+                  [bsValue]="bsCertifiDate"
+                  #dp="bsDatepicker"
+                  bsDatepicker
+                  (bsValueChange)="changeCertiviDateEvent($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('attachment')"
+                label="Embargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="attachment" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('gravFavorThird')"
+                label="Gravamen a Favor de Tercero">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="gravFavorThird" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('coOwnership')"
+                label="Copropiedad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coOwnership" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('embFavorThird')"
+                label="Embargo a Favor de Tercero">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="embFavorThird" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('ownershipPercentage')"
+                label="DecretoExproProc">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="ownershipPercentage" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('ownershipPercentage')"
+                label="% de Copropietario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="ownershipPercentage" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('declareRemediation')"
+                label="Declaraci&oacute;n Remediaci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="declareRemediation" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('decreeExproSupe')"
+                label="DecretoExproSupe">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="decreeExproSupe" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('assurance')"
+                label="Aseguramiento">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="assurance" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('heritage')"
+                label="Patrimonio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="heritage" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('propTitleFolio')"
+                label="Folio T&iacute;tulo de Propietario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="propTitleFolio" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('propTitleFolio')"
+                label="Folio T&iacute;tulo de Propietario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="propTitleFolio" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('vouchersWater')"
+                label="Comprobantes de Agua">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="vouchersWater" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('measuresAdjacent')"
+                label="Medidas de Colindancia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="measuresAdjacent" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('physicalPossession')"
+                label="Poses&iacute;n F&iacute;sica">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="physicalPossession" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('debts')"
+                label="Adeudos">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="debts" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('familyHeritage')"
+                label="Patrimonio de Familia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="familyHeritage" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('closed')"
+                label="Clausurado">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="closed" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
                 [control]="goodDomicilieForm.get('forProblems')"
                 label="Problematicas">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="forProblems" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('problemDesc')"
+                label="Descripci&oacute;n de Problem&aacute;tica">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="problemDesc" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="goodDomicilieForm.get('photosAttached')"
+                label="Fotos Adjuntas">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="photosAttached" />
               </form-field>
             </div>
           </div>
