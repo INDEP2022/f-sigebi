@@ -93,14 +93,14 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processStatus: {
     title: 'Estatus',
     sort: false,
-    filterFunction(cell?: any, search?: string): boolean {
+    /*filterFunction(cell?: any, search?: string): boolean {
       let column = cell.processStatus;
       if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
         return true;
       } else {
         return false;
       }
-    },
+    },*/
   },
   processSituation: {
     title: 'Situación Trámite',
