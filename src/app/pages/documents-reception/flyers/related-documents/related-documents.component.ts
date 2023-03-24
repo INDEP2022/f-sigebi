@@ -2,14 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { FlyersService } from '../services/flyers.service';
 import {
+  IOficioDictamenParams,
   RELATED_DOCUMENTS_COLUMNS,
   RELATED_DOCUMENTS_EXAMPLE_DATA,
 } from './related-documents-columns';
+import { TEXT1, TEXT1Abandono, TEXT2 } from './related-documents-message';
 
 @Component({
   selector: 'app-related-documents',
@@ -21,15 +31,67 @@ import {
         padding-bottom: 0;
         padding-top: 0;
       }
+      .disabled[disabled] {
+        color: red;
+      }
     `,
   ],
 })
 export class RelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
   select = new DefaultSelect();
+  justificacion = new DefaultSelect();
+  ciudad: ICity;
   data = RELATED_DOCUMENTS_EXAMPLE_DATA;
+  pantalla = (option: boolean) =>
+    `${
+      option == true
+        ? '"Oficio de Gestión por Dictamen"'
+        : '"Oficio Gestión Relacionados"'
+    }.`;
+  pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  constructor(private fb: FormBuilder) {
+  paramsGestionDictamen: IOficioDictamenParams = {
+    parametros: '',
+    p_gest_ok: '',
+    p_no_tramite: '',
+    tipo_of: '',
+    sale: '',
+    doc: '',
+    bien: '',
+    volante: '',
+    expediente: '',
+    pllamo: '',
+    p_dictamen: '',
+  };
+  se_refiere_a = {
+    A: 'Se refiere a todos los bienes',
+    B: 'Se refiere a algun(os) bien(es) del expediente',
+    C: 'No se refiere a nigun bien asegurado, decomisado o abandonado',
+    D: 'd',
+  };
+  variables = {
+    dictamen: '',
+    b: '',
+    d: '',
+    dictaminacion: '',
+    clasif: '',
+    clasif2: '',
+    delito: '',
+    todos: '',
+    doc_bien: '',
+    proc_doc_dic: '',
+  };
+  pantallaActual: string = '';
+  disabledRadio: boolean = false;
+  oficioGestion: IMJobManagement;
+
+  constructor(
+    private fb: FormBuilder,
+    private flyerService: FlyersService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -39,8 +101,67 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setInitVariables();
     this.prepareForm();
-    this.initComponent();
+    this.pantallaActual = this.route.snapshot.paramMap.get('id');
+    if (!this.pantallaActual) {
+      this.router.navigateByUrl('/pages/');
+      return;
+    } else {
+      if (this.pantallaActual == '2' || this.pantallaActual == '1') {
+        this.pantallaOption = this.flyerService.getPantallaOption(
+          this.pantallaActual
+        );
+        let params = this.flyerService.getParams(true);
+        console.log(params, this.pantallaOption, this.pantallaActual);
+        this.paramsGestionDictamen.sale = 'C';
+        // if (params['parametros']) {
+        if (this.pantallaOption) {
+          // Pantalla dictamen
+          this.initComponentDictamen();
+        } else {
+          // Pantalla relacionados
+        }
+        // } else {
+        //   this.alert(
+        //     'warning',
+        //     'No existen parámetros para la pantalla',
+        //     'Sin parametros'
+        //   );
+        // }
+      } else {
+        this.router.navigateByUrl('/pages/');
+        return;
+      }
+    }
+  }
+
+  setInitVariables() {
+    this.paramsGestionDictamen = {
+      parametros: null,
+      p_gest_ok: null,
+      p_no_tramite: null,
+      tipo_of: null,
+      sale: null,
+      doc: null,
+      bien: null,
+      volante: '1557783',
+      expediente: '529402',
+      pllamo: null,
+      p_dictamen: null,
+    };
+    this.variables = {
+      dictamen: '',
+      b: '',
+      d: '',
+      dictaminacion: '',
+      clasif: '',
+      clasif2: '',
+      delito: '',
+      todos: '',
+      doc_bien: '',
+      proc_doc_dic: '',
+    };
   }
 
   prepareForm() {
@@ -49,7 +170,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noExpediente: [null, [Validators.required]],
       tipoOficio: [null],
       relacionado: [null, Validators.pattern(STRING_PATTERN)],
-      numero: [null],
+      numero: [404558],
+      cveGestion: [null],
       noRemitente: [null],
       remitente: [null],
       noDestinatario: [null],
@@ -58,6 +180,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       ciudad: [null],
       claveOficio: [null],
       parrafoInicial: [null, Validators.pattern(STRING_PATTERN)],
+      tipoTexto: [null],
+      justificacion: [null],
+      justificacionDetalle: [null],
+      noOficio: [null],
       subtipo: [null],
       indPDoctos: [null],
       noBienes: [null],
@@ -69,6 +195,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noDocumento2: [null],
       documento2: [null],
       parrafoFinal: [null, Validators.pattern(STRING_PATTERN)],
+      text3: [null, Validators.pattern(STRING_PATTERN)],
       parrafoAusencia: [null, Validators.pattern(STRING_PATTERN)],
       ccp: [null],
       ccp2: [null],
@@ -79,5 +206,193 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
   }
 
-  initComponent() {}
+  initComponentDictamen() {
+    if (
+      this.managementForm.get('numero').value ||
+      this.managementForm.get('numero').value == '0' ||
+      this.managementForm.get('numero').value == 0
+    ) {
+      this.validOficioGestion();
+    } else {
+      this.alert(
+        'warning',
+        'No existe un valor para Número de Gestión',
+        'Sin valor'
+      );
+    }
+  }
+
+  async validOficioGestion() {
+    const params = new FilterParams();
+    params.addFilter(
+      'managementNumber',
+      this.managementForm.get('numero').value
+    );
+    params.addFilter('jobBy', 'POR DICTAMEN');
+    await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
+      next: res => {
+        console.log(res);
+        if (res.count == 0) {
+          this.getDictationByWheel();
+        } else {
+          this.oficioGestion = res.data[0];
+          this.setDataOficioGestion();
+          // Se tiene el registro
+          this.initFormFromImages();
+        }
+      },
+      error: err => {
+        console.log(err);
+        this.getDictationByWheel();
+      },
+    });
+  }
+
+  setDataOficioGestion() {
+    this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
+    this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
+    this.managementForm
+      .get('numero')
+      .setValue(this.oficioGestion.managementNumber);
+    this.managementForm
+      .get('cveGestion')
+      .setValue(this.oficioGestion.cveManagement);
+    // Set remitente, destinatario y ciudad
+    this.managementForm
+      .get('parrafoInicial')
+      .setValue(this.oficioGestion.text1);
+    this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
+    this.managementForm.get('text3').setValue(this.oficioGestion.text3);
+    this.managementForm
+      .get('justificacionDetalle')
+      .setValue(this.oficioGestion.justification);
+    this.managementForm
+      .get('justificacion')
+      .setValue(this.oficioGestion.justification);
+  }
+
+  reviewParametersGestion() {
+    if (this.paramsGestionDictamen.sale == 'C') {
+      // A, B, D
+      if (this.se_refiere_a.C == this.managementForm.get('tipoOficio').value) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (this.paramsGestionDictamen.sale == 'D') {
+      // C
+      if (this.se_refiere_a.C == this.managementForm.get('tipoOficio').value) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  async getDictationByWheel() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('wheelNumber', this.managementForm.get('noVolante').value);
+    await this.flyerService
+      .getNotificationByWheel(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log(res);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+
+  initFormFromImages() {
+    // SET VARIABLES
+    console.log('set vars');
+  }
+
+  validOficioExterno() {
+    if (
+      this.managementForm.get('tipoOficio').value == 'externo' &&
+      this.paramsGestionDictamen.pllamo != 'ABANDONO'
+    ) {
+      this.managementForm
+        .get('parrafoInicial')
+        .setValue(TEXT1(this.managementForm.get('noOficio').value));
+      this.managementForm.get('parrafoFinal').setValue(TEXT2);
+    } else if (
+      this.managementForm.get('tipoOficio').value == 'externo' &&
+      this.paramsGestionDictamen.pllamo == 'ABANDONO'
+    ) {
+      this.managementForm.get('parrafoInicial').setValue(TEXT1Abandono);
+      this.managementForm.get('parrafoFinal').setValue('SASASASASAS');
+    } else {
+      this.disabledRadio = true;
+    }
+  }
+
+  /**
+   * INCIDENCIA 581
+   * @returns
+   */
+  getJustification(params: ListParams) {
+    // params.take = 20;
+    // params['order'] = 'DESC';
+    // let subscription = this.flyerService
+    //   .getStatusBySearch(params)
+    //   .subscribe(
+    //     data => {
+    //       this.justificacion = new DefaultSelect(
+    //         data.data.map(i => {
+    //           i.description = '#' + i.id + ' -- ' + i.description;
+    //           return i;
+    //         }),
+    //         data.count
+    //       );
+    //       subscription.unsubscribe();
+    //     },
+    //     err => {
+    //       this.onLoadToast(
+    //         'error',
+    //         'Error',
+    //         err.status === 0 ? ERROR_INTERNET : err.error.message
+    //       );
+    //       subscription.unsubscribe();
+    //     },
+    //     () => {
+    //       subscription.unsubscribe();
+    //     }
+    //   );
+  }
+
+  async getCiudad(city: string) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'nameCity',
+      city,
+      SearchFilter.LIKE
+      // '$ilike'
+    );
+    let subscription = this.flyerService.getCityBySearch(params).subscribe(
+      data => {
+        // this.ciudad = data.data;
+        // new DefaultSelect(
+        //   data.data.map(i => {
+        //     i.nameAndId = '#' + i. + ' -- ' + i.description;
+        //     return i;
+        //   }),
+        //   data.count
+        // );
+        subscription.unsubscribe();
+      },
+      err => {
+        subscription.unsubscribe();
+      },
+      () => {
+        subscription.unsubscribe();
+      }
+    );
+  }
 }
