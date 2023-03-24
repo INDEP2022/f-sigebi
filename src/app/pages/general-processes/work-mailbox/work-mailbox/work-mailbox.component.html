@@ -228,9 +228,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
-                >Turnar</a
-              >
+              <a class="dropdown-item" (click)="turnPaperwork()">Turnar</a>
             </li>
             <li role="menuitem">
               <a class="dropdown-item disabled" (click)="notAvailable()"
@@ -243,9 +241,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
-                >Solicitud</a
-              >
+              <a class="dropdown-item" (click)="getSolicitud()">Solicitud</a>
             </li>
             <li role="menuitem">
               <a class="dropdown-item disabled" (click)="notAvailable()"
@@ -273,6 +269,22 @@
                 (click)="workFunction('viewIndicatorsHistory')"
                 >Hist&oacute;rico Indicadores</a
               >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="onCancelPaperwork()"
+                >Cancelar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="validDoc()"
+                >Validar documentación</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="scanDocuments()">Replicar</a>
             </li>
           </ul>
         </div>

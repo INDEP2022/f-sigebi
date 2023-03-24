@@ -3,7 +3,7 @@ import { map, Observable, tap } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
@@ -304,7 +304,7 @@ export class DocReceptionRegisterService extends HttpService {
       );
   }
 
-  getCities(params?: ListParams): Observable<IListResponse<ICity>> {
+  getCities(params?: _Params): Observable<IListResponse<ICity>> {
     let partials = ENDPOINT_LINKS.City.split('/');
     this.microservice = partials[0];
     const route = partials[1];
@@ -408,8 +408,9 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getCourts(params?: ListParams) {
-    return this.courtService.getAll(params).pipe(
+  getCourts(params?: _Params) {
+    // return this.courtService.getAll(params).pipe(
+    return this.courtService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,
@@ -432,11 +433,12 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getDefendants(params?: ListParams): Observable<IListResponse<IIndiciados>> {
-    let partials = ENDPOINT_LINKS.Indiciados.split('/');
-    this.microservice = partials[0];
-    const route = partials[1];
-    return this.get<IListResponse<IIndiciados>>(route, params).pipe(
+  getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {
+    // let partials = ENDPOINT_LINKS.Indiciados.split('/');
+    // this.microservice = partials[0];
+    // const route = partials[1];
+    // return this.get<IListResponse<IIndiciados>>(route, params).pipe(
+    return this.indiciadosService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,

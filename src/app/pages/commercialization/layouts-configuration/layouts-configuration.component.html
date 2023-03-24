@@ -1,8 +1,15 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Configuracion Layouts</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings6"></app-columns-select>
+      <!-- <div>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
+          Nuevo
+        </button>
+      </div> -->
+    </div>
   </div>
-
   <div body>
     <form class="form-material" [formGroup]="form">
       <!--    <div class="row">
@@ -132,11 +139,10 @@
             [source]="layoutsList"
             (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
         </div>
-        <div class="row mt-5 d-flex justify-content-center">
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
-        </div>
+        <br /><br /><br /><br />
+        <!-- <div class="row mt-5 d-flex justify-content-center">
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        </div> -->
       </div>
 
       <div body>

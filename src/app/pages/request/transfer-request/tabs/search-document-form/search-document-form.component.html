@@ -243,6 +243,7 @@
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
         [source]="documentsSeaData"
+        (rowSelect)="documentSelect($event)"
         (edit)="showDocument($event)"
         (delete)="deleteDocument($event)">
       </ng2-smart-table>

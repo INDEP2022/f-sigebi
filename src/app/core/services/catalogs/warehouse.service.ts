@@ -50,4 +50,8 @@ export class WarehouseService
   getAllFilter(params: _Params) {
     return this.get<IListResponse<IWarehouse>>('warehouse', params);
   }
+
+  getAllFilterSelf(self?: WarehouseService, params?: _Params) {
+    return self.get<IListResponse<IWarehouse>>('warehouse', params);
+  }
 }

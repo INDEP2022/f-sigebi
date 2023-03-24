@@ -85,6 +85,15 @@ export class DocumentsReceptionFlyerSelectComponent
     this.modalRef.hide();
   }
 
+  confirmKey(event: KeyboardEvent) {
+    const { key } = event;
+    if (key == 'Enter') {
+      if (!this.loading && this.flyerForm.valid) {
+        this.confirm();
+      }
+    }
+  }
+
   getNotification(flyer: number | string) {
     if (flyer == null) return;
     this.loading = true;
