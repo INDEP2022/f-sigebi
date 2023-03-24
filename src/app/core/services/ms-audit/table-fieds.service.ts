@@ -26,7 +26,6 @@ const example: Partial<IListResponse<ITableField>> = {
 };
 
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ITableField } from '../../models/ms-audit/table-field.model';
@@ -41,6 +40,9 @@ export class TableFieldsService extends HttpService {
   }
 
   getAllFiltered(params: _Params) {
-    return of<Partial<IListResponse<ITableField>>>(example);
+    return this.get<IListResponse<ITableField>>(
+      'table-fields/get-info-table-fields',
+      params
+    );
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -43,5 +44,10 @@ export class CourtService extends HttpService implements ICrudMethods<ICourt> {
   remove(id: string | number): Observable<Object> {
     const route2 = `${this.route}/id/`;
     return this.courtRepository.remove(route2, id);
+  }
+
+  getAllFiltered(params?: _Params): Observable<IListResponse<ICourt>> {
+    const segments = this.route.split('/');
+    return this.get<IListResponse<ICourt>>(segments[1], params);
   }
 }

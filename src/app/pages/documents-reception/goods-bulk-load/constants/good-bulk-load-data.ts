@@ -30,10 +30,10 @@ const GOODS_BULK_LOAD_SAT_ACTIONS = [
 
 const GOODS_BULK_LOAD_PGR_ACTIONS = [
   {
-    value: 'Inserción de bienes de asuntos PGR',
-    title: 'Inserción de bienes de asuntos PGR',
+    value: 'Inserción de bienes de asuntos FGR',
+    title: 'Inserción de bienes de asuntos FGR',
   },
-  ...COMMON_ACTIONS,
+  // ...COMMON_ACTIONS,
 ];
 
 export const GOODS_BULK_LOAD_ACTIONS = {
@@ -52,7 +52,7 @@ export const GOODS_BULK_LOAD_TARGETS = [
     value: 'sat',
   },
   {
-    label: 'PGR',
+    label: 'FGR',
     value: 'pgr',
   },
 ];

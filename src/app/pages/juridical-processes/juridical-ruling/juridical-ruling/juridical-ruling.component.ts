@@ -9,7 +9,9 @@ import {
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
-
+/*Redux NgRX Global Vars Service*/
+import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
@@ -170,14 +172,26 @@ export class JuridicalRulingComponent
 
   legalForm: FormGroup;
   subtipoForm: FormGroup;
+  /*Redux NgRX Global Vars Model*/
+  /*Redux NgRX Global Vars Model*/
+  globalVars: IGlobalVars;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private globalVarsService: GlobalVarsService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.globalVarsService
+      .getGlobalVars$()
+      .subscribe((globalVars: IGlobalVars) => {
+        this.globalVars = globalVars;
+        console.log(globalVars);
+      });
   }
 
   prepareForm() {

@@ -22,6 +22,7 @@ export interface IGood {
   fecOpinion?: any;
   proficientOpinion?: any;
   appraiserOpinion?: any;
+  goodTypeId: number;
   originSignals?: any;
   worthApraisal: string;
   Nodrawer?: any;
@@ -67,6 +68,7 @@ export interface IGood {
   NoProceedings: string;
   NoexpAssociated: string;
   NoRack: string;
+  requestId: number;
   NoStore: string;
   NoBatch: string;
   NoClasifGood: string;
@@ -585,8 +587,8 @@ export interface IDescriptionByNoGoodResponse {
 
 export interface IFromGoodsAndExpedientsBody {
   goodNumber: number;
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
 }
 
 export interface IFromGoodsAndExpedientsResponse {

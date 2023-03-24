@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IWContent } from 'src/app/core/models/ms-wcontent/wcontent.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -27,13 +28,16 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   regionalDelegacionName: string = '';
   idRegDelegation: number = null;
   file: File = null;
+  registerLvl = '';
+  isreadOnly = true;
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private wcontentService: WContentService,
     private delegationStateService: DelegationStateService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private regDelegationService: RegionalDelegationService
   ) {
     super();
   }
@@ -101,10 +105,25 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       this.documentForm.controls['xidExpediente'].setValue(
         this.parameter.recordId
       );
+      this.registerLvl = 'Expediente';
     } else if (this.typeDoc === 'doc-solicitud') {
-      this.documentForm.controls['xidSolicitud'].setValue(
-        this.parameter.recordId
-      );
+      this.documentForm.controls['xidSolicitud'].setValue(this.parameter.id);
+      this.registerLvl = 'Solicitud';
+    } else if (this.typeDoc === 'doc-bien') {
+      this.documentForm.controls['xidBien'].setValue(this.parameter.goodId);
+      this.registerLvl = 'Bien';
+    } else if (this.typeDoc === 'doc-buscar') {
+      if (this.parameter) {
+        this.documentForm.controls['xidSolicitud'].setValue(
+          this.parameter.xidSolicitud
+        );
+        this.documentForm.controls['xidExpediente'].setValue(
+          this.parameter.xidExpediente
+        );
+        this.documentForm.controls['xidBien'].setValue(this.parameter.xidBien);
+        this.registerLvl = 'Expediente';
+        this.isreadOnly = false;
+      }
     }
   }
 
@@ -121,7 +140,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   getState(params: ListParams) {
-    let id = this.parameter.regionalDelegation.id;
+    let id = this.documentForm.controls['xdelegacionRegional'].value;
     params['filter.regionalDelegation'] = `$eq:${id}`;
     this.delegationStateService.getAll(params).subscribe({
       next: resp => {
@@ -137,12 +156,28 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   setRegionalDelegacion() {
-    this.documentForm.controls['xdelegacionRegional'].setValue(
-      this.parameter.regionalDelegation.id
-    );
-    this.regionalDelegacionName = this.parameter.regionalDelegation.description;
-
-    this.getState(new ListParams());
+    if (this.parameter.regionalDelegation) {
+      this.documentForm.controls['xdelegacionRegional'].setValue(
+        this.parameter.regionalDelegation.id
+      );
+      this.regionalDelegacionName =
+        this.parameter.regionalDelegation.description;
+      this.getState(new ListParams());
+    } else {
+      let deleRegId = 0;
+      if (this.typeDoc === 'doc-buscar') {
+        deleRegId = this.parameter.xdelegacionRegional;
+      } else {
+        deleRegId = this.parameter.regionalDelegacionId;
+      }
+      this.regDelegationService.getById(deleRegId).subscribe({
+        next: resp => {
+          this.documentForm.controls['xdelegacionRegional'].setValue(resp.id);
+          this.regionalDelegacionName = resp.description;
+          this.getState(new ListParams());
+        },
+      });
+    }
   }
 
   getDocType(params: ListParams) {
@@ -154,7 +189,6 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   uploadFile(event: any) {
-    console.log(event.target.files[0]);
     this.file = event.target.files[0];
   }
 
@@ -167,7 +201,12 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         const doctype = this.documentForm.controls['xtipoDocumento'].value;
-        const docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
+        let docName = '';
+        if (this.typeDoc !== 'doc-bien') {
+          docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
+        } else {
+          docName = 'Imagen_' + doctype + this.formatDate() + '.img';
+        }
 
         const form = this.documentForm.getRawValue();
         for (const key in form) {
@@ -177,43 +216,60 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         }
         form['ddocName'] = docName;
         form['dSecurityGroup'] = 'Public';
-        form['xNivelRegistroNSBDB'] = 'Expediente';
+        form['xNivelRegistroNSBDB'] = this.registerLvl;
         form['xNombreProceso'] = 'Captura Solicitud';
         delete form['document'];
 
-        this.wcontentService
-          .addDocumentToContent(
-            docName,
-            '.pdf',
-            JSON.stringify(form),
-            this.file,
-            '.pdf'
-          )
-          .subscribe({
-            next: resp => {
-              console.log(resp);
-              if (resp.status === 'OK') {
-                this.onLoadToast(
-                  'success',
-                  'Documento Guardado',
-                  'El documento guardo correctamente'
-                );
-
-                this.close();
-              } else {
-                this.onLoadToast(
-                  'error',
-                  'Error',
-                  'Ocurrio un error al guardar el documento'
-                );
-                console.log(resp);
-              }
-            },
-          });
-
-        /**/
+        if (this.typeDoc !== 'doc-bien') {
+          this.saveDocument(docName, '.pdf', form);
+        } else {
+          this.saveGoodImgs(docName, '.img', form);
+        }
       }
     });
+  }
+
+  //sube documentos
+  saveDocument(docName: string, type: string, form: any) {
+    this.wcontentService
+      .addDocumentToContent(
+        docName,
+        type,
+        JSON.stringify(form),
+        this.file,
+        '.pdf'
+      )
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Documento Guardado',
+            'El documento guardo correctamente'
+          );
+
+          this.close();
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
+
+  //sube imagenes
+  saveGoodImgs(docName: string, type: string, form: any) {
+    this.wcontentService
+      .addImagesToContent(docName, type, JSON.stringify(form), this.file)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Imagen Guardada',
+            'La imagen se guardo correctamente'
+          );
+
+          this.close();
+        },
+      });
   }
 
   close() {

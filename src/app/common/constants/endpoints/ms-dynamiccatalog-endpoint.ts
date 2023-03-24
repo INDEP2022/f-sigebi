@@ -1,4 +1,5 @@
 export enum DynamicCatalogEndpoint {
+  BasePage = 'dynamiccatalog',
   DyanicCatalog = 'dynamiccatalog',
   DinamicTables = 'dinamic-tables',
   getTablesByID = 'dinamic-tables/tableKey',

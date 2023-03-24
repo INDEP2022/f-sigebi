@@ -133,14 +133,14 @@ export const LAYOUTS_COLUMNS4 = {
 };
 
 export const LAYOUTS_COLUMNS5 = {
-  id: {
-    title: 'Id',
-    type: 'number',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.id;
-    },
-  },
+  // idLayout: {
+  //   title: 'Layout',
+  //   type: 'number',
+  //   sort: true,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return row.idLayout.id;
+  //   },
+  // },
   descLayout: {
     title: 'Descripción',
     type: 'string',
@@ -198,19 +198,19 @@ export const LAYOUTS_COLUMNS5 = {
 };
 
 export const LAYOUTS_COLUMNS6 = {
-  idLayout: {
-    title: 'Layout',
-    type: 'number',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.id;
-    },
-  },
-  idConsec: {
-    title: 'Consec',
-    type: 'number',
-    sort: true,
-  },
+  // idLayout: {
+  //   title: 'Layout',
+  //   type: 'number',
+  //   sort: true,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return row.idLayout.id;
+  //   },
+  // },
+  // idConsec: {
+  //   title: 'Consec',
+  //   type: 'number',
+  //   sort: true,
+  // },
   position: {
     title: 'Posición',
     type: 'number',

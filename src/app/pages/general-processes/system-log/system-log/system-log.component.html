@@ -19,22 +19,18 @@
       <div class="col-md-4">
         <system-log-form [fields]="filterFields" [form]="filterForm">
           <confirm-button
+            [loading]="dynamicLoading"
             (confirm)="getTableData()"
             text="Generar"
             loadingText="Cargando"></confirm-button>
         </system-log-form>
       </div>
     </div>
-
-    <div class="row">
-      <ng2-smart-table
-        [settings]="registerSettings"
-        [source]="dynamicRegisters"
-        (userRowSelect)="onSelectTable($event.data)"></ng2-smart-table>
-
-      <app-pagination
-        [filterParams]="dynamicParams"
-        [totalItems]="totalDynamic"></app-pagination>
-    </div>
+    <system-log-registers-table
+      [class.table-loading]="dynamicLoading"
+      [columns]="dynamicColumns"
+      [params]="dynamicParams"
+      [totalItems]="totalDynamic"
+      [registers]="dynamicRegisters"></system-log-registers-table>
   </div>
 </app-card>

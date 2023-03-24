@@ -1,13 +1,18 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Proceso de actualizaci&oacute;n y carga masiva de bienes
+      <ng-container *ngIf="tipoCarga == 'pgr'; else otroTitulo">
+        Proceso de Carga Masiva de Bienes FGR
+      </ng-container>
+      <ng-template #otroTitulo>
+        Proceso de Actualizaci&oacute;n y Carga Masiva de Bienes
+      </ng-template>
     </h5>
   </div>
 
   <div body>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
-      <div class="row pb-0 mb-0">
+      <!-- <div class="row pb-0 mb-0">
         <div class="col-md-12 d-flex">
           <label class="mr-5">Destino: </label>
           <form-radio
@@ -22,7 +27,7 @@
           </form-radio>
         </div>
       </div>
-      <hr />
+      <hr /> -->
       <div class="row">
         <div class="col-md-8">
           <div class="row">
@@ -30,6 +35,30 @@
               <div class="card">
                 <div class="card-body">
                   <div class="row">
+                    <div class="col-md-12" *ngIf="tipoCarga == 'pgr'">
+                      <div class="card p-2">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            EXPEDIENTE:
+                            <div class="badge badge-pill bg-success text-wrap">
+                              {{ paramsGeneral.p_no_expediente }}
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            VOLANTE:
+                            <div class="badge badge-pill bg-success text-wrap">
+                              {{ paramsGeneral.p_no_volante }}
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            AVERIGUACIÓN PREVIA:
+                            <div class="badge badge-pill bg-success text-wrap">
+                              {{ paramsGeneral.p_av_previa }}
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                     <div class="col-md-6">
                       <label>Opciones de Carga</label>
                       <div class="mt-4">
@@ -43,7 +72,9 @@
                         </form-radio>
                       </div>
                     </div>
-                    <div class="col-md-6">
+                    <div
+                      class="col-md-6"
+                      *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'">
                       <div class="row">
                         <form-check label="Son automoviles" for="cars">
                           <input
@@ -163,9 +194,12 @@
           <div class="row">
             <div class="col-12 text-center">
               <button
+                *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'"
                 class="m-4 btn btn-success btn-sm ml-2"
                 type="button"
-                [disabled]="procesandoUpload || procesandoPreload"
+                [disabled]="
+                  procesandoUpload || procesandoPreload || tipoCarga == 'pgr'
+                "
                 (click)="file.click()">
                 Abrir archivo Excel / CSV
               </button>

@@ -33,7 +33,7 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.paymentConceptForm = this.fb.group({
-      id: [null, Validators.required],
+      id: [null, []],
       description: [
         null,
         Validators.compose([
@@ -42,14 +42,7 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
           Validators.maxLength(100),
         ]),
       ],
-      numRegister: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(100),
-        ]),
-      ],
+      numRegister: [null, []],
     });
     if (this.paymentconcept != null) {
       this.edit = true;

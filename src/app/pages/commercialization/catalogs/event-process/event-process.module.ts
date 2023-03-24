@@ -12,11 +12,11 @@ import { EventProcessRoutingModule } from './event-process-routing.module';
 //@Standalone Components
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 //Components
-import { EventProcessFormComponent } from './event-process-form/event-process-form.component';
 import { EventProcessListComponent } from './event-process-list/event-process-list.component';
+import { EventTProcessFormComponent } from './event-tprocess-form/event-tprocess-form.component';
 
 @NgModule({
-  declarations: [EventProcessListComponent, EventProcessFormComponent],
+  declarations: [EventProcessListComponent, EventTProcessFormComponent],
   imports: [
     CommonModule,
     EventProcessRoutingModule,

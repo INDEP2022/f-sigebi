@@ -1,4 +1,4 @@
-export interface IListResponse<T> {
+export interface IListResponse<T = any> {
   [x: string]: any;
   lenght(arg0: string, lenght: any): unknown;
   data: T[];

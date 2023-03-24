@@ -7,7 +7,7 @@
           [settings]="settingsTable"
           [source]="data"
           (userRowSelect)="rowsSelected.emit($event.selected)"
-          (editConfirm)="updateGoodsRow.emit($event)"
+          (editConfirm)="updateRow($event)"
           (deleteConfirm)="showDeleteAlert.emit($event.data)"></ng2-smart-table>
       </div>
     </div>

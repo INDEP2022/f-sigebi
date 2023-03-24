@@ -418,6 +418,20 @@ export class RegistrationOfRequestsComponent
     );
   }
 
+  getAsyncRequestById() {
+    return new Promise((resolve, reject) => {
+      if (this.requestData.id) {
+        this.requestService.getById(this.requestData.id).subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
+
   finishMethod() {
     this.requestService
       .update(this.requestData.id, this.requestData)
@@ -450,10 +464,12 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la verificacion
   public async confirmMethod() {
-    const result = await this.registrationHelper.validateForm(this.requestData);
-
-    if (result === true) {
-      this.cambiarTipoUsuario(this.requestData);
+    const request = await this.getAsyncRequestById();
+    if (request) {
+      const result = await this.registrationHelper.validateForm(request);
+      if (result === true) {
+        this.cambiarTipoUsuario(this.requestData);
+      }
     }
   }
 
