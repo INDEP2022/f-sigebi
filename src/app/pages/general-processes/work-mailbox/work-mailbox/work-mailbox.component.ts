@@ -1105,4 +1105,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       );
     }
   }
+
+  getSolicitud() {
+    this.router.navigateByUrl(
+      `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+    );
+  }
 }
