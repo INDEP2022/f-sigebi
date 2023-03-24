@@ -70,7 +70,7 @@
                       [form]="filterForm"
                       [data]="users$"
                       (fetchItems)="getUsers($event)"
-                      bindLabel="name"
+                      bindLabel="userAndName"
                       control="user"
                       label="Usuario"
                       [searchOnInit]="true"
@@ -91,22 +91,6 @@
                       label="Buz&oacute;n de &Aacute;rea">
                     </ngx-select>
                   </form-field>
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <button
-                        class="btn btn-primary btn-sm active"
-                        (click)="buildFilters()">
-                        Filtrar
-                      </button>
-                    </div>
-                    <div>
-                      <button
-                        class="btn btn-primary btn-sm active"
-                        (click)="resetFilters()">
-                        Borrar Filtros
-                      </button>
-                    </div>
-                  </div>
                 </div>
                 <div class="col-12 col-md-12 col-lg-12 col-xl-7">
                   <form-check label="Ver tr&aacute;mites del grupo" for="1">
@@ -114,7 +98,7 @@
                       id="1"
                       type="checkbox"
                       class="form-control"
-                      formControlName="verTramite" />
+                      formControlName="verTramiteG" />
                   </form-check>
                   <form-check
                     label="Actualizar buz&oacute;n autom&aacute;ticamente"
@@ -139,6 +123,47 @@
                       class="form-control"
                       formControlName="predetermined" />
                   </form-check>
+                </div>
+              </div>
+              <div class="row pt-4">
+                <div class="col-md-12 mt-3 mb-3">
+                  <label>Fecha Ingreso Trámite</label>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="filterForm.get('startDate')"
+                    label="Desde">
+                    <input
+                      formControlName="startDate"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="filterForm.get('endDate')"
+                    label="Hasta">
+                    <input
+                      formControlName="endDate"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <div>
+                  <button
+                    class="btn btn-danger btn-sm active"
+                    (click)="resetFilters()">
+                    Borrar Filtros
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-primary btn-sm active"
+                    (click)="buildFilters()">
+                    Filtrar
+                  </button>
                 </div>
               </div>
             </form>
@@ -203,9 +228,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
-                >Turnar</a
-              >
+              <a class="dropdown-item" (click)="turnPaperwork()">Turnar</a>
             </li>
             <li role="menuitem">
               <a class="dropdown-item disabled" (click)="notAvailable()"
@@ -218,9 +241,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
-                >Solicitud</a
-              >
+              <a class="dropdown-item" (click)="getSolicitud()">Solicitud</a>
             </li>
             <li role="menuitem">
               <a class="dropdown-item disabled" (click)="notAvailable()"
@@ -228,7 +249,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
+              <a class="dropdown-item disabled" (click)="viewPictures()"
                 >Im&aacute;genes</a
               >
             </li>
@@ -248,6 +269,22 @@
                 (click)="workFunction('viewIndicatorsHistory')"
                 >Hist&oacute;rico Indicadores</a
               >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="onCancelPaperwork()"
+                >Cancelar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="validDoc()"
+                >Validar documentación</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="scanDocuments()">Replicar</a>
             </li>
           </ul>
         </div>

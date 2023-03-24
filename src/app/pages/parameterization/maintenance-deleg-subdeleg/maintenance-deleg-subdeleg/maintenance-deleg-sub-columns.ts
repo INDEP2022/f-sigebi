@@ -2,6 +2,7 @@ export const DELEGATION_COLUMNS = {
   id: {
     title: 'No. Delegación',
     sort: false,
+    width: '10%',
   },
   description: {
     title: 'Descripción Delegación',
@@ -16,10 +17,12 @@ export const SUBDELEGATION_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.id;
     },
+    width: '10%',
   },
   id: {
     title: 'No. Sub Delegación',
     sort: false,
+    width: '10%',
   },
   description: {
     title: 'Descripción Sub Delegación',

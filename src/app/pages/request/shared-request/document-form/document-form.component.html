@@ -46,7 +46,9 @@
       </div>
 
       <div class="row">
-        <div class="space col-md-6" *ngIf="typeDoc === 'doc-expediente'">
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-expediente' || typeDoc === 'doc-buscar'">
           <form-field
             [control]="documentForm.get('xidExpediente')"
             label="No&#46; Expediente">
@@ -54,11 +56,13 @@
               type="text"
               class="form-control"
               formControlName="xidExpediente"
-              readonly />
+              [readonly]="isreadOnly" />
           </form-field>
         </div>
 
-        <div class="space col-md-6" *ngIf="typeDoc === 'doc-solicitud'">
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-solicitud' || typeDoc === 'doc-buscar'">
           <form-field
             [control]="documentForm.get('xidSolicitud')"
             label="No&#46; Solicitud">
@@ -66,10 +70,12 @@
               type="text"
               class="form-control"
               formControlName="xidSolicitud"
-              readonly />
+              [readonly]="isreadOnly" />
           </form-field>
         </div>
-        <div class="space col-md-6" *ngIf="typeDoc === 'doc-bien'">
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-bien' || typeDoc === 'doc-buscar'">
           <form-field
             [control]="documentForm.get('xidBien')"
             label="No&#46; Bien">
@@ -77,7 +83,7 @@
               type="text"
               class="form-control"
               formControlName="xidBien"
-              readonly />
+              [readonly]="isreadOnly" />
           </form-field>
         </div>
         <!-- <div class="col-md-6">
@@ -105,7 +111,9 @@
           </form-field>
         </div>
 
-        <div class="space col-md-6" *ngIf="typeDoc === 'doc-bien'">
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-bien' || typeDoc === 'doc-buscar'">
           <form-field
             [control]="documentForm.get('xidSIAB')"
             label="No&#46; SIAB">

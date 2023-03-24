@@ -44,7 +44,7 @@ export class AttributesRegLogicalTablesModalComponent
 
   private prepareForom() {
     this.tdescAtribForm = this.fb.group({
-      keyAtrib: [null, []],
+      keyAtrib: [null, [Validators.required]],
       idNmTable: [null, []],
       descriptionAtrib: [
         null,
@@ -83,7 +83,21 @@ export class AttributesRegLogicalTablesModalComponent
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    if (
+      this.tdescAtribForm.controls['longMax'].value >
+      this.tdescAtribForm.controls['longMin'].value
+    ) {
+      this.edit ? this.update() : this.create();
+    } else {
+      this.alertQuestion(
+        'warning',
+        'La longitud máxima no puede ser menor a longitud mínima',
+        'Favor de corregir'
+      ).then(question => {
+        if (question.isConfirmed) {
+        }
+      });
+    }
   }
 
   create() {
