@@ -225,6 +225,9 @@
               >
             </li>
             <li role="menuitem">
+              <a class="dropdown-item" (click)="replicate()">Replicar</a>
+            </li>
+            <li role="menuitem">
               <a
                 class="dropdown-item"
                 (click)="workFunction('acptionAntecedente')"
@@ -287,9 +290,6 @@
             <li role="menuitem">
               <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
             </li>
-            <li role="menuitem">
-              <a class="dropdown-item" (click)="scanDocuments()">Replicar</a>
-            </li>
           </ul>
         </div>
       </div>
@@ -309,9 +309,9 @@
         </div>
       </div>
     </div>
-    <app-pagination
+    <!-- <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"></app-pagination> -->
 
     <form [formGroup]="form" class="form-material">
       <div class="row justify-content-end">

@@ -1081,15 +1081,101 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     this.getDocumentsCount().subscribe(count => {
       if (count == 0) {
-        // this.notificationsService.
+        this.getNotificationByFlyer().subscribe(notification => {
+          if (!notification) {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'No existe un folio universal escaneado para replicar.'
+            );
+            return;
+          }
+          this.getNotificationsByCveAndDate(
+            notification.officeExternalKey,
+            notification.entryProcedureDate
+          ).subscribe(flyers => {
+            this.getDocumentsByFlyers(flyers.join(',')).subscribe(documents => {
+              console.log(documents);
+            });
+          });
+        });
+      } else {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'Este registro no permite ser replicado'
+        );
       }
     });
+  }
+
+  getNotificationsByCveAndDate(cve: string, date: string | Date) {
+    const params = new FilterParams();
+    params.addFilter('officeExternalKey', cve);
+    params.addFilter('entryProcedureDate', date as string);
+    this.hideError();
+    return this.notificationsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'No existe un folio universal escaneado para replicar.'
+        );
+        return throwError(() => error);
+      }),
+      map(response =>
+        response.data.map(notification => notification.wheelNumber)
+      )
+    );
+  }
+
+  getNotificationByFlyer() {
+    const params = new FilterParams();
+    params.addFilter('wheelNumber', this.selectedRow.flierNumber);
+    this.hideError();
+    return this.notificationsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'No existe un folio universal escaneado para replicar.'
+        );
+        return throwError(() => error);
+      }),
+      map(response => response.data[0])
+    );
+  }
+
+  getDocumentsByFlyers(flyers: string) {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('flyerNumber', flyers, SearchFilter.IN);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'No existe un folio universal escaneado para replicar'
+          );
+        } else {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al replicar el folio'
+          );
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   getDocumentsCount() {
     const params = new FilterParams();
     params.addFilter('scanStatus', 'ESCANEADO');
     params.addFilter('flyerNumber', this.selectedRow.flierNumber);
+    this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
         if (error.status < 500) {
