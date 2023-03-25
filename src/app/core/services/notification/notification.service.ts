@@ -73,6 +73,6 @@ export class NotificationService implements ICrudMethods<AnyFn> {
     let expedient = encodeURI(id);
     return this.httpClient.get<
       IListResponse<ItVolanteNotificacionesByNoExpedient>
-    >('notification/notification/find-count-by-expedient' + expedient);
+    >('notification/notification/find-count-by-expedient/' + expedient);
   }
 }

@@ -7,17 +7,29 @@
       <div class="">
         <div class="row pt-5">
           <div class="col-md-12">
-            <ngx-select
+            <form-field
+              [control]="clarificationForm.get('clarificationType')"
+              label="Tipo Aclaraci&oacute;n">
+              <select class="form-control" formControlName="clarificationType">
+                <option
+                  *ngFor="let item of clarificationTypes"
+                  [value]="item.value">
+                  {{ item.description }}
+                </option>
+              </select>
+            </form-field>
+
+            <!-- <ngx-select
               [form]="clarificationForm"
               control="typeClarification"
               (fetchItems)="getTypeClarification($event)"
               [data]="selectTypeClarification"
               label="Tipo Aclaraci&oacute;n"
               value="id"
-              bindLabel="typeClarification"></ngx-select>
+              bindLabel="typeClarification"></ngx-select> -->
           </div>
         </div>
-        <div class="row pt-4" *ngIf="edit === true">
+        <div class="row pt-4">
           <div class="col-md-12">
             <ngx-select
               [form]="clarificationForm"
