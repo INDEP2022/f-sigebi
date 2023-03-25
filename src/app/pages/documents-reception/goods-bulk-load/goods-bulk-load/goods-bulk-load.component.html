@@ -1,13 +1,18 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Proceso de actualizaci&oacute;n y carga masiva de bienes
+      <ng-container *ngIf="tipoCarga == 'pgr'; else otroTitulo">
+        Proceso de Carga Masiva de Bienes FGR
+      </ng-container>
+      <ng-template #otroTitulo>
+        Proceso de Actualizaci&oacute;n y Carga Masiva de Bienes
+      </ng-template>
     </h5>
   </div>
 
   <div body>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
-      <div class="row pb-0 mb-0">
+      <!-- <div class="row pb-0 mb-0">
         <div class="col-md-12 d-flex">
           <label class="mr-5">Destino: </label>
           <form-radio
@@ -22,7 +27,7 @@
           </form-radio>
         </div>
       </div>
-      <hr />
+      <hr /> -->
       <div class="row">
         <div class="col-md-8">
           <div class="row">
@@ -30,6 +35,30 @@
               <div class="card">
                 <div class="card-body">
                   <div class="row">
+                    <div class="col-md-12" *ngIf="tipoCarga == 'pgr'">
+                      <div class="card p-2">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            EXPEDIENTE:
+                            <div class="badge badge-pill bg-success text-wrap">
+                              {{ paramsGeneral.p_no_expediente }}
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            VOLANTE:
+                            <div class="badge badge-pill bg-success text-wrap">
+                              {{ paramsGeneral.p_no_volante }}
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            AVERIGUACIÓN PREVIA:
+                            <div class="badge badge-pill bg-success text-wrap">
+                              {{ paramsGeneral.p_av_previa }}
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                     <div class="col-md-6">
                       <label>Opciones de Carga</label>
                       <div class="mt-4">
@@ -43,7 +72,24 @@
                         </form-radio>
                       </div>
                     </div>
-                    <div class="col-md-6">
+                    <div
+                      class="col-md-6"
+                      *ngIf="
+                        tipoCarga == 'pgr' &&
+                        DeclarationsUploadValidationMassive &&
+                        !procesandoUpload &&
+                        endProcess
+                      ">
+                      <button
+                        (click)="goPageVolante()"
+                        type="button"
+                        class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                        Regresar a la pantalla de Volantes
+                      </button>
+                    </div>
+                    <div
+                      class="col-md-6"
+                      *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'">
                       <div class="row">
                         <form-check label="Son automoviles" for="cars">
                           <input
@@ -77,53 +123,7 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="col-md-7">
-              <label>Opciones de Carga</label>
-              <div>
-                <form-radio
-                  *ngFor="let action of actions"
-                  [label]="action.title">
-                  <input
-                    type="radio"
-                    formControlName="actionType"
-                    [value]="action.value" />
-                </form-radio>
-              </div>
-            </div>
-            <div class="col-md-5">
-              <div class="row">
-                <form-check label="Son automoviles" for="cars">
-                  <input id="cars" type="checkbox" formControlName="cars" />
-                </form-check>
-              </div>
-              <div class="row">
-                <form-check label="Son inmuebles" for="property">
-                  <input
-                    id="property"
-                    type="checkbox"
-                    formControlName="inmuebles" />
-                </form-check>
-              </div>
-              <div class="row">
-                <hr class="row" />
-                <form-check label="Desalojo" for="desalojov">
-                  <input
-                    id="desalojov"
-                    type="checkbox"
-                    formControlName="desalojo"
-                    (change)="desalojoChange()" />
-                </form-check>
-              </div>
-            </div> -->
           </div>
-          <!-- <div class="row pt-1">
-            <form-field
-              [control]="assetsForm.get('idCarga')"
-              label="ID carga:"
-              class="col-md-9">
-              <input class="form-control" formControlName="idCarga" />
-            </form-field>
-          </div> -->
         </div>
         <div class="col-md-4">
           <div class="card p-2">
@@ -143,26 +143,20 @@
               <li class="list-group-item">
                 <form-field
                   [control]="assetsForm.get('idCarga')"
+                  style="text-transform: uppercase"
                   label="ID carga:"
                   class="col-md-12">
                   <input class="form-control" formControlName="idCarga" />
                 </form-field>
               </li>
             </ul>
-            <!-- <div class="card-footer">
-              <form-field
-                [control]="assetsForm.get('idCarga')"
-                label="ID carga:"
-                class="col-md-12">
-                <input class="form-control" formControlName="idCarga" />
-              </form-field>
-            </div> -->
           </div>
         </div>
         <div class="col-md-12">
           <div class="row">
             <div class="col-12 text-center">
               <button
+                *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'"
                 class="m-4 btn btn-success btn-sm ml-2"
                 type="button"
                 [disabled]="
@@ -541,114 +535,22 @@
           </div>
         </div>
       </div>
-      <!-- <div class="col-md-12">
-        <h2>Proceso de validación en la carga de datos</h2>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            Proceso actual:
-            <div class="badge badge-pill bg-primary text-wrap">
-              {{ DeclarationsUploadValidationMassive.common_general.proceso }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Estatus del Proceso Actual:
-            <div class="badge badge-pill bg-info text-wrap">
-              {{ DeclarationsUploadValidationMassive.message_progress }}
-            </div><div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
-              <div class="col-md-12">
-                <ng2-smart-table [source]="tableSourceActualUpload" [settings]="settings">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </li>
-          <div class="list-group-item">
-            <div
-              class="progress"
-              role="progressbar"
-              aria-label="Example with label"
-              style="background-color: lightgrey"
-              [attr.aria-valuenow]="
-                ((DeclarationsUploadValidationMassive.common_general.count +
-                  1) /
-                  DeclarationsUploadValidationMassive.common_general.total) *
-                  100 | number: '1.2-2'
-              "
-              aria-valuemin="0"
-              aria-valuemax="100">
-              <div
-                class="progress-bar bg-info"
-                [style.width]="
-                  (((DeclarationsUploadValidationMassive.common_general.count +
-                    1) /
-                    DeclarationsUploadValidationMassive.common_general.total) *
-                    100 | number: '1.2-2') + '%'
-                ">
-                {{
-                  ((DeclarationsUploadValidationMassive.common_general.count +
-                    1) /
-                    DeclarationsUploadValidationMassive.common_general.total) *
-                    100 | number: '1.2-2'
-                }}%
-              </div>
-            </div>
-          </div>
-          <li class="list-group-item">
-            Registro actual en proceso:
-            <div class="badge badge-pill bg-info text-wrap">
-              {{ DeclarationsUploadValidationMassive.common_general.count + 1 }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Total de Registros:
-            <div class="badge badge-pill bg-success text-wrap">
-              {{ DeclarationsUploadValidationMassive.common_general.total }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Total de Registros con Errores:
-            <div class="badge badge-pill bg-danger text-wrap">
-              {{
-                DeclarationsUploadValidationMassive.common_general
-                  .registro_errores
-              }}
-            </div>
-          </li>
-          <li class="list-group-item">
-            Total de Errores en el proceso:
-            <div class="badge badge-pill bg-danger text-wrap">
-              {{
-                DeclarationsUploadValidationMassive.common_general.total_errores
-              }}
-            </div>
-          </li>
-          <div
-            class="list-group-item"
-            *ngIf="
-              DeclarationsUploadValidationMassive.common_general.total_errores >
-                0 &&
-              DeclarationsUploadValidationMassive.common_general.valid == false
-            ">
-            El archivo que se genera al dar clic en "Exportar Errores
-            Encontrados en el Proceso de Carga de Datos" contiene los campos
-            donde se encontraron errores durante el proceso de validación. Se
-            muestran los errores puntuales en la última columna del contenido
-            del excel.
-            <button
-              type="button"
-              [disabled]="procesandoUpload"
-              class="ml-2 mr-2 mt-4 btn btn-success btn-sm"
-              (click)="exportErrorUploadXlsx()">
-              Exportar Errores Encontrados en el Proceso de Carga de Datos<i
-                class="fa fa-file-excel ml-1"></i>
-            </button>
-          </div>
-        </ul>
-      </div> -->
     </div>
 
     <hr *ngIf="tableSource.length > 0" class="row" />
-    <h4 *ngIf="tableSource.length > 0">Registros del Excel/CSV seleccionado</h4>
+    <h4 *ngIf="tableSource.length > 0">
+      <ng-container
+        *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'; else otroData">
+        Registros del Excel/CSV seleccionado
+      </ng-container>
+      <ng-template #otroData> Listado de Registros </ng-template>
+    </h4>
     <div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
+      <div
+        class="col-md-12 alert alert-warning"
+        *ngIf="stopProcess && procesandoUpload">
+        Deteniendo el proceso, Espere un momento...
+      </div>
       <div class="col-md-12">
         <ng2-smart-table [source]="tableSource" [settings]="settings">
         </ng2-smart-table>
