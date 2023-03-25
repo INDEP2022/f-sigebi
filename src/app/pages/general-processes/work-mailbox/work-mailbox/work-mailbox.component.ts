@@ -5,6 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
   catchError,
+  debounceTime,
   map,
   of,
   takeUntil,
@@ -209,7 +210,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.dataTable
       .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
@@ -233,6 +234,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               case 'issueType':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'count':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -241,6 +245,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             if (filter.search !== '' && filter.search.length >= 3) {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else if (filter.search !== '' && filter.field == 'issueType') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else if (filter.search !== '' && filter.field == 'count') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -256,6 +262,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log('se ejecutó');
       if (this.predeterminedF.value) {
         this.getUser();
       } else {
@@ -414,9 +421,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           if (isSegAreas) {
             const token = this.authService.decodeToken();
             let userId = token.preferred_username;
-            this.columnFilters[field] = `$eq:${userId}`;
+            //this.columnFilters[field] = `$eq:${userId}`;
+            let field = `search`;
+            let searchBy = `searchBy`;
+            this.columnFilters[field] = `${userId}`;
+            this.columnFilters[searchBy] = `turnadoiUser`;
           } else if (user !== null) {
-            this.columnFilters[field] = `$eq:${user.id}`;
+            //this.columnFilters[field] = `$eq:${user.id}`;
+            let field = `search`;
+            let searchBy = `searchBy`;
+            this.columnFilters[field] = `${user.id}`;
+            this.columnFilters[searchBy] = `turnadoiUser`;
           } else {
             delete this.columnFilters[field];
           }
@@ -432,9 +447,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       if (this.predeterminedF.value) {
         const token = this.authService.decodeToken();
         let userId = token.preferred_username; //'FGAYTAN'; //
-        this.columnFilters[field] = `$eq:${userId}`;
+        //this.columnFilters[field] = `$eq:${userId}`;
+        let field = `search`;
+        let searchBy = `searchBy`;
+        this.columnFilters[field] = `${userId}`;
+        this.columnFilters[searchBy] = `turnadoiUser`;
       } else if (user !== null) {
-        this.columnFilters[field] = `$eq:${user.id}`;
+        //this.columnFilters[field] = `$eq:${user.id}`;
+        let field = `search`;
+        let searchBy = `searchBy`;
+        this.columnFilters[field] = `${user.id}`;
+        this.columnFilters[searchBy] = `turnadoiUser`;
       } else {
         delete this.columnFilters[field];
       }
@@ -442,9 +465,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
 
     //TODO:VALIDAR CAMPO ESCANEADO
-    //field = `filter.processSituation`;
+    field = `filter.count`;
     if (this.pendientes.value) {
-      //this.columnFilters[field] = `$eq:0`;
+      this.columnFilters[field] = `$eq:0`;
     }
     //Filtros por columna
     /**BLK_CTR_CRITERIOS.CHK_FILTROS_PREDEFINIDOS = 'S'**/
@@ -510,11 +533,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     /*console.log(this.filterParams.getValue());
     let filters : FilterParams =this.filterParams.getValue()*/
     console.log(this.predeterminedF.value);
-    let field = `filter.turnadoiUser`;
+    //let field = `filter.turnadoiUser`;
+    let field = `search`;
+    let searchBy = `searchBy`;
     if (this.predeterminedF.value) {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
-      this.columnFilters[field] = `$eq:${userId}`;
+      //this.columnFilters[field] = `$eq:${userId}`;
+      this.columnFilters[field] = `${userId}`;
+      this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
       delete this.columnFilters[field];
     }*/
@@ -1163,7 +1190,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    //params.addFilter('name', $params.text, SearchFilter.LIKE);
     //params.addFilter('assigned', 'S');
     /*if (lparams?.text.length > 0)
 
