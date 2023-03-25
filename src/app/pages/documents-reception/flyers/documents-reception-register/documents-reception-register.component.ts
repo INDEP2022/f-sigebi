@@ -4,7 +4,14 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format, parse } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map, merge, Observable, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  firstValueFrom,
+  map,
+  merge,
+  Observable,
+  takeUntil,
+} from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -968,6 +975,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   onFormChanges() {
+    this.hideError();
     const $obs = this.detectFormChanges();
     $obs.subscribe({
       next: ({ field, value }) => this.valuesChange[field](value),
@@ -2379,9 +2387,43 @@ export class DocumentsReceptionRegisterComponent
     return true;
   }
 
-  save() {
+  async checkCourt() {
+    if (this.formControls.courtNumber.value != null) {
+      let courtData;
+      const param = new FilterParams();
+      param.addFilter('court', this.formControls.courtNumber.value?.id);
+      param.addFilter('city', this.formControls.cityNumber.value?.idCity);
+      this.hideError();
+      try {
+        courtData = await firstValueFrom(
+          this.docRegisterService.getCourtsByCity(param.getParams())
+        );
+      } catch (e) {
+        return false;
+      }
+      if (courtData.data.length == 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  async save(): Promise<boolean | void> {
     if (!this.checkFormErrors()) {
-      return;
+      return false;
+    }
+    const courtFlag = await this.checkCourt();
+    if (!courtFlag) {
+      this.onLoadToast(
+        'warning',
+        'Formulario Inválido',
+        'El juzgado no corresponde a la ciudad seleccionada.'
+      );
+      this.loading = false;
+      return false;
     }
     this.loading = true;
     if (this.globals.gNoExpediente != null) {
@@ -3159,9 +3201,19 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
-  goodsCaptureCheck() {
+  async goodsCaptureCheck(): Promise<boolean | void> {
     if (!this.checkFormErrors()) {
-      return;
+      return false;
+    }
+    const courtFlag = await this.checkCourt();
+    if (!courtFlag) {
+      this.onLoadToast(
+        'warning',
+        'Formulario Inválido',
+        'El juzgado no corresponde a la ciudad seleccionada.'
+      );
+      this.loading = false;
+      return false;
     }
     this.loading = true;
     this.prepareFormData();
