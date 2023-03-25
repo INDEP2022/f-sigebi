@@ -3657,35 +3657,55 @@ export class DocumentsReceptionRegisterComponent
   }
 
   postGoodsCapture() {
+    console.log('Post Goods Capture');
+    console.log(this.globals.gNoExpediente);
     const params = new FilterParams();
+    // this.hideError();
+    params.addFilter('expedientNumber', this.globals.gNoExpediente);
     this.hideError();
-    this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
+    this.notificationService.getAllFilter(params.getParams()).subscribe({
       next: data => {
-        if (data.affairSijNumber) {
-          params.addFilter('expedientNumber', this.globals.gNoExpediente);
-          this.hideError();
-          this.notificationService.getAllFilter(params.getParams()).subscribe({
-            next: data => {
-              if (data.data.length > 0) {
-                this.formControls.expedientNumber.setValue(
-                  data.data[0].expedientNumber
-                );
-                this.formControls.wheelNumber.setValue(
-                  data.data[0].wheelNumber
-                );
-                this.updateProcedureManagement();
-              }
-            },
-            error: () => {},
-          });
+        console.log(data);
+        if (data.data.length > 0) {
+          this.formControls.expedientNumber.setValue(
+            data.data[0].expedientNumber
+          );
+          this.formControls.wheelNumber.setValue(data.data[0].wheelNumber);
+          this.updateProcedureManagement();
+        } else {
+          this.alertInfo(
+            'success',
+            'Notificación agregada',
+            `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
+          ).then(() => this.endProcess());
         }
       },
-      error: () => {},
+      error: err => {
+        console.log(err);
+        this.alertInfo(
+          'success',
+          'Notificación agregada',
+          `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
+        ).then(() => this.endProcess());
+      },
     });
-    this.sendFlyerCopies();
+    // this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
+    //   next: data => {
+    //     if (data.affairSijNumber) {
+
+    //     } else {
+    //       console.log('No affairSijNumber');
+    //     }
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //   },
+    // });
+    // this.sendFlyerCopies();
   }
 
   updateProcedureManagement() {
+    console.log('Check Procedure');
     const params = new FilterParams();
     params.addFilter(
       'expedientNumber',
@@ -3705,14 +3725,10 @@ export class DocumentsReceptionRegisterComponent
         this.updateProcedure(false);
       },
     });
-    this.alert(
-      'success',
-      'Notificación agregada',
-      `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
-    );
   }
 
   updateProcedure(goods: boolean) {
+    console.log('Upd Post Procedure');
     let areaToTurn = this.formControls.estatusTramite.value.id;
     if (areaToTurn == null) areaToTurn = 'OP';
     let status: string;
@@ -3735,10 +3751,18 @@ export class DocumentsReceptionRegisterComponent
           .update(this.pageParams.pNoTramite, body)
           .subscribe({
             next: () => {
-              this.endProcess();
+              this.alertInfo(
+                'success',
+                'Notificación agregada',
+                `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+              ).then(() => this.endProcess());
             },
             error: () => {
-              this.endProcess();
+              this.alertInfo(
+                'success',
+                'Notificación agregada',
+                `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
+              ).then(() => this.endProcess());
             },
           });
       } else {
@@ -3754,18 +3778,34 @@ export class DocumentsReceptionRegisterComponent
                   .update(this.pageParams.pNoTramite, body)
                   .subscribe({
                     next: () => {
-                      this.endProcess();
+                      this.alertInfo(
+                        'success',
+                        'Notificación agregada',
+                        `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+                      ).then(() => this.endProcess());
                     },
                     error: () => {
-                      this.endProcess();
+                      this.alertInfo(
+                        'success',
+                        'Notificación agregada',
+                        `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
+                      ).then(() => this.endProcess());
                     },
                   });
               } else {
-                this.endProcess();
+                this.alertInfo(
+                  'success',
+                  'Notificación agregada',
+                  `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
+                ).then(() => this.endProcess());
               }
             },
             error: () => {
-              this.endProcess();
+              this.alertInfo(
+                'success',
+                'Notificación agregada',
+                `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
+              ).then(() => this.endProcess());
             },
           });
       }
