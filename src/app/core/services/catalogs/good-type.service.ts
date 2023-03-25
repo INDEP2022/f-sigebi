@@ -18,10 +18,7 @@ export class GoodTypeService implements ICrudMethods<IGoodType> {
   }
 
   search(params?: ListParams) {
-    return this.goodTypeRepository.getAllPaginated(
-      this.route + '/search',
-      params
-    );
+    return this.goodTypeRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IGoodType> {

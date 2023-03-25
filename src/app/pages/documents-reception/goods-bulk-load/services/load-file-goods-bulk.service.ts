@@ -2,14 +2,27 @@ import { Injectable } from '@angular/core';
 import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefgr.interface';
 // date pipe angular
 import { DatePipe } from '@angular/common';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
+import { previewData } from '../interfaces/goods-bulk-load-table';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoasFileGoodsBulkService {
-  constructor(private datePipe: DatePipe) {}
+  tableSource: previewData[] = [];
+  pgrData: IPgrTransfer[] = [];
+  constructor(
+    private datePipe: DatePipe,
+    private interfacefgrService: InterfacefgrService
+  ) {}
 
-  getFilterDataPgr(dataPgr: IPgrTransfer) {
+  initDataPgr(pgrData: IPgrTransfer[]) {
+    this.tableSource = [];
+    this.pgrData = pgrData;
+    this.getFilterDataPgr(this.pgrData[0]); // Inicia proceso de carga y validacion
+  }
+
+  getFilterDataPgr(dataPgr: IPgrTransfer, count: number = 0) {
     // areadestino: null;
     // ciudad: null;
     // contribuyente: null;
@@ -35,7 +48,7 @@ export class LoasFileGoodsBulkService {
       remitente: '',
       identificador: '',
       asunto: dataPgr.pgrBusinessSae,
-      nooficio: '',
+      nooficio: dataPgr.pgrOffice,
       fecoficio: null,
       exptrans: '',
       descripcion: '',
@@ -51,7 +64,7 @@ export class LoasFileGoodsBulkService {
       descbien: '',
       cantidad: null,
       unidad: '',
-      status: '',
+      status: 'ROP',
       clasif: null,
       marca: '',
       serie: '',
@@ -166,6 +179,39 @@ export class LoasFileGoodsBulkService {
       data['edofisico1'] = dataPgr.pgrEdoPhysicalMen;
     }
     data['SAT_CVE_UNICA'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
-    return data;
+    // return data;
+    this.loadDataPgr(this.pgrData[count++], count++, data); // Siguiente registro
+  }
+
+  loadDataPgr(pgrData: IPgrTransfer, count: number = 0, response: any) {
+    let objReplace: any = {};
+    for (const key in response) {
+      if (Object.prototype.hasOwnProperty.call(response, key)) {
+        if (key) {
+          objReplace[key.toLowerCase()] = response[key];
+        }
+      }
+    }
+    if (objReplace) {
+      this.tableSource.push(objReplace);
+    }
+    let obj: any = {};
+    let object: any = this.tableSource[0];
+    for (const key in object) {
+      if (Object.prototype.hasOwnProperty.call(object, key)) {
+        if (key) {
+          obj[key] = {
+            title: key.toLocaleUpperCase(),
+            type: 'string',
+            sort: false,
+          };
+        }
+      }
+    }
+    if (this.pgrData.length >= count++) {
+      console.log(this.tableSource);
+    } else {
+      this.getFilterDataPgr(pgrData, count); // Inicia proceso de carga y validacion
+    }
   }
 }

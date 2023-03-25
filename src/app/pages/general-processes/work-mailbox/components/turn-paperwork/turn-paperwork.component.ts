@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { catchError, tap, throwError } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -23,7 +25,8 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private usersService: UsersService,
     private modalRef: BsModalRef,
-    private tmpManagementProcedureService: TmpManagementProcedureService
+    private tmpManagementProcedureService: TmpManagementProcedureService,
+    private jwtHelper: JwtHelperService
   ) {
     super();
   }
@@ -83,20 +86,33 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       '¿Desea generar folio de recepción a los trámites seleccionados?'
     );
     if (result.isConfirmed) {
-      this.generateReceptionFolio();
+      this.generateReceptionFolio('S');
     } else {
+      this.generateReceptionFolio('N');
     }
   }
 
-  generateReceptionFolio() {
-    let flyer: string | number = null;
-    const { processStatus, flierNumber } = this.paperwork;
-    console.log({ processStatus });
-    if (processStatus == 'DJI' || processStatus == 'DJP') {
-      flyer = flierNumber;
-    }
+  generateReceptionFolio(response: string) {
+    const token = this.jwtHelper.decodeToken();
+    const user = this.paperwork.turnadoiUser;
+    const userTurn = this.form.controls.user.value;
+    const body = {
+      user,
+      userTurn,
+      response,
+    };
+    this.turnPaperWork(body).subscribe();
+  }
 
-    if (flyer) {
-    }
+  turnPaperWork(body: {}) {
+    return this.tmpManagementProcedureService.folioReception(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'Ocurrio un error al turnar el trámite');
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se turno correctamente', '');
+      })
+    );
   }
 }

@@ -18,7 +18,7 @@ export class LabelOkeyService implements ICrudMethods<ILabelOKey> {
   }
 
   getById(id: string | number): Observable<ILabelOKey> {
-    return this.labelOkeyRepository.getById(this.route, id);
+    return this.labelOkeyRepository.getById(this.route + '/id', id);
   }
 
   create(model: ILabelOKey): Observable<ILabelOKey> {

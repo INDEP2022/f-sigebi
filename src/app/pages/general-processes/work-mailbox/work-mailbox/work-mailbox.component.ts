@@ -1108,15 +1108,129 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     this.getDocumentsCount().subscribe(count => {
       if (count == 0) {
-        // this.notificationsService.
+        this.getNotificationByFlyer().subscribe(notification => {
+          if (!notification) {
+            this.alert(
+              'error',
+              'Error',
+              'No existe un folio universal escaneado para replicar'
+            );
+            return;
+          }
+          this.getNotificationsByCveAndDate(
+            notification.officeExternalKey,
+            notification.entryProcedureDate
+          ).subscribe(flyers => {
+            this.getDocumentsByFlyers(flyers.join(',')).subscribe(documents => {
+              if (!documents.data[0]) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'No existe un folio universal escaneado para replicar'
+                );
+                return;
+              }
+              if (documents.count > 1) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Existe mas de un folio universal escaneado para replicar'
+                );
+                return;
+              }
+              const folio = documents[0].id;
+              this.updateDocumentsByFolio(
+                folio,
+                notification.officeExternalKey
+              ).subscribe();
+            });
+          });
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Este registro no permite ser replicado'
+        );
       }
     });
+  }
+
+  updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
+    return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.alert('success', 'Folio replicado correctamente', '');
+      })
+    );
+  }
+
+  getNotificationsByCveAndDate(cve: string, date: string | Date) {
+    const params = new FilterParams();
+    params.addFilter('officeExternalKey', cve);
+    params.addFilter('entryProcedureDate', date as string);
+    this.hideError();
+    return this.notificationsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.alert(
+          'error',
+          'Error',
+          'No existe un folio universal escaneado para replicar.'
+        );
+        return throwError(() => error);
+      }),
+      map(response =>
+        response.data.map(notification => notification.wheelNumber)
+      )
+    );
+  }
+
+  getNotificationByFlyer() {
+    const params = new FilterParams();
+    params.addFilter('wheelNumber', this.selectedRow.flierNumber);
+    this.hideError();
+    return this.notificationsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.alert(
+          'error',
+          'Error',
+          'No existe un folio universal escaneado para replicar.'
+        );
+        return throwError(() => error);
+      }),
+      map(response => response.data[0])
+    );
+  }
+
+  getDocumentsByFlyers(flyers: string) {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('flyerNumber', flyers, SearchFilter.IN);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          this.alert(
+            'error',
+            'Error',
+            'No existe un folio universal escaneado para replicar'
+          );
+        } else {
+          this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   getDocumentsCount() {
     const params = new FilterParams();
     params.addFilter('scanStatus', 'ESCANEADO');
     params.addFilter('flyerNumber', this.selectedRow.flierNumber);
+    this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
         if (error.status < 500) {

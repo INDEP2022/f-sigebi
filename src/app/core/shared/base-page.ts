@@ -5,7 +5,7 @@ import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
+import { filter, Subject, takeUntil, tap } from 'rxjs';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import Swal, {
@@ -14,6 +14,7 @@ import Swal, {
   SweetAlertPosition,
   SweetAlertResult,
 } from 'sweetalert2';
+import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
 
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
@@ -33,6 +34,7 @@ export class SweetalertModel implements SweetAlertOptions {
   confirmButtonClass: string;
   cancelButtonClass: string;
   timer: number;
+  timerProgressBar: boolean;
   position: SweetAlertPosition;
   constructor() {
     this.icon = 'success';
@@ -109,14 +111,12 @@ export abstract class BasePage implements OnDestroy {
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
-  alerts: SweetalertModel[] = [];
-  alertQueue = new BehaviorSubject<boolean>(false);
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
   private _showHide = inject(showHideErrorInterceptorService);
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
-
+  private _alertsService = inject(AlertsQueueService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,
@@ -136,9 +136,6 @@ export abstract class BasePage implements OnDestroy {
         })
       )
       .subscribe();
-    this.alertQueue.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      if (data) this.showAlerts();
-    });
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
@@ -149,9 +146,9 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
-    // Swal.fire(sweetalert);
-    this.alerts.push(sweetalert);
-    this.alertQueue.next(true);
+    sweetalert.timerProgressBar = true;
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
   }
 
   protected alert(icon: SweetAlertIcon, title: string, text: string) {
@@ -160,9 +157,8 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.text = text;
     sweetalert.icon = icon;
     sweetalert.showConfirmButton = true;
-    // return Swal.fire(sweetalert);
-    this.alerts.push(sweetalert);
-    this.alertQueue.next(true);
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
   }
 
   protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
@@ -213,15 +209,5 @@ export abstract class BasePage implements OnDestroy {
   ngOnDestroy(): void {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();
-  }
-
-  async showAlerts() {
-    if (this.alertQueue.getValue() && this.alerts.length > 0) {
-      while (this.alerts.length > 0) {
-        await Swal.fire(this.alerts[0]).then(() => {
-          this.alerts.splice(0, 1);
-        });
-      }
-    }
   }
 }
