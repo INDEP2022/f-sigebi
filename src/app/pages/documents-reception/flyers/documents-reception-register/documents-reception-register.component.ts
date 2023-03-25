@@ -2273,6 +2273,7 @@ export class DocumentsReceptionRegisterComponent
       uniqueKey: Number(this.formControls.uniqueKey.value?.uniqueCve),
       transference: this.formControls.transference.value?.id,
       captureDate: format(new Date(), 'yyyy-MM-dd'),
+      entryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
     };
     if (typeof formData.receiptDate == 'string') {
       formData.receiptDate = format(
@@ -2483,6 +2484,40 @@ export class DocumentsReceptionRegisterComponent
     }
     this.prepareFormData();
     this.hideError();
+    this.notificationService
+      .getDailyConsecutive(this.userDelegation, this.userSubdelegation)
+      .subscribe({
+        next: data => {
+          this.formControls.consecutiveNumber.setValue(data.consecutivedaily);
+          // const params = new FilterParams();
+          // params.addFilter(
+          //   'expedientNumber',
+          //   this.formControls.expedientNumber.value
+          // );
+          // this.hideError();
+          // this.tmpNotificationService
+          //   .getAllWithFilters(params.getParams())
+          //   .subscribe({
+          //     next: data => {
+          //       if (data.data.length > 0) {
+          //         this.tmpNotificationService.update(data.data[0].wheelNumber, {
+          //           ...data.data[0],
+          //           consecutiveNumber:
+          //             this.formControls.consecutiveNumber.value,
+          //         });
+          //       }
+          //     },
+          //     error: err => {
+          //       console.log(err);
+          //       this.loading = false;
+          //     },
+          //   });
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    this.hideError();
     this.expedientService
       .getById(this.formControls.expedientNumber.value)
       .subscribe({
@@ -2496,40 +2531,6 @@ export class DocumentsReceptionRegisterComponent
         error: err => {
           console.log(err);
           this.createExpedient();
-        },
-      });
-    this.hideError();
-    this.notificationService
-      .getDailyConsecutive(this.userDelegation, this.userSubdelegation)
-      .subscribe({
-        next: data => {
-          this.formControls.consecutiveNumber.setValue(data.consecutivedaily);
-          const params = new FilterParams();
-          params.addFilter(
-            'expedientNumber',
-            this.formControls.expedientNumber.value
-          );
-          this.hideError();
-          this.tmpNotificationService
-            .getAllWithFilters(params.getParams())
-            .subscribe({
-              next: data => {
-                if (data.data.length > 0) {
-                  this.tmpNotificationService.update(data.data[0].wheelNumber, {
-                    ...data.data[0],
-                    consecutiveNumber:
-                      this.formControls.consecutiveNumber.value,
-                  });
-                }
-              },
-              error: err => {
-                console.log(err);
-                this.loading = false;
-              },
-            });
-        },
-        error: err => {
-          console.log(err);
         },
       });
   }
@@ -2888,15 +2889,57 @@ export class DocumentsReceptionRegisterComponent
     this.loading = true;
     if (this.existingNotification) {
       console.log('Update Notification');
-      const updateData = {
-        ...this.formData,
-        consecutive: this.formControls.consecutiveNumber.value,
-        wheelNumber: this.formControls.wheelNumber.value,
+      // const updateData = {
+      //   ...this.formData,
+      //   wheelNumber: this.formControls.wheelNumber.value,
+      //   receiptDate: this.formData.receiptDate,
+      //   externalOfficeDate: this.formData.externalOfficeDate,
+      //   affair: null as any,
+      // };
+      // delete updateData.affair;
+      let updateData = {
+        wheelType: this.formData.wheelType,
+        identifier: this.formData.identifier,
+        externalRemitter: this.formData.externalRemitter,
+        affairKey: this.formData.affairKey,
         receiptDate: this.formData.receiptDate,
+        priority: this.formData.priority,
+        wheelNumber: this.formControls.wheelNumber.value,
+        consecutiveNumber: this.formData.consecutiveNumber,
+        expedientNumber: this.formData.expedientNumber,
+        addressGeneral: this.formData.addressGeneral,
+        circumstantialRecord: this.formData.circumstantialRecord,
+        preliminaryInquiry: this.formData.preliminaryInquiry,
+        criminalCase: this.formData.criminalCase,
+        protectionKey: this.formData.protectionKey,
+        touchPenaltyKey: this.formData.touchPenaltyKey,
+        officeExternalKey: this.formData.officeExternalKey,
         externalOfficeDate: this.formData.externalOfficeDate,
-        affair: null as any,
+        observations: this.formData.observations,
+        expedientTransferenceNumber: this.formData.expedientTransferenceNumber,
+        cityNumber: this.formData.cityNumber,
+        entFedKey: this.formData.entFedKey,
+        endTransferNumber: this.formData.endTransferNumber,
+        transference: this.formData.transference,
+        courtNumber: this.formData.courtNumber,
+        stationNumber: this.formData.stationNumber,
+        autorityNumber: this.formData.autorityNumber,
+        indiciadoNumber: this.formData.indiciadoNumber,
+        viaKey: this.formData.viaKey,
+        departamentDestinyNumber: this.formData.departamentDestinyNumber,
+        delDestinyNumber: this.formData.delDestinyNumber,
+        subDelDestinyNumber: this.formData.subDelDestinyNumber,
+        institutionNumber: this.formData.institutionNumber,
+        officeNumber: this.formData.officeNumber,
+        captureDate: this.formData.captureDate,
+        wheelStatus: this.formData.wheelStatus,
+        entryProcedureDate: this.formData.entryProcedureDate,
+        registerNumber: this.formData.registerNumber,
+        originNumber: this.formData.originNumber,
+        dictumKey: this.formData.dictumKey,
+        reserved: this.formData.reserved,
+        dailyEviction: this.formData.dailyEviction,
       };
-      delete updateData.affair;
       this.notificationService
         .update(this.formControls.wheelNumber.value, updateData)
         .subscribe({
