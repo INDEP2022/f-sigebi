@@ -13,7 +13,9 @@ import { ExpedientService } from 'src/app/core/services/expedients/expedient.ser
 import { GoodParameterService } from 'src/app/core/services/good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
@@ -103,7 +105,9 @@ export class GoodsCaptureService {
     private dynamicCatalogService: DynamicCatalogService,
     private goodsQueryService: GoodsQueryService,
     private goodLabelService: LabelOkeyService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private tmpExpedientService: TmpExpedientService,
+    private interfaceFgrService: InterfacefgrService
   ) {}
 
   getParamterById(id: string) {
@@ -267,5 +271,13 @@ export class GoodsCaptureService {
 
   getLabelsByClasif(clasifNum: string | number) {
     return this.statusGoodService.getLabelsByClasif(clasifNum);
+  }
+
+  getInterfaceFgr(params: string) {
+    return this.interfaceFgrService.getPgrTransferFiltered(params);
+  }
+
+  getLabelById(id: string | number) {
+    return this.goodLabelService.getById(id);
   }
 }
