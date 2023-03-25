@@ -6,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
@@ -24,10 +24,14 @@ import {
   ISatTransfer,
 } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
 import { IMenageWrite } from 'src/app/core/models/ms-menage/menage.model';
-import { INotificationTransferentIndiciadoCityGetData } from 'src/app/core/models/ms-notification/notification.model';
+import {
+  INotification,
+  INotificationTransferentIndiciadoCityGetData,
+} from 'src/app/core/models/ms-notification/notification.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import {
   GOODS_BULK_LOAD_ACTIONS,
@@ -146,6 +150,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   procesandoPreload: Boolean = false;
   procesandoUpload: Boolean = false;
   pgrData: IPgrTransfer[] = [];
+  globals: IGlobalVars;
+  cargandoPgr: boolean = false;
+  endProcess: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -155,6 +162,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     private globalVarsService: GlobalVarsService,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
+    private router: Router,
     private LoasFileGoodsBulkService: LoasFileGoodsBulkService
   ) {
     super();
@@ -163,7 +171,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.globalVarsService.loadGlobalVars();
+    this.globalVarsService
+      .getGlobalVars$()
+      .subscribe((globalVars: IGlobalVars) => {
+        this.globals = globalVars;
+        console.log(this.globals);
+      });
     this.procesandoPreload = false; // Inicializar variables proceso
     this.procesandoUpload = false; // Inicializar variables proceso
     this.prepareForm();
@@ -296,6 +309,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   resetProcess() {
+    this.endProcess = false;
     this.tableSource = [];
     this.listError = [];
     // this.startVariables();
@@ -330,7 +344,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.validParameters();
+    // this.validParameters();
     if (this.stopProcess) {
       return;
     }
@@ -506,6 +520,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       console.log('SAT');
       this.validatorPreloadMassiveSat();
     } else if (this.target.value == 'pgr') {
+      this.endProcess = false;
       console.log('PGR');
       this.validatorPreloadMassivePgr();
     } else if (this.target.value == 'general') {
@@ -586,6 +601,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * @returns Si la validacion es correcta
    */
   validLoadFile() {
+    console.log(this.tableSource);
     if (this.tableSource.length > 0) {
       return true;
     } else {
@@ -603,6 +619,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   getDataPGRFromParams() {
+    this.cargandoPgr = true;
     this.assetsForm.get('idCarga').setValue('ASEG');
     this.assetsForm.updateValueAndValidity();
     // this.assetsForm.get('idCarga').disable();
@@ -610,13 +627,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.pgrData = [];
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('pgrOffice', this.paramsGeneral.p_av_previa);
-    // Validar el identificador
+    let office = encodeURI(this.paramsGeneral.p_av_previa);
+    params.addFilter('pgrOffice', office);
+    // Obtener data de PGR
     this.goodsBulkService
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log(res);
+          // console.log(res);
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             if (element) {
@@ -629,6 +647,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.initDataPgr(this.pgrData);
         },
         error: err => {
+          this.cargandoPgr = false;
           console.log(err);
           this.alert(
             'warning',
@@ -642,48 +661,60 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   initDataPgr(pgrData: IPgrTransfer[]) {
     this.tableSource = [];
     this.pgrData = pgrData;
-    this.getFilterDataPgr(this.pgrData[0]); // Inicia proceso de carga y validacion
+    this.getDataVolanteData(this.pgrData[0]); // Inicia proceso de carga y validacion
   }
 
-  getFilterDataPgr(dataPgr: IPgrTransfer, count: number = 0) {
-    // areadestino: null;
-    // ciudad: null;
-    // contribuyente: null;
-    // descbien: '';
-    // destinatario: '';
-    // entfed: null;
-    // exptrans: '';
-    // fecoficio: null;
-    // gestiondestino: '';
-    // identificador: '';
-    // marca: '';
-    // nooficio: '';
-    // remitente: '';
-    // sat_cve_unica: undefined;
-    // serie: '';
-    // solicitante: null;
-    // status: '';
-    // tipovolante: '';
-    // transferente: null;
-    // viarecepcion: null;
+  getDataVolanteData(dataPgr: IPgrTransfer, count: number = 0) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    let expedient = encodeURI(this.paramsGeneral.p_no_expediente);
+    params.addFilter('expedientNumber', expedient);
+    let volante = encodeURI(this.paramsGeneral.p_no_volante);
+    params.addFilter('wheelNumber', volante);
+    let oficio = encodeURIComponent(this.paramsGeneral.p_av_previa);
+    params.addFilter('officeExternalKey', oficio);
+    this.goodsBulkService
+      .getDataPgrNotificationByFilter(params.getFilterParams())
+      .subscribe({
+        next: res => {
+          // console.log('DATA VOLANTE', res);
+          this.getFilterDataPgr(dataPgr, count, res.data[0]); // Inicia proceso de carga y validacion
+        },
+        error: err => {
+          this.cargandoPgr = false;
+          console.log(err);
+          this.onLoadToast(
+            'warning',
+            'Datos del bien',
+            'Ocurrio un error al cargar la información de los bienes.'
+          );
+        },
+      });
+  }
+
+  getFilterDataPgr(
+    dataPgr: IPgrTransfer,
+    count: number = 0,
+    volanteData: INotification
+  ) {
     let data: any = {
-      tipovolante: '',
-      remitente: '',
-      identificador: '',
-      asunto: dataPgr.pgrBusinessSae,
+      tipovolante: volanteData.wheelType,
+      remitente: volanteData.externalRemitter,
+      identificador: volanteData.identifier,
+      asunto: volanteData.affair.id,
       nooficio: dataPgr.pgrOffice,
-      fecoficio: null,
-      exptrans: '',
-      descripcion: '',
-      ciudad: null,
-      entfed: null,
-      solicitante: null,
+      fecoficio: volanteData.entryProcedureDate,
+      exptrans: volanteData.expedientTransferenceNumber,
+      descripcion: volanteData.observations,
+      ciudad: volanteData.cityNumber,
+      entfed: volanteData.entFedKey,
+      solicitante: '200',
       contribuyente: null,
-      transferente: null,
-      viarecepcion: null,
-      areadestino: null,
-      gestiondestino: '',
-      destinatario: '',
+      transferente: volanteData.transference,
+      viarecepcion: volanteData.viaKey,
+      areadestino: volanteData.departamentDestinyNumber,
+      gestiondestino: volanteData.departament.dsarea,
+      destinatario: volanteData.addressee,
       descbien: '',
       cantidad: null,
       unidad: '',
@@ -691,11 +722,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       clasif: null,
       marca: '',
       serie: '',
+      observaciones: volanteData.observations,
     };
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
-      data.descripcion = dataPgr.pgrDescrGoodVeh;
+      data.descbien = dataPgr.pgrDescrGoodVeh;
       data.cantidad = dataPgr.pgrAmountVeh;
       data.unidad = dataPgr.pgrUnitMeasureVeh;
       data.edofisico = dataPgr.pgrEdoPhysicalVeh;
@@ -710,7 +742,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodAer) {
       // CONDICION AER
       data.clasif = dataPgr.pgrTypeGoodAer;
-      data.descripcion = dataPgr.pgrDescrGoodAer;
+      data.descbien = dataPgr.pgrDescrGoodAer;
       data.cantidad = dataPgr.pgrAmountAer;
       data.unidad = dataPgr.pgrUniMeasureAer;
       data.edofisico = dataPgr.pgrEdoPhysicalAer;
@@ -724,7 +756,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodEmb) {
       // CONDICION EMB
       data.clasif = dataPgr.pgrTypeGoodEmb;
-      data.descripcion = dataPgr.pgrDescrGoodEmb;
+      data.descbien = dataPgr.pgrDescrGoodEmb;
       data.cantidad = dataPgr.pgrAmountEmb;
       data.unidad = dataPgr.pgrUniMeasureEmb;
       data.edofisico = dataPgr.pgrEdoPhysicalEmb;
@@ -738,7 +770,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodInm) {
       // CONDICION INM
       data.clasif = dataPgr.pgrTypeGoodInm;
-      data.descripcion = dataPgr.pgrDescrGoodInm;
+      data.descbien = dataPgr.pgrDescrGoodInm;
       data.cantidad = dataPgr.pgrAmountInm;
       data.unidad = dataPgr.pgrUniMeasureInm;
       data.edofisico = dataPgr.pgrEdoPhysicalInm;
@@ -752,7 +784,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodNum) {
       // CONDICION NUM
       data.clasif = dataPgr.pgrTypeGoodNum;
-      data.descripcion = dataPgr.pgrDescrGoodNum;
+      data.descbien = dataPgr.pgrDescrGoodNum;
       data.cantidad = dataPgr.pgrAmountNum;
       data.unidad = dataPgr.pgrUniMeasureNum;
       data.edofisico = dataPgr.pgrEdoPhysicalNum;
@@ -771,7 +803,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodJoy) {
       // CONDICION JOY
       data.clasif = dataPgr.pgrTypeGoodJoy;
-      data.descripcion = dataPgr.pgrDescrGoodJoy;
+      data.descbien = dataPgr.pgrDescrGoodJoy;
       data.cantidad = dataPgr.pgrAmountJoy;
       data.unidad = dataPgr.pgrUniMeasureJoy;
       data.edofisico = dataPgr.pgrEdoPhysicalJoy;
@@ -785,7 +817,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodDiv) {
       // CONDICION DIV
       data.clasif = dataPgr.pgrTypeGoodDiv;
-      data.descripcion = dataPgr.pgrDescrGoodDiv;
+      data.descbien = dataPgr.pgrDescrGoodDiv;
       data.cantidad = dataPgr.pgrAmountDiv;
       data.unidad = dataPgr.pgrUniMeasureDiv;
       data.edofisico = dataPgr.pgrEdoPhysicalDiv;
@@ -794,7 +826,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodMen) {
       // CONDICION MEN
       data.clasif = dataPgr.pgrTypeGoodMen;
-      data.descripcion = dataPgr.pgrDescrGoodMen;
+      data.descbien = dataPgr.pgrDescrGoodMen;
       data.cantidad = dataPgr.pgrAmountMen;
       data.unidad = dataPgr.pgrUniMeasureMen;
       data.edofisico = dataPgr.pgrEdoPhysicalMen;
@@ -803,7 +835,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     data['SAT_CVE_UNICA'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
     // return data;
-    this.loadDataPgr(this.pgrData[count++], count++, data); // Siguiente registro
+    this.loadDataPgr(this.pgrData[count], count, data); // Siguiente registro
   }
 
   loadDataPgr(pgrData: IPgrTransfer, count: number = 0, response: any) {
@@ -831,14 +863,20 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         }
       }
     }
-    console.log(this.pgrData.length, count);
+    // console.log(this.pgrData.length, count);
     if (this.pgrData.length <= count++) {
-      console.log(this.tableSource);
+      // console.log(this.tableSource);
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
+      this.cargandoPgr = false;
     } else {
-      this.getFilterDataPgr(pgrData, count); // Inicia proceso de carga y validacion
+      this.getDataVolanteData(pgrData, count); // Inicia proceso de carga y validacion
     }
+    count++;
+  }
+
+  goPageVolante() {
+    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
   }
 
   /**
@@ -1272,6 +1310,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   /**
+   * INCIDENCIA 623 ---
    * Obtener la unidad de medida de UNIDXCLASIF por el no_clasif_bien
    * @param infoData
    * @param opcionValid
@@ -1302,11 +1341,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           next: res => {
             infoData.validLastRequest = true; // Respuesta correcta
             console.log(res);
-            if (res.data) {
+            if (res.data.length > 0) {
               const found = res.data.find(
                 element => element.unit == infoData.dataRow.unidad
               );
-              if (!found.unit) {
+              console.log(found, infoData.dataRow);
+              if (!found) {
                 infoData.error = this.agregarError(
                   infoData.error,
                   ERROR_UNITY_CLASS_GOOD(infoData.dataRow.unidad, clasif)
@@ -3738,8 +3778,23 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
         VALIDATION_UPLOAD_END_MESSAGE;
-      // Inicia proceso de upload
+      // TERMINA PROCESO FGR
       this.procesandoUpload = false;
+      this.globalVarsService.updateSingleGlobal('gCommit', 'S', this.globals);
+      if (infoData.dataRow.expediente) {
+        this.globalVarsService.updateSingleGlobal(
+          'gOFFCommit',
+          null,
+          this.globals
+        );
+        this.endProcess = true;
+      } else {
+        this.globalVarsService.updateSingleGlobal(
+          'gOFFCommit',
+          null,
+          this.globals
+        );
+      }
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
