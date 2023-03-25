@@ -1083,10 +1083,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       if (count == 0) {
         this.getNotificationByFlyer().subscribe(notification => {
           if (!notification) {
-            this.onLoadToast(
+            this.alert(
               'error',
               'Error',
-              'No existe un folio universal escaneado para replicar.'
+              'No existe un folio universal escaneado para replicar'
             );
             return;
           }
@@ -1095,18 +1095,50 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             notification.entryProcedureDate
           ).subscribe(flyers => {
             this.getDocumentsByFlyers(flyers.join(',')).subscribe(documents => {
-              console.log(documents);
+              if (!documents.data[0]) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'No existe un folio universal escaneado para replicar'
+                );
+                return;
+              }
+              if (documents.count > 1) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Existe mas de un folio universal escaneado para replicar'
+                );
+                return;
+              }
+              const folio = documents[0].id;
+              this.updateDocumentsByFolio(
+                folio,
+                notification.officeExternalKey
+              ).subscribe();
             });
           });
         });
       } else {
-        this.onLoadToast(
+        this.alert(
           'warning',
           'Advertencia',
           'Este registro no permite ser replicado'
         );
       }
     });
+  }
+
+  updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
+    return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.alert('success', 'Folio replicado correctamente', '');
+      })
+    );
   }
 
   getNotificationsByCveAndDate(cve: string, date: string | Date) {
@@ -1116,7 +1148,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.hideError();
     return this.notificationsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Error',
           'No existe un folio universal escaneado para replicar.'
@@ -1135,7 +1167,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.hideError();
     return this.notificationsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Error',
           'No existe un folio universal escaneado para replicar.'
@@ -1154,17 +1186,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
         if (error.status < 500) {
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'No existe un folio universal escaneado para replicar'
           );
         } else {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrio un error al replicar el folio'
-          );
+          this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
         }
         return throwError(() => error);
       })
