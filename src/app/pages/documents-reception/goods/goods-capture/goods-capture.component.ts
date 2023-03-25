@@ -69,9 +69,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       this.selectExpedient();
     }
 
-    if (this.global.pIndicadorSat == 1 || this.global.pIndicadorSat == 0) {
-      this.fillSatSubject();
-    }
+    this.fillSatSubject();
   }
 
   whenIsCalledFromFlyers() {
@@ -298,6 +296,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       window.scrollTo(0, 0);
     } else {
       if (this.params.origin === FLYERS_REGISTRATION_CODE) {
+        const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
+        this.globalVarService.updateGlobalVars(_global);
         this.router.navigate([
           '/pages/documents-reception/flyers-registration',
         ]);

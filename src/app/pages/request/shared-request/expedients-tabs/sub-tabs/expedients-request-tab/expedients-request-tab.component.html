@@ -16,14 +16,12 @@
     </div>
   </div>
   <div class="row pt-2">
-    <div class="col-md-12" style="overflow-x: scroll">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="paragraphs">
-        </ng2-smart-table>
-      </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="paragraphs">
+      </ng2-smart-table>
     </div>
   </div>
   <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
@@ -36,7 +34,7 @@
         <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
       </tab>
       <tab heading="Bienes de la Solicitud" (selectTab)="requestSelected(4)">
-        <app-request-of-assets [typeDoc]="typeDoc"></app-request-of-assets>
+        <app-good-doc-tab [typeDoc]="typeDoc"></app-good-doc-tab>
       </tab>
     </tabset>
   </div>

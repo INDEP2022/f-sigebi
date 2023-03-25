@@ -244,28 +244,28 @@ export interface SatSaeNotificacionMuebles {
 }
 
 export interface pgrDataView {
-  tipovolante: string; //COL1
-  remitente: string; //COL2
-  identificador: string; //COL3
-  asunto: string; //COL4
-  nooficio: string; //COL5
-  fecoficio: string; //COL6
-  exptrans: string; //COL7
-  descripcion: string; //COL8
-  ciudad: string; //COL9
-  entfed: string; //COL10
-  solicitante: string; //COL11
-  contribuyente: string; //COL12
-  transferente: string; //COL13
-  viarecepcion: string; //COL14
-  areadestino: string; //COL15
-  gestiondestino: string; //COL16
-  destinatario: string; //COL17
-  descbien: string; //COL18
-  cantidad: string; //COL19
-  unidad: string; //COL20
-  status: string; //COL21
-  clasif: string; //COL22
-  marca: string; //COL30
-  serie: string; //COL35
+  tipovolante: string | number; //COL1
+  remitente: string | number; //COL2
+  identificador: string | number; //COL3
+  asunto: string | number; //COL4
+  nooficio: string | number; //COL5
+  fecoficio: string | number; //COL6
+  exptrans: string | number; //COL7
+  descripcion: string | number; //COL8
+  ciudad: string | number; //COL9
+  entfed: string | number; //COL10
+  solicitante: string | number; //COL11
+  contribuyente: string | number; //COL12
+  transferente: string | number; //COL13
+  viarecepcion: string | number; //COL14
+  areadestino: string | number; //COL15
+  gestiondestino: string | number; //COL16
+  destinatario: string | number; //COL17
+  descbien: string | number; //COL18
+  cantidad: string | number; //COL19
+  unidad: string | number; //COL20
+  status: string | number; //COL21
+  clasif: string | number; //COL22
+  marca: string | number; //COL30
+  serie: string | number; //COL35
 }

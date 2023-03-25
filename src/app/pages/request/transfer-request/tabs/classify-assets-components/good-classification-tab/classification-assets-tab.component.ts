@@ -88,7 +88,6 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.requestObject);
     if (this.requestObject) {
       this.tablePaginator();
     }
@@ -111,30 +110,22 @@ export class ClassificationAssetsTabComponent
         items.fractionId = fraction.description;
         return items;
       });
-      this.physicalState(info);
+      console.log('info', info);
     });
   }
 
-  physicalState(goods: any) {
+  rowSelected(event: any) {
+    //this.getSection(event.ligieSection);
+  }
+
+  /*physicalState(goods: any) {
     const physicalFilter = goods.map((items: any) => {
       if (items.physicalStatus == 1) items.physicalStatus = 'BUENO';
       if (items.physicalStatus == 2) items.physicalStatus = 'MALO';
       return items;
     });
 
-    this.goodType(physicalFilter);
-  }
-
-  goodType(goods: any) {
-    console.log('mii', goods);
-    const filterGoodType = goods.map((items: any) => {
-      console.log(items.goodTypeId);
-      this.goodTypeService.getById(items.goodTypeId).subscribe(data => {
-        items.goodTypeId = data.nameGoodType;
-      });
-      return items;
-    });
-    this.stateConservation(filterGoodType);
+    this.stateConservation(physicalFilter);
   }
 
   stateConservation(goods: any) {
@@ -158,9 +149,7 @@ export class ClassificationAssetsTabComponent
     this.loading = false;
   }
 
-  rowSelected(event: any) {
-    this.getSection(event.ligieSection);
-  }
+  
 
   getSection(id: number) {
     this.paramsFraction.getValue()['filter.level'] = 0;
@@ -186,7 +175,7 @@ export class ClassificationAssetsTabComponent
         });
       },
     });
-  }
+  } */
 
   getLevel1(idParent: number) {
     this.paramsLvl1.getValue()['filter.parentId'] = idParent;

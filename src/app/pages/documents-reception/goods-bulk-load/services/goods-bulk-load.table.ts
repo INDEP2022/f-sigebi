@@ -8,6 +8,7 @@ import { IHistoryGood } from 'src/app/core/models/administrative-processes/histo
 import { IAuthorityIssuingParams } from 'src/app/core/models/catalogs/authority.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ITagXClasif } from 'src/app/core/models/ms-classifygood/ms-classifygood.interface';
+import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefgr.interface';
 import {
   IDinamicQueryParams,
   ISatTransfer,
@@ -111,6 +112,10 @@ export class GoodsBulkLoadService {
     return this.interfacefgrService.getPgrTransferFiltered(params);
   }
 
+  updateDataPGR(id: number, params: IPgrTransfer) {
+    return this.interfacefgrService.update(id, params);
+  }
+
   /**
    * Obtener las notificaciones de acuerdo al transferente, indiciado y la ciudad
    */
@@ -129,10 +134,19 @@ export class GoodsBulkLoadService {
     return this.notificationService.getAll(params);
   }
 
-  getVolanteNotificacionesByNoExpedient(noExpediente: string) {
-    return this.notificationService.getVolanteNotificacionesByNoExpedient(
-      noExpediente
-    );
+  getVolanteNotificacionesByNoExpedient(
+    noExpediente: string,
+    proceso: number = 0
+  ) {
+    if (proceso == 3) {
+      return this.massiveGoodService.getWheelNotificationsByExpedientNumber(
+        noExpediente
+      );
+    } else {
+      return this.notificationService.getVolanteNotificacionesByNoExpedient(
+        noExpediente
+      );
+    }
   }
 
   getIssuingInstitutionById(idInstitution: string) {
@@ -187,8 +201,8 @@ export class GoodsBulkLoadService {
   updateGood(id: string, good: IGood) {
     return this.goodService.update(id, good);
   }
-  getUploadGoodIdentificador(id: number) {
-    return this.massiveGoodService.countMassiveGood(id);
+  getUploadGoodIdentificador(id: string) {
+    return this.massiveGoodService.getAllWithFilters(id);
   }
   getTagXClasifByCol6Transfer(body: ITagXClasif) {
     return this.classifyGoodService.getTagXClassif(body);

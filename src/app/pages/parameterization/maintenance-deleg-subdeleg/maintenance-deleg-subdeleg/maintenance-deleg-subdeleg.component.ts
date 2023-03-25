@@ -191,16 +191,23 @@ export class MaintenanceDelegSubdelegComponent
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete2(subDelegation.id);
+        this.delete2(subDelegation);
       }
     });
   }
 
   //método para borrar Sub Delegaciones
-  delete2(id: number) {
-    this.subDelegationService.remove(id).subscribe({
+  delete2(subDelegation?: ISubdelegation) {
+    const idDelegation = { ...this.delegations };
+    const formData: Object = {
+      id: Number(subDelegation.id),
+      phaseEdo: Number(subDelegation.phaseEdo),
+      delegationNumber: Number(idDelegation.id),
+    };
+    console.log('datos a eliminar:', formData);
+    this.subDelegationService.remove(formData).subscribe({
       next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getDelegationAll()
+        Swal.fire('Borrado', '', 'success'), this.getSubDelegations(this.dataId)
       ),
       error: err =>
         this.onLoadToast(
