@@ -587,8 +587,8 @@ export interface IDescriptionByNoGoodResponse {
 
 export interface IFromGoodsAndExpedientsBody {
   goodNumber: number;
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
 }
 
 export interface IFromGoodsAndExpedientsResponse {

@@ -14,7 +14,7 @@ const routes: Routes = [
   },
   {
     // CARGA MASIVA PGR
-    path: ':tipo/:P_NO_EXPEDIENTE/:P_AV_PREVIA/:P_NO_VOLANTE',
+    path: ':tipo/:P_NO_EXPEDIENTE/:P_NO_VOLANTE/:P_AV_PREVIA',
     component: GoodsBulkLoadComponent,
   },
 ];
