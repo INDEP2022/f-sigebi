@@ -325,6 +325,9 @@ export class GoodsCaptureMain extends BasePage {
     } else if (this.global.pIndicadorSat == 1) {
       this.formControls.satIndicator.setValue(0);
     }
+    if (!this.global.gNoExpediente) {
+      return;
+    }
     this.getTempExp(this.global.gNoExpediente)
       .pipe(
         tap((response: any) => {
