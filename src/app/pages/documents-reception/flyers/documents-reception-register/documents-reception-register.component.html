@@ -591,11 +591,28 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
+
+            <form-field
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('transference')"
+              *ngIf="showTransference">
+              <ngx-select
+                [form]="documentsReceptionForm"
+                (fetchItems)="getTransferees($event)"
+                [data]="transferees"
+                bindLabel="nameAndId"
+                control="transference"
+                label=" "
+                [searchOnInit]="true"
+                termMaxLength="200"
+                [showTooltip]="true">
+              </ngx-select>
+            </form-field>
           </div>
 
           <div class="row pt-5">
             <form-field
-              class="col-md-4"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('indiciadoNumber')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -618,9 +635,11 @@
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
+          </div>
 
+          <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('viaKey')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -637,7 +656,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('destinationArea')"
               label="&Aacute;rea Destino">
               <input
