@@ -11,6 +11,8 @@ export const STRING_PATTERN =
   '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\/\\s\\#$%¡!|*\\.,_\\-\\\\()\\Üü“”;:]*';
 // '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]
 export const RFCCURP_PATTERN = '[a-zA-Z]{3}[a-zA-Z0-9]*';
+export const CURP_PATTERN =
+  '[a-zA-Z]{4}[0-9]{6}[h-mH-M]{1}[a-zA-Z]{5}[a-zA-Z0-9]{1}[0-9]{1}';
 export const PHONE_PATTERN = '^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$';
 export const KEYGENERATION_PATTERN = '[a-zA-Z0-9\\s\\-\\/]*';
 export const NAME_PATTERN = '^[A-Za-z\\áéíóúÁÉÍÓÚñÑ\\ \\.]+$';

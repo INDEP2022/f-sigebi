@@ -104,7 +104,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
-  transference: new FormControl<number>(null),
+  transference: new FormControl<ITransferente>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null, Validators.required),
   autorityNumber: new FormControl<IAuthority>(null, Validators.required),
@@ -234,7 +234,7 @@ export interface IDocumentsReceptionRegisterForm {
   cityNumber: ICity;
   entFedKey: TvalTable1Data | ITablesEntryData;
   endTransferNumber: ITransferente;
-  transference: number;
+  transference: ITransferente;
   courtNumber: ICourt;
   stationNumber: IStation;
   autorityNumber: IAuthority;

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import {
   JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS,
@@ -38,7 +39,8 @@ export class FileDataUpdateComponent
     private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private docDataService: DocumentsReceptionDataService
   ) {
     super();
   }
@@ -48,6 +50,14 @@ export class FileDataUpdateComponent
   }
 
   returnToFlyers() {
+    this.docDataService.flyersRegistrationParams = {
+      pGestOk: 0,
+      pNoTramite: null,
+      pNoVolante: null,
+      noTransferente: null,
+      pSatTipoExp: null,
+      pIndicadorSat: null,
+    };
     this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
   }
 
