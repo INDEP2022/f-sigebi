@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,12 +10,27 @@ import { IClarification } from '../../models/catalogs/clarification.model';
 @Injectable({
   providedIn: 'root',
 })
-export class ClarificationService implements ICrudMethods<IClarification> {
+export class ClarificationService
+  extends HttpService
+  implements ICrudMethods<IClarification>
+{
   private readonly route: string = ENDPOINT_LINKS.Clarification;
-  constructor(private clarificationRepository: Repository<IClarification>) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IClarification>> {
+  constructor(private clarificationRepository: Repository<IClarification>) {
+    super();
+    this.microservice = 'clarification';
+  }
+
+  getAll(
+    params?: ListParams | string
+  ): Observable<IListResponse<IClarification>> {
     return this.clarificationRepository.getAllPaginated(this.route, params);
+  }
+
+  getAllFilter(
+    params?: ListParams | string
+  ): Observable<IListResponse<IClarification>> {
+    return this.get('clarifications-sat', params);
   }
 
   getById(id: string | number): Observable<IClarification> {

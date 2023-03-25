@@ -16,6 +16,7 @@ export interface ITransferente {
   sector?: string;
   formalization?: string;
   dateFormalization?: string;
+  name?: string;
   entity?: string;
   amedingAgree?: string;
   dateAmeding?: string;
