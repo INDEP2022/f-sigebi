@@ -16,6 +16,7 @@ import {
   ITransferingLevelView,
 } from 'src/app/core/models/catalogs/transferente.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { CourtByCityService } from 'src/app/core/services/catalogs/court-by-city.service';
 import { ConvertiongoodEndpoints } from '../../../common/constants/endpoints/ms-convertiongood-endpoints';
 import { DocumentsEndpoints } from '../../../common/constants/endpoints/ms-documents-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -55,7 +56,8 @@ export class DocReceptionRegisterService extends HttpService {
     private indiciadosService: IndiciadosService,
     private goodParametersService: GoodParametersService,
     private departamentService: DepartamentService,
-    private identifierService: IdentifierService
+    private identifierService: IdentifierService,
+    private courtsService: CourtByCityService
   ) {
     super();
   }
@@ -408,14 +410,29 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getCourts(params?: _Params) {
-    // return this.courtService.getAll(params).pipe(
+  getCourtsUnrelated(params?: _Params) {
     return this.courtService.getAllFiltered(params).pipe(
       map(data => {
         return {
           ...data,
           data: data.data.map(c => {
             return { ...c, nameAndId: `${c.id} - ${c.description}` };
+          }),
+        };
+      })
+    );
+  }
+
+  getCourts(params?: string) {
+    return this.courtsService.getAllWithFilters(params).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(c => {
+            return {
+              ...c.courtNumber,
+              nameAndId: `${c.courtNumber.id} - ${c.courtNumber.description}`,
+            };
           }),
         };
       })
@@ -433,11 +450,11 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
+  getCourtsByCity(params: string) {
+    return this.courtsService.getAllWithFilters(params);
+  }
+
   getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {
-    // let partials = ENDPOINT_LINKS.Indiciados.split('/');
-    // this.microservice = partials[0];
-    // const route = partials[1];
-    // return this.get<IListResponse<IIndiciados>>(route, params).pipe(
     return this.indiciadosService.getAllFiltered(params).pipe(
       map(data => {
         return {
