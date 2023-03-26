@@ -16,6 +16,7 @@ import {
   ITransferingLevelView,
 } from 'src/app/core/models/catalogs/transferente.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { CourtByCityService } from 'src/app/core/services/catalogs/court-by-city.service';
 import { ConvertiongoodEndpoints } from '../../../common/constants/endpoints/ms-convertiongood-endpoints';
 import { DocumentsEndpoints } from '../../../common/constants/endpoints/ms-documents-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -55,7 +56,8 @@ export class DocReceptionRegisterService extends HttpService {
     private indiciadosService: IndiciadosService,
     private goodParametersService: GoodParametersService,
     private departamentService: DepartamentService,
-    private identifierService: IdentifierService
+    private identifierService: IdentifierService,
+    private courtsService: CourtByCityService
   ) {
     super();
   }
@@ -422,6 +424,23 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
+  // getCourts(params?: string) {
+  //   // return this.courtService.getAll(params).pipe(
+  //   return this.courtsService.getAllWithFilters(params).pipe(
+  //     map(data => {
+  //       return {
+  //         ...data,
+  //         data: data.data.map(c => {
+  //           return {
+  //             ...c.court,
+  //             nameAndId: `${c.court.id} - ${c.court.description}`,
+  //           };
+  //         }),
+  //       };
+  //     })
+  //   );
+  // }
+
   getCourt(id: string | number) {
     return this.courtService.getById(id).pipe(
       map(data => {
@@ -431,6 +450,10 @@ export class DocReceptionRegisterService extends HttpService {
         };
       })
     );
+  }
+
+  getCourtsByCity(params: string) {
+    return this.courtsService.getAllWithFilters(params);
   }
 
   getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {

@@ -8,6 +8,8 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   INotification,
   INotificationInquiry,
+  INotificationTransferentIndiciadoCityGetData,
+  ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
 @Injectable({
@@ -30,6 +32,14 @@ export class NotificationService extends HttpService {
   getAllFilter(params: _Params): Observable<IListResponse<INotification>> {
     return this.get<IListResponse<INotification>>(
       `${this.route.Notification}?${params}`
+    );
+  }
+
+  getAllFilterTmpNotification(
+    params: _Params
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      `${this.route.TmpNotification}?${params}`
     );
   }
 
@@ -132,5 +142,21 @@ export class NotificationService extends HttpService {
       notificationDate,
       formData
     );
+  }
+
+  getNotificacionesByTransferentIndiciadoCity(
+    body: INotificationTransferentIndiciadoCityGetData | any
+  ) {
+    return this.notificationRepository.getNotificacionesByTransferentIndiciadoCity(
+      'notification/notification/find-notification-by-transferent-or-city',
+      body
+    );
+  }
+
+  getVolanteNotificacionesByNoExpedient(id: string) {
+    let expedient = encodeURI(id);
+    return this.httpClient.get<
+      IListResponse<ItVolanteNotificacionesByNoExpedient>
+    >('notification/notification/find-count-by-expedient/' + expedient);
   }
 }

@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { switchMap } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
@@ -69,9 +70,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       this.selectExpedient();
     }
 
-    if (this.global.pIndicadorSat == 1 || this.global.pIndicadorSat == 0) {
-      this.fillSatSubject();
-    }
+    this.fillSatSubject();
   }
 
   whenIsCalledFromFlyers() {
@@ -298,6 +297,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       window.scrollTo(0, 0);
     } else {
       if (this.params.origin === FLYERS_REGISTRATION_CODE) {
+        const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
+        this.globalVarService.updateGlobalVars(_global);
         this.router.navigate([
           '/pages/documents-reception/flyers-registration',
         ]);
@@ -329,7 +330,14 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
         next: (expedient: any) => {
           this._expedienService.create(expedient).subscribe({
             next: () => {
-              this.saveGood();
+              this.updateNotifications(expedient).subscribe({
+                next: () => {
+                  this.saveGood();
+                },
+                error: error => {
+                  this.saveGood();
+                },
+              });
             },
             error: error => {
               this.onLoadToast(
@@ -349,6 +357,43 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     } else {
       this.saveGood();
     }
+  }
+
+  updateNotifications(expedient: any) {
+    const params = new FilterParams();
+    params.addFilter('expedientNumber', expedient.id);
+    this.hideError();
+    return this.goodsCaptureService
+      .getTmpNotifications(params.getParams())
+      .pipe(
+        catchError(error => of({ data: [null] })),
+        switchMap(tmpNotification =>
+          this.createNotification(tmpNotification.data[0])
+        )
+      );
+  }
+
+  createNotification(tmpNotification: any) {
+    this.hideError();
+    if (!tmpNotification) {
+      return of({});
+    }
+    const {
+      affair,
+      delegation,
+      departament,
+      institutionNumber,
+      subDelegation,
+    } = tmpNotification;
+    const _notification = {
+      ...tmpNotification,
+      affair: affair?.id ?? null,
+      delegation: delegation?.id ?? null,
+      departament: departament?.id ?? null,
+      institutionNumber: institutionNumber?.id ?? null,
+      subDelegation: subDelegation?.id ?? null,
+    };
+    return this.goodsCaptureService.createNotification(_notification);
   }
 
   saveGood() {

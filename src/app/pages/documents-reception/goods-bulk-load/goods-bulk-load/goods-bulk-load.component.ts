@@ -6,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
@@ -17,6 +17,7 @@ import { IHistoryGood } from 'src/app/core/models/administrative-processes/histo
 import { IAuthorityIssuingParams } from 'src/app/core/models/catalogs/authority.model';
 import { ITagXClasif } from 'src/app/core/models/ms-classifygood/ms-classifygood.interface';
 import { IExpedientMassiveUpload } from 'src/app/core/models/ms-expedient/expedient';
+import { ICopiesxFlier } from 'src/app/core/models/ms-flier/tmp-doc-reg-management.model';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefgr.interface';
 import {
@@ -24,10 +25,14 @@ import {
   ISatTransfer,
 } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
 import { IMenageWrite } from 'src/app/core/models/ms-menage/menage.model';
-import { INotificationTransferentIndiciadoCityGetData } from 'src/app/core/models/ms-notification/notification.model';
+import {
+  INotification,
+  INotificationTransferentIndiciadoCityGetData,
+} from 'src/app/core/models/ms-notification/notification.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import {
   GOODS_BULK_LOAD_ACTIONS,
@@ -146,6 +151,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   procesandoPreload: Boolean = false;
   procesandoUpload: Boolean = false;
   pgrData: IPgrTransfer[] = [];
+  globals: IGlobalVars;
+  cargandoPgr: boolean = false;
+  endProcess: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -155,6 +163,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     private globalVarsService: GlobalVarsService,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
+    private router: Router,
     private LoasFileGoodsBulkService: LoasFileGoodsBulkService
   ) {
     super();
@@ -163,7 +172,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.globalVarsService.loadGlobalVars();
+    this.globalVarsService
+      .getGlobalVars$()
+      .subscribe((globalVars: IGlobalVars) => {
+        this.globals = globalVars;
+        console.log(this.globals);
+      });
     this.procesandoPreload = false; // Inicializar variables proceso
     this.procesandoUpload = false; // Inicializar variables proceso
     this.prepareForm();
@@ -296,6 +310,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   resetProcess() {
+    this.endProcess = false;
     this.tableSource = [];
     this.listError = [];
     // this.startVariables();
@@ -330,7 +345,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.validParameters();
+    // this.validParameters();
     if (this.stopProcess) {
       return;
     }
@@ -340,28 +355,25 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.assetsForm.markAllAsTouched();
       if (this.target.value == 'general') {
         if (this.validIdCarga()) {
+          const params = new FilterParams();
+          params.removeAllFilters();
+          params.addFilter('id', this.assetsForm.get('idCarga').value);
           // Validar el identificador
           this.goodsBulkService
-            .getUploadGoodIdentificador(this.assetsForm.get('idCarga').value)
+            .getUploadGoodIdentificador(params.getFilterParams())
             .subscribe({
               next: res => {
                 console.log(res);
-                if (res.data > 0) {
-                  // this.reviewConditions();
+                if (res.data.length > 0) {
                   this.alert(
                     'warning',
                     'Opción Carga Masiva',
-                    'Ya existe un registro con este identificador.'
+                    'Ya existe(n) ' +
+                      res.count +
+                      ' registro(s) con este IDENTIFICADOR de Carga.'
                   );
                 } else {
                   this.reviewConditions();
-                  // if (!res.data) {
-                  //   this.alert(
-                  //     'warning',
-                  //     'Opción Carga Masiva',
-                  //     'Ya existe un registro con este identificador.'
-                  //   );
-                  // }
                 }
               },
               error: err => {
@@ -369,7 +381,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Opción Carga Masiva',
-                  'Ocurrio un error al validar el identificador, intentelo nuevamente.'
+                  'Ocurrio un error al validar el Identificador de Carga, intentelo nuevamente.'
                 );
               },
             });
@@ -509,6 +521,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       console.log('SAT');
       this.validatorPreloadMassiveSat();
     } else if (this.target.value == 'pgr') {
+      this.endProcess = false;
       console.log('PGR');
       this.validatorPreloadMassivePgr();
     } else if (this.target.value == 'general') {
@@ -589,6 +602,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * @returns Si la validacion es correcta
    */
   validLoadFile() {
+    console.log(this.tableSource);
     if (this.tableSource.length > 0) {
       return true;
     } else {
@@ -606,6 +620,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   getDataPGRFromParams() {
+    this.cargandoPgr = true;
     this.assetsForm.get('idCarga').setValue('ASEG');
     this.assetsForm.updateValueAndValidity();
     // this.assetsForm.get('idCarga').disable();
@@ -613,13 +628,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.pgrData = [];
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('pgrOffice', this.paramsGeneral.p_av_previa);
-    // Validar el identificador
+    let office = encodeURI(this.paramsGeneral.p_av_previa);
+    params.addFilter('pgrOffice', office);
+    // Obtener data de PGR
     this.goodsBulkService
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log(res);
+          // console.log(res);
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             if (element) {
@@ -629,9 +645,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             }
           }
           // this.pgrData = res.data;
-          this.loadDataPgr();
+          this.initDataPgr(this.pgrData);
         },
         error: err => {
+          this.cargandoPgr = false;
           console.log(err);
           this.alert(
             'warning',
@@ -642,44 +659,416 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       });
   }
 
-  loadDataPgr() {
+  initDataPgr(pgrData: IPgrTransfer[]) {
+    this.cargandoPgr = true;
     this.tableSource = [];
-    for (let index = 0; index < this.pgrData.length; index++) {
-      const element = this.pgrData[index];
-      if (element) {
-        let response = this.LoasFileGoodsBulkService.getFilterDataPgr(element);
-        // this.tableSource.push(response);
-        let objReplace: any = {};
-        for (const key in response) {
-          if (Object.prototype.hasOwnProperty.call(response, key)) {
-            if (key) {
-              objReplace[key.toLowerCase()] = response[key];
+    this.pgrData = pgrData;
+    this.getDataVolanteData(this.pgrData[0]); // Inicia proceso de carga y validacion
+  }
+
+  getDataVolanteData(dataPgr: IPgrTransfer, count: number = 0) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    let expedient = encodeURI(this.paramsGeneral.p_no_expediente);
+    params.addFilter('expedientNumber', expedient);
+    let volante = encodeURI(this.paramsGeneral.p_no_volante);
+    params.addFilter('wheelNumber', volante);
+    let oficio = encodeURIComponent(this.paramsGeneral.p_av_previa);
+    params.addFilter('officeExternalKey', oficio);
+    this.goodsBulkService
+      .getDataPgrNotificationByFilter(params.getFilterParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA VOLANTE', res);
+          this.getFilterDataPgr(dataPgr, count, res.data[0], null); // Inicia proceso de carga y validacion
+          // this.getDataCopiasXVolante(dataPgr, count, res.data[0]); // Inicia proceso de carga y validacion
+        },
+        error: err => {
+          this.cargandoPgr = false;
+          console.log(err);
+          this.onLoadToast(
+            'warning',
+            'Datos del bien',
+            'Ocurrio un error al cargar la información del volante.'
+          );
+        },
+      });
+  }
+
+  getDataCopiasXVolante(
+    dataPgr: IPgrTransfer,
+    count: number = 0,
+    volanteData: INotification
+  ) {
+    this.goodsBulkService
+      .getCopiesXFliers({
+        copyNumber: '1',
+        flierNumber: volanteData.wheelNumber,
+      })
+      .subscribe({
+        next: res => {
+          console.log('COPIAS VOLANTE', res);
+          this.getFilterDataPgr(dataPgr, count, volanteData, res); // Inicia proceso de carga y validacion
+        },
+        error: err => {
+          this.onLoadToast(
+            'warning',
+            'Datos del bien',
+            'Ocurrio un error al cargar la información del destinatario.'
+          );
+          console.log(err);
+          this.getFilterDataPgr(dataPgr, count, volanteData, null); // Inicia proceso de carga y validacion
+        },
+      });
+  }
+
+  getFilterDataPgr(
+    dataPgr: IPgrTransfer,
+    count: number = 0,
+    volanteData: INotification,
+    copiasData: ICopiesxFlier
+  ) {
+    let fechaParseOficio = this.datePipe.transform(
+      volanteData.entryProcedureDate,
+      'dd/MM/yyyy'
+    );
+    let data: any = {
+      tipovolante: volanteData.wheelType,
+      remitente: volanteData.externalRemitter,
+      identificador: volanteData.identifier,
+      asunto: volanteData.affair.id,
+      nooficio: dataPgr.pgrOffice,
+      fecoficio: fechaParseOficio,
+      exptrans: volanteData.expedientTransferenceNumber,
+      descripcion: volanteData.observations,
+      ciudad: volanteData.cityNumber,
+      entfed: volanteData.entFedKey,
+      solicitante: '200',
+      contribuyente: volanteData.indiciadoNumber,
+      transferente: volanteData.endTransferNumber,
+      viarecepcion: volanteData.viaKey,
+      areadestino: volanteData.departamentDestinyNumber,
+      gestiondestino: volanteData.departament.dsarea,
+      // destinatario: copiasData ? copiasData.copyuser : null,
+      destinatario: null,
+      descbien: '',
+      cantidad: null,
+      unidad: '',
+      status: 'ROP',
+      clasif: null,
+      marca: '',
+      serie: '',
+      observaciones: volanteData.observations,
+      autoridad: volanteData.autorityNumber,
+    };
+    data['SAT_CVE_UNICA'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
+    if (dataPgr.pgrTypeGoodVeh) {
+      // CONDICION VEH
+      data.clasif = dataPgr.pgrTypeGoodVeh;
+      data.descbien = dataPgr.pgrDescrGoodVeh;
+      data.cantidad = dataPgr.pgrAmountVeh;
+      data.unidad = dataPgr.pgrUnitMeasureVeh;
+      data.edofisico = dataPgr.pgrEdoPhysicalVeh;
+      // DATA EXTRA
+      data['marca'] = dataPgr.pgrVehBrand;
+      data['submarca'] = dataPgr.pgrVehsubBrand;
+      data['modelo'] = dataPgr.pgrVehModel;
+      data['serie'] = dataPgr.pgrVehnoserie;
+      data['numero de motor'] = dataPgr.pgrVehnoEngine;
+      data['procedencia'] = dataPgr.pgrVehOrigin;
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalVeh;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['marca'] = 'MARCA';
+      dataInfo['submarca'] = 'SUBMARCA';
+      dataInfo['modelo'] = 'MODELO';
+      dataInfo['serie'] = 'NUMERO DE SERIE';
+      dataInfo['numero_motor'] = 'NUMERO DE MOTOR';
+      dataInfo['procedencia'] = 'PROCEDENCIA';
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodVeh;
+      let dataInfoRow: any = {};
+      dataInfoRow['marca'] = dataPgr.pgrVehBrand;
+      dataInfoRow['submarca'] = dataPgr.pgrVehsubBrand;
+      dataInfoRow['modelo'] = dataPgr.pgrVehModel;
+      dataInfoRow['serie'] = dataPgr.pgrVehnoserie;
+      dataInfoRow['numero_motor'] = dataPgr.pgrVehnoEngine;
+      dataInfoRow['procedencia'] = dataPgr.pgrVehOrigin;
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalVeh;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodAer) {
+      // CONDICION AER
+      data.clasif = dataPgr.pgrTypeGoodAer;
+      data.descbien = dataPgr.pgrDescrGoodAer;
+      data.cantidad = dataPgr.pgrAmountAer;
+      data.unidad = dataPgr.pgrUniMeasureAer;
+      data.edofisico = dataPgr.pgrEdoPhysicalAer;
+      // DATA EXTRA
+      data['marca'] = dataPgr.pgrAerBrand;
+      data['modelo'] = dataPgr.pgrAerModel;
+      data['numero de motor'] = dataPgr.pgrAernoEngine;
+      data['numero de motor'] = dataPgr.pgrAernoEngine2;
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalAer;
+      data['matricula'] = dataPgr.pgrAermatriactu;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['marca'] = 'MARCA';
+      dataInfo['modelo'] = 'MODELO';
+      dataInfo['numero_motor_1'] = 'NUMERO DE MOTOR1';
+      dataInfo['numero_motor_2'] = 'NUMERO DE MOTOR2';
+      dataInfo['procedencia'] = 'PROCEDENCIA';
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['matricula'] = 'MATRICULA';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodAer;
+      let dataInfoRow: any = {};
+      dataInfoRow['marca'] = dataPgr.pgrAerBrand;
+      dataInfoRow['modelo'] = dataPgr.pgrAerModel;
+      dataInfoRow['numero_motor_1'] = dataPgr.pgrAernoEngine;
+      dataInfoRow['numero_motor_2'] = dataPgr.pgrAernoEngine2;
+      dataInfoRow['procedencia'] = dataPgr.pgrEdoPhysicalAer;
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalAer;
+      dataInfoRow['matricula'] = dataPgr.pgrAermatriactu;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodEmb) {
+      // CONDICION EMB
+      data.clasif = dataPgr.pgrTypeGoodEmb;
+      data.descbien = dataPgr.pgrDescrGoodEmb;
+      data.cantidad = dataPgr.pgrAmountEmb;
+      data.unidad = dataPgr.pgrUniMeasureEmb;
+      data.edofisico = dataPgr.pgrEdoPhysicalEmb;
+      // DATA EXTRA
+      data['modelo'] = dataPgr.pgrEmbModel;
+      data['procedencia'] = dataPgr.pgrEmbOrigin;
+      data['matricula'] = dataPgr.pgrEmbnoTuition;
+      data['motor'] = dataPgr.pgrEmbnoEngine;
+      data['estado operativo'] = dataPgr.pgrEdoPhysicalEmb;
+      data['nombre de la embarcacion'] = dataPgr.pgrEmbName;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['modelo'] = 'MODELO';
+      dataInfo['procedencia'] = 'PROCEDENCIA';
+      dataInfo['matricula'] = 'MATRICULA';
+      dataInfo['numero_motor'] = 'NUMERO DE MOTOR';
+      dataInfo['estado_operativo'] = 'ESTADO OPERATIVO';
+      dataInfo['nombre_embarcacion'] = 'NOMBRE DE LA EMBARCACION';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodEmb;
+      let dataInfoRow: any = {};
+      dataInfoRow['modelo'] = dataPgr.pgrEmbModel;
+      dataInfoRow['procedencia'] = dataPgr.pgrEmbOrigin;
+      dataInfoRow['matricula'] = dataPgr.pgrEmbnoTuition;
+      dataInfoRow['numero_motor'] = dataPgr.pgrEmbnoEngine;
+      dataInfoRow['estado_operativo'] = dataPgr.pgrEdoPhysicalEmb;
+      dataInfoRow['nombre_embarcacion'] = dataPgr.pgrEmbName;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodInm) {
+      // CONDICION INM
+      data.clasif = dataPgr.pgrTypeGoodInm;
+      data.descbien = dataPgr.pgrDescrGoodInm;
+      data.cantidad = dataPgr.pgrAmountInm;
+      data.unidad = dataPgr.pgrUniMeasureInm;
+      data.edofisico = dataPgr.pgrEdoPhysicalInm;
+      // DATA EXTRA
+      data['calle'] = dataPgr.pgrInmcalle;
+      data['colonia'] = dataPgr.pgrInmSuburb;
+      data['delegacion o municipio'] = dataPgr.pgrInmdelegmuni;
+      data['estado'] = dataPgr.pgrInmentfed;
+      data['numero exterior'] = dataPgr.pgrInmnoofi;
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalInm;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['calle'] = 'CALLE';
+      dataInfo['colonia'] = 'COLONIA';
+      dataInfo['delegacion_municipio'] = 'DELEGACION O MUNICIPIO';
+      dataInfo['estado'] = 'ESTADO';
+      dataInfo['numero_exterior'] = 'NUMERO EXTERIOR';
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodInm;
+      let dataInfoRow: any = {};
+      dataInfoRow['calle'] = dataPgr.pgrInmcalle;
+      dataInfoRow['colonia'] = dataPgr.pgrInmSuburb;
+      dataInfoRow['delegacion_municipio'] = dataPgr.pgrInmdelegmuni;
+      dataInfoRow['estado'] = dataPgr.pgrInmentfed;
+      dataInfoRow['numero_exterior'] = dataPgr.pgrInmnoofi;
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalInm;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodNum) {
+      // CONDICION NUM
+      data.clasif = dataPgr.pgrTypeGoodNum;
+      data.descbien = dataPgr.pgrDescrGoodNum;
+      data.cantidad = dataPgr.pgrAmountNum;
+      data.unidad = dataPgr.pgrUniMeasureNum;
+      data.edofisico = dataPgr.pgrEdoPhysicalNum;
+      // DATA EXTRA
+      data['importe'] = dataPgr.pgrNueimport;
+      data['cuenta'] = dataPgr.pgrNuenoBill;
+      data['moneda'] = dataPgr.pgrNueTypemon;
+      data['ficha'] = dataPgr.pgrNuefolficdep;
+      data['banco'] = dataPgr.pgrNumofictransf;
+      let fechaParse = this.datePipe.transform(
+        dataPgr.pgrNuefedepos,
+        'dd/MM/yyyy'
+      );
+      data['fecha'] = fechaParse;
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalNum;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['importe'] = 'IMPORTE';
+      dataInfo['cuenta'] = 'CUENTA';
+      dataInfo['moneda'] = 'MONEDA';
+      dataInfo['ficha'] = 'FICHA';
+      dataInfo['banco'] = 'BANCO';
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodNum;
+      let dataInfoRow: any = {};
+      dataInfoRow['importe'] = dataPgr.pgrNueimport;
+      dataInfoRow['cuenta'] = dataPgr.pgrNuenoBill;
+      dataInfoRow['moneda'] = dataPgr.pgrNueTypemon;
+      dataInfoRow['ficha'] = dataPgr.pgrNuefolficdep;
+      dataInfoRow['banco'] = dataPgr.pgrNumofictransf;
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalNum;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodJoy) {
+      // CONDICION JOY
+      data.clasif = dataPgr.pgrTypeGoodJoy;
+      data.descbien = dataPgr.pgrDescrGoodJoy;
+      data.cantidad = dataPgr.pgrAmountJoy;
+      data.unidad = dataPgr.pgrUniMeasureJoy;
+      data.edofisico = dataPgr.pgrEdoPhysicalJoy;
+      // DATA EXTRA
+      data['marca'] = dataPgr.pgrAerBrand;
+      data['modelo'] = dataPgr.pgrJoyModel;
+      data['marca_joy'] = dataPgr.pgrJoyBrand;
+      data['material'] = dataPgr.pgrJoyMaterial;
+      data['kilataje'] = dataPgr.pgrJoykilataje;
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalJoy;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['marca'] = 'MARCA';
+      dataInfo['modelo'] = 'MODELO';
+      dataInfo['material'] = 'MATERIAL';
+      dataInfo['kilataje'] = 'KILATAJE';
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodJoy;
+      let dataInfoRow: any = {};
+      dataInfoRow['marca'] = dataPgr.pgrAerBrand;
+      dataInfoRow['modelo'] = dataPgr.pgrJoyModel;
+      dataInfoRow['marca_joy'] = dataPgr.pgrJoyBrand;
+      dataInfoRow['material'] = dataPgr.pgrJoyMaterial;
+      dataInfoRow['kilataje'] = dataPgr.pgrJoykilataje;
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalJoy;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodDiv) {
+      // CONDICION DIV
+      data.clasif = dataPgr.pgrTypeGoodDiv;
+      data.descbien = dataPgr.pgrDescrGoodDiv;
+      data.cantidad = dataPgr.pgrAmountDiv;
+      data.unidad = dataPgr.pgrUniMeasureDiv;
+      data.edofisico = dataPgr.pgrEdoPhysicalDiv;
+      // DATA EXTRA
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalDiv;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodDiv;
+      let dataInfoRow: any = {};
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalDiv;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    } else if (dataPgr.pgrTypeGoodMen) {
+      // CONDICION MEN
+      data.clasif = dataPgr.pgrTypeGoodMen;
+      data.descbien = dataPgr.pgrDescrGoodMen;
+      data.cantidad = dataPgr.pgrAmountMen;
+      data.unidad = dataPgr.pgrUniMeasureMen;
+      data.edofisico = dataPgr.pgrEdoPhysicalMen;
+      // DATA EXTRA
+      data['edofisico1'] = dataPgr.pgrEdoPhysicalMen;
+      // Data params
+      let dataInfo: any = {};
+      dataInfo['edofisico'] = 'ESTADO FISICO';
+      dataInfo['clasif'] = dataPgr.pgrTypeGoodMen;
+      let dataInfoRow: any = {};
+      dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalMen;
+      this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
+    }
+    // return data;
+    // this.loadDataPgr(this.pgrData[count], count, data); // Siguiente registro
+  }
+
+  getValData(
+    pgrData: IPgrTransfer,
+    count: number = 0,
+    response: any,
+    body: any,
+    dataInfo: any
+  ) {
+    console.log(body);
+    this.goodsBulkService.getFaValAtributo1(body).subscribe({
+      next: res => {
+        console.log(res);
+        // this.getFilterDataPgr(dataPgr, count, res.data[0]); // Inicia proceso de carga y validacion
+        let dataResponse: any = res;
+        for (const key in dataResponse) {
+          if (Object.prototype.hasOwnProperty.call(dataResponse, key)) {
+            const element = dataResponse[key];
+            if (element) {
+              response['col' + element] = dataInfo[key];
             }
           }
-          // }
         }
-        if (objReplace) {
-          this.tableSource.push(objReplace);
+        this.loadDataPgr(this.pgrData[count], count, response); // Siguiente registro
+      },
+      error: err => {
+        this.cargandoPgr = false;
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Datos del bien',
+          'Ocurrio un error al cargar la información de los atributos del bien.'
+        );
+      },
+    });
+  }
+
+  loadDataPgr(pgrData: IPgrTransfer, count: number = 0, response: any) {
+    console.log(response);
+    let objReplace: any = {};
+    for (const key in response) {
+      if (Object.prototype.hasOwnProperty.call(response, key)) {
+        if (key) {
+          objReplace[key.toLowerCase()] = response[key];
         }
-        let obj: any = {};
-        let object: any = this.tableSource[0];
-        for (const key in object) {
-          if (Object.prototype.hasOwnProperty.call(object, key)) {
-            if (key) {
-              obj[key] = {
-                title: key.toLocaleUpperCase(),
-                type: 'string',
-                sort: false,
-              };
-            }
-          }
-        }
-        console.log(this.tableSource);
-        const _settings = { columns: obj, actions: false };
-        this.settings = { ...this.settings, ..._settings };
       }
     }
-    console.log(this.tableSource);
+    if (objReplace) {
+      this.tableSource.push(objReplace);
+    }
+    let obj: any = {};
+    let object: any = this.tableSource[0];
+    for (const key in object) {
+      if (Object.prototype.hasOwnProperty.call(object, key)) {
+        if (key) {
+          obj[key] = {
+            title: key.toLocaleUpperCase(),
+            type: 'string',
+            sort: false,
+          };
+        }
+      }
+    }
+    // console.log(this.pgrData.length, count);
+    if (this.pgrData.length <= count++) {
+      console.log(this.tableSource);
+      const _settings = { columns: obj, actions: false };
+      this.settings = { ...this.settings, ..._settings };
+      this.cargandoPgr = false;
+    } else {
+      count++; // Aumentar contador
+      this.getDataVolanteData(pgrData, count); // Inicia proceso de carga y validacion
+    }
+  }
+
+  goPageVolante() {
+    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
   }
 
   /**
@@ -1113,6 +1502,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   /**
+   * INCIDENCIA 623 --- NO SE CAMBIA EL MS Y SE SETEAN LAS UNIDADES MANUALMENTE EN EL CODIGO
    * Obtener la unidad de medida de UNIDXCLASIF por el no_clasif_bien
    * @param infoData
    * @param opcionValid
@@ -1143,11 +1533,18 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           next: res => {
             infoData.validLastRequest = true; // Respuesta correcta
             console.log(res);
-            if (res.data) {
+            if (res.data.length > 0) {
+              let comparacion = '';
+              if (infoData.dataRow.unidad == 'PZ') {
+                comparacion = 'PIEZA';
+              } else {
+                comparacion = infoData.dataRow.unidad;
+              }
               const found = res.data.find(
-                element => element.unit == infoData.dataRow.unidad
+                element => element.unit == comparacion
               );
-              if (!found.unit) {
+              console.log(found, infoData.dataRow);
+              if (!found) {
                 infoData.error = this.agregarError(
                   infoData.error,
                   ERROR_UNITY_CLASS_GOOD(infoData.dataRow.unidad, clasif)
@@ -3579,8 +3976,23 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
         VALIDATION_UPLOAD_END_MESSAGE;
-      // Inicia proceso de upload
+      // TERMINA PROCESO FGR
       this.procesandoUpload = false;
+      this.globalVarsService.updateSingleGlobal('gCommit', 'S', this.globals);
+      if (infoData.dataRow.expediente) {
+        this.globalVarsService.updateSingleGlobal(
+          'gOFFCommit',
+          null,
+          this.globals
+        );
+        this.endProcess = true;
+      } else {
+        this.globalVarsService.updateSingleGlobal(
+          'gOFFCommit',
+          null,
+          this.globals
+        );
+      }
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
@@ -3693,9 +4105,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   async validDataUploadMassiveSat() {
     this.startVariables(true);
+    // Total de registros
+    this.DeclarationsUploadValidationMassive.common_general.total =
+      this.tableSource.length;
     // Inicia proceso de validación para carga
     this.DeclarationsUploadValidationMassive.message_progress =
       VALIDATION_UPLOAD_START_MESSAGE;
+    this.DeclarationsUploadValidationMassive.common_general.proceso =
+      this.assetsForm.get('actionType').value;
     // Inicia proceso de upload
     this.procesandoUpload = true;
     this.validDataUploadSAT(0, this.tableSource[0]);
@@ -3753,9 +4170,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   async validDataUploadMassivePgr() {
     this.startVariables(true);
+    // Total de registros
+    this.DeclarationsUploadValidationMassive.common_general.total =
+      this.tableSource.length;
     // Inicia proceso de validación para carga
     this.DeclarationsUploadValidationMassive.message_progress =
       VALIDATION_UPLOAD_START_MESSAGE;
+    this.DeclarationsUploadValidationMassive.common_general.proceso =
+      this.assetsForm.get('actionType').value;
     // Inicia proceso de upload
     this.procesandoUpload = true;
     this.validDataUploadPGR(0, this.tableSource[0]);
@@ -3838,9 +4260,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   async validDataUploadMassiveGeneral() {
     this.startVariables(true);
     console.log(this.DeclarationsUploadValidationMassive);
+    // Total de registros
+    this.DeclarationsUploadValidationMassive.common_general.total =
+      this.tableSource.length;
     // Inicia proceso de validación para carga
     this.DeclarationsUploadValidationMassive.message_progress =
       VALIDATION_UPLOAD_START_MESSAGE;
+    this.DeclarationsUploadValidationMassive.common_general.proceso =
+      this.assetsForm.get('actionType').value;
     // Inicia proceso de upload
     this.procesandoUpload = true;
     this.validDataUploadGeneral(0, this.tableSource[0]);
