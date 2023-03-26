@@ -84,7 +84,7 @@
                         (click)="goPageVolante()"
                         type="button"
                         class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
-                        Regresar a la pantalla de Volantes
+                        Regresar al proceso anterior
                       </button>
                     </div>
                     <div
@@ -197,7 +197,13 @@
     </form>
 
     <hr class="row mt-3" />
-
+    <div class="row mt-3 mb-5" *ngIf="cargandoPgr && tipoCarga == 'pgr'">
+      <div class="col-md-12">
+        <div class="col-md-12 alert alert-warning">
+          Cargando la información de la pantalla, Espere un momento...
+        </div>
+      </div>
+    </div>
     <div
       class="row mt-3 mb-5"
       *ngIf="
@@ -209,7 +215,7 @@
         *ngIf="stopProcess && procesandoPreload">
         Deteniendo el proceso, Espere un momento...
       </div>
-      <div class="col-md-12"><h2>Proceso de validación de archivo</h2></div>
+      <div class="col-md-12"><h2>Proceso de validación de datos</h2></div>
       <div class="col-md-8">
         <div class="card">
           <div class="card-body">
