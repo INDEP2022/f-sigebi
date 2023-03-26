@@ -183,16 +183,15 @@ export class GoodsBulkLoadService {
    * Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
    * @param asuntoSat Clave de Asunto SAT
    */
-  getEntityFederativeByAsuntoSat(asuntoSat: string, opcion: string = 'sat') {
-    if (opcion == 'sat') {
-      return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
-        asuntoSat
-      );
-    } else {
-      return this.issuingInstitutionService.getOTClaveEntityFederativeByAvePrevia(
-        asuntoSat
-      );
-    }
+  getEntityFederativeByAsuntoSat(asuntoSat: string) {
+    return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
+      asuntoSat
+    );
+  }
+  getOTClaveEntityFederativeByAvePrevia(body: string) {
+    return this.interfacefgrService.getOTClaveEntityFederativeByAvePrevia({
+      pgrOffice: body,
+    });
   }
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);

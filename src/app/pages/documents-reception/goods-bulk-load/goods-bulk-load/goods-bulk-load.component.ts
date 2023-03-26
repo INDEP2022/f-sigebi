@@ -628,7 +628,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.pgrData = [];
     const params = new FilterParams();
     params.removeAllFilters();
-    let office = encodeURI(this.paramsGeneral.p_av_previa);
+    let office = encodeURIComponent(this.paramsGeneral.p_av_previa);
     params.addFilter('pgrOffice', office);
     // Obtener data de PGR
     this.goodsBulkService
@@ -669,9 +669,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   getDataVolanteData(dataPgr: IPgrTransfer, count: number = 0) {
     const params = new FilterParams();
     params.removeAllFilters();
-    let expedient = encodeURI(this.paramsGeneral.p_no_expediente);
+    let expedient = encodeURIComponent(this.paramsGeneral.p_no_expediente);
     params.addFilter('expedientNumber', expedient);
-    let volante = encodeURI(this.paramsGeneral.p_no_volante);
+    let volante = encodeURIComponent(this.paramsGeneral.p_no_volante);
     params.addFilter('wheelNumber', volante);
     let oficio = encodeURIComponent(this.paramsGeneral.p_av_previa);
     params.addFilter('officeExternalKey', oficio);
@@ -767,7 +767,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodVeh;
       data.descbien = dataPgr.pgrDescrGoodVeh;
       data.cantidad = dataPgr.pgrAmountVeh;
-      data.unidad = dataPgr.pgrUnitMeasureVeh;
+      data.unidad =
+        dataPgr.pgrUnitMeasureVeh == 'PZ' ? 'PIEZA' : dataPgr.pgrUnitMeasureVeh;
       data.edofisico = dataPgr.pgrEdoPhysicalVeh;
       // DATA EXTRA
       data['marca'] = dataPgr.pgrVehBrand;
@@ -801,7 +802,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodAer;
       data.descbien = dataPgr.pgrDescrGoodAer;
       data.cantidad = dataPgr.pgrAmountAer;
-      data.unidad = dataPgr.pgrUniMeasureAer;
+      data.unidad =
+        dataPgr.pgrUniMeasureAer == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureAer;
       data.edofisico = dataPgr.pgrEdoPhysicalAer;
       // DATA EXTRA
       data['marca'] = dataPgr.pgrAerBrand;
@@ -834,7 +836,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodEmb;
       data.descbien = dataPgr.pgrDescrGoodEmb;
       data.cantidad = dataPgr.pgrAmountEmb;
-      data.unidad = dataPgr.pgrUniMeasureEmb;
+      data.unidad =
+        dataPgr.pgrUniMeasureEmb == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureEmb;
       data.edofisico = dataPgr.pgrEdoPhysicalEmb;
       // DATA EXTRA
       data['modelo'] = dataPgr.pgrEmbModel;
@@ -865,7 +868,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodInm;
       data.descbien = dataPgr.pgrDescrGoodInm;
       data.cantidad = dataPgr.pgrAmountInm;
-      data.unidad = dataPgr.pgrUniMeasureInm;
+      data.unidad =
+        dataPgr.pgrUniMeasureInm == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureInm;
       data.edofisico = dataPgr.pgrEdoPhysicalInm;
       // DATA EXTRA
       data['calle'] = dataPgr.pgrInmcalle;
@@ -896,7 +900,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodNum;
       data.descbien = dataPgr.pgrDescrGoodNum;
       data.cantidad = dataPgr.pgrAmountNum;
-      data.unidad = dataPgr.pgrUniMeasureNum;
+      data.unidad =
+        dataPgr.pgrUniMeasureNum == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureNum;
       data.edofisico = dataPgr.pgrEdoPhysicalNum;
       // DATA EXTRA
       data['importe'] = dataPgr.pgrNueimport;
@@ -932,7 +937,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodJoy;
       data.descbien = dataPgr.pgrDescrGoodJoy;
       data.cantidad = dataPgr.pgrAmountJoy;
-      data.unidad = dataPgr.pgrUniMeasureJoy;
+      data.unidad =
+        dataPgr.pgrUniMeasureJoy == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureJoy;
       data.edofisico = dataPgr.pgrEdoPhysicalJoy;
       // DATA EXTRA
       data['marca'] = dataPgr.pgrAerBrand;
@@ -962,7 +968,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodDiv;
       data.descbien = dataPgr.pgrDescrGoodDiv;
       data.cantidad = dataPgr.pgrAmountDiv;
-      data.unidad = dataPgr.pgrUniMeasureDiv;
+      data.unidad =
+        dataPgr.pgrUniMeasureDiv == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureDiv;
       data.edofisico = dataPgr.pgrEdoPhysicalDiv;
       // DATA EXTRA
       data['edofisico1'] = dataPgr.pgrEdoPhysicalDiv;
@@ -978,7 +985,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data.clasif = dataPgr.pgrTypeGoodMen;
       data.descbien = dataPgr.pgrDescrGoodMen;
       data.cantidad = dataPgr.pgrAmountMen;
-      data.unidad = dataPgr.pgrUniMeasureMen;
+      data.unidad =
+        dataPgr.pgrUniMeasureMen == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureMen;
       data.edofisico = dataPgr.pgrEdoPhysicalMen;
       // DATA EXTRA
       data['edofisico1'] = dataPgr.pgrEdoPhysicalMen;
@@ -2934,28 +2942,51 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     console.log(this.DeclarationsValidationMassive.message_progress);
     let dataFilter: any;
     if (opcionValid == 'sat') {
-      dataFilter = this.paramsGeneral.asunto_sat;
+      dataFilter = encodeURIComponent(this.paramsGeneral.asunto_sat);
+      // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
+      await this.goodsBulkService
+        .getEntityFederativeByAsuntoSat(dataFilter)
+        .subscribe({
+          next: res => {
+            console.log(res);
+            infoData.objInsertResponse.otclave_federative_entity = res.otclave;
+            this.validExpedient(infoData, opcionValid); // Validar expediente
+          },
+          error: err => {
+            console.log(err);
+            infoData.error = this.agregarErrorUploadValidation(
+              infoData.error,
+              ERROR_CITY_ASUNTO_SAT(dataFilter)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            this.validExpedient(infoData, opcionValid); // Validar expediente
+          },
+        });
     } else {
       dataFilter = this.paramsGeneral.p_av_previa;
+      // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
+      await this.goodsBulkService
+        .getOTClaveEntityFederativeByAvePrevia(dataFilter)
+        .subscribe({
+          next: res => {
+            console.log(res);
+            infoData.objInsertResponse.otclave_federative_entity = res.otclave;
+            this.validExpedient(infoData, opcionValid); // Validar expediente
+          },
+          error: err => {
+            console.log(err);
+            infoData.error = this.agregarErrorUploadValidation(
+              infoData.error,
+              ERROR_CITY_ASUNTO_SAT(dataFilter)
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            this.validExpedient(infoData, opcionValid); // Validar expediente
+          },
+        });
     }
-    // Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
-    await this.goodsBulkService
-      .getEntityFederativeByAsuntoSat(dataFilter)
-      .subscribe({
-        next: res => {
-          infoData.objInsertResponse.otclave_federative_entity = res.otclave;
-          this.validExpedient(infoData, opcionValid); // Validar expediente
-        },
-        error: err => {
-          infoData.error = this.agregarErrorUploadValidation(
-            infoData.error,
-            ERROR_CITY_ASUNTO_SAT(dataFilter)
-          );
-          this.infoDataValidation.error = infoData.error; // Setear error
-          infoData.validLastRequest = false; // Respuesta incorrecta
-          this.validExpedient(infoData, opcionValid); // Validar expediente
-        },
-      });
+    console.log(dataFilter);
   }
 
   async validExpedient(infoData: IValidInfoData, opcionValid: string = 'sat') {
@@ -2980,7 +3011,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           }
         },
         error: err => {
-          if (err.statusCode == 400 && err.message == 'Data no encontrada') {
+          console.log(err);
+          if (
+            err.status == 400 &&
+            err.error.message == 'Data no encontrada' &&
+            opcionValid == 'pgr'
+          ) {
             this.insertExpedient(infoData, opcionValid);
           } else {
             infoData.error = this.agregarErrorUploadValidation(
@@ -3076,8 +3112,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       let dataTag: ITagXClasif = {
         col6: infoData.dataRow.clasif,
         lnuTransfereeNumber: infoData.objInsertResponse['lnu_TRANSFERENTE']
-          ? infoData.objInsertResponse['lnu_TRANSFERENTE']
-          : infoData.objInsertResponse.manualvar_no_transferente,
+          ? parseInt(infoData.objInsertResponse['lnu_TRANSFERENTE'])
+          : parseInt(infoData.objInsertResponse.manualvar_no_transferente),
       };
       // Obtener el numero de etiqueta
       await this.goodsBulkService
@@ -3263,17 +3299,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataGood = {
         id: '', // ID
         // satUniqueKey: '', // SAT_CVE_UNICA
-        siabiInventoryId: infoData.objInsertResponse['SAT_CVE_UNICA'], // SIAB_INVENTORY ES PGR_NO_BIEN
-        inventoryNumber: infoData.objInsertResponse['SAT_CVE_UNICA'], // NUMERO DE INVENTARIO
+        siabiInventoryId: infoData.dataRow['SAT_CVE_UNICA'], // SIAB_INVENTORY ES PGR_NO_BIEN
+        inventoryNumber: infoData.dataRow['SAT_CVE_UNICA'], // NUMERO DE INVENTARIO
         fileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE
-        description: infoData.objInsertResponse.descripcion, // Descripcion
-        quantity: infoData.objInsertResponse.cantidad, // Cantidad
-        unit: infoData.objInsertResponse.unidad, // Unidad
-        status: infoData.objInsertResponse.status, // Status
-        identifier: infoData.dataRow.tipovolante
-          ? infoData.dataRow.identificador
-          : infoData.objInsertResponse.identificador, // Identificador
-        goodClassNumber: infoData.objInsertResponse.clasif, // Numero de clasificacion del bien
+        description: infoData.dataRow.descripcion, // Descripcion
+        quantity: infoData.dataRow.cantidad, // Cantidad
+        unit: infoData.dataRow.unidad, // Unidad
+        status: infoData.dataRow.status, // Status
+        identifier: infoData.dataRow.identificador, // Identificador
+        goodClassNumber: infoData.dataRow.clasif, // Numero de clasificacion del bien
         val1: infoData.dataRow['numero de placas'], // Valor 1
         val2: infoData.dataRow['serie'], // Valor 2
         subDelegationNumber: infoData.objInsertResponse['vNO_SUBDELEGACION'], // Sub delegacion
@@ -3283,6 +3317,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         observations: infoData.dataRow.observaciones, // Observaciones
       };
     }
+    console.log(dataGood);
     // Crear el bien
     await this.goodsBulkService.createGood(dataGood).subscribe({
       next: res => {
@@ -3297,6 +3332,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.createMassiveChargeGood(infoData, opcionValid); // Crear registro carga masiva
       },
       error: err => {
+        console.log(err);
         infoData.error = this.agregarErrorUploadValidation(
           infoData.error,
           'Error al crear el bien'
@@ -4307,4 +4343,39 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     return data;
   }
+
+  // validarPGRMenaje() {
+
+  //     const params: ListParams = {
+  //       page: this.params.getValue().page,
+  //       limit: 100,
+  //     };
+  //     this.params.getValue().getParams();
+  //     params['filter.idAuthorityIssuerTransferor'] =
+  //       '$or:' + infoData.dataRow.transferente + '';
+  //     // Obtener institucion emisora EMISORA Y AUTORIDAD
+  //     await this.goodsBulkService
+  //       .getEmisoraAutoridadTransferente(params)
+  //       .subscribe({
+  //         next: res => {
+  //           console.log(res);
+  //           infoData.objInsertResponse['LNU_NO_TRANSFERENTE'] =
+  //             res.data[0].idTransferer;
+  //           // Validar Status
+  //           this.validStatusColumnaPRE(this.infoDataValidation, opcionValid);
+  //         },
+  //         error: err => {
+  //           infoData.error = this.agregarError(
+  //             infoData.error,
+  //             'Error obteneniendo el Transferente ' +
+  //               infoData.dataRow.transferente +
+  //               ' por Transferente Autoridad Emisora.'
+  //           );
+  //           this.infoDataValidation.error = infoData.error; // Setear error
+  //           infoData.validLastRequest = false; // Respuesta incorrecta
+  //           // Validar Status
+  //           this.validStatusColumnaPRE(this.infoDataValidation, opcionValid);
+  //         },
+  //       });
+  // }
 }
