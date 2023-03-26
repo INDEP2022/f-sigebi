@@ -512,6 +512,7 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
+    console.log(this.detailAssets.getRawValue());
   }
 
   handleTheftReportEvent(event: any) {

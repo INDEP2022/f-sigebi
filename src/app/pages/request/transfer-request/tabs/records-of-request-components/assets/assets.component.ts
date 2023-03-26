@@ -530,12 +530,39 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
       //armor
-      const values = ['brand', 'tuition', 'subBrand', 'serie', 'armor'];
-      /* this.listGoodsFractions = this.listgoodObjects;
-      for (let i = 0; i < this.listGoodsFractions.length; i++) {
-        const element = this.listGoodsFractions[i];
-        element['goodClassNumber'] = null;
-      } */
+      const values = [
+        'brand',
+        'tuition',
+        'subBrand',
+        'serie',
+        'armor',
+        'chassis',
+        'model',
+        'cabin',
+        'doorsNumber',
+        'axesNumber',
+        'fitCircular',
+        'enginesNumber',
+        'theftReport',
+        'volume',
+        'useType',
+        'manufacturingYear',
+        'capacity',
+        'operationalState',
+        'flag',
+        'openwork',
+        'shipName',
+        'length',
+        'sleeve',
+        'publicRegistry',
+        'ships',
+        'caratage',
+        'material',
+        'weight',
+        'dgacRegistry',
+        'airplaneType',
+      ];
+      console.log(res);
 
       this.isSaveFraction = true;
       this.matchLevelFraction(res);
