@@ -13,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   FilterParams,
@@ -46,6 +47,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsModalRef: BsModalRef;
   checked: string = 'checked';
   userName: string = '';
+  nickName: string = '';
   idTransferer: number = null;
   idStation: number = null;
 
@@ -69,6 +71,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   authorityService = inject(AuthorityService);
   transferentService = inject(TransferenteService);
   requestService = inject(RequestService);
+  taskService = inject(TaskService);
 
   selectedRegDel: any = null;
 
@@ -233,39 +236,81 @@ export class RequestFormComponent extends BasePage implements OnInit {
     );
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.userName = res.firstName;
+      this.nickName = res.username;
       this.requestForm.controls['targetUser'].setValue(res.id);
     });
   }
 
   save() {
-    this.loadingTurn = true;
-    const form = this.requestForm.getRawValue();
+    Swal.fire({
+      title: 'Guardar Solicitud',
+      text: 'Quiere Guardar la solicitud',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#B38E5D',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.loadingTurn = true;
+        const form = this.requestForm.getRawValue();
 
-    form.requestStatus = 'POR_TURNAR';
-    let date = this.requestForm.controls['applicationDate'].value;
-    form.applicationDate = date.toISOString();
+        form.requestStatus = 'POR_TURNAR';
+        let date = this.requestForm.controls['applicationDate'].value;
+        form.applicationDate = date.toISOString();
 
-    let action = null;
-    if (form.id === null) {
-      action = this.requestService.create(form);
-    } else {
-      action = this.requestService.update(form.id, form);
-    }
-    action.subscribe(
-      (data: any) => {
-        this.loadingTurn = false;
-        this.msgModal(
-          'Se guardo la solicitud con el Folio Nº '.concat(
-            `<strong>${data.id}</strong>`
-          ),
-          'Solicitud Guardada',
-          'success'
+        let action = null;
+        let haveId = false;
+        if (form.id === null) {
+          action = this.requestService.create(form);
+        } else {
+          action = this.requestService.update(form.id, form);
+          haveId = true;
+        }
+        /* se guarda la solicitud */
+        action.subscribe(
+          async (data: any) => {
+            const idRequest = data.id;
+            let body: any = {};
+            const user: any = this.authService.decodeToken();
+            body['id'] = 0;
+            body['assignees'] =
+              this.nickName === '' ? 'SIN ASIGNACION' : this.nickName;
+            body['assigneesDisplayname'] =
+              this.userName === '' ? 'SIN ASIGNACION' : this.userName;
+            body['creator'] = user.username;
+            body['taskNumber'] = 0;
+            body['title'] = 'Captura: ' + data.id;
+
+            if (haveId === false) {
+              /* se crea una tarea */
+              this.taskService.createTask(body).subscribe({
+                next: resp => {
+                  this.loadingTurn = false;
+                  this.msgModal(
+                    'Se guardo la solicitud con el Folio Nº '.concat(
+                      `<strong>${data.id}</strong>`
+                    ),
+                    'Solicitud Guardada',
+                    'success'
+                  );
+                },
+              });
+            } else {
+              const id = await this.getTaskByTaskNumer(data.id);
+              if (id) {
+                //obtener el id de la tarea
+                await this.updateTask(body, idRequest);
+                //actualizar la tarea
+              }
+            }
+          },
+          error => {
+            this.loadingTurn = false;
+          }
         );
-      },
-      error => {
-        this.loadingTurn = false;
       }
-    );
+    });
   }
 
   turnRequest(): void {
@@ -278,41 +323,110 @@ export class RequestFormComponent extends BasePage implements OnInit {
       return;
     }
 
-    this.loadingTurn = true;
-    debugger;
-    const form = this.requestForm.getRawValue();
+    Swal.fire({
+      title: 'Turnar Solicitud',
+      text: 'Quiere Turnar la solicitud',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#B38E5D',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.loadingTurn = true;
+        const form = this.requestForm.getRawValue();
 
-    form.requestStatus = 'A_TURNAR';
-    let date = this.requestForm.controls['applicationDate'].value;
-    form.applicationDate = date.toISOString();
-    //this.requestForm.get('requestStatus').patchValue('A_TURNAR');
+        form.requestStatus = 'A_TURNAR';
+        let date = this.requestForm.controls['applicationDate'].value;
+        form.applicationDate = date.toISOString();
 
-    /*this.requestForm.controls['applicationDate'].setValue(
-      new Date().toISOString().toString()
-    );*/
+        let action = null;
+        let haveId = false;
+        if (form.id === null) {
+          action = this.requestService.create(form);
+        } else {
+          action = this.requestService.update(form.id, form);
+          haveId = true;
+        }
+        /* se guarda la solicitud */
+        action.subscribe(
+          async (data: any) => {
+            const idRequest = data.id;
+            let body: any = {};
 
-    let action = null;
-    if (form.id === null) {
-      action = this.requestService.create(form);
-    } else {
-      action = this.requestService.update(form.id, form);
-    }
+            const user: any = this.authService.decodeToken();
+            body['id'] = 0;
+            body['assignees'] = this.nickName;
+            body['assigneesDisplayname'] = this.userName;
+            body['creator'] = user.username;
+            body['taskNumber'] = Number(data.id);
+            body['title'] =
+              'Registro de solicitud (Captura de Solicitud) con folio: ' +
+              data.id;
+            body['isPublic'] = 's';
+            body['istestTask'] = 's';
 
-    action.subscribe(
-      (data: any) => {
-        this.loadingTurn = false;
-        this.msgModal(
-          'Se turnar la solicitud con el Folio Nº '
-            .concat(`<strong>${data.id}</strong>`)
-            .concat(` al usuario ${this.userName}`),
-          'Solicitud Creada',
-          'success'
+            if (haveId === false) {
+              /* crea una tarea nueba */
+              this.taskService.createTask(body).subscribe({
+                next: (resp: any) => {
+                  if (resp.data) {
+                    this.loadingTurn = false;
+                    this.msgModal(
+                      'Se turnar la solicitud con el Folio Nº '
+                        .concat(`<strong>${data.id}</strong>`)
+                        .concat(` al usuario ${this.userName}`),
+                      'Solicitud Creada',
+                      'success'
+                    );
+                  }
+                },
+                error: error => {
+                  this.loadingTurn = false;
+                },
+              });
+            } else {
+              //obtiene el id de la tarea
+              const idTask = await this.getTaskByTaskNumer(idRequest);
+              //actualiza la tarea
+            }
+          },
+          error => {
+            this.loadingTurn = false;
+          }
         );
-      },
-      error => {
-        this.loadingTurn = false;
       }
-    );
+    });
+  }
+
+  getTaskByTaskNumer(taskNumber: number) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.taskNumber'] = `$eq:${taskNumber}`;
+      this.taskService.getAll(params).subscribe({
+        next: resp => {
+          if (resp.id) {
+            resolve(resp.id);
+          }
+        },
+      });
+    });
+  }
+
+  updateTask(body: any, idRequest: string) {
+    return new Promise((resolve, reject) => {
+      this.taskService.update(body.id, body).subscribe({
+        next: resp => {
+          this.msgModal(
+            'Se guardo la solicitud con el Folio Nº '.concat(
+              `<strong>${idRequest}</strong>`
+            ),
+            'Solicitud Guardada',
+            'success'
+          );
+        },
+      });
+    });
   }
 
   msgModal(message: string, title: string, typeMsg: any) {
