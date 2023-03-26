@@ -17,7 +17,8 @@ export interface ICourt {
 }
 
 export interface ICourtModel {
-  court: ICourt;
+  court: number;
   city: ICity;
+  courtNumber: ICourt;
   registerNumber?: number;
 }
