@@ -410,8 +410,7 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getCourts(params?: _Params) {
-    // return this.courtService.getAll(params).pipe(
+  getCourtsUnrelated(params?: _Params) {
     return this.courtService.getAllFiltered(params).pipe(
       map(data => {
         return {
@@ -424,22 +423,21 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  // getCourts(params?: string) {
-  //   // return this.courtService.getAll(params).pipe(
-  //   return this.courtsService.getAllWithFilters(params).pipe(
-  //     map(data => {
-  //       return {
-  //         ...data,
-  //         data: data.data.map(c => {
-  //           return {
-  //             ...c.court,
-  //             nameAndId: `${c.court.id} - ${c.court.description}`,
-  //           };
-  //         }),
-  //       };
-  //     })
-  //   );
-  // }
+  getCourts(params?: string) {
+    return this.courtsService.getAllWithFilters(params).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(c => {
+            return {
+              ...c.courtNumber,
+              nameAndId: `${c.courtNumber.id} - ${c.courtNumber.description}`,
+            };
+          }),
+        };
+      })
+    );
+  }
 
   getCourt(id: string | number) {
     return this.courtService.getById(id).pipe(
@@ -457,10 +455,6 @@ export class DocReceptionRegisterService extends HttpService {
   }
 
   getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {
-    // let partials = ENDPOINT_LINKS.Indiciados.split('/');
-    // this.microservice = partials[0];
-    // const route = partials[1];
-    // return this.get<IListResponse<IIndiciados>>(route, params).pipe(
     return this.indiciadosService.getAllFiltered(params).pipe(
       map(data => {
         return {

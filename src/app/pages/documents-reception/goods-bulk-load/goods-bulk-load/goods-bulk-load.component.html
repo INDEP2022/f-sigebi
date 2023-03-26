@@ -492,7 +492,7 @@
               </li>
               <li class="list-group-item">
                 Total de Bienes creados:
-                <div class="badge badge-pill bg-danger text-wrap">
+                <div class="badge badge-pill bg-success text-wrap">
                   {{
                     DeclarationsUploadValidationMassive.common_general.bienes
                   }}
@@ -500,7 +500,7 @@
               </li>
               <li class="list-group-item">
                 Total de Expedientes creados:
-                <div class="badge badge-pill bg-danger text-wrap">
+                <div class="badge badge-pill bg-success text-wrap">
                   {{
                     DeclarationsUploadValidationMassive.common_general
                       .expedientes
@@ -509,7 +509,7 @@
               </li>
               <li class="list-group-item">
                 Total de Volantes creados:
-                <div class="badge badge-pill bg-danger text-wrap">
+                <div class="badge badge-pill bg-success text-wrap">
                   {{
                     DeclarationsUploadValidationMassive.common_general.volantes
                   }}
@@ -533,7 +533,7 @@
                 type="button"
                 [disabled]="procesandoPreload"
                 class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
-                (click)="exportXlsx()">
+                (click)="exportErrorUploadXlsx()">
                 Exportar Errores Encontrados en el Proceso de Validación del
                 archivo<i class="fa fa-file-excel ml-1"></i>
               </button>

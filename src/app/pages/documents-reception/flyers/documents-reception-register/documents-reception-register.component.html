@@ -10,7 +10,7 @@
           <i class="bx bx-chevron-left float-icon"></i>Regresar
         </button>
         <button
-          *ngIf="changeFlyerOption || flyerEditMode"
+          *ngIf="(changeFlyerOption || flyerEditMode) && !flyerReceptionMode"
           class="btn btn-primary active btn-sm"
           (click)="chooseOther()">
           Seleccionar Volante
@@ -780,7 +780,7 @@
             loadingText="Cargando"
             [disabled]="procedureBlocked"
             [loading]="loading"
-            (confirm)="goodsCaptureCheck()"></confirm-button>
+            (confirm)="nextStep()"></confirm-button>
         </div>
       </div>
     </div>

@@ -165,3 +165,9 @@ export interface IFaValAtributo1 {
   material?: string;
   kilataje?: string;
 }
+export interface IOTClaveByAsunto {
+  pgrOffice: string;
+}
+export interface IOTClaveByAsuntoResponse {
+  otclave: string;
+}
