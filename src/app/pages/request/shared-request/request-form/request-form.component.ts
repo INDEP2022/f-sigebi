@@ -281,7 +281,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
             body['creator'] = user.username;
             body['taskNumber'] = 0;
             body['title'] = 'Captura: ' + data.id;
-
+            body['istestTask'] = 's';
+            body['programmingId'] = 0;
+            body['requestId'] = data.id;
+            body['expedientId'] = 0;
+            body['urlNb'] = 'pages/request/list/new-transfer-request';
             if (haveId === false) {
               /* se crea una tarea */
               this.taskService.createTask(body).subscribe({
@@ -365,21 +369,23 @@ export class RequestFormComponent extends BasePage implements OnInit {
               data.id;
             body['isPublic'] = 's';
             body['istestTask'] = 's';
-
+            body['programmingId'] = 0;
+            body['requestId'] = data.id;
+            body['expedientId'] = 0;
+            body['urlNb'] =
+              'pages/request/transfer-request/registration-request';
             if (haveId === false) {
               /* crea una tarea nueba */
               this.taskService.createTask(body).subscribe({
                 next: (resp: any) => {
-                  if (resp.data) {
-                    this.loadingTurn = false;
-                    this.msgModal(
-                      'Se turnar la solicitud con el Folio Nº '
-                        .concat(`<strong>${data.id}</strong>`)
-                        .concat(` al usuario ${this.userName}`),
-                      'Solicitud Creada',
-                      'success'
-                    );
-                  }
+                  this.loadingTurn = false;
+                  this.msgModal(
+                    'Se turnar la solicitud con el Folio Nº '
+                      .concat(`<strong>${data.id}</strong>`)
+                      .concat(` al usuario ${this.userName}`),
+                    'Solicitud Creada',
+                    'success'
+                  );
                 },
                 error: error => {
                   this.loadingTurn = false;
