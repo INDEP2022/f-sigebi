@@ -103,49 +103,50 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   confirm(): void {
     const user: any = this.authService.decodeToken();
-    var clarification = this.clarificationForm.getRawValue();
+    let clarification = this.clarificationForm.getRawValue();
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA ACLARACION';
-    console.log(clarification);
-    let action = null;
-
     if (this.edit === true) {
-      action = this.rejectedGoodService.update(
-        clarification.rejectNotificationId,
-        clarification
-      );
+      console.log('update');
+
+      this.update(clarification);
     } else {
-      action = this.rejectedGoodService.create(clarification);
+      this.save(clarification);
     }
-    action.subscribe({
+  }
+  private save(clarification: ClarificationGoodRejectNotification) {
+    this.rejectedGoodService.create(clarification).subscribe({
       next: val => {
-        console.log(val);
-        if (this.edit === true) {
+        this.onLoadToast(
+          'success',
+          `Aclaracion guardada`,
+          `Se guardo la aclaracion correctamente`
+        );
+      },
+      complete: () => {
+        this.modalRef.hide();
+        this.modalRef.content.callback(true);
+      },
+    });
+  }
+  private update(clarification: ClarificationGoodRejectNotification) {
+    this.rejectedGoodService
+      .update(clarification.rejectNotificationId, clarification)
+      .subscribe({
+        next: val => {
           this.onLoadToast(
             'success',
             `Aclaracion actualizada`,
             `Se actualizo la aclaracion correctamente`
           );
-        } else {
-          this.onLoadToast(
-            'success',
-            `Aclaracion guardada`,
-            `Se guardo la aclaracion correctamente`
-          );
-        }
-      },
-      error: error => {
-        console.error(error.error.message);
-        this.onLoadToast(
-          'error',
-          `Error`,
-          `Ocurrio un error en la persistencia del dato`
-        );
-      },
-    });
+        },
+        complete: () => {
+          this.modalRef.hide();
+          this.modalRef.content.callback(true);
+        },
+      });
   }
-
   close(): void {
     this.modalRef.hide();
   }
