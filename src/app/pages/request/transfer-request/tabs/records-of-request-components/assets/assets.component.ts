@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -46,7 +52,7 @@ var defaultData = [
   templateUrl: './assets.component.html',
   styleUrls: ['./assets.component.scss'],
 })
-export class AssetsComponent extends BasePage implements OnInit {
+export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
   goodObject: any; //bienes
   listgoodObjects: any[] = [];
@@ -67,6 +73,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   private idFractions: any = [];
   private listGoodsFractions: any = [];
   private fractionProperties: any = {};
+  typeRecord: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -83,6 +90,12 @@ export class AssetsComponent extends BasePage implements OnInit {
     private goodsQueryService: GoodsQueryService
   ) {
     super();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.requestObject) {
+      this.typeRecord = this.requestObject.typeRecord;
+    }
   }
 
   ngOnInit(): void {
@@ -516,12 +529,14 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
-
+      //armor
+      const values = ['brand', 'tuition', 'subBrand', 'serie', 'armor'];
       /* this.listGoodsFractions = this.listgoodObjects;
       for (let i = 0; i < this.listGoodsFractions.length; i++) {
         const element = this.listGoodsFractions[i];
         element['goodClassNumber'] = null;
       } */
+
       this.isSaveFraction = true;
       this.matchLevelFraction(res);
     });

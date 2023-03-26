@@ -162,7 +162,10 @@
           (click)="editForm()">
           Editar
         </button>
-        <button style="margin-left: 2px" class="btn btn-danger btn-sm active">
+        <button
+          style="margin-left: 2px"
+          class="btn btn-danger btn-sm active"
+          (click)="deleteClarification()">
           Eliminar
         </button>
       </div>
@@ -176,7 +179,7 @@
           [attr.class]="'table-bordered'"
           [settings]="clarifySetting"
           [source]="clarificationData"
-          (userRowSelect)="rowSelected($event)"
+          (userRowSelect)="clarificationSelected($event)"
           ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
         </ng2-smart-table>
       </div>

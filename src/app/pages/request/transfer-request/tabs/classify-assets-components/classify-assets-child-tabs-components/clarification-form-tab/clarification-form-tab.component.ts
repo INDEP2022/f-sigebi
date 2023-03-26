@@ -63,7 +63,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.clarificationForm = this.fb.group({
-      id: [null],
+      rejectNotificationId: [null], //id
       goodId: [null, [Validators.required]],
       clarificationType: [null, [Validators.required]],
       clarificationId: [null, [Validators.required]],
@@ -76,11 +76,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     }
     if (this.docClarification != undefined) {
       this.edit = true;
-      //bloquear tipo de claracion cuando se edite
+      this.getClarification(new ListParams());
 
+      //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
         ...this.clarificationForm,
+        rejectNotificationId: this.docClarification.rejectNotificationId,
         clarificationType: this.docClarification.clarificationType,
+        clarificationId: this.docClarification.clarificationId,
         reason: this.docClarification.reason,
       });
       this.clarificationForm.controls['clarificationType'].disable();
@@ -106,8 +109,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification['answered'] = 'NUEVA ACLARACION';
     console.log(clarification);
     let action = null;
+
     if (this.edit === true) {
-      action = this.rejectedGoodService.update(clarification.id, clarification);
+      action = this.rejectedGoodService.update(
+        clarification.rejectNotificationId,
+        clarification
+      );
     } else {
       action = this.rejectedGoodService.create(clarification);
     }

@@ -26,6 +26,7 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
 import { VerificationComplianceService } from 'src/app/core/services/requests/verification-compliance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
 import { DETAIL_ESTATE_COLUMNS } from './detail-estates-columns';
@@ -80,8 +81,8 @@ export class VerifyComplianceTabComponent
     private verifiCompliance: VerificationComplianceService,
     private requestDocumentService: RequestDocumentationService,
     private authService: AuthService,
-    private rejectedGoodService: RejectedGoodService,
-    private clarificationService: ClarificationService
+    private clarificationService: ClarificationService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
   }
@@ -191,9 +192,8 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  rowSelected(event: any) {
+  clarificationSelected(event: any) {
     this.clarifyRowSelected = event.selected;
-    console.log(event);
   }
 
   newClarification() {
@@ -206,7 +206,9 @@ export class VerifyComplianceTabComponent
 
   editForm() {
     if (this.clarifyRowSelected.length === 1) {
-      this.openForm(this.clarifyRowSelected);
+      let clarify = this.clarifyRowSelected;
+      delete clarify[0].clarificationName;
+      this.openForm(clarify[0]);
     } else {
       this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
     }
@@ -484,6 +486,32 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  deleteClarification() {
+    if (this.clarifyRowSelected.length !== 1) {
+      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Eliminar Aclaración?',
+      text: 'Desea eliminar la aclaracion?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#B38E5D',
+      confirmButtonText: 'Eliminar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        const id = this.clarifyRowSelected[0].rejectNotificationId;
+        this.rejectedGoodService.remove(id).subscribe({
+          next: resp => {
+            this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
+          },
+        });
+      }
+    });
+  }
+
   async confirm() {
     if (this.article3array.length < 3 || this.article12and13array.length < 3) {
       this.alert(
@@ -596,8 +624,6 @@ export class VerifyComplianceTabComponent
       });
     });
   }
-
-  updateGood(good: any) {}
 
   msgModal(btnTitle: string, message: string, title: string, typeMsg: any) {
     this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
