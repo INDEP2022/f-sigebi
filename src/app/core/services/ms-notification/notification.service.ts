@@ -67,7 +67,7 @@ export class NotificationService extends HttpService {
     subdelegation: number
   ): Observable<{ consecutivedaily: number }> {
     return this.get<{ consecutivedaily: string }>(
-      `${this.route.DailyConsecutive}/delegation/${delegation}/subdelegation/${subdelegation}`
+      `${this.route.Notification}/${this.route.DailyConsecutive}/delegation/${delegation}/subdelegation/${subdelegation}`
     ).pipe(
       map(resp => {
         return { consecutivedaily: Number(resp.consecutivedaily) };

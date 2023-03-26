@@ -44,9 +44,6 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { ITmpNotification } from 'src/app/core/models/ms-notification/tmp-notification.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
-import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
-import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
@@ -197,12 +194,9 @@ export class DocumentsReceptionRegisterComponent
     private tmpNotificationService: TmpNotificationService,
     private affairService: AffairService,
     private docRegisterService: DocReceptionRegisterService,
-    private indiciadosService: IndiciadosService,
     private delegationService: DelegationService,
     private subdelegationService: SubdelegationService,
-    private departamentService: DepartamentService,
     private procedureManageService: ProcedureManagementService,
-    private identifierService: IdentifierService,
     private interfacefgrService: InterfacefgrService,
     private expedientService: ExpedientService,
     private tmpExpedientService: TmpExpedientService,
@@ -1121,6 +1115,7 @@ export class DocumentsReceptionRegisterComponent
           next: data => this.entFedKey.setValue(data.data[0]),
         });
       this.getPublicMinistries({ page: 1, text: '' });
+      this.getCourts({ page: 1, text: '', limit: 10 });
     }
   }
 
@@ -1310,13 +1305,17 @@ export class DocumentsReceptionRegisterComponent
       const minpub = notif.minpubNumber as IMinpub;
       this.hideError();
       this.docRegisterService.getMinPub(minpub.id).subscribe({
-        next: data => this.formControls.minpubNumber.setValue(data),
+        next: data => {
+          this.formControls.minpubNumber.setValue(data);
+        },
       });
     }
     if (notif.crimeKey != null) {
       this.hideError();
       this.docRegisterService.getByTableKeyOtKey(2, notif.crimeKey).subscribe({
-        next: data => this.formControls.crimeKey.setValue(data.data),
+        next: data => {
+          this.formControls.crimeKey.setValue(data.data);
+        },
       });
     }
     if (notif.indiciadoNumber != null) {
@@ -1959,10 +1958,17 @@ export class DocumentsReceptionRegisterComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+      params.addFilter(
+        'courtNumber.description',
+        lparams.text,
+        SearchFilter.LIKE
+      );
+    if (this.formControls.cityNumber.value != null)
+      params.addFilter('city', this.formControls.cityNumber.value.idCity);
     this.hideError();
     this.docRegisterService.getCourts(params.getParams()).subscribe({
       next: data => {
+        console.log(data);
         this.courts = new DefaultSelect(data.data, data.count);
       },
       error: () => {
@@ -2392,7 +2398,7 @@ export class DocumentsReceptionRegisterComponent
     if (this.formControls.courtNumber.value != null) {
       let courtData;
       const param = new FilterParams();
-      param.addFilter('court', this.formControls.courtNumber.value?.id);
+      param.addFilter('courtNumber', this.formControls.courtNumber.value?.id);
       param.addFilter('city', this.formControls.cityNumber.value?.idCity);
       this.hideError();
       try {
@@ -2427,6 +2433,7 @@ export class DocumentsReceptionRegisterComponent
       return false;
     }
     this.loading = true;
+    this.blockErrors(true);
     if (this.globals.gNoExpediente != null) {
       this.formControls.expedientNumber.setValue(
         Number(this.globals.gNoExpediente)
@@ -2603,6 +2610,7 @@ export class DocumentsReceptionRegisterComponent
           console.log(err);
           console.log(expedientData);
           this.loading = false;
+          this.blockErrors(false);
           this.onLoadToast(
             'error',
             'Error',
@@ -2701,6 +2709,7 @@ export class DocumentsReceptionRegisterComponent
         console.log(err);
         console.log(expedientData);
         this.loading = false;
+        this.blockErrors(false);
         this.onLoadToast(
           'error',
           'Error',
@@ -2939,15 +2948,19 @@ export class DocumentsReceptionRegisterComponent
         dictumKey: this.formData.dictumKey,
         reserved: this.formData.reserved,
         dailyEviction: this.formData.dailyEviction,
+        crimeKey: this.formData.crimeKey,
+        minpubNumber: this.formData.minpubNumber,
       };
       this.notificationService
         .update(this.formControls.wheelNumber.value, updateData)
         .subscribe({
           next: data => {
+            console.log(data, updateData);
             this.sendFlyerCopies();
             this.formControls.receiptDate.disable();
             this.formControls.externalOfficeDate.disable();
             this.loading = false;
+            this.blockErrors(false);
             this.alert(
               'success',
               'Volante actualizado',
@@ -2960,6 +2973,7 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.receiptDate.disable();
             this.formControls.externalOfficeDate.disable();
             this.loading = false;
+            this.blockErrors(false);
             this.onLoadToast(
               'error',
               'Error',
@@ -2979,6 +2993,7 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.receiptDate.disable();
             this.formControls.externalOfficeDate.disable();
             this.loading = false;
+            this.blockErrors(false);
             this.onLoadToast(
               'error',
               'Error',
@@ -2994,17 +3009,63 @@ export class DocumentsReceptionRegisterComponent
 
   addNotification() {
     console.log('Create Notification');
+    // const insertData = {
+    //   ...this.formData,
+    //   consecutive: this.formControls.consecutiveNumber.value,
+    //   wheelNumber: this.formControls.wheelNumber.value,
+    //   receiptDate: this.formData.receiptDate as Date,
+    //   externalOfficeDate: this.formData.externalOfficeDate as Date,
+    //   delegationNumber: this.userDelegation,
+    //   subDelegationNumber: this.userSubdelegation,
+    //   affair: null as any,
+    // };
     const insertData = {
-      ...this.formData,
-      consecutive: this.formControls.consecutiveNumber.value,
+      wheelType: this.formData.wheelType,
+      identifier: this.formData.identifier,
+      externalRemitter: this.formData.externalRemitter,
+      affairKey: this.formData.affairKey,
+      receiptDate: this.formData.receiptDate,
+      priority: this.formData.priority,
       wheelNumber: this.formControls.wheelNumber.value,
-      receiptDate: this.formData.receiptDate as Date,
-      externalOfficeDate: this.formData.externalOfficeDate as Date,
+      consecutiveNumber: this.formData.consecutiveNumber,
+      expedientNumber: this.formData.expedientNumber,
+      addressGeneral: this.formData.addressGeneral,
+      circumstantialRecord: this.formData.circumstantialRecord,
+      preliminaryInquiry: this.formData.preliminaryInquiry,
+      criminalCase: this.formData.criminalCase,
+      protectionKey: this.formData.protectionKey,
+      touchPenaltyKey: this.formData.touchPenaltyKey,
+      officeExternalKey: this.formData.officeExternalKey,
+      externalOfficeDate: this.formData.externalOfficeDate,
+      observations: this.formData.observations,
+      expedientTransferenceNumber: this.formData.expedientTransferenceNumber,
+      cityNumber: this.formData.cityNumber,
+      entFedKey: this.formData.entFedKey,
+      endTransferNumber: this.formData.endTransferNumber,
+      transference: this.formData.transference,
+      courtNumber: this.formData.courtNumber,
+      stationNumber: this.formData.stationNumber,
+      autorityNumber: this.formData.autorityNumber,
+      indiciadoNumber: this.formData.indiciadoNumber,
+      viaKey: this.formData.viaKey,
+      departamentDestinyNumber: this.formData.departamentDestinyNumber,
+      delDestinyNumber: this.formData.delDestinyNumber,
+      subDelDestinyNumber: this.formData.subDelDestinyNumber,
+      institutionNumber: this.formData.institutionNumber,
+      officeNumber: this.formData.officeNumber,
+      captureDate: this.formData.captureDate,
+      wheelStatus: this.formData.wheelStatus,
+      entryProcedureDate: this.formData.entryProcedureDate,
+      registerNumber: this.formData.registerNumber,
+      originNumber: this.formData.originNumber,
+      dictumKey: this.formData.dictumKey,
+      reserved: this.formData.reserved,
+      dailyEviction: this.formData.dailyEviction,
       delegationNumber: this.userDelegation,
       subDelegationNumber: this.userSubdelegation,
-      affair: null as any,
+      crimeKey: this.formData.crimeKey,
+      minpubNumber: this.formData.minpubNumber,
     };
-    delete insertData.affair;
     this.notificationService.create(insertData).subscribe({
       next: data => {
         console.log(data.wheelNumber);
@@ -3014,6 +3075,7 @@ export class DocumentsReceptionRegisterComponent
         this.formControls.receiptDate.disable();
         this.formControls.externalOfficeDate.disable();
         this.loading = false;
+        this.blockErrors(false);
         this.alert(
           'success',
           'Volante agregado',
@@ -3026,6 +3088,7 @@ export class DocumentsReceptionRegisterComponent
         this.formControls.receiptDate.disable();
         this.formControls.externalOfficeDate.disable();
         this.loading = false;
+        this.blockErrors(false);
         if (err.message.includes('not_2_jxc_fk')) {
           this.onLoadToast(
             'error',
@@ -3044,8 +3107,22 @@ export class DocumentsReceptionRegisterComponent
   }
 
   sendFlyerCopies() {
+    console.log('Flier Copies');
     console.log(this.userRecipient.value);
     console.log(this.userCpp.value);
+    if (this.userRecipient.value == null) {
+      this.flyerCopyRecipientForm.patchValue(
+        this.docDataService.documentsReceptionUserRecepientForm
+      );
+    }
+    if (
+      this.userCpp.value == null &&
+      this.docDataService.documentsReceptionUserCopyForm != null
+    ) {
+      this.flyerCopyCppForm.patchValue(
+        this.docDataService.documentsReceptionUserCopyForm
+      );
+    }
     const params = new FilterParams();
     params.addFilter('flierNumber', this.formControls.wheelNumber.value);
     this.hideError();
@@ -3074,7 +3151,9 @@ export class DocumentsReceptionRegisterComponent
               };
             }
             this.flyerCopiesService.update(body).subscribe({
-              next: data => {},
+              next: data => {
+                console.log(data);
+              },
               error: err => {
                 console.log(err);
               },
@@ -3092,6 +3171,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   createFlyerCopies() {
+    console.log('Create Flyer Copies');
     const recepientData = {
       copyuser: this.userRecipient.value.user,
       flierNumber: this.formControls.wheelNumber.value,
@@ -3100,7 +3180,9 @@ export class DocumentsReceptionRegisterComponent
         this.flyerCopyRecipientForm.controls['copyNumber'].value.toString(),
     };
     this.flyerCopiesService.create(recepientData).subscribe({
-      next: () => {},
+      next: data => {
+        console.log(data);
+      },
       error: err => {
         console.log(err);
         console.log(recepientData);
@@ -3625,6 +3707,10 @@ export class DocumentsReceptionRegisterComponent
   sentToSatBulkLoad() {
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
+    this.docDataService.documentsReceptionUserRecepientForm =
+      this.flyerCopyRecipientForm.value;
+    this.docDataService.documentsReceptionUserCopyForm =
+      this.flyerCopyCppForm.value;
     this.docDataService.goodsBulkLoadSatSaeParams = {
       asuntoSat: this.formData.expedientTransferenceNumber,
       pNoExpediente: this.formControls.expedientNumber.value,
@@ -3658,6 +3744,10 @@ export class DocumentsReceptionRegisterComponent
     this.loading = false;
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
+    this.docDataService.documentsReceptionUserRecepientForm =
+      this.flyerCopyRecipientForm.value;
+    this.docDataService.documentsReceptionUserCopyForm =
+      this.flyerCopyCppForm.value;
     this.docDataService.goodsBulkLoadPgrSaeParams = {
       pNoExpediente: this.formControls.expedientNumber.value,
       pNoVolante: this.formControls.wheelNumber.value,
@@ -3684,9 +3774,10 @@ export class DocumentsReceptionRegisterComponent
     console.log('Goods Capture');
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
-    // this.docDataService.setDocumentsReceptionRegisterForm(
-    //   this.documentsReceptionForm.value
-    // );
+    this.docDataService.documentsReceptionUserRecepientForm =
+      this.flyerCopyRecipientForm.value;
+    this.docDataService.documentsReceptionUserCopyForm =
+      this.flyerCopyCppForm.value;
     if (pgr) {
       this.docDataService.goodsCaptureTempParams = {
         iden: this.formData.identifier,
@@ -3768,20 +3859,20 @@ export class DocumentsReceptionRegisterComponent
           this.formControls.wheelNumber.setValue(data.data[0].wheelNumber);
           this.updateProcedureManagement();
         } else {
-          this.alertInfo(
-            'success',
-            'Notificación agregada',
-            `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
-          ).then(() => this.endProcess());
+          this.alert(
+            'error',
+            'No se pudo verificar los registros agregados',
+            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+          );
         }
       },
       error: err => {
         console.log(err);
-        this.alertInfo(
-          'success',
-          'Notificación agregada',
-          `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
-        ).then(() => this.endProcess());
+        this.alert(
+          'error',
+          'No se pudo verificar los registros agregados',
+          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+        );
       },
     });
     // this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
@@ -3846,6 +3937,7 @@ export class DocumentsReceptionRegisterComponent
           .update(this.pageParams.pNoTramite, body)
           .subscribe({
             next: () => {
+              this.sendFlyerCopies();
               this.alertInfo(
                 'success',
                 'Notificación agregada',
@@ -3853,6 +3945,7 @@ export class DocumentsReceptionRegisterComponent
               ).then(() => this.endProcess());
             },
             error: () => {
+              this.sendFlyerCopies();
               this.alertInfo(
                 'success',
                 'Notificación agregada',
@@ -3873,6 +3966,7 @@ export class DocumentsReceptionRegisterComponent
                   .update(this.pageParams.pNoTramite, body)
                   .subscribe({
                     next: () => {
+                      this.sendFlyerCopies();
                       this.alertInfo(
                         'success',
                         'Notificación agregada',
@@ -3880,6 +3974,7 @@ export class DocumentsReceptionRegisterComponent
                       ).then(() => this.endProcess());
                     },
                     error: () => {
+                      this.sendFlyerCopies();
                       this.alertInfo(
                         'success',
                         'Notificación agregada',
@@ -3888,6 +3983,7 @@ export class DocumentsReceptionRegisterComponent
                     },
                   });
               } else {
+                this.sendFlyerCopies();
                 this.alertInfo(
                   'success',
                   'Notificación agregada',
@@ -3896,6 +3992,7 @@ export class DocumentsReceptionRegisterComponent
               }
             },
             error: () => {
+              this.sendFlyerCopies();
               this.alertInfo(
                 'success',
                 'Notificación agregada',
