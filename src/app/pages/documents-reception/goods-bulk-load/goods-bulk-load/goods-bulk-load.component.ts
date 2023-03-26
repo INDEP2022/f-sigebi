@@ -154,6 +154,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   globals: IGlobalVars;
   cargandoPgr: boolean = false;
   endProcess: boolean = false;
+  pgrGoodNumber: string | number = '';
 
   constructor(
     private fb: FormBuilder,
@@ -635,7 +636,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
         next: res => {
-          // console.log(res);
+          console.log(res);
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             if (element) {
@@ -644,8 +645,16 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               }
             }
           }
-          // this.pgrData = res.data;
-          this.initDataPgr(this.pgrData);
+          if (this.pgrData.length > 0) {
+            this.initDataPgr(this.pgrData);
+          } else {
+            this.cargandoPgr = false;
+            this.alert(
+              'warning',
+              'Carga Masiva FGR',
+              'Ocurrio un error al cargar la información de los bienes.'
+            );
+          }
         },
         error: err => {
           this.cargandoPgr = false;
@@ -695,32 +704,32 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       });
   }
 
-  getDataCopiasXVolante(
-    dataPgr: IPgrTransfer,
-    count: number = 0,
-    volanteData: INotification
-  ) {
-    this.goodsBulkService
-      .getCopiesXFliers({
-        copyNumber: '1',
-        flierNumber: volanteData.wheelNumber,
-      })
-      .subscribe({
-        next: res => {
-          console.log('COPIAS VOLANTE', res);
-          this.getFilterDataPgr(dataPgr, count, volanteData, res); // Inicia proceso de carga y validacion
-        },
-        error: err => {
-          this.onLoadToast(
-            'warning',
-            'Datos del bien',
-            'Ocurrio un error al cargar la información del destinatario.'
-          );
-          console.log(err);
-          this.getFilterDataPgr(dataPgr, count, volanteData, null); // Inicia proceso de carga y validacion
-        },
-      });
-  }
+  // getDataCopiasXVolante(
+  //   dataPgr: IPgrTransfer,
+  //   count: number = 0,
+  //   volanteData: INotification
+  // ) {
+  //   this.goodsBulkService
+  //     .getCopiesXFliers({
+  //       copyNumber: '1',
+  //       flierNumber: volanteData.wheelNumber,
+  //     })
+  //     .subscribe({
+  //       next: res => {
+  //         console.log('COPIAS VOLANTE', res);
+  //         this.getFilterDataPgr(dataPgr, count, volanteData, res); // Inicia proceso de carga y validacion
+  //       },
+  //       error: err => {
+  //         this.onLoadToast(
+  //           'warning',
+  //           'Datos del bien',
+  //           'Ocurrio un error al cargar la información del destinatario.'
+  //         );
+  //         console.log(err);
+  //         this.getFilterDataPgr(dataPgr, count, volanteData, null); // Inicia proceso de carga y validacion
+  //       },
+  //     });
+  // }
 
   getFilterDataPgr(
     dataPgr: IPgrTransfer,
@@ -761,7 +770,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       observaciones: volanteData.observations,
       autoridad: volanteData.autorityNumber,
     };
+    for (let index = 10; index < 44; index++) {
+      data['COL' + index] = null;
+    }
     data['SAT_CVE_UNICA'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
+    console.log(data);
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
@@ -3299,8 +3312,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataGood = {
         id: '', // ID
         // satUniqueKey: '', // SAT_CVE_UNICA
-        siabiInventoryId: infoData.dataRow['SAT_CVE_UNICA'], // SIAB_INVENTORY ES PGR_NO_BIEN
-        inventoryNumber: infoData.dataRow['SAT_CVE_UNICA'], // NUMERO DE INVENTARIO
+        siabiInventoryId: infoData.dataRow['sat_cve_unica'], // SIAB_INVENTORY ES PGR_NO_BIEN
+        inventoryNumber: infoData.dataRow['sat_cve_unica'], // NUMERO DE INVENTARIO
         fileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE
         description: infoData.dataRow.descripcion, // Descripcion
         quantity: infoData.dataRow.cantidad, // Cantidad
@@ -3308,21 +3321,29 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         status: infoData.dataRow.status, // Status
         identifier: infoData.dataRow.identificador, // Identificador
         goodClassNumber: infoData.dataRow.clasif, // Numero de clasificacion del bien
-        val1: infoData.dataRow['numero de placas'], // Valor 1
-        val2: infoData.dataRow['serie'], // Valor 2
-        subDelegationNumber: infoData.objInsertResponse['vNO_SUBDELEGACION'], // Sub delegacion
-        delegationNumber: infoData.objInsertResponse['vNO_DELEGACION'], // Delegacion
+        subDelegationNumber: infoData.objInsertResponse['vNO_SUBDELEGACION'], // Sub delegacion --- TOOLBAR DATA
+        delegationNumber: infoData.objInsertResponse['vNO_DELEGACION'], // Delegacion --- TOOLBAR DATA
         labelNumber: infoData.objInsertResponse['vno_etiqueta'], // Numero de etiqueta
         flyerNumber: this.paramsGeneral.p_no_volante, // No volante
         observations: infoData.dataRow.observaciones, // Observaciones
+        // val1: infoData.dataRow['numero de placas'], // Valor 1
+        // val2: infoData.dataRow['serie'], // Valor 2
       };
+      // Lenar la data de los valores para el bien
+      let contadorCol = 10;
+      for (let index = 10; index < 44; index++) {
+        dataGood['val' + index] = infoData.dataRow['COL' + contadorCol];
+        contadorCol++;
+      }
     }
     console.log(dataGood);
+    this.pgrGoodNumber = '';
     // Crear el bien
     await this.goodsBulkService.createGood(dataGood).subscribe({
       next: res => {
         console.log(res);
-        infoData.objInsertResponse['LNU_NO_BIEN'] = res.idGood;
+        infoData.objInsertResponse['LNU_NO_BIEN'] = res.id;
+        this.pgrGoodNumber = res.id;
         infoData.validLastRequest = true; // Respuesta correcta
         infoData = this.createdGoodsWheelsExpedients(
           res.idGood,
@@ -3372,7 +3393,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     await this.goodsBulkService.createGood(dataGood).subscribe({
       next: res => {
         console.log(res);
-        infoData.objInsertResponse['LNU_NO_BIEN'] = res.idGood;
+        infoData.objInsertResponse['LNU_NO_BIEN'] = res.id;
         infoData.validLastRequest = true; // Respuesta correcta
         this.processUploadEndGeneral(infoData); // Termina proceso 3 para actualizacion
       },
@@ -3420,6 +3441,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         daydayEviction: this.assetsForm.get('idCarga').value ? 1 : 0, //  Desalojo dia a dia
       };
     }
+    console.log('Massive', massiveGoodData);
     // Crear el bien
     await this.goodsBulkService.createMassiveGood(massiveGoodData).subscribe({
       next: res => {
@@ -3455,7 +3477,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       'Creando registro en historico del bien.';
     console.log(this.DeclarationsValidationMassive.message_progress);
     let goodHistory: IHistoryGood = {
-      propertyNum: infoData.objInsertResponse['LNU_NO_BIEN'], // Numero de bien
+      propertyNum: parseInt(infoData.objInsertResponse['LNU_NO_BIEN']), // Numero de bien
       status: 'ROP', // Estatus
       changeDate: new Date(), // Fecha
       userChange: 'USER', // USER se indica el usuario
@@ -3464,6 +3486,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       registryNum: 1, // No se toma en el ms
       extDomProcess: '', // No se toma en el ms
     };
+    console.log('HISTORICO', goodHistory);
     // Crear el historico del bien
     await this.goodsBulkService.createHistoryGood(goodHistory).subscribe({
       next: res => {
@@ -3512,7 +3535,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('pgrOffice', this.paramsGeneral.p_av_previa);
-    params.addFilter('pgrGoodNumber', infoData.dataRow['SAT_CVE_UNICA']); // SET pgrGoodNumber from filter data
+    params.addFilter('pgrGoodNumber', infoData.dataRow['sat_cve_unica']); // SET pgrGoodNumber from filter data
     this.goodsBulkService
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
@@ -3572,7 +3595,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       error: err => {
         infoData.error = this.agregarErrorUploadValidation(
           infoData.error,
-          'Error al crear el registro de la carga masiva'
+          'Error al crear el registro de menaje'
         );
         this.infoDataValidation.error = infoData.error; // Setear error
         infoData.validLastRequest = false; // Respuesta incorrecta
@@ -4029,6 +4052,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.globals
         );
       }
+      this.validarPGRMenaje();
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
@@ -4344,38 +4368,68 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     return data;
   }
 
-  // validarPGRMenaje() {
+  validarPGRMenaje() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    let oficio = encodeURIComponent(this.paramsGeneral.p_av_previa);
+    params.addFilter('officeExternalKey', oficio);
+    this.goodsBulkService
+      .getDataPGRFromParams(params.getFilterParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA MENAJE', res);
+          let validCreateMenaje = false;
+          res.data.forEach(element => {
+            if (element.pgrInmcontMenage) {
+              if (element.pgrInmcontMenage.toUpperCase()[0] == 'S') {
+                validCreateMenaje = true;
+              }
+            }
+          });
+          if (validCreateMenaje) {
+            this.alertInfo(
+              'info',
+              'Actualización de menaje',
+              'Es un bien inmueble con menaje, se van a asociar los bienes hijos al bien padre.'
+            ).then(() => {
+              this.createMenajePGR(res.data, 0);
+            });
+          }
+        },
+        error: err => {
+          this.onLoadToast(
+            'warning',
+            'Actualización de menaje',
+            'Ocurrio un error al cargar la información de los bienes para actualizar el menaje.'
+          );
+        },
+      });
+  }
 
-  //     const params: ListParams = {
-  //       page: this.params.getValue().page,
-  //       limit: 100,
-  //     };
-  //     this.params.getValue().getParams();
-  //     params['filter.idAuthorityIssuerTransferor'] =
-  //       '$or:' + infoData.dataRow.transferente + '';
-  //     // Obtener institucion emisora EMISORA Y AUTORIDAD
-  //     await this.goodsBulkService
-  //       .getEmisoraAutoridadTransferente(params)
-  //       .subscribe({
-  //         next: res => {
-  //           console.log(res);
-  //           infoData.objInsertResponse['LNU_NO_TRANSFERENTE'] =
-  //             res.data[0].idTransferer;
-  //           // Validar Status
-  //           this.validStatusColumnaPRE(this.infoDataValidation, opcionValid);
-  //         },
-  //         error: err => {
-  //           infoData.error = this.agregarError(
-  //             infoData.error,
-  //             'Error obteneniendo el Transferente ' +
-  //               infoData.dataRow.transferente +
-  //               ' por Transferente Autoridad Emisora.'
-  //           );
-  //           this.infoDataValidation.error = infoData.error; // Setear error
-  //           infoData.validLastRequest = false; // Respuesta incorrecta
-  //           // Validar Status
-  //           this.validStatusColumnaPRE(this.infoDataValidation, opcionValid);
-  //         },
-  //       });
-  // }
+  async createMenajePGR(dataResponse: IPgrTransfer[], count: number) {
+    let menaje: IMenageWrite = {
+      noGood: this.pgrGoodNumber, // Numero de bien
+      noGoodMenaje: dataResponse[count].pgrInmcontMenage, // Numero de Menaje
+      noRegister: null, // registro
+    };
+    // Crear menaje
+    await this.goodsBulkService.createMenaje(menaje).subscribe({
+      next: res => {
+        console.log(res);
+        if (dataResponse.length == count) {
+          // TERMINO PGR
+        } else {
+          count++;
+          this.createMenajePGR(res.data, count);
+        }
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Actualización de menaje',
+          'Ocurrio un error al cargar la información del menaje.'
+        );
+      },
+    });
+  }
 }
