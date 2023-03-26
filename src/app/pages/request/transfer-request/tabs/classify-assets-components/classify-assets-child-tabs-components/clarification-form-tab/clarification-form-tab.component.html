@@ -33,7 +33,7 @@
           <div class="col-md-12">
             <ngx-select
               [form]="clarificationForm"
-              control="clarification"
+              control="clarificationId"
               (fetchItems)="getClarification($event)"
               [data]="selectClarification"
               label="Aclaraci&oacute;n"
@@ -60,10 +60,8 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          class="btn btn-primary btn-sm active"
-          [disabled]="clarificationForm.invalid"
-          (click)="confirm()">
+        <!--  [disabled]="clarificationForm.invalid" -->
+        <button class="btn btn-primary btn-sm active" (click)="confirm()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>

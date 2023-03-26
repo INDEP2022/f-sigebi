@@ -10,6 +10,7 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -34,7 +35,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private readonly clarificationService: ClarificationService,
-    private readonly rejectedGoodService: RejectedGoodService
+    private readonly rejectedGoodService: RejectedGoodService,
+    private readonly authService: AuthService
   ) {
     super();
   }
@@ -61,10 +63,13 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.clarificationForm = this.fb.group({
+      id: [null],
       goodId: [null, [Validators.required]],
       clarificationType: [null, [Validators.required]],
-      clarification: [null, [Validators.required]],
+      clarificationId: [null, [Validators.required]],
       reason: [null, [Validators.pattern(STRING_PATTERN)]],
+      creationUser: [null],
+      rejectionDate: [null],
     });
     if (this.goodTransfer) {
       this.clarificationForm.get('goodId').patchValue(this.goodTransfer.id);
@@ -94,14 +99,44 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    console.log(JSON.stringify(this.clarificationForm.getRawValue()));
-    // this.rejectedGoodService
-    //   .create(this.clarificationForm.getRawValue())
-    //   .subscribe({
-    //     next: val => {
-    //       console.log(val);
-    //     },
-    //   });
+    const user: any = this.authService.decodeToken();
+    var clarification = this.clarificationForm.getRawValue();
+    clarification.creationUser = user.username;
+    clarification.rejectionDate = new Date().toISOString();
+    clarification['answered'] = 'NUEVA ACLARACION';
+    console.log(clarification);
+    let action = null;
+    if (this.edit === true) {
+      action = this.rejectedGoodService.update(clarification.id, clarification);
+    } else {
+      action = this.rejectedGoodService.create(clarification);
+    }
+    action.subscribe({
+      next: val => {
+        console.log(val);
+        if (this.edit === true) {
+          this.onLoadToast(
+            'success',
+            `Aclaracion actualizada`,
+            `Se actualizo la aclaracion correctamente`
+          );
+        } else {
+          this.onLoadToast(
+            'success',
+            `Aclaracion guardada`,
+            `Se guardo la aclaracion correctamente`
+          );
+        }
+      },
+      error: error => {
+        console.error(error.error.message);
+        this.onLoadToast(
+          'error',
+          `Error`,
+          `Ocurrio un error en la persistencia del dato`
+        );
+      },
+    });
   }
 
   close(): void {

@@ -21,20 +21,20 @@
     </p>
   </div>
   <div class="row pt-1">
-    <div class="col-md-12">
+    <div class="col-md-6">
       <ng2-smart-table
         (userRowSelect)="article3Selected($event)"
-        [attr.class]="'table-bordered'"
+        [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
         [source]="paragraphsTable1">
       </ng2-smart-table>
     </div>
-  </div>
-  <div class="row pt-4">
-    <div class="col-md-12">
+    <!-- </div>
+  <div class="row pt-4"> -->
+    <div class="col-md-6">
       <ng2-smart-table
         (userRowSelect)="article12y13Selected($event)"
-        [attr.class]="'table-bordered'"
+        [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
         [source]="paragraphsTable2">
       </ng2-smart-table>
