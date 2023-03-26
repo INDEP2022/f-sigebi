@@ -289,6 +289,13 @@ export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
   flierNumber: new FormControl<string | number>(null),
 };
 
+export interface IDocumentsReceptionUserForm {
+  copyNumber: string | number;
+  copyuser: IUserAccessAreaRelational;
+  persontype: string;
+  flierNumber: string | number;
+}
+
 export enum TaxpayerLabel {
   Taxpayer = 'Contribuyente',
   Defendant = 'Indiciado',
