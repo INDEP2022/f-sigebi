@@ -22,7 +22,7 @@ export class RejectedGoodService extends HttpService {
     id: string | number,
     model: ClarificationGoodRejectNotification
   ): Observable<any> {
-    return this.update(`clarification-goods-reject-notification/${id}`, model);
+    return this.put(`clarification-goods-reject-notification/${id}`, model);
   }
 
   remove(id: string | number): Observable<any> {
