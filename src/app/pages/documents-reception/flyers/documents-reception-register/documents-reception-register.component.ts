@@ -309,7 +309,7 @@ export class DocumentsReceptionRegisterComponent
       ) {
         this.setInitialConditions();
       } else if (!this.docDataService.flyerEditMode) {
-        if (this.pageParams != null) this.clearVisibleData();
+        if (Object.keys(this.pageParams).length > 0) this.clearVisibleData();
         this.selectFlyer();
       }
     } else if (
@@ -343,11 +343,17 @@ export class DocumentsReceptionRegisterComponent
     this.getGlobalVars();
     console.log(this.pageParams);
     if (this.globals.gCommit == 'S') {
-      if (this.globals.gOFFCommit == 'N') {
-        this.postGoodsCapture();
+      if (Object.keys(this.pageParams).length > 0) {
+        if (this.globals.gOFFCommit == 'N') {
+          this.postGoodsCapture();
+        } else {
+          this.deleteDuplicatedGoods();
+          this.postGoodsCapture();
+        }
       } else {
-        this.deleteDuplicatedGoods();
-        this.postGoodsCapture();
+        console.log(
+          'Bien capturado sin el flujo completo desde buzon de trabajo'
+        );
       }
     }
   }
@@ -520,7 +526,7 @@ export class DocumentsReceptionRegisterComponent
     } else if ([1, 2, 3, 4].includes(affairType)) {
       this.initialCondition = 'A';
     } else {
-      this.initialCondition = null;
+      this.initialCondition = 'T';
     }
     if (!procedure) {
       volante = this.pageParams.pNoVolante;
@@ -1104,7 +1110,10 @@ export class DocumentsReceptionRegisterComponent
   }
 
   cityChange(city: ICity) {
-    if (city != null && city != undefined) {
+    if (
+      this.formControls.cityNumber.value != null &&
+      this.formControls.cityNumber.value != undefined
+    ) {
       this.hideError();
       this.docRegisterService
         .getDynamicTables(1, {
@@ -1114,7 +1123,7 @@ export class DocumentsReceptionRegisterComponent
         .subscribe({
           next: data => this.entFedKey.setValue(data.data[0]),
         });
-      this.getPublicMinistries({ page: 1, text: '' });
+      this.getFederalEntities({ page: 1, text: '' });
       this.getCourts({ page: 1, text: '', limit: 10 });
     }
   }
@@ -1162,7 +1171,6 @@ export class DocumentsReceptionRegisterComponent
     this.docDataService.flyerEditMode = true;
     this.documentsReceptionForm.reset();
     this.populatingForm = true;
-    // this.documentsReceptionForm.get('flyer').setValue(value);
     console.log(notif);
     const filterParams = new FilterParams();
     const values = {
@@ -1187,6 +1195,7 @@ export class DocumentsReceptionRegisterComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.documentsReceptionForm.patchValue({ ...values });
+    this.blockErrors(true);
     if (notif.dailyEviction == 0) {
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
@@ -1325,6 +1334,7 @@ export class DocumentsReceptionRegisterComponent
       });
     }
     if (notif.viaKey != null) {
+      this.hideError();
       this.docRegisterService.getByTableKeyOtKey(9, notif.viaKey).subscribe({
         next: data => this.formControls.viaKey.setValue(data.data),
       });
@@ -1405,13 +1415,6 @@ export class DocumentsReceptionRegisterComponent
             console.log(data.data[0].id);
             this.procedureId = data.data[0].id;
             const { status, areaToTurn, userToTurn } = data.data[0];
-            // if (status == 'OPI') {
-            //   this.formControls.wheelStatus.setValue(ProcedureStatus.pending);
-            //   this.procedureStatus = ProcedureStatus.pending;
-            // } else if (status == 'OPS') {
-            //   this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
-            //   this.procedureStatus = ProcedureStatus.sent;
-            // }
             if (areaToTurn != null) {
               filterParams.removeAllFilters();
               filterParams.addFilter('id', areaToTurn);
@@ -1424,8 +1427,21 @@ export class DocumentsReceptionRegisterComponent
                       this.formControls.estatusTramite.setValue(data.data[0]);
                     }
                   },
-                  error: () => {},
+                  error: err => {
+                    console.log(err);
+                    this.onLoadToast(
+                      'warning',
+                      'Área de Gestión Destino no encontrada',
+                      'No se encontró el área del trámite.'
+                    );
+                  },
                 });
+            } else {
+              this.onLoadToast(
+                'warning',
+                'Área de Gestión Destino no encontrada',
+                'No se encontró el área del trámite.'
+              );
             }
             if (userToTurn != null) {
               filterParams.removeAllFilters();
@@ -1440,9 +1456,30 @@ export class DocumentsReceptionRegisterComponent
                       this.userRecipient.setValue(data.data[0]);
                     }
                   },
-                  error: () => {},
+                  error: err => {
+                    console.log(err);
+                    this.onLoadToast(
+                      'warning',
+                      'Usuario en atención no encontrado',
+                      'No se encontró el usuario en atención del trámite.'
+                    );
+                  },
                 });
+            } else {
+              this.onLoadToast(
+                'warning',
+                'Usuario en atención no encontrado',
+                'No se encontró el usuario en atención del trámite.'
+              );
             }
+          },
+          error: err => {
+            console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos no encontrados',
+              'No se encontraron los datos del trámite asociado al volante.'
+            );
           },
         });
     }
@@ -1459,7 +1496,7 @@ export class DocumentsReceptionRegisterComponent
     this.destinationAreaChange();
     this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
-    console.log(this.procedureStatus);
+    this.blockErrors(true);
   }
 
   selectFlyer() {
@@ -2164,7 +2201,7 @@ export class DocumentsReceptionRegisterComponent
     self.formControls.subDelegationName.setValue(subdelegation.description);
     self.getPublicMinistries({ page: 1, text: '' });
     self.getUsers({ page: 1, text: '' });
-    this.destinationAreaChange();
+    self.destinationAreaChange();
   }
 
   selectAffair(affair: IAffair, self: DocumentsReceptionRegisterComponent) {
@@ -2464,7 +2501,7 @@ export class DocumentsReceptionRegisterComponent
           this.formControls.wheelNumber.setValue(data.nextval);
         },
         error: err => {
-          // this.onLoadToast('error', 'Error', err);
+          console.log(err);
         },
       });
     }
@@ -2496,29 +2533,6 @@ export class DocumentsReceptionRegisterComponent
       .subscribe({
         next: data => {
           this.formControls.consecutiveNumber.setValue(data.consecutivedaily);
-          // const params = new FilterParams();
-          // params.addFilter(
-          //   'expedientNumber',
-          //   this.formControls.expedientNumber.value
-          // );
-          // this.hideError();
-          // this.tmpNotificationService
-          //   .getAllWithFilters(params.getParams())
-          //   .subscribe({
-          //     next: data => {
-          //       if (data.data.length > 0) {
-          //         this.tmpNotificationService.update(data.data[0].wheelNumber, {
-          //           ...data.data[0],
-          //           consecutiveNumber:
-          //             this.formControls.consecutiveNumber.value,
-          //         });
-          //       }
-          //     },
-          //     error: err => {
-          //       console.log(err);
-          //       this.loading = false;
-          //     },
-          //   });
         },
         error: err => {
           console.log(err);
@@ -2623,8 +2637,14 @@ export class DocumentsReceptionRegisterComponent
   createExpedient() {
     console.log('Create Expedient');
     this.loading = true;
+    console.log(
+      this.formControls.protectionKey.value,
+      this.formData.protectionKey,
+      this.formData.affairKey
+    );
     if (
       this.formData.protectionKey != null &&
+      this.formData.protectionKey != undefined &&
       ['12', '15'].includes(this.formData.affairKey)
     ) {
       const param = new FilterParams();
@@ -2651,8 +2671,6 @@ export class DocumentsReceptionRegisterComponent
           this.insertProtectionKey();
         },
       });
-    } else {
-      this.insertProtectionKey();
     }
     if (this.formControls.expedientNumber.value == null) {
       this.expedientService.getNextVal().subscribe({
@@ -2720,6 +2738,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   insertProtectionKey() {
+    console.log('Add protection');
     const body = {
       cveProtection: this.formData.protectionKey,
       protectionDate: this.formData.externalOfficeDate as Date,
@@ -2802,41 +2821,48 @@ export class DocumentsReceptionRegisterComponent
       userToTurn: this.userRecipient.value.user,
       areaToTurn: this.formData.estatusTramite,
     };
-    if (procedureId != null && procedureId != undefined) {
+    if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != undefined
+    ) {
+      procedure = this.pageParams.pNoTramite;
+    } else if (procedureId != null && procedureId != undefined) {
       procedure = procedureId;
     } else if (this.procedureId != null && this.procedureId != undefined) {
       procedure = this.procedureId;
     }
-    this.procedureManageService.update(procedure, body).subscribe({
-      next: () => {},
-      error: err => {
-        console.log(err);
-        this.loading = false;
-      },
-    });
-    const param = new FilterParams();
-    param.addFilter('fileNumber', this.formControls.expedientNumber.value);
-    this.hideError();
-    this.docRegisterService.getGoods(param.getParams()).subscribe({
-      next: data => {
-        if (data.data.length > 0) {
-          const goods = data.data.filter(g => g.flyerNumber == null);
-          if (goods.length > 0) {
-            this.docRegisterService
-              .updateGood({
-                id: goods[0].id,
-                goodId: goods[0].goodId,
-                flyerNumber: this.formControls.wheelNumber.value,
-              })
-              .subscribe({
-                next: () => {},
-                error: () => {},
-              });
+    if (procedure != undefined && procedure != null) {
+      this.procedureManageService.update(procedure, body).subscribe({
+        next: () => {},
+        error: err => {
+          console.log(err);
+          this.loading = false;
+        },
+      });
+      const param = new FilterParams();
+      param.addFilter('fileNumber', this.formControls.expedientNumber.value);
+      this.hideError();
+      this.docRegisterService.getGoods(param.getParams()).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            const goods = data.data.filter(g => g.flyerNumber == null);
+            if (goods.length > 0) {
+              this.docRegisterService
+                .updateGood({
+                  id: goods[0].id,
+                  goodId: goods[0].goodId,
+                  flyerNumber: this.formControls.wheelNumber.value,
+                })
+                .subscribe({
+                  next: () => {},
+                  error: () => {},
+                });
+            }
           }
-        }
-      },
-      error: () => {},
-    });
+        },
+        error: () => {},
+      });
+    }
   }
 
   createProcedureManagement(affair: string, affairType: number) {
@@ -2898,14 +2924,6 @@ export class DocumentsReceptionRegisterComponent
     this.loading = true;
     if (this.existingNotification) {
       console.log('Update Notification');
-      // const updateData = {
-      //   ...this.formData,
-      //   wheelNumber: this.formControls.wheelNumber.value,
-      //   receiptDate: this.formData.receiptDate,
-      //   externalOfficeDate: this.formData.externalOfficeDate,
-      //   affair: null as any,
-      // };
-      // delete updateData.affair;
       let updateData = {
         wheelType: this.formData.wheelType,
         identifier: this.formData.identifier,
@@ -2966,6 +2984,9 @@ export class DocumentsReceptionRegisterComponent
               'Volante actualizado',
               `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
             );
+            if (this.formControls.goodRelation.value == 'S') {
+              this.sendToGoodsCapture();
+            }
           },
           error: err => {
             console.log(err);
@@ -3009,16 +3030,6 @@ export class DocumentsReceptionRegisterComponent
 
   addNotification() {
     console.log('Create Notification');
-    // const insertData = {
-    //   ...this.formData,
-    //   consecutive: this.formControls.consecutiveNumber.value,
-    //   wheelNumber: this.formControls.wheelNumber.value,
-    //   receiptDate: this.formData.receiptDate as Date,
-    //   externalOfficeDate: this.formData.externalOfficeDate as Date,
-    //   delegationNumber: this.userDelegation,
-    //   subDelegationNumber: this.userSubdelegation,
-    //   affair: null as any,
-    // };
     const insertData = {
       wheelType: this.formData.wheelType,
       identifier: this.formData.identifier,
@@ -3079,7 +3090,7 @@ export class DocumentsReceptionRegisterComponent
         this.alert(
           'success',
           'Volante agregado',
-          `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+          `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
         );
       },
       error: err => {
@@ -3324,6 +3335,17 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
     });
+  }
+
+  nextStep() {
+    console.log(this.pageParams);
+    if (Object.keys(this.pageParams).length > 0) {
+      this.goodsCaptureCheck();
+      console.log('Next capture');
+    } else {
+      this.save();
+      console.log('Next save');
+    }
   }
 
   async goodsCaptureCheck(): Promise<boolean | void> {
@@ -3846,7 +3868,6 @@ export class DocumentsReceptionRegisterComponent
     console.log('Post Goods Capture');
     console.log(this.globals.gNoExpediente);
     const params = new FilterParams();
-    // this.hideError();
     params.addFilter('expedientNumber', this.globals.gNoExpediente);
     this.hideError();
     this.notificationService.getAllFilter(params.getParams()).subscribe({
