@@ -3546,7 +3546,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.pgrData[infoData.contadorRegistro];
           dataUpload.saeNoGood = infoData.objInsertResponse['LNU_NO_BIEN']; // Set data
           this.goodsBulkService
-            .updateDataPGR(dataUpload.pgrGoodNumber, dataUpload)
+            .updateDataPGR(dataUpload.id, dataUpload)
             .subscribe({
               next: res => {
                 console.log(res);
