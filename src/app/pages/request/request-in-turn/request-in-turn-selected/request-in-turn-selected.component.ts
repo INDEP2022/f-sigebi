@@ -132,7 +132,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
       /* crea solicitud */
-      const resposeRequest = await this.saveRequest(item);
+      const resposeRequest: any = await this.saveRequest(item);
       if (resposeRequest) {
         let body: any = {};
         const user: any = this.authService.decodeToken();
@@ -146,6 +146,12 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
           resposeRequest;
         body['isPublic'] = 's';
         body['istestTask'] = 's';
+        body['isPublic'] = 's';
+        body['istestTask'] = 's';
+        body['programmingId'] = 0;
+        body['requestId'] = resposeRequest.id;
+        body['expedientId'] = 0;
+        body['urlNb'] = 'pages/request/transfer-request/registration-request';
         const taskResult: any = await this.createTask(body);
         //console.log(taskResult.data[0].is);
         if (this.requestToTurn.length === index) {
@@ -169,7 +175,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.requestService.update(request.id, request as IRequest).subscribe({
         next: resp => {
           if (resp.id) {
-            resolve(resp.id);
+            resolve(resp);
           } else {
             reject(false);
           }

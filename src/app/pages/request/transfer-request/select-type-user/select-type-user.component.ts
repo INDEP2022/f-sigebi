@@ -177,8 +177,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             body['programmingId'] = 0;
             body['requestId'] = this.data.id;
             body['expedientId'] = this.data.recordId;
-            body['urlNb'] =
-              'pages/request/transfer-request/registration-request';
+            body['urlNb'] = 'pages/request/transfer-request/verify-compliance';
             /* crea una nueva tarea */
             const taskResponse = await this.createTask(body);
             if (taskResponse) {
@@ -261,11 +260,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.taskService.createTask(task).subscribe({
         next: resp => {
-          if (resp) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
+          resolve(true);
         },
         error: error => {
           console.log(error);
