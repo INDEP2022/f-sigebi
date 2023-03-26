@@ -174,7 +174,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               this.data.id;
             body['isPublic'] = 's';
             body['istestTask'] = 's';
-
+            body['programmingId'] = 0;
+            body['requestId'] = this.data.id;
+            body['expedientId'] = this.data.recordId;
+            body['urlNb'] =
+              'pages/request/transfer-request/registration-request';
             /* crea una nueva tarea */
             const taskResponse = await this.createTask(body);
             if (taskResponse) {
