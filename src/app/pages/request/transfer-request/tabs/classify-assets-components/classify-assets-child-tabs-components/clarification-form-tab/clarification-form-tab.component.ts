@@ -10,6 +10,7 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -34,7 +35,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private readonly clarificationService: ClarificationService,
-    private readonly rejectedGoodService: RejectedGoodService
+    private readonly rejectedGoodService: RejectedGoodService,
+    private readonly authService: AuthService
   ) {
     super();
   }
@@ -61,21 +63,27 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.clarificationForm = this.fb.group({
+      rejectNotificationId: [null], //id
       goodId: [null, [Validators.required]],
       clarificationType: [null, [Validators.required]],
-      clarification: [null, [Validators.required]],
+      clarificationId: [null, [Validators.required]],
       reason: [null, [Validators.pattern(STRING_PATTERN)]],
+      creationUser: [null],
+      rejectionDate: [null],
     });
     if (this.goodTransfer) {
       this.clarificationForm.get('goodId').patchValue(this.goodTransfer.id);
     }
     if (this.docClarification != undefined) {
       this.edit = true;
-      //bloquear tipo de claracion cuando se edite
+      this.getClarification(new ListParams());
 
+      //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
         ...this.clarificationForm,
+        rejectNotificationId: this.docClarification.rejectNotificationId,
         clarificationType: this.docClarification.clarificationType,
+        clarificationId: this.docClarification.clarificationId,
         reason: this.docClarification.reason,
       });
       this.clarificationForm.controls['clarificationType'].disable();
@@ -94,16 +102,51 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    console.log(JSON.stringify(this.clarificationForm.getRawValue()));
-    // this.rejectedGoodService
-    //   .create(this.clarificationForm.getRawValue())
-    //   .subscribe({
-    //     next: val => {
-    //       console.log(val);
-    //     },
-    //   });
-  }
+    const user: any = this.authService.decodeToken();
+    let clarification = this.clarificationForm.getRawValue();
+    clarification.creationUser = user.username;
+    clarification.rejectionDate = new Date().toISOString();
+    clarification['answered'] = 'NUEVA ACLARACION';
+    if (this.edit === true) {
+      console.log('update');
 
+      this.update(clarification);
+    } else {
+      this.save(clarification);
+    }
+  }
+  private save(clarification: ClarificationGoodRejectNotification) {
+    this.rejectedGoodService.create(clarification).subscribe({
+      next: val => {
+        this.onLoadToast(
+          'success',
+          `Aclaracion guardada`,
+          `Se guardo la aclaracion correctamente`
+        );
+      },
+      complete: () => {
+        this.modalRef.hide();
+        this.modalRef.content.callback(true);
+      },
+    });
+  }
+  private update(clarification: ClarificationGoodRejectNotification) {
+    this.rejectedGoodService
+      .update(clarification.rejectNotificationId, clarification)
+      .subscribe({
+        next: val => {
+          this.onLoadToast(
+            'success',
+            `Aclaracion actualizada`,
+            `Se actualizo la aclaracion correctamente`
+          );
+        },
+        complete: () => {
+          this.modalRef.hide();
+          this.modalRef.content.callback(true);
+        },
+      });
+  }
   close(): void {
     this.modalRef.hide();
   }
