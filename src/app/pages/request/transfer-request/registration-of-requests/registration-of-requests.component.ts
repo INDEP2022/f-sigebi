@@ -152,7 +152,7 @@ export class RegistrationOfRequestsComponent
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
