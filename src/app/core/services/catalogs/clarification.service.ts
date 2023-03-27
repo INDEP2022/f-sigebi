@@ -34,7 +34,7 @@ export class ClarificationService
   }
 
   getById(id: string | number): Observable<IClarification> {
-    return this.clarificationRepository.getById(this.route, id);
+    return this.clarificationRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: IClarification): Observable<IClarification> {
