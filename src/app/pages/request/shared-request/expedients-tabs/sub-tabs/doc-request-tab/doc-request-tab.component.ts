@@ -148,6 +148,9 @@ export class DocRequestTabComponent
           this.loading = false;
         });
       },
+      error: error => {
+        console.log(error);
+      },
     });
   }
 
@@ -178,13 +181,11 @@ export class DocRequestTabComponent
 
   getDocType(params: ListParams) {
     this.wContentService.getDocumentTypes(params).subscribe(data => {
-      console.log('type doc', data);
       this.selectDocType = new DefaultSelect(data.data, data.count);
     });
   }
 
   search(): void {
-    console.log(this.docRequestForm.value);
     const tipoRelevante = this.docRequestForm.get('docType').value;
     const titleDocument = this.docRequestForm.get('docTitle').value;
     const contribuyente = this.docRequestForm.get('contributor').value;
@@ -198,7 +199,6 @@ export class DocRequestTabComponent
           if (items.xtipoDocumento == tipoRelevante) return items;
         });
 
-        console.log(filter);
         if (filter.length > 0) {
           this.onLoadToast(
             'success',
@@ -218,7 +218,6 @@ export class DocRequestTabComponent
           if (items.xcontribuyente == contribuyente) return items;
         });
 
-        console.log(filter);
         if (filter.length > 0) {
           this.onLoadToast(
             'success',
@@ -238,7 +237,6 @@ export class DocRequestTabComponent
           if (items.ddocTitle == titleDocument) return items;
         });
 
-        console.log(filter);
         if (filter.length > 0) {
           this.onLoadToast(
             'success',
@@ -258,7 +256,6 @@ export class DocRequestTabComponent
           if (items.dDocAuthor == author) return items;
         });
 
-        console.log(filter);
         if (filter.length > 0) {
           this.onLoadToast(
             'success',
@@ -278,7 +275,6 @@ export class DocRequestTabComponent
           if (items.xremitente == remitente) return items;
         });
 
-        console.log(filter);
         if (filter.length > 0) {
           this.onLoadToast(
             'success',
@@ -298,7 +294,6 @@ export class DocRequestTabComponent
           if (items.xcargoRemitente == senderCharge) return items;
         });
 
-        console.log(filter);
         if (filter.length > 0) {
           this.onLoadToast(
             'success',

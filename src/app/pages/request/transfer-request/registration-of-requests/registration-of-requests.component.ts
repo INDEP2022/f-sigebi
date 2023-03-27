@@ -123,6 +123,7 @@ export class RegistrationOfRequestsComponent
           this.staticTabs.tabs[0].active = true;
         }
       },
+      error: error => {},
     });
   }
 
@@ -148,15 +149,15 @@ export class RegistrationOfRequestsComponent
       typeRecord: [null],
       publicMinistry: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ], //cargo remitente
       phoneOfOwner: [
         null,
@@ -164,52 +165,55 @@ export class RegistrationOfRequestsComponent
       ], //telefono remitente
       emailOfOwner: [
         null,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(100)],
       ], //email remitente
       court: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
       crime: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       receiptRoute: [null],
       destinationManagement: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       indicatedTaxpayer: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
       affair: [null],
       transferEntNotes: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
       transferenceFile: [null],
       previousInquiry: [null],
       trialType: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       circumstantialRecord: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       lawsuit: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       tocaPenal: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
     });
   }
@@ -282,32 +286,42 @@ export class RegistrationOfRequestsComponent
   // }
 
   getTransferent(idTransferent: number) {
-    this.transferentService.getById(idTransferent).subscribe(data => {
-      this.transferentName = data.nameTransferent;
+    this.transferentService.getById(idTransferent).subscribe({
+      next: data => {
+        this.transferentName = data.nameTransferent;
+      },
     });
   }
 
   getRegionalDelegation(idDelegation: number) {
-    this.delegationService.getById(idDelegation).subscribe(data => {
-      this.delegationName = data.description;
+    this.delegationService.getById(idDelegation).subscribe({
+      next: data => {
+        this.delegationName = data.description;
+      },
     });
   }
 
   getStateOfRepublic(idState: number) {
-    this.stateOfRepublicService.getById(idState).subscribe(data => {
-      this.stateOfRepublicName = data.descCondition;
+    this.stateOfRepublicService.getById(idState).subscribe({
+      next: data => {
+        this.stateOfRepublicName = data.descCondition;
+      },
     });
   }
 
   getAuthority(idAuthority: number) {
-    this.authorityService.getById(idAuthority).subscribe(data => {
-      this.authorityName = data.authorityName;
+    this.authorityService.getById(idAuthority).subscribe({
+      next: data => {
+        this.authorityName = data.authorityName;
+      },
     });
   }
 
   getStation(idStation: number) {
-    this.stationService.getById(idStation).subscribe(data => {
-      this.stationName = data.stationName;
+    this.stationService.getById(idStation).subscribe({
+      next: data => {
+        this.stationName = data.stationName;
+      },
     });
   }
 
@@ -391,6 +405,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -405,6 +420,7 @@ export class RegistrationOfRequestsComponent
             resolve('');
           }
         },
+        error: error => {},
       });
     });
   }
@@ -416,6 +432,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -439,6 +456,7 @@ export class RegistrationOfRequestsComponent
           next: resp => {
             resolve(resp);
           },
+          error: error => {},
         });
       } else {
         resolve(null);
@@ -462,6 +480,7 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
+        error: error => {},
       });
   }
 

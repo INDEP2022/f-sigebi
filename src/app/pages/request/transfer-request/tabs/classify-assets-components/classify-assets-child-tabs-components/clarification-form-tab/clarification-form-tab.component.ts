@@ -8,6 +8,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -31,6 +32,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   selectClarification = new DefaultSelect<any>();
   docClarification: any;
   goodTransfer: IGood;
+  clarificationId: number = 0;
+  idGood: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -42,12 +45,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //si tipo de aclaracion es Aclaracion se muestra este input
-    // this.edit = true;
-    //verificar si se puede seleccionar muchas aclaraciones para editar y si es a si, que pasa
-    // si son diferentes tipos de aplaracioens
-    console.log(this.goodTransfer);
-
     this.initForm();
     this.clarificationForm.get('clarificationType').valueChanges.subscribe({
       next: val => {
@@ -59,6 +56,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       },
     });
     console.log(this.docClarification);
+    this.getClarification(new ListParams());
   }
 
   initForm(): void {
@@ -76,7 +74,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     }
     if (this.docClarification != undefined) {
       this.edit = true;
-      this.getClarification(new ListParams());
 
       //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
@@ -101,21 +98,26 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
+  clasificationSelect(clarification: IClarification) {
+    this.clarificationId = clarification.id;
+  }
+
   confirm(): void {
     const user: any = this.authService.decodeToken();
     let clarification = this.clarificationForm.getRawValue();
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA ACLARACION';
+    clarification.goodId = this.idGood;
+    clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
-      console.log('update');
-
       this.update(clarification);
     } else {
       this.save(clarification);
     }
   }
   private save(clarification: ClarificationGoodRejectNotification) {
+    console.log('clarification', clarification);
     this.rejectedGoodService.create(clarification).subscribe({
       next: val => {
         this.onLoadToast(
@@ -130,6 +132,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       },
     });
   }
+
   private update(clarification: ClarificationGoodRejectNotification) {
     this.rejectedGoodService
       .update(clarification.rejectNotificationId, clarification)
