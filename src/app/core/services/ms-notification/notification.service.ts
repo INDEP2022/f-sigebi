@@ -57,7 +57,7 @@ export class NotificationService extends HttpService {
   getLastWheelNumber(): Observable<{ nextval: number }> {
     return this.get<{ max: string }>(this.route.LastFlyerId).pipe(
       map(resp => {
-        return { nextval: Number(resp.max) + 1 };
+        return { nextval: Number(resp.max) };
       })
     );
   }

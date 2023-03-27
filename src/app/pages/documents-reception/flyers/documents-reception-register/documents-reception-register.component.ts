@@ -3472,94 +3472,53 @@ export class DocumentsReceptionRegisterComponent
   }
 
   startGoodsCapture() {
+    console.log('Start Goods Capture');
+    console.log(this.formControls.wheelType.value);
     if (this.formControls.wheelType.value == 'A') {
       this.updateGlobalVars('gCreaExpediente', 'N');
     }
     this.hideError();
     this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
       next: data => {
+        console.log(data);
         const { affair, affairSij, typeManagement, officeNumber } = data;
-        this.saveTmpExpedients(affair, affairSij, typeManagement, officeNumber);
+        this.checkTmpExpedients(
+          affair,
+          affairSij,
+          typeManagement,
+          officeNumber
+        );
       },
-      error: () => {
-        this.captureGoods();
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        this.onLoadToast(
+          'warning',
+          'No se encontraron datos',
+          'Hubo un problema al obtener los datos del trámite'
+        );
       },
     });
   }
 
-  saveTmpExpedients(
+  checkTmpExpedients(
     affair: string,
     affairSij: number,
     typeManagement: number,
     officeNumber: string
   ) {
-    if (this.formControls.expedientNumber.value != null) {
-      this.hideError();
-      this.tmpExpedientService
-        .getById(this.formControls.expedientNumber.value)
-        .subscribe({
-          next: () => {
-            this.hideError();
-            this.tmpExpedientService
-              .remove(this.formControls.expedientNumber.value)
-              .subscribe({
-                next: () => {},
-                error: err => {
-                  console.log(err);
-                },
-              });
-          },
-          error: () => {},
-        });
-    }
     if (this.formControls.expedientNumber.value == null) {
+      this.hideError();
       this.expedientService.getNextVal().subscribe({
         next: data => {
           console.log(data);
           this.formControls.expedientNumber.setValue(Number(data.nextval));
-          const expedientData: ITempExpedient = {
-            id: this.formControls.expedientNumber.value,
-            recordCircumstanced: this.formData.circumstantialRecord,
-            ascertainmentPrevious: this.formData.preliminaryInquiry,
-            causePenal: this.formData.criminalCase,
-            cveProtection: this.formData.protectionKey,
-            cvetouchPenal: this.formData.touchPenaltyKey,
-            nameIndexed: this.formData.indiciadoName,
-            courtNumber: this.formData.courtNumber,
-            cveEntfed: this.formData.entFedKey,
-            cveCrime: this.formData.crimeKey,
-            identifier: this.formData.identifier,
-            transfereeNumber: this.formData.endTransferNumber,
-            authorityNumber: this.formData.autorityNumber,
-            stationNumber: this.formData.stationNumber,
-            proceedingsType: this.formData.wheelType,
-            expTransferorsNumber: this.formData.expedientTransferenceNumber,
-            observations: this.formData.observations,
-            insertionDate: format(new Date(), 'yyyy-MM-dd'),
-            affair: affair,
-            affairSijNumber: affairSij,
-            procedureType: typeManagement,
-            jobNumber: officeNumber,
-          };
-          console.log(this.formControls.expedientNumber.value);
-          console.log(expedientData);
-          this.tmpExpedientService.create(expedientData).subscribe({
-            next: data => {
-              this.formControls.expedientNumber.setValue(data.id);
-              this.updateGlobalVars('gNoExpediente', data.id);
-              this.checkTmpNotifications(affairSij);
-            },
-            error: err => {
-              this.loading = false;
-              console.log(expedientData);
-              console.log(err);
-              this.onLoadToast(
-                'warning',
-                'Expediente No Creado',
-                'Hubo un problema al guardar los datos del expediente.'
-              );
-            },
-          });
+          this.checkExistsTmpExpedients(
+            affair,
+            affairSij,
+            typeManagement,
+            officeNumber
+          );
         },
         error: err => {
           console.log(err);
@@ -3571,7 +3530,111 @@ export class DocumentsReceptionRegisterComponent
           );
         },
       });
+    } else {
+      this.checkExistsTmpExpedients(
+        affair,
+        affairSij,
+        typeManagement,
+        officeNumber
+      );
     }
+  }
+
+  checkExistsTmpExpedients(
+    affair: string,
+    affairSij: number,
+    typeManagement: number,
+    officeNumber: string
+  ) {
+    this.hideError();
+    this.tmpExpedientService
+      .getById(this.formControls.expedientNumber.value)
+      .subscribe({
+        next: () => {
+          this.hideError();
+          this.tmpExpedientService
+            .remove(this.formControls.expedientNumber.value)
+            .subscribe({
+              next: () => {
+                console.log('Delete Temp Expediente');
+                this.saveTmpExpedients(
+                  affair,
+                  affairSij,
+                  typeManagement,
+                  officeNumber
+                );
+              },
+              error: err => {
+                console.log(err);
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Expediente No Creado',
+                  'Hubo un problema al guardar los datos del expediente.'
+                );
+              },
+            });
+        },
+        error: () => {
+          this.saveTmpExpedients(
+            affair,
+            affairSij,
+            typeManagement,
+            officeNumber
+          );
+        },
+      });
+  }
+
+  saveTmpExpedients(
+    affair: string,
+    affairSij: number,
+    typeManagement: number,
+    officeNumber: string
+  ) {
+    const expedientData: ITempExpedient = {
+      id: this.formControls.expedientNumber.value,
+      recordCircumstanced: this.formData.circumstantialRecord,
+      ascertainmentPrevious: this.formData.preliminaryInquiry,
+      causePenal: this.formData.criminalCase,
+      cveProtection: this.formData.protectionKey,
+      cvetouchPenal: this.formData.touchPenaltyKey,
+      nameIndexed: this.formData.indiciadoName,
+      courtNumber: this.formData.courtNumber,
+      cveEntfed: this.formData.entFedKey,
+      cveCrime: this.formData.crimeKey,
+      identifier: this.formData.identifier,
+      transfereeNumber: this.formData.endTransferNumber,
+      authorityNumber: this.formData.autorityNumber,
+      stationNumber: this.formData.stationNumber,
+      proceedingsType: this.formData.wheelType,
+      expTransferorsNumber: this.formData.expedientTransferenceNumber,
+      observations: this.formData.observations,
+      insertionDate: format(new Date(), 'yyyy-MM-dd'),
+      affair: affair,
+      affairSijNumber: affairSij,
+      procedureType: typeManagement,
+      jobNumber: officeNumber,
+    };
+    console.log(this.formControls.expedientNumber.value);
+    console.log(expedientData);
+    this.tmpExpedientService.create(expedientData).subscribe({
+      next: data => {
+        this.formControls.expedientNumber.setValue(data.id);
+        this.updateGlobalVars('gNoExpediente', data.id);
+        this.checkTmpNotifications(affairSij);
+      },
+      error: err => {
+        this.loading = false;
+        console.log(expedientData);
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Expediente No Creado',
+          'Hubo un problema al guardar los datos del expediente.'
+        );
+      },
+    });
   }
 
   checkTmpNotifications(affairSij: number) {
@@ -3581,34 +3644,7 @@ export class DocumentsReceptionRegisterComponent
         next: data => {
           console.log(data);
           this.formControls.wheelNumber.setValue(data.nextval);
-          this.hideError();
-          this.tmpNotificationService
-            .getById(this.formControls.wheelNumber.value)
-            .subscribe({
-              next: data => {
-                this.hideError();
-                this.tmpNotificationService
-                  .remove(this.formControls.wheelNumber.value)
-                  .subscribe({
-                    next: () => {
-                      console.log('Volante Temp borrado');
-                      this.saveTmpNotifications(affairSij);
-                    },
-                    error: err => {
-                      console.log(err);
-                      this.loading = false;
-                      this.onLoadToast(
-                        'warning',
-                        'Volante No Creado',
-                        'Hubo un problema al guardar los datos del volante.'
-                      );
-                    },
-                  });
-              },
-              error: () => {
-                this.saveTmpNotifications(affairSij);
-              },
-            });
+          this.checkExistsTmpNotifications(affairSij);
         },
         error: err => {
           console.log(err);
@@ -3620,7 +3656,40 @@ export class DocumentsReceptionRegisterComponent
           );
         },
       });
+    } else {
+      this.checkExistsTmpNotifications(affairSij);
     }
+  }
+
+  checkExistsTmpNotifications(affairSij: number) {
+    this.hideError();
+    this.tmpNotificationService
+      .getById(this.formControls.wheelNumber.value)
+      .subscribe({
+        next: data => {
+          this.hideError();
+          this.tmpNotificationService
+            .remove(this.formControls.wheelNumber.value)
+            .subscribe({
+              next: () => {
+                console.log('Volante Temp borrado');
+                this.saveTmpNotifications(affairSij);
+              },
+              error: err => {
+                console.log(err);
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Volante No Creado',
+                  'Hubo un problema al guardar los datos del volante.'
+                );
+              },
+            });
+        },
+        error: () => {
+          this.saveTmpNotifications(affairSij);
+        },
+      });
   }
 
   saveTmpNotifications(affairSij: number) {
