@@ -103,7 +103,6 @@ export class ClarificationsComponent
     console.log(changes);
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getData();
-      this.getClarifications();
     });
   }
 
@@ -195,15 +194,15 @@ export class ClarificationsComponent
   }
 
   getClarifications() {
-    this.params.value.addFilter('requestId', this.requestObject.id);
+    let params = new BehaviorSubject<FilterParams>(new FilterParams());
+    params.value.addFilter('goodId', this.assetsArray[0]);
     const filter = this.params.getValue().getParams();
-    // this.clarificationService.getAllFilter(filter).subscribe({
-    //   next: ({ data }) => {
-    //     console.log(data);
-    //     this.paragraphs = [...data];
-    //   },
-    // });
-    // this.paragraphs = data2;
+    this.rejectGoodService.getAllFilter(filter).subscribe({
+      next: ({ data }) => {
+        this.paragraphs = [...data];
+        console.log(data);
+      },
+    });
   }
 
   clicked(event: any) {
@@ -233,15 +232,7 @@ export class ClarificationsComponent
         this.assetsArray.find(x => x.id == event.target.value)
       );
       console.log(event.target.value);
-      let params = new BehaviorSubject<FilterParams>(new FilterParams());
-      params.value.addFilter('goodId', event.target.value);
-      const filter = this.params.getValue().getParams();
-      this.rejectGoodService.getAllFilter(filter).subscribe({
-        next: ({ data }) => {
-          this.paragraphs = [...data];
-          console.log(data);
-        },
-      });
+      this.getClarifications();
     } else {
       let index = this.assetsSelected.indexOf(
         this.assetsArray.find(x => x.id == event.target.value)
@@ -262,7 +253,32 @@ export class ClarificationsComponent
       this.openForm();
     }
   }
-
+  deleteClarification() {
+    let data = this.clariArraySelected[0];
+    if (!data) {
+      this.alert('warning', 'Cuidado', 'Tiene que seleccionar una aclaracion');
+    }
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar el registro?'
+    ).then(val => {
+      if (val.isConfirmed) {
+        this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
+          next: val => {
+            this.onLoadToast(
+              'success',
+              'Eliminada con exito',
+              'La aclaracion fue eliminada con exito.'
+            );
+          },
+          complete: () => {
+            this.getClarifications();
+          },
+        });
+      }
+    });
+  }
   editForm() {
     if (this.clariArraySelected.length === 1) {
       this.openForm(this.clariArraySelected[0]);
@@ -278,7 +294,7 @@ export class ClarificationsComponent
         goodTransfer: this.goodForm.value,
         docClarification,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) this.getClarifications();
         },
       },
       class: 'modal-sm modal-dialog-centered',

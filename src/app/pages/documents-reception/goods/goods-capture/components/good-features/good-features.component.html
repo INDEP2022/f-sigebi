@@ -17,6 +17,13 @@
           <confirm-button
             [loading]="loading"
             (confirm)="save()"></confirm-button>
+
+          <button
+            (click)="cancel()"
+            class="btn btn-danger ml-3 active"
+            type="button">
+            Cancelar
+          </button>
         </div>
       </div>
     </div>
