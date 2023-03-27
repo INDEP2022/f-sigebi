@@ -73,7 +73,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="tasks">
+            [source]="tasks"
+            (rowSelect)="openTask($event.data)">
           </ng2-smart-table>
         </div>
       </div>
