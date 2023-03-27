@@ -34,7 +34,7 @@ export class TaskService extends HttpService {
       params.get('text')
     )}&limit=${params.get('limit')}&page=${params.get(
       'page'
-    )}&filter.assignees=${params.get('others')}`;
+    )}&filter.assignees=$ilike:${params.get('others')}`;
 
     // return this.get(route, params);
     return this.get(route);
