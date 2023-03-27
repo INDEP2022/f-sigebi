@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import Swal, { SweetAlertResult, type SweetAlertOptions } from 'sweetalert2';
 
@@ -71,4 +72,12 @@ export function showQuestion({
     cancelButtonText: 'No, cancelar',
     ...data,
   });
+}
+
+export function convertFormatDate(
+  date: any,
+  format = 'yyyy-MM-dd',
+  lang = 'en'
+): any {
+  return formatDate(new Date(date), format, lang);
 }

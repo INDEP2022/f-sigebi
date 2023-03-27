@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row">
-      <form class="form-material mb-0" [formGroup]="consultForm">
+      <form class="form-material mb-0" [formGroup]="form">
         <div class="rounded-3 bg-gray-card px-3 py-3">
           <div class="row">
             <div class="col-sm-12 col-md-6 d-flex align-content-center">
@@ -98,7 +98,7 @@
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="generateLcs()"
-                    [disabled]="dataColumns.length === 0">
+                    [disabled]="dataColumns.count() === 0">
                     <i class="bx bx-send text-light float-icon"></i>
                     Generar LCs
                   </button>
@@ -113,15 +113,26 @@
               <i
                 class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-              <ngx-select
-                [form]="consultForm"
+              <!-- <ngx-select
+                [form]="form"
                 [data]="events"
                 value="id"
                 bindLabel="id"
                 (fetchItems)="getEvents($event)"
                 (change)="selectEvent($event)"
                 control="id">
-              </ngx-select>
+              </ngx-select> -->
+              <form-field [control]="form.get('eventId')" class="form-group">
+                <ng-custom-select
+                  class="form-control"
+                  path="event/api/v1/comer-event"
+                  formControlName="eventId"
+                  (valueChange)="selectEvent($event)">
+                  <ng-template let-item>
+                    {{ item.id }}/ {{ item.processKey }}
+                  </ng-template>
+                </ng-custom-select>
+              </form-field>
               <!-- <ng-select
               not
               (change)="selectEvent($event)">
@@ -136,7 +147,7 @@
               <i
                 class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-              <p class="text-muted">{{ selectedEvent.eventRel.processKey }}</p>
+              <p class="text-muted">{{ selectedEvent.processKey }}</p>
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -145,7 +156,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventRel.eventDate | date: 'medium' }}
+                {{ selectedEvent.eventDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -155,7 +166,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventRel.place }}
+                {{ selectedEvent.place }}
               </p>
             </div>
             <div
@@ -165,7 +176,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventRel.failedDate | date: 'medium' }}
+                {{ selectedEvent.failedDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -175,7 +186,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
               <p class="text-muted">
-                {{ selectedEvent.StatusvtaId }}
+                {{ selectedEvent.statusvtaId }}
               </p>
             </div>
           </div>
@@ -201,7 +212,7 @@
             [isAnimated]="true"
             [collapse]="!toggleFilter">
             <div class="col-sm-4 col-md-2">
-              <form-field [control]="consultForm.get('batchId')">
+              <!-- <form-field [control]="consultForm.get('batchId')">
                 <ngx-select
                   [form]="consultForm"
                   [data]="batchItems"
@@ -211,10 +222,11 @@
                   (fetchItems)="getBatches($event)"
                   control="batchId">
                 </ngx-select>
-              </form-field>
+              </form-field> -->
+              <app-batch-shared [form]="form"> ></app-batch-shared>
             </div>
             <div class="col-sm-4 col-md-2">
-              <form-field [control]="consultForm.get('status')" label="Estatus">
+              <form-field [control]="form.get('status')" label="Estatus">
                 <ng-select
                   formControlName="status"
                   [searchable]="false"
@@ -225,11 +237,11 @@
                 </ng-select>
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-2">
-              <form-field [control]="consultForm.get('operationId')">
+            <!-- <div class="col-sm-4 col-md-2">
+              <form-field [control]="form.get('operationId')">
                 <ngx-select
-                  [form]="consultForm"
-                  [data]="batchItems"
+                  [form]="form"
+                  [data]="[]"
                   value="id"
                   bindLabel="id"
                   label="Id Operación"
@@ -237,10 +249,10 @@
                   control="operationId">
                 </ngx-select>
               </form-field>
-            </div>
+            </div> -->
             <div class="col-sm-4 col-md-2">
               <form-field
-                [control]="consultForm.get('insertDate')"
+                [control]="form.get('insertDate')"
                 label="Fecha Insert">
                 <input
                   type="text"
@@ -251,7 +263,7 @@
             </div>
             <div class="col-sm-4 col-md-2">
               <form-field
-                [control]="consultForm.get('validityDate')"
+                [control]="form.get('validityDate')"
                 label="Fecha Vigencia">
                 <input
                   type="text"

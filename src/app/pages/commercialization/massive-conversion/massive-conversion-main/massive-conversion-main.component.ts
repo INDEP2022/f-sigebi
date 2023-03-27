@@ -1,15 +1,19 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { convertFormatDate } from 'src/app/common/helpers/helpers';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
-import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
@@ -38,10 +42,10 @@ import {
   ],
 })
 export class MassiveConversionMainComponent extends BasePage implements OnInit {
-  consultForm: FormGroup = new FormGroup({});
+  // form: FormGroup = new FormGroup({});
   selectedEvent: any = null;
   // eventItems: IComerEvent[] = []//new DefaultSelect();
-  batchItems = new DefaultSelect();
+  // batchItems = new DefaultSelect();
   operationItems = new DefaultSelect();
   toggleFilter: boolean = true;
   maintenance: boolean = false;
@@ -50,7 +54,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   totalEntries: number = 0;
   generatedLcs: number = 0;
   dataTotalItems: number = 0;
-  dataColumns: any[] = [];
+  dataColumns = new LocalDataSource();
   layout: string = 'RFC'; // 'RFC' || 'clientId'
   reworkType: string = 'CLIENT'; // 'BATCH' || 'CLIENT'
   lcSource: LocalDataSource;
@@ -129,23 +133,23 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   //   // },
   // ];
 
-  batchTestData: any[] = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-  ];
+  // batchTestData: any[] = [
+  //   {
+  //     id: 1,
+  //   },
+  //   {
+  //     id: 2,
+  //   },
+  //   {
+  //     id: 3,
+  //   },
+  //   {
+  //     id: 4,
+  //   },
+  //   {
+  //     id: 5,
+  //   },
+  // ];
 
   operationTestData: any[] = [
     {
@@ -369,11 +373,20 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     },
   ];
 
+  form = new FormGroup({
+    eventId: new FormControl(null, [Validators.required]),
+    batchId: new FormControl(null),
+    status: new FormControl(null),
+    operationId: new FormControl(null),
+    insertDate: new FormControl(null),
+    validityDate: new FormControl(null),
+  });
+
   constructor(
-    private fb: FormBuilder,
+    // private fb: FormBuilder,
     private excelService: ExcelService,
     private modalService: BsModalService,
-    private comerEventosService: ComerEventosService
+    private capturelineService: CapturelineService // private comerEventosService: ComerEventosService
   ) {
     super();
     this.dataSettings.columns = DATA_COLUMNS;
@@ -385,68 +398,72 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.getEvents({ page: 1, text: '' });
-    this.getBatches({ page: 1, text: '' });
+    // this.prepareForm();
+    // this.getEvents({ page: 1, text: '' });
+    // this.getBatches({ page: 1, text: '' });
     this.getOperations({ page: 1, text: '' });
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
     this.clientIdSettings.columns = this.modifyColumns(
       this.clientIdSettings.columns
     );
-  }
 
-  prepareForm() {
-    this.consultForm = this.fb.group({
-      id: [null, [Validators.required]],
-      batchId: [null],
-      status: [null],
-      operationId: [null],
-      insertDate: [null],
-      validityDate: [null],
+    this.dataParams.subscribe(params => {
+      this.getData(params);
     });
   }
 
-  getEvents(params: ListParams) {
-    // if (params.text == '') {
-    //   this.eventItems = new DefaultSelect(this.events, 5);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.events.filter((i: any) => i.id == id)];
-    //   this.eventItems = new DefaultSelect(item[0], 1);
-    // }
-    if (!params.text) {
-      this.events = new DefaultSelect([], 1);
-    }
-    if (!isNaN(params.text as any)) {
-      this.comerEventosService.getById(params.text).subscribe({
-        next: (res: any) => {
-          this.events = new DefaultSelect([res], 1);
-        },
-        error: () => {
-          this.events = new DefaultSelect([], 1);
-        },
-      });
-    } else {
-      this.comerEventosService.getAll(params).subscribe({
-        next: (res: any) => {
-          this.events = new DefaultSelect(res.data, 1);
-        },
-        error: () => {
-          this.events = new DefaultSelect([], 1);
-        },
-      });
-    }
-  }
+  // prepareForm() {
+  //   this.form = this.fb.group({
+  //     id: [null, [Validators.required]],
+  //     batchId: [null],
+  //     status: [null],
+  //     operationId: [null],
+  //     insertDate: [null],
+  //     validityDate: [null],
+  //   });
+  // }
 
-  getBatches(params: ListParams) {
-    if (params.text == '') {
-      this.batchItems = new DefaultSelect(this.batchTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.batchTestData.filter((i: any) => i.id == id)];
-      this.batchItems = new DefaultSelect(item[0], 1);
-    }
-  }
+  // getEvents(params: ListParams) {
+  //   // if (params.text == '') {
+  //   //   this.eventItems = new DefaultSelect(this.events, 5);
+  //   // } else {
+  //   //   const id = parseInt(params.text);
+  //   //   const item = [this.events.filter((i: any) => i.id == id)];
+  //   //   this.eventItems = new DefaultSelect(item[0], 1);
+  //   // }
+  //   if (!params.text) {
+  //     this.events = new DefaultSelect([], 1);
+  //   }
+  //   if (!isNaN(params.text as any)) {
+  //     this.comerEventosService.getById(params.text).subscribe({
+  //       next: (res: any) => {
+  //         this.events = new DefaultSelect([res], 1);
+  //       },
+  //       error: () => {
+  //         this.events = new DefaultSelect([], 1);
+  //       },
+  //     });
+  //   } else {
+  //     this.comerEventosService.getAll(params).subscribe({
+  //       next: (res: any) => {
+  //         this.events = new DefaultSelect(res.data, 1);
+  //       },
+  //       error: () => {
+  //         this.events = new DefaultSelect([], 1);
+  //       },
+  //     });
+  //   }
+  // }
+
+  // getBatches(params: ListParams) {
+  //   if (params.text == '') {
+  //     this.batchItems = new DefaultSelect(this.batchTestData, 5);
+  //   } else {
+  //     const id = parseInt(params.text);
+  //     const item = [this.batchTestData.filter((i: any) => i.id == id)];
+  //     this.batchItems = new DefaultSelect(item[0], 1);
+  //   }
+  // }
 
   getOperations(params: ListParams) {
     if (params.text == '') {
@@ -464,16 +481,17 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   resetFilter() {
-    this.consultForm.controls['batchId'].setValue(null);
-    this.consultForm.controls['status'].setValue(null);
-    this.consultForm.controls['operationId'].setValue(null);
-    this.consultForm.controls['insertDate'].setValue(null);
-    this.consultForm.controls['validityDate'].setValue(null);
+    this.form.controls['batchId'].setValue(null);
+    this.form.controls['status'].setValue(null);
+    this.form.controls['operationId'].setValue(null);
+    this.form.controls['insertDate'].setValue(null);
+    this.form.controls['validityDate'].setValue(null);
   }
 
   consult() {
-    console.log(this.consultForm.value);
-    this.dataColumns = this.checkTestData;
+    // console.log(this.form.value);
+    // this.dataColumns = this.checkTestData;
+    this.getData();
   }
 
   getCsv(event: Event) {
@@ -496,7 +514,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
-    this.dataColumns = this.checkTestData;
+    // this.dataColumns = this.checkTestData;
   }
 
   generateLcs() {
@@ -692,5 +710,43 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   exportExcel() {
     const filename: string = 'Líneas_de_Captura';
     this.excelService.export(this.lcsColumns, { filename });
+  }
+
+  getData(listParams?: ListParams): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.loading = true;
+    const params = new FilterParams();
+    params.limit = listParams?.limit || 10;
+    params.page = listParams?.page || 1;
+    const values = this.form.value as any;
+
+    params.addFilter('eventId', values.eventId);
+    if (values.batchId) params.addFilter('batchId', values.batchId);
+    if (values.status) params.addFilter('status', values.status);
+    if (values.operationId) params.addFilter('operationId', values.operationId);
+    if (values.insertDate)
+      params.addFilter('insertDate', convertFormatDate(values.insertDate));
+    if (values.validityDate)
+      params.addFilter('validityDate', convertFormatDate(values.validityDate));
+    // for (const key in values) {
+    //   if (values.hasOwnProperty(key) && values[key]) {
+    //     params.addFilter(key, values[key]);
+    //   }
+    // }
+
+    this.capturelineService.getTmpLcComer(params.getParams()).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        this.dataColumns.load(res.data);
+        this.totalEntries = res.count;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.onLoadToast('error', 'Error', err);
+      },
+    });
   }
 }

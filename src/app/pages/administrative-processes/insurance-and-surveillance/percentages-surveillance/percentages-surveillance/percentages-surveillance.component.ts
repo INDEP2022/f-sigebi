@@ -69,7 +69,7 @@ export class PercentagesSurveillanceComponent
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: err => {
+      error: () => {
         this.loading = false;
       },
     });

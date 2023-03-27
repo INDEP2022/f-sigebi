@@ -14,7 +14,7 @@ export const DATA_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  clientId: {
+  customerId: {
     title: 'Id Cliente',
     type: 'number',
     sort: false,
@@ -39,7 +39,7 @@ export const DATA_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  checkBank: {
+  bankExpCheck: {
     title: 'Banco Exp. Cheque',
     type: 'string',
     sort: false,
