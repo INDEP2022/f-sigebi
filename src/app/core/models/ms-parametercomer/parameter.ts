@@ -41,6 +41,7 @@ export interface IComerLayoutsH {
 
 export interface IComerLayouts {
   idLayout: IComerLayoutsH;
+  indActive: boolean;
   idConsec: number;
   position: number;
   column: string;
@@ -64,8 +65,10 @@ export interface IL {
 }
 
 export interface IComerLayoutsW {
+  idConsec: number;
   position: number;
   column: string;
+  indActive: boolean;
   type: string;
   length: number;
   constant: string | number;
