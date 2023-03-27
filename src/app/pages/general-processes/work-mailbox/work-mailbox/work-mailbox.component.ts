@@ -447,17 +447,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       if (this.predeterminedF.value) {
         const token = this.authService.decodeToken();
         let userId = token.preferred_username; //'FGAYTAN'; //
-        //this.columnFilters[field] = `$eq:${userId}`;
-        let field = `search`;
-        let searchBy = `searchBy`;
+        this.columnFilters[field] = `$eq:${userId}`;
+        //let field = `search`;
+        //let searchBy = `searchBy`;
         this.columnFilters[field] = `${userId.toUpperCase()}`;
-        this.columnFilters[searchBy] = `turnadoiUser`;
+        //this.columnFilters[searchBy] = `turnadoiUser`;
       } else if (user !== null) {
-        //this.columnFilters[field] = `$eq:${user.id}`;
-        let field = `search`;
-        let searchBy = `searchBy`;
+        this.columnFilters[field] = `$eq:${user.id}`;
+        //let field = `search`;
+        //let searchBy = `searchBy`;
         this.columnFilters[field] = `${user.id}`;
-        this.columnFilters[searchBy] = `turnadoiUser`;
+        //this.columnFilters[searchBy] = `turnadoiUser`;
       } else {
         delete this.columnFilters[field];
       }
@@ -533,15 +533,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     /*console.log(this.filterParams.getValue());
     let filters : FilterParams =this.filterParams.getValue()*/
     console.log(this.predeterminedF.value);
-    //let field = `filter.turnadoiUser`;
-    let field = `search`;
-    let searchBy = `searchBy`;
+    let field = `filter.turnadoiUser`;
+    //let field = `search`;
+    //let searchBy = `searchBy`;
     if (this.predeterminedF.value) {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
-      //this.columnFilters[field] = `$eq:${userId}`;
-      this.columnFilters[field] = `${userId.toUpperCase()}`;
-      this.columnFilters[searchBy] = `turnadoiUser`;
+      this.columnFilters[field] = `$eq:${userId.toUpperCase()}`;
+      //this.columnFilters[field] = `${userId.toUpperCase()}`;
+      //this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
       delete this.columnFilters[field];
     }*/
@@ -569,6 +569,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.dataTable.load([]);
         this.totalItems = 0;
         this.dataTable.refresh();
+        //this.onLoadToast('warning', 'Advertencia','No se encontrarón registros');
         this.loading = false;
       },
     });

@@ -74,16 +74,22 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   async handleError(error: HttpErrorResponse) {
     const status = error.status;
     console.log(error);
-    const message = error?.error?.message ?? 'Unknown error';
+    const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
     if (status === 0) {
-      this.onLoadToast('error', 'Error', 'Unable to connect to server');
+      this.onLoadToast(
+        'error',
+        'Servidor no disponible',
+        'Verifique su conexión, o intentelo más tarde'
+      );
       return;
     }
 
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
-      this.onLoadToast('error', 'Unauthorized', 'Error' + status);
+      let message = 'La sesión expiró';
+      this.onLoadToast('error', 'No autorizado', message);
+      //this.onLoadToast('error', 'No autorizado', 'Error' + status);
       this.router.navigate(['/auth/login']);
       return;
     }
