@@ -113,6 +113,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       idConsec: event.data.idConsec,
       position: event.data.position,
       column: event.data.column,
+      indActive: event.data.column,
       type: event.data.type,
       length: event.data.length,
       constant: event.data.constant,
