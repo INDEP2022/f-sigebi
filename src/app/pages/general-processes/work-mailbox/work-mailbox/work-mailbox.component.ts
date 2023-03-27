@@ -301,7 +301,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     let userId = token.preferred_username;
     let params = new FilterParams();
-    params.addFilter('id', userId, SearchFilter.EQ);
+    params.addFilter('id', userId.toUpperCase(), SearchFilter.EQ);
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: data => {
         console.log(data);
@@ -424,7 +424,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             //this.columnFilters[field] = `$eq:${userId}`;
             let field = `search`;
             let searchBy = `searchBy`;
-            this.columnFilters[field] = `${userId}`;
+            this.columnFilters[field] = `${userId.toUpperCase()}`;
             this.columnFilters[searchBy] = `turnadoiUser`;
           } else if (user !== null) {
             //this.columnFilters[field] = `$eq:${user.id}`;
@@ -450,7 +450,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         //this.columnFilters[field] = `$eq:${userId}`;
         let field = `search`;
         let searchBy = `searchBy`;
-        this.columnFilters[field] = `${userId}`;
+        this.columnFilters[field] = `${userId.toUpperCase()}`;
         this.columnFilters[searchBy] = `turnadoiUser`;
       } else if (user !== null) {
         //this.columnFilters[field] = `$eq:${user.id}`;
@@ -540,7 +540,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
       //this.columnFilters[field] = `$eq:${userId}`;
-      this.columnFilters[field] = `${userId}`;
+      this.columnFilters[field] = `${userId.toUpperCase()}`;
       this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
       delete this.columnFilters[field];
@@ -815,7 +815,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     predetermined
       ? (params.addFilter('predetermined', 'S'),
-        params.addFilter('user', userId))
+        params.addFilter('user', userId.toUpperCase()))
       : params.removeAllFilters();
 
     this.procedureManagementService
@@ -1304,7 +1304,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    //params.addFilter('name', $params.text, SearchFilter.LIKE);
+    params.addFilter('name', $params.text, SearchFilter.LIKE);
     //params.addFilter('assigned', 'S');
     /*if (lparams?.text.length > 0)
 
