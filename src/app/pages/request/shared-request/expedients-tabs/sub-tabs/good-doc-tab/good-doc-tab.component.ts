@@ -72,6 +72,9 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
           this.loading = false;
         });
       },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
