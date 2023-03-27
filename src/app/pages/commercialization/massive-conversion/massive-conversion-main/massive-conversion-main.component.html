@@ -136,7 +136,7 @@
               <i
                 class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-              <p class="text-muted">{{ selectedEvent.processKey }}</p>
+              <p class="text-muted">{{ selectedEvent.eventRel.processKey }}</p>
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -145,7 +145,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventDate }}
+                {{ selectedEvent.eventRel.eventDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -155,7 +155,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
               <p class="text-muted">
-                {{ selectedEvent.place }}
+                {{ selectedEvent.eventRel.place }}
               </p>
             </div>
             <div
@@ -165,7 +165,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.failedDate }}
+                {{ selectedEvent.eventRel.failedDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -252,7 +252,7 @@
             <div class="col-sm-4 col-md-2">
               <form-field
                 [control]="consultForm.get('validityDate')"
-                label="Fecha Fallo">
+                label="Fecha Vigencia">
                 <input
                   type="text"
                   formControlName="validityDate"
