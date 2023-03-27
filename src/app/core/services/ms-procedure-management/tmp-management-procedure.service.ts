@@ -18,4 +18,8 @@ export class TmpManagementProcedureService extends HttpService {
       params
     );
   }
+
+  folioReception(body: {}) {
+    return this.post('tmp-management-procedure/folio-reception', body);
+  }
 }

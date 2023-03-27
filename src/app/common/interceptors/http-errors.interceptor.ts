@@ -74,26 +74,28 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     } else if (Array.isArray(error?.error?.message) === false) {
       message = error?.error?.message;
     } else {
-      message = 'Unknown error';
+      message = 'Error del servidor';
     }
     if (status === 0) {
-      this.onLoadToast('error', 'Error', 'Unable to connect to server');
+      this.onLoadToast('error', 'Error', 'Servidor no disponible');
       return;
     }
     if (status === 400 && this.showError && !this.blockAllErrors) {
-      this.onLoadToast('warning', 'advertencia', message);
-      // console.log(status, this.showError, message);
+      //this.onLoadToast('warning', 'advertencia', message);
+      console.log(status, this.showError, message);
       return;
     }
     if (status === 500 && this.showError && !this.blockAllErrors) {
-      this.onLoadToast('warning', 'advertencia', message);
+      message = 'Error del Servidor';
+      this.onLoadToast('warning', 'Advertencia', message);
       console.log(status, this.showError, message);
       return;
     }
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
-      this.onLoadToast('error', 'Unauthorized', 'Error' + status);
+      message = 'La sesión expiró';
+      this.onLoadToast('error', 'No autorizado', 'Error' + status);
       this.router.navigate(['/auth/login']);
       return;
     }
