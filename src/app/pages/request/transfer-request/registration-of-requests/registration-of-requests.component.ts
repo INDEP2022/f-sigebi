@@ -123,6 +123,7 @@ export class RegistrationOfRequestsComponent
           this.staticTabs.tabs[0].active = true;
         }
       },
+      error: error => {},
     });
   }
 
@@ -282,32 +283,42 @@ export class RegistrationOfRequestsComponent
   // }
 
   getTransferent(idTransferent: number) {
-    this.transferentService.getById(idTransferent).subscribe(data => {
-      this.transferentName = data.nameTransferent;
+    this.transferentService.getById(idTransferent).subscribe({
+      next: data => {
+        this.transferentName = data.nameTransferent;
+      },
     });
   }
 
   getRegionalDelegation(idDelegation: number) {
-    this.delegationService.getById(idDelegation).subscribe(data => {
-      this.delegationName = data.description;
+    this.delegationService.getById(idDelegation).subscribe({
+      next: data => {
+        this.delegationName = data.description;
+      },
     });
   }
 
   getStateOfRepublic(idState: number) {
-    this.stateOfRepublicService.getById(idState).subscribe(data => {
-      this.stateOfRepublicName = data.descCondition;
+    this.stateOfRepublicService.getById(idState).subscribe({
+      next: data => {
+        this.stateOfRepublicName = data.descCondition;
+      },
     });
   }
 
   getAuthority(idAuthority: number) {
-    this.authorityService.getById(idAuthority).subscribe(data => {
-      this.authorityName = data.authorityName;
+    this.authorityService.getById(idAuthority).subscribe({
+      next: data => {
+        this.authorityName = data.authorityName;
+      },
     });
   }
 
   getStation(idStation: number) {
-    this.stationService.getById(idStation).subscribe(data => {
-      this.stationName = data.stationName;
+    this.stationService.getById(idStation).subscribe({
+      next: data => {
+        this.stationName = data.stationName;
+      },
     });
   }
 
@@ -391,6 +402,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -405,6 +417,7 @@ export class RegistrationOfRequestsComponent
             resolve('');
           }
         },
+        error: error => {},
       });
     });
   }
@@ -416,6 +429,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -439,6 +453,7 @@ export class RegistrationOfRequestsComponent
           next: resp => {
             resolve(resp);
           },
+          error: error => {},
         });
       } else {
         resolve(null);
@@ -462,6 +477,7 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
+        error: error => {},
       });
   }
 
