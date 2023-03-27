@@ -134,7 +134,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   private update(clarification: ClarificationGoodRejectNotification) {
-    console.log('se manda', clarification);
     this.rejectedGoodService
       .update(clarification.rejectNotificationId, clarification)
       .subscribe({

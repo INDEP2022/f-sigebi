@@ -23,23 +23,24 @@ export class RegistrationHelper extends BasePage {
   getGoodQuantity(requestId: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.requestId'] = `$eq:${requestId}`;
-      this.goodService.getAll(params).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {
-          console.log(error.error.message);
-          console.log(error);
-          if (error.error.message === 'No se encontraron registros.') {
-            let good: any = {};
-            good['count'] = 0;
-            resolve(good);
-          } else {
-            reject(error.error.message);
-          }
-        },
-      });
+
+      if (requestId) {
+        params['filter.requestId'] = `$eq:${requestId}`;
+        this.goodService.getAll(params).subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            if (error.error.message === 'No se encontraron registros.') {
+              let good: any = {};
+              good['count'] = 0;
+              resolve(good);
+            } else {
+              reject(error.error.message);
+            }
+          },
+        });
+      }
     });
   }
 
