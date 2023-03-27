@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
@@ -27,6 +27,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
+  @Input() idGood: number;
 
   constructor(
     private clarificationService: ClarificationService,
