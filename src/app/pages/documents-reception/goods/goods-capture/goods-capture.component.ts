@@ -10,6 +10,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { HOME_DEFAULT } from 'src/app/utils/constants/main-routes';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
 import { SearchFractionComponent } from './components/search-fraction/search-fraction.component';
 import { GoodsCaptureMain } from './goods-capture-main';
@@ -303,7 +304,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
           '/pages/documents-reception/flyers-registration',
         ]);
       } else {
-        this.router.navigate(['/']);
+        this.router.navigate([HOME_DEFAULT]);
       }
     }
   }
@@ -326,37 +327,55 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     this.loading = true;
     console.log(this.goodToSave.fileNumber);
     if (this.params.origin == FLYERS_REGISTRATION_CODE) {
-      this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
-        next: (expedient: any) => {
-          this._expedienService.create(expedient).subscribe({
-            next: () => {
-              this.updateNotifications(expedient).subscribe({
-                next: () => {
-                  this.saveGood();
-                },
-                error: error => {
-                  this.saveGood();
-                },
-              });
-            },
-            error: error => {
-              this.onLoadToast(
-                'error',
-                'Error',
-                'Ocurrio un error al guardar el expediente'
-              );
-            },
-          });
-        },
-        error: error => {
-          if (error.status > 0 && error.status >= 404) {
-            this.saveGood();
-          }
-        },
-      });
+      this.createFromParams();
     } else {
       this.saveGood();
     }
+  }
+
+  createFromParams() {
+    const expedient = Number(this.global.gNoExpediente);
+    this.hideError();
+    this.goodsCaptureService.findExpedient(expedient).subscribe({
+      next: () => {
+        this.saveGood();
+      },
+      error: error => {
+        this.createWithTmpExp();
+      },
+    });
+  }
+
+  createWithTmpExp() {
+    this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
+      next: (expedient: any) => {
+        this._expedienService.create(expedient).subscribe({
+          next: expedient => {
+            this.goodToSave.fileNumber = `${expedient.id}`;
+            this.updateNotifications(expedient).subscribe({
+              next: () => {
+                this.saveGood();
+              },
+              error: error => {
+                this.saveGood();
+              },
+            });
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al guardar el expediente'
+            );
+          },
+        });
+      },
+      error: error => {
+        if (error.status > 0 && error.status >= 404) {
+          this.saveGood();
+        }
+      },
+    });
   }
 
   updateNotifications(expedient: any) {
