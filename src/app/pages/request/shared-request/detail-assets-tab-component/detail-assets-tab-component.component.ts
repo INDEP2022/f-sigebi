@@ -302,6 +302,60 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      decreeExproProc: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      decreeExproSupe: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      declareRemediation: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      heritage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      assurance: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      propTitleFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      measuresAdjacent: [null, [Validators.pattern(STRING_PATTERN)]],
+      vouchersWater: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      debts: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      physicalPossession: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      closed: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      familyHeritage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      problemDesc: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      photosAttached: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
     });
   }
 
@@ -458,6 +512,7 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
+    console.log(this.detailAssets.getRawValue());
   }
 
   handleTheftReportEvent(event: any) {

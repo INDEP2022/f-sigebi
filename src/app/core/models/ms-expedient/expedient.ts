@@ -15,7 +15,7 @@ export interface IExpedient {
   insertedBy?: string;
   observations?: string;
   insertMethod?: string;
-  insertDate?: Date;
+  insertDate?: Date | string;
   receptionDate?: Date;
   criminalCase: string;
   preliminaryInquiry: string;

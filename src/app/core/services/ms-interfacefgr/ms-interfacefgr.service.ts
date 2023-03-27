@@ -4,7 +4,12 @@ import { InterfacefgrEndPoints } from 'src/app/common/constants/endpoints/ms-int
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPgrTransfer } from '../../models/ms-interfacefgr/ms-interfacefgr.interface';
+import {
+  IFaValAtributo1,
+  IOTClaveByAsunto,
+  IOTClaveByAsuntoResponse,
+  IPgrTransfer,
+} from '../../models/ms-interfacefgr/ms-interfacefgr.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +31,7 @@ export class InterfacefgrService extends HttpService {
     params?: string
   ): Observable<IListResponse<IPgrTransfer>> {
     return this.get<IListResponse<IPgrTransfer>>(
-      InterfacefgrEndPoints.PgrTransfer,
+      InterfacefgrEndPoints.PgrTransferFiltered,
       params
     );
   }
@@ -62,5 +67,19 @@ export class InterfacefgrService extends HttpService {
 
   getCityByAsuntoSat(body: { pgrOffice: string }) {
     return this.post(InterfacefgrEndPoints.cityByAsuntoSat, body);
+  }
+
+  getFaValAtributo1(body: IFaValAtributo1) {
+    return this.post<IListResponse<IFaValAtributo1>>(
+      InterfacefgrEndPoints.PgrFaValAtrib1,
+      body
+    );
+  }
+
+  getOTClaveEntityFederativeByAvePrevia(body: IOTClaveByAsunto) {
+    return this.post<IOTClaveByAsuntoResponse>(
+      InterfacefgrEndPoints.OTkeyByAsunto,
+      body
+    );
   }
 }

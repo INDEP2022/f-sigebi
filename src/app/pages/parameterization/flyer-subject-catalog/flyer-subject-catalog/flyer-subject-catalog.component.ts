@@ -42,6 +42,9 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
 
+  loading1 = this.loading;
+  loading2 = this.loading;
+
   id: any;
 
   settings2;
@@ -115,7 +118,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
 
   //Trae todos los asuntos
   getAffairAll() {
-    this.loading = true;
+    this.loading1 = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -127,10 +130,10 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
         this.totalItems = response.count || 0;
         this.data.load(this.columns);
         this.data.refresh();
-        this.loading = false;
+        this.loading1 = false;
       },
       error: error => {
-        this.loading = false;
+        this.loading1 = false;
         console.log(error);
       },
     });
@@ -152,16 +155,16 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
 
   //Trae los tipos de asuntos por el id del asunto previamente seleccionado
   getAffairType(affair: IAffair) {
-    this.loading = true;
+    this.loading2 = true;
     this.affairTypeService
       .getAffairTypeById(affair.id, this.params2.getValue())
       .subscribe({
         next: response => {
           this.affairTypeList = response.data;
           this.totalItems2 = response.count;
-          this.loading = false;
+          this.loading2 = false;
         },
-        error: error => (this.showNullRegister(), (this.loading = false)),
+        error: error => (this.showNullRegister(), (this.loading2 = false)),
       });
   }
 
@@ -175,7 +178,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
         affair,
         idF,
         callback: (next: boolean) => {
-          if (next) this.getAffairType(this.id);
+          if (next) this.getAffairType(affair);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -208,7 +211,6 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(affair.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -216,11 +218,18 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de asunto
   delete(id: number) {
     this.affairService.remove2(id).subscribe({
-      next: () => this.getAffairAll(),
+      next: () => (Swal.fire('Borrado', '', 'success'), this.getAffairAll()),
+      error: err => {
+        this.alertQuestion(
+          'error',
+          'No se puede eliminar Asunto',
+          'Primero elimine sus tipos de asuntos'
+        );
+      },
     });
   }
 
-  //msj de alerta para eliminar un asunto
+  //msj de alerta para eliminar un tipo de asunto
   showDeleteAlert2(affairType?: IAffairType) {
     this.alertQuestion(
       'warning',
@@ -229,15 +238,17 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(affairType);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  //método para borrar registro de asunto
+  //método para borrar registro de tipo de asunto
   delete2(affairType?: IAffairType) {
+    let affair = this.affairs;
     this.affairTypeService.remove(affairType).subscribe({
-      next: () => this.getAffairAll(),
+      next: () => (
+        Swal.fire('Borrado', '', 'success'), this.getAffairType(affair)
+      ),
     });
   }
 

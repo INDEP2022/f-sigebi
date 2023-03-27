@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -14,13 +14,14 @@ import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents
 @Component({
   selector: 'app-good-doc-tab',
   templateUrl: './good-doc-tab.component.html',
-  styles: [],
+  styleUrls: ['./good-doc-tab.component.scss'],
 })
 export class GoodDocTabComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any = [];
   totalItems: number = 0;
   idRequest: number = 0;
+  @Input() typeDoc = '';
   goodSelect: IGood[] = [];
   constructor(
     private modalService: BsModalService,
@@ -37,13 +38,14 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    /* this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample()); */
-    this.getGoodsRequest();
+      .subscribe(() => this.getGoodsRequest());
   }
 
   getGoodsRequest() {
+    this.loading = true;
+    this.params.getValue()['search'] = this.params.getValue().text;
     this.params.getValue()['filter.requestId'] = this.idRequest;
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: async (data: any) => {
@@ -65,8 +67,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
         });
 
         Promise.all(filterGoodType).then(x => {
-          this.totalItems = data.data;
           this.paragraphs = data.data;
+          this.totalItems = data.count;
           this.loading = false;
         });
       },
@@ -85,19 +87,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
         resolve('');
       }
     });
-  }
-
-  getExample() {
-    /* this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
-        console.log(this.paragraphs);
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    }); */
   }
 
   selectTableColumns(event: any): void {

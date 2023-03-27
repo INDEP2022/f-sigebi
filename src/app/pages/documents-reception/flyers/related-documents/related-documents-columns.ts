@@ -44,3 +44,16 @@ export const RELATED_DOCUMENTS_EXAMPLE_DATA = [
     proceso: 'ASEGURADO',
   },
 ];
+export interface IOficioDictamenParams {
+  parametros: string; //PARAMETROS;
+  p_gest_ok: string; //P_GEST_OK;
+  p_no_tramite: string; // P_NO_TRAMITE;
+  tipo_of: string; //TIPO_OF;
+  sale: string; //SALE;
+  doc: string; //DOC;
+  bien: string; //BIEN;
+  volante: string; //VOLANTE;
+  expediente: string; //EXPEDIENTE;
+  pllamo: string; //PLLAMO;
+  p_dictamen: string; //P_DICTAMEN;
+}

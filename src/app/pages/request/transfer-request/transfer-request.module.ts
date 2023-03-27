@@ -11,12 +11,14 @@ import { SelectTypeUserComponent } from './select-type-user/select-type-user.com
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
 import { GenerateDictumComponent } from './tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
+import { OpenDescriptionComponent } from './tabs/associate-file/open-description/open-description.component';
 import { AdvancedSearchComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { ClarificationFormTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { ClarificationListTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/clarification-list-tab/clarification-list-tab.component';
 import { ClassifyAssetsTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/classify-assets-tab/classify-assets-tab.component';
 import { ClassificationAssetsTabComponent } from './tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
+import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
@@ -73,6 +75,8 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     GenerateDictumComponent,
     AssociateFieldComponent,
     SelectTypeUserComponent,
+    OpenDescriptionComponent,
+    CheckboxComponent,
   ],
   imports: [
     CommonModule,

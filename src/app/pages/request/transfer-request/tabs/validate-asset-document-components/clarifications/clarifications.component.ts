@@ -12,7 +12,9 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
@@ -90,7 +92,9 @@ export class ClarificationsComponent
   constructor(
     private modalService: BsModalService,
     private readonly fb: FormBuilder,
-    private readonly goodService: GoodService
+    private readonly goodService: GoodService,
+    private readonly clarificationService: ClarificationService,
+    private readonly rejectGoodService: RejectedGoodService
   ) {
     super();
   }
@@ -99,7 +103,6 @@ export class ClarificationsComponent
     console.log(changes);
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getData();
-      // this.getClarifications();
     });
   }
 
@@ -185,20 +188,26 @@ export class ClarificationsComponent
     this.goodService.getAll(filter).subscribe({
       next: ({ data }) => {
         this.assetsArray = [...data];
-        console.log(data);
+        console.log(this.assetsArray);
       },
     });
   }
 
   getClarifications() {
-    this.paragraphs = data2;
+    let params = new BehaviorSubject<FilterParams>(new FilterParams());
+    params.value.addFilter('goodId', this.assetsArray[0]);
+    const filter = this.params.getValue().getParams();
+    this.rejectGoodService.getAllFilter(filter).subscribe({
+      next: ({ data }) => {
+        this.paragraphs = [...data];
+        console.log(data);
+      },
+    });
   }
 
   clicked(event: any) {
-    console.log('one row');
     this.rowSelected = event;
     this.goodForm.patchValue({ ...event });
-    console.log(event);
   }
 
   selectAll(event?: any) {
@@ -222,6 +231,8 @@ export class ClarificationsComponent
       this.assetsSelected.push(
         this.assetsArray.find(x => x.id == event.target.value)
       );
+      console.log(event.target.value);
+      this.getClarifications();
     } else {
       let index = this.assetsSelected.indexOf(
         this.assetsArray.find(x => x.id == event.target.value)
@@ -242,10 +253,35 @@ export class ClarificationsComponent
       this.openForm();
     }
   }
-
+  deleteClarification() {
+    let data = this.clariArraySelected[0];
+    if (!data) {
+      this.alert('warning', 'Cuidado', 'Tiene que seleccionar una aclaracion');
+    }
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar el registro?'
+    ).then(val => {
+      if (val.isConfirmed) {
+        this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
+          next: val => {
+            this.onLoadToast(
+              'success',
+              'Eliminada con exito',
+              'La aclaracion fue eliminada con exito.'
+            );
+          },
+          complete: () => {
+            this.getClarifications();
+          },
+        });
+      }
+    });
+  }
   editForm() {
     if (this.clariArraySelected.length === 1) {
-      this.openForm(this.clariArraySelected);
+      this.openForm(this.clariArraySelected[0]);
     } else {
       this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
     }
@@ -255,9 +291,10 @@ export class ClarificationsComponent
     let docClarification = event;
     let config: ModalOptions = {
       initialState: {
-        docClarification: docClarification,
+        goodTransfer: this.goodForm.value,
+        docClarification,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) this.getClarifications();
         },
       },
       class: 'modal-sm modal-dialog-centered',

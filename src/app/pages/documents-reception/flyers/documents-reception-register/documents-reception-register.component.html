@@ -4,7 +4,13 @@
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
         <button
-          *ngIf="changeFlyerOption || flyerEditMode"
+          *ngIf="flyerReceptionMode"
+          class="btn btn-danger active btn-sm"
+          (click)="endProcess()">
+          <i class="bx bx-chevron-left float-icon"></i>Regresar
+        </button>
+        <button
+          *ngIf="(changeFlyerOption || flyerEditMode) && !flyerReceptionMode"
           class="btn btn-primary active btn-sm"
           (click)="chooseOther()">
           Seleccionar Volante
@@ -315,9 +321,11 @@
             </form-field>
           </div>
 
-          <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
+          <div
+            class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}"
+            *ngIf="!pgrInterface">
             <form-field
-              *ngIf="!pgrInterface && initialCondition == 'T'"
+              *ngIf="initialCondition == 'T'"
               class="col-md-12"
               [control]="documentsReceptionForm.get('judgementType')"
               label="Tipo Juicio">
@@ -562,7 +570,6 @@
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface"
                 termMaxLength="80">
               </ngx-select>
             </form-field>
@@ -570,7 +577,6 @@
 
           <div class="row pt-5">
             <form-field
-              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('courtNumber')">
               <ngx-select
@@ -585,11 +591,28 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
+
+            <form-field
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('transference')"
+              *ngIf="showTransference">
+              <ngx-select
+                [form]="documentsReceptionForm"
+                (fetchItems)="getTransferees($event)"
+                [data]="transferees"
+                bindLabel="nameAndId"
+                control="transference"
+                label=" "
+                [searchOnInit]="true"
+                termMaxLength="200"
+                [showTooltip]="true">
+              </ngx-select>
+            </form-field>
           </div>
 
           <div class="row pt-5">
             <form-field
-              class="col-md-4"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('indiciadoNumber')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -612,9 +635,11 @@
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
+          </div>
 
+          <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('viaKey')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -631,7 +656,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('destinationArea')"
               label="&Aacute;rea Destino">
               <input
@@ -755,7 +780,7 @@
             loadingText="Cargando"
             [disabled]="procedureBlocked"
             [loading]="loading"
-            (confirm)="goodsCaptureCheck()"></confirm-button>
+            (confirm)="nextStep()"></confirm-button>
         </div>
       </div>
     </div>

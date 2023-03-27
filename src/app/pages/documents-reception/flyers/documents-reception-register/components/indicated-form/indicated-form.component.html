@@ -15,7 +15,11 @@
       <div class="row pt-5">
         <div class="col-md-12">
           <form-field [control]="indicatedForm.get('curp')" label="Curp">
-            <input type="text" class="form-control" formControlName="curp" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              [max-length]="18" />
           </form-field>
         </div>
       </div>

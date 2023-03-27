@@ -1,10 +1,17 @@
-//Interface Provisional sin Validar
 export interface IContract {
   id?: number;
-  contractKey: number;
-  contractZoneKey: string;
-  status: number;
-  startDate: string;
-  endDate: string;
-  registryNumber: string;
+  contractKey: string;
+  zoneContractKey: number;
+  statusContract: number;
+  startDate: Date;
+  endDate: Date;
+  registerNumber: number;
+  zone: IZone;
+  vigContract: boolean;
+}
+
+interface IZone {
+  recordNumber: string;
+  numberDelegation: string;
+  zoneContractKey: string;
 }

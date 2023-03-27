@@ -31,14 +31,14 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Tipo',
+        selectText: 'Seleccionar',
         list: [
-          { value: 'ACT', title: 'ACT' },
-          { value: 'PAS', title: 'PAS' },
-          { value: 'CAP', title: 'CAP' },
-          { value: 'RES', title: 'RES' },
-          { value: 'ADE', title: 'ADE' },
-          { value: 'PRI', title: 'PRI' },
+          { value: 'ACT', title: 'Activo' },
+          { value: 'PAS', title: 'Pasivo' },
+          { value: 'CAP', title: 'Capital Contable' },
+          { value: 'RES', title: 'Resultados' },
+          { value: 'ADE', title: 'Adeudos' },
+          { value: 'PRI', title: 'Principales Cuentas' },
         ],
       },
     },
@@ -57,7 +57,7 @@ export const FINANCIAL_INFO_ATTR_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Tipo',
+        selectText: 'Seleccionar',
         list: [
           { value: 'GEN', title: 'Genérico' },
           { value: 'UTB', title: 'Utilidad bruta' },
