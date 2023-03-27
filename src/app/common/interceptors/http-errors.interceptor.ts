@@ -87,7 +87,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     }
     if (status === 400 && this.showError && !this.blockAllErrors) {
       //this.onLoadToast('warning', 'advertencia', message);
-      console.log(status, this.showError, message);
+      //console.log(status, this.showError, message);
       return;
     }
     if (status === 500 && this.showError && !this.blockAllErrors) {
