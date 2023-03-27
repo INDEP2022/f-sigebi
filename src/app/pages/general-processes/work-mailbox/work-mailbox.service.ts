@@ -11,7 +11,7 @@ export class WorkMailboxService {
   constructor(private htpp: HttpClient) {}
 
   //TODO: MOVE TO SERVICES FOLDER
-  getView(params?: ListParams) {
+  getView(params?: ListParams): Observable<any> {
     const url = `${environment.API_URL}proceduremanagement/api/v1/views/management-process`;
     return this.htpp.get(url, { params });
   }
