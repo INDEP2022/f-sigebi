@@ -19,7 +19,7 @@ export class ExpedientService implements ICrudMethods<IExpedient> {
 
   getTempExpedientById(id: number | string) {
     return this.expedientRepository.getById(
-      'expedient/expedient/get-temp-expedient',
+      'expedient/tmp-expedients',
       id
     ) as any;
   }

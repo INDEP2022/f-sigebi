@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { DocumentRequest } from 'src/app/core/models/ms-wcontent/document.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -22,20 +25,22 @@ export class SeeInformationComponent extends BasePage implements OnInit {
   nameRegDelegation: string = '';
   nameTrans: string = '';
   nameState: string;
+  typeDocument: string = '';
+  paramsDocTypes = new BehaviorSubject<ListParams>(new ListParams());
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private regDelService: RegionalDelegationService,
     private transferentService: TransferenteService,
-    private stateService: StateOfRepublicService
+    private stateService: StateOfRepublicService,
+    private wContentService: WContentService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.initForm();
-    console.log('data', this.data);
-    console.log(this.typeInfo);
     this.getRegionalDelegation();
     this.getTransferent();
     this.getState();
@@ -53,14 +58,12 @@ export class SeeInformationComponent extends BasePage implements OnInit {
     this.transferentService
       .getById(this.data.xidTransferente)
       .subscribe(info => {
-        console.log('transferente', info);
         this.nameTrans = info.nameTransferent;
       });
   }
 
   getState() {
     this.stateService.getById(this.data.xestado).subscribe(info => {
-      console.log('estado', info);
       this.nameState = info.descCondition;
     });
   }

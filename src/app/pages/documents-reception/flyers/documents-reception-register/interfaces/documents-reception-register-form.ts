@@ -104,7 +104,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
     Validators.required
   ),
   endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
-  transference: new FormControl<number>(null),
+  transference: new FormControl<ITransferente>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null, Validators.required),
   autorityNumber: new FormControl<IAuthority>(null, Validators.required),
@@ -234,7 +234,7 @@ export interface IDocumentsReceptionRegisterForm {
   cityNumber: ICity;
   entFedKey: TvalTable1Data | ITablesEntryData;
   endTransferNumber: ITransferente;
-  transference: number;
+  transference: ITransferente;
   courtNumber: ICourt;
   stationNumber: IStation;
   autorityNumber: IAuthority;
@@ -288,6 +288,13 @@ export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
   persontype: new FormControl<string>('C'),
   flierNumber: new FormControl<string | number>(null),
 };
+
+export interface IDocumentsReceptionUserForm {
+  copyNumber: string | number;
+  copyuser: IUserAccessAreaRelational;
+  persontype: string;
+  flierNumber: string | number;
+}
 
 export enum TaxpayerLabel {
   Taxpayer = 'Contribuyente',

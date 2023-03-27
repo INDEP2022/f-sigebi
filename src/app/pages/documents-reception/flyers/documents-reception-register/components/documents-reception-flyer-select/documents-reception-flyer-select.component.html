@@ -69,7 +69,7 @@
         <confirm-button
           text="Aceptar"
           loadingText="Cargando"
-          [disabled]="!flyerForm.valid"
+          [disabled]="!flyerForm.valid || !notificationExists"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

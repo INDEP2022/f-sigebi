@@ -44,7 +44,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.userName = this.authService.decodeToken().given_name;
+    this.userName = this.authService.decodeToken().preferred_username;
 
     this.consultTasksForm = this.fb.group({
       unlinked: [null, Validators.required],
@@ -85,12 +85,24 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   cleanFilter() {
-    this.consultTasksForm.value.txtSearch = '';
+    this.consultTasksForm.reset();
+    this.consultTasksForm.updateValueAndValidity();
+    this.consultTasksForm.controls['txtSearch'].setValue('');
+    this.getTasks();
     // this.consultTasksForm.value.unlinked1.setValue({"0", "Todos"});
   }
 
   onKeydown(event: any) {
     // console.log("event", event);
     this.getTasks();
+  }
+
+  openTask(selected: any): void {
+    if (selected.requestId !== null || selected.urlNb !== null) {
+      let url = `${selected.urlNb}/${selected.requestId}`;
+      this.router.navigateByUrl(url);
+    } else {
+      this.alert('warning', 'No disponible', 'Tarea no disponible');
+    }
   }
 }

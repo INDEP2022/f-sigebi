@@ -37,6 +37,10 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     super();
   }
 
+  get blockAllErrors() {
+    return this.showHideErrorInterceptorService.blockAllErrors;
+  }
+
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
@@ -76,12 +80,14 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.onLoadToast('error', 'Error', 'Unable to connect to server');
       return;
     }
-    if (status === 400 && this.showError) {
+    if (status === 400 && this.showError && !this.blockAllErrors) {
       this.onLoadToast('warning', 'advertencia', message);
+      // console.log(status, this.showError, message);
       return;
     }
-    if (status === 500) {
+    if (status === 500 && this.showError && !this.blockAllErrors) {
       this.onLoadToast('warning', 'advertencia', message);
+      console.log(status, this.showError, message);
       return;
     }
     if (status === 401) {
