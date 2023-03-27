@@ -6,9 +6,11 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -97,7 +99,9 @@ export class RegistrationOfRequestsComponent
     private goodService: GoodService,
     private fractionService: FractionService,
     private goodEstateService: RealStateService,
-    private registrationHelper: RegistrationHelper
+    private registrationHelper: RegistrationHelper,
+    private taskService: TaskService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -492,7 +496,39 @@ export class RegistrationOfRequestsComponent
     this.openModal(SelectTypeUserComponent, request, 'commit-request');
   }
 
-  verifyComplianceMethod() {}
+  verifyComplianceMethod() {
+    /*  let body: any = {};
+    const user: any = this.authService.decodeToken();
+    body['id'] = 0;
+    body['assignees'] = this.user.username;
+    body['assigneesDisplayname'] = this.user.firstName;
+    body['creator'] = user.username;
+    body['taskNumber'] = Number(this.data.id);
+    body['title'] =
+      'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
+      this.data.id;
+    body['isPublic'] = 's';
+    body['istestTask'] = 's';
+    body['programmingId'] = 0;
+    body['requestId'] = this.data.id;
+    body['expedientId'] = this.data.recordId;
+    body['urlNb'] = 'pages/request/transfer-request/verify-compliance';
+
+    const taskResponse = await this.createTask(body);
+    if (taskResponse) {
+      Swal.fire({
+        title: 'Solicitud Turnada',
+        text: 'La solicitud se turno conrrectamente',
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        this.close();
+      });
+    } */
+  }
 
   saveClarification(): void {
     this.saveClarifiObject = true;
@@ -505,6 +541,19 @@ export class RegistrationOfRequestsComponent
 
   signDictum() {
     this.openModal(GenerateDictumComponent, '', 'approval-request');
+  }
+
+  createTask(task: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    });
   }
 
   msgSaveModal(
