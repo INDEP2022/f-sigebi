@@ -108,7 +108,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA ACLARACION';
-    clarification.goodId = this.idGood;
+    //clarification.goodId = this.idGood;
     clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
       this.update(clarification);

@@ -81,20 +81,25 @@
                 <i class="bx bx-layer"></i> Menaje
               </a>
             </li>
-            <!-- *ngIf="typeRecord == 'PAMA' || typeRecord === 'SAT_SAE'" -->
-            <li role="menuitem">
+            <li
+              role="menuitem"
+              *ngIf="typeRecord == 'PAMA' && transferente === 'SAT_SAE'">
               <a class="dropdown-item" (click)="masiveClasification()">
                 <i class="bx bx-layer"></i> Clasificaci&oacute;n Masiva
               </a>
             </li>
             <!-- sub menu de importacion -->
-            <li role="menuitem">
+            <li
+              role="menuitem"
+              *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'">
               <a class="dropdown-item" (click)="fileInmueble.click()"
                 ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
               </a>
             </li>
-            <li class="divider dropdown-divider"></li>
-            <li role="menuitem">
+
+            <li
+              role="menuitem"
+              *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'">
               <a class="dropdown-item" style="color: red" (click)="delete()">
                 <i class="bx bx-trash"></i> Eliminar
               </a>

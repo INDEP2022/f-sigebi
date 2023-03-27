@@ -95,10 +95,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      console.log(this.requestObject);
-
+      //console.log(this.requestObject);
       this.typeRecord = this.requestObject.typeRecord;
-      // this.transferente = this.requestObject.transfer;
+      this.transferente = this.requestObject.transfer;
     }
   }
 
@@ -454,17 +453,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   saveFractions() {
     return new Promise((resolve, reject) => {
-      debugger;
-      for (let i = 0; i < this.listgoodObjects.length; i++) {
-        const element = this.listgoodObjects[i];
-        element.requestId = Number(element.requestId.id);
-        element.fractionId = Number(element.fractionId.id);
-        element.addressId = Number(element.addressId.id);
-        delete element.goodTypeName;
-        delete element.physicalStatusName;
-        delete element.stateConservationName;
-        delete element.destinyLigieName;
-        delete element.transferentDestinyName;
+      for (let i = 0; i < this.listGoodsFractions.length; i++) {
+        const element = this.listGoodsFractions[i];
 
         this.goodService.update(element).subscribe({
           next: resp => {
@@ -473,6 +463,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               'Fraccion guardada',
               `Se guardo la fraccion exitosamente`
             );
+            this.refreshTable();
           },
           error: error => {
             console.log(error);
@@ -574,11 +565,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         // verifica el nivel actual de la fraccion
         this.matchLevelFraction(res);
       } else {
-        // asignar el id de fraccion a los bienes
+        // asignar el id de fraccion a los biene
+        this.listGoodsFractions = [];
+        this.listgoodObjects.map((item: any) => {
+          let good: any = {};
+          good.id = Number(item.id);
+          good.addressId = Number(item.addressId.id);
+          good.requestId = Number(item.requestId.id);
+          good.fractionId = Number(res.id);
 
-        this.listGoodsFractions = this.listGoodsFractions;
-        this.listGoodsFractions.map((item: any) => {
-          item.fractionId = res.id;
+          this.listGoodsFractions.push(good);
         });
       }
     });
@@ -594,19 +590,26 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       'ligieLevel4',
     ];
 
-    this.listGoodsFractions = this.listgoodObjects;
+    //this.listGoodsFractions = this.listgoodObjects;
+    this.listGoodsFractions = [];
     console.log('antes', this.listGoodsFractions);
-    for (let j = 0; j < this.listGoodsFractions.length; j++) {
-      const good = this.listGoodsFractions[j];
-      good['goodClassNumber'] = this.fractionProperties['goodClassNumber'];
-      good['unitMeasure'] = this.fractionProperties['unitMeasure'];
-      good['ligieUnit'] = this.fractionProperties['ligieUnit'];
+    for (let j = 0; j < this.listgoodObjects.length; j++) {
+      const item = this.listgoodObjects[j];
+      let good: any = {};
+      good.id = Number(item.id);
+      good.addressId = Number(item.addressId.id);
+      good.requestId = Number(item.requestId.id);
+      good.goodClassNumber = Number(this.fractionProperties['goodClassNumber']);
+      good.unitMeasure = this.fractionProperties['unitMeasure'];
+      good.ligieUnit = this.fractionProperties['ligieUnit'];
+      good.fractionId = Number(this.fractionProperties['fractionId']);
 
-      /* iteramos la calsificacion de fraccion */
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
-        good[fractions[i]] = fractionsId;
+        good[fractions[i]] = Number(fractionsId);
       }
+
+      this.listGoodsFractions.push(good);
     }
 
     console.log(this.listGoodsFractions);

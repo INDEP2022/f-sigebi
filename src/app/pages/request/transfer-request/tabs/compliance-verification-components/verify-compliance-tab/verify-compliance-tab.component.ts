@@ -221,7 +221,7 @@ export class VerifyComplianceTabComponent
         docClarification: docClarification,
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
-          //if (next) this.getData();
+          if (next) this.getData();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -617,7 +617,6 @@ export class VerifyComplianceTabComponent
           resolve(true);
         },
         error: error => {
-          debugger;
           console.log(error);
           resolve(true);
         },
