@@ -74,6 +74,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   private listGoodsFractions: any = [];
   private fractionProperties: any = {};
   typeRecord: string = '';
+  transferente: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -94,7 +95,10 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
+      console.log(this.requestObject);
+
       this.typeRecord = this.requestObject.typeRecord;
+      // this.transferente = this.requestObject.transfer;
     }
   }
 
@@ -371,6 +375,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (this.isSaveMenaje === true) {
         await this.saveMenaje();
       }
+      if (this.isSaveFraction === true) {
+        await this.saveFractions();
+      }
       this.closeCreateGoodWIndows();
     } else {
       this.message('error', 'Error', `Seleccione al menos un bien`);
@@ -445,6 +452,37 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     });
   }
 
+  saveFractions() {
+    return new Promise((resolve, reject) => {
+      debugger;
+      for (let i = 0; i < this.listgoodObjects.length; i++) {
+        const element = this.listgoodObjects[i];
+        element.requestId = Number(element.requestId.id);
+        element.fractionId = Number(element.fractionId.id);
+        element.addressId = Number(element.addressId.id);
+        delete element.goodTypeName;
+        delete element.physicalStatusName;
+        delete element.stateConservationName;
+        delete element.destinyLigieName;
+        delete element.transferentDestinyName;
+
+        this.goodService.update(element).subscribe({
+          next: resp => {
+            this.message(
+              'success',
+              'Fraccion guardada',
+              `Se guardo la fraccion exitosamente`
+            );
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+      }
+      this.isSaveFraction = false;
+    });
+  }
+
   delete() {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
@@ -466,8 +504,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   deleteGood() {
-    for (let i = 0; i < this.listgoodObjects.length; i++) {
-      const element = this.listgoodObjects[i];
+    for (let i = 0; i < this.listGoodsFractions.length; i++) {
+      const element = this.listGoodsFractions[i];
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
@@ -529,43 +567,20 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
-      //armor
-      const values = [
-        'brand',
-        'tuition',
-        'subBrand',
-        'serie',
-        'armor',
-        'chassis',
-        'model',
-        'cabin',
-        'doorsNumber',
-        'axesNumber',
-        'fitCircular',
-        'enginesNumber',
-        'theftReport',
-        'volume',
-        'useType',
-        'manufacturingYear',
-        'capacity',
-        'operationalState',
-        'flag',
-        'openwork',
-        'shipName',
-        'length',
-        'sleeve',
-        'publicRegistry',
-        'ships',
-        'caratage',
-        'material',
-        'weight',
-        'dgacRegistry',
-        'airplaneType',
-      ];
-      console.log(res);
-
+      //console.log(res);
       this.isSaveFraction = true;
-      this.matchLevelFraction(res);
+
+      if (this.listgoodObjects.length === 1) {
+        // verifica el nivel actual de la fraccion
+        this.matchLevelFraction(res);
+      } else {
+        // asignar el id de fraccion a los bienes
+
+        this.listGoodsFractions = this.listGoodsFractions;
+        this.listGoodsFractions.map((item: any) => {
+          item.fractionId = res.id;
+        });
+      }
     });
   }
 
@@ -578,7 +593,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       'ligieLevel3',
       'ligieLevel4',
     ];
-    debugger;
+
     this.listGoodsFractions = this.listgoodObjects;
     console.log('antes', this.listGoodsFractions);
     for (let j = 0; j < this.listGoodsFractions.length; j++) {
@@ -593,8 +608,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         good[fractions[i]] = fractionsId;
       }
     }
+
     console.log(this.listGoodsFractions);
-    this.isSaveFraction = false;
   }
 
   getNoClasifyGood(value: string) {
