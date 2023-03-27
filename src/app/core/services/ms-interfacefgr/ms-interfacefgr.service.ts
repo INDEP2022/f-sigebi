@@ -6,6 +6,8 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IFaValAtributo1,
+  IOTClaveByAsunto,
+  IOTClaveByAsuntoResponse,
   IPgrTransfer,
 } from '../../models/ms-interfacefgr/ms-interfacefgr.interface';
 
@@ -70,6 +72,13 @@ export class InterfacefgrService extends HttpService {
   getFaValAtributo1(body: IFaValAtributo1) {
     return this.post<IListResponse<IFaValAtributo1>>(
       InterfacefgrEndPoints.PgrFaValAtrib1,
+      body
+    );
+  }
+
+  getOTClaveEntityFederativeByAvePrevia(body: IOTClaveByAsunto) {
+    return this.post<IOTClaveByAsuntoResponse>(
+      InterfacefgrEndPoints.OTkeyByAsunto,
       body
     );
   }

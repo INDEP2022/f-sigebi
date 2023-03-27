@@ -4,6 +4,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequest } from '../../../../core/models/requests/request.model';
@@ -25,10 +27,16 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   listUser: IUserProcess[] = [];
   typeUser: string = 'TE';
   user: any;
+  username: string = '';
   requestService = inject(RequestService);
   userProcessService = inject(UserProcessService);
+  taskService = inject(TaskService);
 
-  constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
+  constructor(
+    public modalRef: BsModalRef,
+    public fb: FormBuilder,
+    private authService: AuthService
+  ) {
     super();
     this.settings.columns = TURN_SELECTED_COLUMNS;
     this.settings.actions = {
@@ -108,6 +116,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   getRow(user: any) {
     this.user = user.data;
+    this.username = user.data.username;
+    console.log(this.user);
   }
 
   confirm() {
@@ -115,43 +125,83 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
       return;
     }
-    this.loading = true;
-    for (let i = 0; i < this.requestToTurn.length; i++) {
-      let request = this.requestToTurn[i];
-      request.requestStatus = 'A_TURNAR';
-      request.targetUserType = this.requestForm.controls['typeUser'].value;
-      request.targetUser = this.user.id;
-      request.modificationDate = new Date().toISOString();
+    this.requestToTurn.map(async (item: any, i: number) => {
+      let index = i + 1;
+      item.requestStatus = 'A_TURNAR';
+      item.targetUserType = this.requestForm.controls['typeUser'].value;
+      item.targetUser = this.user.id;
+      item.modificationDate = new Date().toISOString();
+      /* crea solicitud */
+      const resposeRequest: any = await this.saveRequest(item);
+      if (resposeRequest) {
+        let body: any = {};
+        const user: any = this.authService.decodeToken();
+        body['id'] = 0;
+        body['assignees'] = this.user.username;
+        body['assigneesDisplayname'] = this.user.firstName;
+        body['creator'] = user.username;
+        body['taskNumber'] = Number(resposeRequest);
+        body['title'] =
+          'Registro de solicitud (Captura de Solicitud) con folio: ' +
+          resposeRequest;
+        body['isPublic'] = 's';
+        body['istestTask'] = 's';
+        body['isPublic'] = 's';
+        body['istestTask'] = 's';
+        body['programmingId'] = 0;
+        body['requestId'] = resposeRequest.id;
+        body['expedientId'] = 0;
+        body['urlNb'] = 'pages/request/transfer-request/registration-request';
+        const taskResult: any = await this.createTask(body);
+        //console.log(taskResult.data[0].is);
+        if (this.requestToTurn.length === index) {
+          this.message(
+            'success',
+            'Turnado Exitoso',
+            'Se turnaron las solicitudes correctamente'
+          );
 
-      this.requestService.update(request.id, request as IRequest).subscribe(
-        (data: any) => {
-          //console.log(data);
-          if (data.statusCode != 200) {
-            this.message(
-              'error',
-              'Turnado',
-              'Ocurrio un error no se pudo turnar las solicitudes'
-            );
-          }
-
-          if (data.id != null) {
-            this.message(
-              'success',
-              'Turnado',
-              'Se turnaron las solicitudes correctamente'
-            );
-
-            this.loading = false;
-            this.modalRef.content.callback(true);
-          }
           this.loading = false;
+          this.modalRef.content.callback(true);
           this.close();
-        },
-        error => {
-          this.loading = false;
         }
-      );
-    }
+      }
+    });
+  }
+
+  saveRequest(request: any) {
+    /* Se crea la solicitud */
+    return new Promise((resolve, reject) => {
+      this.requestService.update(request.id, request as IRequest).subscribe({
+        next: resp => {
+          if (resp.id) {
+            resolve(resp);
+          } else {
+            reject(false);
+          }
+        },
+        error: error => {
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
+  createTask(task: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          if (resp) {
+            resolve(resp);
+          } else {
+            reject(true);
+          }
+        },
+        error: error => {
+          reject(error.error.message);
+        },
+      });
+    });
   }
 
   close() {

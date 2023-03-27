@@ -78,7 +78,7 @@ export class RegistrationHelper extends BasePage {
       body['xidSolicitud'] = id;
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
-          console.log(resp);
+          //console.log(resp);
           resolve(resp.data.lenght);
         },
         error: error => {
@@ -204,7 +204,7 @@ export class RegistrationHelper extends BasePage {
     }
 
     let goods: any = null;
-
+    //debugger;
     if (validoOk === true) {
       goods = await this.getGoodQuantity(Number(request.id));
       if (goods.count < 1) {

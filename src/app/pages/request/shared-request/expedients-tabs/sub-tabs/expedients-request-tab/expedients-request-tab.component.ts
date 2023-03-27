@@ -70,6 +70,7 @@ export class ExpedientsRequestTabComponent
         this.paragraphs = filterInfo;
         this.totalItems = data.count;
       },
+      error: error => {},
     });
   }
 

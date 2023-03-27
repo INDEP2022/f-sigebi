@@ -18,6 +18,17 @@ export class RejectedGoodService extends HttpService {
     return this.post('clarification-goods-reject-notification', model);
   }
 
+  update(
+    id: string | number,
+    model: ClarificationGoodRejectNotification
+  ): Observable<any> {
+    return this.put(`clarification-goods-reject-notification/${id}`, model);
+  }
+
+  remove(id: string | number): Observable<any> {
+    return this.delete(`clarification-goods-reject-notification/${id}`);
+  }
+
   getAllFilter(
     params?: ListParams | string
   ): Observable<IListResponse<ClarificationGoodRejectNotification>> {
