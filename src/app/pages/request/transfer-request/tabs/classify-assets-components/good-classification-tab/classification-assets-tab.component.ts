@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
@@ -31,6 +32,7 @@ export class ClassificationAssetsTabComponent
   @Input() dataObject: any;
   @Input() requestObject: any;
   @Input() typeDoc: any = '';
+
   idRequest: number = 0;
   title: string = 'Bienes de la Solicitud';
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -41,7 +43,7 @@ export class ClassificationAssetsTabComponent
   paramsLvl3 = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl4 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
-  assetsId: number = 0;
+  assetsId: string | number;
   detailArray: any;
   goodObject: any;
   domicilieObject: any;
@@ -56,18 +58,21 @@ export class ClassificationAssetsTabComponent
   levels3 = new DefaultSelect();
   levels4 = new DefaultSelect();
   goodSelect: IGood;
+  idGood: string | number;
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
     private goodTypeService: GoodTypeService,
     private fb: FormBuilder,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   ngOnInit(): void {
+    this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
     this.goodForm();
@@ -143,10 +148,12 @@ export class ClassificationAssetsTabComponent
   }
 
   rowSelected(good: IGood) {
+    this.typeDoc = 'assets';
     this.requestObject = this.requestObject;
     this.goodObject = good;
+    this.assetsId = good.id;
     this.domicilieObject = good.addressId;
-    this.typeDoc = 'assets';
+    this.idGood = good.id;
     this.goodService.getById(good.id).subscribe((data: any) => {
       this.goodSelect = data;
       this.goodForm();
@@ -154,15 +161,16 @@ export class ClassificationAssetsTabComponent
   }
 
   goodForm() {
+    console.log('select', this.goodSelect);
     this.goodsForm = this.fb.group({
-      id: [null],
-      goodId: [null],
-      ligieSection: [null],
-      ligieChapter: [null],
-      ligieLevel1: [null],
-      ligieLevel2: [null],
-      ligieLevel3: [null],
-      ligieLevel4: [null],
+      id: [this.goodSelect?.id],
+      goodId: [this.goodSelect?.idGood],
+      ligieSection: [this.goodSelect?.ligieSection],
+      ligieChapter: [this.goodSelect?.ligieChapter],
+      ligieLevel1: [this.goodSelect?.ligieLevel1],
+      ligieLevel2: [this.goodSelect?.ligieLevel2],
+      ligieLevel3: [this.goodSelect?.ligieLevel3],
+      ligieLevel4: [this.goodSelect?.ligieLevel4],
       requestId: [this.idRequest],
       goodTypeId: [this.goodSelect?.goodTypeId],
       color: [this.goodSelect?.color],
@@ -185,7 +193,7 @@ export class ClassificationAssetsTabComponent
       goodClassNumber: [null],
       ligieUnit: [this.goodSelect?.ligieUnit],
       appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
+      destiny: [this.goodSelect?.destiny], //preguntar Destino ligie
       transferentDestiny: [this.goodSelect?.transferentDestiny],
       compliesNorm: ['N'], //cumple norma
       notesTransferringEntity: [
@@ -194,36 +202,39 @@ export class ClassificationAssetsTabComponent
       ],
       unitMeasure: [this.goodSelect?.unitMeasure], // preguntar Unidad Medida Transferente
       saeDestiny: [this.goodSelect?.saeDestiny],
-      brand: [null, [Validators.required]],
-      subBrand: [null, [Validators.required]],
-      armor: [null],
-      model: [null, [Validators.required]],
+      brand: [this.goodSelect?.brand, [Validators.required]],
+      subBrand: [this.goodSelect?.subbrand, [Validators.required]],
+      armor: [this.goodSelect?.armor],
+      model: [this.goodSelect?.model, [Validators.required]],
       doorsNumber: [null],
       axesNumber: [null, [Validators.required]],
-      engineNumber: [null, [Validators.required]], //numero motor
+      engineNumber: [this.goodSelect?.numEngine, [Validators.required]], //numero motor
       tuition: [null, [Validators.required]],
-      serie: [null, [Validators.required]],
-      chassis: [null],
-      cabin: [null],
+      serie: [this.goodSelect?.serie, [Validators.required]],
+      chassis: [this.goodSelect?.chassis],
+      cabin: [this.goodSelect?.cabin],
       fitCircular: ['N', [Validators.required]],
       theftReport: ['N', [Validators.required]],
-      addressId: [null],
-      operationalState: [null, [Validators.required]],
+      addressId: [this.goodSelect?.addressId],
+      operationalState: [
+        this.goodSelect?.stateOperative,
+        [Validators.required],
+      ],
       manufacturingYear: [null, [Validators.required]],
-      enginesNumber: [null, [Validators.required]], // numero de motores
-      flag: [null, [Validators.required]],
+      enginesNumber: [this.goodSelect?.numEngine, [Validators.required]], // numero de motores
+      flag: [this.goodSelect?.flag, [Validators.required]],
       openwork: [null, [Validators.required]],
-      sleeve: [null],
+      sleeve: [this.goodSelect?.sleeve],
       length: [null, [Validators.required]],
       shipName: [null, [Validators.required]],
-      publicRegistry: [null, [Validators.required]], //registro public
+      publicRegistry: [this.goodSelect?.regPublic, [Validators.required]], //registro public
       ships: [null],
       dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
       airplaneType: [null, [Validators.required]],
       caratage: [null, [Validators.required]], //kilatage
-      material: [null, [Validators.required]],
+      material: [this.goodSelect?.material, [Validators.required]],
       weight: [null, [Validators.required]],
-      fractionId: [null],
+      fractionId: [this.goodSelect?.idFraction],
     });
     this.detailArray = this.goodsForm;
   }
