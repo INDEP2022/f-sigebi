@@ -342,6 +342,7 @@ export class ClassifyAssetsTabComponent
       },
       error: error => {
         console.log('Nivel 4: ', error.error.message[0]);
+        this.selectLevel4 = new DefaultSelect();
       },
     });
   }

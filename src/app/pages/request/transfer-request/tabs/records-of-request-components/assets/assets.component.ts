@@ -131,7 +131,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             //obtener tipo bien
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeName'] = goodType;
-
             //obtener el estado fisico
             const physicalStatus = await this.getPhysicalStatus(
               item.physicalStatus
@@ -167,6 +166,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       },
       error: error => {
         this.loading = false;
+        this.paragraphs = [];
       },
     });
   }
