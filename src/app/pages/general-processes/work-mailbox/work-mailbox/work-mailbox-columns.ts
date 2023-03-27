@@ -202,6 +202,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
   observation: {
     title: 'Observaciones',
     sort: false,
+    renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => {
       value !== null ? (value = value) : (value = '');
     },
@@ -260,9 +261,37 @@ export const WORK_MAILBOX_COLUMNS2 = {
   registerUser: {
     title: 'Usr. Registro',
     sort: false,
-  }
+  }*/
   count: {
-    title: 'Count',
+    title: 'Escaneado',
     sort: false,
-  },*/
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case '0':
+            value = 'Sin Escanear';
+            return value;
+            break;
+          case '1':
+            value = 'Escaneado';
+            return value;
+            break;
+          default:
+            value = 'Sin Referencia';
+            return value;
+            break;
+        }
+      }
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Digitalizados',
+        list: [
+          { value: 0, title: 'Pendientes' },
+          { value: 1, title: 'Escaneados' },
+        ],
+      },
+    },
+  },
 };
