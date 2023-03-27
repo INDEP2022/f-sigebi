@@ -111,35 +111,44 @@ export class ClassificationAssetsTabComponent
 
   getData() {
     this.loading = true;
-    //this.paragraphs = data;
     this.params.getValue()['filter.requestId'] = this.idRequest;
-    this.goodService.getAll(this.params.getValue()).subscribe(data => {
-      const info = data.data.map(items => {
-        const fraction: any = items.fractionId;
-        this.idFraction = fraction.code;
-        items.fractionId = fraction.description;
-        return items;
-      });
-      const filtergoodType = info.map(async item => {
-        const goodType: any = await this.getGoodType(item.goodTypeId);
-        item['goodTypeId'] = goodType;
-        if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-        if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-        if (item['stateConservation'] == 1) item['stateConservation'] = 'BUENO';
-        if (item['stateConservation'] == 2) item['stateConservation'] = 'MALO';
-        if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-        return item;
-      });
+    this.goodService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.showHideErrorInterceptorService.showHideError(false);
+        const info = data.data.map(items => {
+          const fraction: any = items.fractionId;
+          this.idFraction = fraction.code;
+          items.fractionId = fraction.description;
+          return items;
+        });
 
-      Promise.all(filtergoodType).then(data => {
-        this.paragraphs = data;
-        this.totalItems = this.paragraphs.length;
+        const filtergoodType = info.map(async item => {
+          const goodType: any = await this.getGoodType(item.goodTypeId);
+          item['goodTypeId'] = goodType;
+          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          if (item['stateConservation'] == 1)
+            item['stateConservation'] = 'BUENO';
+          if (item['stateConservation'] == 2)
+            item['stateConservation'] = 'MALO';
+          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+          return item;
+        });
+
+        Promise.all(filtergoodType).then(data => {
+          this.paragraphs = data;
+          this.totalItems = this.paragraphs.length;
+          this.loading = false;
+        });
+      },
+      error: error => {
         this.loading = false;
-      });
+      },
     });
   }
 
   getGoodType(goodTypeId: string | number) {
+    this.showHideErrorInterceptorService.showHideError(false);
     return new Promise((resolve, reject) => {
       this.goodTypeService.getById(goodTypeId).subscribe(data => {
         resolve(data.nameGoodType);
@@ -250,6 +259,7 @@ export class ClassificationAssetsTabComponent
           this.getLevel2(info.id);
         });
       },
+      error: error => {},
     });
   }
 
@@ -265,6 +275,7 @@ export class ClassificationAssetsTabComponent
           this.getLevel3(info.id);
         });
       },
+      error: error => {},
     });
   }
 
@@ -279,6 +290,7 @@ export class ClassificationAssetsTabComponent
           this.getLevel4(info.id);
         });
       },
+      error: error => {},
     });
   }
 
@@ -294,6 +306,7 @@ export class ClassificationAssetsTabComponent
           this.classiGoodsForm.get(['level4']).setValue(info.description);
         });
       },
+      error: error => {},
     });
   }
 }

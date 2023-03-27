@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
+  IComerLayoutsW,
   IL,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
@@ -111,22 +112,39 @@ export class LayoutsConfigurationModalComponent
       'Desea actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService.updateL(this.providerForm.value).subscribe({
-          next: data => this.handleSuccess(),
-          error: error => {
-            this.onLoadToast('error', 'layout', '');
-            this.loading = false;
-          },
-        });
+        let params: IComerLayoutsW = {
+          idConsec: this.provider.idConsec,
+          carFilling: this.provider.carFilling,
+          column: this.provider.column,
+          constant: this.provider.constant,
+          dateFormat: this.provider.dateFormat,
+          decimal: this.provider.decimal,
+          indActive: this.provider.indActive,
+          justification: this.provider.justification,
+          length: this.provider.length,
+          position: this.provider.position,
+          registryNumber: this.provider.registryNumber,
+          type: this.provider.type,
+        };
+        this.layoutsConfigService
+          .updateL(this.provider.idLayout.id, params)
+          .subscribe({
+            next: data => this.handleSuccess(),
+            error: error => {
+              this.onLoadToast('error', 'layout', '');
+              this.loading = false;
+            },
+          });
       }
     });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    setTimeout(() => {
-      this.onLoadToast('success', this.title, `${message} Correctamente`);
-    }, 2000);
+    // setTimeout(() => {
+    //   this.onLoadToast('success', this.title, `${message} Correctamente`);
+    // }, 2000);
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.onConfirm.emit(true);
     this.modalRef.content.callback(true);
