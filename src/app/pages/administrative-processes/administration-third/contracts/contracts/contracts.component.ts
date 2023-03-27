@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IContract } from 'src/app/core/models/administrative-processes/contract.model';
 import { ContractService } from 'src/app/core/services/contract/strategy-contract.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -14,21 +16,26 @@ import { CONTRACTS_COLUMNS } from './contracts-columns';
   styles: [],
 })
 export class ContractsComponent extends BasePage implements OnInit {
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columns: IContract[] = [];
+
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
 
-  constructor(
-    private modalService: BsModalService,
-    private contractService: ContractService
-  ) {
+  constructor(private contractService: ContractService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: CONTRACTS_COLUMNS,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...CONTRACTS_COLUMNS },
     };
   }
 
@@ -38,10 +45,43 @@ export class ContractsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'contractKey':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'startDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'endDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'vigentContract':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'zoneContractKey':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
           this.getContractsAll();
         }
       });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getContractsAll());
@@ -57,9 +97,8 @@ export class ContractsComponent extends BasePage implements OnInit {
     this.contractService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
-        this.totalItems = response.count || 0;
-
         this.data.load(this.columns);
+        this.totalItems = response.count || 0;
         this.data.refresh();
         this.loading = false;
       },
