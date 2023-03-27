@@ -101,9 +101,11 @@ export class ClarificationsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getData();
-    });
+    if (this.requestObject) {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getData();
+      });
+    }
   }
 
   ngOnInit(): void {

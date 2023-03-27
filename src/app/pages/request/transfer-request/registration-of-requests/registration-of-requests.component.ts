@@ -380,7 +380,7 @@ export class RegistrationOfRequestsComponent
       this.tab3 = 'Domicilio de la Transferente';
       this.tab4 = 'Verificación del Cumplimiento';
       this.tab5 = 'Expediente';
-      this.btnTitle = 'Aprovar';
+      this.btnTitle = 'Aprobar';
       this.btnSaveTitle = '';
       this.typeDocument = 'proceso-aprovacion';
     }
@@ -510,7 +510,12 @@ export class RegistrationOfRequestsComponent
   signDictum() {
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
-
+  /** Proceso de aprobacion */
+  private approveRequest() {
+    let value = this.registRequestForm.getRawValue();
+    console.log(value);
+  }
+  /** fin de proceso */
   msgSaveModal(
     btnTitle: string,
     message: string,
@@ -529,6 +534,8 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
+        console.log(typeCommit);
+
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
@@ -538,6 +545,9 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'verificar-cumplimiento') {
           this.verifyComplianceMethod();
+        }
+        if (typeCommit === 'proceso-aprovacion') {
+          this.approveRequest();
         }
       }
     });
