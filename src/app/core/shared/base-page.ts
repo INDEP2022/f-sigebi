@@ -206,6 +206,10 @@ export abstract class BasePage implements OnDestroy {
     this._showHide.showHideError(show);
   }
 
+  blockErrors(condition: boolean) {
+    this._showHide.blockAllErrors = condition;
+  }
+
   ngOnDestroy(): void {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();

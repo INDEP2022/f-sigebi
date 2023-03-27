@@ -7,11 +7,14 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 
 @Component({
@@ -21,7 +24,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
-  data: any; // parameters desde el padre
+  data: any; // parameters desde el padre de la solicitud
   typeAnnex: string;
 
   paragraphs: any[] = [];
@@ -36,6 +39,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private transferentService = inject(TransferenteService);
   private requestService = inject(RequestService);
   private wcontentService = inject(WContentService);
+  private taskService = inject(TaskService);
+  private authService = inject(AuthService);
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -122,7 +127,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       this.data.targetUserType = this.user.id;
 
       //Todo: enviar la solicitud
-      //const isUpdated = await this.saveRequest(this.data as IRequest);
+      const isUpdated = await this.saveRequest(this.data as IRequest);
       if (true === true) {
         //TODO: generar o recuperar el reporte
         const report = await this.generateReport(
@@ -156,7 +161,38 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           const addToContent = await this.addDocumentToContent(form, file);
           if (addToContent) {
             const docName = addToContent;
-            //TODO: Generar una nueva tarea en task  table
+            console.log(docName);
+            let body: any = {};
+            const user: any = this.authService.decodeToken();
+            body['id'] = 0;
+            body['assignees'] = this.user.username;
+            body['assigneesDisplayname'] = this.user.firstName;
+            body['creator'] = user.username;
+            body['taskNumber'] = Number(this.data.id);
+            body['title'] =
+              'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
+              this.data.id;
+            body['isPublic'] = 's';
+            body['istestTask'] = 's';
+            body['programmingId'] = 0;
+            body['requestId'] = this.data.id;
+            body['expedientId'] = this.data.recordId;
+            body['urlNb'] = 'pages/request/transfer-request/verify-compliance';
+            /* crea una nueva tarea */
+            const taskResponse = await this.createTask(body);
+            if (taskResponse) {
+              Swal.fire({
+                title: 'Solicitud Turnada',
+                text: 'La solicitud se turno conrrectamente',
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#9D2449',
+                cancelButtonColor: '#B38E5D',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                this.close();
+              });
+            }
           }
         }
       }
@@ -217,6 +253,19 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             reject('error al guardar al content');
           },
         });
+    });
+  }
+
+  createTask(task: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
     });
   }
 

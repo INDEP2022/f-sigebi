@@ -39,6 +39,7 @@ import { RequestDocumentFormComponent } from './tabs/request-document-form/reque
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
+import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     AssociateFieldComponent,
     SelectTypeUserComponent,
     OpenDescriptionComponent,
+    CheckboxComponent,
   ],
   imports: [
     CommonModule,
