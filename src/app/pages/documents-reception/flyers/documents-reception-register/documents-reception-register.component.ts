@@ -292,15 +292,13 @@ export class DocumentsReceptionRegisterComponent
   }
 
   ngOnInit(): void {
-    //this.showHideErrorInterceptorService.showHideError(false);
+    let main = document.documentElement.querySelector('.init-page');
+    main.scroll(0, 0);
     this.checkParams();
     this.onFormChanges();
     this.getLoggedUserArea();
     this.setDefaultValues();
     this.checkManagementArea();
-    // console.log(this.pageParams.pGestOk, this.pageParams.pNoVolante);
-    // console.log((this.pageParams.pGestOk === 1), (this.pageParams.pNoVolante !== null));
-    // console.log(this.docDataService.documentsReceptionRegisterForm);
     if (this.docDataService.documentsReceptionRegisterForm == null) {
       if (
         this.pageParams.pGestOk === 1 ||
@@ -1496,7 +1494,7 @@ export class DocumentsReceptionRegisterComponent
     this.destinationAreaChange();
     this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
-    this.blockErrors(true);
+    this.blockErrors(false);
   }
 
   selectFlyer() {
@@ -2617,6 +2615,10 @@ export class DocumentsReceptionRegisterComponent
       .subscribe({
         next: data => {
           console.log(data);
+          this.updateGlobalVars(
+            'gNoExpediente',
+            this.formControls.expedientNumber.value
+          );
           this.saveNotification();
           this.saveProcedureManagement();
         },
@@ -2681,6 +2683,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: err => {
           console.log(err);
+          this.blockErrors(false);
           this.onLoadToast(
             'error',
             'Error',
@@ -2720,6 +2723,10 @@ export class DocumentsReceptionRegisterComponent
       next: data => {
         this.formControls.expedientNumber.setValue(Number(data.id));
         console.log(data.id, this.formControls.expedientNumber.value);
+        this.updateGlobalVars(
+          'gNoExpediente',
+          this.formControls.expedientNumber.value
+        );
         this.saveNotification();
         this.saveProcedureManagement();
       },
@@ -3473,8 +3480,6 @@ export class DocumentsReceptionRegisterComponent
       next: data => {
         const { affair, affairSij, typeManagement, officeNumber } = data;
         this.saveTmpExpedients(affair, affairSij, typeManagement, officeNumber);
-        // this.saveTmpNotifications(affairSij);
-        // this.captureGoods();
       },
       error: () => {
         this.captureGoods();
@@ -3542,7 +3547,7 @@ export class DocumentsReceptionRegisterComponent
             next: data => {
               this.formControls.expedientNumber.setValue(data.id);
               this.updateGlobalVars('gNoExpediente', data.id);
-              this.saveTmpNotifications(affairSij);
+              this.checkTmpNotifications(affairSij);
             },
             error: err => {
               this.loading = false;
@@ -3558,6 +3563,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: err => {
           console.log(err);
+          this.loading = false;
           this.onLoadToast(
             'warning',
             'Expediente No Creado',
@@ -3568,62 +3574,45 @@ export class DocumentsReceptionRegisterComponent
     }
   }
 
-  saveTmpNotifications(affairSij: number) {
-    if (this.formControls.wheelNumber.value != null) {
-      this.hideError();
-      this.tmpNotificationService
-        .getById(this.formControls.wheelNumber.value)
-        .subscribe({
-          next: data => {
-            this.tmpNotificationService
-              .remove(this.formControls.wheelNumber.value)
-              .subscribe({
-                next: () => {},
-                error: err => {
-                  console.log(err);
-                },
-              });
-          },
-          error: () => {},
-        });
-    }
+  checkTmpNotifications(affairSij: number) {
     if (this.formControls.wheelNumber.value == null) {
+      this.hideError();
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
           console.log(data);
           this.formControls.wheelNumber.setValue(data.nextval);
-          const notificationData: ITmpNotification = {
-            ...this.formData,
-            wheelNumber: this.formControls.wheelNumber.value,
-            externalOfficeDate: this.formData.externalOfficeDate,
-            receiptDate: this.formData.receiptDate,
-            hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
-            hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
-            affairSij,
-            delegationNumber: this.userDelegation,
-            subDelegationNumber: this.userSubdelegation,
-            expedientNumber: this.formControls.expedientNumber.value,
-          };
-          console.log(this.formControls.wheelNumber.value);
-          console.log(notificationData);
-          this.tmpNotificationService.create(notificationData).subscribe({
-            next: () => {
-              this.captureGoods();
-            },
-            error: err => {
-              this.loading = false;
-              console.log(notificationData);
-              console.log(err);
-              this.onLoadToast(
-                'warning',
-                'Volante No Creado',
-                'Hubo un problema al guardar los datos del volante.'
-              );
-            },
-          });
+          this.hideError();
+          this.tmpNotificationService
+            .getById(this.formControls.wheelNumber.value)
+            .subscribe({
+              next: data => {
+                this.hideError();
+                this.tmpNotificationService
+                  .remove(this.formControls.wheelNumber.value)
+                  .subscribe({
+                    next: () => {
+                      console.log('Volante Temp borrado');
+                      this.saveTmpNotifications(affairSij);
+                    },
+                    error: err => {
+                      console.log(err);
+                      this.loading = false;
+                      this.onLoadToast(
+                        'warning',
+                        'Volante No Creado',
+                        'Hubo un problema al guardar los datos del volante.'
+                      );
+                    },
+                  });
+              },
+              error: () => {
+                this.saveTmpNotifications(affairSij);
+              },
+            });
         },
         error: err => {
           console.log(err);
+          this.loading = false;
           this.onLoadToast(
             'warning',
             'Volante No Creado',
@@ -3632,6 +3621,38 @@ export class DocumentsReceptionRegisterComponent
         },
       });
     }
+  }
+
+  saveTmpNotifications(affairSij: number) {
+    const notificationData: ITmpNotification = {
+      ...this.formData,
+      wheelNumber: this.formControls.wheelNumber.value,
+      externalOfficeDate: this.formData.externalOfficeDate,
+      receiptDate: this.formData.receiptDate,
+      hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
+      hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
+      affairSij,
+      delegationNumber: this.userDelegation,
+      subDelegationNumber: this.userSubdelegation,
+      expedientNumber: this.formControls.expedientNumber.value,
+    };
+    console.log(this.formControls.wheelNumber.value);
+    console.log(notificationData);
+    this.tmpNotificationService.create(notificationData).subscribe({
+      next: () => {
+        this.captureGoods();
+      },
+      error: err => {
+        this.loading = false;
+        console.log(notificationData);
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Volante No Creado',
+          'Hubo un problema al guardar los datos del volante.'
+        );
+      },
+    });
   }
 
   captureGoods() {
@@ -3714,11 +3735,6 @@ export class DocumentsReceptionRegisterComponent
           error: err => {
             console.log(err);
             this.sendToGoodsCapture();
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Error al buscar el oficio del FGR'
-            );
           },
         });
     } else {
