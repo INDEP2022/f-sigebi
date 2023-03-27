@@ -67,7 +67,6 @@ export class ClassifyAssetsTabComponent
 
   ngOnInit(): void {
     this.showHideErrorInterceptorService.showHideError(false);
-    console.log(this.typeDoc);
     this.initForm();
     if (!this.goodObject) {
       this.getSection(new ListParams());
@@ -203,6 +202,7 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['ligieSection'].setValue(id);
         }
       },
+      error: error => {},
     });
   }
 
@@ -228,9 +228,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Capitulo: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -260,9 +258,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 1: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -288,9 +284,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 2: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -316,9 +310,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 3: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -344,9 +336,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 4: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
