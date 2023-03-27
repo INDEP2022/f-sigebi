@@ -5,15 +5,18 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 
@@ -29,6 +32,7 @@ export class ClassificationAssetsTabComponent
   @Input() dataObject: any;
   @Input() requestObject: any;
   @Input() typeDoc: any = '';
+
   idRequest: number = 0;
   title: string = 'Bienes de la Solicitud';
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -39,33 +43,39 @@ export class ClassificationAssetsTabComponent
   paramsLvl3 = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl4 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
-  assetsId: number = 0;
+  assetsId: string | number;
   detailArray: any;
+  goodObject: any;
+  domicilieObject: any;
   totalItems: number = 0;
   idFraction: number = 0;
   classiGoodsForm: FormGroup = new FormGroup({});
+  goodsForm: FormGroup = new FormGroup({});
   ligiesSection = new DefaultSelect();
   chapters = new DefaultSelect();
   levels1 = new DefaultSelect();
   levels2 = new DefaultSelect();
   levels3 = new DefaultSelect();
   levels4 = new DefaultSelect();
-
+  goodSelect: IGood;
+  idGood: string | number;
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
     private goodTypeService: GoodTypeService,
     private fb: FormBuilder,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   ngOnInit(): void {
-    console.log('id de la solicitud', this.idRequest);
+    this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
+    this.goodForm();
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -88,7 +98,6 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.requestObject);
     if (this.requestObject) {
       this.tablePaginator();
     }
@@ -111,81 +120,123 @@ export class ClassificationAssetsTabComponent
         items.fractionId = fraction.description;
         return items;
       });
-      this.physicalState(info);
-    });
-  }
-
-  physicalState(goods: any) {
-    const physicalFilter = goods.map((items: any) => {
-      if (items.physicalStatus == 1) items.physicalStatus = 'BUENO';
-      if (items.physicalStatus == 2) items.physicalStatus = 'MALO';
-      return items;
-    });
-
-    this.goodType(physicalFilter);
-  }
-
-  goodType(goods: any) {
-    console.log('mii', goods);
-    const filterGoodType = goods.map((items: any) => {
-      console.log(items.goodTypeId);
-      this.goodTypeService.getById(items.goodTypeId).subscribe(data => {
-        items.goodTypeId = data.nameGoodType;
+      const filtergoodType = info.map(async item => {
+        const goodType: any = await this.getGoodType(item.goodTypeId);
+        item['goodTypeId'] = goodType;
+        if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+        if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+        if (item['stateConservation'] == 1) item['stateConservation'] = 'BUENO';
+        if (item['stateConservation'] == 2) item['stateConservation'] = 'MALO';
+        if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+        return item;
       });
-      return items;
-    });
-    this.stateConservation(filterGoodType);
-  }
 
-  stateConservation(goods: any) {
-    const conservationFilter = goods.map((items: any) => {
-      if (items.stateConservation == 1) items.stateConservation = 'BUENO';
-      if (items.stateConservation == 2) items.stateConservation = 'MALO';
-      return items;
-    });
-    console.log('mee', conservationFilter);
-    this.transferentDestiny(conservationFilter);
-  }
-
-  transferentDestiny(goods: any) {
-    const transferentDestiny = goods.map((items: any) => {
-      if (items.transferentDestiny == 1) items.transferentDestiny = 'BUENO';
-      if (items.transferentDestiny == 2) items.transferentDestiny = 'MALO';
-      return items;
-    });
-    this.paragraphs = transferentDestiny;
-    this.totalItems = this.paragraphs.length;
-    this.loading = false;
-  }
-
-  rowSelected(event: any) {
-    this.getSection(event.ligieSection);
-  }
-
-  getSection(id: number) {
-    this.paramsFraction.getValue()['filter.level'] = 0;
-    this.paramsFraction.getValue()['filter.id'] = id;
-    this.fractionService.getAll(this.paramsFraction.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get('ligieSection').setValue(info.description);
-          this.getChapter(id, info.id);
-        });
-      },
+      Promise.all(filtergoodType).then(data => {
+        this.paragraphs = data;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      });
     });
   }
 
-  getChapter(id: number, idParent: number) {
-    this.paramsChapter.getValue()['filter.parentId'] = id;
-    this.paramsChapter.getValue()['filter.fractionCode'] = 87;
-    this.fractionService.getAll(this.paramsChapter.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get('chapter').setValue(info.description);
-          this.getLevel1(info.id);
-        });
-      },
+  getGoodType(goodTypeId: string | number) {
+    return new Promise((resolve, reject) => {
+      this.goodTypeService.getById(goodTypeId).subscribe(data => {
+        resolve(data.nameGoodType);
+      });
     });
+  }
+
+  rowSelected(good: IGood) {
+    this.typeDoc = 'assets';
+    this.requestObject = this.requestObject;
+    this.goodObject = good;
+    this.assetsId = good.id;
+    this.domicilieObject = good.addressId;
+    this.idGood = good.id;
+    this.goodService.getById(good.id).subscribe((data: any) => {
+      this.goodSelect = data;
+      this.goodForm();
+    });
+  }
+
+  goodForm() {
+    console.log('select', this.goodSelect);
+    this.goodsForm = this.fb.group({
+      id: [this.goodSelect?.id],
+      goodId: [this.goodSelect?.idGood],
+      ligieSection: [this.goodSelect?.ligieSection],
+      ligieChapter: [this.goodSelect?.ligieChapter],
+      ligieLevel1: [this.goodSelect?.ligieLevel1],
+      ligieLevel2: [this.goodSelect?.ligieLevel2],
+      ligieLevel3: [this.goodSelect?.ligieLevel3],
+      ligieLevel4: [this.goodSelect?.ligieLevel4],
+      requestId: [this.idRequest],
+      goodTypeId: [this.goodSelect?.goodTypeId],
+      color: [this.goodSelect?.color],
+      goodDescription: [this.goodSelect?.goodDescription],
+      quantity: [this.goodSelect?.quantity, [Validators.required]],
+      duplicity: [this.goodSelect?.duplicity],
+      capacity: [
+        this.goodSelect?.capacity,
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      volume: [this.goodSelect?.volume, [Validators.pattern(STRING_PATTERN)]],
+      fileeNumber: [null],
+      useType: [this.goodSelect?.useType, [Validators.pattern(STRING_PATTERN)]],
+      physicalStatus: [this.goodSelect?.physicalStatus],
+      stateConservation: [this.goodSelect?.stateConservation],
+      origin: [
+        this.goodSelect?.origin,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      goodClassNumber: [null],
+      ligieUnit: [this.goodSelect?.ligieUnit],
+      appraisal: [null],
+      destiny: [this.goodSelect?.destiny], //preguntar Destino ligie
+      transferentDestiny: [this.goodSelect?.transferentDestiny],
+      compliesNorm: ['N'], //cumple norma
+      notesTransferringEntity: [
+        this.goodSelect?.notesTransferringEntity,
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      unitMeasure: [this.goodSelect?.unitMeasure], // preguntar Unidad Medida Transferente
+      saeDestiny: [this.goodSelect?.saeDestiny],
+      brand: [this.goodSelect?.brand, [Validators.required]],
+      subBrand: [this.goodSelect?.subbrand, [Validators.required]],
+      armor: [this.goodSelect?.armor],
+      model: [this.goodSelect?.model, [Validators.required]],
+      doorsNumber: [null],
+      axesNumber: [null, [Validators.required]],
+      engineNumber: [this.goodSelect?.numEngine, [Validators.required]], //numero motor
+      tuition: [null, [Validators.required]],
+      serie: [this.goodSelect?.serie, [Validators.required]],
+      chassis: [this.goodSelect?.chassis],
+      cabin: [this.goodSelect?.cabin],
+      fitCircular: ['N', [Validators.required]],
+      theftReport: ['N', [Validators.required]],
+      addressId: [this.goodSelect?.addressId],
+      operationalState: [
+        this.goodSelect?.stateOperative,
+        [Validators.required],
+      ],
+      manufacturingYear: [null, [Validators.required]],
+      enginesNumber: [this.goodSelect?.numEngine, [Validators.required]], // numero de motores
+      flag: [this.goodSelect?.flag, [Validators.required]],
+      openwork: [null, [Validators.required]],
+      sleeve: [this.goodSelect?.sleeve],
+      length: [null, [Validators.required]],
+      shipName: [null, [Validators.required]],
+      publicRegistry: [this.goodSelect?.regPublic, [Validators.required]], //registro public
+      ships: [null],
+      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
+      airplaneType: [null, [Validators.required]],
+      caratage: [null, [Validators.required]], //kilatage
+      material: [this.goodSelect?.material, [Validators.required]],
+      weight: [null, [Validators.required]],
+      fractionId: [this.goodSelect?.idFraction],
+    });
+    this.detailArray = this.goodsForm;
   }
 
   getLevel1(idParent: number) {

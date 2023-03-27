@@ -3,6 +3,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDocReceptionFlyersRegistrationParams } from 'src/app/pages/documents-reception/flyers/documents-reception-register/interfaces/documents-reception-register-form';
 import {
   IDocumentsReceptionRegisterForm,
+  IDocumentsReceptionUserForm,
   IGoodsBulkLoadPgrSaeParams,
   IGoodsBulkLoadSatSaeParams,
   IGoodsCaptureTempParams,
@@ -45,6 +46,12 @@ export class DocumentsReceptionDataService {
   private _documentsReceptionRegisterForm: Partial<IDocumentsReceptionRegisterForm> =
     null;
 
+  private _documentsReceptionUserRecepientForm: Partial<IDocumentsReceptionUserForm> =
+    null;
+
+  private _documentsReceptionUserCopyForm: Partial<IDocumentsReceptionUserForm> =
+    null;
+
   private _trackRecordGoods: IGood[] = [];
 
   private _flyerEditMode: boolean = false;
@@ -74,6 +81,16 @@ export class DocumentsReceptionDataService {
   get documentsReceptionRegisterForm() {
     if (this._documentsReceptionRegisterForm === null) return null;
     return { ...this._documentsReceptionRegisterForm };
+  }
+
+  get documentsReceptionUserRecepientForm() {
+    if (this._documentsReceptionUserRecepientForm === null) return null;
+    return { ...this._documentsReceptionUserRecepientForm };
+  }
+
+  get documentsReceptionUserCopyForm() {
+    if (this._documentsReceptionUserCopyForm === null) return null;
+    return { ...this._documentsReceptionUserCopyForm };
   }
 
   get flyerEditMode() {
@@ -112,6 +129,18 @@ export class DocumentsReceptionDataService {
     form: Partial<IDocumentsReceptionRegisterForm>
   ) {
     this._documentsReceptionRegisterForm = form;
+  }
+
+  set documentsReceptionUserRecepientForm(
+    form: Partial<IDocumentsReceptionUserForm>
+  ) {
+    this._documentsReceptionUserRecepientForm = form;
+  }
+
+  set documentsReceptionUserCopyForm(
+    form: Partial<IDocumentsReceptionUserForm>
+  ) {
+    this._documentsReceptionUserCopyForm = form;
   }
 
   set trackRecordGoods(goods: IGood[]) {

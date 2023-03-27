@@ -5,7 +5,7 @@ export interface IWContent {
   ddocId?: string;
   ddocName?: string;
   ddocTitle?: string;
-  ddocType?: string;
+  dDocType?: string;
   did?: string;
   dinDate?: string;
   doutDate?: string;

@@ -1,4 +1,4 @@
 export enum ClassifyGoodEndPoints {
-  classifygood = `interfacefgr`,
+  classifygood = `classifygood`,
   tagXClassif = `application/tagXClassif`,
 }

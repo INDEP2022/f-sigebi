@@ -9,6 +9,10 @@ import { IAuthorityIssuingParams } from 'src/app/core/models/catalogs/authority.
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ITagXClasif } from 'src/app/core/models/ms-classifygood/ms-classifygood.interface';
 import {
+  IFaValAtributo1,
+  IPgrTransfer,
+} from 'src/app/core/models/ms-interfacefgr/ms-interfacefgr.interface';
+import {
   IDinamicQueryParams,
   ISatTransfer,
 } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
@@ -28,7 +32,10 @@ import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-in
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
-import { NotificationService } from 'src/app/core/services/notification/notification.service';
+// import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { _Params } from 'src/app/common/services/http.service';
+import { CopiesXFlierService } from 'src/app/core/services/ms-flier/copies-x-flier.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
 @Injectable({
@@ -44,14 +51,16 @@ export class GoodsBulkLoadService {
     private issuingInstitutionService: IssuingInstitutionService,
     private expedientService: ExpedientService,
     private satInterfaceService: SatInterfaceService,
-    private notificationService: NotificationService,
+    // private notificationService: NotificationService,
+    private msNotificationService: NotificationService,
     private indicatorDeadlineService: IndicatorDeadlineService,
     private classifyGoodService: ClassifyGoodService,
     private massiveGoodService: MassiveGoodService,
     private historyGoodService: HistoryGoodService,
     private satTransferService: SatTransferService,
     private interfacefgrService: InterfacefgrService,
-    private menageService: MenageService
+    private menageService: MenageService,
+    private msCopiesXFlierService: CopiesXFlierService
   ) {}
 
   /**
@@ -111,13 +120,17 @@ export class GoodsBulkLoadService {
     return this.interfacefgrService.getPgrTransferFiltered(params);
   }
 
+  updateDataPGR(id: number, params: IPgrTransfer) {
+    return this.interfacefgrService.update(id, params);
+  }
+
   /**
    * Obtener las notificaciones de acuerdo al transferente, indiciado y la ciudad
    */
   getNotificacionesByTransferentIndiciadoCity(
     body: INotificationTransferentIndiciadoCityGetData | any
   ) {
-    return this.notificationService.getNotificacionesByTransferentIndiciadoCity(
+    return this.msNotificationService.getNotificacionesByTransferentIndiciadoCity(
       body
     );
   }
@@ -126,13 +139,22 @@ export class GoodsBulkLoadService {
    * Obtener notificaciones por volante
    */
   getGetNotificacionByVolante(params: ListParams) {
-    return this.notificationService.getAll(params);
+    return this.msNotificationService.getAll(params);
   }
 
-  getVolanteNotificacionesByNoExpedient(noExpediente: string) {
-    return this.notificationService.getVolanteNotificacionesByNoExpedient(
-      noExpediente
-    );
+  getVolanteNotificacionesByNoExpedient(
+    noExpediente: string,
+    proceso: number = 0
+  ) {
+    if (proceso == 3) {
+      return this.massiveGoodService.getWheelNotificationsByExpedientNumber(
+        noExpediente
+      );
+    } else {
+      return this.msNotificationService.getVolanteNotificacionesByNoExpedient(
+        noExpediente
+      );
+    }
   }
 
   getIssuingInstitutionById(idInstitution: string) {
@@ -161,16 +183,15 @@ export class GoodsBulkLoadService {
    * Obtener la clave de la entidad federativa apartir de la clave Asunto SAT
    * @param asuntoSat Clave de Asunto SAT
    */
-  getEntityFederativeByAsuntoSat(asuntoSat: string, opcion: string = 'sat') {
-    if (opcion == 'sat') {
-      return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
-        asuntoSat
-      );
-    } else {
-      return this.issuingInstitutionService.getOTClaveEntityFederativeByAvePrevia(
-        asuntoSat
-      );
-    }
+  getEntityFederativeByAsuntoSat(asuntoSat: string) {
+    return this.issuingInstitutionService.getOTClaveEntityFederativeByAsuntoSat(
+      asuntoSat
+    );
+  }
+  getOTClaveEntityFederativeByAvePrevia(body: string) {
+    return this.interfacefgrService.getOTClaveEntityFederativeByAvePrevia({
+      pgrOffice: body,
+    });
   }
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);
@@ -187,8 +208,8 @@ export class GoodsBulkLoadService {
   updateGood(id: string, good: IGood) {
     return this.goodService.update(id, good);
   }
-  getUploadGoodIdentificador(id: number) {
-    return this.massiveGoodService.countMassiveGood(id);
+  getUploadGoodIdentificador(id: string) {
+    return this.massiveGoodService.getAllWithFilters(id);
   }
   getTagXClasifByCol6Transfer(body: ITagXClasif) {
     return this.classifyGoodService.getTagXClassif(body);
@@ -211,5 +232,20 @@ export class GoodsBulkLoadService {
 
   getZStatusCatPhasePart(status: string) {
     return this.goodsQueryService.getZStatusCatPhasePart(status);
+  }
+
+  getDataPgrNotificationByFilter(params: _Params) {
+    return this.msNotificationService.getAllFilterTmpNotification(params);
+  }
+
+  getFaValAtributo1(body: IFaValAtributo1) {
+    return this.interfacefgrService.getFaValAtributo1(body);
+  }
+
+  getCopiesXFliers(ids: {
+    copyNumber: string | number;
+    flierNumber: string | number;
+  }) {
+    return this.msCopiesXFlierService.findByIds(ids);
   }
 }

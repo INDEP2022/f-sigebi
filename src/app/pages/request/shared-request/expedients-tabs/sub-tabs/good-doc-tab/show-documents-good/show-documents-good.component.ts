@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -30,16 +33,19 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+  paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
+  paragraphs: LocalDataSource = new LocalDataSource();
   idGood: number;
   idRequest: number = 0;
+  totalItems: number = 0;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private modalService: BsModalService,
     private wContentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private typeRelevantService: TypeRelevantService
   ) {
     super();
 
@@ -61,7 +67,9 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getDocuemntByGood();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDocuemntByGood());
   }
 
   prepareForm(): void {
@@ -88,15 +96,68 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   getDocuemntByGood() {
+    this.loading = true;
     const filter: Object = {
       xidBien: this.idGood,
       xidSolicitud: this.idRequest,
     };
-    this.wContentService.getDocumentos(filter).subscribe({
-      next: response => {
-        console.log('documentos bienes', response);
-        this.paragraphs = response.data;
-      },
+
+    this.wContentService.getDocumentos(filter).subscribe(data => {
+      this.loading = true;
+      const info = data.data.filter((doc: any) => {
+        if (doc.dDocType == 'Document') return doc;
+      });
+
+      const typeDoc = info.map(async (items: any) => {
+        const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
+        items.xtipoDocumento = filter[0].ddescription;
+        return items;
+      });
+
+      Promise.all(typeDoc).then(info => {
+        this.paragraphs.load(info);
+        this.totalItems = this.paragraphs.count();
+        this.loading = false;
+      });
+    });
+  }
+
+  filterGoodDoc(typeDocument: any[]) {
+    return new Promise((resolve, reject) => {
+      const types = typeDocument.map((id: any) => {
+        const data = {
+          id: id,
+        };
+
+        return data;
+      });
+
+      this.wContentService
+        .getDocumentTypes(this.paramsTypeDoc.getValue())
+        .subscribe(data => {
+          const filter = data.data.filter(type => {
+            const index = types.findIndex(
+              (_type: any) => _type.id == type.ddocType
+            );
+            return index < 0 ? false : true;
+          });
+
+          resolve(filter);
+        });
+    });
+  }
+
+  getGoodType(goodTypeId: number) {
+    return new Promise((resolve, reject) => {
+      if (goodTypeId !== null) {
+        this.typeRelevantService.getById(goodTypeId).subscribe({
+          next: (data: any) => {
+            resolve(data.description);
+          },
+        });
+      } else {
+        resolve('');
+      }
     });
   }
 
@@ -163,18 +224,21 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    const idRequest = this.idRequest;
     const idGood = this.idGood;
 
-    let config: ModalOptions = {
-      initialState: {
-        idrequest,
-        typeDoc: 'good',
-        idGood,
-        callback: (next: boolean) => {},
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      idRequest,
+      typeDoc: 'good',
+      idGood,
+      callback: (next: boolean) => {
+        if (next) {
+          this.paragraphs = new LocalDataSource();
+          this.getDocuemntByGood();
+        }
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
     this.modalService.show(NewDocumentComponent, config);
   }
