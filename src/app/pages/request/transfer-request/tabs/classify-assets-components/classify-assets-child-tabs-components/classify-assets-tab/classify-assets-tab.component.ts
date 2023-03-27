@@ -9,6 +9,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -58,12 +59,14 @@ export class ClassifyAssetsTabComponent
     private fractionService: FractionService,
     private goodService: GoodService,
     private route: ActivatedRoute,
-    private requestHelperService: RequestHelperService
+    private requestHelperService: RequestHelperService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.showHideErrorInterceptorService.showHideError(false);
     console.log(this.typeDoc);
     this.initForm();
     if (!this.goodObject) {
@@ -185,6 +188,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
+        this.showHideErrorInterceptorService.showHideError(false);
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {

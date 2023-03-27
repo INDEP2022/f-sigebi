@@ -117,6 +117,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
           this.loading = false;
         });
       },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 

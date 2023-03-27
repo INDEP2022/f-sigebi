@@ -51,6 +51,7 @@ export class RegistrationOfRequestsComponent
   bsValue = new Date();
   isExpedient: boolean = false;
   infoRequest: IRequest;
+  typeDocument: string = '';
 
   //tabs
   tab1: string = '';
@@ -214,21 +215,29 @@ export class RegistrationOfRequestsComponent
   }
 
   getRequest(id: any) {
-    this.requestService.getById(id).subscribe((data: any) => {
-      this.infoRequest = data;
-      this.getTransferent(data.transferenceId);
-      this.getRegionalDelegation(data.regionalDelegationId);
-      this.getStateOfRepublic(data.keyStateOfRepublic);
-      this.getAuthority(data.authorityId);
-      this.getStation(data.stationId);
-      //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
-      this.isExpedient = data.recordId ? true : false;
+    this.requestService.getById(id).subscribe({
+      next: data => {
+        this.infoRequest = data;
+        this.getTransferent(data.transferenceId);
+        this.getRegionalDelegation(data.regionalDelegationId);
+        this.getStateOfRepublic(data.keyStateOfRepublic);
+        this.getAuthority(data.authorityId);
+        this.getStation(data.stationId);
+        //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
+        this.isExpedient = data.recordId ? true : false;
 
-      this.registRequestForm.patchValue(data);
-      /*request.receptionDate = new Date().toISOString();
+        this.registRequestForm.patchValue(data);
+        /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
+      },
+      error: error => {
+        console.log(error.error.message);
+        /*if (error.error.message === 'No se encontraron registros.') {
+          this.router.navigate(['pages/request/list']);
+        }*/
+      },
     });
   }
 
@@ -336,27 +345,32 @@ export class RegistrationOfRequestsComponent
       this.tab4 = 'Asociar Expediente';
       this.tab5 = 'Expediente';
       this.btnTitle = 'Verificar Cumplimiento';
+      this.typeDocument = 'captura-solicitud';
     } else if (this.complianceVerifi == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Verificar Cumplimiento';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Clasificar Bien';
+      this.typeDocument = 'verificar-cumplimiento';
     } else if (this.classifyAssets == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Clasificación de Bienes';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Destino Documental';
+      this.typeDocument = 'clasificar-bienes';
     } else if (this.validateDocument) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Aclaraciones';
       this.tab3 = 'Identifica Destino Documental';
       this.btnTitle = 'Solicitar Aprobación';
+      this.typeDocument = 'validar-destino-bien';
     } else if (this.notifyClarifiOrImpropriety) {
       this.tab1 = 'Detalle de la Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Terminar';
       this.btnSaveTitle = 'Guardar';
+      this.typeDocument = 'validar-notificar-aclaracion';
     } else if (this.approvalProcess) {
       this.tab1 = 'Detalle de la Solicitud';
       this.tab2 = 'Bienes';
@@ -365,6 +379,7 @@ export class RegistrationOfRequestsComponent
       this.tab5 = 'Expediente';
       this.btnTitle = 'Aprovar';
       this.btnSaveTitle = '';
+      this.typeDocument = 'proceso-aprovacion';
     }
   }
 
@@ -384,7 +399,6 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       this.fractionService.getById(fractionId).subscribe({
         next: resp => {
-          debugger;
           if (resp.fractionCode) {
             resolve(resp.fractionCode);
           } else {
@@ -452,22 +466,24 @@ export class RegistrationOfRequestsComponent
   }
 
   confirm() {
-    const typeCommit = 'confirm-request';
     this.msgSaveModal(
       'Aceptar',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       undefined,
-      typeCommit
+      this.typeDocument
     );
   }
 
   //metodo que guarda la verificacion
   public async confirmMethod() {
+    /* trae solicitudes actualizadas */
     const request = await this.getAsyncRequestById();
     if (request) {
+      /* valida campos */
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
+        /* abre modal del elegir usuario */
         this.cambiarTipoUsuario(this.requestData);
       }
     }
@@ -476,6 +492,8 @@ export class RegistrationOfRequestsComponent
   cambiarTipoUsuario(request: any) {
     this.openModal(SelectTypeUserComponent, request, 'commit-request');
   }
+
+  verifyComplianceMethod() {}
 
   saveClarification(): void {
     this.saveClarifiObject = true;
@@ -511,8 +529,12 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
-        if (typeCommit === 'confirm-request') {
+        if (typeCommit === 'captura-solicitud') {
           this.confirmMethod();
+        }
+
+        if (typeCommit === 'verificar-cumplimiento') {
+          this.verifyComplianceMethod();
         }
       }
     });
@@ -542,9 +564,7 @@ export class RegistrationOfRequestsComponent
   }
 
   dinamyCallFrom() {
-    console.log(this.registRequestForm);
     this.registRequestForm.valueChanges.subscribe(data => {
-      console.log(data);
       this.requestData = data;
     });
   }
