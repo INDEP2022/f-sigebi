@@ -13,6 +13,7 @@ export const AFFAIR_TYPE_COLUMNS = {
     valuePrepareFunction: (value: string) => {
       if (value == 'P') return 'Procesal';
       if (value == 'T') return 'Transferente';
+      if (value == 'A') return 'Administrativo';
       if (value == 'AT') return 'AdminTransferente';
 
       return value;

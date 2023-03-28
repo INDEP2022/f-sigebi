@@ -10,7 +10,7 @@
     </h5>
   </div>
 
-  <div body>
+  <div body class="init-page">
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
       <!-- <div class="row pb-0 mb-0">
         <div class="col-md-12 d-flex">
@@ -71,21 +71,6 @@
                             [value]="action.value" />
                         </form-radio>
                       </div>
-                    </div>
-                    <div
-                      class="col-md-6"
-                      *ngIf="
-                        tipoCarga == 'pgr' &&
-                        DeclarationsUploadValidationMassive &&
-                        !procesandoUpload &&
-                        endProcess
-                      ">
-                      <button
-                        (click)="goPageVolante()"
-                        type="button"
-                        class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
-                        Regresar al proceso anterior
-                      </button>
                     </div>
                     <div
                       class="col-md-6"
@@ -205,7 +190,7 @@
       </div>
     </div>
     <div
-      class="row mt-3 mb-5"
+      class="row mt-3 mb-5 preload-process"
       *ngIf="
         DeclarationsValidationMassive &&
         DeclarationsValidationMassive.message_progress != ''
@@ -262,11 +247,16 @@
                   </div>
                 </div>
               </div>
-              <div class="list-group-item">
+              <div
+                class="list-group-item"
+                *ngIf="
+                  DeclarationsValidationMassive.common_general.count + 1 !=
+                  DeclarationsValidationMassive.common_general.total
+                ">
                 Datos del registro actual en proceso:
                 <div
                   class="row mt-5 w-100"
-                  style="max-height: 200px; overflow-y: scroll">
+                  style="max-height: 300px; overflow-y: scroll">
                   <div class="col-md-12">
                     <ng2-smart-table
                       [source]="tableSourceActualPreload"
@@ -357,7 +347,7 @@
     </div>
 
     <div
-      class="row mt-5 mb-3"
+      class="row mt-5 mb-3 upload-process"
       *ngIf="
         DeclarationsUploadValidationMassive &&
         DeclarationsUploadValidationMassive.message_progress != ''
@@ -424,17 +414,41 @@
                   </div>
                 </div>
               </div>
-              <div class="list-group-item">
+              <div
+                class="list-group-item"
+                *ngIf="
+                  DeclarationsUploadValidationMassive.common_general.count +
+                    1 !=
+                  DeclarationsUploadValidationMassive.common_general.total
+                ">
                 Datos del registro actual en proceso:
                 <div
                   class="row mt-5 w-100"
-                  style="max-height: 200px; overflow-y: scroll">
+                  style="max-height: 300px; overflow-y: scroll">
                   <div class="col-md-12">
                     <ng2-smart-table
                       [source]="tableSourceActualUpload"
                       [settings]="settings">
                     </ng2-smart-table>
                   </div>
+                </div>
+              </div>
+              <div class="list-group-item">
+                <div
+                  class="col-md-6 fin-proceso"
+                  *ngIf="
+                    tipoCarga == 'pgr' &&
+                    ((DeclarationsUploadValidationMassive &&
+                      !procesandoUpload &&
+                      endProcess) ||
+                      (tableSource.length == 0 && !cargandoPgr))
+                  ">
+                  <button
+                    (click)="goPageVolante()"
+                    type="button"
+                    class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                    Regresar al proceso anterior
+                  </button>
                 </div>
               </div>
             </ul>

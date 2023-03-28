@@ -41,7 +41,10 @@ export class PublicationPhotographsComponent
 {
   form: FormGroup = new FormGroup({});
   dataBatch: any;
+  transform: number;
+  selectedIndex = 0;
   lot: IComerLot;
+  see: boolean;
   lotList: IComerLot[] = [];
   photography: IGoodPhoto;
   photographyList: IGoodPhoto[] = [];
@@ -109,8 +112,9 @@ export class PublicationPhotographsComponent
     // this.getCve({ page: 1, text: '' });
     // this.data1.load(this.dataBatch)
     this.prepareForm();
-    this.getAllLot();
-    this.getAllPhotoGood();
+    this.see = true;
+    // this.getAllLot();
+    // this.getAllPhotoGood();
   }
 
   prepareForm() {
@@ -119,7 +123,7 @@ export class PublicationPhotographsComponent
       address: [null],
       failureDate: [null],
       place: [null],
-      localization: [null],
+      location: [null],
     });
   }
 
@@ -150,11 +154,17 @@ export class PublicationPhotographsComponent
 
   findEvent(x: any) {
     // this.form.value.price = this.form.controls['price'].value;
-    let eventId = this.form.value.id;
+    let eventId = x.id;
     if (this.form.value.eventId !== null) {
       this.comerLotService.getById(eventId).subscribe({
         next: data => {
+          this.see = false;
           console.log(data);
+          this.form.controls['id'].setValue(x.id);
+          this.form.controls['address'].setValue(x.address);
+          this.form.controls['failureDate'].setValue(x.failureDate);
+          this.form.controls['place'].setValue(x.place);
+          this.form.controls['location'].setValue(x.location);
           this.loading = false;
         },
         error: error => console.error,
@@ -169,6 +179,7 @@ export class PublicationPhotographsComponent
         this.totalItems = data.count;
         console.log(this.lotList);
         this.loading = false;
+        this.see = false;
       },
       error: error => (this.loading = false),
     });
@@ -177,11 +188,11 @@ export class PublicationPhotographsComponent
     this.publicationPhotographsService.getAll().subscribe({
       next: data => {
         this.photographyList = data.data;
-        this.totalItemsL = data.count;
+        this.totalItems = data.count;
         console.log(this.photographyList);
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.see = false),
     });
   }
 
@@ -269,30 +280,30 @@ export class PublicationPhotographsComponent
   itemsPerSlide = 5;
   singleSlideOffset = true;
 
-  slides = [
-    {
-      image:
-        'https://i.pinimg.com/originals/b5/32/5b/b5325b470c543806ab38376946d194c0.jpg',
-    },
-    {
-      image:
-        'https://i.pinimg.com/originals/55/da/25/55da25dd5c6763f54f72e525c4462c18.jpg',
-    },
-    {
-      image:
-        'https://i.pinimg.com/originals/25/19/12/251912a9122dce982d4f9a4c4f7a3360.jpg',
-    },
-    {
-      image:
-        'https://i.pinimg.com/originals/8a/88/81/8a88817c9c7702d4cecf14f84e601158.jpg',
-    },
-    {
-      image:
-        'https://cdn.dealeraccelerate.com/premier/19/5096/92829/1920x1440/1984-chevrolet-silverado-k10-4x4-pickup',
-    },
-    {
-      image:
-        'https://bringatrailer.com/wp-content/uploads/2022/01/1984_chevrolet_k10_20210909_180334-Copy-100030.jpg?fit=940%2C626',
-    },
-  ];
+  // slides = [
+  //   {
+  //     image:
+  //       'https://i.pinimg.com/originals/b5/32/5b/b5325b470c543806ab38376946d194c0.jpg',
+  //   },
+  //   {
+  //     image:
+  //       'https://i.pinimg.com/originals/55/da/25/55da25dd5c6763f54f72e525c4462c18.jpg',
+  //   },
+  //   {
+  //     image:
+  //       'https://i.pinimg.com/originals/25/19/12/251912a9122dce982d4f9a4c4f7a3360.jpg',
+  //   },
+  //   {
+  //     image:
+  //       'https://i.pinimg.com/originals/8a/88/81/8a88817c9c7702d4cecf14f84e601158.jpg',
+  //   },
+  //   {
+  //     image:
+  //       'https://cdn.dealeraccelerate.com/premier/19/5096/92829/1920x1440/1984-chevrolet-silverado-k10-4x4-pickup',
+  //   },
+  //   {
+  //     image:
+  //       'https://bringatrailer.com/wp-content/uploads/2022/01/1984_chevrolet_k10_20210909_180334-Copy-100030.jpg?fit=940%2C626',
+  //   },
+  // ];
 }

@@ -6,9 +6,11 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -97,7 +99,9 @@ export class RegistrationOfRequestsComponent
     private goodService: GoodService,
     private fractionService: FractionService,
     private goodEstateService: RealStateService,
-    private registrationHelper: RegistrationHelper
+    private registrationHelper: RegistrationHelper,
+    private taskService: TaskService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -123,6 +127,7 @@ export class RegistrationOfRequestsComponent
           this.staticTabs.tabs[0].active = true;
         }
       },
+      error: error => {},
     });
   }
 
@@ -219,13 +224,18 @@ export class RegistrationOfRequestsComponent
 
   getRequest(id: any) {
     this.requestService.getById(id).subscribe({
-      next: data => {
+      next: async (data: any) => {
         this.infoRequest = data;
-        this.getTransferent(data.transferenceId);
-        this.getRegionalDelegation(data.regionalDelegationId);
-        this.getStateOfRepublic(data.keyStateOfRepublic);
-        this.getAuthority(data.authorityId);
-        this.getStation(data.stationId);
+        await this.getTransferent(data.transferenceId);
+        await this.getRegionalDelegation(data.regionalDelegationId);
+        await this.getStation(data.transferenceId, data.stationId);
+        await this.getStateOfRepublic(data.keyStateOfRepublic);
+        await this.getAuthority(
+          data.transferenceId,
+          data.stationId,
+          data.authorityId
+        );
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
 
@@ -244,73 +254,67 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  // private getData({
-  //   idTransferent,
-  //   regionalDelegationId,
-  //   keyStateOfRepublic,
-  //   authorityId,
-  //   stationId,
-  // }: any) {
-  //   const obsTransferent = this.transferentService.getById(idTransferent);
-  //   const obsDelegation = this.delegationService.getById(regionalDelegationId);
-  //   const obsStateOfRepublic =
-  //     this.stateOfRepublicService.getById(keyStateOfRepublic);
-  //   const obsAuthority = this.authorityService.getById(authorityId);
-  //   const obsStation = this.stationService.getById(stationId);
-  //   forkJoin([
-  //     obsTransferent,
-  //     obsDelegation,
-  //     obsStateOfRepublic,
-  //     obsAuthority,
-  //     obsStation,
-  //   ]).subscribe({
-  //     next: ([transferent, delegation, stateRepublic, authority, station]) => {
-  //       if (transferent) {
-  //         this.transferentName = transferent.nameTransferent;
-  //       }
-  //       if (delegation) {
-  //         this.delegationName = delegation.description;
-  //       }
-  //       if (stateRepublic) {
-  //         this.stateOfRepublicName = stateRepublic.descCondition;
-  //       }
-  //       if (authority) {
-  //         this.authorityName = authority.authorityName;
-  //       }
-  //       if (station) {
-  //         this.stationName = station.stationName;
-  //       }
-  //     },
-  //   });
-  // }
-
   getTransferent(idTransferent: number) {
-    this.transferentService.getById(idTransferent).subscribe(data => {
-      this.transferentName = data.nameTransferent;
+    return new Promise((resolve, reject) => {
+      this.transferentService.getById(idTransferent).subscribe(data => {
+        this.transferentName = data.nameTransferent;
+        resolve(true);
+      });
     });
   }
 
   getRegionalDelegation(idDelegation: number) {
-    this.delegationService.getById(idDelegation).subscribe(data => {
-      this.delegationName = data.description;
+    return new Promise((resolve, reject) => {
+      this.delegationService.getById(idDelegation).subscribe(data => {
+        this.delegationName = data.description;
+        resolve(true);
+      });
     });
   }
 
   getStateOfRepublic(idState: number) {
-    this.stateOfRepublicService.getById(idState).subscribe(data => {
-      this.stateOfRepublicName = data.descCondition;
+    return new Promise((resolve, reject) => {
+      this.stateOfRepublicService.getById(idState).subscribe(data => {
+        this.stateOfRepublicName = data.descCondition;
+        resolve(true);
+      });
     });
   }
 
-  getAuthority(idAuthority: number) {
-    this.authorityService.getById(idAuthority).subscribe(data => {
-      this.authorityName = data.authorityName;
+  getAuthority(idTransferent: number, idStation: number, idAuthority: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.idStation'] = `$eq:${idStation}`;
+      params['filter.idTransferer'] = `$eq:${idTransferent}`;
+      params['filter.idAuthority'] = `$eq:${idAuthority}`;
+      this.authorityService.getAll(params).subscribe({
+        next: data => {
+          this.authorityName = data.data[0].authorityName;
+          resolve(true);
+        },
+        error: error => {
+          this.authorityName = '';
+          resolve(true);
+        },
+      });
     });
   }
 
-  getStation(idStation: number) {
-    this.stationService.getById(idStation).subscribe(data => {
-      this.stationName = data.stationName;
+  getStation(idTransferent: number, idStation: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${idStation}`;
+      params['filter.idTransferent'] = `$eq:${idTransferent}`;
+      this.stationService.getAll(params).subscribe({
+        next: data => {
+          this.stationName = data.data[0].stationName;
+          resolve(true);
+        },
+        error: error => {
+          this.stationName = '';
+          resolve(true);
+        },
+      });
     });
   }
 
@@ -394,6 +398,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -408,6 +413,7 @@ export class RegistrationOfRequestsComponent
             resolve('');
           }
         },
+        error: error => {},
       });
     });
   }
@@ -419,6 +425,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -442,6 +449,7 @@ export class RegistrationOfRequestsComponent
           next: resp => {
             resolve(resp);
           },
+          error: error => {},
         });
       } else {
         resolve(null);
@@ -465,6 +473,7 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
+        error: error => {},
       });
   }
 
@@ -496,7 +505,38 @@ export class RegistrationOfRequestsComponent
     this.openModal(SelectTypeUserComponent, request, 'commit-request');
   }
 
-  verifyComplianceMethod() {}
+  verifyComplianceMethod() {
+    /*let body: any = {};
+    const user: any = this.authService.decodeToken();
+    body['id'] = 0;
+    body['assignees'] = this.user.username;
+    body['assigneesDisplayname'] = this.user.firstName;
+    body['creator'] = user.username;
+    body['taskNumber'] = Number(this.data.id);
+    body['title'] =
+      'Registro de solicitud (Clasificar Bien) con folio: ' +
+      this.data.id;
+    body['isPublic'] = 's';
+    body['istestTask'] = 's';
+    body['programmingId'] = 0;
+    body['requestId'] = this.data.id;
+    body['expedientId'] = this.data.recordId;
+    body['urlNb'] = 'pages/request/transfer-request/verify-compliance';*/
+    /*const taskResponse = await this.createTask(body);
+    if (taskResponse) {
+      Swal.fire({
+        title: 'Solicitud Turnada',
+        text: 'La solicitud se turno conrrectamente',
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        this.close();
+      });
+    } */
+  }
 
   saveClarification(): void {
     this.saveClarifiObject = true;
@@ -510,11 +550,11 @@ export class RegistrationOfRequestsComponent
   signDictum() {
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
+
   /** Proceso de aprobacion */
   private approveRequest() {
     /**Verificar datos */
     console.log(this.requestData);
-
     console.log('---- Redireccionar finalizando proceso ----');
     return;
     this.requestService
@@ -535,6 +575,19 @@ export class RegistrationOfRequestsComponent
       });
   }
   /** fin de proceso */
+
+  createTask(task: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    });
+  }
   msgSaveModal(
     btnTitle: string,
     message: string,

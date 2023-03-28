@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+
 @Injectable({
   providedIn: 'root',
 })
-export class showHideErrorInterceptorService {
+export class showHideErrorInterceptorService implements OnInit {
   private showError = new BehaviorSubject<boolean>(true);
   private _blockAllErrors: boolean = false; //Bloque permanente errores si esta en true hasta que vuelva a establecerse falso manualmente
   constructor() {}
@@ -13,6 +14,10 @@ export class showHideErrorInterceptorService {
   }
   set blockAllErrors(condition: boolean) {
     this._blockAllErrors = condition;
+  }
+
+  ngOnInit(): void {
+    this._blockAllErrors = false;
   }
 
   showHideError(value: boolean) {
