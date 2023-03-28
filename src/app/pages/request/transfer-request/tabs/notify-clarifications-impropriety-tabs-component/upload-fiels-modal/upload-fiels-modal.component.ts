@@ -3,11 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  RFCCURP_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-upload-fiels-modal',
@@ -35,18 +31,15 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
   initForm() {
     this.fileForm = this.fb.group({
-      name: [
-        { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      position: [
-        { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      position: [null, [Validators.pattern(STRING_PATTERN)]],
       password: [null],
-      rfc: [null, [Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [
+        null,
+        [Validators.pattern(RFCCURP_PATTERN), Validators.maxLength(13)],
+      ],
       certificationFile: [null],
-      keyCertificationFile: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      keyCertificationFile: [null],
     });
   }
 

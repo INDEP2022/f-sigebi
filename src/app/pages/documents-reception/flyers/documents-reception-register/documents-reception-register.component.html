@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div body>
+  <div body class="init-page">
     <form
       [formGroup]="documentsReceptionForm"
       (submit)="(false)"
@@ -757,9 +757,10 @@
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'N' &&
-            !pgrInterface &&
-            !satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'N' &&
+              !pgrInterface &&
+              !satInterface) ||
+            pgrGoodsProcessed
           ">
           <confirm-button
             text="Guardar"
@@ -771,9 +772,10 @@
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'S' ||
-            pgrInterface ||
-            satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'S' ||
+              pgrInterface ||
+              satInterface) &&
+            !pgrGoodsProcessed
           ">
           <confirm-button
             text="Siguiente"
