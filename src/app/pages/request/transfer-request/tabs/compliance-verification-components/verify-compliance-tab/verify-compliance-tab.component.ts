@@ -221,6 +221,7 @@ export class VerifyComplianceTabComponent
         docClarification: docClarification,
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
+          this.clarificationData = [];
           if (next) this.getClarifications(this.goodsSelected[0].id);
         },
       },
@@ -461,12 +462,12 @@ export class VerifyComplianceTabComponent
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
         });
-        console.log(clarification);
 
         Promise.all(clarification).then(data => {
           this.clarificationData = resp.data;
         });
       },
+      error: error => {},
     });
   }
 
