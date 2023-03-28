@@ -253,8 +253,8 @@ export class GoodsBulkLoadService {
     return this.msTmpExpedientService.getById(params);
   }
 
-  getPgrExpedientByFilter(params: _Params) {
-    return this.expedientService.getAllFilter(params);
+  getPgrExpedientByFilter(params: string) {
+    return this.expedientService.getById(params);
   }
 
   createPgrNotification(body: INotification) {
