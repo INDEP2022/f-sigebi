@@ -124,6 +124,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
+  statusProceeding = '';
 
   constructor(
     private fb: FormBuilder,
@@ -387,7 +388,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    this.form.get('fecCaptura').setValue(new Date());
+    if (this.form.get('folio').value.length > 15) {
+      this.alert(
+        'error',
+        'Número de folio incorrecto',
+        'El número de folio no puede ser mayor de 15 dígitos'
+      );
+    } else {
+      this.form.get('fecCaptura').setValue(new Date());
+    }
   }
 
   //"Acta 2"
