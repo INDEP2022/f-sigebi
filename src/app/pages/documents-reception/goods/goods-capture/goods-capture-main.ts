@@ -497,7 +497,8 @@ export class GoodsCaptureMain extends BasePage {
     this.assetsForm.controls.descripcion.setValue(desc);
     this.assetsForm.controls.noClasifBien.setValue(type);
     this.assetsForm.controls.destino.setValue('3');
-    this.assetsForm.controls.unidadMedida.setValue(unit);
+    const _unit = unit?.trim() == 'PZ' ? 'PIEZA' : unit;
+    this.assetsForm.controls.unidadMedida.setValue(_unit);
     this._fillAllForm();
   }
 
