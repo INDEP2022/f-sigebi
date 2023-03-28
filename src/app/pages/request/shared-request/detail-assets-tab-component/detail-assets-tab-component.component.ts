@@ -188,8 +188,6 @@ export class DetailAssetsTabComponentComponent
 
   ngOnInit(): void {
     this.initForm();
-    console.log('tipo de bien');
-    console.log(this.typeDoc);
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());

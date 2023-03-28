@@ -2,7 +2,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export class GoodPartializationForm {
-  bien = new FormControl({ value: null, disabled: true }, [
+  bien = new FormControl<number>({ value: null, disabled: true }, [
     Validators.required,
   ]);
   clasif = new FormControl(null);
