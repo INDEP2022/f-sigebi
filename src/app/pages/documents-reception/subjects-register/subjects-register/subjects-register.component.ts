@@ -80,6 +80,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    let main = document.documentElement.querySelector('.init-page');
+    setTimeout(() => {
+      main.scroll(0, 0);
+    }, 300);
     this.setSettingsTables();
     this.prepareForm();
     this.initPage();
@@ -243,7 +247,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (
       this.pgrTransferForm.get('pgrGoodNumber').value ||
       this.pgrTransferForm.get('saeGoodNumber').value ||
-      this.pgrTransferForm.get('status').value
+      this.pgrTransferForm.get('status').value ||
+      this.pgrTransferForm.get('aveprev').value ||
+      this.pgrTransferForm.get('office').value
     ) {
       valid = true;
     } else {
@@ -337,7 +343,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista PGR Transferencia
    */
   async getPgrTransferencia(resetValues: boolean = false) {
-    let filtrados =
+    let filtrados: any =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.pgrTransferForm.value,
         this.paramsPgrTransferencia.value,
@@ -504,10 +510,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   selectRow(row: any) {
-    this.pgrTransferForm.get('aveprev').setValue(row.issue);
-    this.pgrTransferForm.get('office').setValue(row.officeNumber);
-    this.pgrTransferForm.updateValueAndValidity();
     if (row.issue && row.officeNumber) {
+      this.pgrTransferForm.get('aveprev').setValue(row.issue);
+      this.pgrTransferForm.get('office').setValue(row.officeNumber);
+      this.pgrTransferForm.updateValueAndValidity();
       this.onLoadToast(
         'info',
         '¡Búsqueda!',
@@ -515,6 +521,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       );
     } else {
       if (row.issue) {
+        this.pgrTransferForm.get('aveprev').setValue(row.issue);
+        this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast(
           'info',
           '¡Búsqueda!',
@@ -522,11 +530,13 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         );
       }
       if (row.officeNumber) {
+        this.pgrTransferForm.get('office').setValue(row.officeNumber);
+        this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_PGR);
       }
     }
     setTimeout(() => {
       this.consultarPgrTransferForm(true, true);
-    }, 100);
+    }, 300);
   }
 }

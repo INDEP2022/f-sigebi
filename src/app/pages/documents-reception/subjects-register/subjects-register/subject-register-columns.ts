@@ -14,7 +14,7 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  wheelNumber: {
+  flierNumber: {
     title: 'No. Volante',
     type: 'number',
     sort: false,
