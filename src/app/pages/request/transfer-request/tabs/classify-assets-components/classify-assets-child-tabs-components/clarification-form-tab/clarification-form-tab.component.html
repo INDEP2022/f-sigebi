@@ -23,13 +23,12 @@
         <div class="row pt-4">
           <div class="col-md-12">
             <ngx-select
-              (change)="clasificationSelect($event)"
               [form]="clarificationForm"
               control="clarificationId"
               (fetchItems)="getClarification($event)"
               [data]="selectClarification"
               label="Aclaraci&oacute;n"
-              value="clarification"
+              value="id"
               bindLabel="clarification"></ngx-select>
           </div>
         </div>
