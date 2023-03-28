@@ -221,7 +221,7 @@ export class VerifyComplianceTabComponent
         docClarification: docClarification,
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) this.getClarifications(this.goodsSelected[0].id);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -506,6 +506,8 @@ export class VerifyComplianceTabComponent
         this.rejectedGoodService.remove(id).subscribe({
           next: resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
+            this.clarificationData = [];
+            this.getClarifications(this.goodsSelected[0].id);
           },
         });
       }

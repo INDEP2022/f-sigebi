@@ -97,6 +97,6 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    this.onLoadToast('error', 'Error' + status, message);
+    //this.onLoadToast('error', 'Error' + status, message);
   }
 }

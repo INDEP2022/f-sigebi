@@ -127,6 +127,7 @@ export class RegistrationOfRequestsComponent
           this.staticTabs.tabs[0].active = true;
         }
       },
+      error: error => {},
     });
   }
 
@@ -397,6 +398,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -411,6 +413,7 @@ export class RegistrationOfRequestsComponent
             resolve('');
           }
         },
+        error: error => {},
       });
     });
   }
@@ -422,6 +425,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -445,6 +449,7 @@ export class RegistrationOfRequestsComponent
           next: resp => {
             resolve(resp);
           },
+          error: error => {},
         });
       } else {
         resolve(null);
@@ -468,6 +473,7 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
+        error: error => {},
       });
   }
 
@@ -500,7 +506,7 @@ export class RegistrationOfRequestsComponent
   }
 
   verifyComplianceMethod() {
-    /*  let body: any = {};
+    /*let body: any = {};
     const user: any = this.authService.decodeToken();
     body['id'] = 0;
     body['assignees'] = this.user.username;
@@ -508,16 +514,15 @@ export class RegistrationOfRequestsComponent
     body['creator'] = user.username;
     body['taskNumber'] = Number(this.data.id);
     body['title'] =
-      'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
+      'Registro de solicitud (Clasificar Bien) con folio: ' +
       this.data.id;
     body['isPublic'] = 's';
     body['istestTask'] = 's';
     body['programmingId'] = 0;
     body['requestId'] = this.data.id;
     body['expedientId'] = this.data.recordId;
-    body['urlNb'] = 'pages/request/transfer-request/verify-compliance';
-
-    const taskResponse = await this.createTask(body);
+    body['urlNb'] = 'pages/request/transfer-request/verify-compliance';*/
+    /*const taskResponse = await this.createTask(body);
     if (taskResponse) {
       Swal.fire({
         title: 'Solicitud Turnada',

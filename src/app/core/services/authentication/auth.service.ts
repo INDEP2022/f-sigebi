@@ -51,6 +51,13 @@ export class AuthService {
     const decodedToken: TokenInfoModel = this.jwtService.decodeToken(
       this.token
     );
+    if (decodedToken.preferred_username != 'sigebiadmon') {
+      const tokenInfo = {
+        ...decodedToken,
+        preferred_username: decodedToken.preferred_username.toLocaleUpperCase(),
+      };
+      return tokenInfo;
+    }
     return decodedToken;
   }
 
