@@ -292,15 +292,13 @@ export class DocumentsReceptionRegisterComponent
   }
 
   ngOnInit(): void {
-    //this.showHideErrorInterceptorService.showHideError(false);
+    let main = document.documentElement.querySelector('.init-page');
+    main.scroll(0, 0);
     this.checkParams();
     this.onFormChanges();
     this.getLoggedUserArea();
     this.setDefaultValues();
     this.checkManagementArea();
-    // console.log(this.pageParams.pGestOk, this.pageParams.pNoVolante);
-    // console.log((this.pageParams.pGestOk === 1), (this.pageParams.pNoVolante !== null));
-    // console.log(this.docDataService.documentsReceptionRegisterForm);
     if (this.docDataService.documentsReceptionRegisterForm == null) {
       if (
         this.pageParams.pGestOk === 1 ||
@@ -1496,7 +1494,7 @@ export class DocumentsReceptionRegisterComponent
     this.destinationAreaChange();
     this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
-    this.blockErrors(true);
+    this.blockErrors(false);
   }
 
   selectFlyer() {
@@ -2617,6 +2615,10 @@ export class DocumentsReceptionRegisterComponent
       .subscribe({
         next: data => {
           console.log(data);
+          this.updateGlobalVars(
+            'gNoExpediente',
+            this.formControls.expedientNumber.value
+          );
           this.saveNotification();
           this.saveProcedureManagement();
         },
@@ -2681,6 +2683,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: err => {
           console.log(err);
+          this.blockErrors(false);
           this.onLoadToast(
             'error',
             'Error',
@@ -2720,6 +2723,10 @@ export class DocumentsReceptionRegisterComponent
       next: data => {
         this.formControls.expedientNumber.setValue(Number(data.id));
         console.log(data.id, this.formControls.expedientNumber.value);
+        this.updateGlobalVars(
+          'gNoExpediente',
+          this.formControls.expedientNumber.value
+        );
         this.saveNotification();
         this.saveProcedureManagement();
       },
@@ -3465,21 +3472,118 @@ export class DocumentsReceptionRegisterComponent
   }
 
   startGoodsCapture() {
+    console.log('Start Goods Capture');
+    console.log(this.formControls.wheelType.value);
     if (this.formControls.wheelType.value == 'A') {
       this.updateGlobalVars('gCreaExpediente', 'N');
     }
     this.hideError();
     this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
       next: data => {
+        console.log(data);
         const { affair, affairSij, typeManagement, officeNumber } = data;
-        this.saveTmpExpedients(affair, affairSij, typeManagement, officeNumber);
-        // this.saveTmpNotifications(affairSij);
-        // this.captureGoods();
+        this.checkTmpExpedients(
+          affair,
+          affairSij,
+          typeManagement,
+          officeNumber
+        );
       },
-      error: () => {
-        this.captureGoods();
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        this.onLoadToast(
+          'warning',
+          'No se encontraron datos',
+          'Hubo un problema al obtener los datos del trámite'
+        );
       },
     });
+  }
+
+  checkTmpExpedients(
+    affair: string,
+    affairSij: number,
+    typeManagement: number,
+    officeNumber: string
+  ) {
+    if (this.formControls.expedientNumber.value == null) {
+      this.hideError();
+      this.expedientService.getNextVal().subscribe({
+        next: data => {
+          console.log(data);
+          this.formControls.expedientNumber.setValue(Number(data.nextval));
+          this.checkExistsTmpExpedients(
+            affair,
+            affairSij,
+            typeManagement,
+            officeNumber
+          );
+        },
+        error: err => {
+          console.log(err);
+          this.loading = false;
+          this.onLoadToast(
+            'warning',
+            'Expediente No Creado',
+            'Hubo un problema al guardar los datos del expediente.'
+          );
+        },
+      });
+    } else {
+      this.checkExistsTmpExpedients(
+        affair,
+        affairSij,
+        typeManagement,
+        officeNumber
+      );
+    }
+  }
+
+  checkExistsTmpExpedients(
+    affair: string,
+    affairSij: number,
+    typeManagement: number,
+    officeNumber: string
+  ) {
+    this.hideError();
+    this.tmpExpedientService
+      .getById(this.formControls.expedientNumber.value)
+      .subscribe({
+        next: () => {
+          this.hideError();
+          this.tmpExpedientService
+            .remove(this.formControls.expedientNumber.value)
+            .subscribe({
+              next: () => {
+                console.log('Delete Temp Expediente');
+                this.saveTmpExpedients(
+                  affair,
+                  affairSij,
+                  typeManagement,
+                  officeNumber
+                );
+              },
+              error: err => {
+                console.log(err);
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Expediente No Creado',
+                  'Hubo un problema al guardar los datos del expediente.'
+                );
+              },
+            });
+        },
+        error: () => {
+          this.saveTmpExpedients(
+            affair,
+            affairSij,
+            typeManagement,
+            officeNumber
+          );
+        },
+      });
   }
 
   saveTmpExpedients(
@@ -3488,142 +3592,63 @@ export class DocumentsReceptionRegisterComponent
     typeManagement: number,
     officeNumber: string
   ) {
-    if (this.formControls.expedientNumber.value != null) {
-      this.hideError();
-      this.tmpExpedientService
-        .getById(this.formControls.expedientNumber.value)
-        .subscribe({
-          next: () => {
-            this.hideError();
-            this.tmpExpedientService
-              .remove(this.formControls.expedientNumber.value)
-              .subscribe({
-                next: () => {},
-                error: err => {
-                  console.log(err);
-                },
-              });
-          },
-          error: () => {},
-        });
-    }
-    if (this.formControls.expedientNumber.value == null) {
-      this.expedientService.getNextVal().subscribe({
-        next: data => {
-          console.log(data);
-          this.formControls.expedientNumber.setValue(Number(data.nextval));
-          const expedientData: ITempExpedient = {
-            id: this.formControls.expedientNumber.value,
-            recordCircumstanced: this.formData.circumstantialRecord,
-            ascertainmentPrevious: this.formData.preliminaryInquiry,
-            causePenal: this.formData.criminalCase,
-            cveProtection: this.formData.protectionKey,
-            cvetouchPenal: this.formData.touchPenaltyKey,
-            nameIndexed: this.formData.indiciadoName,
-            courtNumber: this.formData.courtNumber,
-            cveEntfed: this.formData.entFedKey,
-            cveCrime: this.formData.crimeKey,
-            identifier: this.formData.identifier,
-            transfereeNumber: this.formData.endTransferNumber,
-            authorityNumber: this.formData.autorityNumber,
-            stationNumber: this.formData.stationNumber,
-            proceedingsType: this.formData.wheelType,
-            expTransferorsNumber: this.formData.expedientTransferenceNumber,
-            observations: this.formData.observations,
-            insertionDate: format(new Date(), 'yyyy-MM-dd'),
-            affair: affair,
-            affairSijNumber: affairSij,
-            procedureType: typeManagement,
-            jobNumber: officeNumber,
-          };
-          console.log(this.formControls.expedientNumber.value);
-          console.log(expedientData);
-          this.tmpExpedientService.create(expedientData).subscribe({
-            next: data => {
-              this.formControls.expedientNumber.setValue(data.id);
-              this.updateGlobalVars('gNoExpediente', data.id);
-              this.saveTmpNotifications(affairSij);
-            },
-            error: err => {
-              this.loading = false;
-              console.log(expedientData);
-              console.log(err);
-              this.onLoadToast(
-                'warning',
-                'Expediente No Creado',
-                'Hubo un problema al guardar los datos del expediente.'
-              );
-            },
-          });
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast(
-            'warning',
-            'Expediente No Creado',
-            'Hubo un problema al guardar los datos del expediente.'
-          );
-        },
-      });
-    }
+    const expedientData: ITempExpedient = {
+      id: this.formControls.expedientNumber.value,
+      recordCircumstanced: this.formData.circumstantialRecord,
+      ascertainmentPrevious: this.formData.preliminaryInquiry,
+      causePenal: this.formData.criminalCase,
+      cveProtection: this.formData.protectionKey,
+      cvetouchPenal: this.formData.touchPenaltyKey,
+      nameIndexed: this.formData.indiciadoName,
+      courtNumber: this.formData.courtNumber,
+      cveEntfed: this.formData.entFedKey,
+      cveCrime: this.formData.crimeKey,
+      identifier: this.formData.identifier,
+      transfereeNumber: this.formData.endTransferNumber,
+      authorityNumber: this.formData.autorityNumber,
+      stationNumber: this.formData.stationNumber,
+      proceedingsType: this.formData.wheelType,
+      expTransferorsNumber: this.formData.expedientTransferenceNumber,
+      observations: this.formData.observations,
+      insertionDate: format(new Date(), 'yyyy-MM-dd'),
+      affair: affair,
+      affairSijNumber: affairSij,
+      procedureType: typeManagement,
+      jobNumber: officeNumber,
+    };
+    console.log(this.formControls.expedientNumber.value);
+    console.log(expedientData);
+    this.tmpExpedientService.create(expedientData).subscribe({
+      next: data => {
+        this.formControls.expedientNumber.setValue(data.id);
+        this.updateGlobalVars('gNoExpediente', data.id);
+        this.checkTmpNotifications(affairSij);
+      },
+      error: err => {
+        this.loading = false;
+        console.log(expedientData);
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Expediente No Creado',
+          'Hubo un problema al guardar los datos del expediente.'
+        );
+      },
+    });
   }
 
-  saveTmpNotifications(affairSij: number) {
-    if (this.formControls.wheelNumber.value != null) {
-      this.hideError();
-      this.tmpNotificationService
-        .getById(this.formControls.wheelNumber.value)
-        .subscribe({
-          next: data => {
-            this.tmpNotificationService
-              .remove(this.formControls.wheelNumber.value)
-              .subscribe({
-                next: () => {},
-                error: err => {
-                  console.log(err);
-                },
-              });
-          },
-          error: () => {},
-        });
-    }
+  checkTmpNotifications(affairSij: number) {
     if (this.formControls.wheelNumber.value == null) {
+      this.hideError();
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
           console.log(data);
           this.formControls.wheelNumber.setValue(data.nextval);
-          const notificationData: ITmpNotification = {
-            ...this.formData,
-            wheelNumber: this.formControls.wheelNumber.value,
-            externalOfficeDate: this.formData.externalOfficeDate,
-            receiptDate: this.formData.receiptDate,
-            hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
-            hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
-            affairSij,
-            delegationNumber: this.userDelegation,
-            subDelegationNumber: this.userSubdelegation,
-            expedientNumber: this.formControls.expedientNumber.value,
-          };
-          console.log(this.formControls.wheelNumber.value);
-          console.log(notificationData);
-          this.tmpNotificationService.create(notificationData).subscribe({
-            next: () => {
-              this.captureGoods();
-            },
-            error: err => {
-              this.loading = false;
-              console.log(notificationData);
-              console.log(err);
-              this.onLoadToast(
-                'warning',
-                'Volante No Creado',
-                'Hubo un problema al guardar los datos del volante.'
-              );
-            },
-          });
+          this.checkExistsTmpNotifications(affairSij);
         },
         error: err => {
           console.log(err);
+          this.loading = false;
           this.onLoadToast(
             'warning',
             'Volante No Creado',
@@ -3631,7 +3656,72 @@ export class DocumentsReceptionRegisterComponent
           );
         },
       });
+    } else {
+      this.checkExistsTmpNotifications(affairSij);
     }
+  }
+
+  checkExistsTmpNotifications(affairSij: number) {
+    this.hideError();
+    this.tmpNotificationService
+      .getById(this.formControls.wheelNumber.value)
+      .subscribe({
+        next: data => {
+          this.hideError();
+          this.tmpNotificationService
+            .remove(this.formControls.wheelNumber.value)
+            .subscribe({
+              next: () => {
+                console.log('Volante Temp borrado');
+                this.saveTmpNotifications(affairSij);
+              },
+              error: err => {
+                console.log(err);
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Volante No Creado',
+                  'Hubo un problema al guardar los datos del volante.'
+                );
+              },
+            });
+        },
+        error: () => {
+          this.saveTmpNotifications(affairSij);
+        },
+      });
+  }
+
+  saveTmpNotifications(affairSij: number) {
+    const notificationData: ITmpNotification = {
+      ...this.formData,
+      wheelNumber: this.formControls.wheelNumber.value,
+      externalOfficeDate: this.formData.externalOfficeDate,
+      receiptDate: this.formData.receiptDate,
+      hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
+      hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
+      affairSij,
+      delegationNumber: this.userDelegation,
+      subDelegationNumber: this.userSubdelegation,
+      expedientNumber: this.formControls.expedientNumber.value,
+    };
+    console.log(this.formControls.wheelNumber.value);
+    console.log(notificationData);
+    this.tmpNotificationService.create(notificationData).subscribe({
+      next: () => {
+        this.captureGoods();
+      },
+      error: err => {
+        this.loading = false;
+        console.log(notificationData);
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Volante No Creado',
+          'Hubo un problema al guardar los datos del volante.'
+        );
+      },
+    });
   }
 
   captureGoods() {
@@ -3714,11 +3804,6 @@ export class DocumentsReceptionRegisterComponent
           error: err => {
             console.log(err);
             this.sendToGoodsCapture();
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Error al buscar el oficio del FGR'
-            );
           },
         });
     } else {

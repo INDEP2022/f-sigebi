@@ -188,8 +188,8 @@ export class AddressTransferorTabComponent
   //obtener el codigo zip
   getCP(params: ListParams, localityId?: number, municipalityId?: number) {
     params.limit = 20;
-    params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
-    params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
+    //params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
+    // params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
     params['filter.keyState'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
     this.goodsQueryService.getZipCode(params).subscribe({
       next: data => {
