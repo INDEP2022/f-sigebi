@@ -148,6 +148,9 @@ export class DocRequestTabComponent
           this.loading = false;
         });
       },
+      error: error => {
+        console.log(error);
+      },
     });
   }
 

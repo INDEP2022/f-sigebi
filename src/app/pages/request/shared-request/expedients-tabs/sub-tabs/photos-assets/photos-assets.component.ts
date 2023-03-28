@@ -90,37 +90,39 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   getGoodsRequest() {
-    this.loading = true;
-    this.paramsGoods.getValue()['filter.requestId'] = this.idRequest;
-    this.goodService.getAll(this.paramsGoods.getValue()).subscribe({
-      next: async (data: any) => {
-        const filterGoodType = data.data.map(async (item: any) => {
-          const goodType = await this.getGoodType(item.goodTypeId);
-          item['goodTypeId'] = goodType;
-          item['requestId'] = this.idRequest;
+    if (this.idRequest) {
+      this.loading = true;
+      this.paramsGoods.getValue()['filter.requestId'] = this.idRequest;
+      this.goodService.getAll(this.paramsGoods.getValue()).subscribe({
+        next: async (data: any) => {
+          const filterGoodType = data.data.map(async (item: any) => {
+            const goodType = await this.getGoodType(item.goodTypeId);
+            item['goodTypeId'] = goodType;
+            item['requestId'] = this.idRequest;
 
-          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-          if (item['stateConservation'] == 1)
-            item['stateConservation'] = 'BUENO';
-          if (item['stateConservation'] == 2)
-            item['stateConservation'] = 'MALO';
-          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+            if (item['stateConservation'] == 1)
+              item['stateConservation'] = 'BUENO';
+            if (item['stateConservation'] == 2)
+              item['stateConservation'] = 'MALO';
+            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
-          const fraction = item['fractionId'];
-          item['fractionId'] = fraction.description;
-        });
+            const fraction = item['fractionId'];
+            item['fractionId'] = fraction.description;
+          });
 
-        Promise.all(filterGoodType).then(x => {
-          this.paragraphs = data.data;
-          this.totalItems = data.count;
+          Promise.all(filterGoodType).then(x => {
+            this.paragraphs = data.data;
+            this.totalItems = data.count;
+            this.loading = false;
+          });
+        },
+        error: error => {
           this.loading = false;
-        });
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });
+        },
+      });
+    }
   }
 
   getGoodType(goodTypeId: number) {

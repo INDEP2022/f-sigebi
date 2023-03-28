@@ -152,6 +152,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
         body['requestId'] = resposeRequest.id;
         body['expedientId'] = 0;
         body['urlNb'] = 'pages/request/transfer-request/registration-request';
+
         const taskResult: any = await this.createTask(body);
         //console.log(taskResult.data[0].is);
         if (this.requestToTurn.length === index) {
