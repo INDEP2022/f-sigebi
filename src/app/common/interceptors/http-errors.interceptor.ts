@@ -81,7 +81,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.onLoadToast(
         'error',
         'Servidor no disponible',
-        'Verifique su conexión, o intentelo más tarde'
+        'Verifique su conexión, o inténtelo más tarde'
       );
       return;
     }
@@ -100,7 +100,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';
-      this.onLoadToast('error', 'No autorizado', message);
+      //this.onLoadToast('error', 'No autorizado', message);
       this.router.navigate(['/auth/login']);
       return;
     }

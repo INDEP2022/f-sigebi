@@ -189,7 +189,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getGlobalVars$()
       .subscribe((globalVars: IGlobalVars) => {
         this.globals = globalVars;
-        console.log(this.globals);
       });
     this.procesandoPreload = false; // Inicializar variables proceso
     this.procesandoUpload = false; // Inicializar variables proceso
@@ -306,7 +305,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         );
       }
     }
-    console.log(this.tipoCarga, this.paramsGeneral);
   }
 
   prepareForm() {
@@ -364,7 +362,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     this.DeclarationsSatSaeMassive = undefined;
     setTimeout(() => {
-      console.log(this.DeclarationsSatSaeMassive);
       this.assetsForm.markAllAsTouched();
       if (this.target.value == 'general') {
         if (this.validIdCarga()) {
@@ -376,7 +373,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             .getUploadGoodIdentificador(params.getFilterParams())
             .subscribe({
               next: res => {
-                console.log(res);
                 if (res.data.length > 0) {
                   this.alert(
                     'warning',
@@ -391,7 +387,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 }
               },
               error: err => {
-                console.log(err);
                 this.alert(
                   'warning',
                   'Opción Carga Masiva',
@@ -423,7 +418,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       let preloadFile = this.excelService.getData<previewData | any>(
         binaryExcel
       );
-      console.log(preloadFile);
       this.tableSource = [];
       preloadFile.forEach((data: any, count: number) => {
         // PRUEBA
@@ -454,7 +448,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           }
         }
       }
-      console.log(this.tableSource);
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
     } catch (error) {
@@ -525,21 +518,20 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * Revisar las condiciones para comenzar el proceso de carga de registros
    */
   reviewConditions() {
-    console.log(this.assetsForm.value, this.target.value);
     if (!this.validLoadFile()) {
       return;
     }
     // Inicia proceso de preload
     this.procesandoPreload = true;
     if (this.target.value == 'sat') {
-      console.log('SAT');
+      // console.log('SAT');
       this.validatorPreloadMassiveSat();
     } else if (this.target.value == 'pgr') {
       this.endProcess = false;
-      console.log('PGR');
+      // console.log('PGR');
       this.validatorPreloadMassivePgr();
     } else if (this.target.value == 'general') {
-      console.log('GENERAL');
+      // console.log('GENERAL');
       this.validatorPreloadMassiveGeneral();
     }
   }
@@ -572,7 +564,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   validActionType() {
     if (this.assetsForm.get('actionType').value) {
-      console.log(this.assetsForm.get('actionType').value);
       // if (
       //   // GOODS_BULK_LOAD_ACTIONS.sat[0].value !=
       //   //   this.assetsForm.get('actionType').value &&
@@ -616,7 +607,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * @returns Si la validacion es correcta
    */
   validLoadFile() {
-    console.log(this.tableSource);
     if (this.tableSource.length > 0) {
       return true;
     } else {
@@ -649,7 +639,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log(res);
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             if (element) {
@@ -671,7 +660,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         },
         error: err => {
           this.cargandoPgr = false;
-          console.log(err);
           this.alert(
             'warning',
             'Carga Masiva FGR',
@@ -683,16 +671,13 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
 
   initDataPgr(pgrData: IPgrTransfer[]) {
     const params = new FilterParams();
-    params.addFilter('user', this.userId.toUpperCase());
+    params.addFilter('user', this.userId);
     this.hideError();
     this.goodsBulkService.getInfoUserLogued(params.getParams()).subscribe({
       next: data => {
-        console.log(data);
         if (data.data.length > 0) {
           this.userDelegation = data.data[0].delegationNumber;
           this.userSubdelegation = data.data[0].subdelegationNumber;
-          console.log(this.userDelegation, this.userSubdelegation);
-
           this.cargandoPgr = true;
           this.tableSource = [];
           this.pgrData = pgrData;
@@ -701,7 +686,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.cargandoPgr = false;
-        console.log(err);
         this.alert(
           'warning',
           'Carga Masiva FGR',
@@ -712,6 +696,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   getDataVolanteData(dataPgr: IPgrTransfer, count: number = 0) {
+    console.log('CONTADOR PROCESO', count, dataPgr.pgrGoodNumber);
     const params = new FilterParams();
     params.removeAllFilters();
     let expedient = encodeURIComponent(this.paramsGeneral.p_no_expediente);
@@ -724,12 +709,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getDataPgrNotificationByFilter(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
           this.getFilterDataPgr(dataPgr, count, res.data[0], null); // Inicia proceso de carga y validacion
         },
         error: err => {
           this.cargandoPgr = false;
-          console.log(err);
           this.onLoadToast(
             'warning',
             'Datos del bien',
@@ -782,7 +765,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data['COL' + index] = null;
     }
     data['SAT_CVE_UNICA'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
-    console.log(data);
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
@@ -1030,11 +1012,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     body: any,
     dataInfo: any
   ) {
-    console.log(body);
     this.goodsBulkService.getFaValAtributo1(body).subscribe({
       next: res => {
-        console.log(res);
-        // this.getFilterDataPgr(dataPgr, count, res.data[0]); // Inicia proceso de carga y validacion
         let dataResponse: any = res;
         for (const key in dataResponse) {
           if (Object.prototype.hasOwnProperty.call(dataResponse, key)) {
@@ -1048,7 +1027,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.cargandoPgr = false;
-        console.log(err);
         this.onLoadToast(
           'warning',
           'Datos del bien',
@@ -1059,7 +1037,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   loadDataPgr(pgrData: IPgrTransfer, count: number = 0, response: any) {
-    console.log(response);
+    // console.log(response);
     let objReplace: any = {};
     for (const key in response) {
       if (Object.prototype.hasOwnProperty.call(response, key)) {
@@ -1084,15 +1062,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         }
       }
     }
-    // console.log(this.pgrData.length, count);
-    if (this.pgrData.length <= count++) {
-      console.log(this.tableSource);
+    // console.log('COMPLETOS', this.pgrData.length, count);
+    if (this.pgrData.length <= count + 1) {
+      // console.log(this.tableSource);
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
       this.cargandoPgr = false;
     } else {
       count++; // Aumentar contador
-      this.getDataVolanteData(pgrData, count); // Inicia proceso de carga y validacion
+      this.getDataVolanteData(this.pgrData[count], count); // Inicia proceso de carga y validacion
     }
   }
 
@@ -4598,27 +4576,25 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.removeAllFilters();
     let expedient = encodeURIComponent(this.paramsGeneral.p_no_expediente);
-    params.addFilter('identifier', expedient);
-    this.goodsBulkService
-      .getPgrExpedientByFilter(params.getFilterParams())
-      .subscribe({
-        next: res => {
-          console.log('DATA EXPEDIENTE', res);
+    // params.addFilter('identifier', expedient);
+    this.goodsBulkService.getPgrExpedientByFilter(expedient).subscribe({
+      next: res => {
+        console.log('DATA EXPEDIENTE', res);
+        this.endProcess = true;
+      },
+      error: err => {
+        console.log(err);
+        if (
+          err.error.message == 'No se encontrarón registros.' &&
+          err.status == 400
+        ) {
+          console.log('SIN RESULTADOS', expedientData);
+          this.createDataExpediente(expedientData);
+        } else {
           this.endProcess = true;
-        },
-        error: err => {
-          console.log(err);
-          if (
-            err.error.message == 'No se encontrarón registros.' &&
-            err.status == 400
-          ) {
-            console.log('SIN RESULTADOS', expedientData);
-            this.createDataExpediente(expedientData);
-          } else {
-            this.endProcess = true;
-          }
-        },
-      });
+        }
+      },
+    });
   }
 
   createDataExpediente(body: ITempExpedient) {
@@ -4656,7 +4632,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       notificationDate: body.notificationDate,
       notifiedTo: body.notifiedTo,
       placeNotification: body.placeNotification,
-      confiscateDictamineDate: null, // INCIDENCIA
+      confiscateDictamineDate: body.forfeitureRulingDate, // INCIDENCIA 638 --- NO RESUELTA
       dictaminationReturnDate: body.returnRulingDate,
       alienationDate: body.alienationDate,
       federalEntityKey: body.cveEntfed,
