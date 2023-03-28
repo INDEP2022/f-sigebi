@@ -44,7 +44,7 @@ export class TaskService extends HttpService {
     return this.post<any>(TaskEndpoints.Create, body);
   }
 
-  getAll(params: ListParams): Observable<any> {
+  getAll(params: ListParams | string): Observable<any> {
     return this.get<any>(TaskEndpoints.FindAll, params);
   }
 

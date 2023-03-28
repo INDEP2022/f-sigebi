@@ -5,10 +5,12 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -24,7 +26,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
-  data: any; // parameters desde el padre de la solicitud
+  data: any; // solicitud pasada por el modal
   typeAnnex: string;
 
   paragraphs: any[] = [];
@@ -41,6 +43,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private wcontentService = inject(WContentService);
   private taskService = inject(TaskService);
   private authService = inject(AuthService);
+  private orderService = inject(OrderServiceService);
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -156,42 +159,36 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             form['transferenceId'] = this.data.transferenceId;
           }
 
-          //TODO: Guardarlo en el content
           const file: any = report;
+          //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);
           if (addToContent) {
             const docName = addToContent;
             console.log(docName);
-            let body: any = {};
-            const user: any = this.authService.decodeToken();
-            body['id'] = 0;
-            body['assignees'] = this.user.username;
-            body['assigneesDisplayname'] = this.user.firstName;
-            body['creator'] = user.username;
-            body['taskNumber'] = Number(this.data.id);
-            body['title'] =
+            const title =
               'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
               this.data.id;
-            body['isPublic'] = 's';
-            body['istestTask'] = 's';
-            body['programmingId'] = 0;
-            body['requestId'] = this.data.id;
-            body['expedientId'] = this.data.recordId;
-            body['urlNb'] = 'pages/request/transfer-request/verify-compliance';
+            const url = 'pages/request/transfer-request/verify-compliance';
             /* crea una nueva tarea */
-            const taskResponse = await this.createTask(body);
+            const taskResponse = await this.createTask(title, url);
             if (taskResponse) {
-              Swal.fire({
-                title: 'Solicitud Turnada',
-                text: 'La solicitud se turno conrrectamente',
-                icon: 'success',
-                showCancelButton: false,
-                confirmButtonColor: '#9D2449',
-                cancelButtonColor: '#B38E5D',
-                confirmButtonText: 'Aceptar',
-              }).then(result => {
-                this.close();
-              });
+              const from = 'REGISTRO_SOLICITUD';
+              const to = 'VERIFICAR_CUMPLIMIENTO';
+              const orderServResult = await this.createTask(from, to);
+
+              if (orderServResult) {
+                Swal.fire({
+                  title: 'Solicitud Turnada',
+                  text: 'La solicitud se turno conrrectamente',
+                  icon: 'success',
+                  showCancelButton: false,
+                  confirmButtonColor: '#9D2449',
+                  cancelButtonColor: '#B38E5D',
+                  confirmButtonText: 'Aceptar',
+                }).then(result => {
+                  this.close();
+                });
+              }
             }
           }
         }
@@ -256,9 +253,25 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     });
   }
 
-  createTask(task: any) {
+  createTask(title: string, url: string) {
     return new Promise((resolve, reject) => {
-      this.taskService.createTask(task).subscribe({
+      let body: any = {};
+      const user: any = this.authService.decodeToken();
+      body['id'] = 0;
+      body['assignees'] = this.user.username;
+      body['assigneesDisplayname'] = this.user.firstName;
+      body['creator'] = user.username;
+      body['taskNumber'] = Number(this.data.id);
+      body['title'] =
+        'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
+        this.data.id;
+      /* body['isPublic'] = 's';
+      body['istestTask'] = 's'; */
+      body['programmingId'] = 0;
+      body['requestId'] = this.data.id;
+      body['expedientId'] = this.data.recordId;
+      body['urlNb'] = url;
+      this.taskService.createTask(body).subscribe({
         next: resp => {
           resolve(true);
         },
@@ -285,6 +298,34 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             reject('');
           },
         });
+    });
+  }
+
+  createOrderService(from: string, to: string) {
+    return new Promise((resolve, reject) => {
+      let orderservice: IOrderService = {};
+      orderservice.P_ESTATUS_ACTUAL = from;
+      orderservice.P_ESTATUS_NUEVO = to;
+      orderservice.P_ID_SOLICITUD = this.data.id;
+      orderservice.P_SIN_BIENES = '';
+      orderservice.P_BIENES_ACLARACION = '';
+      orderservice.P_FECHA_INSTANCIA = '';
+      orderservice.P_FECHA_ACTUAL = '';
+      orderservice.P_ORDEN_SERVICIO_IN = '';
+      orderservice.P_ORDEN_SERVICIO_OUT = '';
+      this.orderService.UpdateStatusGood(orderservice).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            'Error al actualizar el estatus del bien'
+          );
+          reject(error.error.message);
+        },
+      });
     });
   }
 
