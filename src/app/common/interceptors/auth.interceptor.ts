@@ -76,11 +76,11 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     console.log(error);
     const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
     if (status === 0) {
-      this.onLoadToast(
+      /*this.onLoadToast(
         'error',
         'Servidor no disponible',
         'Verifique su conexión, o inténtelo más tarde'
-      );
+      );*/
       return;
     }
 

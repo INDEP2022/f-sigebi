@@ -13,4 +13,7 @@ export enum ExpedientEndpoints {
 
   //ExpedientSami
   ExpedientSami = 'expedientsami',
+
+  //Select
+  SelectExpedient = 'expedient/expedient',
 }
