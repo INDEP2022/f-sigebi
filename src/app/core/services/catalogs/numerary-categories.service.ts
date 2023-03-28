@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { NumeraryCategoriesEndpoint } from 'src/app/common/constants/endpoints/numerary-categories-endpoint';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -10,12 +12,16 @@ import { INumeraryCategories } from '../../models/catalogs/numerary-categories-m
   providedIn: 'root',
 })
 export class NumeraryCategoriesService
+  extends HttpService
   implements ICrudMethods<INumeraryCategories>
 {
   private readonly route: string = ENDPOINT_LINKS.NumeraryCategories;
   constructor(
     private numeraryCategoriesRepository: Repository<INumeraryCategories>
-  ) {}
+  ) {
+    super();
+    this.microservice = NumeraryCategoriesEndpoint.BasePath;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<INumeraryCategories>> {
     return this.numeraryCategoriesRepository.getAllPaginated(
@@ -39,7 +45,8 @@ export class NumeraryCategoriesService
     return this.numeraryCategoriesRepository.update(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.numeraryCategoriesRepository.remove(this.route, id);
+  remove(id: string | number) {
+    const route = `${NumeraryCategoriesEndpoint.NumeraryCategories}/id/${id}`;
+    return this.delete(route);
   }
 }

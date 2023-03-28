@@ -74,16 +74,29 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   async handleError(error: HttpErrorResponse) {
     const status = error.status;
     console.log(error);
-    const message = error?.error?.message ?? 'Unknown error';
+    const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
     if (status === 0) {
-      this.onLoadToast('error', 'Error', 'Unable to connect to server');
+      /*this.onLoadToast(
+        'error',
+        'Servidor no disponible',
+        'Verifique su conexión, o inténtelo más tarde'
+      );*/
       return;
     }
 
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
-      this.onLoadToast('error', 'Unauthorized', 'Error' + status);
+      let message = 'La sesión expiró';
+      if (error.error?.error === 'invalid_grant') {
+        this.onLoadToast(
+          'error',
+          'Credenciales incorrectas',
+          'Inténtalo nuevamente'
+        );
+      } else {
+        this.onLoadToast('error', 'No autorizado', message);
+      }
       this.router.navigate(['/auth/login']);
       return;
     }
@@ -97,6 +110,6 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    this.onLoadToast('error', 'Error' + status, message);
+    //this.onLoadToast('error', 'Error' + status, message);
   }
 }
