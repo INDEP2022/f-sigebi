@@ -30,13 +30,14 @@ const routes: Routes = [
       screen: 'FCATADBINDICFINAN',
     },
   },
-  {
-    path: 'question-catalog',
-    loadChildren: async () =>
-      (await import('./question-catalog/question-catalog.module'))
-        .QuestionCatalogModule,
-    data: { title: 'Preguntas', screen: 'FCATADBINFOREMPRE' },
-  },
+  // NO SE MIGRA
+  //{
+  //   path: 'question-catalog',
+  //   loadChildren: async () =>
+  //     (await import('./question-catalog/question-catalog.module'))
+  //       .QuestionCatalogModule,
+  //   data: { title: 'Preguntas', screen: 'FCATADBINFOREMPRE' },
+  // },
   {
     path: 'logical-tables-register',
     loadChildren: async () =>
