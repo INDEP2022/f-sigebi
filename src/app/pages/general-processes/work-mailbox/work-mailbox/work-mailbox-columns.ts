@@ -85,14 +85,34 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processNumber: {
     title: 'No. Trámite',
     sort: false,
+    editable: false,
   },
   issueSijNumber: {
     title: 'No. Asunto SIJ',
     sort: false,
+    editable: false,
   },
   processStatus: {
     title: 'Estatus',
     sort: false,
+    editor: {
+      type: 'list',
+      config: {
+        selectText: 'Estatus',
+        list: [
+          { value: 'RS', title: 'RS' },
+          { value: 'RF', title: 'RF' },
+          { value: 'OP', title: 'OP' },
+          { value: 'FN', title: 'FN' },
+          { value: 'DV', title: 'DV' },
+          { value: 'DT', title: 'DT' },
+          { value: 'DS', title: 'DS' },
+          { value: 'DP', title: 'DP' },
+          { value: 'DN', title: 'DN' },
+          { value: 'DJ', title: 'DJ' },
+        ],
+      },
+    },
     /*filterFunction(cell?: any, search?: string): boolean {
       let column = cell.processStatus;
       if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
@@ -105,35 +125,43 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processSituation: {
     title: 'Situación Trámite',
     sort: false,
+    editable: false,
   },
   turnadoiUser: {
     title: 'Usr. Turnado',
     sort: false,
+    editable: false,
   },
   dailyConsecutiveNumber: {
     title: 'Consecutivo Diario',
     sort: false,
+    editable: false,
   },
   processEntryDate: {
     title: 'Fecha Ingreso Trámite',
     sort: false,
     filter: false,
+    editable: false,
   },
   flierNumber: {
     title: 'No. Volante',
     sort: false,
+    editable: false,
   },
   proceedingsNumber: {
     title: 'No. Expediente',
     sort: false,
+    editable: false,
   },
   issue: {
     title: 'Asunto',
     sort: false,
+    editable: false,
   },
   issueType: {
     title: 'Tipo de Asunto',
     sort: false,
+    editable: false,
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         switch (value) {
@@ -181,27 +209,33 @@ export const WORK_MAILBOX_COLUMNS2 = {
   officeNumber: {
     title: 'No. Oficio',
     sort: false,
+    editable: false,
   },
   descentfed: {
     title: 'Desc.Entidad Fed.',
     sort: false,
+    editable: false,
   },
   businessDays: {
     title: 'Días Hábiles',
     sort: false,
+    editable: false,
   },
   naturalDays: {
     title: 'Dias Hab. Nat',
     sort: false,
+    editable: false,
   },
   processLastDate: {
     title: 'Fecha Última Actualización',
     sort: false,
     filter: false,
+    editable: false,
   },
   observation: {
     title: 'Observaciones',
     sort: false,
+    editable: false,
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => {
       value !== null ? (value = value) : (value = '');
@@ -210,6 +244,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
   observationAdd: {
     title: 'Observaciones Add.',
     sort: false,
+    editable: false,
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => {
       value !== null ? (value = value) : (value = '');
@@ -218,37 +253,45 @@ export const WORK_MAILBOX_COLUMNS2 = {
   priority: {
     title: 'Prioridad',
     sort: false,
+    editable: false,
   },
   sheets: {
     title: 'Hojas',
     sort: false,
+    editable: false,
   },
   notaryAutDate: {
     title: 'Fecha Aut. Notario',
     sort: false,
     filter: false,
+    editable: false,
   },
   rebellionDate: {
     title: 'Fecha Rebelión',
     sort: false,
     filter: false,
+    editable: false,
   },
   takePressureDate: {
     title: 'Fecha Toma Poseción',
     sort: false,
     filter: false,
+    editable: false,
   },
   areaATurn: {
     title: 'Área a Turnar',
     sort: false,
+    editable: false,
   },
   userATurn: {
     title: 'Usr. a Turnar',
     sort: false,
+    editable: false,
   },
   folioRep: {
     title: 'Folio Rep.',
     sort: false,
+    editable: false,
   },
   /*royalProceesDate: {
     title: 'Fecha Real Trámite',
@@ -265,6 +308,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
   count: {
     title: 'Escaneado',
     sort: false,
+    editable: false,
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         switch (value) {
