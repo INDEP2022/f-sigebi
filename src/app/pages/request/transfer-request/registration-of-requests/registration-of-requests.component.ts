@@ -512,8 +512,27 @@ export class RegistrationOfRequestsComponent
   }
   /** Proceso de aprobacion */
   private approveRequest() {
-    let value = this.registRequestForm.getRawValue();
-    console.log(value);
+    /**Verificar datos */
+    console.log(this.requestData);
+
+    console.log('---- Redireccionar finalizando proceso ----');
+    return;
+    this.requestService
+      .update(this.requestData.id, this.requestData)
+      .subscribe({
+        next: resp => {
+          if (resp.statusCode !== null) {
+            this.message('error', 'Error', 'Ocurrio un error al guardar');
+          }
+          if (resp.id !== null) {
+            this.message(
+              'success',
+              'Solicitud Guardada',
+              'Se guardo la solicitud correctamente'
+            );
+          }
+        },
+      });
   }
   /** fin de proceso */
   msgSaveModal(
