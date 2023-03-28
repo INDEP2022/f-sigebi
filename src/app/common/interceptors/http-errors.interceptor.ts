@@ -77,12 +77,9 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     } else {
       message = 'Error del servidor';
     }
-    if (status === 0) {
-      this.onLoadToast(
-        'error',
-        'Servidor no disponible',
-        'Verifique su conexión, o intentelo más tarde'
-      );
+    if (status === 0 && this.showError && !this.blockAllErrors) {
+      message = 'Error del Servidor';
+      this.onLoadToast('error', 'Advertencia', message);
       return;
     }
     if (status === 400 && this.showError && !this.blockAllErrors) {
@@ -100,7 +97,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';
-      this.onLoadToast('error', 'No autorizado', message);
+      //this.onLoadToast('error', 'No autorizado', message);
       this.router.navigate(['/auth/login']);
       return;
     }
@@ -109,7 +106,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.onLoadToast(
         'error',
         'Error' + status,
-        'No tienes permisos para realizar esta acción'
+        'No tiene permisos para realizar esta acción'
       );
       return;
     }

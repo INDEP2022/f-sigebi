@@ -79,6 +79,14 @@ export const Lot = {
   },
 };
 export const GoodPhoto = {
+  goodsNumber: {
+    title: 'Bien',
+    type: 'number',
+    sort: true,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodsNumber;
+    },
+  },
   location: {
     title: 'Photo',
     type: 'html',
@@ -89,7 +97,7 @@ export const GoodPhoto = {
   },
   publicImgcatWeb: {
     title: 'Pública',
-    type: 'number',
+    type: 'html',
     sort: true,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -100,7 +108,7 @@ export const GoodPhoto = {
   },
   existsfs: {
     title: 'Favoritos',
-    type: 'number',
+    type: 'boolean',
     sort: true,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {

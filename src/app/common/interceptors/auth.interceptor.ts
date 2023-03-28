@@ -76,11 +76,11 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     console.log(error);
     const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
     if (status === 0) {
-      this.onLoadToast(
+      /*this.onLoadToast(
         'error',
         'Servidor no disponible',
-        'Verifique su conexión, o intentelo más tarde'
-      );
+        'Verifique su conexión, o inténtelo más tarde'
+      );*/
       return;
     }
 
@@ -88,8 +88,15 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       localStorage.clear();
       sessionStorage.clear();
       let message = 'La sesión expiró';
-      this.onLoadToast('error', 'No autorizado', message);
-      //this.onLoadToast('error', 'No autorizado', 'Error' + status);
+      if (error.error?.error === 'invalid_grant') {
+        this.onLoadToast(
+          'error',
+          'Credenciales incorrectas',
+          'Inténtalo nuevamente'
+        );
+      } else {
+        this.onLoadToast('error', 'No autorizado', message);
+      }
       this.router.navigate(['/auth/login']);
       return;
     }
