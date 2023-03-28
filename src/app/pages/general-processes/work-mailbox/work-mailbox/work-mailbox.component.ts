@@ -624,11 +624,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                         error: error => (this.loading = false),
                       });
                   } else {
-                    this.onLoadToast(
+                    /*this.onLoadToast(
                       'warning',
                       '',
                       'No se pudo cargar la fecha de captura'
-                    );
+                    );*/
                     this.selectedRow = {
                       ...this.selectedRow,
                       dateFlier: resp.data[0]?.captureDate || null,
