@@ -66,8 +66,8 @@
                             #rfc
                             hidden
                             type="file"
-                            accept=".csv"
-                            (change)="getCsv($event)"
+                            accept=".csv, .xlsx, .xls"
+                            (change)="readFile($event, 'rfc')"
                         /></a>
                       </li>
                       <li role="menuitem">
@@ -78,8 +78,8 @@
                             #clientId
                             hidden
                             type="file"
-                            accept=".csv"
-                            (change)="getCsv($event)"
+                            accept=".csv, .xlsx, .xls"
+                            (change)="readFile($event, 'client_id')"
                         /></a>
                       </li>
                     </ul>

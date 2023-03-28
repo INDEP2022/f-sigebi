@@ -6,10 +6,16 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { convertFormatDate } from 'src/app/common/helpers/helpers';
+import {
+  convertFormatDate,
+  readFile,
+  showQuestion,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
@@ -380,6 +386,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     operationId: new FormControl(null),
     insertDate: new FormControl(null),
     validityDate: new FormControl(null),
+
+    client_id: new FormControl(null),
+    rfc: new FormControl(null),
   });
 
   constructor(
@@ -494,28 +503,75 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.getData();
   }
 
-  getCsv(event: Event) {
+  readFile(event: Event, type: 'rfc' | 'client_id') {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1)
-      throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+      showToast({
+        text: 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)',
+        icon: 'error',
+      });
+    readFile(files[0], 'BinaryString').then((res: any) => {
+      console.log(res);
+      this.getDataFile(res.result, type);
+    });
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  getDataFile(binaryExcel: string | ArrayBuffer, type: 'rfc' | 'client_id') {
     try {
-      let arr = this.excelService.getData(binaryExcel);
-      console.log(arr);
+      const data = this.excelService.getData(binaryExcel);
+      if (data?.length == 0) {
+        showToast({
+          icon: 'error',
+          text: 'El archivo no contiene datos',
+          title: 'Error',
+        });
+        return;
+      }
+      if (!data[0].hasOwnProperty(type.toUpperCase())) {
+        showToast({
+          icon: 'error',
+          text: 'El archivo no contiene la columna ' + type.toUpperCase(),
+          title: 'Error',
+        });
+        return;
+      }
+      console.log(data);
       this.maintenance = true;
+      this.form
+        .get(type)
+        ?.setValue(data.map((item: any) => item[type.toUpperCase()]));
+      this.getData(null, true);
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      showToast({
+        icon: 'error',
+        text: 'Ocurrió un error al leer el archivo',
+        title: 'Error',
+      });
     }
   }
 
   loadChecks() {
-    // this.dataColumns = this.checkTestData;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const dateValidity = this.form.controls['validityDate'].value;
+    let ban = Boolean(dateValidity);
+
+    showQuestion({
+      text: dateValidity
+        ? `La fecha de vigencia será ${convertFormatDate(
+            dateValidity
+          )}. ¿Desea continuar?`
+        : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?',
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.loadChecksInServer();
+      }
+    });
   }
+
+  loadChecksInServer(): void {}
 
   generateLcs() {
     this.lcsColumns = this.lcsTestData;
@@ -712,31 +768,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.excelService.export(this.lcsColumns, { filename });
   }
 
-  getData(listParams?: ListParams): void {
-    if (this.form.invalid) {
+  getData(listParams?: ListParams, notValidate: boolean = false): void {
+    if (this.form.invalid && !notValidate) {
       this.form.markAllAsTouched();
       return;
     }
     this.loading = true;
-    const params = new FilterParams();
-    params.limit = listParams?.limit || 10;
+    const params = this.makeParams();
     params.page = listParams?.page || 1;
-    const values = this.form.value as any;
-
-    params.addFilter('eventId', values.eventId);
-    if (values.batchId) params.addFilter('batchId', values.batchId);
-    if (values.status) params.addFilter('status', values.status);
-    if (values.operationId) params.addFilter('operationId', values.operationId);
-    if (values.insertDate)
-      params.addFilter('insertDate', convertFormatDate(values.insertDate));
-    if (values.validityDate)
-      params.addFilter('validityDate', convertFormatDate(values.validityDate));
-    // for (const key in values) {
-    //   if (values.hasOwnProperty(key) && values[key]) {
-    //     params.addFilter(key, values[key]);
-    //   }
-    // }
-
+    params.limit = listParams?.pageSize || 10;
     this.capturelineService.getTmpLcComer(params.getParams()).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -748,5 +788,29 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', err);
       },
     });
+  }
+
+  makeParams(): FilterParams {
+    const params = new FilterParams();
+    const values = this.form.value as any;
+    params.addFilter('eventId', values.eventId);
+    if (values.batchId) params.addFilter('batchId', values.batchId);
+    if (values.status) params.addFilter('status', values.status);
+    if (values.operationId) params.addFilter('operationId', values.operationId);
+    if (values.insertDate)
+      params.addFilter('insertDate', convertFormatDate(values.insertDate));
+    if (values.validityDate)
+      params.addFilter('validityDate', convertFormatDate(values.validityDate));
+    if (values.rfc) params.addFilter('rfc', values.rfc, SearchFilter.IN);
+    if (values.clientId)
+      params.addFilter('clientId', values.clientId, SearchFilter.IN);
+
+    // if (moreParams) {
+    //   Object.keys(moreParams).forEach(key => {
+    //     const param = moreParams[key];
+    //     params.addFilter(param.name, param.value, param.type);
+    //   });
+    // }
+    return params;
   }
 }

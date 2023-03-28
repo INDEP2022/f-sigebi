@@ -81,3 +81,25 @@ export function convertFormatDate(
 ): any {
   return formatDate(new Date(date), format, lang);
 }
+
+export function readFile(
+  file: File,
+  type: 'BinaryString' | 'ArrayBuffer' | 'Text' | 'DataUrl' = 'Text'
+) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => {
+      resolve({
+        result: event.target.result,
+        ext: file?.name.split('.').pop(),
+      });
+    };
+    reader.onerror = error => reject(error);
+    const functionType = `readAs${type}` as
+      | 'readAsBinaryString'
+      | 'readAsArrayBuffer'
+      | 'readAsText'
+      | 'readAsDataURL';
+    reader[functionType](file);
+  });
+}
