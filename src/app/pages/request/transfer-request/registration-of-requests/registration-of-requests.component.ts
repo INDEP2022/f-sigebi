@@ -390,7 +390,7 @@ export class RegistrationOfRequestsComponent
       this.tab3 = 'Domicilio de la Transferente';
       this.tab4 = 'Verificación del Cumplimiento';
       this.tab5 = 'Expediente';
-      this.btnTitle = 'Aprovar';
+      this.btnTitle = 'Aprobar';
       this.btnSaveTitle = '';
       this.typeDocument = 'proceso-aprovacion';
     }
@@ -549,6 +549,31 @@ export class RegistrationOfRequestsComponent
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
 
+  /** Proceso de aprobacion */
+  private approveRequest() {
+    /**Verificar datos */
+    console.log(this.requestData);
+    console.log('---- Redireccionar finalizando proceso ----');
+    return;
+    this.requestService
+      .update(this.requestData.id, this.requestData)
+      .subscribe({
+        next: resp => {
+          if (resp.statusCode !== null) {
+            this.message('error', 'Error', 'Ocurrio un error al guardar');
+          }
+          if (resp.id !== null) {
+            this.message(
+              'success',
+              'Solicitud Guardada',
+              'Se guardo la solicitud correctamente'
+            );
+          }
+        },
+      });
+  }
+  /** fin de proceso */
+
   createTask(oldTask: any, title: string, url: string) {
     return new Promise((resolve, reject) => {
       let body: any = {};
@@ -644,6 +669,8 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
+        console.log(typeCommit);
+
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
@@ -653,6 +680,9 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'verificar-cumplimiento') {
           this.verifyComplianceMethod();
+        }
+        if (typeCommit === 'proceso-aprovacion') {
+          this.approveRequest();
         }
       }
     });
