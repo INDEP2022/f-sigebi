@@ -149,11 +149,18 @@ export enum ENDPOINT_LINKS {
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/application/paComerUsuxtpevents',
   security = 'security/seg-profile',
+
   //request
   request = 'request',
+  //Verificar Cumplimiento
+  VerificationCompliance = 'verification-compliance',
+  RequestDocumentation = 'request-documentation',
+
   //expedient
   Expedient = 'expedient',
   //goodsQuery//
   GoodsQuery = 'goodsquery',
   ProgrammingGood = 'ProgrammingGood',
+  DinamicTablesSelect = 'dynamiccatalog/dinamic-tables',
+  StrategyContract = 'contract/strategy-contract',
 }

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -11,26 +11,22 @@ export class WorkMailboxService {
   constructor(private htpp: HttpClient) {}
 
   //TODO: MOVE TO SERVICES FOLDER
-  getView(params?: ListParams) {
+  getView(params?: ListParams): Observable<any> {
     const url = `${environment.API_URL}proceduremanagement/api/v1/views/management-process`;
     return this.htpp.get(url, { params });
   }
 
-  getViewBienes(): Observable<any> {
+  getViewBienes(_params?: any): Observable<any> {
+    const params = this.getParams(_params);
     const url = `${environment.API_URL}trackergood/api/v1/trackergood/apps/goodtrackertmp`;
-    return this.htpp.get(url);
+    return this.htpp.get(url, { params });
   }
 
-  getViewAntecedente(): Observable<any> {
+  getViewAntecedente(_params?: any): Observable<any> {
+    const params = this.getParams(_params);
     const url = `${environment.API_URL}flier/api/v1/views/background-view`;
-    return this.htpp.get(url);
+    return this.htpp.get(url, { params });
   }
-
-  // getAllFiltered(
-  //   params?: _Params
-  // ): Observable<any> {
-  //   return this.htpp.get(  'historical-procedure-management');
-  // }
 
   getProcedureManagement(processNumber: number) {
     const url = `${environment.API_URL}proceduremanagement/api/v1/proceduremanagement/${processNumber}`;
@@ -50,6 +46,22 @@ export class WorkMailboxService {
   getNotificationsFilter(wheelNumber: number) {
     const url = `${environment.API_URL}/notification/api/v1/notification?filter.wheelNumber=${wheelNumber}`;
     return this.htpp.get(url);
+  }
+
+  private getParams(rawParams: any) {
+    if (rawParams instanceof HttpParams) {
+      return rawParams;
+    }
+
+    if (typeof rawParams === 'string') {
+      return new HttpParams({ fromString: rawParams });
+    }
+
+    if (rawParams instanceof ListParams) {
+      return new HttpParams({ fromObject: rawParams });
+    }
+
+    return new HttpParams({ fromObject: rawParams });
   }
 
   /*getFile() {

@@ -11,6 +11,7 @@ import { SelectTypeUserComponent } from './select-type-user/select-type-user.com
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
 import { GenerateDictumComponent } from './tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
+import { OpenDescriptionComponent } from './tabs/associate-file/open-description/open-description.component';
 import { AdvancedSearchComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { ClarificationFormTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { ClarificationListTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/clarification-list-tab/clarification-list-tab.component';
@@ -38,7 +39,7 @@ import { RequestDocumentFormComponent } from './tabs/request-document-form/reque
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
-import { OpenDescriptionComponent } from './tabs/associate-file/open-description/open-description.component';
+import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { OpenDescriptionComponent } from './tabs/associate-file/open-description
     AssociateFieldComponent,
     SelectTypeUserComponent,
     OpenDescriptionComponent,
+    CheckboxComponent,
   ],
   imports: [
     CommonModule,

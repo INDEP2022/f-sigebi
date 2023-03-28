@@ -1346,7 +1346,7 @@ export class JuridicalRecordUpdateComponent
   }
 
   getCourts(lparams: ListParams) {
-    this.docRegisterService.getCourts(lparams).subscribe({
+    this.docRegisterService.getCourtsUnrelated(lparams).subscribe({
       next: data => {
         this.courts = new DefaultSelect(data.data, data.count);
       },

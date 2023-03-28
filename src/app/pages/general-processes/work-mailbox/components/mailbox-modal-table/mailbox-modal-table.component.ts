@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
@@ -12,6 +12,7 @@ import {
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,18 +23,25 @@ import { WorkMailboxService } from '../../work-mailbox.service';
   templateUrl: './mailbox-modal-table.component.html',
   styles: [],
 })
-export class MailboxModalTableComponent extends BasePage implements OnInit {
+export class MailboxModalTableComponent<T = any>
+  extends BasePage
+  implements OnInit
+{
   $obs: (params?: _Params, body?: any) => Observable<IListResponse<any>>;
   service:
     | HistoricalProcedureManagementService
     | HistoryIndicatorService
-    | WorkMailboxService;
+    | WorkMailboxService
+    | DocumentsService;
   title: string = '';
   rows: any[] = [];
   totalItems = 0;
   columns: any = {};
   $params = new BehaviorSubject(new FilterParams());
   body: any = {};
+  showConfirmButton: boolean = false;
+  selectedRow: T = null;
+  @Output() selected = new EventEmitter<T>();
   constructor(private modalRef: BsModalRef) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -75,6 +83,11 @@ export class MailboxModalTableComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.selected.emit(this.selectedRow);
     this.modalRef.hide();
   }
 }

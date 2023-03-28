@@ -4,4 +4,5 @@ export enum MassiveGoodEndpoints {
   CountMassiveGood = `massive-charge-goods/countMasiveGood`,
   InsertMassiveGood = `massive-charge-goods/insertMasiveGood`,
   DeleteMassiveGood = `massive-charge-goods/deleteMasiveGood`,
+  GetFlierNumberMassiveGood = `massive-charge-goods/get-flier-number`,
 }

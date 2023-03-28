@@ -70,9 +70,4 @@ export const MINIPUB_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  registryNumber: {
-    title: 'Número registro',
-    type: 'number',
-    sort: false,
-  },
 };

@@ -137,3 +137,37 @@ export interface IPgrTransfer {
   managementNumber: string | null;
   saeDetination: number | null;
 }
+
+export interface IFaValAtributo1 {
+  clasif: number;
+  marca?: string;
+  submarca?: string;
+  modelo?: string;
+  serie?: string;
+  numero_motor?: string;
+  procedencia?: string;
+  edofisico?: string;
+  numero_motor_1?: string;
+  numero_motor_2?: string;
+  matricula?: string;
+  estado_operativo?: string;
+  nombre_embarcacion?: string;
+  calle?: string;
+  colonia?: string;
+  delegacion_municipio?: string;
+  estado?: string;
+  numero_exterior?: string;
+  importe?: string;
+  cuenta?: string;
+  moneda?: string;
+  ficha?: string;
+  banco?: string;
+  material?: string;
+  kilataje?: string;
+}
+export interface IOTClaveByAsunto {
+  pgrOffice: string;
+}
+export interface IOTClaveByAsuntoResponse {
+  otclave: string;
+}

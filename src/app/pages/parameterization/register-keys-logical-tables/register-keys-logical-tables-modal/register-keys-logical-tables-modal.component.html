@@ -16,17 +16,24 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-3">
+        <h6>Campos para Clave 1</h6>
+        <div class="col-md-3 pt-3">
           <form-field [control]="tdescCveForm.get('dsKey1')" label="Clave">
             <input type="text" class="form-control" formControlName="dsKey1" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field [control]="tdescCveForm.get('swFormat1')" label="Formato">
-            <input
-              type="text"
+            <ng-select
+              formControlName="swFormat1"
+              [searchable]="false"
               class="form-control"
-              formControlName="swFormat1" />
+              [clearable]="false">
+              <ng-option value="V">Alfanum&eacute;rico</ng-option>
+              <ng-option value="N">Num&eacute;rico</ng-option>
+              <ng-option value="F">Flotante</ng-option>
+              <ng-option value="D">Fecha</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-3">
@@ -53,7 +60,7 @@
 
       <div>
         <hr />
-        <span>Campos para Clave 2</span>
+        <h6>Campos para Clave 2</h6>
         <div class="row pt-4">
           <div class="col-md-3">
             <form-field [control]="tdescCveForm.get('dsKey2')" label="Clave">
@@ -67,10 +74,16 @@
             <form-field
               [control]="tdescCveForm.get('swFormat2')"
               label="Formato">
-              <input
-                type="text"
+              <ng-select
+                formControlName="swFormat2"
+                [searchable]="false"
                 class="form-control"
-                formControlName="swFormat2" />
+                [clearable]="false">
+                <ng-option value="V">Alfanum&eacute;rico</ng-option>
+                <ng-option value="N">Num&eacute;rico</ng-option>
+                <ng-option value="F">Flotante</ng-option>
+                <ng-option value="D">Fecha</ng-option>
+              </ng-select>
             </form-field>
           </div>
           <div class="col-md-3">
@@ -97,7 +110,7 @@
 
         <div class="row pt-5">
           <hr />
-          <span>Campos para Clave 3</span>
+          <h6>Campos para Clave 3</h6>
           <div class="row pt-4">
             <div class="col-md-3">
               <form-field [control]="tdescCveForm.get('dsKey3')" label="Clave">
@@ -111,10 +124,16 @@
               <form-field
                 [control]="tdescCveForm.get('swFormat3')"
                 label="Formato">
-                <input
-                  type="text"
+                <ng-select
+                  formControlName="swFormat3"
+                  [searchable]="false"
                   class="form-control"
-                  formControlName="swFormat3" />
+                  [clearable]="false">
+                  <ng-option value="V">Alfanum&eacute;rico</ng-option>
+                  <ng-option value="N">Num&eacute;rico</ng-option>
+                  <ng-option value="F">Flotante</ng-option>
+                  <ng-option value="D">Fecha</ng-option>
+                </ng-select>
               </form-field>
             </div>
             <div class="col-md-3">
@@ -142,7 +161,7 @@
 
         <div class="row pt-5">
           <hr />
-          <span>Campos para Clave 4</span>
+          <h6>Campos para Clave 4</h6>
           <div class="row pt-4">
             <div class="col-md-3">
               <form-field [control]="tdescCveForm.get('dsKey4')" label="Clave">
@@ -156,10 +175,16 @@
               <form-field
                 [control]="tdescCveForm.get('swFormat4')"
                 label="Formato">
-                <input
-                  type="text"
+                <ng-select
+                  formControlName="swFormat4"
+                  [searchable]="false"
                   class="form-control"
-                  formControlName="swFormat4" />
+                  [clearable]="false">
+                  <ng-option value="V">Alfanum&eacute;rico</ng-option>
+                  <ng-option value="N">Num&eacute;rico</ng-option>
+                  <ng-option value="F">Flotante</ng-option>
+                  <ng-option value="D">Fecha</ng-option>
+                </ng-select>
               </form-field>
             </div>
             <div class="col-md-3">
@@ -187,7 +212,7 @@
 
         <div class="row pt-5">
           <hr />
-          <span>Campos para Clave 5</span>
+          <h6>Campos para Clave 5</h6>
           <div class="row pt-4">
             <div class="col-md-3">
               <form-field [control]="tdescCveForm.get('dsKey5')" label="Clave">
@@ -201,10 +226,16 @@
               <form-field
                 [control]="tdescCveForm.get('swFormat5')"
                 label="Formato">
-                <input
-                  type="text"
+                <ng-select
+                  formControlName="swFormat5"
+                  [searchable]="false"
                   class="form-control"
-                  formControlName="swFormat5" />
+                  [clearable]="false">
+                  <ng-option value="V">Alfanum&eacute;rico</ng-option>
+                  <ng-option value="N">Num&eacute;rico</ng-option>
+                  <ng-option value="F">Flotante</ng-option>
+                  <ng-option value="D">Fecha</ng-option>
+                </ng-select>
               </form-field>
             </div>
             <div class="col-md-3">

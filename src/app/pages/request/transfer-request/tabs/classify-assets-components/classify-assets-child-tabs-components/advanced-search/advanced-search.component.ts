@@ -86,16 +86,15 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   search(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      /*params.page = data.inicio;
-      params.limit = data.pageSize;*/
+      let params = new ListParams();
+      params.page = data.inicio;
+      params.limit = data.pageSize;
       this.getSearch(data);
     });
   }
 
-  getSearch(data: any) {
-    let params = new ListParams();
-    params.page = data.inicio;
-    params.limit = data.pageSize;
+  getSearch(params: ListParams) {
+    //let params = new ListParams();
 
     const code = this.searchForm.controls['code'].value;
     const description = this.searchForm.controls['description'].value;
