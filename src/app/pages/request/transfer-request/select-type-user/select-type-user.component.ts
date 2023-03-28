@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -44,6 +45,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private taskService = inject(TaskService);
   private authService = inject(AuthService);
   private orderService = inject(OrderServiceService);
+  private router = inject(Router);
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -126,22 +128,25 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   async turnRequest() {
     if (this.user) {
-      this.data.targetUserType = this.userForm.controls['typeUser'].value;
-      this.data.targetUserType = this.user.id;
-
+      const requestUpdate: any = {};
+      requestUpdate.id = this.data.id;
+      requestUpdate.recordId = this.data.recordId;
+      requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
+      requestUpdate.targetUser = this.user.id;
       //Todo: enviar la solicitud
-      const isUpdated = await this.saveRequest(this.data as IRequest);
-      if (true === true) {
+      const requestResult = await this.saveRequest(requestUpdate);
+      if (requestResult === true) {
         //TODO: generar o recuperar el reporte
         const report = await this.generateReport(
           'SolicitudTransferencia',
           this.data.id,
           ''
         );
+
         if (report) {
           let form: any = {};
           form['ddocTitle'] = `Solicitud_${this.data.id}`;
-          form['xidExpediente'] = `Solicitud_${this.data.recordId}`;
+          form['xidExpediente'] = this.data.recordId;
           form['ddocType'] = 'Document';
           form['xNombreProceso'] = 'Captura Solicitud';
           form['dSecurityGroup'] = 'Public';
@@ -174,7 +179,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             if (taskResponse) {
               const from = 'REGISTRO_SOLICITUD';
               const to = 'VERIFICAR_CUMPLIMIENTO';
-              const orderServResult = await this.createTask(from, to);
+              /* actualizar status del bien */
+              const orderServResult = await this.createOrderService(from, to);
 
               if (orderServResult) {
                 Swal.fire({
@@ -247,6 +253,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             }
           },
           error: error => {
+            this.message('error', 'Error', 'Error al subir al content');
             reject('error al guardar al content');
           },
         });
@@ -295,7 +302,12 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             }
           },
           error: error => {
-            reject('');
+            this.message(
+              'error',
+              'Error al guardar',
+              'No se pudo bajar el documento'
+            );
+            reject('false');
           },
         });
     });
@@ -330,9 +342,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   }
 
   close() {
-    console.log('entro');
-
     this.modalRef.hide();
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 
   message(header: any, title: string, body: string) {
