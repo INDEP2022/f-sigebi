@@ -22,10 +22,12 @@
               (fetchItems)="getZoneContracts($event)"
               [data]="zoneContracts"
               [form]="contractForm"
-              value="zoneContractKey"
+              value="id"
               bindLabel="description"
               label="Zona"
-              control="zoneContractKey">
+              control="zoneContractKey"
+              (change)="onValuesChange($event)"
+              required>
             </ngx-select>
           </form-field>
         </div>
@@ -36,7 +38,11 @@
             <input
               class="form-control"
               formControlName="startDate"
-              bsDatepicker />
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-6 mt-4">
@@ -44,9 +50,13 @@
             label="Fecha final"
             [control]="contractForm.get('endDate')">
             <input
-              formControlName="endDate"
               class="form-control"
-              bsDatepicker />
+              formControlName="endDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
       </div>

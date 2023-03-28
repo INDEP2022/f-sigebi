@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IContract } from 'src/app/core/models/administrative-processes/contract.model';
+import { IZoneContract } from 'src/app/core/models/catalogs/zone-contract.model';
 import { ZoneContractService } from 'src/app/core/services/catalogs/zone-contract.service';
 import { ContractService } from 'src/app/core/services/contract/strategy-contract.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -74,12 +75,17 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.contractService
-      .update(this.contract.id, this.contractForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    const req: IContract = {
+      contractKey: this.contract.contractKey,
+      endDate: this.contract.endDate,
+      zoneContractKey: this.contract.zoneContractKey,
+      startDate: this.contract.startDate,
+    };
+
+    this.contractService.update(this.contract.id, req).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -90,9 +96,16 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
+  onValuesChange(zoneContractChange: IZoneContract) {
+    if (this.contract) {
+      this.contract.zoneContractKey = zoneContractChange.id;
+    }
+  }
+
   getZoneContracts(params: ListParams) {
-    this.zoneContractService.getAll(params).subscribe(data => {
-      this.zoneContracts = new DefaultSelect(data.data, data.count);
+    this.zoneContractService.getAll(params).subscribe({
+      next: data =>
+        (this.zoneContracts = new DefaultSelect(data.data, data.count)),
     });
   }
 }
