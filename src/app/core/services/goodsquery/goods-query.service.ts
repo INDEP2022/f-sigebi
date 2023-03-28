@@ -135,9 +135,10 @@ export class GoodsQueryService extends HttpService {
   //   return this.attribClassifGoodMethodsRepository.remove(this.attribClassifGoodRoute, id);
   // }
 
+  // Se cambia getClasifXUnit por getUnit
   getClasifXUnitByClasifNum(clasifNum: number) {
     return this.httpClient.get<IListResponse<IUnityByClasif>>(
-      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getClasifXUnit/${clasifNum}`
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getUnit/${clasifNum}`
     );
   }
 

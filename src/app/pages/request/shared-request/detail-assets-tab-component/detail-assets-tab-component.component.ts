@@ -54,6 +54,7 @@ export class DetailAssetsTabComponentComponent
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
+  @Input() assetsId: any; //id del bien
   @Input() detailAssets: ModelForm<any>; // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
@@ -144,9 +145,23 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.typeDoc === 'clarification') {
-      console.log(changes['detailAssets'].currentValue);
     }
-
+    console.log('typeDoc', this.typeDoc);
+    //verifica si la vista es verificacion de cumplimiento o bien
+    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+      if (this.detailAssets.controls['addressId'].value) {
+        this.addressId = this.detailAssets.controls['addressId'].value;
+        this.getGoodDomicilie(this.addressId);
+      }
+      //verifica si la vista es verificacion de cumplimiento
+      if (this.typeDoc === 'verify-compliance') {
+        this.detailAssets.disable();
+        this.disableDuplicity = true;
+        if (this.goodDomicilieForm !== undefined) {
+          this.goodDomicilieForm.disable();
+        }
+      }
+    }
     //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
@@ -173,8 +188,6 @@ export class DetailAssetsTabComponentComponent
 
   ngOnInit(): void {
     this.initForm();
-    console.log('tipo de bien');
-    console.log(this.typeDoc);
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
@@ -299,6 +312,60 @@ export class DetailAssetsTabComponentComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       ownershipPercentage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      decreeExproProc: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      decreeExproSupe: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      declareRemediation: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      heritage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      assurance: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      propTitleFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      measuresAdjacent: [null, [Validators.pattern(STRING_PATTERN)]],
+      vouchersWater: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      debts: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      physicalPossession: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      closed: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      familyHeritage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      problemDesc: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      photosAttached: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
@@ -458,6 +525,7 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
+    console.log(this.detailAssets.getRawValue());
   }
 
   handleTheftReportEvent(event: any) {

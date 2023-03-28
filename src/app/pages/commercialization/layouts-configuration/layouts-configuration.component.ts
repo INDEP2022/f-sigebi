@@ -113,6 +113,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       idConsec: event.data.idConsec,
       position: event.data.position,
       column: event.data.column,
+      indActive: event.data.column,
       type: event.data.type,
       length: event.data.length,
       constant: event.data.constant,
@@ -127,14 +128,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
         this.layout = paramsId;
         this.structureLayout = paramsUpdate;
         console.log(this.structureLayout);
-        this.rowSelected = true;
         this.valid = true;
         this.layoutsConfigService.getByIdH(this.idLayout).subscribe({
           next: data => {
             this.layoutDuplicated = data;
             console.log(this.layoutDuplicated);
-            this.rowSelected = true;
             this.valid = true;
+            this.rowSelected = true;
           },
           error: error => {
             this.loading = false;
@@ -151,17 +151,36 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     });
   }
 
+  userRowLayoutSelect(event: any) {
+    this.idLayout = event.data.id;
+    console.log(this.idLayout);
+    this.layoutsConfigService.getByIdH(this.idLayout).subscribe({
+      next: data => {
+        this.layoutDuplicated = data;
+        console.log(this.layoutDuplicated);
+        this.rowSelected = true;
+        this.valid = true;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'error en la búsqueda!!', '');
+        return;
+      },
+    });
+  }
+
   selectRowGood() {
     this.rowSelectedGood = true;
   }
 
   duplicar() {
     this.loading = false;
-    this.layoutsConfigService.createH(this.layout).subscribe({
+    this.layoutsConfigService.create(this.structureLayout).subscribe({
       next: data => {
         console.log('creado' + data);
         this.valid = true;
         this.rowSelected = true;
+        // this.duplicaLayout();
         this.handleSuccess();
       },
       error: error => {
@@ -171,20 +190,18 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
     });
   }
-  duplicaLayout() {
-    this.layoutsConfigService.create(this.layoutDuplicated).subscribe({
-      next: data1 => {
-        console.log('creado' + data1);
-        this.rowSelected = true;
-        this.valid = true;
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-        return;
-      },
-    });
-  }
+  // duplicaLayout() {
+  //   this.layoutsConfigService.createH(this.layoutDuplicated).subscribe({
+  //     next: data1 => {
+  //       console.log('creado' + data1);
+  //     },
+  //     error: error => {
+  //       this.loading = false;
+  //       this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+  //       return;
+  //     },
+  //   });
+  // }
 
   handleSuccess() {
     const message: string = 'Duplicado';
@@ -240,19 +257,19 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     );
   }
-  showIdLayout(event: any) {
-    //enseña lo que elegistes en el input
-    console.log(event.idLayout);
-    console.log(event.idLayout);
-  }
-  showDeleteAlert(id: IL) {
+
+  showDeleteAlert(event: any) {
+    let del: ILay = {
+      idLayout: event.data.idLayout.id,
+      idConsec: event.data.idConsec,
+    };
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.layoutsConfigService.remove(id).subscribe({
+        this.layoutsConfigService.remove(del).subscribe({
           next: data => {
             this.loading = false;
             this.onLoadToast('success', 'Layout eliminado', '');
@@ -318,19 +335,11 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   settings6 = {
     ...TABLE_SETTINGS,
     actions: {
-      position: 'left',
-      edit: {
-        confirmSave: true,
-      },
-      delete: {
-        confirmDelete: true,
-        deleteButtonContent: 'Delete data',
-        saveButtonContent: 'save',
-        cancelButtonContent: 'cancel',
-      },
-      add: {
-        confirmCreate: true,
-      },
+      columnTitle: 'Acciones',
+      edit: true,
+      delete: true,
+      add: false,
+      position: 'right',
     },
     columns: { ...LAYOUTS_COLUMNS6 },
 

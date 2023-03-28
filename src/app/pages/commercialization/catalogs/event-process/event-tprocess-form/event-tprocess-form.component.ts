@@ -4,25 +4,30 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 //models
-import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 //Services
+import { addDays, format } from 'date-fns';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  IComerTpEventFull,
+  IComerTpEventId,
+} from 'src/app/core/models/ms-event/event-type.model';
 import { DelegationService } from 'src/app/core/services/maintenance-delegations/delegation.service';
-import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-event-process-form',
-  templateUrl: './event-process-form.component.html',
+  selector: 'app-event-tprocess-form',
+  templateUrl: './event-tprocess-form.component.html',
   styles: [],
 })
-export class EventProcessFormComponent extends BasePage implements OnInit {
+export class EventTProcessFormComponent extends BasePage implements OnInit {
   title: string = 'Evento';
   edit: boolean = false;
 
-  comerEventForm: ModelForm<IComerEvent>;
-  comerEvent: IComerEvent;
+  comerEventRlForm: ModelForm<IComerTpEventFull>;
+  comerEventForm: ModelForm<IComerTpEventId>;
+  comerEvent: IComerTpEventFull;
 
   delegations = new DefaultSelect();
   typeEvent = new DefaultSelect();
@@ -32,7 +37,7 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private comerEventosService: ComerEventosService,
+    private comerTpEventosService: ComerTpEventosService,
     private delegationService: DelegationService
   ) {
     super();
@@ -41,6 +46,7 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.comerEventForm);
   }
 
   private prepareForm() {
@@ -74,10 +80,23 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
       tpsolavalId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       applyIva: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+
+    this.comerEventRlForm = this.fb.group({
+      id: this.comerEventForm,
+      year: [null, [Validators.required]],
+      phase: [null, [Validators.required]],
+      topost: [null],
+      warrantyDate: [null, [Validators.required]],
+    });
+
     if (this.comerEvent != null) {
       this.edit = true;
       console.log(this.comerEvent);
-      this.comerEventForm.patchValue(this.comerEvent);
+      this.comerEventRlForm.patchValue(this.comerEvent);
+      this.comerEventRlForm
+        .get('warrantyDate')
+        .setValue(addDays(new Date(this.comerEvent.warrantyDate), 1));
+      /*       this.comerEventForm.patchValue(this.comerEventRlForm.get('id').value); */
     }
   }
 
@@ -91,16 +110,32 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.comerEventosService.create(this.comerEventForm.value).subscribe({
+    this.comerTpEventosService.create(this.comerEventForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
   }
 
   update() {
+    if (this.comerEventRlForm.get('topost').value == false) {
+      this.comerEventRlForm.get('topost').setValue(null);
+    } else {
+      this.comerEventRlForm.get('topost').setValue(1);
+    }
+
+    const editTpEvent = {
+      id: this.comerEventForm.get('id').value,
+      year: this.comerEventRlForm.get('year').value,
+      phase: this.comerEventRlForm.get('phase').value,
+      topost: this.comerEventRlForm.get('topost').value,
+      warrantyDate: format(
+        this.comerEventRlForm.get('warrantyDate').value,
+        'yyyy-MM-dd'
+      ),
+    };
     this.loading = true;
-    this.comerEventosService
-      .update(this.comerEvent.id, this.comerEventForm.value)
+    this.comerTpEventosService
+      .newUpdate(this.comerEvent.id.id, editTpEvent)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -123,9 +158,9 @@ export class EventProcessFormComponent extends BasePage implements OnInit {
     });
   }
 
-  getTypeEvent(params: ListParams) {
+  /* getTypeEvent(params: ListParams) {
     this.comerEventosService.getAllTypeEvent(params).subscribe({
       next: data => (this.typeEvent = new DefaultSelect(data.data, data.count)),
     });
-  }
+  } */
 }

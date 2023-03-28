@@ -40,6 +40,7 @@ export class DocumentsReceptionFlyerSelectComponent
   globalVars: IGlobalVars;
   obs: Subscription;
   selectedFlyer: INotification = null;
+  notificationExists: boolean = false;
   constructor(
     private fb: FormBuilder,
     private location: Location,
@@ -85,28 +86,51 @@ export class DocumentsReceptionFlyerSelectComponent
     this.modalRef.hide();
   }
 
+  confirmKey(event: KeyboardEvent) {
+    const { key } = event;
+    if (key == 'Enter') {
+      if (!this.loading && this.flyerForm.valid) {
+        this.confirm();
+      }
+    }
+  }
+
   getNotification(flyer: number | string) {
     if (flyer == null) return;
     this.loading = true;
     const flyerNumber = Number(flyer);
     const params = new FilterParams();
     params.addFilter('wheelNumber', flyerNumber);
+    this.hideError();
     this.notifService.getAllFilter(params.getParams()).subscribe({
       next: data => {
         if (data.count > 0) {
           this.selectedFlyer = data.data[0];
           this.flyerForm.controls['flyerNumber'].setErrors(null);
+          this.notificationExists = true;
           this.loading = false;
         } else {
           this.selectedFlyer = null;
           this.flyerForm.controls['flyerNumber'].setErrors({ notFound: true });
+          this.notificationExists = false;
           this.loading = false;
+          this.onLoadToast(
+            'warning',
+            'Volante no encontrado',
+            `No se encontró el volante ${flyerNumber}.`
+          );
         }
       },
       error: () => {
         this.selectedFlyer = null;
         this.flyerForm.controls['flyerNumber'].setErrors({ notFound: true });
+        this.notificationExists = false;
         this.loading = false;
+        this.onLoadToast(
+          'warning',
+          'Volante no encontrado',
+          `No se encontró el volante ${flyerNumber}.`
+        );
       },
     });
   }

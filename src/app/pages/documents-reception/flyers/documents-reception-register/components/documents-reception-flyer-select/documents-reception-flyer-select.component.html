@@ -15,10 +15,14 @@
           control="flyerNumber"
           label="No. Volante"
           [searchOnInit]="false"></ngx-select> -->
-        <input type="text" formControlName="flyerNumber" class="form-control" />
+        <input
+          type="text"
+          formControlName="flyerNumber"
+          class="form-control"
+          (keyup)="confirmKey($event)" />
       </form-field>
     </form>
-    <div class="row mt-4">
+    <div class="row mt-4" *ngIf="false">
       <div class="d-flex justify-content-center flex-wrap">
         <div>
           <button
@@ -65,7 +69,7 @@
         <confirm-button
           text="Aceptar"
           loadingText="Cargando"
-          [disabled]="!flyerForm.valid"
+          [disabled]="!flyerForm.valid || !notificationExists"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

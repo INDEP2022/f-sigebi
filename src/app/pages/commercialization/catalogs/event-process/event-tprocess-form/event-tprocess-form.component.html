@@ -1,0 +1,66 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="comerEventForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="ID" [control]="comerEventForm.get('id')">
+            <input
+              type="number"
+              class="form-control disabled"
+              formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <form class="form-material" [formGroup]="comerEventRlForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="Año" [control]="comerEventRlForm.get('year')">
+            <input type="text" class="form-control" formControlName="year" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Fase" [control]="comerEventRlForm.get('phase')">
+            <input type="text" class="form-control" formControlName="phase" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Garantia"
+            [control]="comerEventRlForm.get('warrantyDate')">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="warrantyDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="comerEventRlForm.get('topost')">
+            <input
+              type="checkbox"
+              formControlName="topost"
+              [checked]="comerEventRlForm.get('topost').value === 1" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!comerEventForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

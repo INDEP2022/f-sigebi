@@ -4,6 +4,7 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Injectable()
@@ -13,7 +14,8 @@ export class RegistrationHelper extends BasePage {
   constructor(
     private goodService: GoodService,
     private fractionService: FractionService,
-    private goodEstateService: RealStateService
+    private goodEstateService: RealStateService,
+    private wcontentService: WContentService
   ) {
     super();
   }
@@ -21,12 +23,24 @@ export class RegistrationHelper extends BasePage {
   getGoodQuantity(requestId: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.requestId'] = `$eq:${requestId}`;
-      this.goodService.getAll(params).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-      });
+
+      if (requestId) {
+        params['filter.requestId'] = `$eq:${requestId}`;
+        this.goodService.getAll(params).subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            if (error.error.message === 'No se encontraron registros.') {
+              let good: any = {};
+              good['count'] = 0;
+              resolve(good);
+            } else {
+              reject(error.error.message);
+            }
+          },
+        });
+      }
     });
   }
 
@@ -34,7 +48,6 @@ export class RegistrationHelper extends BasePage {
     return new Promise((resolve, reject) => {
       this.fractionService.getById(fractionId).subscribe({
         next: resp => {
-          debugger;
           if (resp.fractionCode) {
             resolve(resp.fractionCode);
           } else {
@@ -60,7 +73,24 @@ export class RegistrationHelper extends BasePage {
     });
   }
 
+  getDocument(id: string) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: (resp: any) => {
+          //console.log(resp);
+          resolve(resp.data.lenght);
+        },
+        error: error => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
   async validateForm(request: any) {
+    const idRequest = request.id;
     const idTrandference = Number(request.transferenceId);
     let validoOk = false;
     let allOk = false;
@@ -78,16 +108,25 @@ export class RegistrationHelper extends BasePage {
     const urgentPriority = request.urgentPriority;
     const priorityDate = request.priorityDate;
 
+    const lisDocument = await this.getDocument(idRequest);
+
     //Todo: verificar y obtener documentos de la solicitud
-    /*if (request.recordId === null) {
+    if (request.recordId === null) {
       //Verifica si hay expediente
       this.message(
         'error',
-        'Error',
-        'La solicitud no tiene Expediente asociado'
+        'Error sin expediente',
+        'La solicitud no tiene expediente asociado'
       );
       validoOk = false;
-    } else */ if (urgentPriority === 'Y' && priorityDate === null) {
+    } else if (lisDocument && lisDocument < 1) {
+      this.message(
+        'error',
+        'Error sin expediente',
+        'Se debe asociar un archivo a la solicitud'
+      );
+      validoOk = false;
+    } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
       this.message(
         'error',
@@ -166,13 +205,13 @@ export class RegistrationHelper extends BasePage {
     }
 
     let goods: any = null;
-
+    //debugger;
     if (validoOk === true) {
       goods = await this.getGoodQuantity(Number(request.id));
       if (goods.count < 1) {
         this.message(
           'error',
-          'Error',
+          'Error en los bienes',
           'La solicitud no cuenta con bienes a transferir'
         );
       } else {
@@ -276,6 +315,7 @@ export class RegistrationHelper extends BasePage {
           }
 
           //validar por el tipo de bien
+          /* Tipo Inmueble */
           if (Number(good.goodTypeId) === 1) {
             existBienInm = true;
             if (good.idGoodProperty === null) {
@@ -302,7 +342,15 @@ export class RegistrationHelper extends BasePage {
                 this.message(
                   'error',
                   `Error en el bien ${good.goodDescription}`,
-                  'El campo Poroblematicas Pública en Bien Inmueble esta vacio, favor de complementar'
+                  'El campo Problematicas en Bien Inmueble esta vacio, favor de complementar'
+                );
+                break;
+              } else if (realEstate.problemDesc === null) {
+                tipoRelInmueble = true;
+                this.message(
+                  'error',
+                  `Error en el bien ${good.goodDescription}`,
+                  'El campo Descripción de Problemática en Bien Inmueble esta vacio, favor de complementar'
                 );
                 break;
               } else if (realEstate.pubRegProperty === null) {

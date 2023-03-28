@@ -60,41 +60,43 @@ export class SelectAddressComponent extends BasePage implements OnInit {
 
   //obtengo los nombres de los campos
   getData(params: ListParams) {
-    var array: any = [];
-    this.loading = true;
-    params['filter.requestId'] = `$eq:${this.request.id}`;
-    this.goodDomiciliesService.getAll(params).subscribe({
-      next: resp => {
-        const result = resp.data.map(async (item: any) => {
-          item['warehouseAlias'] = item.warehouseAlias.id;
-          var stateOfRepublic = await this.getStateOfRepublic(item);
-          item['stateOfRepublicName'] = stateOfRepublic;
+    if (this.request.id) {
+      var array: any = [];
+      this.loading = true;
+      params['filter.requestId'] = `$eq:${this.request.id}`;
+      this.goodDomiciliesService.getAll(params).subscribe({
+        next: resp => {
+          const result = resp.data.map(async (item: any) => {
+            item['warehouseAlias'] = item.warehouseAlias.id;
+            var stateOfRepublic = await this.getStateOfRepublic(item);
+            item['stateOfRepublicName'] = stateOfRepublic;
 
-          if (item.statusKey && item.municipalityKey) {
-            const municipality = await this.getMunicipality(item);
-            item['municipalityName'] = municipality;
-          } else {
-            item['municipalityName'] = '';
-          }
+            if (item.statusKey && item.municipalityKey) {
+              const municipality = await this.getMunicipality(item);
+              item['municipalityName'] = municipality;
+            } else {
+              item['municipalityName'] = '';
+            }
 
-          if (item.statusKey && item.municipalityKey && item.localityKey) {
-            const location = await this.getLocation(item);
-            item['localityName'] = location;
-          } else {
-            item['localityName'] = '';
-          }
-        });
+            if (item.statusKey && item.municipalityKey && item.localityKey) {
+              const location = await this.getLocation(item);
+              item['localityName'] = location;
+            } else {
+              item['localityName'] = '';
+            }
+          });
 
-        Promise.all(result).then(x => {
-          this.paragraphs = resp.data;
+          Promise.all(result).then(x => {
+            this.paragraphs = resp.data;
+            this.loading = false;
+          });
+        },
+        error: error => {
+          console.log('Domicillio de bienes ', error.error.message);
           this.loading = false;
-        });
-      },
-      error: error => {
-        console.log('Domicillio de bienes ', error.error.message);
-        this.loading = false;
-      },
-    });
+        },
+      });
+    }
   }
 
   getStateOfRepublic(item: any) {

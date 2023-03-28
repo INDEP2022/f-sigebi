@@ -53,8 +53,8 @@ export class LockersService extends HttpService {
     return httpParams;
   }
 
-  remove(model: ILocker) {
-    const route = `${LockerEndpoints.Locker}`;
-    return this.delete(route, model);
+  remove(id: string | number) {
+    const route = `${LockerEndpoints.Locker}/id/${id}`;
+    return this.delete(route);
   }
 }

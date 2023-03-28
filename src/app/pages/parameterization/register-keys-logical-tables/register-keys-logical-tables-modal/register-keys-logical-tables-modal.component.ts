@@ -25,7 +25,7 @@ export class RegisterKeysLogicalTablesModalComponent
   tdescCve: ITdescCve;
   idCve: ITable;
 
-  title: string = 'Registro de claves para tablas logicas';
+  title: string = 'Registro de claves para tablas logicas con 5 claves';
   edit: boolean = false;
 
   _id: any;
@@ -44,7 +44,7 @@ export class RegisterKeysLogicalTablesModalComponent
 
   private prepareForom() {
     this.tdescCveForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null, []],
 
       dsKey1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -85,7 +85,21 @@ export class RegisterKeysLogicalTablesModalComponent
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    if (
+      this.tdescCveForm.controls['longMax1'].value >=
+      this.tdescCveForm.controls['longMin1'].value
+    ) {
+      this.edit ? this.update() : this.create();
+    } else {
+      this.alertQuestion(
+        'warning',
+        'La longitud máxima no puede ser menor a longitud mínima',
+        'Favor de corregir'
+      ).then(question => {
+        if (question.isConfirmed) {
+        }
+      });
+    }
   }
 
   create() {

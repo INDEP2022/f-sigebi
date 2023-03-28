@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
@@ -17,6 +17,7 @@ import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
+import { OpenDescriptionComponent } from './open-description/open-description.component';
 
 @Component({
   selector: 'app-associate-file',
@@ -40,6 +41,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   constructor(
     private modalRef: BsModalRef,
+    private bsChildModalRef: BsModalRef,
     private fb: FormBuilder,
     private externalExpedientService: CoverExpedientService,
     private transferentService: TransferenteService,
@@ -61,54 +63,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
-    console.log(this.parameter.getRawValue());
-    // this.call();
-  }
-
-  call() {
-    debugger;
-    this.wcontetService.callReportFile('Etiqueta_INAI', '4325').subscribe({
-      next: (resp: any) => {
-        console.log(resp);
-        const form = {
-          ddocTitle: 'Caratula del Expediente test',
-          ddocAuthor: '',
-          ddocType: '',
-          ddocCreator: '',
-          ddocName: 'REPORTE_10620230319',
-          dID: '',
-          dSecurityGroup: 'Public',
-          dDocAccount: '',
-          dDocId: '',
-          dInDate: '08-May-2022',
-          dOutDate: '',
-          dRevLabel: '',
-          xIdcProfile: '',
-          xDelegacionRegional: 3,
-          xidTransferente: '',
-          xidBien: '',
-          xidExpediente: '35015',
-          xidSolicitud: '39567',
-        };
-
-        this.wcontetService
-          .addDocumentToContent(
-            'Contents',
-            '.pdf',
-            JSON.stringify(form),
-            resp,
-            'pdf'
-          )
-          .subscribe({
-            next: resp => {
-              console.log(resp);
-            },
-          });
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+    //this.call();
   }
 
   formsChanges() {
@@ -170,8 +125,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    let request = this.parameter.getRawValue();
-    if (!request.regionalDelegacionId) {
+    let request = this.parameter.getRawValue() as IRequest;
+    if (!request.regionalDelegationId) {
       this.onLoadToast(
         'error',
         '',
@@ -241,12 +196,15 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                 this.requestService
                   .update(requestUpdate.id, requestUpdate)
                   .subscribe({
-                    next: resp => {
-                      const solicitud = resp;
+                    next: (resp: any) => {
+                      const solicitud = resp as any;
                       if (solicitud.id) {
-                        //llamar al reporte
+                        //llamar al reporte caratula inai
                         this.wcontetService
-                          .callReportFile('Etiqueta_INAI', solicitud.id)
+                          .downloadCaratulaINAIFile(
+                            'Etiqueta_INAI',
+                            solicitud.id
+                          )
                           .subscribe({
                             next: resp => {
                               const file: any = resp;
@@ -268,7 +226,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 dRevLabel: '',
                                 xIdcProfile: '',
                                 xDelegacionRegional:
-                                  solicitud.regionalDelegacionId,
+                                  solicitud.regionalDelegationId,
                                 xidTransferente: solicitud.transferenceId ?? '',
                                 xidBien: '',
                                 xidExpediente: solicitud.recordId,
@@ -284,6 +242,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                   solicitud.contribuyente_indiciado ?? '',
                               };
                               const form = JSON.stringify(body);
+                              //se guarda el file y el documento
                               this.wcontetService
                                 .addDocumentToContent(
                                   docName,
@@ -294,46 +253,27 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 )
                                 .subscribe({
                                   next: resp => {
-                                    console.log(resp);
                                     const reporteName = resp.dDocName;
                                     console.log(reporteName);
-                                    //se habre el reporte
-                                    this.wcontetService
-                                      .obtainFile(reporteName)
-                                      .subscribe({
-                                        next: resps => {
-                                          console.log(resps);
-
-                                          const base64 = resps;
-                                          this.createPDF(base64, reporteName);
-
-                                          /* const autoridad: any =
-                                            this.authService.decodeToken();
-
-                                          Swal.fire({
-                                            html: `No. Expediente: <strong>${
-                                              expedient.id
-                                            }</strong> <br><br>Fecha Expediente: <strong>${this.setDate(
-                                              this.associateFileForm.controls[
-                                                'expedientDate'
-                                              ].value
-                                            )}</strong> <br><br>Usuario Creacion: <strong>${
-                                              autoridad.username
-                                            }</strong><br><br>Fecha Creación: <strong>${this.setDate(
-                                              new Date()
-                                            )}</strong>`,
-                                            showDenyButton: false,
-                                            showCancelButton: false,
-                                            confirmButtonColor: '#9D2449',
-                                            confirmButtonText: 'Aceptar',
-                                            denyButtonText: `Don't save`,
-                                          }).then(result => {
-
-                                            //this.closeAssociateExpedientTab();
-                                            //this.close();
-                                          });*/
-                                        },
-                                      });
+                                    //se arma los parametros y se habre un modal
+                                    const autoridad: any =
+                                      this.authService.decodeToken();
+                                    const parameters = {
+                                      idExpedient: expedient.id,
+                                      expedientDate: this.setDate(
+                                        this.associateFileForm.controls[
+                                          'expedientDate'
+                                        ].value
+                                      ),
+                                      usrCreation: autoridad.username,
+                                      dateCreation: this.setDate(new Date()),
+                                      docName: reporteName,
+                                    };
+                                    this.openModal(
+                                      OpenDescriptionComponent,
+                                      parameters
+                                    );
+                                    this.close();
                                   },
                                 });
                             },
@@ -382,7 +322,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   setDate(date: Date) {
     const newDate =
-      date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
     return newDate;
   }
 
@@ -439,10 +379,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   close() {
     this.modalRef.hide();
-  }
-
-  closeAssociateExpedientTab() {
-    this.requestHelperService.associateExpedient(true);
   }
 
   getUserSelect(params: ListParams) {
@@ -544,5 +480,21 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     }, 2000);
   }
 
-  messageModal() {}
+  openModal(component: any, parameters?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        parameter: parameters,
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(component, config);
+
+    /*this.bsModalRef.content.event.subscribe((res: any) => {
+      this.matchLevelFraction(res);
+    });*/
+  }
 }

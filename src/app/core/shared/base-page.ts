@@ -14,6 +14,7 @@ import Swal, {
   SweetAlertPosition,
   SweetAlertResult,
 } from 'sweetalert2';
+import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
 
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
@@ -33,6 +34,7 @@ export class SweetalertModel implements SweetAlertOptions {
   confirmButtonClass: string;
   cancelButtonClass: string;
   timer: number;
+  timerProgressBar: boolean;
   position: SweetAlertPosition;
   constructor() {
     this.icon = 'success';
@@ -114,7 +116,7 @@ export abstract class BasePage implements OnDestroy {
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
-
+  private _alertsService = inject(AlertsQueueService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,
@@ -144,10 +146,22 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
-    Swal.fire(sweetalert);
+    sweetalert.timerProgressBar = true;
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
   }
 
   protected alert(icon: SweetAlertIcon, title: string, text: string) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
+  }
+
+  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
     let sweetalert = new SweetalertModel();
     sweetalert.title = title;
     sweetalert.text = text;
@@ -190,6 +204,10 @@ export abstract class BasePage implements OnDestroy {
 
   hideError(show: boolean = false) {
     this._showHide.showHideError(show);
+  }
+
+  blockErrors(condition: boolean) {
+    this._showHide.blockAllErrors = condition;
   }
 
   ngOnDestroy(): void {

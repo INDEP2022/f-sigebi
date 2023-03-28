@@ -24,6 +24,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { CategorizationAutomNumeraryService } from 'src/app/core/services/ms-good-parameters/categorization-autom-numerary.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
@@ -85,7 +86,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
     private proceedingsDeliveryRecService: ProceedingsDeliveryReceptionService,
     private screenStatusService: ScreenStatusService,
     private categorizationNumeraryService: CategorizationAutomNumeraryService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private partializeGoodService: PartializeGoodService
   ) {
     super();
     this.activatedRoute.queryParams
@@ -279,7 +281,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   }
 
   handleErrorGoHome(error: string) {
-    this.alert('error', 'Error', error).then(() => {
+    this.alertInfo('error', 'Error', error).then(() => {
       if (this.goodNum || this.screen) {
         this.router.navigate([HOME_DEFAULT]);
       } else {
@@ -332,9 +334,33 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   }
 
   partializaGood() {
-    this.getGoodById(this.goodNum)
-      .pipe(tap(good => this.insertNewGood(good)))
-      .subscribe();
+    const { bien, en, y, isNume, originalQuantity, originalImport } =
+      this.form.getRawValue();
+    const body = {
+      parGood: bien,
+      tiValue1: en,
+      tiValueOrigin: originalImport,
+      diEsNumerary: isNume ? 'S' : 'N',
+      diAmountOriginal: originalQuantity,
+      tiValue2: y,
+    };
+    console.log(body, this.form.getRawValue());
+    this.partializeGood(body).subscribe();
+  }
+
+  partializeGood(body: {}) {
+    this.loading = true;
+    return this.partializeGoodService.partializeGood(body).pipe(
+      catchError(error => {
+        this.loading = false;
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loading = false;
+        console.log(response);
+        this.alert('success', 'Bien parcializado correctamente', '');
+      })
+    );
   }
 
   insertNewGood(good: IGood) {
