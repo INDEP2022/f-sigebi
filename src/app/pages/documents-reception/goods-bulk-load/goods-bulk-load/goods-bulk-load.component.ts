@@ -683,7 +683,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
 
   initDataPgr(pgrData: IPgrTransfer[]) {
     const params = new FilterParams();
-    params.addFilter('user', this.userId.toUpperCase());
+    params.addFilter('user', this.userId);
     this.hideError();
     this.goodsBulkService.getInfoUserLogued(params.getParams()).subscribe({
       next: data => {
@@ -4656,7 +4656,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       notificationDate: body.notificationDate,
       notifiedTo: body.notifiedTo,
       placeNotification: body.placeNotification,
-      confiscateDictamineDate: null, // INCIDENCIA
+      confiscateDictamineDate: null, // INCIDENCIA 638 --- NO RESUELTA
       dictaminationReturnDate: body.returnRulingDate,
       alienationDate: body.alienationDate,
       federalEntityKey: body.cveEntfed,
