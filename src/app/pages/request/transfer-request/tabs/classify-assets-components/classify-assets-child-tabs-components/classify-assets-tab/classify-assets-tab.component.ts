@@ -409,6 +409,7 @@ export class ClassifyAssetsTabComponent
 
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
+
     if (goods.addressId === null) {
       this.message(
         'error',

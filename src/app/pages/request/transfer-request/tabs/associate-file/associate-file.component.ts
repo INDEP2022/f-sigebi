@@ -153,7 +153,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   generateCaratula() {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
-
+    this.loader.load = true;
     //guardar expediente
     this.expedientSamiService.create(expedient).subscribe({
       next: resp => {
@@ -269,16 +269,34 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                       dateCreation: this.setDate(new Date()),
                                       docName: reporteName,
                                     };
+                                    this.loader.load = false;
                                     this.openModal(
                                       OpenDescriptionComponent,
                                       parameters
                                     );
                                     this.close();
                                   },
+                                  error: error => {
+                                    this.loader.load = false;
+                                    this.onLoadToast(
+                                      'error',
+                                      'Error',
+                                      'Error guardar la caratula al contenedor'
+                                    );
+                                  },
                                 });
+                            },
+                            error: error => {
+                              this.loader.load = false;
+                              this.onLoadToast(
+                                'error',
+                                'Error',
+                                'Error al generar la caratula'
+                              );
                             },
                           });
                       } else {
+                        this.loader.load = false;
                         console.log('error');
                         this.onLoadToast(
                           'error',
@@ -309,15 +327,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     var downloadURL = window.URL.createObjectURL(blob);
     // open the window
     var newWin = window.open(downloadURL, `${docName}.pdf`);
-
-    /*const base64 = resp;
-      const linkSource = 'data:application/pdf;base64,' + base64;
-      const downloadLink = document.createElement('a');
-      const fileName = `${docName}.pdf`;
-      downloadLink.href = linkSource;
-      downloadLink.download = fileName;
-      downloadLink.click();*/
-    //cierra la ventana de mensaje y oculta el tab
   }
 
   setDate(date: Date) {

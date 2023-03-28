@@ -176,7 +176,7 @@
       <!-- <ng-scrollbar track="all" style="min-height: 200px; border: none"> -->
       <div [class]="loading ? 'table-loading table-responsive' : ''">
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="clarifySetting"
           [source]="clarificationData"
           (userRowSelect)="clarificationSelected($event)"

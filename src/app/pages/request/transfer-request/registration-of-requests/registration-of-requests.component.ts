@@ -129,7 +129,7 @@ export class RegistrationOfRequestsComponent
     this.requestHelperService.currentExpedient.subscribe({
       next: resp => {
         if (resp === true) {
-          this.isExpedient = resp;
+          this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
       },
@@ -464,6 +464,7 @@ export class RegistrationOfRequestsComponent
   }
 
   finishMethod() {
+    debugger;
     this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
@@ -514,17 +515,16 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
-    const oldTask = await this.getOldTask();
-    if (Object.entries(oldTask).length === 0) {
+    const oldTask: any = await this.getOldTask();
+    debugger;
+    if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/classify-assets';
       const taskResult = await this.createTask(oldTask, title, url);
-
       if (taskResult === true) {
         const from = 'VERIFICAR_CUMPLIMIENTO';
         const to = 'CLASIFICAR_BIEN';
         const orderServResult = await this.createOrderService(from, to);
-
         if (orderServResult) {
           this.msgGuardado(
             'success',
@@ -535,7 +535,9 @@ export class RegistrationOfRequestsComponent
       }
     }
   }
+  /* Fin Metodo para guardar verifucacion cumplimiento */
 
+  classifyGoodMethod() {}
   saveClarification(): void {
     this.saveClarifiObject = true;
   }
@@ -579,8 +581,8 @@ export class RegistrationOfRequestsComponent
       let body: any = {};
       const user: any = this.authService.decodeToken();
       body['id'] = 0;
-      body['assignees'] = oldTask.username;
-      body['assigneesDisplayname'] = oldTask.firstName;
+      body['assignees'] = oldTask.assignees;
+      body['assigneesDisplayname'] = oldTask.assigneesDisplayname;
       body['creator'] = user.username;
       body['taskNumber'] = Number(this.requestData.id);
       body['title'] = title;
@@ -681,6 +683,10 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'verificar-cumplimiento') {
           this.verifyComplianceMethod();
         }
+        if (typeCommit === 'clasificar-bienes') {
+          this.classifyGoodMethod();
+        }
+
         if (typeCommit === 'proceso-aprovacion') {
           this.approveRequest();
         }

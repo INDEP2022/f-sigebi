@@ -128,9 +128,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   async turnRequest() {
     if (this.user) {
+      this.loader.load = true;
       const requestUpdate: any = {};
       requestUpdate.id = this.data.id;
-      requestUpdate.recordId = this.data.recordId;
       requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
       requestUpdate.targetUser = this.user.id;
       //Todo: enviar la solicitud
@@ -183,9 +183,10 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               const orderServResult = await this.createOrderService(from, to);
 
               if (orderServResult) {
+                this.loader.load = false;
                 Swal.fire({
                   title: 'Solicitud Turnada',
-                  text: 'La solicitud se turno conrrectamente',
+                  text: 'La solicitud se turno correctamente',
                   icon: 'success',
                   showCancelButton: false,
                   confirmButtonColor: '#9D2449',
@@ -224,6 +225,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
+          this.loader.load = false;
           this.message(
             'error',
             'Error al guardar',
@@ -249,10 +251,13 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             if (resp.dDocName) {
               resolve(resp.dDocName);
             } else {
+              this.loader.load = false;
+              this.message('error', 'Error', 'Error al subir al content');
               resolve(null);
             }
           },
           error: error => {
+            this.loader.load = false;
             this.message('error', 'Error', 'Error al subir al content');
             reject('error al guardar al content');
           },
@@ -283,7 +288,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: error => {
+          this.loader.load = false;
           console.log(error);
+          this.message('error', 'Error', 'Error crear la tarea');
         },
       });
     });
@@ -302,6 +309,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             }
           },
           error: error => {
+            this.loader.load = false;
             this.message(
               'error',
               'Error al guardar',
@@ -330,6 +338,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: error => {
+          this.loader.load = false;
           this.message(
             'error',
             'Error',
