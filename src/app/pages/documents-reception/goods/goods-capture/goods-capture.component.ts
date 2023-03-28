@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -29,7 +35,11 @@ import {
   templateUrl: './goods-capture.component.html',
   styles: [],
 })
-export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
+export class GoodsCaptureComponent
+  extends GoodsCaptureMain
+  implements OnInit, AfterViewInit
+{
+  @ViewChild('initPage', { static: true }) initPage: ElementRef<HTMLDivElement>;
   constructor(
     fb: FormBuilder,
     modalService: BsModalService,
@@ -52,6 +62,9 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       drDataService,
       globalVarService
     );
+  }
+  ngAfterViewInit(): void {
+    this.initPage.nativeElement.scroll(0, 0);
   }
 
   ngOnInit(): void {
