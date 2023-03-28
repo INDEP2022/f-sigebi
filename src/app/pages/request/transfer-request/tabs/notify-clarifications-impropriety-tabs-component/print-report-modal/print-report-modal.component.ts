@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -61,9 +61,22 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       },
     };
 
-    /* this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());*/
+      .subscribe(() => this.getSignatories());
+  }
+
+  getSignatories() {
+    //this.loading = true;
+    console.log('Traer firmantes');
+    // this.signatoriesService.getAll(this.params.getValue()).subscribe({
+    //   next: response => {
+    //     this.documentsForDictum = response.data;
+    //     this.totalItems = response.count;
+    //     this.loading = false;
+    //   },
+    //   error: error => (this.loading = false),
+    // });
   }
 
   close(): void {
