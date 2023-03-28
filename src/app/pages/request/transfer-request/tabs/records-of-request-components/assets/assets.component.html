@@ -107,25 +107,28 @@
           </ul>
         </div>
       </div>
-      <div class="" style="margin-left: 1%">
+      <div class="mr-4" style="margin-left: 1%">
         <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
           {{ btnCreate }}
         </button>
       </div>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
 
   <div class="row pt-4">
     <div class="col-md-12">
       <!--  <ng-scrollbar track="all" style="min-height: 200px; border: none"> -->
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings"
-          [source]="paragraphs"
-          (userRowSelect)="selectRows($event)"
-          ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
-        </ng2-smart-table>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="selectRows($event)"
+            ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+          </ng2-smart-table>
+        </div>
       </div>
       <app-pagination
         [filterParams]="params"

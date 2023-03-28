@@ -12,7 +12,7 @@ export const LIST_REPORTS_COLUMN = {
     sort: false,
   },
   statusRegistration: {
-    title: 'Estado Registro',
+    title: 'Estatus Registro',
     type: 'string',
     sort: false,
   },

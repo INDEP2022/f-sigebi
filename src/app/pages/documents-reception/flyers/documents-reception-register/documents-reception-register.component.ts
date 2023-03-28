@@ -142,8 +142,10 @@ export class DocumentsReceptionRegisterComponent
   stationLoading: boolean = false;
   populatingForm: boolean = false;
   procedureId: number;
-  reprocessFlag: boolean = false;
+  reprocessFlag: boolean = true;
   showTransference: boolean = false;
+  procedureStatusCode: string = '';
+  pgrGoodsProcessed: boolean = true;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -343,8 +345,10 @@ export class DocumentsReceptionRegisterComponent
     if (this.globals.gCommit == 'S') {
       if (Object.keys(this.pageParams).length > 0) {
         if (this.globals.gOFFCommit == 'N') {
+          this.checkPgrGoods();
           this.postGoodsCapture();
         } else {
+          this.checkPgrGoods();
           this.deleteDuplicatedGoods();
           this.postGoodsCapture();
         }
@@ -396,6 +400,49 @@ export class DocumentsReceptionRegisterComponent
         }
       },
       error: () => {},
+    });
+  }
+
+  checkPgrGoods() {
+    console.log('Check Pgr Goods');
+    console.log(this.pageParams.pNoTramite);
+    console.log(this.globals.noVolante);
+    const params = new FilterParams();
+    // params.addFilter('id', this.pageParams.pNoTramite);
+    this.hideError();
+    console.log(params.getParams());
+    this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
+      next: data => {
+        console.log(data);
+        const { status, typeManagement } = data;
+        if (!['', null, undefined].includes(status) && status.includes('OP')) {
+          params.removeAllFilters();
+          params.addFilter('flyerNumber', this.globals.noVolante);
+          this.docRegisterService.getGoods(params.getParams()).subscribe({
+            next: data => {
+              console.log(data);
+              if (data.count > 0) {
+                if ([3, '3'].includes(typeManagement)) {
+                  this.pgrGoodsProcessed = true;
+                } else {
+                  this.pgrGoodsProcessed = false;
+                }
+              } else {
+                this.pgrGoodsProcessed = false;
+              }
+            },
+            error: err => {
+              console.log(err);
+              this.pgrGoodsProcessed = false;
+            },
+          });
+        } else {
+          this.pgrGoodsProcessed = false;
+        }
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 
@@ -577,6 +624,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.goodRelation.setValue('S');
       //TODO: Comentado para pruebas, descomentar al tener el buzon de tramites listo
       this.pgrInterface = true;
+      this.checkPgrGoods();
       this.alert(
         'info',
         'Tipo de Trámite',
@@ -1168,6 +1216,7 @@ export class DocumentsReceptionRegisterComponent
   fillForm(notif: INotification) {
     this.docDataService.flyerEditMode = true;
     this.documentsReceptionForm.reset();
+    this.pgrGoodsProcessed = true;
     this.populatingForm = true;
     console.log(notif);
     const filterParams = new FilterParams();
@@ -1411,8 +1460,11 @@ export class DocumentsReceptionRegisterComponent
         .subscribe({
           next: data => {
             console.log(data.data[0].id);
+            console.log(data);
             this.procedureId = data.data[0].id;
-            const { status, areaToTurn, userToTurn } = data.data[0];
+            const { status, areaToTurn, userToTurn, typeManagement } =
+              data.data[0];
+            this.procedureStatusCode = status;
             if (areaToTurn != null) {
               filterParams.removeAllFilters();
               filterParams.addFilter('id', areaToTurn);
@@ -1463,6 +1515,36 @@ export class DocumentsReceptionRegisterComponent
                     );
                   },
                 });
+              if (status == 'OPS') {
+                filterParams.removeAllFilters();
+                filterParams.addFilter('flyerNumber', notif.wheelNumber);
+                this.docRegisterService
+                  .getGoods(filterParams.getParams())
+                  .subscribe({
+                    next: data => {
+                      console.log(data);
+                      if (data.count > 0) {
+                        if ([3, '3'].includes(typeManagement)) {
+                          this.pgrGoodsProcessed = true;
+                          console.log(typeManagement);
+                        } else {
+                          this.pgrGoodsProcessed = false;
+                        }
+                      } else {
+                        this.pgrGoodsProcessed = false;
+                      }
+                      console.log(this.pgrGoodsProcessed);
+                    },
+                    error: err => {
+                      console.log(err);
+                      this.pgrGoodsProcessed = false;
+                      console.log(this.pgrGoodsProcessed);
+                    },
+                  });
+              } else {
+                this.pgrGoodsProcessed = false;
+                console.log(this.pgrGoodsProcessed);
+              }
             } else {
               this.onLoadToast(
                 'warning',
@@ -2992,7 +3074,7 @@ export class DocumentsReceptionRegisterComponent
               `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
             );
             if (this.formControls.goodRelation.value == 'S') {
-              this.sendToGoodsCapture();
+              //this.sendToGoodsCapture();
             }
           },
           error: err => {
@@ -3709,6 +3791,7 @@ export class DocumentsReceptionRegisterComponent
     console.log(notificationData);
     this.tmpNotificationService.create(notificationData).subscribe({
       next: () => {
+        this.updateGlobalVars('noVolante', this.formControls.wheelNumber.value);
         this.captureGoods();
       },
       error: err => {
