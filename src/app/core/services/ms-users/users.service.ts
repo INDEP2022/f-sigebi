@@ -86,7 +86,6 @@ export class UsersService extends HttpService {
       params
     );
   }
-  getInfoUserLogued() {}
 
   getAccessUsers(_params: _Params) {
     return this.get<IListResponse<IUserAccess>>(
