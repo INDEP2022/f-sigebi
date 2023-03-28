@@ -153,7 +153,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.requestForm.controls['regionalDelegationId'].setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 
-      this.getEntity(new ListParams(), 11);
+      this.getEntity(new ListParams(), regDelId);
     });
   }
 
@@ -181,7 +181,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getStation(id: any) {
     const params = new ListParams();
-    params['filter.idTransferent'] = `$eq:${id}`;
+    params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params.limit = 30;
     this.stationService.getAll(params).subscribe((data: IListResponse<any>) => {
@@ -335,73 +335,88 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
-    }).then(result => {
+    }).then(async result => {
       if (result.isConfirmed) {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
 
-        form.requestStatus = 'A_TURNAR';
-        let date = this.requestForm.controls['applicationDate'].value;
-        form.applicationDate = date.toISOString();
+        const requestResult: any = await this.createRequest(form);
 
-        let action = null;
-        let haveId = false;
-        if (form.id === null) {
-          action = this.requestService.create(form);
-        } else {
-          action = this.requestService.update(form.id, form);
-          haveId = true;
-        }
-        /* se guarda la solicitud */
-        action.subscribe(
-          async (data: any) => {
-            const idRequest = data.id;
-            let body: any = {};
+        if (requestResult) {
+          let body: any = {};
 
-            const user: any = this.authService.decodeToken();
-            body['id'] = 0;
-            body['assignees'] = this.nickName;
-            body['assigneesDisplayname'] = this.userName;
-            body['creator'] = user.username;
-            body['taskNumber'] = Number(data.id);
-            body['title'] =
-              'Registro de solicitud (Captura de Solicitud) con folio: ' +
-              data.id;
-            body['isPublic'] = 's';
-            body['istestTask'] = 's';
-            body['programmingId'] = 0;
-            body['requestId'] = data.id;
-            body['expedientId'] = 0;
-            body['urlNb'] =
-              'pages/request/transfer-request/registration-request';
-            if (haveId === false) {
-              /* crea una tarea nueba */
-              this.taskService.createTask(body).subscribe({
-                next: (resp: any) => {
-                  this.loadingTurn = false;
-                  this.msgModal(
-                    'Se turnar la solicitud con el Folio Nº '
-                      .concat(`<strong>${data.id}</strong>`)
-                      .concat(` al usuario ${this.userName}`),
-                    'Solicitud Creada',
-                    'success'
-                  );
-                },
-                error: error => {
-                  this.loadingTurn = false;
-                },
-              });
-            } else {
-              //obtiene el id de la tarea
-              const idTask = await this.getTaskByTaskNumer(idRequest);
-              //actualiza la tarea
-            }
-          },
-          error => {
+          const user: any = this.authService.decodeToken();
+          body['id'] = 0;
+          body['assignees'] = this.nickName;
+          body['assigneesDisplayname'] = this.userName;
+          body['creator'] = user.username;
+          body['taskNumber'] = Number(requestResult.id);
+          body['title'] =
+            'Registro de solicitud (Captura de Solicitud) con folio: ' +
+            requestResult.id;
+          body['isPublic'] = 's';
+          body['istestTask'] = 's';
+          body['programmingId'] = 0;
+          body['requestId'] = requestResult.id;
+          body['expedientId'] = 0;
+          body['urlNb'] = 'pages/request/transfer-request/registration-request';
+          const taskResult = await this.createTask(body);
+
+          if (taskResult === true) {
             this.loadingTurn = false;
+            this.msgModal(
+              'Se turnar la solicitud con el Folio Nº '
+                .concat(`<strong>${requestResult.id}</strong>`)
+                .concat(` al usuario ${this.userName}`),
+              'Solicitud Creada',
+              'success'
+            );
           }
-        );
+        } else {
+          console.log(requestResult);
+          console.error('error');
+        }
       }
+    });
+  }
+
+  createRequest(form: any) {
+    return new Promise((resolve, reject) => {
+      form.requestStatus = 'A_TURNAR';
+      let date = this.requestForm.controls['applicationDate'].value;
+      form.applicationDate = date.toISOString();
+
+      let action = null;
+      if (!form.id) {
+        action = this.requestService.create(form);
+      } else {
+        action = this.requestService.update(form.id, form);
+      }
+      action.subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
+          reject(error.error);
+        },
+      });
+    });
+  }
+
+  createTask(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.msgModal('Error', 'Error', 'Error al guardar la tarea');
+          reject(error.error);
+        },
+      });
     });
   }
 

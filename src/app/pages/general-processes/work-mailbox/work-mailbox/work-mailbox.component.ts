@@ -5,6 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
   catchError,
+  debounceTime,
   map,
   of,
   takeUntil,
@@ -209,7 +210,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.dataTable
       .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
@@ -233,6 +234,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               case 'issueType':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'count':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -241,6 +245,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             if (filter.search !== '' && filter.search.length >= 3) {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else if (filter.search !== '' && filter.field == 'issueType') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else if (filter.search !== '' && filter.field == 'count') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -256,6 +262,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log('se ejecutó');
       if (this.predeterminedF.value) {
         this.getUser();
       } else {
@@ -294,7 +301,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     let userId = token.preferred_username;
     let params = new FilterParams();
-    params.addFilter('id', userId, SearchFilter.EQ);
+    params.addFilter('id', userId.toUpperCase(), SearchFilter.EQ);
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: data => {
         console.log(data);
@@ -414,9 +421,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           if (isSegAreas) {
             const token = this.authService.decodeToken();
             let userId = token.preferred_username;
-            this.columnFilters[field] = `$eq:${userId}`;
+            //this.columnFilters[field] = `$eq:${userId}`;
+            let field = `search`;
+            let searchBy = `searchBy`;
+            this.columnFilters[field] = `${userId.toUpperCase()}`;
+            this.columnFilters[searchBy] = `turnadoiUser`;
           } else if (user !== null) {
-            this.columnFilters[field] = `$eq:${user.id}`;
+            //this.columnFilters[field] = `$eq:${user.id}`;
+            let field = `search`;
+            let searchBy = `searchBy`;
+            this.columnFilters[field] = `${user.id}`;
+            this.columnFilters[searchBy] = `turnadoiUser`;
           } else {
             delete this.columnFilters[field];
           }
@@ -433,8 +448,16 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         const token = this.authService.decodeToken();
         let userId = token.preferred_username; //'FGAYTAN'; //
         this.columnFilters[field] = `$eq:${userId}`;
+        //let field = `search`;
+        //let searchBy = `searchBy`;
+        this.columnFilters[field] = `${userId.toUpperCase()}`;
+        //this.columnFilters[searchBy] = `turnadoiUser`;
       } else if (user !== null) {
         this.columnFilters[field] = `$eq:${user.id}`;
+        //let field = `search`;
+        //let searchBy = `searchBy`;
+        this.columnFilters[field] = `${user.id}`;
+        //this.columnFilters[searchBy] = `turnadoiUser`;
       } else {
         delete this.columnFilters[field];
       }
@@ -442,9 +465,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
 
     //TODO:VALIDAR CAMPO ESCANEADO
-    //field = `filter.processSituation`;
+    field = `filter.count`;
     if (this.pendientes.value) {
-      //this.columnFilters[field] = `$eq:0`;
+      this.columnFilters[field] = `$eq:0`;
     }
     //Filtros por columna
     /**BLK_CTR_CRITERIOS.CHK_FILTROS_PREDEFINIDOS = 'S'**/
@@ -511,10 +534,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     let filters : FilterParams =this.filterParams.getValue()*/
     console.log(this.predeterminedF.value);
     let field = `filter.turnadoiUser`;
+    //let field = `search`;
+    //let searchBy = `searchBy`;
     if (this.predeterminedF.value) {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
-      this.columnFilters[field] = `$eq:${userId}`;
+      this.columnFilters[field] = `$eq:${userId.toUpperCase()}`;
+      //this.columnFilters[field] = `${userId.toUpperCase()}`;
+      //this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
       delete this.columnFilters[field];
     }*/
@@ -542,6 +569,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.dataTable.load([]);
         this.totalItems = 0;
         this.dataTable.refresh();
+        //this.onLoadToast('warning', 'Advertencia','No se encontrarón registros');
         this.loading = false;
       },
     });
@@ -788,7 +816,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     predetermined
       ? (params.addFilter('predetermined', 'S'),
-        params.addFilter('user', userId))
+        params.addFilter('user', userId.toUpperCase()))
       : params.removeAllFilters();
 
     this.procedureManagementService
@@ -1081,15 +1109,129 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     this.getDocumentsCount().subscribe(count => {
       if (count == 0) {
-        // this.notificationsService.
+        this.getNotificationByFlyer().subscribe(notification => {
+          if (!notification) {
+            this.alert(
+              'error',
+              'Error',
+              'No existe un folio universal escaneado para replicar'
+            );
+            return;
+          }
+          this.getNotificationsByCveAndDate(
+            notification.officeExternalKey,
+            notification.entryProcedureDate
+          ).subscribe(flyers => {
+            this.getDocumentsByFlyers(flyers.join(',')).subscribe(documents => {
+              if (!documents.data[0]) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'No existe un folio universal escaneado para replicar'
+                );
+                return;
+              }
+              if (documents.count > 1) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Existe mas de un folio universal escaneado para replicar'
+                );
+                return;
+              }
+              const folio = documents[0].id;
+              this.updateDocumentsByFolio(
+                folio,
+                notification.officeExternalKey
+              ).subscribe();
+            });
+          });
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Este registro no permite ser replicado'
+        );
       }
     });
+  }
+
+  updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
+    return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.alert('success', 'Folio replicado correctamente', '');
+      })
+    );
+  }
+
+  getNotificationsByCveAndDate(cve: string, date: string | Date) {
+    const params = new FilterParams();
+    params.addFilter('officeExternalKey', cve);
+    params.addFilter('entryProcedureDate', date as string);
+    this.hideError();
+    return this.notificationsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.alert(
+          'error',
+          'Error',
+          'No existe un folio universal escaneado para replicar.'
+        );
+        return throwError(() => error);
+      }),
+      map(response =>
+        response.data.map(notification => notification.wheelNumber)
+      )
+    );
+  }
+
+  getNotificationByFlyer() {
+    const params = new FilterParams();
+    params.addFilter('wheelNumber', this.selectedRow.flierNumber);
+    this.hideError();
+    return this.notificationsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        this.alert(
+          'error',
+          'Error',
+          'No existe un folio universal escaneado para replicar.'
+        );
+        return throwError(() => error);
+      }),
+      map(response => response.data[0])
+    );
+  }
+
+  getDocumentsByFlyers(flyers: string) {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('flyerNumber', flyers, SearchFilter.IN);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          this.alert(
+            'error',
+            'Error',
+            'No existe un folio universal escaneado para replicar'
+          );
+        } else {
+          this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   getDocumentsCount() {
     const params = new FilterParams();
     params.addFilter('scanStatus', 'ESCANEADO');
     params.addFilter('flyerNumber', this.selectedRow.flierNumber);
+    this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
         if (error.status < 500) {

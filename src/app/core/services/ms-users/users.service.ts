@@ -7,6 +7,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDepartment } from '../../models/catalogs/department.model';
+import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 import { ISegUsers } from '../../models/ms-users/seg-users-model';
 
 @Injectable({
@@ -75,5 +76,13 @@ export class UsersService extends HttpService {
     );
   }
 
-  getInfoUserLogued() {}
+  getInfoUserLogued(
+    params?: string
+  ): Observable<IListResponse<IUserAccessAreaRelational>> {
+    this.microservice = UserEndpoints.BasePath;
+    return this.get<IListResponse<IUserAccessAreaRelational>>(
+      UserEndpoints.SegAccessAreas,
+      params
+    );
+  }
 }

@@ -225,6 +225,9 @@
               >
             </li>
             <li role="menuitem">
+              <a class="dropdown-item" (click)="replicate()">Replicar</a>
+            </li>
+            <li role="menuitem">
               <a
                 class="dropdown-item"
                 (click)="workFunction('acptionAntecedente')"
@@ -246,11 +249,6 @@
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="getSolicitud()">Solicitud</a>
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
-                >Replicar</a
-              >
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="viewPictures()"
@@ -286,9 +284,6 @@
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item" (click)="scanDocuments()">Replicar</a>
             </li>
           </ul>
         </div>

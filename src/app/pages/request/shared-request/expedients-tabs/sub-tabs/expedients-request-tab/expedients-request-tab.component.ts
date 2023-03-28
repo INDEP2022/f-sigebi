@@ -57,21 +57,25 @@ export class ExpedientsRequestTabComponent
   }
 
   getRequestByExpedient(expeident: number) {
-    this.params.getValue()['filter.recordId'] = expeident;
-    this.requestService.getAll(this.params.getValue()).subscribe({
-      next: async data => {
-        const filterInfo = data.data.map(items => {
-          items.authorityId = items.authority.authorityName;
-          items.regionalDelegationId = items.regionalDelegation.description;
-          items.transferenceId = items.transferent.name;
-          items.stationId = items.emisora.stationName;
-          return items;
-        });
-        this.paragraphs = filterInfo;
-        this.totalItems = data.count;
-      },
-      error: error => {},
-    });
+    if (expeident) {
+      this.params.getValue()['filter.recordId'] = expeident;
+      this.requestService.getAll(this.params.getValue()).subscribe({
+        next: async data => {
+          const filterInfo = data.data.map(items => {
+            items.authorityId = items.authority.authorityName;
+            items.regionalDelegationId = items.regionalDelegation.description;
+            items.transferenceId = items.transferent.name;
+            items.stationId = items.emisora.stationName;
+            return items;
+          });
+          this.paragraphs = filterInfo;
+          this.totalItems = data.count;
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
