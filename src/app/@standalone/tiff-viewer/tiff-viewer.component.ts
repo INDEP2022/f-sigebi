@@ -11,7 +11,7 @@ import {
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-const Tiff = require('tiff.js');
+const Tiff = require('src/assets/js/tiff.min.js');
 
 @Component({
   selector: 'tiff-viewer',
