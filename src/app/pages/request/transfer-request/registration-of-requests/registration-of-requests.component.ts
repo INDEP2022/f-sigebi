@@ -568,6 +568,7 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin Metodo para guardar clasificacion de bienes */
 
+  /* Metodo de destino documental */
   async destinyDocumental() {
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
@@ -588,6 +589,7 @@ export class RegistrationOfRequestsComponent
       }
     }
   }
+  /* Fin metodo destino documental */
 
   saveClarification(): void {
     this.saveClarifiObject = true;
