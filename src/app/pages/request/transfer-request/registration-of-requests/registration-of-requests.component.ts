@@ -606,6 +606,8 @@ export class RegistrationOfRequestsComponent
   private approveRequest() {
     /**Verificar datos */
     /**Actualizar tarea para aprobacion */
+    console.log(this.requestData);
+
     return;
     this.requestService
       .update(this.requestData.id, this.requestData)
