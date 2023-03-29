@@ -44,7 +44,6 @@ export class VerifyComplianceTabComponent
   @Input() requestObject: any;
   @Input() typeDoc: string = '';
   @Input() process: string = '';
-
   verifComplianceForm: ModelForm<any>;
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;

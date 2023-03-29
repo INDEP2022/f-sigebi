@@ -14,7 +14,11 @@
     </ng-template>
     <div
       *ngIf="
-        process == 'registration-request' || process === 'verify-compliance'
+        process == 'registration-request' ||
+        process == 'verify-compliance' ||
+        process == 'validate-document' ||
+        process == 'notify-clarification-inadmissibility' ||
+        process == 'process-approval'
       ">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">

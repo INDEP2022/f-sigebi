@@ -12,6 +12,7 @@ import { LIST_ASSETS_COLUMNS } from './list-assets-columns';
 })
 export class ApprovalAssetsTabsComponent extends BasePage implements OnInit {
   @Input() dataObject: string;
+  @Input() process: string;
   //bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
