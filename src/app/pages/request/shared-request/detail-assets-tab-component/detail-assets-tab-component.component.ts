@@ -156,6 +156,8 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    const valor = this.detailAssets.value;
+    console.log(valor);
     if (this.process == 'classify-assets') {
       this.setDataGood();
     }
@@ -204,7 +206,7 @@ export class DetailAssetsTabComponentComponent
     const idGood = this.assetsId;
     this.goodService.getById(idGood).subscribe({
       next: data => {
-        //this.goodType(data.goodTypeId);
+        this.goodType(data.goodTypeId);
         this.typeRelevant(data.goodTypeId);
         if (data.stateConservation == 1 || data.physicalStatus == 1)
           data.stateConservation = 'BUENO';

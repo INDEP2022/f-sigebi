@@ -1166,11 +1166,7 @@
   </tab>
 
   <!-- Informacion aereonaves -->
-  <tab
-    *ngIf="
-      (aircraftAssets && process == 'registration-request') ||
-      (aircraftAssets && process == 'classify-assets')
-    ">
+  <tab>
     <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
     </ng-template>
