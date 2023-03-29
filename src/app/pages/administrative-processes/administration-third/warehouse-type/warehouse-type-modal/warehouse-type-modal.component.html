@@ -1,69 +1,49 @@
-<app-card [header]="true">
+<!-- <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Tipo de Almacén</h5>
-    <!-- <div class="col-md-5 buttons">
+    <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
-    </div> -->
+    </div>
   </div>
   <div body>
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Tipo</h5>
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data1">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Sub Tipo</h5>
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="data1">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Sub Sub Tipo</h5>
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings3"
-            [source]="data1">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings3" [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Sub Sub Sub Tipo</h5>
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings4"
-            [source]="data1">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings4" [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row">
@@ -76,14 +56,58 @@
       </div>
       <div class="col-md-4">
         <div class="justify-content-center">
-          <button
-            type="submit"
-            class="btn btn-danger btn-sm active"
-            (click)="close()">
+          <button type="submit" class="btn btn-danger btn-sm active" (click)="close()">
             Atras
           </button>
         </div>
       </div>
     </div>
   </div>
-</app-card>
+</app-card> -->
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="warehouseForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('classifGoodNumber')"
+            label="Calificador Descripción">
+            <input
+              type="text"
+              formControlName="classifGoodNumber"
+              placeholder="Calificador Descripción"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('costId')" label="Costo">
+            <input
+              type="text"
+              formControlName="costId"
+              placeholder="Costo"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!warehouseForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

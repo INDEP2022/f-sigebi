@@ -69,7 +69,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.typeDoc);
     this.typeDoc = this.type ? this.type : this.typeDoc;
     if (this.typeDoc === 'doc-request') {
       //hacer visible la vista principal y no el ng-template
@@ -166,7 +165,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
         return data;
       });
-      console.log('aclareaciones', types);
+
       this.wContentService
         .getDocumentTypes(this.paramsTypeDoc.getValue())
         .subscribe(data => {

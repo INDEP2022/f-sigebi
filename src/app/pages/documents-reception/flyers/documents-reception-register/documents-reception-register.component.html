@@ -6,12 +6,14 @@
         <button
           *ngIf="flyerReceptionMode"
           class="btn btn-danger active btn-sm"
+          [disabled]="loadingPostCapture"
           (click)="endProcess()">
           <i class="bx bx-chevron-left float-icon"></i>Regresar
         </button>
         <button
           *ngIf="(changeFlyerOption || flyerEditMode) && !flyerReceptionMode"
           class="btn btn-primary active btn-sm"
+          [disabled]="loadingPostCapture"
           (click)="chooseOther()">
           Seleccionar Volante
         </button>
@@ -19,7 +21,17 @@
     </div>
   </div>
 
-  <div body>
+  <div body class="init-page">
+    <div class="row mb-5" *ngIf="loadingPostCapture">
+      <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center">
+          <div class="loader">
+            <!-- <i class="bx bx-loader bx-lg bx-spin spinner"></i> -->
+          </div>
+          <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+        </div>
+      </div>
+    </div>
     <form
       [formGroup]="documentsReceptionForm"
       (submit)="(false)"
@@ -32,6 +44,7 @@
                 outline
                 class="btn btn-primary btn-sm mr-3 active"
                 size="small"
+                [disabled]="loadingPostCapture"
                 (click)="sendToRecordUpdate()">
                 Antecedentes
               </button>
@@ -89,7 +102,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('affair')"
               label="Asunto">
               <input
@@ -459,15 +472,6 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
-
-            <!-- <div class="col-md-2">
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active"
-                (click)="clearCityState()">
-                <i class="bx bxs-eraser bx-sm float-icon"></i>
-              </button>
-            </div> -->
           </div>
 
           <div class="row pt-5">
@@ -757,28 +761,30 @@
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'N' &&
-            !pgrInterface &&
-            !satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'N' &&
+              !pgrInterface &&
+              !satInterface) ||
+            pgrGoodsProcessed
           ">
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
-            [disabled]="procedureBlocked"
+            [disabled]="procedureBlocked || loadingPostCapture"
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'S' ||
-            pgrInterface ||
-            satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'S' ||
+              pgrInterface ||
+              satInterface) &&
+            !pgrGoodsProcessed
           ">
           <confirm-button
             text="Siguiente"
             loadingText="Cargando"
-            [disabled]="procedureBlocked"
+            [disabled]="procedureBlocked || loadingPostCapture"
             [loading]="loading"
             (confirm)="nextStep()"></confirm-button>
         </div>

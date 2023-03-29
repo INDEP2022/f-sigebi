@@ -103,7 +103,17 @@ import {
 @Component({
   selector: 'app-documents-reception-register',
   templateUrl: './documents-reception-register.component.html',
-  styles: [],
+  styles: [
+    `
+      .loader {
+        height: 8rem;
+      }
+
+      .loader-msg {
+        margin-top: 14rem;
+      }
+    `,
+  ],
 })
 export class DocumentsReceptionRegisterComponent
   extends BasePage
@@ -142,8 +152,11 @@ export class DocumentsReceptionRegisterComponent
   stationLoading: boolean = false;
   populatingForm: boolean = false;
   procedureId: number;
-  reprocessFlag: boolean = false;
+  reprocessFlag: boolean = true;
   showTransference: boolean = false;
+  procedureStatusCode: string = '';
+  pgrGoodsProcessed: boolean = true;
+  loadingPostCapture: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -292,15 +305,13 @@ export class DocumentsReceptionRegisterComponent
   }
 
   ngOnInit(): void {
-    //this.showHideErrorInterceptorService.showHideError(false);
+    let main = document.documentElement.querySelector('.init-page');
+    main.scroll(0, 0);
     this.checkParams();
     this.onFormChanges();
     this.getLoggedUserArea();
     this.setDefaultValues();
     this.checkManagementArea();
-    // console.log(this.pageParams.pGestOk, this.pageParams.pNoVolante);
-    // console.log((this.pageParams.pGestOk === 1), (this.pageParams.pNoVolante !== null));
-    // console.log(this.docDataService.documentsReceptionRegisterForm);
     if (this.docDataService.documentsReceptionRegisterForm == null) {
       if (
         this.pageParams.pGestOk === 1 ||
@@ -309,7 +320,12 @@ export class DocumentsReceptionRegisterComponent
       ) {
         this.setInitialConditions();
       } else if (!this.docDataService.flyerEditMode) {
-        if (Object.keys(this.pageParams).length > 0) this.clearVisibleData();
+        //if (Object.keys(this.pageParams).length > 0) this.clearVisibleData();
+        this.documentsReceptionForm.reset();
+        this.documentsReceptionForm.patchValue(
+          DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
+        );
+        this.setDefaultValues();
         this.selectFlyer();
       }
     } else if (
@@ -344,10 +360,14 @@ export class DocumentsReceptionRegisterComponent
     console.log(this.pageParams);
     if (this.globals.gCommit == 'S') {
       if (Object.keys(this.pageParams).length > 0) {
+        this.loadingPostCapture = true;
+        this.documentsReceptionForm.disable();
         if (this.globals.gOFFCommit == 'N') {
+          this.checkPgrGoods();
           this.postGoodsCapture();
         } else {
-          this.deleteDuplicatedGoods();
+          this.checkPgrGoods();
+          ///this.deleteDuplicatedGoods();
           this.postGoodsCapture();
         }
       } else {
@@ -398,6 +418,49 @@ export class DocumentsReceptionRegisterComponent
         }
       },
       error: () => {},
+    });
+  }
+
+  checkPgrGoods() {
+    console.log('Check Pgr Goods');
+    console.log(this.pageParams.pNoTramite);
+    console.log(this.globals.noVolante);
+    const params = new FilterParams();
+    // params.addFilter('id', this.pageParams.pNoTramite);
+    this.hideError();
+    console.log(params.getParams());
+    this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
+      next: data => {
+        console.log(data);
+        const { status, typeManagement } = data;
+        if (!['', null, undefined].includes(status) && status.includes('OP')) {
+          params.removeAllFilters();
+          params.addFilter('flyerNumber', this.globals.noVolante);
+          this.docRegisterService.getGoods(params.getParams()).subscribe({
+            next: data => {
+              console.log(data);
+              if (data.count > 0) {
+                if ([3, '3'].includes(typeManagement)) {
+                  this.pgrGoodsProcessed = true;
+                } else {
+                  this.pgrGoodsProcessed = false;
+                }
+              } else {
+                this.pgrGoodsProcessed = false;
+              }
+            },
+            error: err => {
+              console.log(err);
+              this.pgrGoodsProcessed = false;
+            },
+          });
+        } else {
+          this.pgrGoodsProcessed = false;
+        }
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 
@@ -579,6 +642,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.goodRelation.setValue('S');
       //TODO: Comentado para pruebas, descomentar al tener el buzon de tramites listo
       this.pgrInterface = true;
+      this.checkPgrGoods();
       this.alert(
         'info',
         'Tipo de Trámite',
@@ -1170,6 +1234,7 @@ export class DocumentsReceptionRegisterComponent
   fillForm(notif: INotification) {
     this.docDataService.flyerEditMode = true;
     this.documentsReceptionForm.reset();
+    this.pgrGoodsProcessed = true;
     this.populatingForm = true;
     console.log(notif);
     const filterParams = new FilterParams();
@@ -1223,7 +1288,7 @@ export class DocumentsReceptionRegisterComponent
     } else if (notif.wheelStatus == 'ENVIADO') {
       this.procedureStatus = ProcedureStatus.sent;
     }
-    this.checkProcedureBlock();
+    //this.checkProcedureBlock();
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
     this.initialCondition = notif.wheelType;
@@ -1413,8 +1478,11 @@ export class DocumentsReceptionRegisterComponent
         .subscribe({
           next: data => {
             console.log(data.data[0].id);
+            console.log(data);
             this.procedureId = data.data[0].id;
-            const { status, areaToTurn, userToTurn } = data.data[0];
+            const { status, areaToTurn, userToTurn, typeManagement } =
+              data.data[0];
+            this.procedureStatusCode = status;
             if (areaToTurn != null) {
               filterParams.removeAllFilters();
               filterParams.addFilter('id', areaToTurn);
@@ -1465,6 +1533,36 @@ export class DocumentsReceptionRegisterComponent
                     );
                   },
                 });
+              if (status == 'OPS') {
+                filterParams.removeAllFilters();
+                filterParams.addFilter('flyerNumber', notif.wheelNumber);
+                this.docRegisterService
+                  .getGoods(filterParams.getParams())
+                  .subscribe({
+                    next: data => {
+                      console.log(data);
+                      if (data.count > 0) {
+                        if ([3, '3'].includes(typeManagement)) {
+                          this.pgrGoodsProcessed = true;
+                          console.log(typeManagement);
+                        } else {
+                          this.pgrGoodsProcessed = false;
+                        }
+                      } else {
+                        this.pgrGoodsProcessed = false;
+                      }
+                      console.log(this.pgrGoodsProcessed);
+                    },
+                    error: err => {
+                      console.log(err);
+                      this.pgrGoodsProcessed = false;
+                      console.log(this.pgrGoodsProcessed);
+                    },
+                  });
+              } else {
+                this.pgrGoodsProcessed = false;
+                console.log(this.pgrGoodsProcessed);
+              }
             } else {
               this.onLoadToast(
                 'warning',
@@ -1496,7 +1594,7 @@ export class DocumentsReceptionRegisterComponent
     this.destinationAreaChange();
     this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
-    this.blockErrors(true);
+    this.blockErrors(false);
   }
 
   selectFlyer() {
@@ -1995,15 +2093,9 @@ export class DocumentsReceptionRegisterComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter(
-        'courtNumber.description',
-        lparams.text,
-        SearchFilter.LIKE
-      );
-    if (this.formControls.cityNumber.value != null)
-      params.addFilter('city', this.formControls.cityNumber.value.idCity);
+      params.addFilter('name', lparams.text, SearchFilter.LIKE);
     this.hideError();
-    this.docRegisterService.getCourts(params.getParams()).subscribe({
+    this.docRegisterService.getCourtsUnrelated(params.getParams()).subscribe({
       next: data => {
         console.log(data);
         this.courts = new DefaultSelect(data.data, data.count);
@@ -2459,16 +2551,16 @@ export class DocumentsReceptionRegisterComponent
     if (!this.checkFormErrors()) {
       return false;
     }
-    const courtFlag = await this.checkCourt();
-    if (!courtFlag) {
-      this.onLoadToast(
-        'warning',
-        'Formulario Inválido',
-        'El juzgado no corresponde a la ciudad seleccionada.'
-      );
-      this.loading = false;
-      return false;
-    }
+    // const courtFlag = await this.checkCourt();
+    // if (!courtFlag) {
+    //   this.onLoadToast(
+    //     'warning',
+    //     'Formulario Inválido',
+    //     'El juzgado no corresponde a la ciudad seleccionada.'
+    //   );
+    //   this.loading = false;
+    //   return false;
+    // }
     this.loading = true;
     this.blockErrors(true);
     if (this.globals.gNoExpediente != null) {
@@ -2476,12 +2568,12 @@ export class DocumentsReceptionRegisterComponent
         Number(this.globals.gNoExpediente)
       );
     }
-    this.checkGoodsDailyEviction();
+    //this.checkGoodsDailyEviction();
     if (this.globals.antecede == 1) {
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
           this.formControls.wheelNumber.setValue(data.nextval);
-          this.updateROPGoods();
+          //this.updateROPGoods();
         },
         error: () => {},
       });
@@ -2617,6 +2709,10 @@ export class DocumentsReceptionRegisterComponent
       .subscribe({
         next: data => {
           console.log(data);
+          this.updateGlobalVars(
+            'gNoExpediente',
+            this.formControls.expedientNumber.value
+          );
           this.saveNotification();
           this.saveProcedureManagement();
         },
@@ -2681,6 +2777,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: err => {
           console.log(err);
+          this.blockErrors(false);
           this.onLoadToast(
             'error',
             'Error',
@@ -2720,6 +2817,10 @@ export class DocumentsReceptionRegisterComponent
       next: data => {
         this.formControls.expedientNumber.setValue(Number(data.id));
         console.log(data.id, this.formControls.expedientNumber.value);
+        this.updateGlobalVars(
+          'gNoExpediente',
+          this.formControls.expedientNumber.value
+        );
         this.saveNotification();
         this.saveProcedureManagement();
       },
@@ -2985,7 +3086,7 @@ export class DocumentsReceptionRegisterComponent
               `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
             );
             if (this.formControls.goodRelation.value == 'S') {
-              this.sendToGoodsCapture();
+              //this.sendToGoodsCapture();
             }
           },
           error: err => {
@@ -3242,7 +3343,7 @@ export class DocumentsReceptionRegisterComponent
                 });
             }
           });
-          this.massiveGoodCorrections(goods, goodsStatus);
+          //this.massiveGoodCorrections(goods, goodsStatus);
         }
       },
       error: () => {},
@@ -3352,16 +3453,16 @@ export class DocumentsReceptionRegisterComponent
     if (!this.checkFormErrors()) {
       return false;
     }
-    const courtFlag = await this.checkCourt();
-    if (!courtFlag) {
-      this.onLoadToast(
-        'warning',
-        'Formulario Inválido',
-        'El juzgado no corresponde a la ciudad seleccionada.'
-      );
-      this.loading = false;
-      return false;
-    }
+    // const courtFlag = await this.checkCourt();
+    // if (!courtFlag) {
+    //   this.onLoadToast(
+    //     'warning',
+    //     'Formulario Inválido',
+    //     'El juzgado no corresponde a la ciudad seleccionada.'
+    //   );
+    //   this.loading = false;
+    //   return false;
+    // }
     this.loading = true;
     this.prepareFormData();
     this.docDataService.documentsReceptionRegisterForm =
@@ -3465,21 +3566,118 @@ export class DocumentsReceptionRegisterComponent
   }
 
   startGoodsCapture() {
+    console.log('Start Goods Capture');
+    console.log(this.formControls.wheelType.value);
     if (this.formControls.wheelType.value == 'A') {
       this.updateGlobalVars('gCreaExpediente', 'N');
     }
     this.hideError();
     this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
       next: data => {
+        console.log(data);
         const { affair, affairSij, typeManagement, officeNumber } = data;
-        this.saveTmpExpedients(affair, affairSij, typeManagement, officeNumber);
-        // this.saveTmpNotifications(affairSij);
-        // this.captureGoods();
+        this.checkTmpExpedients(
+          affair,
+          affairSij,
+          typeManagement,
+          officeNumber
+        );
       },
-      error: () => {
-        this.captureGoods();
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        this.onLoadToast(
+          'warning',
+          'No se encontraron datos',
+          'Hubo un problema al obtener los datos del trámite'
+        );
       },
     });
+  }
+
+  checkTmpExpedients(
+    affair: string,
+    affairSij: number,
+    typeManagement: number,
+    officeNumber: string
+  ) {
+    if (this.formControls.expedientNumber.value == null) {
+      this.hideError();
+      this.expedientService.getNextVal().subscribe({
+        next: data => {
+          console.log(data);
+          this.formControls.expedientNumber.setValue(Number(data.nextval));
+          this.checkExistsTmpExpedients(
+            affair,
+            affairSij,
+            typeManagement,
+            officeNumber
+          );
+        },
+        error: err => {
+          console.log(err);
+          this.loading = false;
+          this.onLoadToast(
+            'warning',
+            'Expediente No Creado',
+            'Hubo un problema al guardar los datos del expediente.'
+          );
+        },
+      });
+    } else {
+      this.checkExistsTmpExpedients(
+        affair,
+        affairSij,
+        typeManagement,
+        officeNumber
+      );
+    }
+  }
+
+  checkExistsTmpExpedients(
+    affair: string,
+    affairSij: number,
+    typeManagement: number,
+    officeNumber: string
+  ) {
+    this.hideError();
+    this.tmpExpedientService
+      .getById(this.formControls.expedientNumber.value)
+      .subscribe({
+        next: () => {
+          this.hideError();
+          this.tmpExpedientService
+            .remove(this.formControls.expedientNumber.value)
+            .subscribe({
+              next: () => {
+                console.log('Delete Temp Expediente');
+                this.saveTmpExpedients(
+                  affair,
+                  affairSij,
+                  typeManagement,
+                  officeNumber
+                );
+              },
+              error: err => {
+                console.log(err);
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Expediente No Creado',
+                  'Hubo un problema al guardar los datos del expediente.'
+                );
+              },
+            });
+        },
+        error: () => {
+          this.saveTmpExpedients(
+            affair,
+            affairSij,
+            typeManagement,
+            officeNumber
+          );
+        },
+      });
   }
 
   saveTmpExpedients(
@@ -3488,142 +3686,63 @@ export class DocumentsReceptionRegisterComponent
     typeManagement: number,
     officeNumber: string
   ) {
-    if (this.formControls.expedientNumber.value != null) {
-      this.hideError();
-      this.tmpExpedientService
-        .getById(this.formControls.expedientNumber.value)
-        .subscribe({
-          next: () => {
-            this.hideError();
-            this.tmpExpedientService
-              .remove(this.formControls.expedientNumber.value)
-              .subscribe({
-                next: () => {},
-                error: err => {
-                  console.log(err);
-                },
-              });
-          },
-          error: () => {},
-        });
-    }
-    if (this.formControls.expedientNumber.value == null) {
-      this.expedientService.getNextVal().subscribe({
-        next: data => {
-          console.log(data);
-          this.formControls.expedientNumber.setValue(Number(data.nextval));
-          const expedientData: ITempExpedient = {
-            id: this.formControls.expedientNumber.value,
-            recordCircumstanced: this.formData.circumstantialRecord,
-            ascertainmentPrevious: this.formData.preliminaryInquiry,
-            causePenal: this.formData.criminalCase,
-            cveProtection: this.formData.protectionKey,
-            cvetouchPenal: this.formData.touchPenaltyKey,
-            nameIndexed: this.formData.indiciadoName,
-            courtNumber: this.formData.courtNumber,
-            cveEntfed: this.formData.entFedKey,
-            cveCrime: this.formData.crimeKey,
-            identifier: this.formData.identifier,
-            transfereeNumber: this.formData.endTransferNumber,
-            authorityNumber: this.formData.autorityNumber,
-            stationNumber: this.formData.stationNumber,
-            proceedingsType: this.formData.wheelType,
-            expTransferorsNumber: this.formData.expedientTransferenceNumber,
-            observations: this.formData.observations,
-            insertionDate: format(new Date(), 'yyyy-MM-dd'),
-            affair: affair,
-            affairSijNumber: affairSij,
-            procedureType: typeManagement,
-            jobNumber: officeNumber,
-          };
-          console.log(this.formControls.expedientNumber.value);
-          console.log(expedientData);
-          this.tmpExpedientService.create(expedientData).subscribe({
-            next: data => {
-              this.formControls.expedientNumber.setValue(data.id);
-              this.updateGlobalVars('gNoExpediente', data.id);
-              this.saveTmpNotifications(affairSij);
-            },
-            error: err => {
-              this.loading = false;
-              console.log(expedientData);
-              console.log(err);
-              this.onLoadToast(
-                'warning',
-                'Expediente No Creado',
-                'Hubo un problema al guardar los datos del expediente.'
-              );
-            },
-          });
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast(
-            'warning',
-            'Expediente No Creado',
-            'Hubo un problema al guardar los datos del expediente.'
-          );
-        },
-      });
-    }
+    const expedientData: ITempExpedient = {
+      id: this.formControls.expedientNumber.value,
+      recordCircumstanced: this.formData.circumstantialRecord,
+      ascertainmentPrevious: this.formData.preliminaryInquiry,
+      causePenal: this.formData.criminalCase,
+      cveProtection: this.formData.protectionKey,
+      cvetouchPenal: this.formData.touchPenaltyKey,
+      nameIndexed: this.formData.indiciadoName,
+      courtNumber: this.formData.courtNumber,
+      cveEntfed: this.formData.entFedKey,
+      cveCrime: this.formData.crimeKey,
+      identifier: this.formData.identifier,
+      transfereeNumber: this.formData.endTransferNumber,
+      authorityNumber: this.formData.autorityNumber,
+      stationNumber: this.formData.stationNumber,
+      proceedingsType: this.formData.wheelType,
+      expTransferorsNumber: this.formData.expedientTransferenceNumber,
+      observations: this.formData.observations,
+      insertionDate: format(new Date(), 'yyyy-MM-dd'),
+      affair: affair,
+      affairSijNumber: affairSij,
+      procedureType: typeManagement,
+      jobNumber: officeNumber,
+    };
+    console.log(this.formControls.expedientNumber.value);
+    console.log(expedientData);
+    this.tmpExpedientService.create(expedientData).subscribe({
+      next: data => {
+        this.formControls.expedientNumber.setValue(data.id);
+        this.updateGlobalVars('gNoExpediente', data.id);
+        this.checkTmpNotifications(affairSij);
+      },
+      error: err => {
+        this.loading = false;
+        console.log(expedientData);
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Expediente No Creado',
+          'Hubo un problema al guardar los datos del expediente.'
+        );
+      },
+    });
   }
 
-  saveTmpNotifications(affairSij: number) {
-    if (this.formControls.wheelNumber.value != null) {
-      this.hideError();
-      this.tmpNotificationService
-        .getById(this.formControls.wheelNumber.value)
-        .subscribe({
-          next: data => {
-            this.tmpNotificationService
-              .remove(this.formControls.wheelNumber.value)
-              .subscribe({
-                next: () => {},
-                error: err => {
-                  console.log(err);
-                },
-              });
-          },
-          error: () => {},
-        });
-    }
+  checkTmpNotifications(affairSij: number) {
     if (this.formControls.wheelNumber.value == null) {
+      this.hideError();
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
           console.log(data);
           this.formControls.wheelNumber.setValue(data.nextval);
-          const notificationData: ITmpNotification = {
-            ...this.formData,
-            wheelNumber: this.formControls.wheelNumber.value,
-            externalOfficeDate: this.formData.externalOfficeDate,
-            receiptDate: this.formData.receiptDate,
-            hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
-            hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
-            affairSij,
-            delegationNumber: this.userDelegation,
-            subDelegationNumber: this.userSubdelegation,
-            expedientNumber: this.formControls.expedientNumber.value,
-          };
-          console.log(this.formControls.wheelNumber.value);
-          console.log(notificationData);
-          this.tmpNotificationService.create(notificationData).subscribe({
-            next: () => {
-              this.captureGoods();
-            },
-            error: err => {
-              this.loading = false;
-              console.log(notificationData);
-              console.log(err);
-              this.onLoadToast(
-                'warning',
-                'Volante No Creado',
-                'Hubo un problema al guardar los datos del volante.'
-              );
-            },
-          });
+          this.checkExistsTmpNotifications(affairSij);
         },
         error: err => {
           console.log(err);
+          this.loading = false;
           this.onLoadToast(
             'warning',
             'Volante No Creado',
@@ -3631,7 +3750,73 @@ export class DocumentsReceptionRegisterComponent
           );
         },
       });
+    } else {
+      this.checkExistsTmpNotifications(affairSij);
     }
+  }
+
+  checkExistsTmpNotifications(affairSij: number) {
+    this.hideError();
+    this.tmpNotificationService
+      .getById(this.formControls.wheelNumber.value)
+      .subscribe({
+        next: data => {
+          this.hideError();
+          this.tmpNotificationService
+            .remove(this.formControls.wheelNumber.value)
+            .subscribe({
+              next: () => {
+                console.log('Volante Temp borrado');
+                this.saveTmpNotifications(affairSij);
+              },
+              error: err => {
+                console.log(err);
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Volante No Creado',
+                  'Hubo un problema al guardar los datos del volante.'
+                );
+              },
+            });
+        },
+        error: () => {
+          this.saveTmpNotifications(affairSij);
+        },
+      });
+  }
+
+  saveTmpNotifications(affairSij: number) {
+    const notificationData: ITmpNotification = {
+      ...this.formData,
+      wheelNumber: this.formControls.wheelNumber.value,
+      externalOfficeDate: this.formData.externalOfficeDate,
+      receiptDate: this.formData.receiptDate,
+      hcCaptureDate: format(new Date(), 'yyyy-MM-dd'),
+      hcEntryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
+      affairSij,
+      delegationNumber: this.userDelegation,
+      subDelegationNumber: this.userSubdelegation,
+      expedientNumber: this.formControls.expedientNumber.value,
+    };
+    console.log(this.formControls.wheelNumber.value);
+    console.log(notificationData);
+    this.tmpNotificationService.create(notificationData).subscribe({
+      next: () => {
+        this.updateGlobalVars('noVolante', this.formControls.wheelNumber.value);
+        this.captureGoods();
+      },
+      error: err => {
+        this.loading = false;
+        console.log(notificationData);
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Volante No Creado',
+          'Hubo un problema al guardar los datos del volante.'
+        );
+      },
+    });
   }
 
   captureGoods() {
@@ -3714,11 +3899,6 @@ export class DocumentsReceptionRegisterComponent
           error: err => {
             console.log(err);
             this.sendToGoodsCapture();
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Error al buscar el oficio del FGR'
-            );
           },
         });
     } else {
@@ -3880,18 +4060,20 @@ export class DocumentsReceptionRegisterComponent
           this.formControls.wheelNumber.setValue(data.data[0].wheelNumber);
           this.updateProcedureManagement();
         } else {
+          this.loadingPostCapture = false;
           this.alert(
             'error',
-            'No se pudo verificar los registros agregados',
+            'Error al verificar los registros agregados',
             `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
           );
         }
       },
       error: err => {
         console.log(err);
+        this.loadingPostCapture = false;
         this.alert(
           'error',
-          'No se pudo verificar los registros agregados',
+          'Error al verificar los registros agregados',
           `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
         );
       },
@@ -3937,6 +4119,7 @@ export class DocumentsReceptionRegisterComponent
   updateProcedure(goods: boolean) {
     console.log('Upd Post Procedure');
     let areaToTurn = this.formControls.estatusTramite.value.id;
+    console.log(areaToTurn);
     if (areaToTurn == null) areaToTurn = 'OP';
     let status: string;
     if (goods) {
@@ -3959,6 +4142,8 @@ export class DocumentsReceptionRegisterComponent
           .subscribe({
             next: () => {
               this.sendFlyerCopies();
+              this.documentsReceptionForm.enable();
+              this.loadingPostCapture = false;
               this.alertInfo(
                 'success',
                 'Notificación agregada',
@@ -3967,6 +4152,8 @@ export class DocumentsReceptionRegisterComponent
             },
             error: () => {
               this.sendFlyerCopies();
+              this.documentsReceptionForm.enable();
+              this.loadingPostCapture = false;
               this.alertInfo(
                 'success',
                 'Notificación agregada',
@@ -3988,6 +4175,8 @@ export class DocumentsReceptionRegisterComponent
                   .subscribe({
                     next: () => {
                       this.sendFlyerCopies();
+                      this.documentsReceptionForm.enable();
+                      this.loadingPostCapture = false;
                       this.alertInfo(
                         'success',
                         'Notificación agregada',
@@ -3996,6 +4185,8 @@ export class DocumentsReceptionRegisterComponent
                     },
                     error: () => {
                       this.sendFlyerCopies();
+                      this.documentsReceptionForm.enable();
+                      this.loadingPostCapture = false;
                       this.alertInfo(
                         'success',
                         'Notificación agregada',
@@ -4005,6 +4196,8 @@ export class DocumentsReceptionRegisterComponent
                   });
               } else {
                 this.sendFlyerCopies();
+                this.documentsReceptionForm.enable();
+                this.loadingPostCapture = false;
                 this.alertInfo(
                   'success',
                   'Notificación agregada',
@@ -4014,6 +4207,8 @@ export class DocumentsReceptionRegisterComponent
             },
             error: () => {
               this.sendFlyerCopies();
+              this.documentsReceptionForm.enable();
+              this.loadingPostCapture = false;
               this.alertInfo(
                 'success',
                 'Notificación agregada',

@@ -36,6 +36,7 @@ export class ClassifyAssetsTabComponent
   @Input() typeDoc: string = '';
   @Input() goodObject: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
+  @Input() process: string = '';
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -67,7 +68,6 @@ export class ClassifyAssetsTabComponent
 
   ngOnInit(): void {
     this.showHideErrorInterceptorService.showHideError(false);
-    console.log(this.typeDoc);
     this.initForm();
     if (!this.goodObject) {
       this.getSection(new ListParams());
@@ -203,6 +203,7 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['ligieSection'].setValue(id);
         }
       },
+      error: error => {},
     });
   }
 
@@ -228,9 +229,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Capitulo: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -260,9 +259,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 1: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -288,9 +285,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 2: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -316,9 +311,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 3: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -345,7 +338,7 @@ export class ClassifyAssetsTabComponent
         }
       },
       error: error => {
-        console.log('Nivel 4: ', error.error.message[0]);
+        this.loading = false;
       },
     });
   }
@@ -405,7 +398,18 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
+    const info = this.classiGoodsForm.getRawValue();
+    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
+      this.classiGoodsForm.get('stateConservation').setValue(1);
+    this.classiGoodsForm.get('physicalStatus').setValue(1);
+
+    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
+      this.classiGoodsForm.get('stateConservation').setValue(2);
+    this.classiGoodsForm.get('physicalStatus').setValue(2);
+    this.classiGoodsForm.get('destiny').setValue(1);
+
     const goods = this.classiGoodsForm.getRawValue();
+
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -470,6 +474,7 @@ export class ClassifyAssetsTabComponent
           }
         }
       },
+      error: (error: any) => {},
     });
   }
 

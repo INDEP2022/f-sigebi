@@ -55,49 +55,29 @@ export class ClarificationListTabComponent
   }
 
   getData(): void {
-    this.loading = true;
-    this.params.getValue()['filter.goodId'] = this.idGood;
-    this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
-      next: async data => {
-        const info = data.data.map(async item => {
-          const clarification: any = await this.getClarification(
-            item.clarificationId
-          );
-          item.clarificationId = clarification;
-        });
-
-        Promise.all(info).then(() => {
-          this.paragraphs.load(data.data);
-          this.totalItems = data.count;
-          this.loading = false;
-        });
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });
-
-    /*.subscribe({
-        next: data => {
-          const clarification = data.data.map(items => {
-            this.clarificationService.getById(items.clarificationId).subscribe({
-              next: data => {
-                this.clarificationName = data.clarification;
-              },
-              error: error => {
-                this.loading = false;
-              },
-            });
+    if (this.idGood) {
+      this.loading = true;
+      this.params.getValue()['filter.goodId'] = this.idGood;
+      this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
+        next: async data => {
+          const info = data.data.map(async item => {
+            const clarification: any = await this.getClarification(
+              item.clarificationId
+            );
+            item.clarificationId = clarification;
           });
 
-          console.log('clarificación', this.clarificationName);
-          this.paragraphs.load(data.data);
-          this.loading = false;
+          Promise.all(info).then(() => {
+            this.paragraphs.load(data.data);
+            this.totalItems = data.count;
+            this.loading = false;
+          });
         },
         error: error => {
           this.loading = false;
         },
-      }); */
+      });
+    }
   }
 
   getClarification(id: number) {

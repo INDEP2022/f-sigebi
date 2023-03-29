@@ -14,7 +14,8 @@
           <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
         </button>
       </div>
-      <div class="p-2" *ngIf="approvalProcess">
+      <!-- *ngIf="approvalProcess" -->
+      <div class="p-2">
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -96,7 +97,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">No&#46; Oficio&#58;</label>
-                  {{ registRequestForm.get('paperNumber').value }}
+                  {{ registRequestForm?.get('paperNumber').value }}
                 </div>
               </div>
               <div class="col-md-4">
@@ -160,41 +161,48 @@
               -->
               <app-request-detail-tab
                 *ngIf="requestRegistration === false"
-                [requestForm]="registRequestForm"></app-request-detail-tab>
+                [requestForm]="registRequestForm"
+                [process]="process"></app-request-detail-tab>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">
               <!-- Registro de Solicitudes o bines -->
               <app-assets
                 *ngIf="requestRegistration"
-                [requestObject]="requestData"></app-assets>
+                [requestObject]="requestData"
+                [process]="process"></app-assets>
               <!-- fin -->
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
                 *ngIf="complianceVerifi"
                 [typeDoc]="'verify-compliance'"
-                [requestObject]="requestData"></app-verify-compliance-tab>
+                [requestObject]="requestData"
+                [process]="process"></app-verify-compliance-tab>
               <!-- fin -->
               <!-- clasificacion de bienes -->
               <app-classification-assets-tab
                 *ngIf="classifyAssets"
-                [requestObject]="requestData"
+                [requestObject]="registRequestForm"
+                [process]="process"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->
               <app-clarifications
                 [requestObject]="requestData"
-                *ngIf="validateDocument"></app-clarifications>
+                *ngIf="validateDocument"
+                [process]="process"></app-clarifications>
               <!-- fin -->
               <!-- notificar aclaraciones o improcedencias -->
               <app-notification-assets-tab
                 *ngIf="notifyClarifiOrImpropriety"
-                [isSaving]="saveClarifiObject"></app-notification-assets-tab>
+                [isSaving]="saveClarifiObject"
+                [process]="process"></app-notification-assets-tab>
               <!-- fin -->
               <!-- Aprovar solicitudes -->
               <app-approval-assets-tabs
                 *ngIf="approvalProcess"
-                [dataObject]="object"></app-approval-assets-tabs>
+                [dataObject]="object"
+                [process]="process"></app-approval-assets-tabs>
               <!-- Fin -->
             </tab>
             <tab heading="{{ tab3 }}">
@@ -215,7 +223,7 @@
             </tab>
             <tab
               heading="{{ tab4 }}"
-              *ngIf="(requestRegistration || approvalProcess) && !isExpedient">
+              *ngIf="requestRegistration || approvalProcess">
               <app-registration-request-form
                 *ngIf="requestRegistration"
                 [requestForm]="

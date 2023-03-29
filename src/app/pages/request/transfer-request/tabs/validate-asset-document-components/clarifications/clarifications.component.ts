@@ -77,6 +77,7 @@ export class ClarificationsComponent
   implements OnInit, OnChanges
 {
   @Input() requestObject: any;
+  @Input() process: string = '';
   goodForm: IFormGroup<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
@@ -101,9 +102,11 @@ export class ClarificationsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getData();
-    });
+    if (this.requestObject) {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getData();
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -132,10 +135,19 @@ export class ClarificationsComponent
       goodDescription: [null],
       quantity: [1, [Validators.required]],
       duplicity: ['N'],
-      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
-      volume: [null, [Validators.pattern(STRING_PATTERN)]],
+      capacity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      volume: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       fileeNumber: [null],
-      useType: [null, [Validators.pattern(STRING_PATTERN)]],
+      useType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       physicalStatus: [null],
       stateConservation: [null],
       origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -145,38 +157,181 @@ export class ClarificationsComponent
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
       compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
-      brand: [null, [Validators.required]],
-      subBrand: [null, [Validators.required]],
+      brand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(350),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(300),
+        ],
+      ],
       armor: [null],
-      model: [null, [Validators.required]],
+      model: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(300),
+        ],
+      ],
       doorsNumber: [null],
-      axesNumber: [null, [Validators.required]],
-      engineNumber: [null, [Validators.required]], //numero motor
-      tuition: [null, [Validators.required]],
-      serie: [null, [Validators.required]],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      engineNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //numero motor
+      tuition: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      serie: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       chassis: [null],
       cabin: [null],
-      fitCircular: ['N', [Validators.required]],
-      theftReport: ['N', [Validators.required]],
+      fitCircular: [
+        'N',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      theftReport: [
+        'N',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       addressId: [null],
-      operationalState: [null, [Validators.required]],
-      manufacturingYear: [null, [Validators.required]],
-      enginesNumber: [null, [Validators.required]], // numero de motores
-      flag: [null, [Validators.required]],
-      openwork: [null, [Validators.required]],
+      operationalState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      manufacturingYear: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      enginesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], // numero de motores
+      flag: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      openwork: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       sleeve: [null],
       length: [null, [Validators.required]],
-      shipName: [null, [Validators.required]],
-      publicRegistry: [null, [Validators.required]], //registro public
+      shipName: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      publicRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro public
       ships: [null],
-      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
-      airplaneType: [null, [Validators.required]],
+      dgacRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro direccion gral de aereonautica civil
+      airplaneType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       caratage: [null, [Validators.required]], //kilatage
-      material: [null, [Validators.required]],
-      weight: [null, [Validators.required]],
+      material: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      weight: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       fractionId: [null],
     });
   }
