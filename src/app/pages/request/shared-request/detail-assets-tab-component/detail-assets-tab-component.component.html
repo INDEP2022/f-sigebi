@@ -12,7 +12,7 @@
     <ng-template tabHeading>
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
-    <div>
+    <div *ngIf="process == 'registration-request'">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -263,7 +263,7 @@
       </form>
     </div>
 
-    <!--<div *ngIf="process == 'classify-assets'">
+    <div *ngIf="process == 'classify-assets'">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="row">
           <div class="col-md-4">
@@ -275,7 +275,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Id tipo relevante&#58;</label>
-              <span class="fs-4">{{ goodData?.goodTypeId }}</span>
+              <span class="fs-4">{{ nameTypeRelevant }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -394,7 +394,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Volumen (m3)&#58;</label>
-              <span class="fs-4" {{goodData?.compliesNorm}}></span>
+              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
             </div>
           </div>
         </div>
@@ -403,7 +403,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Tipo de bien&#58;</label>
-              <span class="fs-4">{{ goodData?.goodTypeId }}</span>
+              <span class="fs-4">{{ nameGoodType }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -415,7 +415,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Procedencia&#58;</label>
-              <span class="fs-4"></span>
+              <span class="fs-4">{{ goodData?.useType }}</span>
             </div>
           </div>
         </div>
@@ -501,7 +501,7 @@
           </div>
         </div>
       </form>
-    </div> -->
+    </div>
   </tab>
 
   <tab>

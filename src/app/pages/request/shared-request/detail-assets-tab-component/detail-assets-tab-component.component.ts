@@ -25,6 +25,7 @@ import {
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -76,6 +77,7 @@ export class DetailAssetsTabComponentComponent
   selectConservationState = new DefaultSelect<any>();
 
   goodTypeName: string = '';
+  nameTypeRelevant: string = '';
   duplicity: boolean = false;
   armor: boolean = false;
   destinyLigie: string = '';
@@ -92,7 +94,7 @@ export class DetailAssetsTabComponentComponent
   complyNormString: string = 'N';
   appraisal: boolean = false;
   appraisalString = 'N';
-
+  nameGoodType: string = '';
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
@@ -147,7 +149,8 @@ export class DetailAssetsTabComponentComponent
   constructor(
     private fb: FormBuilder,
     private modalServise: BsModalService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodTypeService: GoodTypeService
   ) {
     super();
   }
@@ -199,13 +202,36 @@ export class DetailAssetsTabComponentComponent
 
   setDataGood() {
     const idGood = this.assetsId;
-    console.log(idGood);
     this.goodService.getById(idGood).subscribe({
       next: data => {
+        this.goodType(data.goodTypeId);
+        this.typeRelevant(data.goodTypeId);
+        if (data.stateConservation == 1 || data.physicalStatus == 1)
+          data.stateConservation = 'BUENO';
+        data.physicalStatus = 'BUENO';
+        if (data.stateConservation == 2 || data.physicalStatus == 2)
+          data.stateConservation = 'MALO';
+        data.physicalStatus = 'MALO';
         this.goodData = data;
-        console.log(data);
       },
       error: error => {},
+    });
+  }
+
+  goodType(goodTypeId: number) {
+    this.goodTypeService.getById(goodTypeId).subscribe({
+      next: response => {
+        this.nameGoodType = response.nameGoodType;
+      },
+      error: error => {},
+    });
+  }
+
+  typeRelevant(typeRelevantId: number) {
+    this.typeRelevantSevice.getById(typeRelevantId).subscribe({
+      next: data => {
+        this.nameTypeRelevant = data.description;
+      },
     });
   }
 
@@ -218,22 +244,15 @@ export class DetailAssetsTabComponentComponent
     this.getReactiveFormCall();
     this.isSavingData();
 
-    //.getGoodDomicilieTab();
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
-
-    //console.log('detalle del objeto enviado');
-    //console.log(this.detailAssets);
-
-    //this.initInputs();
   }
 
   initForm() {
-    //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
       warehouseAlias: [],
@@ -244,7 +263,7 @@ export class DetailAssetsTabComponentComponent
       localityKey: [null],
       code: [''],
       latitude: [''],
-      length: [''], //por cambiar
+      length: [''],
       wayName: [''],
       wayOrigin: [''],
       exteriorNumber: [''],
@@ -256,13 +275,8 @@ export class DetailAssetsTabComponentComponent
       regionalDelegationId: [null],
       requestId: [null],
     });
-
-    //this.assetsForm.controls['typeAsset'].disable();
-    //this.assetsForm.disable();
-    //this.assetsForm.controls['typeAsset'].enable();
   }
 
-  //formulario del inmueble
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],

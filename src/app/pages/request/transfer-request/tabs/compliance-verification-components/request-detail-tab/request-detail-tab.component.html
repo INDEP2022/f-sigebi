@@ -1,4 +1,11 @@
-<div *ngIf="process == 'registration-request'">
+<div
+  *ngIf="
+    process == 'registration-request' ||
+    process == 'verify-compliance' ||
+    process == 'validate-document' ||
+    process == 'process-approval' ||
+    process == 'notify-clarification-inadmissibility'
+  ">
   <div class="row">
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
