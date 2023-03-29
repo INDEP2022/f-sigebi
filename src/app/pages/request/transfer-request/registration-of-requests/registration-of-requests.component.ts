@@ -128,7 +128,6 @@ export class RegistrationOfRequestsComponent
   //Obtenemos el tipo de proceso//
   processView() {
     this.route.data.forEach((item: any) => {
-      console.log(item);
       this.process = item.process;
     });
   }
@@ -261,7 +260,6 @@ export class RegistrationOfRequestsComponent
       this.getData(request); */
       },
       error: error => {
-        console.log(error.error.message);
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -607,8 +605,6 @@ export class RegistrationOfRequestsComponent
   /** Proceso de aprobacion */
   private approveRequest() {
     /**Verificar datos */
-    console.log(this.requestData);
-    console.log('---- Redireccionar finalizando proceso ----');
     return;
     this.requestService
       .update(this.requestData.id, this.requestData)
@@ -724,8 +720,6 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
-        console.log(typeCommit);
-
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
@@ -767,10 +761,6 @@ export class RegistrationOfRequestsComponent
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
-
-    /*  this.BsModal.content.event.subscribe((res: any) => {
-      console.log(res);
-    }); */
   }
 
   dinamyCallFrom() {

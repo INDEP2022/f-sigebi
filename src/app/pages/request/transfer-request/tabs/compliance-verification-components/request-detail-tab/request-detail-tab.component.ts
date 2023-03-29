@@ -75,7 +75,6 @@ export class RequestDetailTabComponent
   showDataProg() {
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
       this.infoRequest = data;
-      console.log('info request', this.infoRequest);
     });
   }
 

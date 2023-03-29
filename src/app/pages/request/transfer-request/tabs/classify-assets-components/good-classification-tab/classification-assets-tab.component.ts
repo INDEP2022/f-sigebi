@@ -73,7 +73,6 @@ export class ClassificationAssetsTabComponent
   }
 
   ngOnInit(): void {
-    console.log('p', this.process);
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
