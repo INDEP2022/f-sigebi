@@ -6,6 +6,9 @@ const routes: Routes = [
   {
     path: 'registration-request/:id',
     component: RegistrationOfRequestsComponent,
+    data: {
+      process: 'registration-request',
+    },
   },
   {
     path: 'verify-compliance/:id',
@@ -14,6 +17,9 @@ const routes: Routes = [
   {
     path: 'classify-assets/:id',
     component: RegistrationOfRequestsComponent,
+    data: {
+      process: 'classify-assets',
+    },
   },
   {
     path: 'validate-document/:id',

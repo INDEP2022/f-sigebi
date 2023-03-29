@@ -59,7 +59,7 @@ export class RegistrationOfRequestsComponent
   isExpedient: boolean = false;
   infoRequest: IRequest;
   typeDocument: string = '';
-
+  process: string = '';
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -116,12 +116,21 @@ export class RegistrationOfRequestsComponent
     const id = this.route.snapshot.paramMap.get('id');
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
+    this.processView();
     this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
     this.dinamyCallFrom();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      console.log(item);
+      this.process = item.process;
+    });
   }
 
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud

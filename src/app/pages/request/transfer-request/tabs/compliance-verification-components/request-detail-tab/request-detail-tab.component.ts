@@ -25,6 +25,7 @@ export class RequestDetailTabComponent
   @Input() typeDoc = '';
   //datos pasados del padre
   @Input() requestForm: ModelForm<any>;
+  @Input() process: string = '';
   public receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
   priority: any = null;
@@ -73,8 +74,8 @@ export class RequestDetailTabComponent
 
   showDataProg() {
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
-      console.log(data);
       this.infoRequest = data;
+      console.log('info request', this.infoRequest);
     });
   }
 
@@ -82,7 +83,6 @@ export class RequestDetailTabComponent
 
   confirm() {
     this.loading = true;
-    console.log(this.receptionForm.value);
   }
 
   reactiveFormCalls() {
