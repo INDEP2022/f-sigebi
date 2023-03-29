@@ -171,15 +171,30 @@
         formControlName="register"
         class="form-control" />
     </form-field>
-    <form-field [control]="form.get('description')" label="Desripcion">
-      <ng-select
+    <form-field
+      class="form-group"
+      [control]="form.get('description')"
+      label="Descripciónn">
+      <!-- <ng-select
         (change)="selectedExpenseType($event)"
         class="form-control"
         formControlName="description">
         <ng-option [value]="type.id" *ngFor="let type of expenseType">{{
           type.description
         }}</ng-option>
-      </ng-select>
+      </ng-select> -->
+      <ng-custom-select
+        class="form-control"
+        formControlName="description"
+        path="spent/api/v1/expense-concept"
+        value="id"
+        paramSearch="filter.description"
+        prefixSearch="$ilike"
+        (valueChange)="selectedExpenseType($event)">
+        <ng-template let-item>
+          {{ item.description }}
+        </ng-template>
+      </ng-custom-select>
     </form-field>
     <form-field [control]="form.get('import')" label="Importe">
       <input type="number" formControlName="import" class="form-control" />

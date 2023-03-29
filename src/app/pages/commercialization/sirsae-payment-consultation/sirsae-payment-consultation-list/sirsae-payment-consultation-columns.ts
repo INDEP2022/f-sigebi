@@ -3,8 +3,11 @@ export const CONSULT_SIRSAE_COLUMNS = {
     title: 'Cuenta Bancaria',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.accountbank?.name_bank;
+    },
   },
-  bank: {
+  ifdsc: {
     title: 'Banco',
     type: 'string',
     sort: false,
@@ -29,14 +32,20 @@ export const CONSULT_SIRSAE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  idestcta: {
+  statusMov: {
     title: 'Estatus Mov.',
-    type: 'string',
+    type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.statusMov?.id;
+    },
   },
-  descmov: {
+  statusMovDescription: {
     title: 'Descripción Movimiento',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.statusMov?.statusDescription;
+    },
   },
 };

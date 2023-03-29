@@ -27,7 +27,7 @@
                     formControlName="startDate"
                     class="form-control"
                     bsDatepicker
-                    [maxDate]="maxDate" />
+                    [maxDate]="form.get('endDate').value || maxDate" />
                 </form-field>
               </div>
               <div class="col-md-3 col-12">
@@ -49,14 +49,17 @@
                     path="interfacesirsae/api/v1/banks-sirsae"
                     paramSearch="name_bank"
                     prefixSearch="$ilike"
-                    value="id">
+                    value="name_bank">
                     <ng-template let-item>{{ item.name_bank }}</ng-template>
                   </ng-custom-select>
                 </form-field>
               </div>
               <div class="col-12 col-md-6">
-                <form-field [control]="form.get('status')" label="Estatus Mov.">
-                  <ng-select
+                <form-field
+                  class="form-group"
+                  [control]="form.get('status')"
+                  label="Estatus Mov.">
+                  <!-- <ng-select
                     formControlName="status"
                     [items]="statusesMov"
                     bindLabel="statusDescription"
@@ -65,7 +68,18 @@
                     class="form-control"
                     [clearable]="false"
                     (change)="filterStatus($event)">
-                  </ng-select>
+                  </ng-select>  -->
+                  <ng-custom-select
+                    formControlName="status"
+                    class="form-control"
+                    path="interfacesirsae/api/v1/statusmov-sirsae"
+                    paramSearch="statusDescription"
+                    prefixSearch="$ilike"
+                    value="id">
+                    <ng-template let-item>{{
+                      item.statusDescription
+                    }}</ng-template>
+                  </ng-custom-select>
                 </form-field>
               </div>
             </div>
@@ -74,7 +88,7 @@
             <div class="col-12">
               <button
                 class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
-                (click)="consult()"
+                (click)="search()"
                 [disabled]="!form.valid">
                 Consultar
               </button>

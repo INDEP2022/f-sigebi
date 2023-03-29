@@ -64,11 +64,10 @@ export class TableExpensesComponent implements OnInit {
     });
   }
 
-  selectedExpenseType(id: any): void {
-    const data = this.expenseType.find(x => x.id == id);
+  selectedExpenseType(spent: ISpentConcept): void {
     this.form.patchValue({
-      descriptionName: data.description,
-      register: data.registryNumber,
+      descriptionName: spent.description,
+      register: spent.registryNumber,
     });
   }
 
