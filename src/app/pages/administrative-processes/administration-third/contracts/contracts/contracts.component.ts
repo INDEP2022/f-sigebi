@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -8,6 +9,8 @@ import {
 import { IContract } from 'src/app/core/models/administrative-processes/contract.model';
 import { ContractService } from 'src/app/core/services/contract/strategy-contract.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
+import { ContractsDetailComponent } from '../contracts-detail/contracts-detail.component';
 import { CONTRACTS_COLUMNS } from './contracts-columns';
 
 @Component({
@@ -23,16 +26,19 @@ export class ContractsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
 
-  constructor(private contractService: ContractService) {
+  constructor(
+    private contractService: ContractService,
+    private modalService: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: false,
+        edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...CONTRACTS_COLUMNS },
@@ -105,6 +111,39 @@ export class ContractsComponent extends BasePage implements OnInit {
       error: error => {
         this.loading = false;
       },
+    });
+  }
+
+  openForm(contract?: IContract) {
+    let config: ModalOptions = {
+      initialState: {
+        contract,
+        callback: (next: boolean) => {
+          if (next) this.getContractsAll();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ContractsDetailComponent, config);
+  }
+
+  showDeleteAlert(contract?: IContract) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(contract.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.contractService.remove(id).subscribe({
+      next: () => this.getContractsAll(),
     });
   }
 }

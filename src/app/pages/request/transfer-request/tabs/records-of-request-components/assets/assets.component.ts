@@ -62,7 +62,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
-  btnCreate: string = 'Crear Nuevo';
+  btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
   data: ExcelFormat[] = [];
   menajeSelected: any;
@@ -279,11 +279,11 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   newAsset(): void {
     if (this.createNewAsset === false) {
       this.createNewAsset = true;
-      this.btnCreate = 'Cerrar Nuevo';
+      this.btnCreate = 'Cerrar Bien';
       window.scroll(0, 600);
     } else {
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
@@ -294,16 +294,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
-        this.btnCreate = 'Cerrar Nuevo';
+        this.btnCreate = 'Cerrar Bien';
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
-        this.btnCreate = 'Crear Nuevo';
+        this.btnCreate = 'Nuevo Bien';
       }
     } else {
       this.goodObject = this.listgoodObjects;
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
@@ -528,7 +528,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   closeCreateGoodWIndows() {
     this.goodObject = null;
     this.createNewAsset = false;
-    this.btnCreate = 'Crear Nuevo';
+    this.btnCreate = 'Nuevo Bien';
     this.paginatedData();
   }
 

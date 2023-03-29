@@ -165,7 +165,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
         return data;
       });
-      console.log('aclareaciones', types);
+
       this.wContentService
         .getDocumentTypes(this.paramsTypeDoc.getValue())
         .subscribe(data => {

@@ -10,26 +10,26 @@ import { IZoneContract } from '../../models/catalogs/zone-contract.model';
   providedIn: 'root',
 })
 export class ZoneContractService implements ICrudMethods<IZoneContract> {
-  private readonly route: string = ENDPOINT_LINKS.ZoneGeographic;
-  constructor(private zoneGeographicRepository: Repository<IZoneContract>) {}
+  private readonly route: string = ENDPOINT_LINKS.ZoneContract;
+  constructor(private zoneContractRepository: Repository<IZoneContract>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IZoneContract>> {
-    return this.zoneGeographicRepository.getAllPaginated(this.route, params);
+    return this.zoneContractRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IZoneContract> {
-    return this.zoneGeographicRepository.getById(this.route, id);
+    return this.zoneContractRepository.getById(this.route, id);
   }
 
   create(model: IZoneContract): Observable<IZoneContract> {
-    return this.zoneGeographicRepository.create(this.route, model);
+    return this.zoneContractRepository.create(this.route, model);
   }
 
   update(id: string | number, model: IZoneContract): Observable<Object> {
-    return this.zoneGeographicRepository.update(this.route, id, model);
+    return this.zoneContractRepository.update(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.zoneGeographicRepository.remove(this.route, id);
+    return this.zoneContractRepository.remove(this.route, id);
   }
 }

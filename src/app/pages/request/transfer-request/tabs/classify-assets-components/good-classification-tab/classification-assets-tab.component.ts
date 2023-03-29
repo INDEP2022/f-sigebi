@@ -14,6 +14,7 @@ import { showHideErrorInterceptorService } from 'src/app/common/services/show-hi
 import { IGood } from 'src/app/core/models/good/good.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -32,6 +33,7 @@ export class ClassificationAssetsTabComponent
   @Input() dataObject: any;
   @Input() requestObject: any;
   @Input() typeDoc: any = '';
+  @Input() process: string = '';
 
   idRequest: number = 0;
   title: string = 'Bienes de la Solicitud';
@@ -65,7 +67,8 @@ export class ClassificationAssetsTabComponent
     private goodTypeService: GoodTypeService,
     private fb: FormBuilder,
     private fractionService: FractionService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private typeRelevantSevice: TypeRelevantService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -98,7 +101,7 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.requestObject) {
+    if (changes['requestObject'].currentValue) {
       this.tablePaginator();
     }
   }
@@ -152,8 +155,8 @@ export class ClassificationAssetsTabComponent
   getGoodType(goodTypeId: string | number) {
     this.showHideErrorInterceptorService.showHideError(false);
     return new Promise((resolve, reject) => {
-      this.goodTypeService.getById(goodTypeId).subscribe(data => {
-        resolve(data.nameGoodType);
+      this.typeRelevantSevice.getById(goodTypeId).subscribe(data => {
+        resolve(data.description);
       });
     });
   }
@@ -172,7 +175,6 @@ export class ClassificationAssetsTabComponent
   }
 
   goodForm() {
-    console.log('select', this.goodSelect);
     this.goodsForm = this.fb.group({
       id: [this.goodSelect?.id],
       goodId: [this.goodSelect?.idGood],
@@ -248,67 +250,5 @@ export class ClassificationAssetsTabComponent
       fractionId: [this.goodSelect?.idFraction],
     });
     this.detailArray = this.goodsForm;
-  }
-
-  getLevel1(idParent: number) {
-    this.paramsLvl1.getValue()['filter.parentId'] = idParent;
-    this.paramsLvl1.getValue()['filter.fractionCode'] = 8703;
-
-    this.fractionService.getAll(this.paramsLvl1.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level1']).setValue(info.description);
-          this.getLevel2(info.id);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  getLevel2(idParent: number) {
-    this.paramsLvl2.getValue()['filter.parentId'] = idParent;
-    this.paramsLvl2.getValue()['filter.id'] = 17616;
-    //this.paramsLvl2.getValue()['filter.fractionCode'] = 8703;
-
-    this.fractionService.getAll(this.paramsLvl2.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level2']).setValue(info.description);
-          this.getLevel3(info.id);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  getLevel3(idParent: number) {
-    this.paramsLvl3.getValue()['filter.parentId'] = idParent;
-    this.paramsLvl3.getValue()['filter.fractionCode'] = 870323;
-
-    this.fractionService.getAll(this.paramsLvl3.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level3']).setValue(info.description);
-          this.getLevel4(info.id);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  getLevel4(idParent: number) {
-    this.paramsLvl4.getValue()['filter.parentId'] = idParent;
-    //this.paramsLvl2.getValue()['filter.id'] = 17616;
-    this.paramsLvl4.getValue()['filter.fractionCode'] = 87032301;
-
-    this.fractionService.getAll(this.paramsLvl4.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level4']).setValue(info.description);
-        });
-      },
-      error: error => {},
-    });
   }
 }
