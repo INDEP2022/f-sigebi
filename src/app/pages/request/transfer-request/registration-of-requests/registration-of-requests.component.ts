@@ -605,6 +605,7 @@ export class RegistrationOfRequestsComponent
   /** Proceso de aprobacion */
   private approveRequest() {
     /**Verificar datos */
+    /**Actualizar tarea para aprobacion */
     return;
     this.requestService
       .update(this.requestData.id, this.requestData)
