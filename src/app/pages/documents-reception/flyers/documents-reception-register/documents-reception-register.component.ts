@@ -320,7 +320,7 @@ export class DocumentsReceptionRegisterComponent
       ) {
         this.setInitialConditions();
       } else if (!this.docDataService.flyerEditMode) {
-        //if (Object.keys(this.pageParams).length > 0) this.clearVisibleData();
+        //if (Object.keys(this.pageParams).length > 0) {}
         this.documentsReceptionForm.reset();
         this.documentsReceptionForm.patchValue(
           DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
@@ -462,55 +462,6 @@ export class DocumentsReceptionRegisterComponent
         console.log(err);
       },
     });
-  }
-
-  clearVisibleData() {
-    this.formControls.wheelType.setValue(null);
-    this.formControls.wheelNumber.setValue(null);
-    this.formControls.expedientNumber.setValue(null);
-    this.formControls.consecutiveNumber.setValue(null);
-    this.formControls.identifierExp.setValue(null);
-    this.formControls.receiptDate.setValue(null);
-    this.formControls.priority.setValue('N');
-    this.formControls.identifier.setValue(null);
-    this.formControls.externalRemitter.setValue(null);
-    this.formControls.affairKey.setValue(null);
-    this.formControls.affairKey.setValue(null);
-    this.formControls.dailyEviction.setValue(false);
-    this.formControls.addressGeneral.setValue(false);
-    this.formControls.circumstantialRecord.setValue(null);
-    this.formControls.preliminaryInquiry.setValue(null);
-    this.formControls.protectionKey.setValue(null);
-    this.formControls.criminalCase.setValue(null);
-    this.formControls.touchPenaltyKey.setValue(null);
-    this.formControls.judgementType.setValue(null);
-    this.formControls.expedientTransferenceNumber.setValue(null);
-    this.formControls.externalOfficeDate.setValue(null);
-    this.formControls.officeExternalKey.setValue(null);
-    this.formControls.stage.setValue(null);
-    this.formControls.stageName.setValue(null);
-    this.formControls.uniqueKey.setValue(null);
-    this.formControls.cityNumber.setValue(null);
-    this.formControls.minpubNumber.setValue(null);
-    this.formControls.endTransferNumber.setValue(null);
-    this.formControls.stationNumber.setValue(null);
-    this.formControls.autorityNumber.setValue(null);
-    this.formControls.courtNumber.setValue(null);
-    this.formControls.crimeKey.setValue(null);
-    this.formControls.indiciadoNumber.setValue(null);
-    this.formControls.viaKey.setValue(null);
-    this.formControls.estatusTramite.setValue(null);
-    this.formControls.delDestinyNumber.setValue(null);
-    this.formControls.delegationName.setValue(null);
-    this.formControls.subDelDestinyNumber.setValue(null);
-    this.formControls.subDelegationName.setValue(null);
-    this.formControls.departamentDestinyNumber.setValue(null);
-    this.formControls.destinationArea.setValue(null);
-    this.formControls.recordId.setValue(null);
-    this.userRecipient.setValue(null);
-    this.userCpp.setValue(null);
-    this.formControls.goodRelation.setValue(null);
-    this.setDefaultValues();
   }
 
   setInitialConditions() {
@@ -1266,7 +1217,6 @@ export class DocumentsReceptionRegisterComponent
     } else if (notif.dailyEviction == 1) {
       this.formControls.dailyEviction.setValue(true);
     }
-
     this.formControls.receiptDate.setValue(
       format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
     );
@@ -1448,10 +1398,12 @@ export class DocumentsReceptionRegisterComponent
             filterParams.removeAllFilters();
             filterParams.addFilter('id', notif.departamentDestinyNumber);
             filterParams.addFilter('numDelegation', notif.delDestinyNumber);
-            // filterParams.addFilter(
-            //   'numSubDelegation',
-            //   notif.subDelDestinyNumber
-            // );
+            if (notif.subDelDestinyNumber != null) {
+              filterParams.addFilter(
+                'numSubDelegation',
+                notif.subDelDestinyNumber
+              );
+            }
             filterParams.addFilter('phaseEdo', data.stagecreated);
             this.hideError();
             this.docRegisterService
