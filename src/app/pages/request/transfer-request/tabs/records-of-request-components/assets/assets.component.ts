@@ -32,7 +32,7 @@ import { SelectAddressComponent } from '../records-of-request-child-tabs-compone
 import { ASSETS_COLUMNS } from './assests-columns';
 import { ExcelFormat } from './AssetExcelFormat';
 
-var defaultData = [
+const defaultData = [
   {
     id: 0,
     noManagement: '',
@@ -95,7 +95,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      //console.log(this.requestObject);
+      // console.log(this.requestObject);
       this.typeRecord = this.requestObject.typeRecord;
       this.transferente = this.requestObject.transfer;
     }
@@ -110,7 +110,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     };
     //this.settings.actions.delete = true;
     // this.settings.actions.position = 'left';
-
     //oye los camibios de detail-assets-tab para refrescar la tabla
     this.refreshTable();
     this.paginatedData();
