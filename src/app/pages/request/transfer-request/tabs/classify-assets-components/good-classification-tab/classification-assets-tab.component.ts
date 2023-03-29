@@ -101,6 +101,7 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('data', this.dataObject);
     if (changes['requestObject'].currentValue) {
       this.tablePaginator();
     }
@@ -169,8 +170,9 @@ export class ClassificationAssetsTabComponent
     this.domicilieObject = good.addressId;
     this.idGood = good.id;
     this.goodService.getById(good.id).subscribe((data: any) => {
-      this.goodSelect = data;
-      this.goodForm();
+      this.goodsForm.patchValue(data);
+      this.detailArray = this.goodsForm;
+      //this.goodForm();
     });
   }
 
@@ -249,6 +251,5 @@ export class ClassificationAssetsTabComponent
       weight: [null, [Validators.required]],
       fractionId: [this.goodSelect?.idFraction],
     });
-    this.detailArray = this.goodsForm;
   }
 }
