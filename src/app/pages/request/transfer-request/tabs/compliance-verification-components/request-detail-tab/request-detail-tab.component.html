@@ -1,4 +1,11 @@
-<div>
+<div
+  *ngIf="
+    process == 'registration-request' ||
+    process == 'verify-compliance' ||
+    process == 'validate-document' ||
+    process == 'process-approval' ||
+    process == 'notify-clarification-inadmissibility'
+  ">
   <div class="row">
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
@@ -10,7 +17,7 @@
       <!--  <div class="p-2 bd-highlight buttons">
                 <button
                     class="btn btn-primary btn-sm active"
-                    [disabled]="receptionForm.invalid"      
+                    [disabled]="receptionForm.invalid"
                     (click)="confirm()">
                     Guardar
                 </button>
@@ -128,4 +135,233 @@
       </div>
     </form>
   </div>
+</div>
+
+<!--Si el proceso es clasificación de bienes-->
+
+<div *ngIf="process == 'classify-assets'">
+  <div class="row">
+    <div class="d-flex bd-highlight">
+      <div class="p-2 flex-grow-1 bd-highlight">
+        <h5 class="title">
+          <strong>Informaci&oacute;n de Solicitud</strong>
+        </h5>
+      </div>
+    </div>
+  </div>
+  <form [formGroup]="requestForm" class="form-material form-horizontal">
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right align-baseline"
+            >Prioridad&#58;</label
+          >
+          <input
+            id="urgentPriority"
+            type="checkbox"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="priority"
+            [disabled]="true" />
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Fecha recepci&oacute;n&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.receptionDate }} </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Causa penal&#58;</label>
+          <span class="fs-4"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Tipo expediente&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.typeRecord }} </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">No. amparo&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.protectNumber }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Tipo expediente&#58;</label>
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Toca penal&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.tocaPenal }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Nombre titular&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.nameOfOwner }} </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Fecha de oficio&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.paperDate }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Cargo titular&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.holderCharge }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Ministerio publico&#58;</label>
+          <span class="fs-4">{{ infoRequest?.publicMinistry }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Telefono titular&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.phoneOfOwner }} </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Juzgado&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.court }} </span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Email titular&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.emailOfOwner }} </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Delito&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.crime }} </span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Contribuyente y/o indiciado&#58;</label
+          >
+          <span class="fs-4"> {{ infoRequest?.indicatedTaxpayer }} </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right"
+            >V&iacute;a de recepci&oacute;n&#58;</label
+          >
+          <span class="fs-4"> {{ infoRequest?.receiptRoute }} </span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Expediente transferente / PAMA&#58;</label
+          >
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right"
+            >Gesti&oacute;n de destino&#58;</label
+          >
+          <span class="fs-4"> {{ infoRequest?.destinationManagement }} </span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Notas entidad transferente&#58;</label
+          >
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Asunto&#58;</label>
+          <span class="fs-4"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Procedencia informaci&oacute;n&#58;</label
+          >
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right"
+            >Extinci&oacute;n de dominio&#58;</label
+          >
+          <span class="fs-4"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Acta circunstanciada&#58;</label>
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Tipo juicio&#58;</label>
+          <span class="fs-4"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Averiguaci&oacute;n previa&#58;</label
+          >
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Observaciones&#58;</label>
+          <span class="fs-4"> {{ infoRequest?.observations }} </span>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>

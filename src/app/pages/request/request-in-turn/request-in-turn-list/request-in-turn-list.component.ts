@@ -124,19 +124,23 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
           item['stationName'] = item.emisora.stationName;
 
-          const affairService = this.affairService.getById(item.affair);
+          if (item.affair) {
+            const affairService = this.affairService.getById(item.affair);
 
-          this.listTable = [];
-          forkJoin([affairService]).subscribe(
-            ([_affair]) => {
-              let affair = _affair as any;
+            this.listTable = [];
+            forkJoin([affairService]).subscribe(
+              ([_affair]) => {
+                let affair = _affair as any;
 
-              item['affairName'] = affair.description;
-            },
-            error => {
-              this.loading = false;
-            }
-          );
+                item['affairName'] = affair.description;
+              },
+              error => {
+                this.loading = false;
+              }
+            );
+          } else {
+            item['affairName'] = '';
+          }
         })
       );
 
