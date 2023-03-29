@@ -163,4 +163,5 @@ export enum ENDPOINT_LINKS {
   ProgrammingGood = 'ProgrammingGood',
   DinamicTablesSelect = 'dynamiccatalog/dinamic-tables',
   StrategyContract = 'contract/strategy-contract',
+  ZoneContract = 'catalog/zones-contract',
 }
