@@ -1,13 +1,13 @@
 export interface IContract {
   id?: number;
-  contractKey: string;
-  zoneContractKey: number;
-  statusContract: number;
-  startDate: Date;
-  endDate: Date;
-  registerNumber: number;
-  zone: IZone;
-  vigContract: boolean;
+  contractKey?: string; // max 60 caracteres
+  zoneContractKey?: number; // max 3 caracters
+  statusContract?: number;
+  startDate?: string;
+  endDate?: string;
+  registerNumber?: number;
+  zone?: IZone;
+  vigContract?: boolean;
 }
 
 interface IZone {

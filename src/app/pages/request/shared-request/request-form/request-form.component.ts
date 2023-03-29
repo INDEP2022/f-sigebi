@@ -11,8 +11,10 @@ import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-se
 //Provisional Data
 import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
@@ -72,6 +74,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   transferentService = inject(TransferenteService);
   requestService = inject(RequestService);
   taskService = inject(TaskService);
+  orderService = inject(OrderServiceService);
 
   selectedRegDel: any = null;
 
@@ -340,40 +343,33 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
 
+        /* crea la solicitud */
         const requestResult: any = await this.createRequest(form);
-
         if (requestResult) {
-          let body: any = {};
-
-          const user: any = this.authService.decodeToken();
-          body['id'] = 0;
-          body['assignees'] = this.nickName;
-          body['assigneesDisplayname'] = this.userName;
-          body['creator'] = user.username;
-          body['taskNumber'] = Number(requestResult.id);
-          body['title'] =
-            'Registro de solicitud (Captura de Solicitud) con folio: ' +
-            requestResult.id;
-          body['isPublic'] = 's';
-          body['istestTask'] = 's';
-          body['programmingId'] = 0;
-          body['requestId'] = requestResult.id;
-          body['expedientId'] = 0;
-          body['urlNb'] = 'pages/request/transfer-request/registration-request';
-          const taskResult = await this.createTask(body);
-
+          /* genera una tarea */
+          const taskResult = await this.createTask(requestResult);
           if (taskResult === true) {
-            this.loadingTurn = false;
-            this.msgModal(
-              'Se turnar la solicitud con el Folio Nº '
-                .concat(`<strong>${requestResult.id}</strong>`)
-                .concat(` al usuario ${this.userName}`),
-              'Solicitud Creada',
-              'success'
+            /* actualiza el estatus del bien */
+            const orderServ = await this.createOrderService(
+              requestResult,
+              'REGISTRO_SOLICITUD',
+              'REGISTRO_SOLICITUD'
             );
+
+            if (orderServ === true) {
+              this.loadingTurn = false;
+              this.msgModal(
+                'Se turnar la solicitud con el Folio Nº '
+                  .concat(`<strong>${requestResult.id}</strong>`)
+                  .concat(` al usuario ${this.userName}`),
+                'Solicitud Creada',
+                'success'
+              );
+            }
           }
         } else {
-          console.log(requestResult);
+          this.loadingTurn = false;
+          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
           console.error('error');
         }
       }
@@ -405,16 +401,61 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTask(body: any) {
+  createTask(request: any) {
     return new Promise((resolve, reject) => {
+      let body: any = {};
+
+      const user: any = this.authService.decodeToken();
+      body['id'] = 0;
+      body['assignees'] = this.nickName;
+      body['assigneesDisplayname'] = this.userName;
+      body['creator'] = user.username;
+      body['taskNumber'] = Number(request.id);
+      body['title'] =
+        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
+      /*       body['isPublic'] = 'S';
+      body['istestTask'] = 'S'; */
+      body['programmingId'] = 0;
+      body['requestId'] = request.id;
+      body['expedientId'] = 0;
+      body['urlNb'] = 'pages/request/transfer-request/registration-request';
       this.taskService.createTask(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
           this.loadingTurn = false;
-          this.msgModal('Error', 'Error', 'Error al guardar la tarea');
-          reject(error.error);
+          this.msgModal('error', 'Error', 'Error al crear la tarea');
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
+  createOrderService(request: any, from: string, to: string) {
+    return new Promise((resolve, reject) => {
+      let orderservice: IOrderService = {};
+      orderservice.P_ESTATUS_ACTUAL = from;
+      orderservice.P_ESTATUS_NUEVO = to;
+      orderservice.P_ID_SOLICITUD = request.id;
+      orderservice.P_SIN_BIENES = '';
+      orderservice.P_BIENES_ACLARACION = '';
+      orderservice.P_FECHA_INSTANCIA = '';
+      orderservice.P_FECHA_ACTUAL = '';
+      orderservice.P_ORDEN_SERVICIO_IN = '';
+      orderservice.P_ORDEN_SERVICIO_OUT = '';
+      this.orderService.UpdateStatusGood(orderservice).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.msgModal(
+            'error',
+            'Error',
+            'Error al actualizar el estatus del bien'
+          );
+          reject(error.error.message);
         },
       });
     });

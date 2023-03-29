@@ -202,9 +202,7 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['ligieSection'].setValue(id);
         }
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -230,9 +228,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -262,9 +258,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -290,9 +284,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -318,9 +310,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -348,7 +338,6 @@ export class ClassifyAssetsTabComponent
       },
       error: error => {
         this.loading = false;
-        console.log(error);
       },
     });
   }
@@ -409,6 +398,7 @@ export class ClassifyAssetsTabComponent
 
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
+
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -473,9 +463,7 @@ export class ClassifyAssetsTabComponent
           }
         }
       },
-      error: (error: any) => {
-        console.log(error);
-      },
+      error: (error: any) => {},
     });
   }
 
