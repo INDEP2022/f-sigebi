@@ -156,7 +156,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('0', this.detailAssets.value);
     if (this.process == 'classify-assets') {
       this.setDataGood();
     }
@@ -220,7 +219,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   goodType(goodTypeId: number) {
-    console.log('xx', goodTypeId);
     this.typeRelevantSevice.getById(goodTypeId).subscribe({
       next: response => {
         this.nameGoodType = response.description;
