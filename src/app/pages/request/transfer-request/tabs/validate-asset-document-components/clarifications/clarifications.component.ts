@@ -77,6 +77,7 @@ export class ClarificationsComponent
   implements OnInit, OnChanges
 {
   @Input() requestObject: any;
+  @Input() process: string = '';
   goodForm: IFormGroup<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];

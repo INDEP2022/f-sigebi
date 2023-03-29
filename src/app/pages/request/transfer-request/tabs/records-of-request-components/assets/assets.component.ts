@@ -54,6 +54,7 @@ const defaultData = [
 })
 export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
+  @Input() process: string = '';
   goodObject: any; //bienes
   listgoodObjects: any[] = [];
   totalItems: number = 0;
@@ -102,6 +103,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    console.log('process', this.process);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,

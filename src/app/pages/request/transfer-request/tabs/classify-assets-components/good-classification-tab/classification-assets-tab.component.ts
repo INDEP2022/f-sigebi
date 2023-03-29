@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -17,7 +17,6 @@ import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.servic
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 
@@ -78,7 +77,6 @@ export class ClassificationAssetsTabComponent
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
-    this.goodForm();
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -101,6 +99,7 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('data', this.dataObject);
     if (changes['requestObject'].currentValue) {
       this.tablePaginator();
     }
@@ -169,86 +168,8 @@ export class ClassificationAssetsTabComponent
     this.domicilieObject = good.addressId;
     this.idGood = good.id;
     this.goodService.getById(good.id).subscribe((data: any) => {
-      this.goodSelect = data;
-      this.goodForm();
+      this.goodsForm.patchValue(data);
+      this.detailArray = this.goodsForm;
     });
-  }
-
-  goodForm() {
-    this.goodsForm = this.fb.group({
-      id: [this.goodSelect?.id],
-      goodId: [this.goodSelect?.idGood],
-      ligieSection: [this.goodSelect?.ligieSection],
-      ligieChapter: [this.goodSelect?.ligieChapter],
-      ligieLevel1: [this.goodSelect?.ligieLevel1],
-      ligieLevel2: [this.goodSelect?.ligieLevel2],
-      ligieLevel3: [this.goodSelect?.ligieLevel3],
-      ligieLevel4: [this.goodSelect?.ligieLevel4],
-      requestId: [this.idRequest],
-      goodTypeId: [this.goodSelect?.goodTypeId],
-      color: [this.goodSelect?.color],
-      goodDescription: [this.goodSelect?.goodDescription],
-      quantity: [this.goodSelect?.quantity, [Validators.required]],
-      duplicity: [this.goodSelect?.duplicity],
-      capacity: [
-        this.goodSelect?.capacity,
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      volume: [this.goodSelect?.volume, [Validators.pattern(STRING_PATTERN)]],
-      fileeNumber: [null],
-      useType: [this.goodSelect?.useType, [Validators.pattern(STRING_PATTERN)]],
-      physicalStatus: [this.goodSelect?.physicalStatus],
-      stateConservation: [this.goodSelect?.stateConservation],
-      origin: [
-        this.goodSelect?.origin,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      goodClassNumber: [null],
-      ligieUnit: [this.goodSelect?.ligieUnit],
-      appraisal: [null],
-      destiny: [this.goodSelect?.destiny], //preguntar Destino ligie
-      transferentDestiny: [this.goodSelect?.transferentDestiny],
-      compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [
-        this.goodSelect?.notesTransferringEntity,
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      unitMeasure: [this.goodSelect?.unitMeasure], // preguntar Unidad Medida Transferente
-      saeDestiny: [this.goodSelect?.saeDestiny],
-      brand: [this.goodSelect?.brand, [Validators.required]],
-      subBrand: [this.goodSelect?.subbrand, [Validators.required]],
-      armor: [this.goodSelect?.armor],
-      model: [this.goodSelect?.model, [Validators.required]],
-      doorsNumber: [null],
-      axesNumber: [null, [Validators.required]],
-      engineNumber: [this.goodSelect?.numEngine, [Validators.required]], //numero motor
-      tuition: [null, [Validators.required]],
-      serie: [this.goodSelect?.serie, [Validators.required]],
-      chassis: [this.goodSelect?.chassis],
-      cabin: [this.goodSelect?.cabin],
-      fitCircular: ['N', [Validators.required]],
-      theftReport: ['N', [Validators.required]],
-      addressId: [this.goodSelect?.addressId],
-      operationalState: [
-        this.goodSelect?.stateOperative,
-        [Validators.required],
-      ],
-      manufacturingYear: [null, [Validators.required]],
-      enginesNumber: [this.goodSelect?.numEngine, [Validators.required]], // numero de motores
-      flag: [this.goodSelect?.flag, [Validators.required]],
-      openwork: [null, [Validators.required]],
-      sleeve: [this.goodSelect?.sleeve],
-      length: [null, [Validators.required]],
-      shipName: [null, [Validators.required]],
-      publicRegistry: [this.goodSelect?.regPublic, [Validators.required]], //registro public
-      ships: [null],
-      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
-      airplaneType: [null, [Validators.required]],
-      caratage: [null, [Validators.required]], //kilatage
-      material: [this.goodSelect?.material, [Validators.required]],
-      weight: [null, [Validators.required]],
-      fractionId: [this.goodSelect?.idFraction],
-    });
-    this.detailArray = this.goodsForm;
   }
 }

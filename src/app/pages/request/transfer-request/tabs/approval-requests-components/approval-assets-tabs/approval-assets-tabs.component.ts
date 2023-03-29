@@ -35,6 +35,7 @@ const defaultData = [
 })
 export class ApprovalAssetsTabsComponent extends BasePage implements OnInit {
   @Input() dataObject: string;
+  @Input() process: string;
   //bsModalRef: BsModalRef;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];

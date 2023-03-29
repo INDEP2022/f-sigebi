@@ -105,7 +105,7 @@ export class AuthorityService
   }
   getAuthorityIssuingByAverPrevia(body: IAuthorityIssuingParams | any) {
     return this.authorityRepository.getAuthorityIssuingByParams(
-      'catalog/api/v1/authority/authority-and-station?limit=1&page=1',
+      'catalog/authority/authority-and-station?limit=1&page=1',
       body
     );
   }
