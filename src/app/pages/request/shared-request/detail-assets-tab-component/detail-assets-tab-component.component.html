@@ -12,251 +12,496 @@
     <ng-template tabHeading>
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
-    <form [formGroup]="detailAssets" class="form-material">
-      <div class="infoAsset">
-        <div class="row pt-4">
-          <div class="col-md-4" *ngIf="detailAssets.get('goodId').value">
-            <form-field
-              [control]="detailAssets.get('goodId')"
-              label="No&#46; Gesti&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="goodId"
-                [readOnly]="true" />
-            </form-field>
+    <div>
+      <form [formGroup]="detailAssets" class="form-material">
+        <div class="infoAsset">
+          <div class="row pt-4">
+            <div class="col-md-4" *ngIf="detailAssets.get('goodId').value">
+              <form-field
+                [control]="detailAssets.get('goodId')"
+                label="No&#46; Gesti&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="goodId"
+                  [readOnly]="true" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('goodTypeId')"
+                label="Tipo Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="goodTypeName"
+                  [readOnly]="true" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="detailAssets.get('color')" label="Color">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="color" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('goodDescription')"
+                label="Descripci&oacute;n de bien Transferente">
+                <textarea
+                  class="form-control"
+                  formControlName="goodDescription"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('quantity')"
+                label="Cantidad de la Transferente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="quantity" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-check label="Duplicidad" for="duplicity">
+                <input
+                  id="duplicity"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="duplicity"
+                  (change)="modifyResponse($event)"
+                  [disabled]="disableDuplicity" />
+              </form-check>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('capacity')"
+                label="Capacidad &#40;lts&#46;&#41;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="capacity" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('fileeNumber')"
+                label="No&#46; Exp&#46; de la transferente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="fileeNumber" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('volume')"
+                label="Volumen m3">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="volume" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="detailAssets"
+                control="physicalStatus"
+                (fetchItems)="getPhysicalState($event)"
+                [data]="selectPhysicalState"
+                label="Estado F&iacute;sico"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('useType')"
+                label="Tipo de Uso">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="useType" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="detailAssets"
+                control="stateConservation"
+                (fetchItems)="getConcervationState($event)"
+                [data]="selectConcervationState"
+                label="Estado de Concervaci&oacute;n"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('origin')"
+                label="Procedencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="origin" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('ligieUnit')"
+                label="Unidad de Medida Ligie">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="ligieUnit"
+                  [readOnly]="true" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-check label="Avaluo" for="appraisal">
+                <input
+                  id="appraisal"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="appraisal"
+                  (change)="handleAppraisalEvent($event)" />
+              </form-check>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="detailAssets"
+                control="unitMeasure"
+                (fetchItems)="getTransferentUnit($event)"
+                [data]="selectTansferUnitMeasure"
+                label="Unid&#46; Medida Transferente"
+                [searchable]="true"
+                bindLabel="unitMeasureTl"
+                value="unitMeasureTl"></ngx-select>
+            </div>
+            <div
+              class="col-md-3"
+              *ngIf="otherAssets === true || manejeAssets === true">
+              <form-check label="Cumple Norma" for="compliesNorm">
+                <input
+                  id="compliesNorm"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="complyNorm"
+                  (change)="handleCumpliesNormEvent($event)" />
+              </form-check>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('destiny')"
+                label="Destino Ligie">
+                <input
+                  type="text"
+                  class="form-control"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="destinyLigie"
+                  [readOnly]="true" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="detailAssets"
+                control="transferentDestiny"
+                (fetchItems)="getDestinyTransfer($event)"
+                [data]="selectDestinyTransfer"
+                label="Destino Transferente"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="detailAssets.get('notesTransferringEntity')"
+                label="Notas">
+                <textarea
+                  class="form-control"
+                  formControlName="notesTransferringEntity"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
+              <ngx-select
+                [form]="detailAssets"
+                control="saeDestiny"
+                (fetchItems)="getDestintSae($event)"
+                [data]="selectDestintSae"
+                label="Destino SEA"
+                value="id"
+                bindLabel="saeDestiny"></ngx-select>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
+      </form>
+    </div>
+
+    <!--<div *ngIf="process == 'classify-assets'">
+      <form [formGroup]="detailAssets" class="form-material">
+        <div class="row">
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('goodTypeId')"
-              label="Tipo Bien">
-              <input
-                type="text"
-                class="form-control"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="goodTypeName"
-                [readOnly]="true" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Id bien&#58;</label>
+              <span class="fs-4">{{ goodData?.id }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('color')" label="Color">
-              <input type="text" class="form-control" formControlName="color" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('goodDescription')"
-              label="Descripci&oacute;n de bien Transferente">
-              <textarea
-                class="form-control"
-                formControlName="goodDescription"></textarea>
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Id tipo relevante&#58;</label>
+              <span class="fs-4">{{ goodData?.goodTypeId }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('quantity')"
-              label="Cantidad de la Transferente">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="quantity" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Unidad de medida ligie&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.ligieUnit }}</span>
+            </div>
           </div>
         </div>
 
-        <div class="row pt-4">
+        <div class="row pt-3">
           <div class="col-md-4">
-            <form-check label="Duplicidad" for="duplicity">
-              <input
-                id="duplicity"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="duplicity"
-                (change)="modifyResponse($event)"
-                [disabled]="disableDuplicity" />
-            </form-check>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Cumple norma&#58;</label>
+              <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('capacity')"
-              label="Capacidad &#40;lts&#46;&#41;">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="capacity" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >U. medida transferente&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.unitMeasure }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Unidad de medida SAE&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.saeMeasureUnit }}</span>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
+
+        <div class="row pt-3">
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('fileeNumber')"
-              label="No&#46; Exp&#46; de la transferente">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="fileeNumber" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Norma&#58;</label>
+              <span class="fs-4"></span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('volume')"
-              label="Volumen m3">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="volume" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Duplicidad&#58;</label>
+              <span class="fs-4"></span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Cantidad&#58;</label>
+              <span class="fs-4">{{ goodData?.quantity }}</span>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
+
+        <div class="row pt-3">
           <div class="col-md-4">
-            <ngx-select
-              [form]="detailAssets"
-              control="physicalStatus"
-              (fetchItems)="getPhysicalState($event)"
-              [data]="selectPhysicalState"
-              label="Estado F&iacute;sico"
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"></ngx-select>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Descripci&oacute;n&#58;</label>
+              <span class="fs-4">{{ goodData?.description }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('useType')"
-              label="Tipo de Uso">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="useType" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Destino ligie&#58;</label>
+              <span class="fs-4"></span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Destino transferente&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
+
+        <div class="row pt-3">
           <div class="col-md-4">
-            <ngx-select
-              [form]="detailAssets"
-              control="stateConservation"
-              (fetchItems)="getConcervationState($event)"
-              [data]="selectConcervationState"
-              label="Estado de Concervaci&oacute;n"
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"></ngx-select>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Tipo&#58;</label>
+              <span class="fs-4">{{ goodData?.type }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('origin')"
-              label="Procedencia">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="origin" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Destino SAE&#58;</label>
+              <span class="fs-4">{{ goodData?.saeDestiny }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Color&#58;</label>
+              <span class="fs-4">{{ goodData?.color }}</span>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
+
+        <div class="row pt-3">
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('ligieUnit')"
-              label="Unidad de Medida Ligie">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ligieUnit"
-                [readOnly]="true" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Folio de solicitud&#58;</label>
+              <span class="fs-4">{{ goodData?.requestFolio }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <form-check label="Avaluo" for="appraisal">
-              <input
-                id="appraisal"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="appraisal"
-                (change)="handleAppraisalEvent($event)" />
-            </form-check>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Capacidad&#58;</label>
+              <span class="fs-4">{{ goodData?.capacity }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Volumen (m3)&#58;</label>
+              <span class="fs-4" {{goodData?.compliesNorm}}></span>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
+
+        <div class="row pt-3">
           <div class="col-md-4">
-            <ngx-select
-              [form]="detailAssets"
-              control="unitMeasure"
-              (fetchItems)="getTransferentUnit($event)"
-              [data]="selectTansferUnitMeasure"
-              label="Unid&#46; Medida Transferente"
-              [searchable]="true"
-              bindLabel="unitMeasureTl"
-              value="unitMeasureTl"></ngx-select>
-          </div>
-          <div
-            class="col-md-3"
-            *ngIf="otherAssets === true || manejeAssets === true">
-            <form-check label="Cumple Norma" for="compliesNorm">
-              <input
-                id="compliesNorm"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="complyNorm"
-                (change)="handleCumpliesNormEvent($event)" />
-            </form-check>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('destiny')"
-              label="Destino Ligie">
-              <input
-                type="text"
-                class="form-control"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="destinyLigie"
-                [readOnly]="true" />
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Tipo de bien&#58;</label>
+              <span class="fs-4">{{ goodData?.goodTypeId }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <ngx-select
-              [form]="detailAssets"
-              control="transferentDestiny"
-              (fetchItems)="getDestinyTransfer($event)"
-              [data]="selectDestinyTransfer"
-              label="Destino Transferente"
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"></ngx-select>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Tipo de uso&#58;</label>
+              <span class="fs-4">{{ goodData?.useType }}</span>
+            </div>
           </div>
-        </div>
-        <div class="row pt-4">
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('notesTransferringEntity')"
-              label="Notas">
-              <textarea
-                class="form-control"
-                formControlName="notesTransferringEntity"></textarea>
-            </form-field>
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Procedencia&#58;</label>
+              <span class="fs-4"></span>
+            </div>
           </div>
         </div>
-        <div class="row pt-4">
-          <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
-            <ngx-select
-              [form]="detailAssets"
-              control="saeDestiny"
-              (fetchItems)="getDestintSae($event)"
-              [data]="selectDestintSae"
-              label="Destino SEA"
-              value="id"
-              bindLabel="saeDestiny"></ngx-select>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Clave &Uacute;nica&#58;</label>
+              <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Aval&uacute;o&#58;</label>
+              <span class="fs-4"></span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">No. Norma&#58;</label>
+              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
+            </div>
           </div>
         </div>
-      </div>
-    </form>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Desc. bien transferente&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.description }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Descripción bien sae&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Bien duplicado&#58;</label>
+              <span class="fs-4">{{ goodData?.duplicatedGood }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">No. expediente&#58;</label>
+              <span class="fs-4">{{ goodData?.storeNumber }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Estado f&iacute;sico&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.physicalStatus }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Unidad de medida ligie&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.ligieUnit }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Estado de conservaci&oacute;n&#58;</label
+              >
+              <span class="fs-4">{{ goodData?.stateConservation }}</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div> -->
   </tab>
 
   <tab>
@@ -488,13 +733,22 @@
   </tab>
 
   <!-- Información del  vehiculo tab -->
-  <tab *ngIf="carsAssets">
-    <ng-template tabHeading>
+  <tab
+    *ngIf="
+      (carsAssets && process == 'registration-request') ||
+      (jewelerAssets && process == 'classify-assets')
+    ">
+    <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bxs-car"></i> Ficha t&eacute;cnica vehiculos
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="vehicleDateSheet">
-        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
+        <p class="msg-required" *ngIf="process == 'registration-request'">
+          Los campos con <span>*</span> son requeridos
+        </p>
         <div class="row pt-5">
           <div class="col-md-4">
             <ngx-select
@@ -647,9 +901,16 @@
   </tab>
 
   <!-- Información de Embarcación  -->
-  <tab *ngIf="boatAssets">
-    <ng-template tabHeading>
+  <tab
+    *ngIf="
+      (boatAssets && process == 'registration-request') ||
+      (jewelerAssets && process == 'classify-assets')
+    ">
+    <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bx-anchor"></i> Informaci&oacute;n de Embarcaci&oacute;n
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bx-anchor"></i> Ficha t&eacute;cnica Embarcaci&oacute;n
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="boatInformation">
@@ -854,7 +1115,11 @@
   </tab>
 
   <!-- Informacion Joyeria -->
-  <tab *ngIf="jewelerAssets">
+  <tab
+    *ngIf="
+      (jewelerAssets && process == 'registration-request') ||
+      (jewelerAssets && process == 'classify-assets')
+    ">
     <ng-template tabHeading>
       <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
     </ng-template>
@@ -898,9 +1163,16 @@
   </tab>
 
   <!-- Informacion aereonaves -->
-  <tab *ngIf="aircraftAssets">
-    <ng-template tabHeading>
+  <tab
+    *ngIf="
+      (aircraftAssets && process == 'registration-request') ||
+      (aircraftAssets && process == 'classify-assets')
+    ">
+    <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bx-flag"></i> Ficha t&eacute;cnica aeronaves
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">
@@ -916,7 +1188,7 @@
                 (change)="handleArmor($event)" />
             </form-check>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="process == 'registration-request'">
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
               label="A&ntilde;o de Fabricaci&oacute;n">
@@ -1015,6 +1287,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('origin')"
+              aria-setsize=""
               label="Procedencia">
               <input
                 type="text"

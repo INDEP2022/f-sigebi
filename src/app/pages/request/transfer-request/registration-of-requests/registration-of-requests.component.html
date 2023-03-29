@@ -160,7 +160,8 @@
               -->
               <app-request-detail-tab
                 *ngIf="requestRegistration === false"
-                [requestForm]="registRequestForm"></app-request-detail-tab>
+                [requestForm]="registRequestForm"
+                [process]="process"></app-request-detail-tab>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">
@@ -179,6 +180,7 @@
               <app-classification-assets-tab
                 *ngIf="classifyAssets"
                 [requestObject]="requestData"
+                [process]="process"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->
