@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS1 } from './columns1';
@@ -20,7 +21,10 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private expedientService: ExpedientService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
@@ -78,7 +82,19 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   data2 = EXAMPLE_DATA2;
 
   search(term: string | number) {
-    this.response = !this.response;
+    this.loading = true;
+    this.expedientService.getById(term).subscribe(
+      response => {
+        if (response !== null) {
+          this.response = !this.response;
+        } else {
+          this.alert('info', 'No se encontrarón registros', '');
+        }
+
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
   }
 
   onSubmit() {}

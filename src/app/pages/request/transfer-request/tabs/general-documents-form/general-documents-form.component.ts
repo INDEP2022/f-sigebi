@@ -141,7 +141,7 @@ export class GeneralDocumentsFormComponent
     this.rowSelected = event.data;
   }
 
-  //abrir nuevo documento
+  //abrir nuevo expediente
   newExpedient() {
     this.openModal(AssociateFileComponent, 'doc-expediente', this.requestForm);
   }

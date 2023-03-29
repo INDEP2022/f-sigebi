@@ -462,9 +462,7 @@ export class DetailAssetsTabComponentComponent
     keySettlement?: number
   ): any {
     params.limit = 20;
-    params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
-    params['filter.keySettlement'] = `$eq:${keySettlement}`;
     delete params.text;
     delete params.take;
     delete params.inicio;

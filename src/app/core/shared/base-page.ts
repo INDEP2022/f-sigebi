@@ -118,7 +118,7 @@ export abstract class BasePage implements OnDestroy {
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
   private _alertsService = inject(AlertsQueueService);
-  private readonly loader = inject(LoadingService);
+  protected loader = inject(LoadingService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,

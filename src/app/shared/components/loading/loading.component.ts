@@ -12,7 +12,7 @@ import { LoadingService } from 'src/app/common/services/loading.service';
         width: 100vw;
         height: 100vh;
         background: rgba(20, 20, 20, 0.9);
-        z-index: 1;
+        z-index: 1111;
         display: flex;
         justify-content: center;
         align-items: center;
