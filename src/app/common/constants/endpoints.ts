@@ -124,6 +124,8 @@ export enum ENDPOINT_LINKS {
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
+  WarehouseTypeWarehouse = 'parametergood/almacen-tipos-almacen',
+  WarehouseClassifyCosts = 'parametergood/almacen-clasif-costos',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
   Document = 'documents',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
