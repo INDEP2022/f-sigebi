@@ -603,13 +603,32 @@ export class RegistrationOfRequestsComponent
   }
 
   /** Proceso de aprobacion */
-  private approveRequest() {
+  async approveRequest() {
     /**Verificar datos */
     /**Actualizar tarea para aprobacion */
     console.log(this.requestData);
 
     return;
-    this.requestService
+
+    /*const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'SOLICITAR_APROBACION';
+        const to = 'APROBADO';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }*/
+    /*  this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
         next: resp => {
@@ -624,7 +643,7 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
-      });
+      }); */
   }
   /** fin de proceso */
 

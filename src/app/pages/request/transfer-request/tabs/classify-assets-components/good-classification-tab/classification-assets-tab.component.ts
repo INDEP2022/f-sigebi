@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -17,6 +17,7 @@ import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.servic
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 
@@ -51,7 +52,7 @@ export class ClassificationAssetsTabComponent
   totalItems: number = 0;
   idFraction: number = 0;
   classiGoodsForm: FormGroup = new FormGroup({});
-  goodsForm: FormGroup = new FormGroup({});
+  goodsForm: FormGroup = new FormGroup({}); // ModelForm<any>; //: FormGroup = new FormGroup({});
   ligiesSection = new DefaultSelect();
   chapters = new DefaultSelect();
   levels1 = new DefaultSelect();
@@ -83,6 +84,7 @@ export class ClassificationAssetsTabComponent
       selectMode: '',
       columns: REQUEST_OF_ASSETS_COLUMNS,
     };
+    this.initForm();
   }
 
   prepareForm() {
@@ -170,6 +172,71 @@ export class ClassificationAssetsTabComponent
     this.goodService.getById(good.id).subscribe((data: any) => {
       this.goodsForm.patchValue(data);
       this.detailArray = this.goodsForm;
+    });
+  }
+
+  initForm() {
+    this.goodsForm = this.fb.group({
+      id: [null],
+      goodId: [null],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
+      requestId: [null],
+      goodTypeId: [null],
+      color: [null],
+      goodDescription: [null],
+      quantity: [1, [Validators.required]],
+      duplicity: ['N'],
+      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
+      volume: [null, [Validators.pattern(STRING_PATTERN)]],
+      fileeNumber: [null],
+      useType: [null, [Validators.pattern(STRING_PATTERN)]],
+      physicalStatus: [null],
+      stateConservation: [null],
+      origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      goodClassNumber: [null],
+      ligieUnit: [null],
+      appraisal: [null],
+      destiny: [null], //preguntar Destino ligie
+      transferentDestiny: [null],
+      compliesNorm: ['N'], //cumple norma
+      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      unitMeasure: [null], // preguntar Unidad Medida Transferente
+      saeDestiny: [null],
+      brand: [null, [Validators.required]],
+      subBrand: [null, [Validators.required]],
+      armor: [null],
+      model: [null, [Validators.required]],
+      doorsNumber: [null],
+      axesNumber: [null, [Validators.required]],
+      engineNumber: [null, [Validators.required]], //numero motor
+      tuition: [null, [Validators.required]],
+      serie: [null, [Validators.required]],
+      chassis: [null],
+      cabin: [null],
+      fitCircular: ['N', [Validators.required]],
+      theftReport: ['N', [Validators.required]],
+      addressId: [null],
+      operationalState: [null, [Validators.required]],
+      manufacturingYear: [null, [Validators.required]],
+      enginesNumber: [null, [Validators.required]], // numero de motores
+      flag: [null, [Validators.required]],
+      openwork: [null, [Validators.required]],
+      sleeve: [null],
+      length: [null, [Validators.required]],
+      shipName: [null, [Validators.required]],
+      publicRegistry: [null, [Validators.required]], //registro public
+      ships: [null],
+      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
+      airplaneType: [null, [Validators.required]],
+      caratage: [null, [Validators.required]], //kilatage
+      material: [null, [Validators.required]],
+      weight: [null, [Validators.required]],
+      fractionId: [null],
     });
   }
 }
