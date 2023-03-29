@@ -156,19 +156,13 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.detailAssets.getRawValue());
     if (this.process == 'classify-assets') {
       this.setDataGood();
     }
     if (this.typeDoc === 'clarification') {
     }
     //verifica si la vista es verificacion de cumplimiento o bien
-    if (
-      this.typeDoc === 'verify-compliance' ||
-      this.typeDoc === 'assets' ||
-      this.typeDoc === 'clarification' ||
-      this.process == 'classify-assets'
-    ) {
+    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
         this.getGoodDomicilie(this.addressId);
