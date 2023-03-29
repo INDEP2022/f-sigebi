@@ -9,6 +9,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -58,13 +59,14 @@ export class ClassifyAssetsTabComponent
     private fractionService: FractionService,
     private goodService: GoodService,
     private route: ActivatedRoute,
-    private requestHelperService: RequestHelperService
+    private requestHelperService: RequestHelperService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log(this.typeDoc);
+    this.showHideErrorInterceptorService.showHideError(false);
     this.initForm();
     if (!this.goodObject) {
       this.getSection(new ListParams());
@@ -185,6 +187,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
+        this.showHideErrorInterceptorService.showHideError(false);
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
@@ -199,6 +202,7 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['ligieSection'].setValue(id);
         }
       },
+      error: error => {},
     });
   }
 
@@ -224,9 +228,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Capitulo: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -256,9 +258,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 1: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -284,9 +284,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 2: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -312,9 +310,7 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {
-        console.log('Nivel 3: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -341,7 +337,7 @@ export class ClassifyAssetsTabComponent
         }
       },
       error: error => {
-        console.log('Nivel 4: ', error.error.message[0]);
+        this.loading = false;
       },
     });
   }
@@ -401,7 +397,18 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
+    const info = this.classiGoodsForm.getRawValue();
+    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
+      this.classiGoodsForm.get('stateConservation').setValue(1);
+    this.classiGoodsForm.get('physicalStatus').setValue(1);
+
+    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
+      this.classiGoodsForm.get('stateConservation').setValue(2);
+    this.classiGoodsForm.get('physicalStatus').setValue(2);
+    this.classiGoodsForm.get('destiny').setValue(1);
+
     const goods = this.classiGoodsForm.getRawValue();
+
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -466,6 +473,7 @@ export class ClassifyAssetsTabComponent
           }
         }
       },
+      error: (error: any) => {},
     });
   }
 

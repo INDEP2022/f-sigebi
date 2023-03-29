@@ -16,7 +16,6 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { CallScanDocumentComponent } from '../call-scan-document/call-scan-document.component';
 import { ListDocumentsComponent } from '../list-documents/list-documents.component';
 import { ListNotificationsComponent } from '../list-notifications/list-notifications.component';
 
@@ -218,11 +217,6 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.loading = false;
           if (err.status === 400) {
             this.countDoc = 0;
-            this.onLoadToast(
-              'error',
-              'No se encontro relacion de registros de documentos',
-              ''
-            );
           }
         },
       });
@@ -369,15 +363,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   callScan() {
     if (this.idFolio) {
-      let config: ModalOptions = {
-        //no se tiene los nombre que se enviaran por parametro
-        initialState: {
-          callback: (next: boolean) => {},
-        },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(CallScanDocumentComponent, config);
+      window.open(
+        `./pages/general-processes/scan-documents?folio=${this.idFolio}`,
+        '_blank'
+      );
     } else {
       this.onLoadToast('error', 'No existe un folio para escanear.', '');
     }

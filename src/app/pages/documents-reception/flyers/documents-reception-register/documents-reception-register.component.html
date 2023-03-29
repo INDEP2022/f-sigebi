@@ -10,7 +10,7 @@
           <i class="bx bx-chevron-left float-icon"></i>Regresar
         </button>
         <button
-          *ngIf="changeFlyerOption || flyerEditMode"
+          *ngIf="(changeFlyerOption || flyerEditMode) && !flyerReceptionMode"
           class="btn btn-primary active btn-sm"
           (click)="chooseOther()">
           Seleccionar Volante
@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div body>
+  <div body class="init-page">
     <form
       [formGroup]="documentsReceptionForm"
       (submit)="(false)"
@@ -591,11 +591,28 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
+
+            <form-field
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('transference')"
+              *ngIf="showTransference">
+              <ngx-select
+                [form]="documentsReceptionForm"
+                (fetchItems)="getTransferees($event)"
+                [data]="transferees"
+                bindLabel="nameAndId"
+                control="transference"
+                label=" "
+                [searchOnInit]="true"
+                termMaxLength="200"
+                [showTooltip]="true">
+              </ngx-select>
+            </form-field>
           </div>
 
           <div class="row pt-5">
             <form-field
-              class="col-md-4"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('indiciadoNumber')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -618,9 +635,11 @@
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
+          </div>
 
+          <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('viaKey')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -637,7 +656,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('destinationArea')"
               label="&Aacute;rea Destino">
               <input
@@ -738,9 +757,10 @@
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'N' &&
-            !pgrInterface &&
-            !satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'N' &&
+              !pgrInterface &&
+              !satInterface) ||
+            pgrGoodsProcessed
           ">
           <confirm-button
             text="Guardar"
@@ -752,16 +772,17 @@
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'S' ||
-            pgrInterface ||
-            satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'S' ||
+              pgrInterface ||
+              satInterface) &&
+            !pgrGoodsProcessed
           ">
           <confirm-button
             text="Siguiente"
             loadingText="Cargando"
             [disabled]="procedureBlocked"
             [loading]="loading"
-            (confirm)="goodsCaptureCheck()"></confirm-button>
+            (confirm)="nextStep()"></confirm-button>
         </div>
       </div>
     </div>

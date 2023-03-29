@@ -15,12 +15,17 @@ import {
   throwError,
 } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ITypesByClasification } from 'src/app/core/models/catalogs/types-by-clasification';
+import { ITempExpedient } from 'src/app/core/models/ms-expedient/tmp-expedient.model';
+import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefgr.interface';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -56,6 +61,7 @@ import {
 })
 export class GoodsCaptureMain extends BasePage {
   @ViewChild('form') form: ElementRef;
+  globalNgrx: any = {};
   goodToSave = new GOOD_TO_SAVE();
   satTransfer: any = {};
   params: Partial<IGoodCaptureParams> = {
@@ -130,7 +136,7 @@ export class GoodsCaptureMain extends BasePage {
     public router: Router,
     public menageService: MenageService,
     public drDataService: DocumentsReceptionDataService,
-    private globalVarService: GlobalVarsService
+    public globalVarService: GlobalVarsService
   ) {
     super();
     const paramsMap = this.activatedRoute.snapshot.queryParamMap;
@@ -146,10 +152,14 @@ export class GoodsCaptureMain extends BasePage {
       .pipe(takeUntil(this.$unSubscribe), take(1))
       .subscribe({
         next: global => {
+          this.globalNgrx = global;
           this.global.gNoExpediente = global.gNoExpediente;
-          console.log(this.global.gNoExpediente);
+          // this.global.gNoExpediente = 6172868;
+          console.log(global);
           this.global.gnuActivaGestion = global.gnuActivaGestion;
           this.global.pIndicadorSat = global.pIndicadorSat;
+          console.log(this.global);
+          // this.global.pIndicadorSat = 1;
         },
       });
   }
@@ -315,10 +325,14 @@ export class GoodsCaptureMain extends BasePage {
     } else if (this.global.pIndicadorSat == 1) {
       this.formControls.satIndicator.setValue(0);
     }
+    if (!this.global.gNoExpediente) {
+      return;
+    }
     this.getTempExp(this.global.gNoExpediente)
       .pipe(
         tap((response: any) => {
-          type = response.typeTranssact;
+          console.log(response);
+          type = response.procedureType;
           this.global.vPgrOficio = response.noOffice;
         })
       )
@@ -332,7 +346,6 @@ export class GoodsCaptureMain extends BasePage {
 
   // PUP_VALIDATE_SAT
   validateSat() {
-    console.log('entro a validar sat');
     const satCveUnique: string = this.satTransfer?.satOnlyKey ?? null;
     // TODO: Checar funcionamiento
     // this.good.CVE_UNICA_SAT= satCveUnique;
@@ -401,48 +414,186 @@ export class GoodsCaptureMain extends BasePage {
 
   // PUP_LLENA_DATOS
   fillData() {
-    console.log('Entro a PUP_LLENA DATOS');
     const expedientNum = Number(this.global.gNoExpediente);
     this.getTempExp(expedientNum).subscribe({
       next: (expedient: any) => this.fillWithTempExpedient(expedient),
     });
   }
 
-  fillWithTempExpedient(tmpExpedient: any) {
-    const { typeTranssact, noOffice, subject } = tmpExpedient;
-    if (typeTranssact == 3) {
-      return;
-    }
-    const body = {
-      officeKey: noOffice,
-      expType: subject,
-    };
-    this.getAllExpJob(body).subscribe({
-      next: response => {
-        const first = response?.data[0];
-        if (!first) return;
-        console.log(first.satDepartureNumber);
-        if (first.satDepartureNumber != null && subject != null) {
-          if (typeTranssact == 2) {
-            this.getGoodByDepartureNum(first.satDepartureNumber).subscribe();
-            this.fillTempDescription(tmpExpedient);
-          }
-        } else if (typeTranssact == 2) {
-          console.log('Tipo tramite 2');
-          this.fillDataSatSubject(tmpExpedient);
-        }
-      },
-    });
+  getDataPgr(tmpExpedient: ITempExpedient) {
+    const params = new FilterParams();
+    params.addFilter('pgrOffice', tmpExpedient.jobNumber);
+    this.goodsCaptureService
+      .getInterfaceFgr(params.getParams())
+      .subscribe(response => {
+        const pgr = response.data[0];
+        this.fillFromPgr(pgr);
+      });
   }
 
-  fillDataSatSubject(tmpExpedient: any) {
+  fillFromPgr(pgr: IPgrTransfer) {
+    let type, desc, quantity, unit, edo;
+    const {
+      pgrTypeGoodVeh,
+      pgrTypeGoodAer,
+      pgrTypeGoodEmb,
+      pgrTypeGoodNum,
+      pgrTypeGoodInm,
+      pgrTypeGoodJoy,
+      pgrTypeGoodDiv,
+      pgrTypeGoodMen,
+    } = pgr;
+    if (pgrTypeGoodVeh) {
+      type = pgrTypeGoodVeh;
+      desc = pgr.pgrDescrGoodVeh;
+      quantity = pgr.pgrAmountVeh;
+      unit = pgr.pgrUnitMeasureVeh;
+      edo = pgr.pgrEdoPhysicalVeh;
+    } else if (pgrTypeGoodAer) {
+      type = pgrTypeGoodAer;
+      desc = pgr.pgrDescrGoodAer;
+      quantity = pgr.pgrAmountAer;
+      unit = pgr.pgrUniMeasureAer;
+      edo = pgr.pgrEdoPhysicalVeh;
+    } else if (pgrTypeGoodEmb) {
+      type = pgrTypeGoodEmb;
+      desc = pgr.pgrDescrGoodEmb;
+      quantity = pgr.pgrAmountEmb;
+      unit = pgr.pgrUniMeasureEmb;
+      edo = pgr.pgrEdoPhysicalEmb;
+    } else if (pgrTypeGoodInm) {
+      type = pgrTypeGoodInm;
+      desc = pgr.pgrDescrGoodInm;
+      quantity = pgr.pgrAmountInm;
+      unit = pgr.pgrUniMeasureInm;
+      edo = pgr.pgrEdoPhysicalInm;
+    } else if (pgrTypeGoodNum) {
+      type = pgrTypeGoodNum;
+      desc = pgr.pgrDescrGoodNum;
+      quantity = pgr.pgrAmountNum;
+      unit = pgr.pgrUniMeasureNum;
+      edo = pgr.pgrEdoPhysicalNum;
+    } else if (pgrTypeGoodJoy) {
+      type = pgrTypeGoodJoy;
+      desc = pgr.pgrDescrGoodJoy;
+      quantity = pgr.pgrAmountJoy;
+      unit = pgr.pgrUniMeasureJoy;
+      edo = pgr.pgrEdoPhysicalJoy;
+    } else if (pgrTypeGoodDiv) {
+      type = pgrTypeGoodDiv;
+      desc = pgr.pgrDescrGoodDiv;
+      quantity = pgr.pgrAmountDiv;
+      unit = pgr.pgrUniMeasureDiv;
+      edo = pgr.pgrEdoPhysicalDiv;
+    } else if (pgrTypeGoodMen) {
+      type = pgrTypeGoodMen;
+      desc = pgr.pgrDescrGoodMen;
+      quantity = pgr.pgrAmountMen;
+      unit = pgr.pgrUniMeasureMen;
+      edo = pgr.pgrEdoPhysicalMen;
+    }
+    console.log({ type, desc, quantity, unit, edo });
+    this.assetsForm.controls.cantidad.setValue(quantity);
+    this.assetsForm.controls.descripcion.setValue(desc);
+    this.assetsForm.controls.noClasifBien.setValue(type);
+    this.assetsForm.controls.destino.setValue('3');
+    const _unit = unit?.trim() == 'PZ' ? 'PIEZA' : unit;
+    this.assetsForm.controls.unidadMedida.setValue(_unit);
+    this._fillAllForm();
+  }
+
+  _fillAllForm() {
+    const clasifNum = this.formControls.noClasifBien.value;
+    if (!clasifNum) {
+      return;
+    }
+    if (this.formControls.satIndicator.value == 0) {
+      this.getFractionsByClasifNum(clasifNum).subscribe({
+        next: (response: any) => {
+          this.fillFractions(response);
+          this.patchSatTransferValue();
+          // this.getNoms();
+          this.getUnitsByClasifNum(clasifNum).subscribe();
+          this.goodsCaptureService.getLabelById(3).subscribe(label => {
+            const _label = {
+              labelNumber: label.id,
+              e_descripcion: label.description,
+            };
+            this.goodLabels = new DefaultSelect([_label], 1);
+          });
+        },
+      });
+    }
+    if (this.formControls.satIndicator.value == 1) {
+      this.getFractionsByClasifNum(clasifNum).subscribe({
+        next: (response: any) => {
+          this.fillFractions(response);
+          this.patchSatTransferValue();
+          this.getNoms();
+          this.getUnitsByClasifNum(clasifNum).subscribe();
+          this.goodsCaptureService.getLabelById(3).subscribe(label => {
+            const _label = {
+              labelNumber: label.id,
+              e_descripcion: label.description,
+            };
+            this.goodLabels = new DefaultSelect([_label], 1);
+          });
+        },
+      });
+    }
+    if (this.formControls.satIndicator.value == null) {
+      const clasifNum = this.formControls.noClasifBien.value;
+      this.getGoodTypesByClasifNum(clasifNum)
+        .pipe(switchMap(() => this.getGoodFeaturesByClasif(clasifNum)))
+        .subscribe({
+          next: () => {
+            this.getUnitsByClasifNum(clasifNum).subscribe();
+            this.goodsCaptureService.getLabelById(3).subscribe(label => {
+              const _label = {
+                labelNumber: label.id,
+                e_descripcion: label.description,
+              };
+              this.goodLabels = new DefaultSelect([_label], 1);
+            });
+          },
+        });
+    }
+  }
+
+  fillWithTempExpedient(tmpExpedient: ITempExpedient) {
+    const { procedureType, jobNumber, affair } = tmpExpedient;
+    if (procedureType == 3) {
+      this.getDataPgr(tmpExpedient);
+    } else {
+      const body = {
+        officeKey: jobNumber,
+        expType: affair,
+      };
+      this.getAllExpJob(body).subscribe({
+        next: response => {
+          const first = response?.data[0];
+          if (!first) return;
+          if (first.satDepartureNumber != null && affair != null) {
+            if (procedureType == 2) {
+              this.getGoodByDepartureNum(first.satDepartureNumber).subscribe();
+              this.fillTempDescription(tmpExpedient);
+            }
+          } else if (procedureType == 2) {
+            this.fillDataSatSubject(tmpExpedient);
+          }
+        },
+      });
+    }
+  }
+
+  fillDataSatSubject(tmpExpedient: ITempExpedient) {
     this.formControls.cantidad.setValue(1);
-    const { typeTranssact, noOffice, subject } = tmpExpedient;
-    if (!subject) return;
+    const { procedureType, jobNumber, affair } = tmpExpedient;
+    if (!affair) return;
     this.formControls.cantidad.setValue(1);
     const body = {
-      jobNumber: noOffice,
-      affair: subject,
+      jobNumber: jobNumber,
+      affair: affair,
     };
     this.getTempGood(body).subscribe({
       next: (tempGood: any) => {
@@ -471,7 +622,6 @@ export class GoodsCaptureMain extends BasePage {
     };
     this.getTempGood(body).subscribe({
       next: (tempGood: any) => {
-        console.log(tempGood);
         this.formControls.descripcion.setValue(tempGood.description);
         this.formControls.observaciones.setValue(tempGood.observations);
       },
@@ -484,7 +634,6 @@ export class GoodsCaptureMain extends BasePage {
       next: response => {
         const first = response.data[0];
         if (!first) return;
-        console.log(first.saeUnitMeasure);
         this.formControls.unidadMedida.setValue(first.saeUnitMeasure);
         this.setIdentifier('TRANS');
       },
@@ -636,7 +785,7 @@ export class GoodsCaptureMain extends BasePage {
         tap((parameter: any) => {
           const departure = this.formControls.noPartida.value;
           const link =
-            parameter.data.initialValue + departure + parameter.data.finalValue;
+            parameter.initialValue + departure + parameter.finalValue;
           window.open(link, '_blank');
         }),
         catchError(error => {
@@ -687,7 +836,6 @@ export class GoodsCaptureMain extends BasePage {
   getGoodFeaturesByClasif(clasifNum: number) {
     return this.goodsCaptureService.getGoodFeatures(clasifNum).pipe(
       tap(response => {
-        console.log(response);
         this.goodFeatures = response.data.sort(
           (feat: any, _feat: any) => feat.columnNumber - _feat.columnNumber
         );
@@ -731,7 +879,6 @@ export class GoodsCaptureMain extends BasePage {
     return this.goodsCaptureService
       .getMaxPaperWorkByExpedient(expedient.id)
       .pipe(
-        tap(res => console.log(res)),
         catchError(error => {
           if (error.status <= 404) {
             return of(1);

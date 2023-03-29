@@ -8,6 +8,8 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   INotification,
   INotificationInquiry,
+  INotificationTransferentIndiciadoCityGetData,
+  ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
 @Injectable({
@@ -33,6 +35,14 @@ export class NotificationService extends HttpService {
     );
   }
 
+  getAllFilterTmpNotification(
+    params: _Params
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      `${this.route.TmpNotification}?${params}`
+    );
+  }
+
   create(body: INotification): Observable<INotification> {
     return this.post(this.route.Notification, body);
   }
@@ -45,9 +55,9 @@ export class NotificationService extends HttpService {
   }
 
   getLastWheelNumber(): Observable<{ nextval: number }> {
-    return this.get<{ nextval: string }>(this.route.LastWheelNumber).pipe(
+    return this.get<{ max: string }>(this.route.LastFlyerId).pipe(
       map(resp => {
-        return { nextval: Number(resp.nextval) };
+        return { nextval: Number(resp.max) };
       })
     );
   }
@@ -57,7 +67,7 @@ export class NotificationService extends HttpService {
     subdelegation: number
   ): Observable<{ consecutivedaily: number }> {
     return this.get<{ consecutivedaily: string }>(
-      `${this.route.DailyConsecutive}/delegation/${delegation}/subdelegation/${subdelegation}`
+      `${this.route.Notification}/${this.route.DailyConsecutive}/delegation/${delegation}/subdelegation/${subdelegation}`
     ).pipe(
       map(resp => {
         return { consecutivedaily: Number(resp.consecutivedaily) };
@@ -132,5 +142,21 @@ export class NotificationService extends HttpService {
       notificationDate,
       formData
     );
+  }
+
+  getNotificacionesByTransferentIndiciadoCity(
+    body: INotificationTransferentIndiciadoCityGetData | any
+  ) {
+    return this.notificationRepository.getNotificacionesByTransferentIndiciadoCity(
+      'notification/notification/find-notification-by-transferent-or-city',
+      body
+    );
+  }
+
+  getVolanteNotificacionesByNoExpedient(id: string) {
+    let expedient = encodeURI(id);
+    return this.httpClient.get<
+      IListResponse<ItVolanteNotificacionesByNoExpedient>
+    >('notification/notification/find-count-by-expedient/' + expedient);
   }
 }

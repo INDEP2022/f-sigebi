@@ -14,7 +14,8 @@
           <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
         </button>
       </div>
-      <div class="p-2" *ngIf="approvalProcess">
+      <!-- *ngIf="approvalProcess" -->
+      <div class="p-2">
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -96,7 +97,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">No&#46; Oficio&#58;</label>
-                  {{ registRequestForm.get('paperNumber').value }}
+                  {{ registRequestForm?.get('paperNumber').value }}
                 </div>
               </div>
               <div class="col-md-4">
@@ -160,7 +161,8 @@
               -->
               <app-request-detail-tab
                 *ngIf="requestRegistration === false"
-                [requestForm]="registRequestForm"></app-request-detail-tab>
+                [requestForm]="registRequestForm"
+                [process]="process"></app-request-detail-tab>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">
@@ -178,7 +180,8 @@
               <!-- clasificacion de bienes -->
               <app-classification-assets-tab
                 *ngIf="classifyAssets"
-                [requestObject]="requestData"
+                [requestObject]="registRequestForm"
+                [process]="process"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
               <!-- Validacion de Documentos -->

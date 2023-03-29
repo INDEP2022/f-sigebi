@@ -18,12 +18,15 @@ export interface IGood {
   status: string;
   classificationGood?: any;
   remarksOrien?: any;
+  physicalStatus?: boolean;
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
   appraiserOpinion?: any;
   goodTypeId: number;
   originSignals?: any;
+  goodDescription?: string;
+  saeDestiny?: string;
   worthApraisal: string;
   Nodrawer?: any;
   NoVault?: any;
@@ -42,9 +45,14 @@ export interface IGood {
   placeNotification?: any;
   fecResdiscardRecRev?: any;
   fecResissueRecRev?: any;
+  transferentDestiny?: string;
   fecResAgreementRecRev?: any;
   fecResAudienceRecRev?: any;
+  notesTransferringEntity?: string;
+  saeMeasureUnit?: string;
+  compliesNorm?: string;
   observationRecRev?: any;
+  duplicatedGood?: any;
   reasonAbandonment?: any;
   resolution?: any;
   fecUnaffordability?: any;
@@ -52,11 +60,13 @@ export interface IGood {
   usrApprovedUtilization?: any;
   fecApprovedUtilization?: any;
   observationUtilization?: any;
+  storeNumber?: any;
   fecSoliChangeNumerary?: any;
   userSolicChangeNumerary?: any;
   reasonChangeNumerary?: any;
   requestChangeNumerary?: any;
   fecAuthorizesChangeNumerary?: any;
+  uniqueKey?: any;
   userAuthorizesChangeNumera?: any;
   AuthorizesChangeNumerary?: any;
   fecRatifiesChangeNumerary?: any;
@@ -64,6 +74,7 @@ export interface IGood {
   fecNotificationRecRev?: any;
   reasonRecRev?: any;
   agreementInitial?: any;
+  requestFolio?: any;
   observation: string;
   NoProceedings: string;
   NoexpAssociated: string;
@@ -85,12 +96,14 @@ export interface IGood {
   NoRegister: string;
   fecAgreementAseg: string;
   state: string;
+  origin: string;
   typOpinion?: any;
   fecPresentation?: any;
   fecSubsanaRecRev?: any;
   statusReception?: any;
   userPromoterDecoDevo?: any;
   fecProgramerXDecoDevo?: any;
+  ligieUnit: string;
   noGoogDadBias?: any;
   declarationAbnSera?: any;
   identifier: string;
@@ -132,6 +145,7 @@ export interface IGood {
   entityFederative?: any;
   stateConservation?: any;
   armor?: any;
+  useType?: string;
   brand?: any;
   subbrand?: any;
   model?: any;
@@ -347,6 +361,8 @@ export interface IGood {
   no_etiqueta: ILabelOKey;
   estatus: Estatus;
   no_expediente: NoExpediente;
+  goodClassNumber?: number;
+  fractionId?: number;
 }
 
 // TODO: Checar a que interfaz pertenece
@@ -444,7 +460,7 @@ export interface IDomicilies {
   versionid?: number | null;
   requestIdid?: number | null;
   warehouseAlias?: string;
-  regionalDelegationIdid?: number | null;
+  regionalDelegationId?: number | null;
 }
 
 //Bien inmueble
@@ -587,8 +603,8 @@ export interface IDescriptionByNoGoodResponse {
 
 export interface IFromGoodsAndExpedientsBody {
   goodNumber: number;
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
 }
 
 export interface IFromGoodsAndExpedientsResponse {

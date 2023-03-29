@@ -41,8 +41,8 @@ export class SubDelegationService extends HttpService {
     );
   }
 
-  remove(id: string | number) {
-    const route = `${SubDelegationEndpoints.SubDelegation}/${id}`;
-    return this.delete(route);
+  remove(model: Object) {
+    const route = `${SubDelegationEndpoints.SubDelegation}`;
+    return this.delete(route, model);
   }
 }

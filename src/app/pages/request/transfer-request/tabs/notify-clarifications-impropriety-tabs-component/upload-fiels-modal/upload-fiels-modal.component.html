@@ -30,14 +30,14 @@
               formControlName="password" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4" *ngIf="!isRFCHided">
+        <!-- *ngIf="!isRFCHided" -->
         <div class="col-md-6">
           <form-field [control]="fileForm.get('rfc')" label="RFC">
-            <input type="password" class="form-control" formControlName="rfc" />
+            <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
       </div>
+
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
@@ -46,6 +46,7 @@
             <input
               type="file"
               class="form-control"
+              accept=".cer"
               formControlName="certificationFile"
               (change)="chargeCertifications($event)" />
           </form-field>
@@ -55,8 +56,6 @@
             placeholder="Seleccione un certificado"
             (change)="chargeCertifications($event.target)" /> -->
         </div>
-      </div>
-      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
             [control]="fileForm.get('keyCertificationFile')"
@@ -64,11 +63,13 @@
             <input
               type="file"
               class="form-control"
+              accept=".key"
               formControlName="keyCertificationFile"
               (change)="chargeKeyCertifications($event)" />
           </form-field>
         </div>
       </div>
+      <div class="row pt-4"></div>
     </form>
   </div>
   <div footer>
@@ -78,7 +79,7 @@
           class="btn btn-primary btn-sm active"
           [disabled]="fileForm.invalid"
           (click)="confirm()">
-          Guardar
+          Aceptar
         </button>
         <!--<confirm-button
           [disabled]="fileForm.invalid"

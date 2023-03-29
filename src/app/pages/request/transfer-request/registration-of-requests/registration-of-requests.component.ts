@@ -4,11 +4,18 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -51,7 +58,8 @@ export class RegistrationOfRequestsComponent
   bsValue = new Date();
   isExpedient: boolean = false;
   infoRequest: IRequest;
-
+  typeDocument: string = '';
+  process: string = '';
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -96,7 +104,10 @@ export class RegistrationOfRequestsComponent
     private goodService: GoodService,
     private fractionService: FractionService,
     private goodEstateService: RealStateService,
-    private registrationHelper: RegistrationHelper
+    private registrationHelper: RegistrationHelper,
+    private taskService: TaskService,
+    private authService: AuthService,
+    private orderService: OrderServiceService
   ) {
     super();
   }
@@ -105,6 +116,7 @@ export class RegistrationOfRequestsComponent
     const id = this.route.snapshot.paramMap.get('id');
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
+    this.processView();
     this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
@@ -113,15 +125,23 @@ export class RegistrationOfRequestsComponent
     this.dinamyCallFrom();
   }
 
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      this.process = item.process;
+    });
+  }
+
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
   associateExpedientListener() {
     this.requestHelperService.currentExpedient.subscribe({
       next: resp => {
         if (resp === true) {
-          this.isExpedient = resp;
+          this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
       },
+      error: error => {},
     });
   }
 
@@ -147,15 +167,15 @@ export class RegistrationOfRequestsComponent
       typeRecord: [null],
       publicMinistry: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ], //cargo remitente
       phoneOfOwner: [
         null,
@@ -163,142 +183,151 @@ export class RegistrationOfRequestsComponent
       ], //telefono remitente
       emailOfOwner: [
         null,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(100)],
       ], //email remitente
       court: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
       crime: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       receiptRoute: [null],
       destinationManagement: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       indicatedTaxpayer: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
       affair: [null],
       transferEntNotes: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
       transferenceFile: [null],
       previousInquiry: [null],
       trialType: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       circumstantialRecord: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       lawsuit: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       tocaPenal: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
     });
   }
 
   getRequest(id: any) {
-    this.requestService.getById(id).subscribe((data: any) => {
-      this.infoRequest = data;
-      this.getTransferent(data.transferenceId);
-      this.getRegionalDelegation(data.regionalDelegationId);
-      this.getStateOfRepublic(data.keyStateOfRepublic);
-      this.getAuthority(data.authorityId);
-      this.getStation(data.stationId);
-      //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
-      this.isExpedient = data.recordId ? true : false;
+    this.requestService.getById(id).subscribe({
+      next: async (data: any) => {
+        this.infoRequest = data;
+        await this.getTransferent(data.transferenceId);
+        await this.getRegionalDelegation(data.regionalDelegationId);
+        await this.getStation(data.transferenceId, data.stationId);
+        await this.getStateOfRepublic(data.keyStateOfRepublic);
+        await this.getAuthority(
+          data.transferenceId,
+          data.stationId,
+          data.authorityId
+        );
 
-      this.registRequestForm.patchValue(data);
-      /*request.receptionDate = new Date().toISOString();
+        //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
+        this.isExpedient = data.recordId ? true : false;
+
+        this.registRequestForm.patchValue(data);
+        /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
+      },
+      error: error => {
+        /*if (error.error.message === 'No se encontraron registros.') {
+          this.router.navigate(['pages/request/list']);
+        }*/
+      },
     });
   }
 
-  // private getData({
-  //   idTransferent,
-  //   regionalDelegationId,
-  //   keyStateOfRepublic,
-  //   authorityId,
-  //   stationId,
-  // }: any) {
-  //   const obsTransferent = this.transferentService.getById(idTransferent);
-  //   const obsDelegation = this.delegationService.getById(regionalDelegationId);
-  //   const obsStateOfRepublic =
-  //     this.stateOfRepublicService.getById(keyStateOfRepublic);
-  //   const obsAuthority = this.authorityService.getById(authorityId);
-  //   const obsStation = this.stationService.getById(stationId);
-  //   forkJoin([
-  //     obsTransferent,
-  //     obsDelegation,
-  //     obsStateOfRepublic,
-  //     obsAuthority,
-  //     obsStation,
-  //   ]).subscribe({
-  //     next: ([transferent, delegation, stateRepublic, authority, station]) => {
-  //       if (transferent) {
-  //         this.transferentName = transferent.nameTransferent;
-  //       }
-  //       if (delegation) {
-  //         this.delegationName = delegation.description;
-  //       }
-  //       if (stateRepublic) {
-  //         this.stateOfRepublicName = stateRepublic.descCondition;
-  //       }
-  //       if (authority) {
-  //         this.authorityName = authority.authorityName;
-  //       }
-  //       if (station) {
-  //         this.stationName = station.stationName;
-  //       }
-  //     },
-  //   });
-  // }
-
   getTransferent(idTransferent: number) {
-    this.transferentService.getById(idTransferent).subscribe(data => {
-      this.transferentName = data.nameTransferent;
+    return new Promise((resolve, reject) => {
+      this.transferentService.getById(idTransferent).subscribe(data => {
+        this.transferentName = data.nameTransferent;
+        resolve(true);
+      });
     });
   }
 
   getRegionalDelegation(idDelegation: number) {
-    this.delegationService.getById(idDelegation).subscribe(data => {
-      this.delegationName = data.description;
+    return new Promise((resolve, reject) => {
+      this.delegationService.getById(idDelegation).subscribe(data => {
+        this.delegationName = data.description;
+        resolve(true);
+      });
     });
   }
 
   getStateOfRepublic(idState: number) {
-    this.stateOfRepublicService.getById(idState).subscribe(data => {
-      this.stateOfRepublicName = data.descCondition;
+    return new Promise((resolve, reject) => {
+      this.stateOfRepublicService.getById(idState).subscribe(data => {
+        this.stateOfRepublicName = data.descCondition;
+        resolve(true);
+      });
     });
   }
 
-  getAuthority(idAuthority: number) {
-    this.authorityService.getById(idAuthority).subscribe(data => {
-      this.authorityName = data.authorityName;
+  getAuthority(idTransferent: number, idStation: number, idAuthority: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.idStation'] = `$eq:${idStation}`;
+      params['filter.idTransferer'] = `$eq:${idTransferent}`;
+      params['filter.idAuthority'] = `$eq:${idAuthority}`;
+      this.authorityService.getAll(params).subscribe({
+        next: data => {
+          this.authorityName = data.data[0].authorityName;
+          resolve(true);
+        },
+        error: error => {
+          this.authorityName = '';
+          resolve(true);
+        },
+      });
     });
   }
 
-  getStation(idStation: number) {
-    this.stationService.getById(idStation).subscribe(data => {
-      this.stationName = data.stationName;
+  getStation(idTransferent: number, idStation: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${idStation}`;
+      params['filter.idTransferent'] = `$eq:${idTransferent}`;
+      this.stationService.getAll(params).subscribe({
+        next: data => {
+          this.stationName = data.data[0].stationName;
+          resolve(true);
+        },
+        error: error => {
+          this.stationName = '';
+          resolve(true);
+        },
+      });
     });
   }
 
@@ -336,35 +365,41 @@ export class RegistrationOfRequestsComponent
       this.tab4 = 'Asociar Expediente';
       this.tab5 = 'Expediente';
       this.btnTitle = 'Verificar Cumplimiento';
+      this.typeDocument = 'captura-solicitud';
     } else if (this.complianceVerifi == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Verificar Cumplimiento';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Clasificar Bien';
+      this.typeDocument = 'verificar-cumplimiento';
     } else if (this.classifyAssets == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Clasificación de Bienes';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Destino Documental';
+      this.typeDocument = 'clasificar-bienes';
     } else if (this.validateDocument) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Aclaraciones';
       this.tab3 = 'Identifica Destino Documental';
       this.btnTitle = 'Solicitar Aprobación';
+      this.typeDocument = 'validar-destino-bien';
     } else if (this.notifyClarifiOrImpropriety) {
       this.tab1 = 'Detalle de la Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Terminar';
       this.btnSaveTitle = 'Guardar';
+      this.typeDocument = 'validar-notificar-aclaracion';
     } else if (this.approvalProcess) {
       this.tab1 = 'Detalle de la Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Domicilio de la Transferente';
       this.tab4 = 'Verificación del Cumplimiento';
       this.tab5 = 'Expediente';
-      this.btnTitle = 'Aprovar';
+      this.btnTitle = 'Aprobar';
       this.btnSaveTitle = '';
+      this.typeDocument = 'proceso-aprovacion';
     }
   }
 
@@ -376,6 +411,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -384,13 +420,13 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       this.fractionService.getById(fractionId).subscribe({
         next: resp => {
-          debugger;
           if (resp.fractionCode) {
             resolve(resp.fractionCode);
           } else {
             resolve('');
           }
         },
+        error: error => {},
       });
     });
   }
@@ -402,6 +438,7 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           resolve(resp);
         },
+        error: error => {},
       });
     });
   }
@@ -425,6 +462,7 @@ export class RegistrationOfRequestsComponent
           next: resp => {
             resolve(resp);
           },
+          error: error => {},
         });
       } else {
         resolve(null);
@@ -433,6 +471,141 @@ export class RegistrationOfRequestsComponent
   }
 
   finishMethod() {
+    debugger;
+    this.requestService
+      .update(this.requestData.id, this.requestData)
+      .subscribe({
+        next: resp => {
+          if (resp.statusCode !== null) {
+            this.message('error', 'Error', 'Ocurrio un error al guardar');
+          }
+          if (resp.id !== null) {
+            this.message(
+              'success',
+              'Solicitud Guardada',
+              'Se guardo la solicitud correctamente'
+            );
+          }
+        },
+        error: error => {},
+      });
+  }
+
+  confirm() {
+    this.msgSaveModal(
+      'Aceptar',
+      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
+      'Confirmación',
+      undefined,
+      this.typeDocument
+    );
+  }
+
+  //metodo que guarda la captura de solivitud
+  public async confirmMethod() {
+    /* trae solicitudes actualizadas */
+    const request = await this.getAsyncRequestById();
+    if (request) {
+      /* valida campos */
+      const result = await this.registrationHelper.validateForm(request);
+      if (result === true) {
+        /* abre modal del elegir usuario */
+        this.cambiarTipoUsuario(this.requestData);
+      }
+    }
+  }
+
+  cambiarTipoUsuario(request: any) {
+    this.openModal(SelectTypeUserComponent, request, 'commit-request');
+  }
+  /* Fin guardar captura de solicitud */
+
+  /* Metodo para guardar la Verificacion de cumplimientos */
+  async verifyComplianceMethod() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/classify-assets';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'VERIFICAR_CUMPLIMIENTO';
+        const to = 'CLASIFICAR_BIEN';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+  /* Fin Metodo para guardar verifucacion cumplimiento */
+
+  /* Metodo para guardar la clasificacion de bienes */
+  async classifyGoodMethod() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/validate-document';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'CLASIFICAR_BIEN';
+        const to = 'DESTINO_DOCUMENTAL';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+  /* Fin Metodo para guardar clasificacion de bienes */
+
+  /* Metodo de destino documental */
+  async destinyDocumental() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'DESTINO_DOCUMENTAL';
+        const to = 'SOLICITAR_APROBACION';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+  /* Fin metodo destino documental */
+
+  saveClarification(): void {
+    this.saveClarifiObject = true;
+  }
+
+  close() {
+    this.registRequestForm.reset();
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+  }
+
+  signDictum() {
+    this.openModal(GenerateDictumComponent, '', 'approval-request');
+  }
+
+  /** Proceso de aprobacion */
+  private approveRequest() {
+    /**Verificar datos */
+    return;
     this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
@@ -450,44 +623,83 @@ export class RegistrationOfRequestsComponent
         },
       });
   }
+  /** fin de proceso */
 
-  confirm() {
-    const typeCommit = 'confirm-request';
-    this.msgSaveModal(
-      'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
-      'Confirmación',
-      undefined,
-      typeCommit
-    );
+  createTask(oldTask: any, title: string, url: string) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      const user: any = this.authService.decodeToken();
+      body['id'] = 0;
+      body['assignees'] = oldTask.assignees;
+      body['assigneesDisplayname'] = oldTask.assigneesDisplayname;
+      body['creator'] = user.username;
+      body['taskNumber'] = Number(this.requestData.id);
+      body['title'] = title;
+      /* body['isPublic'] = 'S';
+      body['istestTask'] = 'S'; */
+      body['programmingId'] = 0;
+      body['requestId'] = this.requestData.id;
+      body['expedientId'] = this.requestData.recordId;
+      body['urlNb'] = url;
+      this.taskService.createTask(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.message('error', 'Error', 'Error al crear la tarea');
+          console.log(error);
+        },
+      });
+    });
   }
 
-  //metodo que guarda la verificacion
-  public async confirmMethod() {
-    const request = await this.getAsyncRequestById();
-    if (request) {
-      const result = await this.registrationHelper.validateForm(request);
-      if (result === true) {
-        this.cambiarTipoUsuario(this.requestData);
-      }
-    }
+  getOldTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          const task = {
+            assignees: resp.data[0].assignees,
+            assigneesDisplayname: resp.data[0].assigneesDisplayname,
+          };
+          resolve(task);
+        },
+        error: error => {
+          this.message('error', 'Error', 'Error al obtener la tarea antigua');
+          reject(error.error.message);
+        },
+      });
+    });
   }
 
-  cambiarTipoUsuario(request: any) {
-    this.openModal(SelectTypeUserComponent, request, 'commit-request');
-  }
-
-  saveClarification(): void {
-    this.saveClarifiObject = true;
-  }
-
-  close() {
-    this.registRequestForm.reset();
-    this.router.navigate(['pages/request/list']);
-  }
-
-  signDictum() {
-    this.openModal(GenerateDictumComponent, '', 'approval-request');
+  createOrderService(from: string, to: string) {
+    return new Promise((resolve, reject) => {
+      let orderservice: IOrderService = {};
+      orderservice.P_ESTATUS_ACTUAL = from;
+      orderservice.P_ESTATUS_NUEVO = to;
+      orderservice.P_ID_SOLICITUD = this.requestData.id;
+      orderservice.P_SIN_BIENES = '';
+      orderservice.P_BIENES_ACLARACION = '';
+      orderservice.P_FECHA_INSTANCIA = '';
+      orderservice.P_FECHA_ACTUAL = '';
+      orderservice.P_ORDEN_SERVICIO_IN = '';
+      orderservice.P_ORDEN_SERVICIO_OUT = '';
+      this.orderService.UpdateStatusGood(orderservice).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            'Error al actualizar el estatus del bien'
+          );
+          reject(error.error.message);
+        },
+      });
+    });
   }
 
   msgSaveModal(
@@ -511,8 +723,22 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
-        if (typeCommit === 'confirm-request') {
+        if (typeCommit === 'captura-solicitud') {
           this.confirmMethod();
+        }
+
+        if (typeCommit === 'verificar-cumplimiento') {
+          this.verifyComplianceMethod();
+        }
+        if (typeCommit === 'clasificar-bienes') {
+          this.classifyGoodMethod();
+        }
+        if (typeCommit === 'validar-destino-bien') {
+          this.destinyDocumental();
+        }
+
+        if (typeCommit === 'proceso-aprovacion') {
+          this.approveRequest();
         }
       }
     });
@@ -535,17 +761,27 @@ export class RegistrationOfRequestsComponent
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
-
-    /*  this.BsModal.content.event.subscribe((res: any) => {
-      console.log(res);
-    }); */
   }
 
   dinamyCallFrom() {
-    console.log(this.registRequestForm);
     this.registRequestForm.valueChanges.subscribe(data => {
-      console.log(data);
       this.requestData = data;
+    });
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.close();
+      }
     });
   }
 }

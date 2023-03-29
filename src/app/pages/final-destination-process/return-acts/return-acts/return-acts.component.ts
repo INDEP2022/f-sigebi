@@ -10,11 +10,13 @@ import {
   catchError,
   concatMap,
   EMPTY,
+  from,
   map,
   of,
   switchMap,
   takeUntil,
   tap,
+  toArray,
 } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -34,7 +36,7 @@ import { PROCEEDINGS_COLUMNS } from './proceedings-columns';
 @Component({
   selector: 'app-return-acts',
   templateUrl: './return-acts.component.html',
-  styles: [],
+  styleUrls: ['./return-acts.component.scss'],
 })
 export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   proceedingList: any[] = [
@@ -75,7 +77,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   // dataTable: any[] = [];
   proceedingsNumb: number;
   //paginacion
-  firsTime: boolean;
+  firsTime: boolean = false;
   paginatorGoods: any = {};
   paginatorProceedings: any = {};
   paramsDetailProceedings = new BehaviorSubject<ListParams>(new ListParams());
@@ -91,7 +93,14 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     super();
 
     this.settings = { ...this.settings };
-    this.settings.columns = PROCEEDINGS_COLUMNS;
+    this.settings.selectMode = 'single';
+    (this.settings.rowClassFunction = (row: any) => {
+      if (row.isSelected) {
+        return 'selected-row';
+      }
+      return '';
+    }),
+      (this.settings.columns = PROCEEDINGS_COLUMNS);
     this.settings.actions.delete = true;
     this.settingsDetailProceedings = { ...this.settings, actions: false };
     this.settingsDetailProceedings.columns = COLUMNS;
@@ -103,12 +112,25 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.startCalendars();
+    this.initPaginatorProceedings();
+    this.initPaginatorGoods();
+    this.initPaginatorDetailProceedings();
+  }
+
+  onRowSelect(event: any): void {
+    const selectedRow = event.data;
+    this.proceedingsData.forEach(row => {
+      row.isSelected = false;
+    });
+    selectedRow.isSelected = true;
+    // this.gridService.grid.dataSet.select(selectedRow);
   }
 
   getGoods() {
     return this.goodService.getByExpedient(this.fileNumber, {
       text: '?expedient=',
+      page: this.paginatorGoods.page,
+      limit: this.paginatorGoods.limit,
     });
     // .subscribe(data => console.log(data));
   }
@@ -162,6 +184,42 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
                 );
               return of(err);
             }),
+            concatMap((detail: any) => {
+              console.log(detail.data);
+              return from(detail.data).pipe(
+                concatMap((element: any) => {
+                  console.log(element);
+                  return this.goodService
+                    .getFromGoodsAndExpedients({
+                      goodNumber: Number(element?.numGoodId?.id),
+                    })
+                    .pipe(
+                      map((status_description: any) => {
+                        console.log('222222222: ', status_description);
+                        return {
+                          ...element,
+                          di_status_good:
+                            status_description.data[0].description,
+                        };
+                      })
+                    );
+                }),
+                toArray()
+              );
+            }),
+            // map((data: any) => {
+            //   for (let good of data?.data) {
+            //     this.goodService
+            //       .getFromGoodsAndExpedients({
+            //         goodNumber: Number(good.numGoodId.id),
+            //       })
+            //       .pipe(
+            //         tap((data: any) => {
+            //           good.di_status_good = data.data[0].description;
+            //         })
+            //       );
+            //   }
+            // }),
             concatMap((detailProceeding: any) =>
               this.getGoods().pipe(
                 map((goods: any) => ({
@@ -180,9 +238,9 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
           this.firsTime = false;
           this.prepareData(data);
           this.totalProceedings = Number(data.proceedings.count);
+          console.log(data?.detailProceeding?.length);
+          this.totalDetailProceedings = Number(data.detailProceeding.length);
           this.totalGoods = Number(data.goods.count);
-          this.totalDetailProceedings = Number(data.detailProceeding.count);
-          console.log(data);
         },
         error: error => {
           console.log(error);
@@ -200,8 +258,6 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     this.proceedingsData2 = [];
     let expedientInfo: any = {};
     this.dataResp = data.proceedings.data[0];
-    // this.statusAct = 'ABIERTA';
-    // this.statusAct = this.dataResp.proceedingStatus;          //DESCOMENTAR ESTO
     expedientInfo.penaltyCause =
       data.proceedings.data[0].fileNumber.penaltyCause;
     expedientInfo.previewFind = data.proceedings.data[0].fileNumber.previewFind;
@@ -267,7 +323,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     console.log(detailProceedings);
     this.quantityDetailProceedings = detailProceedings?.count;
     let detailProceedingsData: any[] = [];
-    for (let detail of detailProceedings?.data) {
+    console.log(detailProceedings);
+    for (let detail of detailProceedings) {
       let data: any = {
         goodId: detail.good[0].id,
         description: detail.good[0].description,
@@ -281,10 +338,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     this.detailProceedingsData = detailProceedingsData;
   }
 
-  onSubmit() {
-    this.initPaginatorProceedings();
-    this.initPaginatorDetailProceedings();
-  }
+  onSubmit() {}
 
   initPaginatorProceedings() {
     console.log('Inicio');
@@ -328,11 +382,9 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       this.paginatorGoods.limit = data.limit;
       if (!this.firsTime) {
         console.log('XXXX');
-        this.getDetailProceedings(this.proceedingsNumb).subscribe(
-          (data: any) => {
-            this.prepareGoodsData(data);
-          }
-        );
+        this.getGoods().subscribe((data: any) => {
+          this.prepareGoodsData(data);
+        });
       }
     });
   }
