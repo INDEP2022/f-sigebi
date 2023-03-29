@@ -397,6 +397,16 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
+    const info = this.classiGoodsForm.getRawValue();
+    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
+      this.classiGoodsForm.get('stateConservation').setValue(1);
+    this.classiGoodsForm.get('physicalStatus').setValue(1);
+
+    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
+      this.classiGoodsForm.get('stateConservation').setValue(2);
+    this.classiGoodsForm.get('physicalStatus').setValue(2);
+    this.classiGoodsForm.get('destiny').setValue(1);
+
     const goods = this.classiGoodsForm.getRawValue();
 
     if (goods.addressId === null) {
