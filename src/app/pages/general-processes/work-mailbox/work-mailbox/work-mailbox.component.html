@@ -299,7 +299,8 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="dataTable"
-            (userRowSelect)="selectEvent($event)">
+            (userRowSelect)="selectEvent($event)"
+            (editConfirm)="onSaveConfirm($event)">
           </ng2-smart-table>
         </div>
       </div>
@@ -339,9 +340,9 @@
           <button class="btn btn-info btn-sm active mx-1" disabled>
             Im&aacute;genes SIJ
           </button>
-          <button class="btn btn-info btn-sm active mx-1" disabled>
+          <!-- <button class="btn btn-info btn-sm active mx-1" disabled>
             Cambiar Estatus
-          </button>
+          </button> -->
         </div>
       </div>
     </form>

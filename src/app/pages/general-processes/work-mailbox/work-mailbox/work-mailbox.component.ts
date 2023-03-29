@@ -192,16 +192,25 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private notificationsService: NotificationService
   ) {
     super();
-    this.settings.actions = false;
+    this.settings.actions = true;
     this.settings.columns = WORK_MAILBOX_COLUMNS2;
     this.settings = {
       ...this.settings,
-      selectMode: 'inline',
+      mode: 'inline',
       actions: {
         ...this.settings.actions,
         delete: false,
         add: false,
-        edit: false,
+        edit: true,
+        columnTitle: 'Acciones',
+        position: 'right',
+      },
+      edit: {
+        ...this.settings.edit,
+        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmSave: true,
       },
       hideSubHeader: false,
     };
@@ -259,6 +268,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             this.getData();
           }
         }
+
+        // this.workService.getStatus().subscribe({
+        //   next: (resp: any) => {
+        //     console.log(resp);
+        //
+        //   }
+        // })
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -1423,5 +1439,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       fromDateCtrl.addValidators(maxDate(min));
     }
     fromDateCtrl.updateValueAndValidity();
+  }
+
+  onSaveConfirm(event: any) {
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Actualizado', '');
   }
 }
