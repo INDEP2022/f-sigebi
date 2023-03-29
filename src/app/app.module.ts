@@ -21,12 +21,18 @@ import { TransferorsModule } from './pages/catalogs/transferors/transferors.modu
 import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
 import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
 import { MailModule } from './pages/parameterization/mail/mail.module';
+import { LoadingComponent } from './shared/components/loading/loading.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
 @NgModule({
-  declarations: [AppComponent, ContentComponent, InputFormDirective],
+  declarations: [
+    AppComponent,
+    ContentComponent,
+    InputFormDirective,
+    LoadingComponent,
+  ],
   imports: [
     BrowserModule,
     FullModule,

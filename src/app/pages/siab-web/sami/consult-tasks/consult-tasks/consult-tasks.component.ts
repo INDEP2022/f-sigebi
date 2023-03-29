@@ -13,6 +13,7 @@ import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/consult-tasks/consult-tasks-columns';
 @Component({
   selector: 'app-consult-tasks',
@@ -54,23 +55,25 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       unlinked: [null, Validators.required],
       unlinked1: [null, Validators.required],
       txtSearch: [''],
-      txtTituloTarea: ['', Validators.required],
-      txtNoProgramacionEntrega: [''],
+      txtTituloTarea: [''],
+      txtNoProgramacionEntrega: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNombreActividad: [''],
-      txtNoOrdenServicio: [''],
+      txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAsignado: [''],
-      txtNoOrdenPago: [''],
+      txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAprobador: [''],
-      txtNoOrdenIngreso: [''],
+      txtNoOrdenIngreso: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNombreAplicacion: [''],
-      txtNoMuestreo: [''],
-      txtFechaAsignacion: [''],
-      txtNoMuestreoOrden: [''],
-      txtFechaFin: [''],
-      txtNoDelegacionRegional: [''],
-      txtNoSolicitud: [''],
-      txtNoTransfiriente: [''],
-      txtNoProgramacion: [''],
+      txtNoMuestreo: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtFecAsigDesde: [''],
+      txtFecAsigHasta: [''],
+      txtNoMuestreoOrden: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtFechaFinDesde: [''],
+      txtFechaFinHasta: [''],
+      txtNoDelegacionRegional: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoTransfiriente: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
     });
 
     this.params
@@ -183,14 +186,24 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtFechaAsignacion) {
+    if (
+      this.consultTasksForm.value.txtFecAsigDesde &&
+      this.consultTasksForm.value.txtFecAsigHasta
+    ) {
+      const fechaInicio = this.consultTasksForm.value.txtFecAsigDesde;
+      const fechaFin = this.consultTasksForm.value.txtFecAsigHasta;
+
+      const inicio =
+        fechaInicio instanceof Date
+          ? fechaInicio.toISOString().split('T')[0]
+          : fechaInicio;
+      const final = fechaFin
+        ? fechaFin.toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
+
       this.filterParams
         .getValue()
-        .addFilter(
-          'assignedDate',
-          this.consultTasksForm.value.txtFechaAsignacion,
-          SearchFilter.ILIKE
-        );
+        .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
       this.filterParams
@@ -201,14 +214,21 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtFechaFin) {
+    if (this.consultTasksForm.value.txtFechaFinDesde) {
+      const fechaInicio = this.consultTasksForm.value.txtFechaFinDesde;
+      const fechaFin = this.consultTasksForm.value.txtFechaFinHasta;
+
+      const inicio =
+        fechaInicio instanceof Date
+          ? fechaInicio.toISOString().split('T')[0]
+          : fechaInicio;
+      const final = fechaFin
+        ? fechaFin.toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
+
       this.filterParams
         .getValue()
-        .addFilter(
-          'endDate',
-          this.consultTasksForm.value.txtFechaFin,
-          SearchFilter.ILIKE
-        );
+        .addFilter('endDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoDelegacionRegional) {
       this.filterParams
@@ -262,6 +282,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .getTasksByUser(this.filterParams.getValue().getParams())
       .subscribe({
         next: response => {
+          console.log('Response: ', response);
+
           this.loading = false;
           this.tasks = response.data;
           this.totalItems = response.count;
@@ -279,7 +301,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   onKeydown(event: any) {
-    // console.log("event", event);
+    console.log('Apreto enter event', event);
     this.getTasks();
   }
 
@@ -290,5 +312,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
     }
+  }
+
+  get fechaMin() {
+    return '2022/01/01'; //this.consultTasksForm.get('fechafin');
   }
 }

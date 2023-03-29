@@ -54,7 +54,7 @@ export class RegistrationOfRequestsComponent
   isExpedient: boolean = false;
   infoRequest: IRequest;
   typeDocument: string = '';
-
+  process: string = '';
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -110,12 +110,21 @@ export class RegistrationOfRequestsComponent
     const id = this.route.snapshot.paramMap.get('id');
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
+    this.processView();
     this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
     this.dinamyCallFrom();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      console.log(item);
+      this.process = item.process;
+    });
   }
 
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
@@ -384,7 +393,7 @@ export class RegistrationOfRequestsComponent
       this.tab3 = 'Domicilio de la Transferente';
       this.tab4 = 'Verificación del Cumplimiento';
       this.tab5 = 'Expediente';
-      this.btnTitle = 'Aprovar';
+      this.btnTitle = 'Aprobar';
       this.btnSaveTitle = '';
       this.typeDocument = 'proceso-aprovacion';
     }
@@ -551,6 +560,31 @@ export class RegistrationOfRequestsComponent
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
 
+  /** Proceso de aprobacion */
+  private approveRequest() {
+    /**Verificar datos */
+    console.log(this.requestData);
+    console.log('---- Redireccionar finalizando proceso ----');
+    return;
+    this.requestService
+      .update(this.requestData.id, this.requestData)
+      .subscribe({
+        next: resp => {
+          if (resp.statusCode !== null) {
+            this.message('error', 'Error', 'Ocurrio un error al guardar');
+          }
+          if (resp.id !== null) {
+            this.message(
+              'success',
+              'Solicitud Guardada',
+              'Se guardo la solicitud correctamente'
+            );
+          }
+        },
+      });
+  }
+  /** fin de proceso */
+
   createTask(task: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTask(task).subscribe({
@@ -563,7 +597,6 @@ export class RegistrationOfRequestsComponent
       });
     });
   }
-
   msgSaveModal(
     btnTitle: string,
     message: string,
@@ -582,6 +615,8 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
+        console.log(typeCommit);
+
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
@@ -591,6 +626,9 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'verificar-cumplimiento') {
           this.verifyComplianceMethod();
+        }
+        if (typeCommit === 'proceso-aprovacion') {
+          this.approveRequest();
         }
       }
     });

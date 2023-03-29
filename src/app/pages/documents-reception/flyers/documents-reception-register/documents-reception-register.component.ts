@@ -3074,7 +3074,7 @@ export class DocumentsReceptionRegisterComponent
               `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
             );
             if (this.formControls.goodRelation.value == 'S') {
-              this.sendToGoodsCapture();
+              //this.sendToGoodsCapture();
             }
           },
           error: err => {

@@ -32,6 +32,7 @@ export class ClassificationAssetsTabComponent
   @Input() dataObject: any;
   @Input() requestObject: any;
   @Input() typeDoc: any = '';
+  @Input() process: string = '';
 
   idRequest: number = 0;
   title: string = 'Bienes de la Solicitud';
@@ -72,6 +73,7 @@ export class ClassificationAssetsTabComponent
   }
 
   ngOnInit(): void {
+    console.log('p', this.process);
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
@@ -172,7 +174,6 @@ export class ClassificationAssetsTabComponent
   }
 
   goodForm() {
-    console.log('select', this.goodSelect);
     this.goodsForm = this.fb.group({
       id: [this.goodSelect?.id],
       goodId: [this.goodSelect?.idGood],
@@ -303,7 +304,6 @@ export class ClassificationAssetsTabComponent
 
     this.fractionService.getAll(this.paramsLvl4.getValue()).subscribe({
       next: response => {
-        console.log(response);
         response.data.map(info => {
           this.classiGoodsForm.get(['level4']).setValue(info.description);
         });
