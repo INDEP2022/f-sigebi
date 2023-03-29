@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
@@ -10,13 +11,15 @@ import { PrintReportModalComponent } from '../../notify-clarifications-improprie
   styles: [],
 })
 export class GenerateDictumComponent implements OnInit {
+  pdfurl: string = '';
   public event: EventEmitter<any> = new EventEmitter();
   dictumForm: ModelForm<any>;
 
   constructor(
     private bsModelRef: BsModalRef,
     private fb: FormBuilder,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {

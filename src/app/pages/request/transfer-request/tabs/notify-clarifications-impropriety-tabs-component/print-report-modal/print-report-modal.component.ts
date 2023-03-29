@@ -1,4 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -22,6 +24,10 @@ var data = [
   styles: [],
 })
 export class PrintReportModalComponent extends BasePage implements OnInit {
+  src = '';
+  isPdfLoaded = false;
+  private pdf: PDFDocumentProxy;
+
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
@@ -41,12 +47,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   constructor(
     public modalService: BsModalService,
-    public modalRef: BsModalRef
+    public modalRef: BsModalRef,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
 
+  onLoaded(pdf: PDFDocumentProxy) {
+    this.pdf = pdf;
+    this.isPdfLoaded = true;
+  }
+
   ngOnInit(): void {
+    this.src =
+      'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717';
     console.log(this.typeReport);
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = LIST_REPORTS_COLUMN;
@@ -85,6 +99,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   signReport() {
     //mostrar listado de reportes
+
     if (!this.listSigns && this.printReport && !this.isAttachDoc) {
       this.printReport = false;
       this.listSigns = true;
@@ -97,6 +112,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.openMessage(message);
       this.close();
     }
+  }
+
+  print() {
+    this.pdf.getData().then(u8 => {
+      let blob = new Blob([u8.buffer], {
+        type: 'application/pdf',
+      });
+      const blobUrl = window.URL.createObjectURL(blob);
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = blobUrl;
+      document.body.appendChild(iframe);
+      iframe.contentWindow.print();
+    });
   }
 
   ListReports() {

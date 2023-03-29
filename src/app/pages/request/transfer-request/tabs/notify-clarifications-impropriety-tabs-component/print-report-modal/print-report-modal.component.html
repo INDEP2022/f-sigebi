@@ -21,7 +21,30 @@
           </div>
         </div>
       </div>
-      <div class="row">mostrar reporte</div>
+      <div class="row pt-5">
+        <button class="btn btn-primary btn-sm" (click)="print()">
+          Descargar
+        </button>
+        <div style="position: relative; height: 715px">
+          <div class="pdf-container">
+            <pdf-viewer
+              [src]="src"
+              [rotation]="0"
+              [original-size]="false"
+              [show-all]="true"
+              [fit-to-page]="false"
+              [zoom]="1"
+              [zoom-scale]="'page-width'"
+              [stick-to-page]="false"
+              [render-text]="true"
+              [external-link-target]="'blank'"
+              [autoresize]="true"
+              [show-borders]="false"
+              (after-load-complete)="onLoaded($event)"
+              style="width: 100%; height: 600px"></pdf-viewer>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Listado de firmas electronicas -->
