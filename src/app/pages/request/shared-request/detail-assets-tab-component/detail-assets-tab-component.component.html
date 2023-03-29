@@ -520,20 +520,16 @@
         <div class="row pt-4" *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
-              *ngIf="process"
-              !="classify-assets"
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
               <i class="bx bx-home"></i> Seleccionar Domicilio
             </button>
             <button
-              *ngIf="process"
-              !="classify-assets"
               class="btn btn-secondary btn-sm active"
               style="margin-left: 2px"
               (click)="openSelectMenage()">
-              Menaje
+              ,enaje
             </button>
           </div>
         </div>
@@ -747,7 +743,7 @@
   <tab
     *ngIf="
       (carsAssets && process == 'registration-request') ||
-      (carsAssets && process == 'classify-assets')
+      (jewelerAssets && process == 'classify-assets')
     ">
     <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
@@ -915,7 +911,7 @@
   <tab
     *ngIf="
       (boatAssets && process == 'registration-request') ||
-      (boatAssets && process == 'classify-assets')
+      (jewelerAssets && process == 'classify-assets')
     ">
     <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bx-anchor"></i> Informaci&oacute;n de Embarcaci&oacute;n
@@ -1174,7 +1170,11 @@
   </tab>
 
   <!-- Informacion aereonaves -->
-  <tab>
+  <tab
+    *ngIf="
+      (aircraftAssets && process == 'registration-request') ||
+      (aircraftAssets && process == 'classify-assets')
+    ">
     <ng-template tabHeading *ngIf="process == 'registration-request'">
       <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
     </ng-template>
@@ -1325,16 +1325,9 @@
   </tab>
 
   <!-- Informacion inmuebles -->
-  <tab
-    *ngIf="
-      (immovablesAssets && process == 'registration-request') ||
-      (immovablesAssets && process == 'classify-assets')
-    ">
-    <ng-template tabHeading *ngIf="process == 'registration-request'">
+  <tab *ngIf="immovablesAssets">
+    <ng-template tabHeading>
       <i class="bx bx-building"></i> Bien Inmueble
-    </ng-template>
-    <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bx-building"></i> Ficha tecnica bien inmueble
     </ng-template>
     <form [formGroup]="goodDomicilieForm" class="form-material">
       <div class="immovablestInformation">
