@@ -12,7 +12,7 @@ export const GP_GOODS_COLUMNS = {
     sort: false,
   },
   inventorySiabiId: {
-    title: 'No. Inventario NDBDDB',
+    title: 'No. Inventario NSBDDB',
     sort: false,
   },
   socialCabite: {
@@ -28,7 +28,7 @@ export const GP_GOODS_COLUMNS = {
     sort: false,
   },
   destiny: {
-    title: 'Identificado de Destino',
+    title: 'Identificador de Destino',
     sort: false,
   },
   clasif: {
@@ -60,7 +60,7 @@ export const GP_GOODS_COLUMNS = {
     sort: false,
   },
   goodDescription: {
-    title: 'Descripcion del Bien',
+    title: 'Descripción del Bien',
     sort: false,
   },
 };

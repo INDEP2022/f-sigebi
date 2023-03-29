@@ -8,7 +8,7 @@
         <div class="col-md-12">
           <form-field
             [control]="dictumForm.get('paragraph1Dictum')"
-            label="Parrafo1 Dictamen">
+            label="Párrafo uno">
             <textarea
               class="form-control"
               formControlName="paragraph1Dictum"
@@ -21,7 +21,7 @@
         <div class="col-md-12">
           <form-field
             [control]="dictumForm.get('paragraph2Dictum')"
-            label="Parrafo2 Dictamen">
+            label="Párrafo dos">
             <textarea
               class="form-control"
               formControlName="paragraph2Dictum"
@@ -34,7 +34,7 @@
         <div class="col-md-12">
           <form-field
             [control]="dictumForm.get('ccpDictum')"
-            label="CcpDictamen">
+            label="C.c.p Dictamen">
             <textarea
               class="form-control"
               formControlName="ccpDictum"
@@ -44,19 +44,17 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
             [control]="dictumForm.get('nameRecipientDictum')"
-            label="Nombre Destinatario Dictamen">
+            label="Destinatario">
             <input
               type="text"
               class="form-control"
               formControlName="nameRecipientDictum" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
             [control]="dictumForm.get('chargeRecipientDictum')"
             label="Cargo Destinatario Dictamen">
@@ -76,7 +74,7 @@
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="signDictum()">
-          Seleccionar</button
+          Firmar dictámen</button
         ><!-- [disabled]="requestForm.invalid" -->
       </div>
       <div class="m-3">
