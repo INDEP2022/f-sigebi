@@ -453,6 +453,7 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  /*  Metodo para traer las solicitudes de un bien  */
   getClarifications(id: number | string) {
     let params = new ListParams();
     params['filter.goodId'] = `$eq:${id}`;
@@ -471,6 +472,7 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  /* Metodo para traer las aclaraciones */
   getCatClarification(id: number | string) {
     return new Promise((resolve, reject) => {
       let params = new ListParams();
