@@ -223,7 +223,7 @@
             </tab>
             <tab
               heading="{{ tab4 }}"
-              *ngIf="(requestRegistration || approvalProcess) && !isExpedient">
+              *ngIf="requestRegistration || approvalProcess">
               <app-registration-request-form
                 *ngIf="requestRegistration"
                 [requestForm]="
