@@ -516,7 +516,6 @@ export class RegistrationOfRequestsComponent
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
     const oldTask: any = await this.getOldTask();
-    debugger;
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/classify-assets';
@@ -537,7 +536,50 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
 
-  classifyGoodMethod() {}
+  /* Metodo para guardar la clasificacion de bienes */
+  async classifyGoodMethod() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/validate-document';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'CLASIFICAR_BIEN';
+        const to = 'DESTINO_DOCUMENTAL';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+  /* Fin Metodo para guardar clasificacion de bienes */
+
+  async destinyDocumental() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'DESTINO_DOCUMENTAL';
+        const to = 'SOLICITAR_APROBACION';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+
   saveClarification(): void {
     this.saveClarifiObject = true;
   }
@@ -685,6 +727,9 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'clasificar-bienes') {
           this.classifyGoodMethod();
+        }
+        if (typeCommit === 'validar-destino-bien') {
+          this.destinyDocumental();
         }
 
         if (typeCommit === 'proceso-aprovacion') {
