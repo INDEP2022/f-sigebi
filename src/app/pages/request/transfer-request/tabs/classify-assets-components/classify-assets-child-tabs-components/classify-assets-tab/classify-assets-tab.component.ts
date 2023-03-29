@@ -36,6 +36,7 @@ export class ClassifyAssetsTabComponent
   @Input() typeDoc: string = '';
   @Input() goodObject: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
+  @Input() process: string = '';
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
