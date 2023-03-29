@@ -19,6 +19,7 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDomicilies,
+  IGood,
   IGoodRealState,
 } from 'src/app/core/models/good/good.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
@@ -29,6 +30,7 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
@@ -58,6 +60,9 @@ export class DetailAssetsTabComponentComponent
   @Input() detailAssets: ModelForm<any>; // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
+  @Input() process: string = '';
+
+  goodData: IGood;
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
@@ -139,14 +144,20 @@ export class DetailAssetsTabComponentComponent
   isSaveMenaje: boolean = false;
   disableDuplicity: boolean = false; //para verificar cumplimientos = false
 
-  constructor(private fb: FormBuilder, private modalServise: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalServise: BsModalService,
+    private goodService: GoodService
+  ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.process == 'classify-assets') {
+      this.setDataGood();
+    }
     if (this.typeDoc === 'clarification') {
     }
-    console.log('typeDoc', this.typeDoc);
     //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
@@ -186,6 +197,18 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  setDataGood() {
+    const idGood = this.assetsId;
+    console.log(idGood);
+    this.goodService.getById(idGood).subscribe({
+      next: data => {
+        this.goodData = data;
+        console.log(data);
+      },
+      error: error => {},
+    });
+  }
+
   ngOnInit(): void {
     this.initForm();
     this.getDestinyTransfer(new ListParams());
@@ -201,17 +224,6 @@ export class DetailAssetsTabComponentComponent
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
-      /* this.domicileForm.controls['regionalDelegationId'].setValue(
-        this.requestObject.regionalDelegationId
-      ); */
-      /*  this.getStateOfRepublic(
-        new ListParams(),
-        this.requestObject.keyStateOfRepublic
-      );
-      this.getMunicipaly(
-        new ListParams(),
-        this.requestObject.keyStateOfRepublic
-      ); */
     }
 
     //console.log('detalle del objeto enviado');
@@ -413,9 +425,7 @@ export class DetailAssetsTabComponentComponent
       next: data => {
         this.selectMunicipe = new DefaultSelect(data.data, data.count);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -427,9 +437,7 @@ export class DetailAssetsTabComponentComponent
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -472,7 +480,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.description'] = `$ilike:${params.text}`;
     this.goodsInvService.getCatUnitMeasureView(params).subscribe({
       next: resp => {
-        console.log(resp);
         this.selectTansferUnitMeasure = new DefaultSelect(
           resp.data,
           resp.count
@@ -525,7 +532,6 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
-    console.log(this.detailAssets.getRawValue());
   }
 
   handleTheftReportEvent(event: any) {
@@ -803,7 +809,6 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
-      console.log(domicilio);
 
       var action = null;
       if (domicilio.id === null) {
