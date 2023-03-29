@@ -204,7 +204,7 @@ export class DetailAssetsTabComponentComponent
     const idGood = this.assetsId;
     this.goodService.getById(idGood).subscribe({
       next: data => {
-        this.goodType(data.goodTypeId);
+        //this.goodType(data.goodTypeId);
         this.typeRelevant(data.goodTypeId);
         if (data.stateConservation == 1 || data.physicalStatus == 1)
           data.stateConservation = 'BUENO';
