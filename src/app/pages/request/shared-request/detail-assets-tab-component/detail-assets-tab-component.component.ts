@@ -156,8 +156,9 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const valor = this.detailAssets.value;
+    const valor = this.detailAssets.value();
     console.log(valor);
+    debugger;
     if (this.process == 'classify-assets') {
       this.setDataGood();
     }
