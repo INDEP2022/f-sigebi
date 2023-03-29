@@ -12,8 +12,220 @@
       <div class="row margin-input">
         <div class="col-md-3">
           <form-field
+            [control]="consultTasksForm.get('txtTituloTarea')"
+            label="Titulo tarea">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtTituloTarea"
+              placeholder="Titulo de la tarea a buscar" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoProgramacionEntrega')"
+            label="No. Programacion Entrega">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoProgramacionEntrega"
+              placeholder="No. programacion entrega a buscar" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNombreActividad')"
+            label="Nombre de la Actividad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNombreActividad"
+              placeholder="Nombre de la actividad" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoOrdenServicio')"
+            label="No.Orden de Servicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoOrdenServicio"
+              placeholder="No Orden de Servicio" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtAsignado')"
+            label="Asignado a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtAsignado"
+              placeholder="Asignado" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoOrdenPago')"
+            label="No. Orden de Pago">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoOrdenPago"
+              placeholder="No Orden de Pago" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtAprobador')"
+            label="Aprobador">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtAprobador"
+              placeholder="Aprobador" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoOrdenIngreso')"
+            label="No. Orden de Ingreso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoOrdenIngreso"
+              placeholder="No. Orden de Ingreso" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNombreAplicacion')"
+            label="Nombre de la aplicacion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNombreAplicacion"
+              placeholder="Nombre de la aplicacion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoMuestreo')"
+            label="No. Muestreo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoMuestreo"
+              placeholder="No. de Muestreo" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtFechaAsignacion')"
+            label="Fecha de Asignacion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtFechaAsignacion"
+              placeholder="Fecha de Asignacion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoMuestreoOrden')"
+            label="No. de Muestreo de Orden">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoMuestreoOrden"
+              placeholder="No. de Muestreo de Orden" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtFechaFin')"
+            label="txtFechaFin">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtFechaFin"
+              placeholder="Fecha Finalizacion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoDelegacionRegional')"
+            label="No. de Delegacion Regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoDelegacionRegional"
+              placeholder="No. de Delegacion Regional" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoSolicitud')"
+            label="No. Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoSolicitud"
+              placeholder="No. de Solicitud" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoTransfiriente')"
+            label="No. Transfiriente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoTransfiriente"
+              placeholder="No. Transfiriente" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultTasksForm.get('txtNoProgramacion')"
+            label="No. de Programacion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="txtNoProgramacion"
+              placeholder="No. de Programacion" />
+          </form-field>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+
+      <!-- 
+       -->
+
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
             [control]="consultTasksForm.get('unlinked')"
-            label="Acciones">
+            label="Acciones1">
             <input
               type="text"
               class="form-control"
@@ -22,9 +234,9 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field
+          <!-- <form-field
             [control]="consultTasksForm.get('unlinked1')"
-            label="Estatus">
+            label="Estatus2">
             <select class="form-control" formControlName="unlinked1">
               <option [value]="0">Todos</option>
               <option [value]="1">Asignado</option>
@@ -35,7 +247,7 @@
               <option [value]="6">Alertado</option>
               <option [value]="7">Informaci&oacute;n requerido</option>
             </select>
-          </form-field>
+          </form-field> -->
         </div>
       </div>
     </form>
@@ -43,7 +255,7 @@
       <div class="col-md-2">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-sm btn-primary active"
           (click)="getTasks()"
           (keydown.enter)="onKeydown($event)">
           Buscar
@@ -52,7 +264,7 @@
       <div class="col-md-2">
         <button
           type="button"
-          class="btn btn-success active"
+          class="btn btn-sm btn-success active"
           (click)="exportToExcel()">
           Exportar a Excel
         </button>
@@ -60,7 +272,7 @@
       <div class="col-md-2">
         <button
           type="button"
-          class="btn btn-secondary active"
+          class="btn btn-sm btn-secondary active"
           (click)="cleanFilter()">
           Limpiar Filtro
         </button>

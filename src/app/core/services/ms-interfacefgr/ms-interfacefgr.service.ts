@@ -36,23 +36,27 @@ export class InterfacefgrService extends HttpService {
     );
   }
 
+  /**
+   * Ya no va a funcionar
+   * @deprecated
+   */
   getById(id: string | number): Observable<IPgrTransfer> {
     const route = `${InterfacefgrEndPoints.PgrTransfer}/${id}`;
     return this.get(route);
   }
 
   create(body: IPgrTransfer) {
-    return this.post(InterfacefgrEndPoints.PgrTransfer, body);
+    return this.post(InterfacefgrEndPoints.PgrTransferFiltered, body);
   }
 
-  update(id: string | number, body: IPgrTransfer) {
-    const route = `${InterfacefgrEndPoints.PgrTransfer}/${id}`;
+  update(body: IPgrTransfer) {
+    const route = `${InterfacefgrEndPoints.PgrTransferFiltered}`;
     return this.put(route, body);
   }
 
-  remove(id: string | number) {
-    const route = `${InterfacefgrEndPoints.PgrTransfer}/${id}`;
-    return this.delete(route);
+  remove(body: Partial<IPgrTransfer>) {
+    const route = `${InterfacefgrEndPoints.PgrTransferFiltered}`;
+    return this.delete(route, body);
   }
 
   getCountAffair(office: string): Observable<{ count: number }> {

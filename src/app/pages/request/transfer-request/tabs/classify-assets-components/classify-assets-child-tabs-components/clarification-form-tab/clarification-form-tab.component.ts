@@ -8,7 +8,6 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -30,10 +29,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   // selectTypeClarification = new DefaultSelect<any>();
   clarificationTypes = ClarificationTypes;
   selectClarification = new DefaultSelect<any>();
+  //se pasa las aclaraciones del padres
   docClarification: any;
+  //se pasa todo el bien
   goodTransfer: IGood;
-  clarificationId: number = 0;
-  idGood: number = 0;
+  //clarificationId: number = 0; ya no
+  //idGood: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -93,14 +94,16 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   getClarification(params: ListParams | string): void {
     this.clarificationService.getAll(params).subscribe({
       next: data => {
+        console.log(data);
+
         this.selectClarification = new DefaultSelect(data.data, data.count);
       },
     });
   }
 
-  clasificationSelect(clarification: IClarification) {
+  /* clasificationSelect(clarification: IClarification) {
     this.clarificationId = clarification.id;
-  }
+  } */
 
   confirm(): void {
     const user: any = this.authService.decodeToken();
@@ -108,14 +111,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA ACLARACION';
-    clarification.goodId = this.idGood;
-    clarification.clarificationId = this.clarificationId;
+    //clarification.goodId = this.idGood;
+    //clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
       this.update(clarification);
     } else {
       this.save(clarification);
     }
   }
+
   private save(clarification: ClarificationGoodRejectNotification) {
     console.log('clarification', clarification);
     this.rejectedGoodService.create(clarification).subscribe({

@@ -27,17 +27,21 @@ export class TaskService extends HttpService {
 
   // getTasksByUser(id: string | number, params?: ListParams) {
   getTasksByUser(_params: ListParams | string) {
+    console.log('Parametros recibidos: ', _params);
+
     const params = this.makeParams(_params);
 
     // const route = `${TaskEndpoints.FindAll}?filter.user=${id}`;
-    const route = `${TaskEndpoints.FindAll}?search=${encodeURI(
-      params.get('text')
-    )}&limit=${params.get('limit')}&page=${params.get(
-      'page'
-    )}&filter.assignees=$ilike:${params.get('others')}`;
+    // const route = `${TaskEndpoints.FindAll}?search=${encodeURI(
+    //   params.get('text')
+    // )}&limit=${params.get('limit')}&page=${params.get('page')}&filter.assignees=$ilike:${params.get('others')}`;
+
+    const route = `${TaskEndpoints.FindAll}`;
+
+    console.log('Route: ', route);
 
     // return this.get(route, params);
-    return this.get(route);
+    return this.get(route, _params);
   }
 
   createTask(body: Object): Observable<any> {

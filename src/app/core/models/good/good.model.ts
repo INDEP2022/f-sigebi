@@ -361,6 +361,8 @@ export interface IGood {
   no_etiqueta: ILabelOKey;
   estatus: Estatus;
   no_expediente: NoExpediente;
+  goodClassNumber?: number;
+  fractionId?: number;
 }
 
 // TODO: Checar a que interfaz pertenece
