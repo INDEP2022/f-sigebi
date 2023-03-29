@@ -52,7 +52,7 @@ export class ClassificationAssetsTabComponent
   totalItems: number = 0;
   idFraction: number = 0;
   classiGoodsForm: FormGroup = new FormGroup({});
-  goodsForm: FormGroup = new FormGroup({});
+  goodsForm: FormGroup = new FormGroup({}); // ModelForm<any>; //: FormGroup = new FormGroup({});
   ligiesSection = new DefaultSelect();
   chapters = new DefaultSelect();
   levels1 = new DefaultSelect();
@@ -78,13 +78,13 @@ export class ClassificationAssetsTabComponent
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
-    this.goodForm();
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: '',
       columns: REQUEST_OF_ASSETS_COLUMNS,
     };
+    this.initForm();
   }
 
   prepareForm() {
@@ -101,6 +101,7 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('data', this.dataObject);
     if (changes['requestObject'].currentValue) {
       this.tablePaginator();
     }
@@ -169,147 +170,73 @@ export class ClassificationAssetsTabComponent
     this.domicilieObject = good.addressId;
     this.idGood = good.id;
     this.goodService.getById(good.id).subscribe((data: any) => {
-      this.goodSelect = data;
-      this.goodForm();
+      this.goodsForm.patchValue(data);
+      this.detailArray = this.goodsForm;
     });
   }
 
-  goodForm() {
+  initForm() {
     this.goodsForm = this.fb.group({
-      id: [this.goodSelect?.id],
-      goodId: [this.goodSelect?.idGood],
-      ligieSection: [this.goodSelect?.ligieSection],
-      ligieChapter: [this.goodSelect?.ligieChapter],
-      ligieLevel1: [this.goodSelect?.ligieLevel1],
-      ligieLevel2: [this.goodSelect?.ligieLevel2],
-      ligieLevel3: [this.goodSelect?.ligieLevel3],
-      ligieLevel4: [this.goodSelect?.ligieLevel4],
-      requestId: [this.idRequest],
-      goodTypeId: [this.goodSelect?.goodTypeId],
-      color: [this.goodSelect?.color],
-      goodDescription: [this.goodSelect?.goodDescription],
-      quantity: [this.goodSelect?.quantity, [Validators.required]],
-      duplicity: [this.goodSelect?.duplicity],
-      capacity: [
-        this.goodSelect?.capacity,
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      volume: [this.goodSelect?.volume, [Validators.pattern(STRING_PATTERN)]],
+      id: [null],
+      goodId: [null],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
+      requestId: [null],
+      goodTypeId: [null],
+      color: [null],
+      goodDescription: [null],
+      quantity: [1, [Validators.required]],
+      duplicity: ['N'],
+      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
+      volume: [null, [Validators.pattern(STRING_PATTERN)]],
       fileeNumber: [null],
-      useType: [this.goodSelect?.useType, [Validators.pattern(STRING_PATTERN)]],
-      physicalStatus: [this.goodSelect?.physicalStatus],
-      stateConservation: [this.goodSelect?.stateConservation],
-      origin: [
-        this.goodSelect?.origin,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      useType: [null, [Validators.pattern(STRING_PATTERN)]],
+      physicalStatus: [null],
+      stateConservation: [null],
+      origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       goodClassNumber: [null],
-      ligieUnit: [this.goodSelect?.ligieUnit],
+      ligieUnit: [null],
       appraisal: [null],
-      destiny: [this.goodSelect?.destiny], //preguntar Destino ligie
-      transferentDestiny: [this.goodSelect?.transferentDestiny],
+      destiny: [null], //preguntar Destino ligie
+      transferentDestiny: [null],
       compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [
-        this.goodSelect?.notesTransferringEntity,
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      unitMeasure: [this.goodSelect?.unitMeasure], // preguntar Unidad Medida Transferente
-      saeDestiny: [this.goodSelect?.saeDestiny],
-      brand: [this.goodSelect?.brand, [Validators.required]],
-      subBrand: [this.goodSelect?.subbrand, [Validators.required]],
-      armor: [this.goodSelect?.armor],
-      model: [this.goodSelect?.model, [Validators.required]],
+      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      unitMeasure: [null], // preguntar Unidad Medida Transferente
+      saeDestiny: [null],
+      brand: [null, [Validators.required]],
+      subBrand: [null, [Validators.required]],
+      armor: [null],
+      model: [null, [Validators.required]],
       doorsNumber: [null],
       axesNumber: [null, [Validators.required]],
-      engineNumber: [this.goodSelect?.numEngine, [Validators.required]], //numero motor
+      engineNumber: [null, [Validators.required]], //numero motor
       tuition: [null, [Validators.required]],
-      serie: [this.goodSelect?.serie, [Validators.required]],
-      chassis: [this.goodSelect?.chassis],
-      cabin: [this.goodSelect?.cabin],
+      serie: [null, [Validators.required]],
+      chassis: [null],
+      cabin: [null],
       fitCircular: ['N', [Validators.required]],
       theftReport: ['N', [Validators.required]],
-      addressId: [this.goodSelect?.addressId],
-      operationalState: [
-        this.goodSelect?.stateOperative,
-        [Validators.required],
-      ],
+      addressId: [null],
+      operationalState: [null, [Validators.required]],
       manufacturingYear: [null, [Validators.required]],
-      enginesNumber: [this.goodSelect?.numEngine, [Validators.required]], // numero de motores
-      flag: [this.goodSelect?.flag, [Validators.required]],
+      enginesNumber: [null, [Validators.required]], // numero de motores
+      flag: [null, [Validators.required]],
       openwork: [null, [Validators.required]],
-      sleeve: [this.goodSelect?.sleeve],
+      sleeve: [null],
       length: [null, [Validators.required]],
       shipName: [null, [Validators.required]],
-      publicRegistry: [this.goodSelect?.regPublic, [Validators.required]], //registro public
+      publicRegistry: [null, [Validators.required]], //registro public
       ships: [null],
       dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
       airplaneType: [null, [Validators.required]],
       caratage: [null, [Validators.required]], //kilatage
-      material: [this.goodSelect?.material, [Validators.required]],
+      material: [null, [Validators.required]],
       weight: [null, [Validators.required]],
-      fractionId: [this.goodSelect?.idFraction],
-    });
-    this.detailArray = this.goodsForm;
-  }
-
-  getLevel1(idParent: number) {
-    this.paramsLvl1.getValue()['filter.parentId'] = idParent;
-    this.paramsLvl1.getValue()['filter.fractionCode'] = 8703;
-
-    this.fractionService.getAll(this.paramsLvl1.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level1']).setValue(info.description);
-          this.getLevel2(info.id);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  getLevel2(idParent: number) {
-    this.paramsLvl2.getValue()['filter.parentId'] = idParent;
-    this.paramsLvl2.getValue()['filter.id'] = 17616;
-    //this.paramsLvl2.getValue()['filter.fractionCode'] = 8703;
-
-    this.fractionService.getAll(this.paramsLvl2.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level2']).setValue(info.description);
-          this.getLevel3(info.id);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  getLevel3(idParent: number) {
-    this.paramsLvl3.getValue()['filter.parentId'] = idParent;
-    this.paramsLvl3.getValue()['filter.fractionCode'] = 870323;
-
-    this.fractionService.getAll(this.paramsLvl3.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level3']).setValue(info.description);
-          this.getLevel4(info.id);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  getLevel4(idParent: number) {
-    this.paramsLvl4.getValue()['filter.parentId'] = idParent;
-    //this.paramsLvl2.getValue()['filter.id'] = 17616;
-    this.paramsLvl4.getValue()['filter.fractionCode'] = 87032301;
-
-    this.fractionService.getAll(this.paramsLvl4.getValue()).subscribe({
-      next: response => {
-        response.data.map(info => {
-          this.classiGoodsForm.get(['level4']).setValue(info.description);
-        });
-      },
-      error: error => {},
+      fractionId: [null],
     });
   }
 }

@@ -130,8 +130,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         //   );
         // }
       } else {
-        this.router.navigateByUrl('/pages/');
-        return;
+        this.alertInfo(
+          'warning',
+          'Opción no disponible',
+          'Esta pantalla no existe en el sistema.'
+        ).then(() => {
+          this.router.navigateByUrl('/pages/');
+        });
       }
     }
   }
