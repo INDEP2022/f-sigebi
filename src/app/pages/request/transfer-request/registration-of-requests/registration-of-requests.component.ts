@@ -606,6 +606,8 @@ export class RegistrationOfRequestsComponent
   async approveRequest() {
     /**Verificar datos */
     /**Actualizar tarea para aprobacion */
+    console.log(this.requestData);
+
     return;
 
     /*const oldTask: any = await this.getOldTask();

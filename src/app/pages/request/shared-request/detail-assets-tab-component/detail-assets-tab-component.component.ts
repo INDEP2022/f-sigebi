@@ -166,6 +166,7 @@ export class DetailAssetsTabComponentComponent
     if (
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
+      this.typeDoc === 'clarification' ||
       this.process == 'classify-assets'
     ) {
       if (this.detailAssets.controls['addressId'].value) {
