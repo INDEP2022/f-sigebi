@@ -162,7 +162,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       this.satTransferForm.get('satOnlyKey').value ||
       this.satTransferForm.get('satProceedings').value ||
       this.satTransferForm.get('satHouseGuide').value ||
-      this.satTransferForm.get('satMasterGuide').value
+      this.satTransferForm.get('satMasterGuide').value ||
+      this.satTransferForm.get('job').value
     ) {
       valid = true;
     } else {
@@ -279,7 +280,6 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       .getReport(filtrados, 'gestion_sat')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
             this.downloadFile(
               data.base64,
@@ -375,6 +375,11 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista SAT Transferencia
    */
   async getSatTransferencia(resetValues: boolean = false) {
+    if (resetValues == false) {
+      this.satTransferForm.get('satProceedings').reset();
+      this.satTransferForm.get('job').reset();
+      this.satTransferForm.updateValueAndValidity();
+    }
     let filtrados =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.satTransferForm.value,
@@ -382,10 +387,6 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         this.filtroPaginado,
         'filter'
       );
-    if (resetValues == true) {
-      this.satTransferForm.get('job').reset();
-      this.satTransferForm.updateValueAndValidity();
-    }
     this.satSubjectsRegisterService
       .getSatTransferenciaBySearch(filtrados)
       .subscribe({
@@ -500,8 +501,9 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     if (data.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
+    let dataChangeNames = this.setNombreData(opcion, data);
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(dataChangeNames, {
       filename:
         opcion == 'gestion'
           ? `GestionSat__Listado_Tramites_SAT${new Date().getTime()}`
@@ -509,11 +511,35 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     });
   }
 
+  setNombreData(opcion: string, data: any[]) {
+    let dataSet: any[] = [];
+    let gestionData = SAT_PAPERWORK_MAILBOX_COLUMNS;
+    let transferData = SAT_TRANSFER_COLUMNS;
+    data.forEach(elementData => {
+      let newObj: any = {};
+      for (const key in elementData) {
+        if (Object.prototype.hasOwnProperty.call(elementData, key)) {
+          if (opcion == 'gestion') {
+            newObj[gestionData[key as keyof typeof gestionData].title] =
+              elementData[key];
+          } else {
+            newObj[transferData[key as keyof typeof transferData].title] =
+              elementData[key];
+          }
+        }
+      }
+      dataSet.push(newObj);
+    });
+    return dataSet;
+  }
+
   selectRow(row: any) {
-    this.satTransferForm.get('satProceedings').setValue(row.proceedingsNumber);
-    this.satTransferForm.get('job').setValue(row.officeNumber);
-    this.satTransferForm.updateValueAndValidity();
     if (row.proceedingsNumber && row.officeNumber) {
+      this.satTransferForm
+        .get('satProceedings')
+        .setValue(row.proceedingsNumber);
+      this.satTransferForm.get('job').setValue(row.officeNumber);
+      this.satTransferForm.updateValueAndValidity();
       this.onLoadToast(
         'info',
         '¡Búsqueda!',
@@ -521,6 +547,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       );
     } else {
       if (row.proceedingsNumber) {
+        this.satTransferForm
+          .get('satProceedings')
+          .setValue(row.proceedingsNumber);
+        this.satTransferForm.updateValueAndValidity();
         this.onLoadToast(
           'info',
           '¡Búsqueda!',
@@ -528,11 +558,13 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         );
       }
       if (row.officeNumber) {
+        this.satTransferForm.get('job').setValue(row.officeNumber);
+        this.satTransferForm.updateValueAndValidity();
         this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_SAT);
       }
     }
     setTimeout(() => {
       this.consultarSatTransferForm(true, true);
-    }, 100);
+    }, 300);
   }
 }
