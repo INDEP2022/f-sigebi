@@ -1,6 +1,6 @@
 const SAT_PAPERWORK_MAILBOX_COLUMNS = {
   processNumber: {
-    title: 'No. Tramite',
+    title: 'No. Trámite',
     type: 'number',
     sort: false,
   },
