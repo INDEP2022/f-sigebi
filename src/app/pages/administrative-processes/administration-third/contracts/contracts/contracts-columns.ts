@@ -7,6 +7,11 @@ export const CONTRACTS_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  zoneContractKey: {
+    title: 'N°',
+    width: '5%',
+    sort: false,
+  },
   zone: {
     title: 'Zonas',
     width: '30%',
@@ -27,19 +32,16 @@ export const CONTRACTS_COLUMNS = {
   startDate: {
     title: 'Fecha inicial',
     width: '30%',
-    type: 'Date',
     sort: false,
   },
   endDate: {
     title: 'Fecha final',
     width: '30%',
-    type: 'Date',
     sort: false,
   },
-  vigentContract: {
+  statusContract: {
     title: 'Vigente',
     width: '5%',
-    type: 'boolean',
     sort: false,
   },
 };

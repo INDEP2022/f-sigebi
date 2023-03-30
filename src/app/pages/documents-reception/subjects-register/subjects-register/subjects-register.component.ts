@@ -80,6 +80,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    let main = document.documentElement.querySelector('.init-page');
+    setTimeout(() => {
+      main.scroll(0, 0);
+    }, 300);
     this.setSettingsTables();
     this.prepareForm();
     this.initPage();
@@ -243,7 +247,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (
       this.pgrTransferForm.get('pgrGoodNumber').value ||
       this.pgrTransferForm.get('saeGoodNumber').value ||
-      this.pgrTransferForm.get('status').value
+      this.pgrTransferForm.get('status').value ||
+      this.pgrTransferForm.get('aveprev').value ||
+      this.pgrTransferForm.get('office').value
     ) {
       valid = true;
     } else {
@@ -337,18 +343,18 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista PGR Transferencia
    */
   async getPgrTransferencia(resetValues: boolean = false) {
-    let filtrados =
+    if (resetValues == false) {
+      this.pgrTransferForm.get('aveprev').reset();
+      this.pgrTransferForm.get('office').reset();
+      this.pgrTransferForm.updateValueAndValidity();
+    }
+    let filtrados: any =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.pgrTransferForm.value,
         this.paramsPgrTransferencia.value,
         this.filtroPaginado,
         'filter'
       );
-    if (resetValues == true) {
-      this.pgrTransferForm.get('aveprev').reset();
-      this.pgrTransferForm.get('office').reset();
-      this.pgrTransferForm.updateValueAndValidity();
-    }
     this.pgrSubjectsRegisterService
       .getPgrTransferenciaBySearch(filtrados)
       .subscribe({
@@ -391,13 +397,36 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (data.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
+    let dataChangeNames = this.setNombreData(opcion, data);
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(dataChangeNames, {
       filename:
         opcion == 'gestion'
           ? `GestionFGR__Listado_Tramites_FGR${new Date().getTime()}`
           : `FGRTransferencia_Listado_Cves_FGR${new Date().getTime()}`,
     });
+  }
+
+  setNombreData(opcion: string, data: any[]) {
+    let dataSet: any[] = [];
+    let gestionData = PGR_PAPERWORK_MAILBOX_COLUMNS;
+    let transferData = PGR_TRANSFERS_COLUMNS;
+    data.forEach(elementData => {
+      let newObj: any = {};
+      for (const key in elementData) {
+        if (Object.prototype.hasOwnProperty.call(elementData, key)) {
+          if (opcion == 'gestion') {
+            newObj[gestionData[key as keyof typeof gestionData].title] =
+              elementData[key];
+          } else {
+            newObj[transferData[key as keyof typeof transferData].title] =
+              elementData[key];
+          }
+        }
+      }
+      dataSet.push(newObj);
+    });
+    return dataSet;
   }
 
   /**
@@ -504,10 +533,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   selectRow(row: any) {
-    this.pgrTransferForm.get('aveprev').setValue(row.issue);
-    this.pgrTransferForm.get('office').setValue(row.officeNumber);
-    this.pgrTransferForm.updateValueAndValidity();
     if (row.issue && row.officeNumber) {
+      this.pgrTransferForm.get('aveprev').setValue(row.issue);
+      this.pgrTransferForm.get('office').setValue(row.officeNumber);
+      this.pgrTransferForm.updateValueAndValidity();
       this.onLoadToast(
         'info',
         '¡Búsqueda!',
@@ -515,6 +544,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       );
     } else {
       if (row.issue) {
+        this.pgrTransferForm.get('aveprev').setValue(row.issue);
+        this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast(
           'info',
           '¡Búsqueda!',
@@ -522,11 +553,13 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         );
       }
       if (row.officeNumber) {
+        this.pgrTransferForm.get('office').setValue(row.officeNumber);
+        this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_PGR);
       }
     }
     setTimeout(() => {
       this.consultarPgrTransferForm(true, true);
-    }, 100);
+    }, 300);
   }
 }

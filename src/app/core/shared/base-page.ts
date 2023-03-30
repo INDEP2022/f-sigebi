@@ -6,6 +6,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import Swal, {
@@ -117,6 +118,7 @@ export abstract class BasePage implements OnDestroy {
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
   private _alertsService = inject(AlertsQueueService);
+  protected loader = inject(LoadingService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,
@@ -124,7 +126,6 @@ export abstract class BasePage implements OnDestroy {
       // minDate: new Date(),
       // maxDate: new Date(),
     };
-
     this._router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -213,5 +214,6 @@ export abstract class BasePage implements OnDestroy {
   ngOnDestroy(): void {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();
+    this._showHide.blockAllErrors = false;
   }
 }

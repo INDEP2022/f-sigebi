@@ -1,18 +1,27 @@
 export const FINANCIAL_INFORMATION_COLUMNS1 = {
-  name: {
-    title: 'Nombre',
-    type: 'string',
+  goodId: {
+    title: 'Bien',
+    type: 'number',
     sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.goodId;
+    // },
   },
-  description: {
+  goodDescription: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.description;
+    // },
   },
-  value: {
+  quantity: {
     title: 'Valor',
     type: 'string',
     sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.quantity;
+    // },
   },
 };
 
@@ -27,8 +36,8 @@ export const FINANCIAL_INFORMATION_COLUMNS2 = {
     type: 'number',
     sort: false,
   },
-  check: {
-    title: 'Check',
+  value: {
+    title: 'Valor',
     type: 'number',
     sort: false,
   },

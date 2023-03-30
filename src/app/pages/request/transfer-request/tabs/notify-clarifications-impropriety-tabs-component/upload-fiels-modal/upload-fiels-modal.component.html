@@ -11,29 +11,26 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="fileForm.get('position')" label="Cargo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="position" />
+          <form-field [control]="fileForm.get('post')" label="Cargo">
+            <input type="text" class="form-control" formControlName="post" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="fileForm.get('password')"
+            [control]="fileForm.get('pass')"
             label="Contrase&ntilde;a">
             <input
               type="password"
               class="form-control"
-              formControlName="password" />
+              formControlName="pass" />
           </form-field>
         </div>
         <!-- *ngIf="!isRFCHided" -->
         <div class="col-md-6">
-          <form-field [control]="fileForm.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" />
+          <form-field [control]="fileForm.get('rfcUser')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfcUser" />
           </form-field>
         </div>
       </div>
@@ -41,13 +38,13 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="fileForm.get('certificationFile')"
+            [control]="fileForm.get('certificate')"
             label="Certificado">
             <input
               type="file"
               class="form-control"
               accept=".cer"
-              formControlName="certificationFile"
+              formControlName="certificate"
               (change)="chargeCertifications($event)" />
           </form-field>
           <!-- <input
@@ -58,13 +55,13 @@
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="fileForm.get('keyCertificationFile')"
+            [control]="fileForm.get('keycertificate')"
             label="Key Certificado">
             <input
               type="file"
               class="form-control"
               accept=".key"
-              formControlName="keyCertificationFile"
+              formControlName="keycertificate"
               (change)="chargeKeyCertifications($event)" />
           </form-field>
         </div>

@@ -7,7 +7,8 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 import {
-  IComerLot,
+  IComerLotEvent,
+  IEvent,
   IGoodPhoto,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 
@@ -41,8 +42,13 @@ export class PublicationPhotographsComponent
 {
   form: FormGroup = new FormGroup({});
   dataBatch: any;
-  lot: IComerLot;
-  lotList: IComerLot[] = [];
+  transform: number;
+  selectedIndex = 0;
+  lot: IComerLotEvent;
+  eventList = new DefaultSelect<IEvent>();
+  events: any;
+  see: boolean;
+  lotList: IComerLotEvent[] = [];
   photography: IGoodPhoto;
   photographyList: IGoodPhoto[] = [];
   subtype: any;
@@ -106,11 +112,12 @@ export class PublicationPhotographsComponent
   }
 
   ngOnInit(): void {
-    // this.getCve({ page: 1, text: '' });
-    // this.data1.load(this.dataBatch)
+    this.getCve({ page: 1, text: '' });
+    this.data1.load(this.lotList);
     this.prepareForm();
-    this.getAllLot();
-    this.getAllPhotoGood();
+    this.see = true;
+    // this.getAllLot();
+    // this.getAllPhotoGood();
   }
 
   prepareForm() {
@@ -119,28 +126,28 @@ export class PublicationPhotographsComponent
       address: [null],
       failureDate: [null],
       place: [null],
-      localization: [null],
+      location: [null],
     });
   }
 
-  //  getCve(params: ListParams) {
-  //     if (params.text == '') {
-  //       this.cveItems = new DefaultSelect(this.data, 3);
-  //     } else {
-  //       const id = parseInt(params.text);
-  //       const item = [this.data.filter((i: any) => i.id == id)];
-  //       this.cveItems = new DefaultSelect(item[0], 1);
-  //     }
-  //   }
+  getCve(params: ListParams) {
+    if (params.text == '') {
+      this.cveItems = new DefaultSelect(this.events, this.totalItems);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.events.filter((i: any) => i.id == id)];
+      this.cveItems = new DefaultSelect(item[0], 1);
+    }
+  }
 
   selectCve(event: any) {
     this.selectedCve = event;
   }
 
   selectRow(row: any) {
-    this.data2.load(row.numStore); //Sub
+    this.data2.load(row.goodNumber); //Sub
     this.data2.refresh();
-    this.rowAllotment = row.id; //primary
+    this.rowAllotment = row.goodNumber; //primary
     this.rowSelected = true;
   }
 
@@ -150,11 +157,17 @@ export class PublicationPhotographsComponent
 
   findEvent(x: any) {
     // this.form.value.price = this.form.controls['price'].value;
-    let eventId = this.form.value.id;
+    let eventId = x.id;
     if (this.form.value.eventId !== null) {
       this.comerLotService.getById(eventId).subscribe({
         next: data => {
+          this.see = false;
           console.log(data);
+          this.form.controls['id'].setValue(x.id);
+          this.form.controls['address'].setValue(x.address);
+          this.form.controls['failureDate'].setValue(x.failureDate);
+          this.form.controls['place'].setValue(x.place);
+          this.form.controls['location'].setValue(x.location);
           this.loading = false;
         },
         error: error => console.error,
@@ -162,13 +175,15 @@ export class PublicationPhotographsComponent
     }
   }
 
-  getAllLot() {
+  getAllLotEvent() {
     this.comerLotService.getAll().subscribe({
       next: data => {
         this.lotList = data.data;
+        this.lotList.forEach(resp => (this.events = resp.event));
         this.totalItems = data.count;
-        console.log(this.lotList);
+        console.log(this.events);
         this.loading = false;
+        this.see = false;
       },
       error: error => (this.loading = false),
     });
@@ -177,11 +192,11 @@ export class PublicationPhotographsComponent
     this.publicationPhotographsService.getAll().subscribe({
       next: data => {
         this.photographyList = data.data;
-        this.totalItemsL = data.count;
+        this.totalItems = data.count;
         console.log(this.photographyList);
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.see = false),
     });
   }
 
@@ -264,6 +279,26 @@ export class PublicationPhotographsComponent
   //     }
   //   });
   // }
+  data: any[] = [
+    {
+      id: '9423',
+      description: 'DESTRU/COMDD/10-03/02',
+      type: 'REMESA',
+      status: 'EN PREPARACIÓN',
+    },
+    {
+      id: '7897',
+      description: 'CRCUL/COMDD/08-10/15',
+      type: 'SUBASTA',
+      status: 'EN SUBASTA',
+    },
+    {
+      id: '3242',
+      description: 'COMER/COMDD/09-21/74',
+      type: 'TIPO 03',
+      status: 'DONACIÓN',
+    },
+  ];
 
   //Carrusel de fotografías
   itemsPerSlide = 5;

@@ -32,7 +32,7 @@ import { SelectAddressComponent } from '../records-of-request-child-tabs-compone
 import { ASSETS_COLUMNS } from './assests-columns';
 import { ExcelFormat } from './AssetExcelFormat';
 
-var defaultData = [
+const defaultData = [
   {
     id: 0,
     noManagement: '',
@@ -54,6 +54,7 @@ var defaultData = [
 })
 export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
+  @Input() process: string = '';
   goodObject: any; //bienes
   listgoodObjects: any[] = [];
   totalItems: number = 0;
@@ -62,7 +63,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
-  btnCreate: string = 'Crear Nuevo';
+  btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
   data: ExcelFormat[] = [];
   menajeSelected: any;
@@ -95,13 +96,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      //console.log(this.requestObject);
+      // console.log(this.requestObject);
       this.typeRecord = this.requestObject.typeRecord;
       this.transferente = this.requestObject.transfer;
     }
   }
 
   ngOnInit(): void {
+    console.log('process', this.process);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -110,7 +112,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     };
     //this.settings.actions.delete = true;
     // this.settings.actions.position = 'left';
-
     //oye los camibios de detail-assets-tab para refrescar la tabla
     this.refreshTable();
     this.paginatedData();
@@ -280,11 +281,11 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   newAsset(): void {
     if (this.createNewAsset === false) {
       this.createNewAsset = true;
-      this.btnCreate = 'Cerrar Nuevo';
+      this.btnCreate = 'Cerrar Bien';
       window.scroll(0, 600);
     } else {
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
@@ -295,16 +296,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
-        this.btnCreate = 'Cerrar Nuevo';
+        this.btnCreate = 'Cerrar Bien';
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
-        this.btnCreate = 'Crear Nuevo';
+        this.btnCreate = 'Nuevo Bien';
       }
     } else {
       this.goodObject = this.listgoodObjects;
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
@@ -529,7 +530,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   closeCreateGoodWIndows() {
     this.goodObject = null;
     this.createNewAsset = false;
-    this.btnCreate = 'Crear Nuevo';
+    this.btnCreate = 'Nuevo Bien';
     this.paginatedData();
   }
 

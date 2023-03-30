@@ -77,6 +77,7 @@ export class ClarificationsComponent
   implements OnInit, OnChanges
 {
   @Input() requestObject: any;
+  @Input() process: string = '';
   goodForm: IFormGroup<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
@@ -101,9 +102,11 @@ export class ClarificationsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getData();
-    });
+    if (this.requestObject) {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getData();
+      });
+    }
   }
 
   ngOnInit(): void {
