@@ -46,6 +46,7 @@ export class RegistrationOfRequestsComponent
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
+  idTypeDoc: number = 50; //Tipo de documento, aprobar, dictamen, es 50
   registRequestForm: IFormGroup<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
@@ -123,6 +124,7 @@ export class RegistrationOfRequestsComponent
     this.getRequest(id);
     this.associateExpedientListener();
     this.dinamyCallFrom();
+    console.log('ID tipo de documento', this.idTypeDoc);
   }
 
   //Obtenemos el tipo de proceso//
@@ -179,7 +181,7 @@ export class RegistrationOfRequestsComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
       ], //telefono remitente
       emailOfOwner: [
         null,
@@ -599,7 +601,22 @@ export class RegistrationOfRequestsComponent
   }
 
   signDictum() {
-    this.openModal(GenerateDictumComponent, '', 'approval-request');
+    const idDoc = this.route.snapshot.paramMap.get('id');
+    const idTypeDoc = this.idTypeDoc;
+    const typeAnnex = 'approval-request';
+    console.log(idDoc);
+    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
+    let config: ModalOptions = {
+      initialState: {
+        idDoc,
+        idTypeDoc,
+        typeAnnex,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalService.show(GenerateDictumComponent, config);
   }
 
   /** Proceso de aprobacion */

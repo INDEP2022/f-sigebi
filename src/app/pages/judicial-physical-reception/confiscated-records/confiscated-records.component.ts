@@ -320,29 +320,41 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const dataTry = res.data.filter((item: any) => {
             item.status != 'ADM';
           });
-          console.log(res);
-          console.log(dataTry);
-
           if (res.data.length > 0) {
             this.form.get('ident').setValue('ADM');
             this.dataGoods.load(res.data);
             this.serviceExpedient
               .getById(this.form.get('expediente').value)
               .subscribe(res => {
-                let model: TransferProceeding = {
-                  numFile: res.transferNumber as number,
-                  typeProceedings: res.expedientType,
-                };
-                if (res.expedientType === 'T') {
-                  this.records = ['RT'];
+                if (
+                  res.expedientType != 'A' &&
+                  res.expedientType != 'N/A' &&
+                  res.expedientType != 'T'
+                ) {
+                  this.alert(
+                    'error',
+                    'Numero de expediente invalido',
+                    'El número de expediente ingresado tiene un tipo de expediente no valido'
+                  );
                 } else {
-                  this.records = ['A', 'NA', 'D', 'NS'];
-                }
+                  let model: TransferProceeding = {
+                    numFile: res.transferNumber as number,
+                    typeProceedings: res.expedientType,
+                  };
+                  if (res.expedientType === 'T') {
+                    this.records = ['RT'];
+                  } else {
+                    this.records = ['A', 'NA', 'D', 'NS'];
+                  }
 
-                this.serviceProcVal.getTransfer(model).subscribe(res => {
-                  this.transferSelect = new DefaultSelect(res.data, res.count);
-                });
-                this.enableElement('acta');
+                  this.serviceProcVal.getTransfer(model).subscribe(res => {
+                    this.transferSelect = new DefaultSelect(
+                      res.data,
+                      res.count
+                    );
+                  });
+                  this.enableElement('acta');
+                }
               });
           } else {
             this.alert(
