@@ -40,6 +40,10 @@ export const GENERAL_PROCESSES_ROUTES = [
         link: '/pages/general-processes/documents-viewer',
       },
       {
+        label: 'Escaneo de Documentos',
+        link: '/pages/general-processes/scan-documents',
+      },
+      {
         label: 'Bitacora del sistema',
         link: '/pages/general-processes/system-log',
       },
