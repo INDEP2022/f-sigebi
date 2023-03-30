@@ -62,7 +62,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
       zipCode: [null, Validators.pattern(NUMBERS_PATTERN)],
       delegation: [null, [Validators.maxLength(100)]],
       federative: [null],
-      phone: [null, [Validators.pattern(PHONE_PATTERN)]],
+      phone: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+      ],
       observations: [null, [Validators.maxLength(100)]],
       rfc: [null, [Validators.maxLength(20)]],
       curp: [null, [Validators.maxLength(20)]],
