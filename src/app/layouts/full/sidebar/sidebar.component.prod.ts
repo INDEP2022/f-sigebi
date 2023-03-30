@@ -58,6 +58,20 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     this.initialize();
   }
 
+  openMenu() {
+    const body = document.body;
+    if (body.classList.contains('vertical-collpsed')) {
+      body.classList.remove('vertical-collpsed');
+      body.classList.remove('sidebar-enable');
+      setTimeout(() => {
+        this.menu = new MetisMenu(this.sideMenu.nativeElement);
+        this._activateMenuDropdown();
+        this.menu.dispose();
+        this._scrollElement();
+      });
+    }
+  }
+
   ngAfterViewInit() {
     this.router.events.forEach(event => {
       if (event instanceof NavigationEnd) {

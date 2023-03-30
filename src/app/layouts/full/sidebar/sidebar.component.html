@@ -8,7 +8,7 @@
       <!-- {{menuItems}} -->
       <ng-container *ngFor="let item of menuItems">
         <li class="menu-title" *ngIf="item.isTitle">{{ item.label }}</li>
-        <li *ngIf="!item.isTitle && !item.isLayout">
+        <li *ngIf="!item.isTitle && !item.isLayout" (mouseover)="openMenu()">
           <a
             *ngIf="hasItems(item)"
             href="javascript:void(0);"

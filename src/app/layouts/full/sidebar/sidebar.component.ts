@@ -61,6 +61,8 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     event.currentTarget.nextElementSibling.classList.toggle('mm-show');
   }
 
+  openMenu() {}
+
   ngOnChanges() {
     if ((!this.isCondensed && this.sideMenu) || this.isCondensed) {
       setTimeout(() => {
