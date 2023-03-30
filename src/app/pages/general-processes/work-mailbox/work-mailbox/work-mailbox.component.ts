@@ -59,6 +59,7 @@ import {
 import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   CONFIRM_CANCEL,
+  CONFIRM_FINISH,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
@@ -1051,10 +1052,49 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
+  async onFinishPaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    const result = await this.alertQuestion(
+      'question',
+      'Advertencia',
+      CONFIRM_FINISH
+    );
+
+    if (result.isConfirmed) {
+      this.finishPaperwork().subscribe();
+    }
+  }
+
   cancelPaperwork() {
     const { processNumber, turnadoiUser } = this.selectedRow;
     const body = {
       status: 'CNI',
+      userTurned: turnadoiUser,
+      situation: 1,
+    };
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al cancelar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.getData();
+      })
+    );
+  }
+
+  finishPaperwork() {
+    const { processNumber, turnadoiUser } = this.selectedRow;
+    const body = {
+      status: 'FNI',
       userTurned: turnadoiUser,
       situation: 1,
     };
