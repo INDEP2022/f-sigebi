@@ -162,7 +162,11 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
     }
     //verifica si la vista es verificacion de cumplimiento o bien
-    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+    if (
+      this.typeDoc === 'verify-compliance' ||
+      this.typeDoc === 'assets' ||
+      this.typeDoc === 'approval-process'
+    ) {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
         this.getGoodDomicilie(this.addressId);
