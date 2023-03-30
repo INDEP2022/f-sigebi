@@ -35,9 +35,9 @@ export class AuthGuard implements CanActivate, CanLoad {
 
   verify(route: Route) {
     this.authService.getTokenExpiration();
+    // Reestablece propiedad al navegar a cualquier pantalla
+    this.showHideErrorService.blockAllErrors = false;
     if (this.authService.existToken() && !this.authService.isTokenExpired()) {
-      // Reestablece propiedad al navegar a cualquier pantalla
-      this.showHideErrorService.blockAllErrors = false;
       return true;
       //TODO: Habilitar checkRoles()
       //this.checkRoles(route);

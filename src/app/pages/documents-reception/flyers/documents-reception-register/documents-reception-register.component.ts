@@ -103,7 +103,17 @@ import {
 @Component({
   selector: 'app-documents-reception-register',
   templateUrl: './documents-reception-register.component.html',
-  styles: [],
+  styles: [
+    `
+      .loader {
+        height: 8rem;
+      }
+
+      .loader-msg {
+        margin-top: 14rem;
+      }
+    `,
+  ],
 })
 export class DocumentsReceptionRegisterComponent
   extends BasePage
@@ -146,6 +156,7 @@ export class DocumentsReceptionRegisterComponent
   showTransference: boolean = false;
   procedureStatusCode: string = '';
   pgrGoodsProcessed: boolean = true;
+  loadingPostCapture: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -309,7 +320,12 @@ export class DocumentsReceptionRegisterComponent
       ) {
         this.setInitialConditions();
       } else if (!this.docDataService.flyerEditMode) {
-        if (Object.keys(this.pageParams).length > 0) this.clearVisibleData();
+        //if (Object.keys(this.pageParams).length > 0) {}
+        this.documentsReceptionForm.reset();
+        this.documentsReceptionForm.patchValue(
+          DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
+        );
+        this.setDefaultValues();
         this.selectFlyer();
       }
     } else if (
@@ -344,12 +360,14 @@ export class DocumentsReceptionRegisterComponent
     console.log(this.pageParams);
     if (this.globals.gCommit == 'S') {
       if (Object.keys(this.pageParams).length > 0) {
+        this.loadingPostCapture = true;
+        this.documentsReceptionForm.disable();
         if (this.globals.gOFFCommit == 'N') {
           this.checkPgrGoods();
           this.postGoodsCapture();
         } else {
           this.checkPgrGoods();
-          this.deleteDuplicatedGoods();
+          ///this.deleteDuplicatedGoods();
           this.postGoodsCapture();
         }
       } else {
@@ -444,55 +462,6 @@ export class DocumentsReceptionRegisterComponent
         console.log(err);
       },
     });
-  }
-
-  clearVisibleData() {
-    this.formControls.wheelType.setValue(null);
-    this.formControls.wheelNumber.setValue(null);
-    this.formControls.expedientNumber.setValue(null);
-    this.formControls.consecutiveNumber.setValue(null);
-    this.formControls.identifierExp.setValue(null);
-    this.formControls.receiptDate.setValue(null);
-    this.formControls.priority.setValue('N');
-    this.formControls.identifier.setValue(null);
-    this.formControls.externalRemitter.setValue(null);
-    this.formControls.affairKey.setValue(null);
-    this.formControls.affairKey.setValue(null);
-    this.formControls.dailyEviction.setValue(false);
-    this.formControls.addressGeneral.setValue(false);
-    this.formControls.circumstantialRecord.setValue(null);
-    this.formControls.preliminaryInquiry.setValue(null);
-    this.formControls.protectionKey.setValue(null);
-    this.formControls.criminalCase.setValue(null);
-    this.formControls.touchPenaltyKey.setValue(null);
-    this.formControls.judgementType.setValue(null);
-    this.formControls.expedientTransferenceNumber.setValue(null);
-    this.formControls.externalOfficeDate.setValue(null);
-    this.formControls.officeExternalKey.setValue(null);
-    this.formControls.stage.setValue(null);
-    this.formControls.stageName.setValue(null);
-    this.formControls.uniqueKey.setValue(null);
-    this.formControls.cityNumber.setValue(null);
-    this.formControls.minpubNumber.setValue(null);
-    this.formControls.endTransferNumber.setValue(null);
-    this.formControls.stationNumber.setValue(null);
-    this.formControls.autorityNumber.setValue(null);
-    this.formControls.courtNumber.setValue(null);
-    this.formControls.crimeKey.setValue(null);
-    this.formControls.indiciadoNumber.setValue(null);
-    this.formControls.viaKey.setValue(null);
-    this.formControls.estatusTramite.setValue(null);
-    this.formControls.delDestinyNumber.setValue(null);
-    this.formControls.delegationName.setValue(null);
-    this.formControls.subDelDestinyNumber.setValue(null);
-    this.formControls.subDelegationName.setValue(null);
-    this.formControls.departamentDestinyNumber.setValue(null);
-    this.formControls.destinationArea.setValue(null);
-    this.formControls.recordId.setValue(null);
-    this.userRecipient.setValue(null);
-    this.userCpp.setValue(null);
-    this.formControls.goodRelation.setValue(null);
-    this.setDefaultValues();
   }
 
   setInitialConditions() {
@@ -1248,7 +1217,6 @@ export class DocumentsReceptionRegisterComponent
     } else if (notif.dailyEviction == 1) {
       this.formControls.dailyEviction.setValue(true);
     }
-
     this.formControls.receiptDate.setValue(
       format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
     );
@@ -1270,7 +1238,7 @@ export class DocumentsReceptionRegisterComponent
     } else if (notif.wheelStatus == 'ENVIADO') {
       this.procedureStatus = ProcedureStatus.sent;
     }
-    this.checkProcedureBlock();
+    //this.checkProcedureBlock();
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
     this.initialCondition = notif.wheelType;
@@ -1430,10 +1398,12 @@ export class DocumentsReceptionRegisterComponent
             filterParams.removeAllFilters();
             filterParams.addFilter('id', notif.departamentDestinyNumber);
             filterParams.addFilter('numDelegation', notif.delDestinyNumber);
-            // filterParams.addFilter(
-            //   'numSubDelegation',
-            //   notif.subDelDestinyNumber
-            // );
+            if (notif.subDelDestinyNumber != null) {
+              filterParams.addFilter(
+                'numSubDelegation',
+                notif.subDelDestinyNumber
+              );
+            }
             filterParams.addFilter('phaseEdo', data.stagecreated);
             this.hideError();
             this.docRegisterService
@@ -2075,15 +2045,9 @@ export class DocumentsReceptionRegisterComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter(
-        'courtNumber.description',
-        lparams.text,
-        SearchFilter.LIKE
-      );
-    if (this.formControls.cityNumber.value != null)
-      params.addFilter('city', this.formControls.cityNumber.value.idCity);
+      params.addFilter('name', lparams.text, SearchFilter.LIKE);
     this.hideError();
-    this.docRegisterService.getCourts(params.getParams()).subscribe({
+    this.docRegisterService.getCourtsUnrelated(params.getParams()).subscribe({
       next: data => {
         console.log(data);
         this.courts = new DefaultSelect(data.data, data.count);
@@ -2539,16 +2503,16 @@ export class DocumentsReceptionRegisterComponent
     if (!this.checkFormErrors()) {
       return false;
     }
-    const courtFlag = await this.checkCourt();
-    if (!courtFlag) {
-      this.onLoadToast(
-        'warning',
-        'Formulario Inválido',
-        'El juzgado no corresponde a la ciudad seleccionada.'
-      );
-      this.loading = false;
-      return false;
-    }
+    // const courtFlag = await this.checkCourt();
+    // if (!courtFlag) {
+    //   this.onLoadToast(
+    //     'warning',
+    //     'Formulario Inválido',
+    //     'El juzgado no corresponde a la ciudad seleccionada.'
+    //   );
+    //   this.loading = false;
+    //   return false;
+    // }
     this.loading = true;
     this.blockErrors(true);
     if (this.globals.gNoExpediente != null) {
@@ -2556,12 +2520,12 @@ export class DocumentsReceptionRegisterComponent
         Number(this.globals.gNoExpediente)
       );
     }
-    this.checkGoodsDailyEviction();
+    //this.checkGoodsDailyEviction();
     if (this.globals.antecede == 1) {
       this.notificationService.getLastWheelNumber().subscribe({
         next: data => {
           this.formControls.wheelNumber.setValue(data.nextval);
-          this.updateROPGoods();
+          //this.updateROPGoods();
         },
         error: () => {},
       });
@@ -3331,7 +3295,7 @@ export class DocumentsReceptionRegisterComponent
                 });
             }
           });
-          this.massiveGoodCorrections(goods, goodsStatus);
+          //this.massiveGoodCorrections(goods, goodsStatus);
         }
       },
       error: () => {},
@@ -3441,16 +3405,16 @@ export class DocumentsReceptionRegisterComponent
     if (!this.checkFormErrors()) {
       return false;
     }
-    const courtFlag = await this.checkCourt();
-    if (!courtFlag) {
-      this.onLoadToast(
-        'warning',
-        'Formulario Inválido',
-        'El juzgado no corresponde a la ciudad seleccionada.'
-      );
-      this.loading = false;
-      return false;
-    }
+    // const courtFlag = await this.checkCourt();
+    // if (!courtFlag) {
+    //   this.onLoadToast(
+    //     'warning',
+    //     'Formulario Inválido',
+    //     'El juzgado no corresponde a la ciudad seleccionada.'
+    //   );
+    //   this.loading = false;
+    //   return false;
+    // }
     this.loading = true;
     this.prepareFormData();
     this.docDataService.documentsReceptionRegisterForm =
@@ -4048,18 +4012,20 @@ export class DocumentsReceptionRegisterComponent
           this.formControls.wheelNumber.setValue(data.data[0].wheelNumber);
           this.updateProcedureManagement();
         } else {
+          this.loadingPostCapture = false;
           this.alert(
             'error',
-            'No se pudo verificar los registros agregados',
+            'Error al verificar los registros agregados',
             `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
           );
         }
       },
       error: err => {
         console.log(err);
+        this.loadingPostCapture = false;
         this.alert(
           'error',
-          'No se pudo verificar los registros agregados',
+          'Error al verificar los registros agregados',
           `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
         );
       },
@@ -4105,6 +4071,7 @@ export class DocumentsReceptionRegisterComponent
   updateProcedure(goods: boolean) {
     console.log('Upd Post Procedure');
     let areaToTurn = this.formControls.estatusTramite.value.id;
+    console.log(areaToTurn);
     if (areaToTurn == null) areaToTurn = 'OP';
     let status: string;
     if (goods) {
@@ -4127,6 +4094,8 @@ export class DocumentsReceptionRegisterComponent
           .subscribe({
             next: () => {
               this.sendFlyerCopies();
+              this.documentsReceptionForm.enable();
+              this.loadingPostCapture = false;
               this.alertInfo(
                 'success',
                 'Notificación agregada',
@@ -4135,6 +4104,8 @@ export class DocumentsReceptionRegisterComponent
             },
             error: () => {
               this.sendFlyerCopies();
+              this.documentsReceptionForm.enable();
+              this.loadingPostCapture = false;
               this.alertInfo(
                 'success',
                 'Notificación agregada',
@@ -4156,6 +4127,8 @@ export class DocumentsReceptionRegisterComponent
                   .subscribe({
                     next: () => {
                       this.sendFlyerCopies();
+                      this.documentsReceptionForm.enable();
+                      this.loadingPostCapture = false;
                       this.alertInfo(
                         'success',
                         'Notificación agregada',
@@ -4164,6 +4137,8 @@ export class DocumentsReceptionRegisterComponent
                     },
                     error: () => {
                       this.sendFlyerCopies();
+                      this.documentsReceptionForm.enable();
+                      this.loadingPostCapture = false;
                       this.alertInfo(
                         'success',
                         'Notificación agregada',
@@ -4173,6 +4148,8 @@ export class DocumentsReceptionRegisterComponent
                   });
               } else {
                 this.sendFlyerCopies();
+                this.documentsReceptionForm.enable();
+                this.loadingPostCapture = false;
                 this.alertInfo(
                   'success',
                   'Notificación agregada',
@@ -4182,6 +4159,8 @@ export class DocumentsReceptionRegisterComponent
             },
             error: () => {
               this.sendFlyerCopies();
+              this.documentsReceptionForm.enable();
+              this.loadingPostCapture = false;
               this.alertInfo(
                 'success',
                 'Notificación agregada',
