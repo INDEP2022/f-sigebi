@@ -83,6 +83,9 @@ export class MenajeComponent extends BasePage implements OnInit {
           });
         }
       },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 

@@ -19,16 +19,19 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDomicilies,
+  IGood,
   IGoodRealState,
 } from 'src/app/core/models/good/good.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
@@ -58,6 +61,9 @@ export class DetailAssetsTabComponentComponent
   @Input() detailAssets: ModelForm<any>; // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
+  @Input() process: string = '';
+
+  goodData: IGood;
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
@@ -71,6 +77,7 @@ export class DetailAssetsTabComponentComponent
   selectConservationState = new DefaultSelect<any>();
 
   goodTypeName: string = '';
+  nameTypeRelevant: string = '';
   duplicity: boolean = false;
   armor: boolean = false;
   destinyLigie: string = '';
@@ -87,7 +94,7 @@ export class DetailAssetsTabComponentComponent
   complyNormString: string = 'N';
   appraisal: boolean = false;
   appraisalString = 'N';
-
+  nameGoodType: string = '';
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
@@ -139,16 +146,27 @@ export class DetailAssetsTabComponentComponent
   isSaveMenaje: boolean = false;
   disableDuplicity: boolean = false; //para verificar cumplimientos = false
 
-  constructor(private fb: FormBuilder, private modalServise: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalServise: BsModalService,
+    private goodService: GoodService,
+    private goodTypeService: GoodTypeService
+  ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.process == 'classify-assets') {
+      this.setDataGood();
+    }
     if (this.typeDoc === 'clarification') {
     }
-    console.log('typeDoc', this.typeDoc);
     //verifica si la vista es verificacion de cumplimiento o bien
-    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+    if (
+      this.typeDoc === 'verify-compliance' ||
+      this.typeDoc === 'assets' ||
+      this.typeDoc === 'approval-process'
+    ) {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
         this.getGoodDomicilie(this.addressId);
@@ -186,6 +204,42 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  setDataGood() {
+    const idGood = this.assetsId;
+    this.goodService.getById(idGood).subscribe({
+      next: data => {
+        this.goodType(data.goodTypeId);
+        this.typeRelevant(data.goodTypeId);
+        if (data.stateConservation == 1 || data.physicalStatus == 1)
+          data.stateConservation = 'BUENO';
+        data.physicalStatus = 'BUENO';
+        if (data.stateConservation == 2 || data.physicalStatus == 2)
+          data.stateConservation = 'MALO';
+        data.physicalStatus = 'MALO';
+        this.goodData = data;
+      },
+      error: error => {},
+    });
+  }
+
+  goodType(goodTypeId: number) {
+    this.typeRelevantSevice.getById(goodTypeId).subscribe({
+      next: response => {
+        this.nameGoodType = response.description;
+      },
+      error: error => {},
+    });
+  }
+
+  typeRelevant(typeRelevantId: number) {
+    this.typeRelevantSevice.getById(typeRelevantId).subscribe({
+      next: data => {
+        this.nameTypeRelevant = data.description;
+      },
+      error: error => {},
+    });
+  }
+
   ngOnInit(): void {
     this.initForm();
     this.getDestinyTransfer(new ListParams());
@@ -195,62 +249,69 @@ export class DetailAssetsTabComponentComponent
     this.getReactiveFormCall();
     this.isSavingData();
 
-    //.getGoodDomicilieTab();
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
-      /* this.domicileForm.controls['regionalDelegationId'].setValue(
-        this.requestObject.regionalDelegationId
-      ); */
-      /*  this.getStateOfRepublic(
-        new ListParams(),
-        this.requestObject.keyStateOfRepublic
-      );
-      this.getMunicipaly(
-        new ListParams(),
-        this.requestObject.keyStateOfRepublic
-      ); */
     }
-
-    //console.log('detalle del objeto enviado');
-    //console.log(this.detailAssets);
-
-    //this.initInputs();
   }
 
   initForm() {
-    //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
       warehouseAlias: [],
-      wayref2Key: [null],
-      wayref3Key: [null],
+      wayref2Key: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref3Key: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       statusKey: [null],
       municipalityKey: [null],
       localityKey: [null],
       code: [''],
-      latitude: [''],
-      length: [''], //por cambiar
-      wayName: [''],
-      wayOrigin: [''],
-      exteriorNumber: [''],
-      interiorNumber: [''],
-      wayDestiny: [''],
-      wayref1Key: [null],
-      wayChaining: [''],
-      description: [''],
+      latitude: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayName: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayOrigin: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      exteriorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
+      interiorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
+      wayDestiny: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref1Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayChaining: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      description: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       regionalDelegationId: [null],
       requestId: [null],
     });
-
-    //this.assetsForm.controls['typeAsset'].disable();
-    //this.assetsForm.disable();
-    //this.assetsForm.controls['typeAsset'].enable();
   }
 
-  //formulario del inmueble
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
@@ -259,12 +320,12 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      propertyType: [null, [Validators.required]],
-      surfaceMts: [0, [Validators.required]],
-      consSurfaceMts: [0, [Validators.required]],
-      publicDeed: [null, [Validators.required]],
-      pubRegProperty: [null, [Validators.required]],
-      appraisalValue: [0, [Validators.required]],
+      propertyType: [null, [Validators.required, Validators.maxLength(30)]],
+      surfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
+      consSurfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
+      publicDeed: [null, [Validators.required, Validators.maxLength(30)]],
+      pubRegProperty: [null, [Validators.required, Validators.maxLength(100)]],
+      appraisalValue: [0, [Validators.required, Validators.maxLength(30)]],
       appraisalDate: [null],
       certLibLien: [
         null,
@@ -292,7 +353,7 @@ export class DetailAssetsTabComponentComponent
       addressId: [null],
       userModification: [null],
       modificationDate: [null],
-      forProblems: [null, [Validators.required]],
+      forProblems: [null, [Validators.required, Validators.maxLength(30)]],
       certLibLienDate: [null],
       pffDate: [null],
       gravFavorThird: [
@@ -413,9 +474,7 @@ export class DetailAssetsTabComponentComponent
       next: data => {
         this.selectMunicipe = new DefaultSelect(data.data, data.count);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -427,9 +486,7 @@ export class DetailAssetsTabComponentComponent
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -440,9 +497,7 @@ export class DetailAssetsTabComponentComponent
     keySettlement?: number
   ): any {
     params.limit = 20;
-    params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
-    params['filter.keySettlement'] = `$eq:${keySettlement}`;
     delete params.text;
     delete params.take;
     delete params.inicio;
@@ -472,7 +527,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.description'] = `$ilike:${params.text}`;
     this.goodsInvService.getCatUnitMeasureView(params).subscribe({
       next: resp => {
-        console.log(resp);
         this.selectTansferUnitMeasure = new DefaultSelect(
           resp.data,
           resp.count
@@ -525,7 +579,6 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
-    console.log(this.detailAssets.getRawValue());
   }
 
   handleTheftReportEvent(event: any) {
@@ -803,7 +856,6 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
-      console.log(domicilio);
 
       var action = null;
       if (domicilio.id === null) {

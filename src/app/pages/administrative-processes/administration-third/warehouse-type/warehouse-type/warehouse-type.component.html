@@ -6,94 +6,59 @@
     </div> -->
   </div>
   <div body>
-    <form [formGroup]="warehouseForm" class="form-material">
-      <h5 class="title">Datos Generales Almacén</h5>
-      <div class="row margin-input">
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseForm.get('descripction')"
-            label="Descripción">
-            <input
-              type="text"
-              formControlName="descripction"
-              placeholder="Descripción"
-              class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseForm.get('noTypeWarehouse')"
-            label="No.Tipo Almacén">
-            <input
-              type="number"
-              formControlName="noTypeWarehouse"
-              placeholder="No.Tipo Almacén"
-              class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="warehouseForm.get('area')" label="Área m2">
-            <input
-              type="number"
-              formControlName="area"
-              placeholder="Área m2"
-              class="form-control" />
-          </form-field>
-        </div>
-      </div>
-    </form>
-    <form [formGroup]="warehouseTimeForm" class="form-material">
-      <h5 class="title">Tiempo máximo estancia</h5>
-      <div class="row margin-input">
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseTimeForm.get('normal')"
-            label="Normal">
-            <input
-              type="text"
-              formControlName="normal"
-              placeholder="Normal"
-              class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseTimeForm.get('pDestruction')"
-            label="P/Destrucción">
-            <input
-              type="text"
-              formControlName="pDestruction"
-              placeholder="P/Destrucción"
-              class="form-control" />
-          </form-field>
-        </div>
-      </div>
-    </form>
     <div class="row">
+      <div class="ch-content" header>
+        <h5 class="title">Datos Generales Almacén</h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openType()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="col-md-12">
-        <h5 class="title pt-4">Calificadore para el almacén</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2"
+            (edit)="openType($event.data)"
+            (userRowSelect)="rowsSelected($event)">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params2"
+          [totalItems]="totalItems2"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="ch-content" header>
+        <h5 class="title">Calificadores para el almacén</h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openTypeClassify()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data1"
+            (edit)="openTypeClassifyCost($event.data)">
           </ng2-smart-table>
         </div>
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="justify-content-center">
-          <button
-            type="submit"
-            class="btn btn-primary btn-sm active"
-            (click)="openType('')">
-            Aceptar
-          </button>
-        </div>
       </div>
     </div>
   </div>

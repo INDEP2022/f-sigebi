@@ -43,6 +43,7 @@ export class VerifyComplianceTabComponent
 {
   @Input() requestObject: any;
   @Input() typeDoc: string = '';
+  @Input() process: string = '';
   verifComplianceForm: ModelForm<any>;
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
@@ -221,7 +222,8 @@ export class VerifyComplianceTabComponent
         docClarification: docClarification,
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
-          //if (next) this.getData();
+          this.clarificationData = [];
+          if (next) this.getClarifications(this.goodsSelected[0].id);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -452,6 +454,7 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  /*  Metodo para traer las solicitudes de un bien  */
   getClarifications(id: number | string) {
     let params = new ListParams();
     params['filter.goodId'] = `$eq:${id}`;
@@ -461,15 +464,16 @@ export class VerifyComplianceTabComponent
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
         });
-        console.log(clarification);
 
         Promise.all(clarification).then(data => {
           this.clarificationData = resp.data;
         });
       },
+      error: error => {},
     });
   }
 
+  /* Metodo para traer las aclaraciones */
   getCatClarification(id: number | string) {
     return new Promise((resolve, reject) => {
       let params = new ListParams();
@@ -506,6 +510,8 @@ export class VerifyComplianceTabComponent
         this.rejectedGoodService.remove(id).subscribe({
           next: resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
+            this.clarificationData = [];
+            this.getClarifications(this.goodsSelected[0].id);
           },
         });
       }
@@ -617,7 +623,6 @@ export class VerifyComplianceTabComponent
           resolve(true);
         },
         error: error => {
-          debugger;
           console.log(error);
           resolve(true);
         },

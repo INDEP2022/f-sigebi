@@ -1,9 +1,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Buz&oacute;n de tramites FGR</h5>
+    <h5 class="title">Buz&oacute;n de Trámites FGR</h5>
   </div>
 
-  <div body>
+  <div body class="init-page">
     <form
       [formGroup]="pgrForm"
       class="form-material"
@@ -185,7 +185,7 @@
       </div>
       <hr class="row" />
       <div class="row pb-3">
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="listPgrTransferencia.length > 0">
           <div class="alert alert-info">
             {{
               INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
@@ -207,7 +207,8 @@
             [disabled]="downloadingTransferente"
             type="button"
             class="ml-2 mr-2 btn btn-success btn-sm"
-            (click)="exportXlsx('transferencia', listPgrTransferencia)">
+            (click)="getReportTransferenciaPgr(true)">
+            <!-- (click)="exportXlsx('transferencia', listPgrTransferencia)"> -->
             Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
           </button>
         </div>

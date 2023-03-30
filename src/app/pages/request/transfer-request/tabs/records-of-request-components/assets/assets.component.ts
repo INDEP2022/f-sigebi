@@ -32,7 +32,7 @@ import { SelectAddressComponent } from '../records-of-request-child-tabs-compone
 import { ASSETS_COLUMNS } from './assests-columns';
 import { ExcelFormat } from './AssetExcelFormat';
 
-var defaultData = [
+const defaultData = [
   {
     id: 0,
     noManagement: '',
@@ -54,6 +54,7 @@ var defaultData = [
 })
 export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
+  @Input() process: string = '';
   goodObject: any; //bienes
   listgoodObjects: any[] = [];
   totalItems: number = 0;
@@ -62,7 +63,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
-  btnCreate: string = 'Crear Nuevo';
+  btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
   data: ExcelFormat[] = [];
   menajeSelected: any;
@@ -74,6 +75,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   private listGoodsFractions: any = [];
   private fractionProperties: any = {};
   typeRecord: string = '';
+  transferente: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -94,11 +96,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
+      // console.log(this.requestObject);
       this.typeRecord = this.requestObject.typeRecord;
+      this.transferente = this.requestObject.transfer;
     }
   }
 
   ngOnInit(): void {
+    console.log('process', this.process);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -107,7 +112,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     };
     //this.settings.actions.delete = true;
     // this.settings.actions.position = 'left';
-
     //oye los camibios de detail-assets-tab para refrescar la tabla
     this.refreshTable();
     this.paginatedData();
@@ -131,7 +135,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             //obtener tipo bien
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeName'] = goodType;
-
             //obtener el estado fisico
             const physicalStatus = await this.getPhysicalStatus(
               item.physicalStatus
@@ -167,6 +170,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       },
       error: error => {
         this.loading = false;
+        this.paragraphs = [];
       },
     });
   }
@@ -277,11 +281,11 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   newAsset(): void {
     if (this.createNewAsset === false) {
       this.createNewAsset = true;
-      this.btnCreate = 'Cerrar Nuevo';
+      this.btnCreate = 'Cerrar Bien';
       window.scroll(0, 600);
     } else {
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
@@ -292,16 +296,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
-        this.btnCreate = 'Cerrar Nuevo';
+        this.btnCreate = 'Cerrar Bien';
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
-        this.btnCreate = 'Crear Nuevo';
+        this.btnCreate = 'Nuevo Bien';
       }
     } else {
       this.goodObject = this.listgoodObjects;
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
@@ -370,6 +374,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       }
       if (this.isSaveMenaje === true) {
         await this.saveMenaje();
+      }
+      if (this.isSaveFraction === true) {
+        await this.saveFractions();
       }
       this.closeCreateGoodWIndows();
     } else {
@@ -445,6 +452,29 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     });
   }
 
+  saveFractions() {
+    return new Promise((resolve, reject) => {
+      for (let i = 0; i < this.listGoodsFractions.length; i++) {
+        const element = this.listGoodsFractions[i];
+
+        this.goodService.update(element).subscribe({
+          next: resp => {
+            this.message(
+              'success',
+              'Fraccion guardada',
+              `Se guardo la fraccion exitosamente`
+            );
+            this.refreshTable();
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+      }
+      this.isSaveFraction = false;
+    });
+  }
+
   delete() {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
@@ -466,8 +496,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   deleteGood() {
-    for (let i = 0; i < this.listgoodObjects.length; i++) {
-      const element = this.listgoodObjects[i];
+    for (let i = 0; i < this.listGoodsFractions.length; i++) {
+      const element = this.listGoodsFractions[i];
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
@@ -500,7 +530,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   closeCreateGoodWIndows() {
     this.goodObject = null;
     this.createNewAsset = false;
-    this.btnCreate = 'Crear Nuevo';
+    this.btnCreate = 'Nuevo Bien';
     this.paginatedData();
   }
 
@@ -529,43 +559,25 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
-      //armor
-      const values = [
-        'brand',
-        'tuition',
-        'subBrand',
-        'serie',
-        'armor',
-        'chassis',
-        'model',
-        'cabin',
-        'doorsNumber',
-        'axesNumber',
-        'fitCircular',
-        'enginesNumber',
-        'theftReport',
-        'volume',
-        'useType',
-        'manufacturingYear',
-        'capacity',
-        'operationalState',
-        'flag',
-        'openwork',
-        'shipName',
-        'length',
-        'sleeve',
-        'publicRegistry',
-        'ships',
-        'caratage',
-        'material',
-        'weight',
-        'dgacRegistry',
-        'airplaneType',
-      ];
-      console.log(res);
-
+      //console.log(res);
       this.isSaveFraction = true;
-      this.matchLevelFraction(res);
+
+      if (this.listgoodObjects.length === 1) {
+        // verifica el nivel actual de la fraccion
+        this.matchLevelFraction(res);
+      } else {
+        // asignar el id de fraccion a los biene
+        this.listGoodsFractions = [];
+        this.listgoodObjects.map((item: any) => {
+          let good: any = {};
+          good.id = Number(item.id);
+          good.addressId = Number(item.addressId.id);
+          good.requestId = Number(item.requestId.id);
+          good.fractionId = Number(res.id);
+
+          this.listGoodsFractions.push(good);
+        });
+      }
     });
   }
 
@@ -578,23 +590,30 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       'ligieLevel3',
       'ligieLevel4',
     ];
-    debugger;
-    this.listGoodsFractions = this.listgoodObjects;
-    console.log('antes', this.listGoodsFractions);
-    for (let j = 0; j < this.listGoodsFractions.length; j++) {
-      const good = this.listGoodsFractions[j];
-      good['goodClassNumber'] = this.fractionProperties['goodClassNumber'];
-      good['unitMeasure'] = this.fractionProperties['unitMeasure'];
-      good['ligieUnit'] = this.fractionProperties['ligieUnit'];
 
-      /* iteramos la calsificacion de fraccion */
+    //this.listGoodsFractions = this.listgoodObjects;
+    this.listGoodsFractions = [];
+    console.log('antes', this.listGoodsFractions);
+    for (let j = 0; j < this.listgoodObjects.length; j++) {
+      const item = this.listgoodObjects[j];
+      let good: any = {};
+      good.id = Number(item.id);
+      good.addressId = Number(item.addressId.id);
+      good.requestId = Number(item.requestId.id);
+      good.goodClassNumber = Number(this.fractionProperties['goodClassNumber']);
+      good.unitMeasure = this.fractionProperties['unitMeasure'];
+      good.ligieUnit = this.fractionProperties['ligieUnit'];
+      good.fractionId = Number(this.fractionProperties['fractionId']);
+
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
-        good[fractions[i]] = fractionsId;
+        good[fractions[i]] = Number(fractionsId);
       }
+
+      this.listGoodsFractions.push(good);
     }
+
     console.log(this.listGoodsFractions);
-    this.isSaveFraction = false;
   }
 
   getNoClasifyGood(value: string) {

@@ -1,11 +1,11 @@
 const PGR_PAPERWORK_MAILBOX_COLUMNS = {
   processNumber: {
-    title: 'No. Tramite',
+    title: 'No. Trámite',
     type: 'number',
     sort: false,
   },
   processStatus: {
-    title: 'Estatus tramite',
+    title: 'Estatus Trámite',
     type: 'string',
     sort: false,
   },
@@ -14,7 +14,7 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  wheelNumber: {
+  flierNumber: {
     title: 'No. Volante',
     type: 'number',
     sort: false,

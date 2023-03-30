@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -18,6 +19,7 @@ import { ClarificationListTabComponent } from './tabs/classify-assets-components
 import { ClassifyAssetsTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/classify-assets-tab/classify-assets-tab.component';
 import { ClassificationAssetsTabComponent } from './tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
+import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
@@ -39,7 +41,6 @@ import { RequestDocumentFormComponent } from './tabs/request-document-form/reque
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
-import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { CheckboxComponent } from './tabs/compliance-verification-components/ver
     TabsModule.forRoot(),
     NgScrollbarModule,
     SharedRequestModule,
+    PdfViewerModule,
   ],
   exports: [VerifyComplianceTabComponent],
 })

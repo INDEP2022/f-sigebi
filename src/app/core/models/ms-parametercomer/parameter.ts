@@ -1,4 +1,4 @@
-import { IEvent } from '../commercialization/event.model';
+// import { IEvent } from '../commercialization/event.model';
 
 export interface IParameter {
   idParam: string;
@@ -150,4 +150,86 @@ export interface IGoodPhoto {
 export interface IFindPhoto {
   goodNumber: number;
   consecNumber: number;
+}
+
+export interface IComerLotEvent {
+  idLot: number;
+  idStatusVta: string;
+  event: IEvent;
+  lotPublic: number;
+  description: string;
+  baseValue: number;
+  noTransferee: number;
+  idClient: number;
+  priceValuationRef: number;
+  priceGuarantee: number;
+  deliverDate: string;
+  finalPrice: number;
+  reference: string;
+  referential: number;
+  accumulated: string;
+  validSystem: number;
+  ivaLot: number;
+  amountAppIva: number;
+  amountNoAppIva: number;
+  porcAppIva: number;
+  porcNoAppIva: number;
+  coordinationRegz: string;
+  coordinatorReg: string;
+  datoFiscMand: string;
+  location: string;
+  advance: string;
+  amountWithoutIva: number;
+  noJobnNotifies: number;
+  printNotifies: number;
+  idStatusvtant: number;
+  numEstate: number;
+  exceedsShortage: number;
+  isAssigned: boolean;
+  isScrap: boolean;
+  requests: string;
+  amountRetained: number;
+  noDelegation: number;
+  lotOrigin: number;
+  coversLots: number;
+  palette: string;
+  assignedGuarantee: string;
+  amountLiq: number;
+  phase: string;
+  nopartialities: string;
+  pointsPercentage: number;
+  advancePercentage: number;
+  aIva: number;
+  eat_events: IEvent;
+}
+
+export interface IEvent {
+  id: number;
+  tpeventoId: number;
+  statusvtaId: string;
+  processKey: string;
+  observations: string;
+  address: string;
+  failedDate: string;
+  place: string;
+  eventDate: string;
+  text1: string;
+  text2: string;
+  signatory: string;
+  signatoryPost: string;
+  notes: string;
+  textEnd3: string;
+  textEnd4: string;
+  basisCost: number;
+  basisVendNumber: number;
+  username: string;
+  month: string;
+  year: string;
+  delegationNumber: number;
+  phaseInmu: string;
+  thirdEatId: number;
+  notificationDate: string;
+  closingEventDate: string;
+  tpsolavalId: number;
+  applyIva: number;
 }

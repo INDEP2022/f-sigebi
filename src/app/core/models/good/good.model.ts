@@ -49,7 +49,10 @@ export interface IGood {
   fecResAgreementRecRev?: any;
   fecResAudienceRecRev?: any;
   notesTransferringEntity?: string;
+  saeMeasureUnit?: string;
+  compliesNorm?: string;
   observationRecRev?: any;
+  duplicatedGood?: any;
   reasonAbandonment?: any;
   resolution?: any;
   fecUnaffordability?: any;
@@ -57,11 +60,13 @@ export interface IGood {
   usrApprovedUtilization?: any;
   fecApprovedUtilization?: any;
   observationUtilization?: any;
+  storeNumber?: any;
   fecSoliChangeNumerary?: any;
   userSolicChangeNumerary?: any;
   reasonChangeNumerary?: any;
   requestChangeNumerary?: any;
   fecAuthorizesChangeNumerary?: any;
+  uniqueKey?: any;
   userAuthorizesChangeNumera?: any;
   AuthorizesChangeNumerary?: any;
   fecRatifiesChangeNumerary?: any;
@@ -69,6 +74,7 @@ export interface IGood {
   fecNotificationRecRev?: any;
   reasonRecRev?: any;
   agreementInitial?: any;
+  requestFolio?: any;
   observation: string;
   NoProceedings: string;
   NoexpAssociated: string;
@@ -355,6 +361,8 @@ export interface IGood {
   no_etiqueta: ILabelOKey;
   estatus: Estatus;
   no_expediente: NoExpediente;
+  goodClassNumber?: number;
+  fractionId?: number;
 }
 
 // TODO: Checar a que interfaz pertenece

@@ -10,7 +10,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -19,6 +19,7 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
 import { GoodDomiciliesService } from '../../../../../../core/services/good/good-domicilies.service';
@@ -93,25 +94,58 @@ export class AddressTransferorTabComponent
   initForm() {
     this.domicileForm = this.fb.group({
       warehouseAlias: ['DOMICILIO TRANSFERENTE'],
-      wayref2Key: [null],
-      wayref3Key: [null],
+      wayref2Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref3Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       statusKey: [null],
       municipalityKey: [null],
       localityKey: [null],
       code: [null],
-      latitude: [null],
-      length: [null], //por cambiar
-      wayName: [null],
-      wayOrigin: [null],
-      exteriorNumber: [null],
-      interiorNumber: [null],
-      wayDestiny: [null],
-      wayref1Key: [null],
-      wayChaining: [null],
-      description: [null],
+      latitude: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], //por cambiar
+      wayName: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayOrigin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      exteriorNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      interiorNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      wayDestiny: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref1Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayChaining: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       regionalDelegationId: [null],
       requestId: [null],
-      creationDate: [null],
+      creationDate: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       userCreation: [null],
     });
 
@@ -188,8 +222,8 @@ export class AddressTransferorTabComponent
   //obtener el codigo zip
   getCP(params: ListParams, localityId?: number, municipalityId?: number) {
     params.limit = 20;
-    params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
-    params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
+    //params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
+    // params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
     params['filter.keyState'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
     this.goodsQueryService.getZipCode(params).subscribe({
       next: data => {

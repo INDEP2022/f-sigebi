@@ -124,6 +124,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
+  statusProceeding = '';
 
   constructor(
     private fb: FormBuilder,
@@ -319,29 +320,41 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const dataTry = res.data.filter((item: any) => {
             item.status != 'ADM';
           });
-          console.log(res);
-          console.log(dataTry);
-
           if (res.data.length > 0) {
             this.form.get('ident').setValue('ADM');
             this.dataGoods.load(res.data);
             this.serviceExpedient
               .getById(this.form.get('expediente').value)
               .subscribe(res => {
-                let model: TransferProceeding = {
-                  numFile: res.transferNumber as number,
-                  typeProceedings: res.expedientType,
-                };
-                if (res.expedientType === 'T') {
-                  this.records = ['RT'];
+                if (
+                  res.expedientType != 'A' &&
+                  res.expedientType != 'N/A' &&
+                  res.expedientType != 'T'
+                ) {
+                  this.alert(
+                    'error',
+                    'Numero de expediente invalido',
+                    'El número de expediente ingresado tiene un tipo de expediente no valido'
+                  );
                 } else {
-                  this.records = ['A', 'NA', 'D', 'NS'];
-                }
+                  let model: TransferProceeding = {
+                    numFile: res.transferNumber as number,
+                    typeProceedings: res.expedientType,
+                  };
+                  if (res.expedientType === 'T') {
+                    this.records = ['RT'];
+                  } else {
+                    this.records = ['A', 'NA', 'D', 'NS'];
+                  }
 
-                this.serviceProcVal.getTransfer(model).subscribe(res => {
-                  this.transferSelect = new DefaultSelect(res.data, res.count);
-                });
-                this.enableElement('acta');
+                  this.serviceProcVal.getTransfer(model).subscribe(res => {
+                    this.transferSelect = new DefaultSelect(
+                      res.data,
+                      res.count
+                    );
+                  });
+                  this.enableElement('acta');
+                }
               });
           } else {
             this.alert(
@@ -387,7 +400,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    this.form.get('fecCaptura').setValue(new Date());
+    if (this.form.get('folio').value.length > 15) {
+      this.alert(
+        'error',
+        'Número de folio incorrecto',
+        'El número de folio no puede ser mayor de 15 dígitos'
+      );
+    } else {
+      this.form.get('fecCaptura').setValue(new Date());
+    }
   }
 
   //"Acta 2"

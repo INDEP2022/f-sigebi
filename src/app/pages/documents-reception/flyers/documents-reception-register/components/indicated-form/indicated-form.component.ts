@@ -44,11 +44,7 @@ export class IDocReceptionndicatedFormComponent
       noRegistration: [null],
       curp: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(CURP_PATTERN),
-          Validators.maxLength(18),
-        ],
+        [Validators.pattern(CURP_PATTERN), Validators.maxLength(18)],
       ],
       consecutive: [null],
     });

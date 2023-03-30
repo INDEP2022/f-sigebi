@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
@@ -10,16 +11,22 @@ import { PrintReportModalComponent } from '../../notify-clarifications-improprie
   styles: [],
 })
 export class GenerateDictumComponent implements OnInit {
+  idDoc: any; //ID de solicitud, viene desde el componente principal
+  idTypeDoc: any;
+
+  pdfurl: string = '';
   public event: EventEmitter<any> = new EventEmitter();
   dictumForm: ModelForm<any>;
 
   constructor(
     private bsModelRef: BsModalRef,
     private fb: FormBuilder,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
+    console.log('Id de documento: ', this.idDoc);
     this.initForm();
   }
 
@@ -34,7 +41,21 @@ export class GenerateDictumComponent implements OnInit {
   }
 
   signDictum(): void {
-    this.openModal(PrintReportModalComponent, '', 'approval-process');
+    const idDoc = this.idDoc;
+    const typeAnnex = 'approval-request';
+    const idTypeDoc = this.idTypeDoc;
+    let config: ModalOptions = {
+      initialState: {
+        idDoc,
+        idTypeDoc,
+        typeAnnex,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
+    //this.modalService.show(PrintReportModalComponent,  config);
   }
 
   close(): void {

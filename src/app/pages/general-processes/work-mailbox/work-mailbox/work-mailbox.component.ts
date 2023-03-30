@@ -623,11 +623,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                         error: error => (this.loading = false),
                       });
                   } else {
-                    this.onLoadToast(
+                    /*this.onLoadToast(
                       'warning',
                       '',
                       'No se pudo cargar la fecha de captura'
-                    );
+                    );*/
                     this.selectedRow = {
                       ...this.selectedRow,
                       dateFlier: resp.data[0]?.captureDate || null,
@@ -714,11 +714,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 '/pages/documents-reception/flyers-registration'
               );
             } else {
-              this.alert(
-                'info',
-                `${resp.data[0].screenKey}`,
-                'No se encuentra disponible en este momento'
-              );
+              resp.data[0].screenKey !== null
+                ? this.alert(
+                    'info',
+                    `${resp.data[0].screenKey}`,
+                    'No se encuentra disponible en este momento'
+                  )
+                : this.alert(
+                    'info',
+                    `Pantalla`,
+                    'No disponible en este momento'
+                  );
               console.log('other screenKey');
               //TODO:MAP SCREENS AND ROUTING
             }
