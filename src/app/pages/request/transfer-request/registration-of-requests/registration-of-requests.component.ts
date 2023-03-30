@@ -46,6 +46,7 @@ export class RegistrationOfRequestsComponent
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
+  idTypeDoc: number = 50; //Tipo de documento, aprobar, dictamen, es 50
   registRequestForm: IFormGroup<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
@@ -123,6 +124,7 @@ export class RegistrationOfRequestsComponent
     this.getRequest(id);
     this.associateExpedientListener();
     this.dinamyCallFrom();
+    console.log('ID tipo de documento', this.idTypeDoc);
   }
 
   //Obtenemos el tipo de proceso//
@@ -599,14 +601,51 @@ export class RegistrationOfRequestsComponent
   }
 
   signDictum() {
-    this.openModal(GenerateDictumComponent, '', 'approval-request');
+    const idDoc = this.route.snapshot.paramMap.get('id');
+    const idTypeDoc = this.idTypeDoc;
+    const typeAnnex = 'approval-request';
+    console.log(idDoc);
+    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
+    let config: ModalOptions = {
+      initialState: {
+        idDoc,
+        idTypeDoc,
+        typeAnnex,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalService.show(GenerateDictumComponent, config);
   }
 
   /** Proceso de aprobacion */
-  private approveRequest() {
+  async approveRequest() {
     /**Verificar datos */
+    /**Actualizar tarea para aprobacion */
+    console.log(this.requestData);
+
     return;
-    this.requestService
+
+    /*const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'SOLICITAR_APROBACION';
+        const to = 'APROBADO';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }*/
+    /*  this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
         next: resp => {
@@ -621,7 +660,7 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
-      });
+      }); */
   }
   /** fin de proceso */
 

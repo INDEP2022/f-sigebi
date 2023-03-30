@@ -13,6 +13,7 @@ import { UnitCostDetService } from 'src/app/core/services/unit-cost/unit-cost-de
 import { UnitCostService } from 'src/app/core/services/unit-cost/unit-cost.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
+import { UnitCostDetFormComponent } from '../unit-cost-det-form/unit-cost-det-form.component';
 import { UnitCostFormComponent } from '../unit-cost-form/unit-cost-form.component';
 import { COSTKEY_COLUMNS, VALIDITYCOST_COLUMNS } from './unit-cost-columns';
 
@@ -52,7 +53,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
         delete: true,
         position: 'right',
       },
-      columns: COSTKEY_COLUMNS,
+      columns: { ...COSTKEY_COLUMNS },
     };
     this.settings2 = {
       ...this.settings,
@@ -63,7 +64,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
         delete: true,
         position: 'right',
       },
-      columns: VALIDITYCOST_COLUMNS,
+      columns: { ...VALIDITYCOST_COLUMNS },
     };
   }
 
@@ -82,33 +83,23 @@ export class UnitCostComponent extends BasePage implements OnInit {
             switch (filters.field) {
               case 'processNumber':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'process':
-                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'serviceNumber':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'service':
-                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'serviceTypeNumber':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'serviceType':
-                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'shiftNumber':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'shift':
-                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'varCostNumber':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'varCost':
-                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -225,10 +216,10 @@ export class UnitCostComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(contract?: IUnitCost) {
+  openForm(unitCost?: IUnitCost) {
     let config: ModalOptions = {
       initialState: {
-        contract,
+        unitCost,
         callback: (next: boolean) => {
           if (next) this.getUnitCostAll();
         },
@@ -237,6 +228,20 @@ export class UnitCostComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(UnitCostFormComponent, config);
+  }
+
+  openForm2(unitCostDet?: IUnitCostDet) {
+    let config: ModalOptions = {
+      initialState: {
+        unitCostDet,
+        callBack: (next: boolean) => {
+          if (next) this.getUnitCostDetAll();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(UnitCostDetFormComponent, config);
   }
 
   showDeleteAlert(unitCost?: IUnitCost) {

@@ -162,7 +162,11 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
     }
     //verifica si la vista es verificacion de cumplimiento o bien
-    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+    if (
+      this.typeDoc === 'verify-compliance' ||
+      this.typeDoc === 'assets' ||
+      this.typeDoc === 'approval-process'
+    ) {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
         this.getGoodDomicilie(this.addressId);
@@ -219,9 +223,9 @@ export class DetailAssetsTabComponentComponent
   }
 
   goodType(goodTypeId: number) {
-    this.goodTypeService.getById(goodTypeId).subscribe({
+    this.typeRelevantSevice.getById(goodTypeId).subscribe({
       next: response => {
-        this.nameGoodType = response.nameGoodType;
+        this.nameGoodType = response.description;
       },
       error: error => {},
     });
@@ -232,6 +236,7 @@ export class DetailAssetsTabComponentComponent
       next: data => {
         this.nameTypeRelevant = data.description;
       },
+      error: error => {},
     });
   }
 

@@ -418,3 +418,17 @@ ng-scrollbar.table-scrollbar {
     }
   }
 }
+
+.loader:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('./assets/images/loader-button.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: '';
+}

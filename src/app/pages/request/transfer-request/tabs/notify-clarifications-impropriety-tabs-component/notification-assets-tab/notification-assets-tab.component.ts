@@ -61,6 +61,7 @@ export class NotificationAssetsTabComponent
   implements OnInit, OnChanges
 {
   @Input() isSaving: boolean;
+  @Input() process: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   totalItems: number = 0;

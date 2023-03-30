@@ -8,3 +8,16 @@ export interface ITypeWarehouse {
   version?: number;
   estatus?: number;
 }
+export interface IWarehouseTypeWarehouse {
+  warehouseTypeId: number;
+  descriptionType: string;
+  porcAreaA: number;
+  porcAreaB: number;
+  porcAreaC: number;
+  porcAreaD: number;
+  timeMaxContainer: number;
+  timeMaxDestruction: number;
+  registryNumber: number;
+  insertDate: string;
+  userInsert: string;
+}
