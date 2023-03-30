@@ -88,6 +88,8 @@ export class RegistrationOfRequestsComponent
   delegationName: string = '';
   authorityName: string = '';
 
+  requestList: IRequest;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -604,19 +606,31 @@ export class RegistrationOfRequestsComponent
     const idDoc = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
-    console.log(idDoc);
-    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
-    let config: ModalOptions = {
-      initialState: {
-        idDoc,
-        idTypeDoc,
-        typeAnnex,
-        callback: (next: boolean) => {},
+
+    this.requestService.getById(idDoc).subscribe({
+      next: response => {
+        this.requestList = response;
+
+        let config: ModalOptions = {
+          initialState: {
+            idDoc,
+            idTypeDoc,
+            typeAnnex,
+            response,
+            callback: (next: boolean) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalService.show(
+          GenerateDictumComponent,
+          config
+        );
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.bsModalRef = this.modalService.show(GenerateDictumComponent, config);
+      error: error => (this.loading = false),
+    });
+
+    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
   }
 
   /** Proceso de aprobacion */

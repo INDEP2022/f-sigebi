@@ -80,10 +80,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('ID solicitud: ', this.idDoc);
-    this.src =
-      'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717';
-    console.log(this.typeReport);
+    let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+    this.src = linkDoc1;
     /*this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = LIST_REPORTS_COLUMN;
 
