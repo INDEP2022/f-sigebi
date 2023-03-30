@@ -153,6 +153,13 @@ const routes: Routes = [
       (await import('./work-mailbox/work-mailbox.module')).WorkMailboxModule,
   },
   {
+    path: 'scan-documents',
+    data: { screen: 'FIMGDOCEXPADD', title: 'Escaneo de documentos' },
+    loadChildren: async () =>
+      (await import('./scan-documents/scan-documents.module'))
+        .ScanDocumentsModule,
+  },
+  {
     path: 'help-screen',
     data: { screen: 'FINDCA_AYADA', title: 'Pantalla de Ayuda' },
     loadChildren: async () =>

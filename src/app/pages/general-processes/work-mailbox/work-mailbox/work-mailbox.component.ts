@@ -70,7 +70,6 @@ import {
 } from './work-mailbox-columns';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScanDocumentsModalComponent } from 'src/app/@standalone/modals/scan-documents-modal/scan-documents-modal.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -1148,11 +1147,16 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   goToScanDocuments(document: IDocuments) {
-    const config = {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: false,
-    };
-    this.modalService.show(ScanDocumentsModalComponent, config);
+    const { id } = document;
+    const url = this.router.createUrlTree(
+      ['/pages/general-processes/scan-documents'],
+      {
+        queryParams: {
+          folio: id,
+        },
+      }
+    );
+    window.open(url.toString(), '_blank');
   }
 
   replicate() {

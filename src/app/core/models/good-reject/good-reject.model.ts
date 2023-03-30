@@ -5,7 +5,7 @@ export interface IRejectGood {
   reason: string;
   goodId: number;
   rejectionDate: string;
-  clarificationId: string;
+  clarificationId?: string | number;
   clarificationType: string;
   goodResDevId: string;
   documentClarificationId: string;
