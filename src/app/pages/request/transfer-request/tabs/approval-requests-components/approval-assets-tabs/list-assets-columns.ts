@@ -1,50 +1,50 @@
 export const LIST_ASSETS_COLUMNS = {
-  noGestion: {
-    title: 'No. Gestion',
+  goodId: {
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  descripTransfeAsset: {
+  goodDescription: {
     title: 'Descripción del Bien Transferente',
     type: 'string',
     sort: false,
   },
-  typeAsset: {
-    title: 'Typo de Bien',
+  goodTypeName: {
+    title: 'Tipo de Bien',
     type: 'string',
     sort: false,
   },
-  physicalState: {
-    title: 'Estado Fisico',
+  physicalStatusName: {
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  conservationState: {
+  stateConservationName: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  tansferUnitMeasure: {
+  unitMeasure: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
-  transferAmount: {
+  quantity: {
     title: 'Cantidad de Transferente',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
-  destinyLigie: {
+  destinyLigieName: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  destinyTransfer: {
+  transferentDestinyName: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,
   },
-  householdAsset: {
+  goodMenaje: {
     title: 'Menaje del Bien',
     type: 'string',
     sort: false,
