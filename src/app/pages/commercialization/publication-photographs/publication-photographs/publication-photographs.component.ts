@@ -7,7 +7,8 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 import {
-  IComerLot,
+  IComerLotEvent,
+  IEvent,
   IGoodPhoto,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 
@@ -43,9 +44,11 @@ export class PublicationPhotographsComponent
   dataBatch: any;
   transform: number;
   selectedIndex = 0;
-  lot: IComerLot;
+  lot: IComerLotEvent;
+  eventList = new DefaultSelect<IEvent>();
+  events: any;
   see: boolean;
-  lotList: IComerLot[] = [];
+  lotList: IComerLotEvent[] = [];
   photography: IGoodPhoto;
   photographyList: IGoodPhoto[] = [];
   subtype: any;
@@ -109,8 +112,8 @@ export class PublicationPhotographsComponent
   }
 
   ngOnInit(): void {
-    // this.getCve({ page: 1, text: '' });
-    // this.data1.load(this.dataBatch)
+    this.getCve({ page: 1, text: '' });
+    this.data1.load(this.lotList);
     this.prepareForm();
     this.see = true;
     // this.getAllLot();
@@ -127,24 +130,24 @@ export class PublicationPhotographsComponent
     });
   }
 
-  //  getCve(params: ListParams) {
-  //     if (params.text == '') {
-  //       this.cveItems = new DefaultSelect(this.data, 3);
-  //     } else {
-  //       const id = parseInt(params.text);
-  //       const item = [this.data.filter((i: any) => i.id == id)];
-  //       this.cveItems = new DefaultSelect(item[0], 1);
-  //     }
-  //   }
+  getCve(params: ListParams) {
+    if (params.text == '') {
+      this.cveItems = new DefaultSelect(this.events, this.totalItems);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.events.filter((i: any) => i.id == id)];
+      this.cveItems = new DefaultSelect(item[0], 1);
+    }
+  }
 
   selectCve(event: any) {
     this.selectedCve = event;
   }
 
   selectRow(row: any) {
-    this.data2.load(row.numStore); //Sub
+    this.data2.load(row.goodNumber); //Sub
     this.data2.refresh();
-    this.rowAllotment = row.id; //primary
+    this.rowAllotment = row.goodNumber; //primary
     this.rowSelected = true;
   }
 
@@ -172,12 +175,13 @@ export class PublicationPhotographsComponent
     }
   }
 
-  getAllLot() {
+  getAllLotEvent() {
     this.comerLotService.getAll().subscribe({
       next: data => {
         this.lotList = data.data;
+        this.lotList.forEach(resp => (this.events = resp.event));
         this.totalItems = data.count;
-        console.log(this.lotList);
+        console.log(this.events);
         this.loading = false;
         this.see = false;
       },
@@ -275,35 +279,55 @@ export class PublicationPhotographsComponent
   //     }
   //   });
   // }
+  data: any[] = [
+    {
+      id: '9423',
+      description: 'DESTRU/COMDD/10-03/02',
+      type: 'REMESA',
+      status: 'EN PREPARACIÓN',
+    },
+    {
+      id: '7897',
+      description: 'CRCUL/COMDD/08-10/15',
+      type: 'SUBASTA',
+      status: 'EN SUBASTA',
+    },
+    {
+      id: '3242',
+      description: 'COMER/COMDD/09-21/74',
+      type: 'TIPO 03',
+      status: 'DONACIÓN',
+    },
+  ];
 
   //Carrusel de fotografías
   itemsPerSlide = 5;
   singleSlideOffset = true;
 
-  // slides = [
-  //   {
-  //     image:
-  //       'https://i.pinimg.com/originals/b5/32/5b/b5325b470c543806ab38376946d194c0.jpg',
-  //   },
-  //   {
-  //     image:
-  //       'https://i.pinimg.com/originals/55/da/25/55da25dd5c6763f54f72e525c4462c18.jpg',
-  //   },
-  //   {
-  //     image:
-  //       'https://i.pinimg.com/originals/25/19/12/251912a9122dce982d4f9a4c4f7a3360.jpg',
-  //   },
-  //   {
-  //     image:
-  //       'https://i.pinimg.com/originals/8a/88/81/8a88817c9c7702d4cecf14f84e601158.jpg',
-  //   },
-  //   {
-  //     image:
-  //       'https://cdn.dealeraccelerate.com/premier/19/5096/92829/1920x1440/1984-chevrolet-silverado-k10-4x4-pickup',
-  //   },
-  //   {
-  //     image:
-  //       'https://bringatrailer.com/wp-content/uploads/2022/01/1984_chevrolet_k10_20210909_180334-Copy-100030.jpg?fit=940%2C626',
-  //   },
-  // ];
+  slides = [
+    {
+      image:
+        'https://i.pinimg.com/originals/b5/32/5b/b5325b470c543806ab38376946d194c0.jpg',
+    },
+    {
+      image:
+        'https://i.pinimg.com/originals/55/da/25/55da25dd5c6763f54f72e525c4462c18.jpg',
+    },
+    {
+      image:
+        'https://i.pinimg.com/originals/25/19/12/251912a9122dce982d4f9a4c4f7a3360.jpg',
+    },
+    {
+      image:
+        'https://i.pinimg.com/originals/8a/88/81/8a88817c9c7702d4cecf14f84e601158.jpg',
+    },
+    {
+      image:
+        'https://cdn.dealeraccelerate.com/premier/19/5096/92829/1920x1440/1984-chevrolet-silverado-k10-4x4-pickup',
+    },
+    {
+      image:
+        'https://bringatrailer.com/wp-content/uploads/2022/01/1984_chevrolet_k10_20210909_180334-Copy-100030.jpg?fit=940%2C626',
+    },
+  ];
 }
