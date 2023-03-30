@@ -1108,7 +1108,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.onLoadToast('success', 'El trámite se finalizo correctamente', '');
         this.getData();
       })
     );
