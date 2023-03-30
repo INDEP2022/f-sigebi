@@ -16,6 +16,11 @@ export class WorkMailboxService {
     return this.htpp.get(url, { params });
   }
 
+  getStatus() {
+    const url = `${environment.API_URL}proceduremanagement/api/v1/management-area`;
+    return this.htpp.get(url);
+  }
+
   getViewBienes(_params?: any): Observable<any> {
     const params = this.getParams(_params);
     const url = `${environment.API_URL}trackergood/api/v1/trackergood/apps/goodtrackertmp`;

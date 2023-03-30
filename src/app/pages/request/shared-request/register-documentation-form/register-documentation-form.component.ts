@@ -85,7 +85,10 @@ export class RegisterDocumentationFormComponent
       transferType: [null],
       senderName: [null, [Validators.pattern(STRING_PATTERN)]],
       senderPosition: [null, [Validators.pattern(STRING_PATTERN)]],
-      senderPhone: [null, [Validators.pattern(PHONE_PATTERN)]],
+      senderPhone: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+      ],
       senderEmail: [null, [Validators.pattern(EMAIL_PATTERN)]],
       judgementType: [
         null,

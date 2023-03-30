@@ -11,6 +11,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { PHONE_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -56,7 +57,10 @@ export class RequestDetailTabComponent
       typeExpedient: [null],
       nameSender: [null],
       senderCharge: [null],
-      phoneSender: [null],
+      phoneSender: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+      ],
       emailSender: [null],
       publicMinister: [null],
       tribunal: [null],

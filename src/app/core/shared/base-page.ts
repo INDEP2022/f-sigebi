@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AES, enc } from 'crypto-js';
@@ -16,7 +17,6 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
-
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
   text: string;
@@ -215,5 +215,19 @@ export abstract class BasePage implements OnDestroy {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();
     this._showHide.blockAllErrors = false;
+  }
+
+  handleErrorAlert(
+    message: string,
+    error: HttpErrorResponse,
+    _status?: number
+  ) {
+    if (_status) {
+      if (error.status == _status) this.alert('error', 'Error', message);
+      return;
+    }
+    if (error.status < 500) {
+      this.alert('error', 'Error', message);
+    }
   }
 }

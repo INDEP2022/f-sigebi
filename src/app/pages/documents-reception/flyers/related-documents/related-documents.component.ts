@@ -6,9 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -41,7 +39,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
   select = new DefaultSelect();
   justificacion = new DefaultSelect();
-  ciudad: ICity;
+  cities = new DefaultSelect();
+  senders = new DefaultSelect();
   data = RELATED_DOCUMENTS_EXAMPLE_DATA;
   pantalla = (option: boolean) =>
     `${
@@ -317,9 +316,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     console.log('set vars');
   }
 
-  validOficioExterno() {
+  validOficioEXTERNO() {
     if (
-      this.managementForm.get('tipoOficio').value == 'externo' &&
+      this.managementForm.get('tipoOficio').value == 'EXTERNO' &&
       this.paramsGestionDictamen.pllamo != 'ABANDONO'
     ) {
       this.managementForm
@@ -327,7 +326,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         .setValue(TEXT1(this.managementForm.get('noOficio').value));
       this.managementForm.get('parrafoFinal').setValue(TEXT2);
     } else if (
-      this.managementForm.get('tipoOficio').value == 'externo' &&
+      this.managementForm.get('tipoOficio').value == 'EXTERNO' &&
       this.paramsGestionDictamen.pllamo == 'ABANDONO'
     ) {
       this.managementForm.get('parrafoInicial').setValue(TEXT1Abandono);
@@ -371,33 +370,70 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     //   );
   }
 
-  async getCiudad(city: string) {
-    const params = new FilterParams();
-    params.removeAllFilters();
-    params.addFilter(
-      'nameCity',
-      city,
-      SearchFilter.LIKE
-      // '$ilike'
-    );
-    let subscription = this.flyerService.getCityBySearch(params).subscribe(
-      data => {
-        // this.ciudad = data.data;
-        // new DefaultSelect(
-        //   data.data.map(i => {
-        //     i.nameAndId = '#' + i. + ' -- ' + i.description;
-        //     return i;
-        //   }),
-        //   data.count
-        // );
+  changeSender() {
+    if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
+    } else if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
+    }
+  }
+
+  /**
+   * Data Selects
+   */
+
+  /**
+   * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
+   * @param params Parametos de busqueda de tipo @ListParams
+   * @returns
+   */
+  getCityByDetail(params: ListParams) {
+    console.log(params);
+    params.take = 20;
+    params['order'] = 'DESC';
+    console.log(params);
+    let subscription = this.flyerService.getCityBySearch(params).subscribe({
+      next: data => {
+        this.cities = new DefaultSelect(
+          data.data.map(i => {
+            i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
+            return i;
+          }),
+          data.count
+        );
         subscription.unsubscribe();
       },
-      err => {
+      error: error => {
+        this.onLoadToast('error', 'Error', error.error.message);
         subscription.unsubscribe();
       },
-      () => {
+    });
+  }
+
+  /**
+   * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
+   * @param params Parametos de busqueda de tipo @ListParams
+   * @returns
+   */
+  getSenderByDetail(params: ListParams) {
+    params.take = 20;
+    params['order'] = 'DESC';
+    console.log(params);
+    let subscription = this.flyerService.getSenderUser(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.senders = new DefaultSelect(
+          data.data.map(i => {
+            i.userDetail.name =
+              '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
+            return i.userDetail;
+          }),
+          data.count
+        );
         subscription.unsubscribe();
-      }
-    );
+      },
+      error: error => {
+        this.onLoadToast('error', 'Error', error.error.message);
+        subscription.unsubscribe();
+      },
+    });
   }
 }
