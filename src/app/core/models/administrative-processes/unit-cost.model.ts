@@ -3,7 +3,7 @@ export interface IUnitCost {
   processNumber?: number;
   serviceNumber?: number;
   serviceTypeNumber?: number;
-  shiftNumber: number;
+  shiftNumber?: number;
   varCostNumber?: number;
   registryNumber?: number;
   nbOrigin?: string;

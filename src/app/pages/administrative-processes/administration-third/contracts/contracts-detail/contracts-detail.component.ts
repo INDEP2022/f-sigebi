@@ -76,10 +76,10 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     const req: IContract = {
-      contractKey: this.contract.contractKey,
-      endDate: this.contract.endDate,
-      zoneContractKey: this.contract.zoneContractKey,
-      startDate: this.contract.startDate,
+      contractKey: this.contractForm.value.contractKey,
+      endDate: this.contractForm.value.endDate,
+      zoneContractKey: this.contractForm.value.zoneContractKey,
+      startDate: this.contractForm.value.startDate,
     };
 
     this.contractService.update(this.contract.id, req).subscribe({

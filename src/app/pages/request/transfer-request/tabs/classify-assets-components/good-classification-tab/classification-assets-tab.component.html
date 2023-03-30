@@ -40,18 +40,20 @@
           [goodObject]="goodObject"></app-classify-assets-tab>
       </tab>
       <tab heading="Atributos del Bien">
-        <app-detail-assets-tab-component
-          [requestObject]="requestObject"
-          [detailAssets]="detailArray"
-          [assetsId]="assetsId"
-          [domicilieObject]="domicilieObject"
-          [typeDoc]="typeDoc"
-          [process]="process">
-        </app-detail-assets-tab-component>
+        <div *ngIf="detailArray !== undefined && detailArray !== null">
+          <app-detail-assets-tab-component
+            [requestObject]="requestObject"
+            [detailAssets]="detailArray"
+            [assetsId]="assetsId"
+            [domicilieObject]="domicilieObject"
+            [typeDoc]="typeDoc"
+            [process]="process">
+          </app-detail-assets-tab-component>
+        </div>
       </tab>
       <tab heading="Aclaración">
         <app-clarification-list-tab
-          [idGood]="idGood"></app-clarification-list-tab>
+          [good]="goodObject"></app-clarification-list-tab>
       </tab>
     </tabset>
   </div>

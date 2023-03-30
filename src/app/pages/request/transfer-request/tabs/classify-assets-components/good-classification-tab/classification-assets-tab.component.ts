@@ -163,12 +163,11 @@ export class ClassificationAssetsTabComponent
   }
 
   rowSelected(good: IGood) {
-    this.typeDoc = 'assets';
+    this.detailArray = null;
     this.requestObject = this.requestObject;
     this.goodObject = good;
     this.assetsId = good.id;
     this.domicilieObject = good.addressId;
-    this.idGood = good.id;
     this.goodService.getById(good.id).subscribe((data: any) => {
       this.goodsForm.patchValue(data);
       this.detailArray = this.goodsForm;

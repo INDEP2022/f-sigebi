@@ -176,7 +176,7 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-check label="Avaluo" for="appraisal">
+              <form-check label="Avalúo" for="appraisal">
                 <input
                   id="appraisal"
                   type="checkbox"
@@ -513,16 +513,18 @@
         <div class="row pt-4" *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
+              *ngIf="process != 'classify-assets'"
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
               <i class="bx bx-home"></i> Seleccionar Domicilio
             </button>
             <button
+              *ngIf="process != 'classify-assets'"
               class="btn btn-secondary btn-sm active"
               style="margin-left: 2px"
               (click)="openSelectMenage()">
-              ,enaje
+              Menaje
             </button>
           </div>
         </div>
@@ -748,6 +750,7 @@
         <div class="row pt-5">
           <div class="col-md-4">
             <ngx-select
+              *ngIf="process != 'classify-assets'"
               [form]="detailAssets"
               control="brand"
               (fetchItems)="getBrand($event)"
@@ -755,14 +758,35 @@
               label="Marca"
               value="id"
               bindLabel="id"></ngx-select>
+            <ngx-select
+              *ngIf="process == 'classify-assets'"
+              [form]="detailAssets"
+              control="brand"
+              (fetchItems)="getBrand($event)"
+              [data]="selectBrand"
+              label="Marca"
+              value="id"
+              [readonly]="isDisabled"
+              bindLabel="id"></ngx-select>
           </div>
           <div class="col-md-3">
             <form-field
+              *ngIf="process != 'classify-assets'"
               [control]="detailAssets.get('tuition')"
               label="Matr&iacute;cula">
               <input
                 type="text"
                 class="form-control"
+                formControlName="tuition" />
+            </form-field>
+            <form-field
+              *ngIf="process == 'classify-assets'"
+              [control]="detailAssets.get('tuition')"
+              label="Matr&iacute;cula">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="tuition" />
             </form-field>
           </div>
@@ -771,6 +795,7 @@
         <div class="row pt-4">
           <div class="col-md-4">
             <ngx-select
+              *ngIf="process != 'classify-assets'"
               [form]="detailAssets"
               control="subBrand"
               (fetchItems)="getSubBrand($event)"
@@ -778,29 +803,81 @@
               label="Sub Marca"
               value="idSubBrand"
               bindLabel="idSubBrand"></ngx-select>
+            <ngx-select
+              *ngIf="process == 'classify-assets'"
+              [form]="detailAssets"
+              control="subBrand"
+              (fetchItems)="getSubBrand($event)"
+              [data]="selectSubBrand"
+              label="Sub Marca"
+              value="idSubBrand"
+              [readonly]="isDisabled"
+              bindLabel="idSubBrand"></ngx-select>
           </div>
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('serie')" label="Serie">
+            <form-field
+              [control]="detailAssets.get('serie')"
+              label="Serie"
+              *ngIf="process != 'classify-assets'">
               <input type="text" class="form-control" formControlName="serie" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('serie')"
+              label="Serie"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="serie"
+                [readOnly]="true" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-check label="Blindaje" for="armor">
+            <form-check
+              label="Blindaje"
+              for="armor"
+              *ngIf="process != 'classify-assets'">
               <input
                 id="armor"
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
+                [readOnly]="true"
+                (change)="handleArmor($event)" />
+            </form-check>
+            <form-check
+              label="Blindaje"
+              for="armor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                id="armor"
+                type="checkbox"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="armor"
+                [readOnly]="true"
                 (change)="handleArmor($event)" />
             </form-check>
           </div>
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('chassis')" label="Chasis">
+            <form-field
+              [control]="detailAssets.get('chassis')"
+              label="Chasis"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="chassis" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('chassis')"
+              label="Chasis"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="chassis" />
             </form-field>
           </div>
@@ -808,18 +885,44 @@
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('model')" label="Modelo">
+            <form-field
+              [control]="detailAssets.get('model')"
+              label="Modelo"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
                 formControlName="model" />
             </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="detailAssets.get('cabin')" label="Cabina">
+            <form-field
+              [control]="detailAssets.get('model')"
+              label="Modelo"
+              *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                [readOnly]="true"
+                formControlName="model" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="detailAssets.get('cabin')"
+              label="Cabina"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="cabin" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('cabin')"
+              label="Cabina"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="cabin" />
             </form-field>
           </div>
@@ -829,20 +932,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas">
+              label="Num&#46; Puertas"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="doorsNumber" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('doorsNumber')"
+              label="Num&#46; Puertas"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="doorsNumber" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('origin')"
-              label="Procedencia">
+              label="Procedencia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="origin" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('origin')"
+              label="Procedencia"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="origin" />
             </form-field>
           </div>
@@ -851,20 +976,46 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes">
+              label="Num&#46; Ejes"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
                 formControlName="axesNumber" />
             </form-field>
+            <form-field
+              [control]="detailAssets.get('axesNumber')"
+              label="Num&#46; Ejes"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                [readOnly]="true"
+                class="form-control"
+                formControlName="axesNumber" />
+            </form-field>
           </div>
           <div class="col-md-4">
-            <form-check label="Apto para Circular" for="fitCircular">
+            <form-check
+              label="Apto para Circular"
+              for="fitCircular"
+              *ngIf="process != 'classify-assets'">
               <input
                 id="fitCircular"
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="circulate"
+                (change)="handleCirculateEvent($event)" />
+            </form-check>
+            <form-check
+              label="Apto para Circular"
+              for="fitCircular"
+              *ngIf="process == 'classify-assets'">
+              <input
+                id="fitCircular"
+                type="checkbox"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="circulate"
+                [disabled]="true"
                 (change)="handleCirculateEvent($event)" />
             </form-check>
           </div>
@@ -874,20 +1025,46 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor">
+              label="Num&#46; Motor"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 formControlName="engineNumber" />
             </form-field>
+            <form-field
+              [control]="detailAssets.get('engineNumber')"
+              label="Num&#46; Motor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="engineNumber" />
+            </form-field>
           </div>
           <div class="col-md-4">
-            <form-check label="Cuenta con reporte de robos" for="theftReport">
+            <form-check
+              label="Cuenta con reporte de robos"
+              for="theftReport"
+              *ngIf="process != 'classify-assets'">
               <input
                 id="theftReport"
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="theftReport"
+                (change)="handleTheftReportEvent($event)" />
+            </form-check>
+            <form-check
+              label="Cuenta con reporte de robos"
+              for="theftReport"
+              *ngIf="process == 'classify-assets'">
+              <input
+                id="theftReport"
+                type="checkbox"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="theftReport"
+                [disabled]="true"
                 (change)="handleTheftReportEvent($event)" />
             </form-check>
           </div>
@@ -911,7 +1088,10 @@
         </p>
         <div class="row pt-5">
           <div class="col-md-4">
-            <form-check label="Blindaje" for="armor">
+            <form-check
+              label="Blindaje"
+              for="armor"
+              *ngIf="process != 'classify-assets'">
               <input
                 id="armor"
                 type="checkbox"
@@ -919,15 +1099,38 @@
                 [(ngModel)]="armor"
                 (change)="handleArmor($event)" />
             </form-check>
+            <form-check
+              label="Blindaje"
+              for="armor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                id="armor"
+                type="checkbox"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="armor"
+                [disabled]="true"
+                (change)="handleArmor($event)" />
+            </form-check>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('operationalState')"
-              label="Estado Operativo">
+              label="Estado Operativo"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 formControlName="operationalState" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('operationalState')"
+              label="Estado Operativo"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="operationalState"
+                [readOnly]="true" />
             </form-field>
           </div>
         </div>
@@ -935,20 +1138,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor">
+              label="Num&#46; Motor"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="engineNumber" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('engineNumber')"
+              label="Num&#46; Motor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="engineNumber" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores">
+              label="Num&#46; Motores"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="enginesNumber" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('enginesNumber')"
+              label="Num&#46; Motores"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="enginesNumber" />
             </form-field>
           </div>
@@ -958,18 +1183,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('tuition')"
-              label="Matr&iacute;cula">
+              label="Matr&iacute;cula"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
                 formControlName="tuition" />
             </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="detailAssets.get('flag')" label="Bandera">
+            <form-field
+              [control]="detailAssets.get('tuition')"
+              label="Matr&iacute;cula"
+              *ngIf="process == 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
+                [readOnly]="true"
+                formControlName="tuition" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="detailAssets.get('flag')"
+              label="Bandera"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="flag" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('flag')"
+              label="Bandera"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="flag" />
             </form-field>
           </div>
@@ -977,18 +1226,44 @@
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('cabin')" label="Cabina">
+            <form-field
+              [control]="detailAssets.get('cabin')"
+              label="Cabina"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
                 formControlName="cabin" />
             </form-field>
+            <form-field
+              [control]="detailAssets.get('cabin')"
+              label="Cabina"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="cabin" />
+            </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('openwork')" label="Calado">
+            <form-field
+              [control]="detailAssets.get('openwork')"
+              label="Calado"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
+                formControlName="openwork" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('openwork')"
+              label="Calado"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="openwork" />
             </form-field>
           </div>
@@ -998,18 +1273,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('volume')"
-              label="Volumen&#40;m3&#41;">
+              label="Volumen&#40;m3&#41;"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
                 formControlName="volume" />
             </form-field>
+            <form-field
+              [control]="detailAssets.get('volume')"
+              label="Volumen&#40;m3&#41;"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="volume" />
+            </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('length')" label="Eslora">
+            <form-field
+              [control]="detailAssets.get('length')"
+              label="Eslora"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
+                formControlName="length" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('length')"
+              label="Eslora"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="length" />
             </form-field>
           </div>
@@ -1019,18 +1318,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('origin')"
-              label="Procedencia">
+              label="Procedencia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
                 formControlName="origin" />
             </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="detailAssets.get('sleeve')" label="Manga">
+            <form-field
+              [control]="detailAssets.get('origin')"
+              label="Procedencia"
+              *ngIf="process == 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
+                [readOnly]="true"
+                formControlName="origin" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="detailAssets.get('sleeve')"
+              label="Manga"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="sleeve" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('sleeve')"
+              label="Manga"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="sleeve" />
             </form-field>
           </div>
@@ -1040,20 +1363,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('useType')"
-              label="Tipo de Uso">
+              label="Tipo de Uso"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="useType" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('useType')"
+              label="Tipo de Uso"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="useType" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('shipName')"
-              label="Nombre de Embarcaci&oacute;n">
+              label="Nombre de Embarcaci&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
+                formControlName="shipName" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('shipName')"
+              label="Nombre de Embarcaci&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="shipName" />
             </form-field>
           </div>
@@ -1063,20 +1408,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
-              label="A&ntilde;o de Fabricaci&oacute;n">
+              label="A&ntilde;o de Fabricaci&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="manufacturingYear" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('manufacturingYear')"
+              label="A&ntilde;o de Fabricaci&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="manufacturingYear" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('publicRegistry')"
-              label="Registro P&uacute;blico de la Embarcaci&oacute;n">
+              label="Registro P&uacute;blico de la Embarcaci&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="publicRegistry" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('publicRegistry')"
+              label="Registro P&uacute;blico de la Embarcaci&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="publicRegistry" />
             </form-field>
           </div>
@@ -1086,20 +1453,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('capacity')"
-              label="Capacidad &#40;lts&#41;">
+              label="Capacidad &#40;lts&#41;"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="capacity" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('capacity')"
+              label="Capacidad &#40;lts&#41;"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="capacity" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('ships')"
-              label="Embarcaciones">
+              label="Embarcaciones"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="string"
                 class="form-control"
+                formControlName="ships" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('ships')"
+              label="Embarcaciones"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="string"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="ships" />
             </form-field>
           </div>
@@ -1110,40 +1499,78 @@
 
   <!-- Informacion Joyeria -->
   <tab *ngIf="jewelerAssets">
-    <ng-template tabHeading>
+    <ng-template tabHeading *ngIf="process != 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="jewelInformation">
-        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
+        <p class="msg-required" *ngIf="process != 'classify-assets'">
+          Los campos con <span>*</span> son requeridos
+        </p>
         <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="detailAssets.get('caratage')"
-              label="Kilataje">
+              label="Kilataje"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="caratage" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('caratage')"
+              label="Kilataje"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="caratage" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="detailAssets.get('material')"
-              label="Material">
+              label="Material"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="material" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('material')"
+              label="Material"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="material" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="detailAssets.get('weight')"
-              label="Peso&#40;Kgs&#41;">
+              label="Peso&#40;Kgs&#41;"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="weight" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('weight')"
+              label="Peso&#40;Kgs&#41;"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="weight" />
             </form-field>
           </div>
@@ -1162,10 +1589,15 @@
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">
-        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
+        <p class="msg-required" *ngIf="process != 'classify-assets'">
+          Los campos con <span>*</span> son requeridos
+        </p>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-check label="Blindaje" for="armor">
+            <form-check
+              label="Blindaje"
+              for="armor"
+              *ngIf="process != 'classify-assets'">
               <input
                 id="armor"
                 type="checkbox"
@@ -1173,14 +1605,37 @@
                 [(ngModel)]="armor"
                 (change)="handleArmor($event)" />
             </form-check>
+            <form-check
+              label="Blindaje"
+              for="armor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                id="armor"
+                type="checkbox"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="armor"
+                [disabled]="true"
+                (change)="handleArmor($event)" />
+            </form-check>
           </div>
-          <div class="col-md-4" *ngIf="process == 'registration-request'">
+          <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
-              label="A&ntilde;o de Fabricaci&oacute;n">
+              label="A&ntilde;o de Fabricaci&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="manufacturingYear" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('manufacturingYear')"
+              label="A&ntilde;o de Fabricaci&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="manufacturingYear" />
             </form-field>
           </div>
@@ -1188,20 +1643,44 @@
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('model')" label="Modelo">
+            <form-field
+              [control]="detailAssets.get('model')"
+              label="Modelo"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="model" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('model')"
+              label="Modelo"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="model" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('operationalState')"
-              label="Estado Operativo">
+              label="Estado Operativo"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="operationalState" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('operationalState')"
+              label="Estado Operativo"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="operationalState" />
             </form-field>
           </div>
@@ -1211,20 +1690,42 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor">
+              label="Num&#46; Motor"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="engineNumber" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('engineNumber')"
+              label="Num&#46; Motor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="engineNumber" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores">
+              label="Num&#46; Motores"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="enginesNumber" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('enginesNumber')"
+              label="Num&#46; Motores"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="enginesNumber" />
             </form-field>
           </div>
@@ -1234,37 +1735,83 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('tuition')"
-              label="Matr&iacute;cula">
+              label="Matr&iacute;cula"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="tuition" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('tuition')"
+              label="Matr&iacute;cula"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="tuition" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('dgacRegistry')"
-              label="Registro Direcci&oacute;n Gral&#46; de Aeron&aacute;utica Civil">
+              label="Registro Direcci&oacute;n Gral&#46; de Aeron&aacute;utica Civil"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="dgacRegistry" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('dgacRegistry')"
+              label="Registro Direcci&oacute;n Gral&#46; de Aeron&aacute;utica Civil"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="dgacRegistry" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('serie')" label="Serie">
+            <form-field
+              [control]="detailAssets.get('serie')"
+              label="Serie"
+              *ngIf="process != 'classify-assets'">
               <input type="text" class="form-control" formControlName="serie" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('serie')"
+              label="Serie"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="serie"
+                [readOnly]="true" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('airplaneType')"
-              label="Tipo de Avi&oacute;n">
+              label="Tipo de Avi&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="airplaneType" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('airplaneType')"
+              label="Tipo de Avi&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="airplaneType" />
             </form-field>
           </div>
@@ -1274,16 +1821,41 @@
             <form-field
               [control]="detailAssets.get('origin')"
               aria-setsize=""
-              label="Procedencia">
+              label="Procedencia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 formControlName="origin" />
             </form-field>
+            <form-field
+              [control]="detailAssets.get('origin')"
+              aria-setsize=""
+              label="Procedencia"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="origin" />
+            </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="detailAssets.get('flag')" label="Bandera">
+            <form-field
+              [control]="detailAssets.get('flag')"
+              label="Bandera"
+              *ngIf="process != 'classify-assets'">
               <input type="text" class="form-control" formControlName="flag" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('flag')"
+              label="Bandera"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="flag"
+                [readOnly]="true" />
             </form-field>
           </div>
         </div>
@@ -1291,10 +1863,21 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('useType')"
-              label="Tipo de Uso">
+              label="Tipo de Uso"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="useType" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('useType')"
+              label="Tipo de Uso"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="useType" />
             </form-field>
           </div>
@@ -1308,26 +1891,53 @@
     <ng-template tabHeading *ngIf="process != 'classify-assets'">
       <i class="bx bx-building"></i> Bien Inmueble
     </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bx-building"></i> Bien Inmueble
+    </ng-template>
     <form [formGroup]="goodDomicilieForm" class="form-material">
       <div class="immovablestInformation">
-        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
+        <p class="msg-required" *ngIf="process != 'classify-assets'">
+          Los campos con <span>*</span> son requeridos
+        </p>
         <div class="row pt-5">
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('description')"
-              label="Descripci&oacute;n">
+              label="Descripci&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <textarea
                 class="form-control"
                 formControlName="description"></textarea>
+            </form-field>
+
+            <form-field
+              [control]="goodDomicilieForm.get('description')"
+              label="Descripci&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <textarea
+                class="form-control"
+                formControlName="description"
+                [readOnly]="true"></textarea>
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('guardCustody')"
-              label="Guarda Custodia">
+              label="Guarda Custodia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="guardCustody" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('guardCustody')"
+              label="Guarda Custodia"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="guardCustody" />
             </form-field>
           </div>
@@ -1337,20 +1947,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('status')"
-              label="Estatus">
+              label="Estatus"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="status" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('status')"
+              label="Estatus"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="status" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('vigilanceRequired')"
-              label="Requiere Vigilancia">
+              label="Requiere Vigilancia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="vigilanceRequired" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('vigilanceRequired')"
+              label="Requiere Vigilancia"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="vigilanceRequired" />
             </form-field>
           </div>
@@ -1360,20 +1992,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('propertyType')"
-              label="Tipo de Inmueble">
+              label="Tipo de Inmueble"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="propertyType" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('propertyType')"
+              label="Tipo de Inmueble"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="propertyType" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('vigilanceLevel')"
-              label="Nivel de Vigilancia">
+              label="Nivel de Vigilancia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="vigilanceLevel" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('vigilanceLevel')"
+              label="Nivel de Vigilancia"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="vigilanceLevel" />
             </form-field>
           </div>
@@ -1383,20 +2037,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('surfaceMts')"
-              label="Mts&#46; de Terreno">
+              label="Mts&#46; de Terreno"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="surfaceMts" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('surfaceMts')"
+              label="Mts&#46; de Terreno"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="surfaceMts" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('mtsOfiWarehouse')"
-              label="Metros de Bodega">
+              label="Metros de Bodega"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="mtsOfiWarehouse" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('mtsOfiWarehouse')"
+              label="Metros de Bodega"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="mtsOfiWarehouse" />
             </form-field>
           </div>
@@ -1406,20 +2082,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('consSurfaceMts')"
-              label="Mts&#46; Construidos de Terreno">
+              label="Mts&#46; Construidos de Terreno"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="consSurfaceMts" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('consSurfaceMts')"
+              label="Mts&#46; Construidos de Terreno"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="consSurfaceMts" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('bedrooms')"
-              label="Habitaciones">
+              label="Habitaciones"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="bedrooms" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('bedrooms')"
+              label="Habitaciones"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="bedrooms" />
             </form-field>
           </div>
@@ -1429,20 +2127,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
-              label="Escritura p&uacute;blica">
+              label="Escritura p&uacute;blica"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="publicDeed" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('publicDeed')"
+              label="Escritura p&uacute;blica"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="publicDeed" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('bathroom')"
-              label="Ba&ntilde;o">
+              label="Ba&ntilde;o"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="bathroom" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('bathroom')"
+              label="Ba&ntilde;o"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="bathroom" />
             </form-field>
           </div>
@@ -1452,20 +2172,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
-              label="Registro Público de Propiedad">
+              label="Registro Público de Propiedad"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="pubRegProperty" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('pubRegProperty')"
+              label="Registro Público de Propiedad"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="pubRegProperty" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('kitchen')"
-              label="Cocina">
+              label="Cocina"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="kitchen" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('kitchen')"
+              label="Cocina"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="kitchen" />
             </form-field>
           </div>
@@ -1475,20 +2217,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('appraisalValue')"
-              label="Valor Aval&uacute;o">
+              label="Valor Aval&uacute;o"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="appraisalValue" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('appraisalValue')"
+              label="Valor Aval&uacute;o"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="appraisalValue" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('livingRoom')"
-              label="Sala">
+              label="Sala"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="livingRoom" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('livingRoom')"
+              label="Sala"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="livingRoom" />
             </form-field>
           </div>
@@ -1498,7 +2262,8 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('appraisalDate')"
-              label="Fecha de Avaluo">
+              label="Fecha de Aval&uacute;o"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
@@ -1507,14 +2272,38 @@
                 bsDatepicker
                 (bsValueChange)="changeDateEvaluoEvent($event)" />
             </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('appraisalDate')"
+              label="Fecha de Avaluo"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [bsValue]="bsEvaluoDate"
+                #dp="bsDatepicker"
+                [readOnly]="true"
+                bsDatepicker
+                (bsValueChange)="changeDateEvaluoEvent($event)" />
+            </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('diningRoom')"
-              label="Comedor">
+              label="Comedor"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="diningRoom" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('diningRoom')"
+              label="Comedor"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="diningRoom" />
             </form-field>
           </div>
@@ -1524,20 +2313,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('certLibLien')"
-              label="Certificado de Liberaci&oacute;n de Gravamen">
+              label="Certificado de Liberaci&oacute;n de Gravamen"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="certLibLien" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('certLibLien')"
+              label="Certificado de Liberaci&oacute;n de Gravamen"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="certLibLien" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('study')"
-              label="Estudio">
+              label="Estudio"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="study" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('study')"
+              label="Estudio"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="study" />
             </form-field>
           </div>
@@ -1547,21 +2358,46 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('espPark')"
-              label="Espacio de Estacionamiento">
+              label="Espacio de Estacionamiento"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
+                formControlName="espPark" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('espPark')"
+              label="Espacio de Estacionamiento"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="number"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="espPark" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('pffDate')"
-              label="Fecha de Paso al Fiscal">
+              label="Fecha de Paso al Fiscal"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [bsValue]="bsPffDate"
+                #dp="bsDatepicker"
+                bsDatepicker
+                (bsValueChange)="changeCertiviffDateEvent($event)" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('pffDate')"
+              label="Fecha de Paso al Fiscal"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [bsValue]="bsPffDate"
+                [readOnly]="true"
                 #dp="bsDatepicker"
                 bsDatepicker
                 (bsValueChange)="changeCertiviffDateEvent($event)" />
@@ -1573,7 +2409,8 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('certLibLienDate')"
-              label="Fecha de Certificado de Liberacion de Gravamen">
+              label="Fecha de Certificado de Liberacion de Gravamen"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
@@ -1582,14 +2419,38 @@
                 bsDatepicker
                 (bsValueChange)="changeCertiviDateEvent($event)" />
             </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('certLibLienDate')"
+              label="Fecha de Certificado de Liberacion de Gravamen"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [bsValue]="bsCertifiDate"
+                #dp="bsDatepicker"
+                [readOnly]="true"
+                bsDatepicker
+                (bsValueChange)="changeCertiviDateEvent($event)" />
+            </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('attachment')"
-              label="Embargo">
+              label="Embargo"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="attachment" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('attachment')"
+              label="Embargo"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="attachment" />
             </form-field>
           </div>
@@ -1599,20 +2460,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('gravFavorThird')"
-              label="Gravamen a Favor de Tercero">
+              label="Gravamen a Favor de Tercero"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="gravFavorThird" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('gravFavorThird')"
+              label="Gravamen a Favor de Tercero"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="gravFavorThird" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('coOwnership')"
-              label="Copropiedad">
+              label="Copropiedad"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="coOwnership" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('coOwnership')"
+              label="Copropiedad"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="coOwnership" />
             </form-field>
           </div>
@@ -1621,20 +2504,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('embFavorThird')"
-              label="Embargo a Favor de Tercero">
+              label="Embargo a Favor de Tercero"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="embFavorThird" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('embFavorThird')"
+              label="Embargo a Favor de Tercero"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="embFavorThird" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
-              label="DecretoExproProc">
+              label="DecretoExproProc"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="ownershipPercentage" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('ownershipPercentage')"
+              label="DecretoExproProc"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="ownershipPercentage" />
             </form-field>
           </div>
@@ -1643,20 +2548,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
-              label="% de Copropietario">
+              label="% de Copropietario"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="ownershipPercentage" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('ownershipPercentage')"
+              label="% de Copropietario"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="ownershipPercentage" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('declareRemediation')"
-              label="Declaraci&oacute;n Remediaci&oacute;n">
+              label="Declaraci&oacute;n Remediaci&oacute;n"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="declareRemediation" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('declareRemediation')"
+              label="Declaraci&oacute;n Remediaci&oacute;n"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="declareRemediation" />
             </form-field>
           </div>
@@ -1665,20 +2592,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('decreeExproSupe')"
-              label="DecretoExproSupe">
+              label="DecretoExproSupe"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="decreeExproSupe" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('decreeExproSupe')"
+              label="DecretoExproSupe"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="decreeExproSupe" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('assurance')"
-              label="Aseguramiento">
+              label="Aseguramiento"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="assurance" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('assurance')"
+              label="Aseguramiento"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="assurance" />
             </form-field>
           </div>
@@ -1687,20 +2636,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('heritage')"
-              label="Patrimonio">
+              label="Patrimonio"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="heritage" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('heritage')"
+              label="Patrimonio"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="heritage" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('propTitleFolio')"
-              label="Folio T&iacute;tulo de Propietario">
+              label="Folio T&iacute;tulo de Propietario"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="propTitleFolio" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('propTitleFolio')"
+              label="Folio T&iacute;tulo de Propietario"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="propTitleFolio" />
             </form-field>
           </div>
@@ -1709,20 +2680,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('propTitleFolio')"
-              label="Folio T&iacute;tulo de Propietario">
+              label="Folio T&iacute;tulo de Propietario"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="propTitleFolio" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('propTitleFolio')"
+              label="Folio T&iacute;tulo de Propietario"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="propTitleFolio" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('vouchersWater')"
-              label="Comprobantes de Agua">
+              label="Comprobantes de Agua"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="vouchersWater" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('vouchersWater')"
+              label="Comprobantes de Agua"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="vouchersWater" />
             </form-field>
           </div>
@@ -1731,20 +2724,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('measuresAdjacent')"
-              label="Medidas de Colindancia">
+              label="Medidas de Colindancia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="measuresAdjacent" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('measuresAdjacent')"
+              label="Medidas de Colindancia"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="measuresAdjacent" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('physicalPossession')"
-              label="Poses&iacute;n F&iacute;sica">
+              label="Poses&iacute;n F&iacute;sica"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="physicalPossession" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('physicalPossession')"
+              label="Poses&iacute;n F&iacute;sica"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="physicalPossession" />
             </form-field>
           </div>
@@ -1753,17 +2768,39 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('debts')"
-              label="Adeudos">
+              label="Adeudos"
+              *ngIf="process != 'classify-assets'">
               <input type="text" class="form-control" formControlName="debts" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('debts')"
+              label="Adeudos"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="debts" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('familyHeritage')"
-              label="Patrimonio de Familia">
+              label="Patrimonio de Familia"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="familyHeritage" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('familyHeritage')"
+              label="Patrimonio de Familia"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="familyHeritage" />
             </form-field>
           </div>
@@ -1772,20 +2809,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('closed')"
-              label="Clausurado">
+              label="Clausurado"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="closed" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('closed')"
+              label="Clausurado"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="closed" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('forProblems')"
-              label="Problematicas">
+              label="Problematicas"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="forProblems" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('forProblems')"
+              label="Problematicas"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="forProblems" />
             </form-field>
           </div>
@@ -1794,20 +2853,42 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('problemDesc')"
-              label="Descripci&oacute;n de Problem&aacute;tica">
+              label="Descripci&oacute;n de Problem&aacute;tica"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="problemDesc" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('problemDesc')"
+              label="Descripci&oacute;n de Problem&aacute;tica"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="problemDesc" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('photosAttached')"
-              label="Fotos Adjuntas">
+              label="Fotos Adjuntas"
+              *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
+                formControlName="photosAttached" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('photosAttached')"
+              label="Fotos Adjuntas"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
                 formControlName="photosAttached" />
             </form-field>
           </div>
