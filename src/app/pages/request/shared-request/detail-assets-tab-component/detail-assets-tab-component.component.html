@@ -16,9 +16,9 @@
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
-            <div class="col-md-4" *ngIf="detailAssets.get('goodId').value">
+            <div class="col-md-4">
               <form-field
-                [control]="detailAssets.get('goodId')"
+                [control]="detailAssets?.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
                 <input
                   type="text"
@@ -176,7 +176,7 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-check label="Avaluo" for="appraisal">
+              <form-check label="Aval&uacute;o" for="appraisal">
                 <input
                   id="appraisal"
                   type="checkbox"
@@ -1502,7 +1502,7 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('appraisalDate')"
-              label="Fecha de Avaluo">
+              label="Fecha de Aval&uacute;o">
               <input
                 type="text"
                 class="form-control"

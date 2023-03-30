@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LocalityService } from '../../../../../../../core/services/catalogs/locality.service';
 import { MunicipalityService } from '../../../../../../../core/services/catalogs/municipality.service';
@@ -33,6 +34,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   stateOfRepublicService = inject(StateOfRepublicService);
   municipaliService = inject(MunicipalityService);
   localityService = inject(LocalityService);
+  goodsinvService = inject(GoodsInvService);
 
   constructor(
     private modelRef: BsModalRef,
@@ -66,6 +68,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
       params['filter.requestId'] = `$eq:${this.request.id}`;
       this.goodDomiciliesService.getAll(params).subscribe({
         next: resp => {
+          debugger;
           const result = resp.data.map(async (item: any) => {
             item['warehouseAlias'] = item.warehouseAlias.id;
             var stateOfRepublic = await this.getStateOfRepublic(item);
@@ -132,7 +135,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
       param['filter.municipalityId'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
       param['filter.id'] = `$eq:${item.localityKey}`;
-      this.localityService.getAll(param).subscribe({
+      this.goodsinvService.getTownshipByStateKey(param).subscribe({
         next: (data: any) => {
           resolve(data.data[0].nameLocation);
         },
