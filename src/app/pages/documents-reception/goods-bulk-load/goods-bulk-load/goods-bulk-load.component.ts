@@ -180,13 +180,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
     const token = this.authService.decodeToken();
     this.userId = token.preferred_username
       ? token.preferred_username.toLocaleUpperCase()
       : token.preferred_username;
     let main = document.documentElement.querySelector('.init-page');
     main.scroll(0, 0);
-    this.blockErrors(false); // OCULTAR MENSAJES DEL INTERCEPTOR
+    // this.blockErrors(false); // OCULTAR MENSAJES DEL INTERCEPTOR
     this.globalVarsService
       .getGlobalVars$()
       .subscribe((globalVars: IGlobalVars) => {
@@ -369,31 +370,45 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         if (this.validIdCarga()) {
           const params = new FilterParams();
           params.removeAllFilters();
-          params.addFilter('id', this.assetsForm.get('idCarga').value);
+          let encodeP = encodeURIComponent(
+            this.assetsForm.get('idCarga').value
+          );
+          params.addFilter('id', encodeP);
           // Validar el identificador
           this.goodsBulkService
             .getUploadGoodIdentificador(params.getFilterParams())
             .subscribe({
               next: res => {
-                if (res.data.length > 0) {
-                  this.alert(
-                    'warning',
-                    'Opción Carga Masiva',
-                    'Ya existe(n) ' +
-                      res.count +
-                      ' registro(s) con este IDENTIFICADOR de Carga.'
-                  );
-                } else {
-                  this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
-                  this.reviewConditions();
-                }
-              },
-              error: err => {
+                // if (res.data.length > 0) {
                 this.alert(
                   'warning',
                   'Opción Carga Masiva',
-                  'Ocurrio un error al validar el Identificador de Carga, intentelo nuevamente.'
+                  'Ya existe(n) ' +
+                    res.count +
+                    ' registro(s) con este IDENTIFICADOR de Carga.'
                 );
+                // } else {
+                //   this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
+                //   this.reviewConditions();
+                // }
+              },
+              error: err => {
+                console.log(err);
+                let msg;
+                if (
+                  err.status == 400 &&
+                  err.error.message == 'No se encontrarón registros.'
+                ) {
+                  // msg = err.error.message;
+
+                  this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
+                  this.reviewConditions();
+                } else {
+                  msg =
+                    'Ocurrio un error al validar el Identificador de Carga, intentelo nuevamente.' +
+                    err.error.message;
+                  this.alert('warning', 'Opción Carga Masiva', msg);
+                }
               },
             });
         }
@@ -545,6 +560,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   validIdCarga() {
     this.assetsForm.get('idCarga').addValidators(Validators.required);
     this.assetsForm.get('idCarga').updateValueAndValidity();
+    this.assetsForm.get('idCarga').markAsTouched();
     if (this.assetsForm.get('idCarga').valid) {
       this.assetsForm.get('idCarga').clearValidators();
       this.assetsForm.get('idCarga').updateValueAndValidity();

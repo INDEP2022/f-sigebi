@@ -906,9 +906,7 @@
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="boatInformation">
-        <p class="msg-required" *ngIf="process != 'classify-assets'">
-          Los campos con <span>*</span> son requeridos
-        </p>
+        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
         <div class="row pt-5">
           <div class="col-md-4">
             <form-check label="Blindaje" for="armor">
@@ -1110,7 +1108,10 @@
 
   <!-- Informacion Joyeria -->
   <tab *ngIf="jewelerAssets">
-    <ng-template tabHeading>
+    <ng-template tabHeading *ngIf="process != 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
@@ -1306,6 +1307,9 @@
   <!-- Informacion inmuebles -->
   <tab *ngIf="immovablesAssets">
     <ng-template tabHeading *ngIf="process != 'classify-assets'">
+      <i class="bx bx-building"></i> Bien Inmueble
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-building"></i> Bien Inmueble
     </ng-template>
     <form [formGroup]="goodDomicilieForm" class="form-material">

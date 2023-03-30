@@ -156,7 +156,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.detailAssets.getRawValue());
     if (this.process == 'classify-assets') {
       this.setDataGood();
     }
@@ -166,8 +165,7 @@ export class DetailAssetsTabComponentComponent
     if (
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
-      this.typeDoc === 'clarification' ||
-      this.process == 'classify-assets'
+      this.typeDoc === 'approval-process'
     ) {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;

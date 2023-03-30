@@ -1,9 +1,13 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/good/good.model';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { FinantialInformationService } from 'src/app/core/services/ms-parameter-finantial/finantial-information.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   FINANCIAL_INFORMATION_COLUMNS1,
   FINANCIAL_INFORMATION_COLUMNS2,
@@ -15,23 +19,44 @@ import {
   styles: [],
 })
 export class FinancialInformationComponent extends BasePage implements OnInit {
-  form: FormGroup;
-  data1: any[] = [];
-  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  form: FormGroup = new FormGroup({});
+  data1: any[];
+  good: IGood;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-  settings1 = { ...this.settings, actions: false };
+  settings1;
+  settings2;
   data2: any[] = [];
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
-
-  constructor(private fb: FormBuilder) {
+  date: string;
+  proficientOpinion: string;
+  valuerOpinion: string;
+  observations: string;
+  quantity: number;
+  goodDescription: string;
+  goodId: number;
+  constructor(
+    private fb: FormBuilder,
+    private datePipe: DatePipe,
+    private goodService: GoodService,
+    private finantialInformationService: FinantialInformationService
+  ) {
     super();
     this.settings1 = {
+      ...TABLE_SETTINGS,
       ...this.settings,
       actions: false,
       columns: FINANCIAL_INFORMATION_COLUMNS1,
     };
     this.settings.columns = FINANCIAL_INFORMATION_COLUMNS2;
+
+    this.settings2 = {
+      ...TABLE_SETTINGS,
+      ...this.settings,
+      actions: false,
+      columns: FINANCIAL_INFORMATION_COLUMNS2,
+    };
   }
 
   ngOnInit(): void {
@@ -40,19 +65,71 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      noBien: [null, Validators.required],
-      date: [null, Validators.required],
-      dictaminatedBy: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
-      avaluo: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
-      observations: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
+      noBien: [null],
+      date: [null],
+      dictaminatedBy: [null],
+      avaluo: [null],
+      observations: [null],
     });
+  }
+  onChangeGood() {
+    this.searchGoods(this.form.value.noBien);
+  }
+  searchGoods(idGood: number | string) {
+    this.goodService.getById(idGood).subscribe({
+      next: response => {
+        this.good = response;
+        this.date = this.datePipe.transform(
+          response.dateIn,
+          'dd-MM-yyyy h:mm a'
+        );
+        this.proficientOpinion = response.proficientOpinion;
+        this.valuerOpinion = response.valuerOpinion;
+        this.observations = response.observations;
+        this.quantity = response.quantity;
+        this.goodDescription = response.goodDescription;
+        this.goodId = response.goodId;
+        this.form.controls['date'].setValue(this.date);
+        this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
+        this.form.controls['avaluo'].setValue(this.valuerOpinion);
+        this.form.controls['observations'].setValue(this.observations);
+
+        this.data1 = response;
+        console.log(this.data1);
+        this.totalItems1 = response.count;
+        // this.loadDescriptionStatus(this.good.id);
+        // this.setGood(this.good);
+      },
+      error: err => {
+        this.onLoadToast('error', 'ERROR', 'Bien no existe');
+        this.form.reset();
+        console.log(err);
+      },
+    });
+  }
+  loadFinancial(idGood: number | string) {
+    this.finantialInformationService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        // console.log(response);
+        // this.actaER.setValue(response.cve_acta);
+        // this.actaERDate.setValue(new Date(response.fec_elaboracion));
+      },
+      error: err => {
+        // this.actaER.setValue('');
+        // this.actaERDate.setValue('');
+        this.onLoadToast(
+          'info',
+          'Opss..',
+          'Este bien no tiene Información Financiera asociada'
+        );
+        console.log(err);
+      },
+    });
+  }
+
+  confirm() {}
+
+  cleanForm() {
+    this.form.reset();
   }
 }
