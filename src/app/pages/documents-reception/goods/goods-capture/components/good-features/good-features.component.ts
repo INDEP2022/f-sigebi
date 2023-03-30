@@ -8,8 +8,11 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { HOME_DEFAULT } from 'src/app/utils/constants/main-routes';
+import { FLYERS_REGISTRATION_CODE } from '../../utils/good-capture-constants';
 
 @Component({
   selector: 'good-features',
@@ -25,8 +28,12 @@ export class GoodFeaturesComponent
   @Input() override loading: boolean = false;
   @Input() good: any = {};
   @Output() onSave = new EventEmitter<void>();
-  constructor() {
+  origin: string = null;
+  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
     super();
+    const paramsMap = this.activatedRoute.snapshot.queryParamMap;
+
+    this.origin = paramsMap.get('origin');
   }
 
   ngOnInit(): void {
@@ -65,5 +72,13 @@ export class GoodFeaturesComponent
       return;
     }
     this.onSave.emit();
+  }
+
+  cancel() {
+    if (this.origin == FLYERS_REGISTRATION_CODE) {
+      this.router.navigate(['/pages/documents-reception/flyers-registration']);
+    } else {
+      this.router.navigate([HOME_DEFAULT]);
+    }
   }
 }

@@ -1,6 +1,6 @@
 const SAT_PAPERWORK_MAILBOX_COLUMNS = {
   processNumber: {
-    title: 'No. Tramite',
+    title: 'No. Trámite',
     type: 'number',
     sort: false,
   },
@@ -14,7 +14,7 @@ const SAT_PAPERWORK_MAILBOX_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  wheelNumber: {
+  flierNumber: {
     title: 'No. Volante',
     type: 'number',
     sort: false,

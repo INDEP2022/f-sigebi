@@ -67,4 +67,9 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.Documents}/good/${id}`;
     return this.get<IListResponse<IDocuments>>(route);
   }
+
+  updateByFolio(body: { folioLNU: string | number; folioLST: string }) {
+    const route = `${DocumentsEndpoints.Documents}/update-by-folio`;
+    return this.put(route, body);
+  }
 }

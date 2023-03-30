@@ -1,89 +1,139 @@
 export const COSTKEY_COLUMNS = {
-  noProcess: {
+  processNumber: {
     title: 'N°',
     width: '5%',
     sort: false,
   },
-  process: {
+  strategyProcess: {
     title: 'Proceso',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value) return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noService: {
+  serviceNumber: {
     title: 'N°',
     width: '5%',
     sort: false,
   },
-  service: {
+  strategyService: {
     title: 'Servicio',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value) return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noSpecification: {
+  serviceTypeNumber: {
     title: 'N°',
     width: '5%',
     sort: false,
   },
-  specification: {
+  strategyServicetype: {
     title: 'Especificación',
-    width: '10%',
+    width: '30%',
+    type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value) return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noTurnType: {
+  shiftNumber: {
     title: 'N°',
     width: '5%',
     sort: false,
   },
-  turnType: {
+  strategyShift: {
     title: 'Turno/Tipo',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value) return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noVariableCost: {
+  varCostNumber: {
     title: 'N°',
     width: '5%',
     sort: false,
   },
-  variableCost: {
+  strategyVariableCost: {
     title: 'Variable costo',
     width: '15%',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value) return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  idCost: {
+  costId: {
     title: 'Id Costo',
     width: '10%',
     sort: false,
   },
 };
 export const VALIDITYCOST_COLUMNS = {
-  cve: {
-    title: 'CVE',
+  cveZoneContract: {
+    title: 'Zona',
     width: '5%',
     sort: false,
   },
-  zone: {
-    title: 'Zona',
-    width: '15%',
-    sort: false,
-  },
   startDate: {
-    title: 'Fecha page',
+    title: 'Fecha inicial',
     width: '10%',
     sort: false,
   },
-
   finalDate: {
     title: 'Fecha final',
     width: '10%',
     sort: false,
   },
-  unitCost: {
+  costUnitarian: {
     title: 'Costo unitario',
     width: '10%',
     sort: false,
   },
-  inflammationIndex: {
-    title: '% Indice inflamacion',
+  porceInflation: {
+    title: '% Indice inflación',
     width: '10%',
     sort: false,
   },
@@ -92,9 +142,9 @@ export const VALIDITYCOST_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  vig: {
+  validity: {
     title: 'Vig.',
-    width: '5%',
+    width: '10%',
     sort: false,
   },
 };

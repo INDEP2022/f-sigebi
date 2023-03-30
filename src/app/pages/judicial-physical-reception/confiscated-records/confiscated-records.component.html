@@ -30,7 +30,7 @@
                 (click)="getGoodsByExpedient()">
                 Buscar
               </button>
-
+              <span class="ml-3">{{ statusProceeding }}</span>
               <!-- <form-field
                 [control]="form.get('averPrev')"
                 label="Averiguaci&oacute;n Previa">
@@ -99,7 +99,7 @@
                   type="text"
                   class="form-control disabled"
                   formControlName="ident"
-                  (ngModelChange)="fillActTwo()" />
+                  (change)="fillActTwo()" />
               </form-field>
             </div>
 
@@ -145,7 +145,7 @@
                   type="text"
                   class="form-control"
                   formControlName="folio"
-                  (ngModelChange)="fillActTwo()" />
+                  (change)="fillActTwo()" />
               </form-field>
             </div>
             <div class="col">
@@ -237,7 +237,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="folioEscaneo" />
+                  formControlName="folioEscaneo"
+                  maxlength="15" />
               </form-field>
             </div>
 

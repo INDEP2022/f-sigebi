@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { PermissionsService } from 'src/app/common/services/permissions.service';
+import { showHideErrorInterceptorService } from '../../common/services/show-hide-error-interceptor.service';
 import { AuthService } from '../services/authentication/auth.service';
 const READ_PERMISSION = 'read';
 
@@ -18,7 +19,8 @@ export class AuthGuard implements CanActivate, CanLoad {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
-    private permissionsService: PermissionsService
+    private permissionsService: PermissionsService,
+    private showHideErrorService: showHideErrorInterceptorService
   ) {}
 
   canActivate(
@@ -33,6 +35,8 @@ export class AuthGuard implements CanActivate, CanLoad {
 
   verify(route: Route) {
     this.authService.getTokenExpiration();
+    // Reestablece propiedad al navegar a cualquier pantalla
+    this.showHideErrorService.blockAllErrors = false;
     if (this.authService.existToken() && !this.authService.isTokenExpired()) {
       return true;
       //TODO: Habilitar checkRoles()

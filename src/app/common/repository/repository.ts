@@ -250,7 +250,7 @@ export class Repository<T> implements IRepository<T> {
   getAuthorityIssuingByParams(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
 
-    return this.httpClient.post<IAuthorityIssuingResponse[]>(
+    return this.httpClient.post<IListResponse<IAuthorityIssuingResponse>>(
       `${fullRoute}`,
       formData
     );

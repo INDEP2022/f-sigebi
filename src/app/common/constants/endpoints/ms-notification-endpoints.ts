@@ -23,4 +23,6 @@ export enum NotificationEndpoints {
   FindTransferentCity = `notification/find-notification-by-transferent-or-city`,
   //find-count-by-inquiri
   FindCountByInquiry = `notification/find-count-by-inquiri`,
+  //Last-Flyer-id
+  LastFlyerId = `notification/last-flyer-identification`,
 }

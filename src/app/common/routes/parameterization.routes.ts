@@ -12,10 +12,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Indicadores financieros',
         link: '/pages/parameterization/cat-financial-indicators',
       },
-      {
-        label: 'Preguntas',
-        link: '/pages/parameterization/question-catalog',
-      },
+      // { NO SE MIGRA
+      //   label: 'Preguntas',
+      //   link: '/pages/parameterization/question-catalog',
+      // },
       {
         label: 'Tablas lógicas',
         link: '/pages/parameterization/logical-tables-register',

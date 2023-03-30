@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">APROBACI&Oacute;N DE BIENES PARA DONACI&Oacute;N</h5>
@@ -19,13 +19,23 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="form.get('preliminaryInquiry')"
-            label="Averiguaci&oacute;n Previa">
-            <input
+          <form-field [control]="form.get('preliminaryInquiry')">
+            <!-- <input
               type="text"
               class="form-control"
-              formControlName="preliminaryInquiry" />
+              formControlName="preliminaryInquiry" /> -->
+            <ngx-select
+              [form]="form"
+              [data]="expedientSelec"
+              (fetchItems)="getExpedient($event)"
+              bindLabel="name"
+              control="preliminaryInquiry"
+              [searchOnInit]="true"
+              label="Averiguaci&oacute;n Previa"
+              termMaxLength="100"
+              [showTooltip]="true"
+              (change)="onValuesChange($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-2">
@@ -33,7 +43,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="criminalCase" />
+              formControlName="criminalCase"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -43,7 +54,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="circumstantialRecord" />
+              formControlName="circumstantialRecord"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -51,7 +63,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="keyPenalty" />
+              formControlName="keyPenalty"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -110,6 +123,18 @@
             ><i class="fa fa-square"></i> No disponibles</span
           >
         </p>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="row pt-5" *ngIf="form.get('criminalCase').value !== null">
+      <div class="col-md-2">
+        <button
+          class="btn btn-sm btn-primary active"
+          [disabled]="!form.valid"
+          (click)="resetScreen()">
+          Reiniciar
+        </button>
       </div>
     </div>
   </div>

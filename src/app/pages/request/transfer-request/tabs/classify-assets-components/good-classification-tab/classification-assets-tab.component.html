@@ -36,16 +36,24 @@
     <tabset class="md-tabs">
       <tab heading="Clasificacion del Bien" id="tab1">
         <app-classify-assets-tab
-          [assetsId]="assetsId"></app-classify-assets-tab>
+          [assetsId]="assetsId"
+          [goodObject]="goodObject"></app-classify-assets-tab>
       </tab>
       <tab heading="Atributos del Bien">
-        <!--<app-detail-assets-tab-component
-          [detailAssets]="detailArray"
-          [typeDoc]="typeDoc"></app-detail-assets-tab-component> -->
+        <div *ngIf="detailArray !== undefined && detailArray !== null">
+          <app-detail-assets-tab-component
+            [requestObject]="requestObject"
+            [detailAssets]="detailArray"
+            [assetsId]="assetsId"
+            [domicilieObject]="domicilieObject"
+            [typeDoc]="typeDoc"
+            [process]="process">
+          </app-detail-assets-tab-component>
+        </div>
       </tab>
       <tab heading="Aclaración">
-        <!--<app-clarification-list-tab
-          [detailAssets]="detailArray"></app-clarification-list-tab> -->
+        <app-clarification-list-tab
+          [idGood]="idGood"></app-clarification-list-tab>
       </tab>
     </tabset>
   </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 import { ExpedientRepository } from 'src/app/common/repository/repositories/ms-expedient-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -36,13 +36,32 @@ export class ExpedientService extends HttpService {
   }
 
   update(id: number | string, body: Partial<IExpedient>) {
-    return this.post(`${this.route.BasePath}/${id}`, body);
+    return this.put(`${this.route.BasePath}/${id}`, body);
   }
 
   getItegratedExpedients(params: _Params) {
     return this.get<IListResponse<IIntegratedExpedient>>(
       this.route.GetIntegratedExpedients,
       params
+    );
+  }
+
+  getExpedientList(params?: string): Observable<IListResponse<IExpedient>> {
+    let partials = ExpedientEndpoints.SelectExpedient.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<IExpedient>>(partials[1], params).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(m => {
+            return {
+              ...m,
+              name: `${m.id}: ${m.preliminaryInquiry}`,
+            };
+          }),
+        };
+      }),
+      tap(() => (this.microservice = ''))
     );
   }
 }

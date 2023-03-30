@@ -12,7 +12,9 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
@@ -75,6 +77,7 @@ export class ClarificationsComponent
   implements OnInit, OnChanges
 {
   @Input() requestObject: any;
+  @Input() process: string = '';
   goodForm: IFormGroup<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
@@ -90,17 +93,20 @@ export class ClarificationsComponent
   constructor(
     private modalService: BsModalService,
     private readonly fb: FormBuilder,
-    private readonly goodService: GoodService
+    private readonly goodService: GoodService,
+    private readonly clarificationService: ClarificationService,
+    private readonly rejectGoodService: RejectedGoodService
   ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getData();
-      // this.getClarifications();
-    });
+    if (this.requestObject) {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.getData();
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -129,10 +135,19 @@ export class ClarificationsComponent
       goodDescription: [null],
       quantity: [1, [Validators.required]],
       duplicity: ['N'],
-      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
-      volume: [null, [Validators.pattern(STRING_PATTERN)]],
+      capacity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      volume: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       fileeNumber: [null],
-      useType: [null, [Validators.pattern(STRING_PATTERN)]],
+      useType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       physicalStatus: [null],
       stateConservation: [null],
       origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -142,38 +157,181 @@ export class ClarificationsComponent
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
       compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
-      brand: [null, [Validators.required]],
-      subBrand: [null, [Validators.required]],
+      brand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(350),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(300),
+        ],
+      ],
       armor: [null],
-      model: [null, [Validators.required]],
+      model: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(300),
+        ],
+      ],
       doorsNumber: [null],
-      axesNumber: [null, [Validators.required]],
-      engineNumber: [null, [Validators.required]], //numero motor
-      tuition: [null, [Validators.required]],
-      serie: [null, [Validators.required]],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      engineNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //numero motor
+      tuition: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      serie: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       chassis: [null],
       cabin: [null],
-      fitCircular: ['N', [Validators.required]],
-      theftReport: ['N', [Validators.required]],
+      fitCircular: [
+        'N',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      theftReport: [
+        'N',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       addressId: [null],
-      operationalState: [null, [Validators.required]],
-      manufacturingYear: [null, [Validators.required]],
-      enginesNumber: [null, [Validators.required]], // numero de motores
-      flag: [null, [Validators.required]],
-      openwork: [null, [Validators.required]],
+      operationalState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      manufacturingYear: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      enginesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], // numero de motores
+      flag: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      openwork: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       sleeve: [null],
       length: [null, [Validators.required]],
-      shipName: [null, [Validators.required]],
-      publicRegistry: [null, [Validators.required]], //registro public
+      shipName: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      publicRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro public
       ships: [null],
-      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
-      airplaneType: [null, [Validators.required]],
+      dgacRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro direccion gral de aereonautica civil
+      airplaneType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       caratage: [null, [Validators.required]], //kilatage
-      material: [null, [Validators.required]],
-      weight: [null, [Validators.required]],
+      material: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      weight: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       fractionId: [null],
     });
   }
@@ -185,20 +343,26 @@ export class ClarificationsComponent
     this.goodService.getAll(filter).subscribe({
       next: ({ data }) => {
         this.assetsArray = [...data];
-        console.log(data);
+        console.log(this.assetsArray);
       },
     });
   }
 
   getClarifications() {
-    this.paragraphs = data2;
+    let params = new BehaviorSubject<FilterParams>(new FilterParams());
+    params.value.addFilter('goodId', this.assetsArray[0]);
+    const filter = this.params.getValue().getParams();
+    this.rejectGoodService.getAllFilter(filter).subscribe({
+      next: ({ data }) => {
+        this.paragraphs = [...data];
+        console.log(data);
+      },
+    });
   }
 
   clicked(event: any) {
-    console.log('one row');
     this.rowSelected = event;
     this.goodForm.patchValue({ ...event });
-    console.log(event);
   }
 
   selectAll(event?: any) {
@@ -222,6 +386,8 @@ export class ClarificationsComponent
       this.assetsSelected.push(
         this.assetsArray.find(x => x.id == event.target.value)
       );
+      console.log(event.target.value);
+      this.getClarifications();
     } else {
       let index = this.assetsSelected.indexOf(
         this.assetsArray.find(x => x.id == event.target.value)
@@ -242,10 +408,35 @@ export class ClarificationsComponent
       this.openForm();
     }
   }
-
+  deleteClarification() {
+    let data = this.clariArraySelected[0];
+    if (!data) {
+      this.alert('warning', 'Cuidado', 'Tiene que seleccionar una aclaracion');
+    }
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar el registro?'
+    ).then(val => {
+      if (val.isConfirmed) {
+        this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
+          next: val => {
+            this.onLoadToast(
+              'success',
+              'Eliminada con exito',
+              'La aclaracion fue eliminada con exito.'
+            );
+          },
+          complete: () => {
+            this.getClarifications();
+          },
+        });
+      }
+    });
+  }
   editForm() {
     if (this.clariArraySelected.length === 1) {
-      this.openForm(this.clariArraySelected);
+      this.openForm(this.clariArraySelected[0]);
     } else {
       this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
     }
@@ -255,9 +446,10 @@ export class ClarificationsComponent
     let docClarification = event;
     let config: ModalOptions = {
       initialState: {
-        docClarification: docClarification,
+        goodTransfer: this.goodForm.value,
+        docClarification,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) this.getClarifications();
         },
       },
       class: 'modal-sm modal-dialog-centered',

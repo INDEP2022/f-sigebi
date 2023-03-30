@@ -93,7 +93,10 @@
           (click)="editForm()">
           Editar
         </button>
-        <button style="margin-left: 2px" class="btn btn-danger btn-sm active">
+        <button
+          style="margin-left: 2px"
+          class="btn btn-danger btn-sm active"
+          (click)="deleteClarification()">
           Eliminar
         </button>
       </div>
@@ -117,6 +120,7 @@
       [detailAssets]="goodForm"
       [typeDoc]="typeDoc"
       [requestObject]="requestObject"
+      [process]="process"
       *ngIf="rowSelected"></app-detail-assets-tab-component>
   </div>
 </div>

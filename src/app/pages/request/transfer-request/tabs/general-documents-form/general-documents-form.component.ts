@@ -90,7 +90,7 @@ export class GeneralDocumentsFormComponent
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.requestForm.valueChanges.subscribe((data: any) => {
-      console.log(this.requestForm.getRawValue());
+      //console.log(this.requestForm.getRawValue());
     });
   }
 
@@ -139,10 +139,9 @@ export class GeneralDocumentsFormComponent
   //seleccionar fila
   selectRow(event: any) {
     this.rowSelected = event.data;
-    console.log(this.rowSelected);
   }
 
-  //abrir nuevo documento
+  //abrir nuevo expediente
   newExpedient() {
     this.openModal(AssociateFileComponent, 'doc-expediente', this.requestForm);
   }
