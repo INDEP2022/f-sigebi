@@ -1011,7 +1011,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   turnPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     // TODO: descomentar cuando los permisos esten habilitados
