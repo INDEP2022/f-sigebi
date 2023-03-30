@@ -25,12 +25,12 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtTituloTarea')"
-                label="Titulo tarea">
+                label="T&iacute;tulo tarea">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="txtTituloTarea"
-                  placeholder="Titulo de la tarea a buscar"
+                  placeholder="T&iacute;tulo de la tarea"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
@@ -38,12 +38,12 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoProgramacionEntrega')"
-                label="No. Programacion Entrega">
+                label="No. programaci&oacute;n entrega">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoProgramacionEntrega"
-                  placeholder="No. programacion entrega a buscar"
+                  placeholder="No. programaci&oacute;n entrega"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
@@ -52,7 +52,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtNombreActividad')"
-                label="Nombre de la Actividad">
+                label="Nombre de la actividad">
                 <input
                   type="text"
                   class="form-control"
@@ -64,9 +64,9 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoOrdenServicio')"
-                label="No.Orden de Servicio">
+                label="No. Orden de Servicio">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoOrdenServicio"
                   placeholder="No Orden de Servicio"
@@ -78,7 +78,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtAsignado')"
-                label="Asignado a">
+                label="Asignado">
                 <input
                   type="text"
                   class="form-control"
@@ -92,7 +92,7 @@
                 [control]="consultTasksForm.get('txtNoOrdenPago')"
                 label="No. Orden de Pago">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoOrdenPago"
                   placeholder="No Orden de Pago"
@@ -118,7 +118,7 @@
                 [control]="consultTasksForm.get('txtNoOrdenIngreso')"
                 label="No. Orden de Ingreso">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoOrdenIngreso"
                   placeholder="No. Orden de Ingreso"
@@ -130,7 +130,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtNombreAplicacion')"
-                label="Nombre de la aplicacion">
+                label="Nombre de la aplicaci&oacute;n">
                 <input
                   type="text"
                   class="form-control"
@@ -144,7 +144,7 @@
                 [control]="consultTasksForm.get('txtNoMuestreo')"
                 label="No. Muestreo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoMuestreo"
                   placeholder="No. de Muestreo"
@@ -156,7 +156,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="consultTasksForm.get('txtFecAsigDesde')"
-                label="Fecha de Asignacion Desde: "
+                label="Fecha de asignacion desde: "
                 style="padding-left: 10px">
                 <input
                   class="form-control"
@@ -167,7 +167,6 @@
                     displayOneMonthRange: true
                   }"
                   (keydown.enter)="onKeydown($event)" />
-                <!-- [minDate]="fechaFin.value"  -->
               </form-field>
             </div>
             <div class="col-md-2">
@@ -184,7 +183,6 @@
                     displayOneMonthRange: true
                   }"
                   (keydown.enter)="onKeydown($event)" />
-                <!-- [minDate]="fechaFin.value"  -->
               </form-field>
             </div>
 
@@ -193,7 +191,7 @@
                 [control]="consultTasksForm.get('txtNoMuestreoOrden')"
                 label="No. de Muestreo de Orden">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoMuestreoOrden"
                   placeholder="No. de Muestreo de Orden"
@@ -216,7 +214,6 @@
                     displayOneMonthRange: true
                   }"
                   (keydown.enter)="onKeydown($event)" />
-                <!-- [minDate]="fechaInicio.value" -->
               </form-field>
             </div>
             <div class="col-md-2">
@@ -241,7 +238,7 @@
                 [control]="consultTasksForm.get('txtNoDelegacionRegional')"
                 label="No. de Delegacion Regional">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoDelegacionRegional"
                   placeholder="No. de Delegacion Regional"
@@ -255,7 +252,7 @@
                 [control]="consultTasksForm.get('txtNoSolicitud')"
                 label="No. Solicitud">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoSolicitud"
                   placeholder="No. de Solicitud"
@@ -264,13 +261,13 @@
             </div>
             <div class="col-md-5">
               <form-field
-                [control]="consultTasksForm.get('txtNoTransfiriente')"
-                label="No. Transfiriente">
+                [control]="consultTasksForm.get('txtNoTransferente')"
+                label="No. Transferente">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
-                  formControlName="txtNoTransfiriente"
-                  placeholder="No. Transfiriente"
+                  formControlName="txtNoTransferente"
+                  placeholder="No. Transferente"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
@@ -279,62 +276,44 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoProgramacion')"
-                label="No. de Programacion">
+                label="No. de Programaci&oacute;n">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="txtNoProgramacion"
-                  placeholder="No. de Programacion"
+                  placeholder="No. de Programaci&oacute;n"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
-            <div class="col-md-5"></div>
-          </div>
-          <!-- <div class="row margin-input">
-            <div class="col-md-5">
-              <form-field
-                [control]="consultTasksForm.get('unlinked')"
-                label="Acciones1">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="txtSearch"
-                  placeholder="Tarea a buscar" />
-              </form-field>
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary active"
+                (click)="getTasks()"
+                (keydown.enter)="onKeydown($event)">
+                Buscar
+              </button>
             </div>
-            <div class="col-md-5"></div>
-          </div> -->
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-success active"
+                (click)="exportToExcel()">
+                Exportar a Excel
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-secondary active"
+                (click)="cleanFilter()">
+                Limpiar Filtro
+              </button>
+            </div>
+          </div>
         </form>
       </accordion-group>
     </accordion>
-
-    <div class="row margin-input">
-      <div class="col-md-4">
-        <button
-          type="button"
-          class="btn btn-sm btn-primary active"
-          (click)="getTasks()"
-          (keydown.enter)="onKeydown($event)">
-          Buscar
-        </button>
-      </div>
-      <div class="col-md-4">
-        <button
-          type="button"
-          class="btn btn-sm btn-success active"
-          (click)="exportToExcel()">
-          Exportar a Excel
-        </button>
-      </div>
-      <div class="col-md-4">
-        <button
-          type="button"
-          class="btn btn-sm btn-secondary active"
-          (click)="cleanFilter()">
-          Limpiar Filtro
-        </button>
-      </div>
-    </div>
 
     <div class="row pt-4">
       <div class="col-md-12">

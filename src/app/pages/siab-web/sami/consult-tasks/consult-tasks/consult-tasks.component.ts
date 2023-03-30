@@ -31,7 +31,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   userName = '';
   consultTasksForm: FormGroup;
 
-  // constructor(private fb: FormBuilder) {}
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
@@ -72,7 +71,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtFechaFinHasta: [''],
       txtNoDelegacionRegional: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtNoTransfiriente: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
     });
 
@@ -248,12 +247,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtNoTransfiriente) {
+    if (this.consultTasksForm.value.txtNoTransferente) {
       this.filterParams
         .getValue()
         .addFilter(
           'transferenceId',
-          this.consultTasksForm.value.txtNoTransfiriente,
+          this.consultTasksForm.value.txtNoTransferente,
           SearchFilter.ILIKE
         );
     }
@@ -297,7 +296,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.consultTasksForm.updateValueAndValidity();
     this.consultTasksForm.controls['txtSearch'].setValue('');
     this.getTasks();
-    // this.consultTasksForm.value.unlinked1.setValue({"0", "Todos"});
   }
 
   onKeydown(event: any) {
@@ -312,9 +310,5 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
     }
-  }
-
-  get fechaMin() {
-    return '2022/01/01'; //this.consultTasksForm.get('fechafin');
   }
 }
