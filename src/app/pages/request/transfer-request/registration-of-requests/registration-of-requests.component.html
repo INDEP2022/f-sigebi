@@ -232,7 +232,8 @@
               <!-- Aprovacion de de solicitudes -->
               <app-classification-assets-tab
                 *ngIf="approvalProcess"
-                [dataObject]="object"
+                [requestObject]="registRequestForm"
+                [process]="process"
                 [typeDoc]="'approval-process'"></app-classification-assets-tab>
               <!-- Fin -->
             </tab>

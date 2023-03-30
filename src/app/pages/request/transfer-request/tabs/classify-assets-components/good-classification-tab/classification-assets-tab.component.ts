@@ -163,7 +163,7 @@ export class ClassificationAssetsTabComponent
   }
 
   rowSelected(good: IGood) {
-    this.typeDoc = 'assets';
+    this.detailArray = null;
     this.requestObject = this.requestObject;
     this.goodObject = good;
     this.assetsId = good.id;

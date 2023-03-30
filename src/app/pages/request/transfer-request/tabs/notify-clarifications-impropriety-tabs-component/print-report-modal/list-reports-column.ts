@@ -1,12 +1,10 @@
-import { InputFieldComponent } from '../input-field/input-field.component';
-
 export const LIST_REPORTS_COLUMN = {
   name: {
     title: 'Nombre',
     type: 'string',
     sort: false,
   },
-  position: {
+  post: {
     title: 'Cargo',
     type: 'string',
     sort: false,
@@ -16,7 +14,7 @@ export const LIST_REPORTS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  button: {
+  /*button: {
     title: '',
     type: 'custom',
     class: 'custom-field',
@@ -24,5 +22,5 @@ export const LIST_REPORTS_COLUMN = {
     renderComponent: InputFieldComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
-  },
+  },*/
 };
