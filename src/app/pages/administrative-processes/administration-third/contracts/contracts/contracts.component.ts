@@ -67,7 +67,7 @@ export class ContractsComponent extends BasePage implements OnInit {
               case 'endDate':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'vigentContract':
+              case 'statusContract':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'zoneContractKey':

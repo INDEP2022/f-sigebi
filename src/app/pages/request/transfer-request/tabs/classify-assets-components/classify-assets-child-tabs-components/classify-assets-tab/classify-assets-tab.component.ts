@@ -524,9 +524,9 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
-          let fractionCode = this.selectLevel1.data.filter(
-            x => x.id === dataLevel1
-          )[0].fractionCode;
+          let fractionCode =
+            this.selectLevel1.data.filter(x => x.id === dataLevel1)[0]
+              .fractionCode ?? '';
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
@@ -632,13 +632,13 @@ export class ClassifyAssetsTabComponent
           Number(fractionId)
         );
       }
-    } else {
+    } /* else {
       this.message(
         'info',
         'Fraccion Nula',
         `La fracción del campo ${campo} no tiene un codigo`
       );
-    }
+    } */
   }
 
   //obtenien la unidad de medida
