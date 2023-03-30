@@ -195,10 +195,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   expenses: any[] = [];
 
-  constructor(
-    private excelService: ExcelService,
-    private currencyPipe: CurrencyPipe // private goodService: GoodService, // private bankAccountService: BankAccountService
-  ) {
+  constructor(private excelService: ExcelService) {
     super();
   }
 

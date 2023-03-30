@@ -65,7 +65,6 @@ export class PercentagesSurveillanceComponent
       next: response => {
         // this.percentages = response.data;
         this.sources.load(response.data);
-
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -146,7 +145,7 @@ export class PercentagesSurveillanceComponent
             this.sources.update(this.editDialogData, values);
             this.closeDialogPercentage();
           },
-          error: err => {
+          error: () => {
             this.loading = false;
           },
         });
@@ -162,7 +161,7 @@ export class PercentagesSurveillanceComponent
         }
         this.loading = false;
       },
-      error: err => {
+      error: () => {
         this.loading = false;
       },
     });

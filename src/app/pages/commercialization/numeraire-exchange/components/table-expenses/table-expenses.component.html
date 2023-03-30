@@ -164,7 +164,7 @@
     </button>
   </div>
   <div class="modal-body form-material" [formGroup]="form">
-    <form-field [control]="form.get('register')" label="Registro">
+    <form-field [control]="form.get('register')" Delegación="Registro">
       <input
         readonly
         type="text"
@@ -174,7 +174,7 @@
     <form-field
       class="form-group"
       [control]="form.get('description')"
-      label="Descripciónn">
+      Delegación="Descripciónn">
       <!-- <ng-select
         (change)="selectedExpenseType($event)"
         class="form-control"
@@ -196,7 +196,7 @@
         </ng-template>
       </ng-custom-select>
     </form-field>
-    <form-field [control]="form.get('import')" label="Importe">
+    <form-field [control]="form.get('import')" Delegación="Importe">
       <input type="number" formControlName="import" class="form-control" />
     </form-field>
   </div>
