@@ -3,25 +3,25 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     title: 'Bien',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodId;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.goodId;
+    // },
   },
-  description: {
+  goodDescription: {
     title: 'Descripción',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.description;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.description;
+    // },
   },
   quantity: {
     title: 'Valor',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.quantity;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.quantity;
+    // },
   },
 };
 

@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -19,12 +20,12 @@ import {
 })
 export class FinancialInformationComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  data1: any[] = [];
+  data1: any[];
   good: IGood;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-  settings1 = { ...this.settings, actions: false };
-  settings2 = { ...this.settings, actions: false };
+  settings1;
+  settings2;
   data2: any[] = [];
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
@@ -33,6 +34,8 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   valuerOpinion: string;
   observations: string;
   quantity: number;
+  goodDescription: string;
+  goodId: number;
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
@@ -41,6 +44,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings1 = {
+      ...TABLE_SETTINGS,
       ...this.settings,
       actions: false,
       columns: FINANCIAL_INFORMATION_COLUMNS1,
@@ -48,11 +52,11 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.settings.columns = FINANCIAL_INFORMATION_COLUMNS2;
 
     this.settings2 = {
+      ...TABLE_SETTINGS,
       ...this.settings,
       actions: false,
       columns: FINANCIAL_INFORMATION_COLUMNS2,
     };
-    this.settings.columns = FINANCIAL_INFORMATION_COLUMNS2;
   }
 
   ngOnInit(): void {
@@ -75,18 +79,24 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.goodService.getById(idGood).subscribe({
       next: response => {
         this.good = response;
-        console.log(this.good);
         this.date = this.datePipe.transform(
           response.dateIn,
           'dd-MM-yyyy h:mm a'
         );
         this.proficientOpinion = response.proficientOpinion;
         this.valuerOpinion = response.valuerOpinion;
+        this.observations = response.observations;
         this.quantity = response.quantity;
+        this.goodDescription = response.goodDescription;
+        this.goodId = response.goodId;
         this.form.controls['date'].setValue(this.date);
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
+
+        this.data1 = response;
+        console.log(this.data1);
+        this.totalItems1 = response.count;
         // this.loadDescriptionStatus(this.good.id);
         // this.setGood(this.good);
       },
