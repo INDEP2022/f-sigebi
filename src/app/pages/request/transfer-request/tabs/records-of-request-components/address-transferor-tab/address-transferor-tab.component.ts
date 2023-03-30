@@ -118,17 +118,23 @@ export class AddressTransferorTabComponent
       ], //por cambiar
       wayName: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       wayOrigin: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      exteriorNumber: [null, [Validators.pattern(STRING_PATTERN)]],
-      interiorNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      exteriorNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      interiorNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       wayDestiny: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       wayref1Key: [
         null,
@@ -136,7 +142,7 @@ export class AddressTransferorTabComponent
       ],
       wayChaining: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       description: [
         null,
@@ -146,7 +152,7 @@ export class AddressTransferorTabComponent
       requestId: [null],
       creationDate: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       userCreation: [null],
     });

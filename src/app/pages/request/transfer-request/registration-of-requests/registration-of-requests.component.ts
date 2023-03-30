@@ -181,7 +181,7 @@ export class RegistrationOfRequestsComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
       ], //telefono remitente
       emailOfOwner: [
         null,

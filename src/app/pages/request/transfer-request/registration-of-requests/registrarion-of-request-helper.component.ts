@@ -504,7 +504,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Estado Operativo en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.tuition === null) {
+            } /* else if (good.tuition === null) {
               //Matricula
               tipoRelEmbarca = true;
               this.message(
@@ -513,7 +513,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.shipName === null) {
+            } */ else if (good.shipName === null) {
               //Nombre Barco
               tipoRelEmbarca = true;
               this.message(
