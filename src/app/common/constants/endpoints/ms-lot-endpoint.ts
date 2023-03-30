@@ -1,4 +1,4 @@
 export enum LotEndpoints {
   BasePath = 'lot',
-  ComerLot = 'comer-lot',
+  ComerLot = 'eat-lots',
 }
