@@ -13,6 +13,9 @@ const routes: Routes = [
   {
     path: 'verify-compliance/:id',
     component: RegistrationOfRequestsComponent,
+    data: {
+      process: 'verify-compliance',
+    },
   },
   {
     path: 'classify-assets/:id',
@@ -24,14 +27,23 @@ const routes: Routes = [
   {
     path: 'validate-document/:id',
     component: RegistrationOfRequestsComponent,
+    data: {
+      process: 'validate-document',
+    },
   },
   {
     path: 'notify-clarification-inadmissibility/:id',
     component: RegistrationOfRequestsComponent,
+    data: {
+      process: 'notify-clarification-inadmissibility',
+    },
   },
   {
     path: 'process-approval/:id',
     component: RegistrationOfRequestsComponent,
+    data: {
+      process: 'process-approval',
+    },
   },
 ];
 

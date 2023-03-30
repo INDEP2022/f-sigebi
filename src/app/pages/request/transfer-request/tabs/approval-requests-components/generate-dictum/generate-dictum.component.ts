@@ -11,6 +11,9 @@ import { PrintReportModalComponent } from '../../notify-clarifications-improprie
   styles: [],
 })
 export class GenerateDictumComponent implements OnInit {
+  idDoc: any; //ID de solicitud, viene desde el componente principal
+  idTypeDoc: any;
+
   pdfurl: string = '';
   public event: EventEmitter<any> = new EventEmitter();
   dictumForm: ModelForm<any>;
@@ -23,6 +26,7 @@ export class GenerateDictumComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('Id de documento: ', this.idDoc);
     this.initForm();
   }
 
@@ -37,7 +41,21 @@ export class GenerateDictumComponent implements OnInit {
   }
 
   signDictum(): void {
-    this.openModal(PrintReportModalComponent, '', 'approval-process');
+    const idDoc = this.idDoc;
+    const typeAnnex = 'approval-request';
+    const idTypeDoc = this.idTypeDoc;
+    let config: ModalOptions = {
+      initialState: {
+        idDoc,
+        idTypeDoc,
+        typeAnnex,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
+    //this.modalService.show(PrintReportModalComponent,  config);
   }
 
   close(): void {
