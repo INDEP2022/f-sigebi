@@ -19,6 +19,7 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
@@ -64,6 +65,7 @@ export class AddressTransferorTabComponent
   goodDomicileService = inject(GoodDomiciliesService);
   authService = inject(AuthService);
   route = inject(ActivatedRoute);
+  goodsinvService = inject(GoodsInvService);
 
   constructor(private fb: FormBuilder, private modelRef: BsModalRef) {
     super();
@@ -206,15 +208,16 @@ export class AddressTransferorTabComponent
 
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
-    params.limit = 20;
+    /* params.limit = 20;
     params['filter.municipalityId'] = `$eq:${municipalityId}`;
-    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
-    this.localityService.getAll(params).subscribe({
-      next: data => {
-        this.selectLocality = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
+    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`; */
+    let object: any = {
+      municipalityKey: Number(municipalityId),
+      stateKey: Number(this.keyStateOfRepublic),
+    };
+    this.goodsinvService.getTownshipByStateKey(object).subscribe({
+      next: resp => {
+        this.selectLocality = new DefaultSelect(resp.data, resp.count);
       },
     });
   }
@@ -224,13 +227,15 @@ export class AddressTransferorTabComponent
     params.limit = 20;
     //params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
     // params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
-    params['filter.keyState'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
-    this.goodsQueryService.getZipCode(params).subscribe({
-      next: data => {
-        this.selectCP = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
+    //params['filter.keyState'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
+    const object = {
+      municipalityKey: municipalityId,
+      stateKey: this.keyStateOfRepublic,
+      townshipKey: localityId,
+    };
+    this.goodsinvService.getCodePostalByStateKey(object).subscribe({
+      next: resp => {
+        this.selectCP = new DefaultSelect(resp.data, resp.count);
       },
     });
   }

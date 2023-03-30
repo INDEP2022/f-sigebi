@@ -23,4 +23,16 @@ export class GoodsInvService extends HttpService {
       params
     );
   }
+
+  getMunicipalitiesByStateKey(params: Object) {
+    return this.post(IGoodsinvEndpoint.GetMunicipalityByParams, params);
+  }
+
+  getTownshipByStateKey(params: Object) {
+    return this.post(IGoodsinvEndpoint.GetTownshipByParams, params);
+  }
+
+  getCodePostalByStateKey(params: Object) {
+    return this.post(IGoodsinvEndpoint.GetCodePostalByParams, params);
+  }
 }

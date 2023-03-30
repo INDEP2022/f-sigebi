@@ -70,8 +70,8 @@
               (fetchItems)="getLocality($event)"
               [data]="selectLocality"
               label="Colonia"
-              bindLabel="nameLocation"
-              value="id"></ngx-select>
+              bindLabel="township"
+              value="townshipKey"></ngx-select>
           </div>
           <div class="col-md-4">
             <ngx-select
@@ -80,8 +80,8 @@
               (fetchItems)="getCP($event)"
               [data]="selectCP"
               label="C&#46;P&#46;"
-              value="codePostal"
-              bindLabel="codePostal"></ngx-select>
+              value="postalCode"
+              bindLabel="postalCode"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
