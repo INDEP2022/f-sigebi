@@ -56,7 +56,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         this.getClarification(filter);
       },
     });
-    console.log(this.docClarification);
     this.getClarification(new ListParams());
   }
 
@@ -94,16 +93,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   getClarification(params: ListParams | string): void {
     this.clarificationService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
-
         this.selectClarification = new DefaultSelect(data.data, data.count);
       },
     });
   }
-
-  /* clasificationSelect(clarification: IClarification) {
-    this.clarificationId = clarification.id;
-  } */
 
   confirm(): void {
     const user: any = this.authService.decodeToken();
@@ -111,7 +104,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA ACLARACION';
-    //clarification.goodId = this.idGood;
+    clarification.goodId = this.goodTransfer.id;
     //clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
       this.update(clarification);
@@ -121,7 +114,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   private save(clarification: ClarificationGoodRejectNotification) {
-    console.log('clarification', clarification);
     this.rejectedGoodService.create(clarification).subscribe({
       next: val => {
         this.onLoadToast(
