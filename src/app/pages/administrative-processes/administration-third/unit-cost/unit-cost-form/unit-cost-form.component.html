@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="unitCostForm">
@@ -14,9 +14,7 @@
               value="processNumber"
               bindLabel="description"
               label="Proceso"
-              control="processNumber"
-              (change)="onProcessChange($event)"
-              required>
+              control="processNumber">
             </ngx-select>
           </form-field>
         </div>
@@ -29,9 +27,7 @@
               value="serviceNumber"
               bindLabel="description"
               label="Servicio"
-              control="serviceNumber"
-              (change)="onServiceChange($event)"
-              required>
+              control="serviceNumber">
             </ngx-select>
           </form-field>
         </div>
@@ -44,9 +40,7 @@
               value="serviceTypeNumber"
               bindLabel="description"
               label="Tipo de Servicio"
-              control="serviceTypeNumber"
-              (change)="onServiceTypeChange($event)"
-              required>
+              control="serviceTypeNumber">
             </ngx-select>
           </form-field>
         </div>
@@ -59,9 +53,7 @@
               value="shiftNumber"
               bindLabel="description"
               label="Turno/Tipo"
-              control="shiftNumber"
-              (change)="onShiftChange($event)"
-              required>
+              control="shiftNumber">
             </ngx-select>
           </form-field>
         </div>
@@ -74,9 +66,7 @@
               value="varCostNumber"
               bindLabel="description"
               label="Variable costo"
-              control="varCostNumber"
-              (change)="onVarCostChange($event)"
-              required>
+              control="varCostNumber">
             </ngx-select>
           </form-field>
         </div>

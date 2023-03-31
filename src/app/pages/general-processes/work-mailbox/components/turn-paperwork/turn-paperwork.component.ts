@@ -107,7 +107,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   turnPaperWork(body: {}) {
     return this.tmpManagementProcedureService.folioReception(body).pipe(
       catchError(error => {
-        this.alert('error', 'Error', 'Ocurrio un error al turnar el trámite');
+        this.alert('error', 'Error', 'Ocurrió un error al turnar el trámite');
         return throwError(() => error);
       }),
       tap(() => {

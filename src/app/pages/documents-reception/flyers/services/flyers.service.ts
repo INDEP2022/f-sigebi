@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +16,8 @@ export class FlyersService {
   constructor(
     private msMJobManagementService: MJobManagementService,
     private msNotificationService: NotificationService,
-    private msCityService: CityService
+    private msCityService: CityService,
+    private msUsersService: UsersService
   ) {}
 
   /**
@@ -104,5 +107,9 @@ export class FlyersService {
 
   getCityBySearch(params: any) {
     return this.msCityService.getAll(params);
+  }
+
+  getSenderUser(params: ListParams) {
+    return this.msUsersService.getAllSegXAreas(params);
   }
 }
