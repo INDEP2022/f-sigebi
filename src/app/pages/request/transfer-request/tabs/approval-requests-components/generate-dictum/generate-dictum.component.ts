@@ -1,9 +1,10 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 
@@ -107,13 +108,48 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       priorityDate: [null],
       ofRejectionsNumber: [null],
       rulingDocumentId: [null],
-      nameRecipientRuling: [null],
-      postRecipientRuling: [null],
-      paragraphOneRuling: [null],
-      paragraphTwoRuling: [null],
+      nameRecipientRuling: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      postRecipientRuling: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      paragraphOneRuling: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4000),
+        ],
+      ],
+      paragraphTwoRuling: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4000),
+        ],
+      ],
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
-      ccpRuling: [null],
+      ccpRuling: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
+      ],
       rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],
