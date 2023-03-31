@@ -68,7 +68,6 @@ export class SelectAddressComponent extends BasePage implements OnInit {
       params['filter.requestId'] = `$eq:${this.request.id}`;
       this.goodDomiciliesService.getAll(params).subscribe({
         next: resp => {
-          debugger;
           const result = resp.data.map(async (item: any) => {
             item['warehouseAlias'] = item.warehouseAlias.id;
             var stateOfRepublic = await this.getStateOfRepublic(item);
@@ -119,25 +118,31 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   getMunicipality(item: any) {
     return new Promise((resolve, reject) => {
       var param = new ListParams();
-      param['filter.idMunicipality'] = `$eq:${item.municipalityKey}`;
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
-      this.municipaliService.getAll(param).subscribe({
+
+      this.goodsinvService.getAllMunipalitiesByFilter(param).subscribe({
+        next: resp => {
+          resolve(resp.data[0].municipality);
+        },
+      });
+      /* this.municipaliService.getAll(param).subscribe({
         next: (data: any) => {
           resolve(data.data[0].nameMunicipality);
         },
-      });
+      }); */
     });
   }
 
   getLocation(item: any) {
     return new Promise((resolve, reject) => {
       var param = new ListParams();
-      param['filter.municipalityId'] = `$eq:${item.municipalityKey}`;
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
-      param['filter.id'] = `$eq:${item.localityKey}`;
-      this.goodsinvService.getTownshipByStateKey(param).subscribe({
+      param['filter.townshipKey'] = `$eq:${item.localityKey}`;
+      this.goodsinvService.getAllTownshipByFilter(param).subscribe({
         next: (data: any) => {
-          resolve(data.data[0].nameLocation);
+          resolve(data.data[0].township);
         },
       });
     });
@@ -170,10 +175,17 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   selectAddress() {
+    if (!this.rowSelected) {
+      this.onLoadToast(
+        'error',
+        'No hay direccion',
+        'Seleccione una direccion previamente'
+      );
+      return;
+    }
     //delete this.rowSelected.stateOfRepublicName;
     delete this.rowSelected.municipalityName;
     delete this.rowSelected.localityName;
-
     this.event.emit(this.rowSelected as IDomicile);
     this.close();
   }

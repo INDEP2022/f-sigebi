@@ -44,6 +44,7 @@ export class AddressTransferorTabComponent
   domicileForm: ModelForm<any>;
   municipalityId: number = 0;
   keyStateOfRepublic: number = 0;
+  localityId: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
 
   selectState = new DefaultSelect<any>();
@@ -202,26 +203,31 @@ export class AddressTransferorTabComponent
   getMunicipaly(params: ListParams, stateKey?: number) {
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     params['filter.nameMunicipality'] = `$ilike:${params.text}`;
-    this.municipalySeraService.getAll(params).subscribe({
+
+    this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
+      next: resp => {
+        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+    /* this.municipalySeraService.getAll(params).subscribe({
       next: data => {
         this.selectMunicipe = new DefaultSelect(data.data, data.count);
       },
       error: error => {
         console.log(error);
       },
-    });
+    }); */
   }
 
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
-    /* params.limit = 20;
-    params['filter.municipalityId'] = `$eq:${municipalityId}`;
-    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`; */
-    let object: any = {
-      municipalityKey: Number(municipalityId),
-      stateKey: Number(this.keyStateOfRepublic),
-    };
-    this.goodsinvService.getTownshipByStateKey(object).subscribe({
+    //params.limit = 20;
+    params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
+    params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
+    params['filter.township'] = `$ilike:${params.text}`;
+
+    debugger;
+    this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
         this.selectLocality = new DefaultSelect(resp.data, resp.count);
       },
@@ -231,15 +237,10 @@ export class AddressTransferorTabComponent
   //obtener el codigo zip
   getCP(params: ListParams, localityId?: number, municipalityId?: number) {
     params.limit = 20;
-    //params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
-    // params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
-    //params['filter.keyState'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
-    const object = {
-      municipalityKey: municipalityId,
-      stateKey: this.keyStateOfRepublic,
-      townshipKey: localityId,
-    };
-    this.goodsinvService.getCodePostalByStateKey(object).subscribe({
+    params['filter.townshipKey'] = `$eq:${this.localityId}`; //localidad
+    params['filter.municipalityKey'] = `$eq:${this.municipalityId}`; //municipio
+    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
+    this.goodsinvService.getAllCodePostalByFilter(params).subscribe({
       next: resp => {
         this.selectCP = new DefaultSelect(resp.data, resp.count);
       },
@@ -301,7 +302,8 @@ export class AddressTransferorTabComponent
     );
     this.domicileForm.controls['localityKey'].valueChanges.subscribe(
       (data: any) => {
-        this.getCP(new ListParams(), data, this.municipalityId);
+        this.localityId = data;
+        this.getCP(new ListParams());
       }
     );
   }

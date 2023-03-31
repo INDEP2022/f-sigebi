@@ -36,6 +36,18 @@ export class GoodsInvService extends HttpService {
     return this.post(IGoodsinvEndpoint.GetCodePostalByParams, params);
   }
 
+  getAllMunipalitiesByFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetMunicipalityByFilter, params);
+  }
+
+  getAllTownshipByFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.getTownshipByFilter, params);
+  }
+
+  getAllCodePostalByFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetCodePostalByFilter, params);
+  }
+
   getAllBrandWithFilter(params: ListParams | string) {
     return this.get(IGoodsinvEndpoint.GetCatBrandWithFilter, params);
   }

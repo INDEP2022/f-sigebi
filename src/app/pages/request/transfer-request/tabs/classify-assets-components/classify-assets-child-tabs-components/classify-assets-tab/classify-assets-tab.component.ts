@@ -154,13 +154,13 @@ export class ClassifyAssetsTabComponent
       subBrand: [null, [Validators.required, Validators.maxLength(30)]],
       armor: [null],
       model: [null, [Validators.required, Validators.maxLength(30)]],
-      doorsNumber: [null],
+      doorsNumber: [null, [Validators.maxLength(7)]],
       axesNumber: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(10),
         ],
       ],
       engineNumber: [
@@ -168,23 +168,23 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(5),
         ],
       ], //numero motor
       tuition: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
       ],
       serie: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(10),
         ],
       ],
-      chassis: [null],
-      cabin: [null],
+      chassis: [null, [Validators.maxLength(10)]],
+      cabin: [null, Validators.maxLength(5)],
       fitCircular: [
         'N',
         [
@@ -223,7 +223,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(10),
         ],
       ], // numero de motores
       flag: [
@@ -553,8 +553,8 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    debugger;
-    const info = this.classiGoodsForm.getRawValue();
+    //debugger;
+    /*const info = this.classiGoodsForm.getRawValue();
     if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
       this.classiGoodsForm.get('stateConservation').setValue(1);
     this.classiGoodsForm.get('physicalStatus').setValue(1);
@@ -562,7 +562,7 @@ export class ClassifyAssetsTabComponent
     if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
       this.classiGoodsForm.get('stateConservation').setValue(2);
     this.classiGoodsForm.get('physicalStatus').setValue(2);
-    this.classiGoodsForm.get('destiny').setValue(1);
+    this.classiGoodsForm.get('destiny').setValue(1);*/
 
     const goods = this.classiGoodsForm.getRawValue();
 

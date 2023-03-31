@@ -559,9 +559,9 @@
               control="municipalityKey"
               (fetchItems)="getMunicipaly($event)"
               [data]="selectMunicipe"
-              bindLabel="nameMunicipality"
               label="Municipio"
-              value="idMunicipality"
+              bindLabel="municipality"
+              value="municipalityKey"
               [readonly]="isDisabled"></ngx-select>
           </div>
         </div>
@@ -574,8 +574,8 @@
               (fetchItems)="getLocality($event)"
               [data]="selectLocality"
               label="Colonia"
-              bindLabel="nameLocation"
-              value="id"
+              bindLabel="township"
+              value="townshipKey"
               [readonly]="isDisabled"></ngx-select>
           </div>
           <div class="col-md-4">
@@ -585,8 +585,8 @@
               (fetchItems)="getCP($event)"
               [data]="selectCP"
               label="C&#46;P&#46;"
-              value="codePostal"
-              bindLabel="codePostal"
+              value="postalCode"
+              bindLabel="postalCode"
               [readonly]="isDisabled"></ngx-select>
           </div>
           <div class="col-md-4">
