@@ -8,7 +8,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './scan-documents-modal.component.html',
-  styles: [],
+  styleUrls: ['./scan-documents-modal.component.scss'],
 })
 export class ScanDocumentsModalComponent implements OnInit {
   form = this.fb.group({

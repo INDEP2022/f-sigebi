@@ -4,12 +4,17 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -41,6 +46,7 @@ export class RegistrationOfRequestsComponent
   implements OnInit
 {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
+  idTypeDoc: number = 50; //Tipo de documento, aprobar, dictamen, es 50
   registRequestForm: IFormGroup<IRequest>; //solicitudes
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
@@ -82,6 +88,8 @@ export class RegistrationOfRequestsComponent
   delegationName: string = '';
   authorityName: string = '';
 
+  requestList: IRequest;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -101,7 +109,8 @@ export class RegistrationOfRequestsComponent
     private goodEstateService: RealStateService,
     private registrationHelper: RegistrationHelper,
     private taskService: TaskService,
-    private authService: AuthService
+    private authService: AuthService,
+    private orderService: OrderServiceService
   ) {
     super();
   }
@@ -117,12 +126,12 @@ export class RegistrationOfRequestsComponent
     this.getRequest(id);
     this.associateExpedientListener();
     this.dinamyCallFrom();
+    console.log('ID tipo de documento', this.idTypeDoc);
   }
 
   //Obtenemos el tipo de proceso//
   processView() {
     this.route.data.forEach((item: any) => {
-      console.log(item);
       this.process = item.process;
     });
   }
@@ -132,7 +141,7 @@ export class RegistrationOfRequestsComponent
     this.requestHelperService.currentExpedient.subscribe({
       next: resp => {
         if (resp === true) {
-          this.isExpedient = resp;
+          this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
       },
@@ -174,7 +183,7 @@ export class RegistrationOfRequestsComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
       ], //telefono remitente
       emailOfOwner: [
         null,
@@ -255,7 +264,6 @@ export class RegistrationOfRequestsComponent
       this.getData(request); */
       },
       error: error => {
-        console.log(error.error.message);
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -467,6 +475,7 @@ export class RegistrationOfRequestsComponent
   }
 
   finishMethod() {
+    debugger;
     this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
@@ -496,7 +505,7 @@ export class RegistrationOfRequestsComponent
     );
   }
 
-  //metodo que guarda la verificacion
+  //metodo que guarda la captura de solivitud
   public async confirmMethod() {
     /* trae solicitudes actualizadas */
     const request = await this.getAsyncRequestById();
@@ -513,39 +522,76 @@ export class RegistrationOfRequestsComponent
   cambiarTipoUsuario(request: any) {
     this.openModal(SelectTypeUserComponent, request, 'commit-request');
   }
+  /* Fin guardar captura de solicitud */
 
-  verifyComplianceMethod() {
-    /*let body: any = {};
-    const user: any = this.authService.decodeToken();
-    body['id'] = 0;
-    body['assignees'] = this.user.username;
-    body['assigneesDisplayname'] = this.user.firstName;
-    body['creator'] = user.username;
-    body['taskNumber'] = Number(this.data.id);
-    body['title'] =
-      'Registro de solicitud (Clasificar Bien) con folio: ' +
-      this.data.id;
-    body['isPublic'] = 's';
-    body['istestTask'] = 's';
-    body['programmingId'] = 0;
-    body['requestId'] = this.data.id;
-    body['expedientId'] = this.data.recordId;
-    body['urlNb'] = 'pages/request/transfer-request/verify-compliance';*/
-    /*const taskResponse = await this.createTask(body);
-    if (taskResponse) {
-      Swal.fire({
-        title: 'Solicitud Turnada',
-        text: 'La solicitud se turno conrrectamente',
-        icon: 'success',
-        showCancelButton: false,
-        confirmButtonColor: '#9D2449',
-        cancelButtonColor: '#B38E5D',
-        confirmButtonText: 'Aceptar',
-      }).then(result => {
-        this.close();
-      });
-    } */
+  /* Metodo para guardar la Verificacion de cumplimientos */
+  async verifyComplianceMethod() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/classify-assets';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'VERIFICAR_CUMPLIMIENTO';
+        const to = 'CLASIFICAR_BIEN';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
   }
+  /* Fin Metodo para guardar verifucacion cumplimiento */
+
+  /* Metodo para guardar la clasificacion de bienes */
+  async classifyGoodMethod() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/validate-document';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'CLASIFICAR_BIEN';
+        const to = 'DESTINO_DOCUMENTAL';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+  /* Fin Metodo para guardar clasificacion de bienes */
+
+  /* Metodo de destino documental */
+  async destinyDocumental() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'DESTINO_DOCUMENTAL';
+        const to = 'SOLICITAR_APROBACION';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
+  }
+  /* Fin metodo destino documental */
 
   saveClarification(): void {
     this.saveClarifiObject = true;
@@ -553,20 +599,67 @@ export class RegistrationOfRequestsComponent
 
   close() {
     this.registRequestForm.reset();
-    this.router.navigate(['pages/request/list']);
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 
   signDictum() {
-    this.openModal(GenerateDictumComponent, '', 'approval-request');
+    const idDoc = this.route.snapshot.paramMap.get('id');
+    const idTypeDoc = this.idTypeDoc;
+    const typeAnnex = 'approval-request';
+
+    this.requestService.getById(idDoc).subscribe({
+      next: response => {
+        this.requestList = response;
+
+        let config: ModalOptions = {
+          initialState: {
+            idDoc,
+            idTypeDoc,
+            typeAnnex,
+            response,
+            callback: (next: boolean) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalService.show(
+          GenerateDictumComponent,
+          config
+        );
+      },
+      error: error => (this.loading = false),
+    });
+
+    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
   }
 
   /** Proceso de aprobacion */
-  private approveRequest() {
+  async approveRequest() {
     /**Verificar datos */
+    /**Actualizar tarea para aprobacion */
     console.log(this.requestData);
-    console.log('---- Redireccionar finalizando proceso ----');
+
     return;
-    this.requestService
+
+    /*const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const taskResult = await this.createTask(oldTask, title, url);
+      if (taskResult === true) {
+        const from = 'SOLICITAR_APROBACION';
+        const to = 'APROBADO';
+        const orderServResult = await this.createOrderService(from, to);
+        if (orderServResult) {
+          this.msgGuardado(
+            'success',
+            'Turnado Exitoso',
+            `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }*/
+    /*  this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
         next: resp => {
@@ -581,22 +674,87 @@ export class RegistrationOfRequestsComponent
             );
           }
         },
-      });
+      }); */
   }
   /** fin de proceso */
 
-  createTask(task: any) {
+  createTask(oldTask: any, title: string, url: string) {
     return new Promise((resolve, reject) => {
-      this.taskService.createTask(task).subscribe({
+      let body: any = {};
+      const user: any = this.authService.decodeToken();
+      body['id'] = 0;
+      body['assignees'] = oldTask.assignees;
+      body['assigneesDisplayname'] = oldTask.assigneesDisplayname;
+      body['creator'] = user.username;
+      body['taskNumber'] = Number(this.requestData.id);
+      body['title'] = title;
+      /* body['isPublic'] = 'S';
+      body['istestTask'] = 'S'; */
+      body['programmingId'] = 0;
+      body['requestId'] = this.requestData.id;
+      body['expedientId'] = this.requestData.recordId;
+      body['urlNb'] = url;
+      this.taskService.createTask(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
+          this.message('error', 'Error', 'Error al crear la tarea');
           console.log(error);
         },
       });
     });
   }
+
+  getOldTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          const task = {
+            assignees: resp.data[0].assignees,
+            assigneesDisplayname: resp.data[0].assigneesDisplayname,
+          };
+          resolve(task);
+        },
+        error: error => {
+          this.message('error', 'Error', 'Error al obtener la tarea antigua');
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
+  createOrderService(from: string, to: string) {
+    return new Promise((resolve, reject) => {
+      let orderservice: IOrderService = {};
+      orderservice.P_ESTATUS_ACTUAL = from;
+      orderservice.P_ESTATUS_NUEVO = to;
+      orderservice.P_ID_SOLICITUD = this.requestData.id;
+      orderservice.P_SIN_BIENES = '';
+      orderservice.P_BIENES_ACLARACION = '';
+      orderservice.P_FECHA_INSTANCIA = '';
+      orderservice.P_FECHA_ACTUAL = '';
+      orderservice.P_ORDEN_SERVICIO_IN = '';
+      orderservice.P_ORDEN_SERVICIO_OUT = '';
+      this.orderService.UpdateStatusGood(orderservice).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            'Error al actualizar el estatus del bien'
+          );
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
   msgSaveModal(
     btnTitle: string,
     message: string,
@@ -615,8 +773,6 @@ export class RegistrationOfRequestsComponent
       confirmButtonText: btnTitle,
     }).then(result => {
       if (result.isConfirmed) {
-        console.log(typeCommit);
-
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
@@ -627,6 +783,13 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'verificar-cumplimiento') {
           this.verifyComplianceMethod();
         }
+        if (typeCommit === 'clasificar-bienes') {
+          this.classifyGoodMethod();
+        }
+        if (typeCommit === 'validar-destino-bien') {
+          this.destinyDocumental();
+        }
+
         if (typeCommit === 'proceso-aprovacion') {
           this.approveRequest();
         }
@@ -651,15 +814,27 @@ export class RegistrationOfRequestsComponent
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
-
-    /*  this.BsModal.content.event.subscribe((res: any) => {
-      console.log(res);
-    }); */
   }
 
   dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
+    });
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.close();
+      }
     });
   }
 }

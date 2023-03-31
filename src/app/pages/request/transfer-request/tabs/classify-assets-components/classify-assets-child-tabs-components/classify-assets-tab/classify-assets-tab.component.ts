@@ -17,7 +17,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -36,6 +36,7 @@ export class ClassifyAssetsTabComponent
   @Input() typeDoc: string = '';
   @Input() goodObject: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
+  @Input() process: string = '';
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -96,63 +97,221 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm = this.fb.group({
       id: [null],
       goodId: [null],
-      ligieSection: [null],
-      ligieChapter: [null],
-      ligieLevel1: [null],
-      ligieLevel2: [null],
-      ligieLevel3: [null],
-      ligieLevel4: [null],
+      ligieSection: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       requestId: [requestId],
       goodTypeId: [null],
       color: [null],
       goodDescription: [null],
-      quantity: [1, [Validators.required]],
+      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       duplicity: ['N'],
-      capacity: [null, [Validators.pattern(STRING_PATTERN)]],
-      volume: [null, [Validators.pattern(STRING_PATTERN)]],
-      fileeNumber: [null],
-      useType: [null, [Validators.pattern(STRING_PATTERN)]],
-      physicalStatus: [null],
-      stateConservation: [null],
-      origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      capacity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      volume: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      fileeNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
+      useType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      origin: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       goodClassNumber: [null],
       ligieUnit: [null],
       appraisal: [null],
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
-      compliesNorm: ['N'], //cumple norma
-      notesTransferringEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      compliesNorm: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
+      ], //cumple norma
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
-      brand: [null, [Validators.required]],
-      subBrand: [null, [Validators.required]],
+      brand: [null, [Validators.required, Validators.maxLength(350)]],
+      subBrand: [null, [Validators.required, Validators.maxLength(300)]],
       armor: [null],
-      model: [null, [Validators.required]],
+      model: [null, [Validators.required, Validators.maxLength(300)]],
       doorsNumber: [null],
-      axesNumber: [null, [Validators.required]],
-      engineNumber: [null, [Validators.required]], //numero motor
-      tuition: [null, [Validators.required]],
-      serie: [null, [Validators.required]],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      engineNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //numero motor
+      tuition: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      serie: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       chassis: [null],
       cabin: [null],
-      fitCircular: ['N', [Validators.required]],
-      theftReport: ['N', [Validators.required]],
+      fitCircular: [
+        'N',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      theftReport: [
+        'N',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       addressId: [null],
-      operationalState: [null, [Validators.required]],
-      manufacturingYear: [null, [Validators.required]],
-      enginesNumber: [null, [Validators.required]], // numero de motores
-      flag: [null, [Validators.required]],
-      openwork: [null, [Validators.required]],
+      operationalState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      manufacturingYear: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      enginesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], // numero de motores
+      flag: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      openwork: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       sleeve: [null],
-      length: [null, [Validators.required]],
-      shipName: [null, [Validators.required]],
-      publicRegistry: [null, [Validators.required]], //registro public
+      length: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      shipName: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      publicRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro public
       ships: [null],
-      dgacRegistry: [null, [Validators.required]], //registro direccion gral de aereonautica civil
-      airplaneType: [null, [Validators.required]],
-      caratage: [null, [Validators.required]], //kilatage
-      material: [null, [Validators.required]],
-      weight: [null, [Validators.required]],
+      dgacRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro direccion gral de aereonautica civil
+      airplaneType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      caratage: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ], //kilatage
+      material: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      weight: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       fractionId: [null],
     });
 
@@ -397,7 +556,18 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
+    const info = this.classiGoodsForm.getRawValue();
+    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
+      this.classiGoodsForm.get('stateConservation').setValue(1);
+    this.classiGoodsForm.get('physicalStatus').setValue(1);
+
+    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
+      this.classiGoodsForm.get('stateConservation').setValue(2);
+    this.classiGoodsForm.get('physicalStatus').setValue(2);
+    this.classiGoodsForm.get('destiny').setValue(1);
+
     const goods = this.classiGoodsForm.getRawValue();
+
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -512,9 +682,9 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
-          let fractionCode = this.selectLevel1.data.filter(
-            x => x.id === dataLevel1
-          )[0].fractionCode;
+          let fractionCode =
+            this.selectLevel1.data.filter(x => x.id === dataLevel1)[0]
+              .fractionCode ?? '';
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
@@ -620,13 +790,13 @@ export class ClassifyAssetsTabComponent
           Number(fractionId)
         );
       }
-    } else {
+    } /* else {
       this.message(
         'info',
         'Fraccion Nula',
         `La fracción del campo ${campo} no tiene un codigo`
       );
-    }
+    } */
   }
 
   //obtenien la unidad de medida

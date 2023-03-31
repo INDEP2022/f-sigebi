@@ -3,13 +3,15 @@ import { IZoneContract } from 'src/app/core/models/catalogs/zone-contract.model'
 export const CONTRACTS_COLUMNS = {
   contractKey: {
     title: 'Contrato',
-    width: '10%',
     type: 'string',
+    sort: false,
+  },
+  zoneContractKey: {
+    title: 'N°',
     sort: false,
   },
   zone: {
     title: 'Zonas',
-    width: '30%',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IZoneContract) => {
@@ -26,20 +28,23 @@ export const CONTRACTS_COLUMNS = {
   },
   startDate: {
     title: 'Fecha inicial',
-    width: '30%',
-    type: 'Date',
     sort: false,
   },
   endDate: {
     title: 'Fecha final',
-    width: '30%',
-    type: 'Date',
     sort: false,
   },
-  vigentContract: {
+  statusContract: {
     title: 'Vigente',
-    width: '5%',
-    type: 'boolean',
     sort: false,
+    valuePrepareFunction: (value: string | number) => {
+      if (value === '1') {
+        return 'Sí';
+      } else if (value === '0') {
+        return 'No';
+      } else {
+        return '';
+      }
+    },
   },
 };

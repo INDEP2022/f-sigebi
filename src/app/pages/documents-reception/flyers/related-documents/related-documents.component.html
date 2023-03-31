@@ -90,7 +90,11 @@
           [control]="managementForm.get('remitente')"
           class="col-md-4">
           <ngx-select
-            [data]="select"
+            (fetchItems)="getSenderByDetail($event)"
+            (change)="changeSender()"
+            value="id"
+            bindLabel="name"
+            [data]="senders"
             [form]="managementForm"
             control="remitente"
             label="Remitente"></ngx-select>
@@ -108,7 +112,10 @@
 
         <form-field [control]="managementForm.get('ciudad')" class="col-md-4">
           <ngx-select
-            [data]="select"
+            (fetchItems)="getCityByDetail($event)"
+            value="idCity"
+            bindLabel="nameCity"
+            [data]="cities"
             [form]="managementForm"
             control="ciudad"
             label="Ciudad"></ngx-select>

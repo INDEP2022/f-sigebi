@@ -264,6 +264,16 @@
               formControlName="transferEntNotes" />
           </form-field>
         </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('protectNumber')"
+            label="N&uacute;mero Amparo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="protectNumber" />
+          </form-field>
+        </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4" *ngIf="transferenceNumber === 1">
@@ -286,15 +296,6 @@
               formControlName="circumstantialRecord" />
           </form-field>
         </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
-          <form-field
-            [control]="requestForm.get('lawsuit')"
-            label="Causa Penal">
-            <input type="text" class="form-control" formControlName="lawsuit" />
-          </form-field>
-        </div>
       </div>
       <div
         class="row pt-4"
@@ -309,14 +310,13 @@
               formControlName="tocaPenal" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
           <form-field
-            [control]="requestForm.get('protectNumber')"
-            label="N&uacute;mero Amparo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="protectNumber" />
+            [control]="requestForm.get('lawsuit')"
+            label="Causa Penal">
+            <input type="text" class="form-control" formControlName="lawsuit" />
           </form-field>
         </div>
       </div>

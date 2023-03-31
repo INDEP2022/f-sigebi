@@ -343,6 +343,11 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista PGR Transferencia
    */
   async getPgrTransferencia(resetValues: boolean = false) {
+    if (resetValues == false) {
+      this.pgrTransferForm.get('aveprev').reset();
+      this.pgrTransferForm.get('office').reset();
+      this.pgrTransferForm.updateValueAndValidity();
+    }
     let filtrados: any =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.pgrTransferForm.value,
@@ -350,11 +355,6 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         this.filtroPaginado,
         'filter'
       );
-    if (resetValues == true) {
-      this.pgrTransferForm.get('aveprev').reset();
-      this.pgrTransferForm.get('office').reset();
-      this.pgrTransferForm.updateValueAndValidity();
-    }
     this.pgrSubjectsRegisterService
       .getPgrTransferenciaBySearch(filtrados)
       .subscribe({
@@ -397,13 +397,36 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (data.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
+    let dataChangeNames = this.setNombreData(opcion, data);
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(dataChangeNames, {
       filename:
         opcion == 'gestion'
           ? `GestionFGR__Listado_Tramites_FGR${new Date().getTime()}`
           : `FGRTransferencia_Listado_Cves_FGR${new Date().getTime()}`,
     });
+  }
+
+  setNombreData(opcion: string, data: any[]) {
+    let dataSet: any[] = [];
+    let gestionData = PGR_PAPERWORK_MAILBOX_COLUMNS;
+    let transferData = PGR_TRANSFERS_COLUMNS;
+    data.forEach(elementData => {
+      let newObj: any = {};
+      for (const key in elementData) {
+        if (Object.prototype.hasOwnProperty.call(elementData, key)) {
+          if (opcion == 'gestion') {
+            newObj[gestionData[key as keyof typeof gestionData].title] =
+              elementData[key];
+          } else {
+            newObj[transferData[key as keyof typeof transferData].title] =
+              elementData[key];
+          }
+        }
+      }
+      dataSet.push(newObj);
+    });
+    return dataSet;
   }
 
   /**
@@ -457,7 +480,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   /**
    * Obtener el listado de Transferencia PGR
    */
-  getReportTransferenciaPgr() {
+  getReportTransferenciaPgr(filtroForm: boolean = false) {
     let objParams: any = {
       aveprev: this.pgrTransferForm.value.issue,
       pgrGoodNumber: this.pgrTransferForm.value.pgrGoodNumber,
@@ -475,7 +498,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    if (filtroForm == true) {
+      filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    }
+    // filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
     this.downloadingTransferente = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'transferencia_pgr')

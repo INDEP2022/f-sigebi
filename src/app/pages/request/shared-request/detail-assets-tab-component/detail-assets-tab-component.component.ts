@@ -25,6 +25,7 @@ import {
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -76,6 +77,7 @@ export class DetailAssetsTabComponentComponent
   selectConservationState = new DefaultSelect<any>();
 
   goodTypeName: string = '';
+  nameTypeRelevant: string = '';
   duplicity: boolean = false;
   armor: boolean = false;
   destinyLigie: string = '';
@@ -92,7 +94,7 @@ export class DetailAssetsTabComponentComponent
   complyNormString: string = 'N';
   appraisal: boolean = false;
   appraisalString = 'N';
-
+  nameGoodType: string = '';
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
@@ -147,7 +149,8 @@ export class DetailAssetsTabComponentComponent
   constructor(
     private fb: FormBuilder,
     private modalServise: BsModalService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodTypeService: GoodTypeService
   ) {
     super();
   }
@@ -159,7 +162,11 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
     }
     //verifica si la vista es verificacion de cumplimiento o bien
-    if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
+    if (
+      this.typeDoc === 'verify-compliance' ||
+      this.typeDoc === 'assets' ||
+      this.typeDoc === 'approval-process'
+    ) {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
         this.getGoodDomicilie(this.addressId);
@@ -199,11 +206,35 @@ export class DetailAssetsTabComponentComponent
 
   setDataGood() {
     const idGood = this.assetsId;
-    console.log(idGood);
     this.goodService.getById(idGood).subscribe({
       next: data => {
+        this.goodType(data.goodTypeId);
+        this.typeRelevant(data.goodTypeId);
+        if (data.stateConservation == 1 || data.physicalStatus == 1)
+          data.stateConservation = 'BUENO';
+        data.physicalStatus = 'BUENO';
+        if (data.stateConservation == 2 || data.physicalStatus == 2)
+          data.stateConservation = 'MALO';
+        data.physicalStatus = 'MALO';
         this.goodData = data;
-        console.log(data);
+      },
+      error: error => {},
+    });
+  }
+
+  goodType(goodTypeId: number) {
+    this.typeRelevantSevice.getById(goodTypeId).subscribe({
+      next: response => {
+        this.nameGoodType = response.description;
+      },
+      error: error => {},
+    });
+  }
+
+  typeRelevant(typeRelevantId: number) {
+    this.typeRelevantSevice.getById(typeRelevantId).subscribe({
+      next: data => {
+        this.nameTypeRelevant = data.description;
       },
       error: error => {},
     });
@@ -218,51 +249,69 @@ export class DetailAssetsTabComponentComponent
     this.getReactiveFormCall();
     this.isSavingData();
 
-    //.getGoodDomicilieTab();
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
-
-    //console.log('detalle del objeto enviado');
-    //console.log(this.detailAssets);
-
-    //this.initInputs();
   }
 
   initForm() {
-    //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
       warehouseAlias: [],
-      wayref2Key: [null],
-      wayref3Key: [null],
+      wayref2Key: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref3Key: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       statusKey: [null],
       municipalityKey: [null],
       localityKey: [null],
       code: [''],
-      latitude: [''],
-      length: [''], //por cambiar
-      wayName: [''],
-      wayOrigin: [''],
-      exteriorNumber: [''],
-      interiorNumber: [''],
-      wayDestiny: [''],
-      wayref1Key: [null],
-      wayChaining: [''],
-      description: [''],
+      latitude: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayName: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayOrigin: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      exteriorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
+      interiorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
+      wayDestiny: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref1Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayChaining: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      description: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       regionalDelegationId: [null],
       requestId: [null],
     });
-
-    //this.assetsForm.controls['typeAsset'].disable();
-    //this.assetsForm.disable();
-    //this.assetsForm.controls['typeAsset'].enable();
   }
 
-  //formulario del inmueble
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
@@ -271,12 +320,12 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      propertyType: [null, [Validators.required]],
-      surfaceMts: [0, [Validators.required]],
-      consSurfaceMts: [0, [Validators.required]],
-      publicDeed: [null, [Validators.required]],
-      pubRegProperty: [null, [Validators.required]],
-      appraisalValue: [0, [Validators.required]],
+      propertyType: [null, [Validators.required, Validators.maxLength(30)]],
+      surfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
+      consSurfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
+      publicDeed: [null, [Validators.required, Validators.maxLength(30)]],
+      pubRegProperty: [null, [Validators.required, Validators.maxLength(100)]],
+      appraisalValue: [0, [Validators.required, Validators.maxLength(30)]],
       appraisalDate: [null],
       certLibLien: [
         null,
@@ -304,7 +353,7 @@ export class DetailAssetsTabComponentComponent
       addressId: [null],
       userModification: [null],
       modificationDate: [null],
-      forProblems: [null, [Validators.required]],
+      forProblems: [null, [Validators.required, Validators.maxLength(30)]],
       certLibLienDate: [null],
       pffDate: [null],
       gravFavorThird: [
@@ -448,9 +497,7 @@ export class DetailAssetsTabComponentComponent
     keySettlement?: number
   ): any {
     params.limit = 20;
-    params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
-    params['filter.keySettlement'] = `$eq:${keySettlement}`;
     delete params.text;
     delete params.take;
     delete params.inicio;

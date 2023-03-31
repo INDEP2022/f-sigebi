@@ -76,11 +76,21 @@ const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
   `No se encontro SAT_CVE_UNICA de: ${descripcion}.`;
 const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
   `No se encontro la institución emisora: ${cveIssuing}.`;
-const ERROR_TRANSFERENTE_PARAMS = (contador: number) =>
+const ERROR_TRANSFERENTE_PARAMS = (
+  contador: number,
+  opcionValid: string,
+  oficioExpediente: string,
+  transferente: number,
+  ciudad: number
+) =>
   `${
     contador == 0
-      ? 'No existe el transferente, emisora y autoridad.'
-      : 'Demasiadas transferentes, emisoras y autoridades coinciden.'
+      ? `No existe la emisora y autoridad filtrada por: ${
+          opcionValid == 'sat' ? 'Expediente' : 'Oficio'
+        } : ${oficioExpediente}, Transferente: ${transferente} y Ciudad: ${ciudad}.`
+      : `Demasiados registros existen para las Emisoras y Autoridades filtrados por: ${
+          opcionValid == 'sat' ? 'Expediente' : 'Oficio'
+        } : ${oficioExpediente}, Transferente: ${transferente} y Ciudad: ${ciudad}.`
   }.`;
 // PROCESO GENERAL
 const ERROR_EXPEDIENTE_IDENTIFICADOR = (identificador: string) =>

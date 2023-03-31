@@ -2,7 +2,14 @@
   <div class="ch-content" header>
     <h5 class="title">Clave de costo</h5>
     <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <app-columns-select
+        [defaultColumns]="11"
+        [(settings)]="settings"></app-columns-select>
+      <div>
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
     </div>
   </div>
   <div body>
@@ -33,6 +40,13 @@
     <h5 class="title">Vigencia y costo</h5>
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings2"></app-columns-select>
+      <div>
+        <button
+          (click)="openForm2()"
+          class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
     </div>
   </div>
   <div body>
