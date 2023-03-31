@@ -10,14 +10,15 @@ import {
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
 import {
-  IOficioDictamenParams,
   RELATED_DOCUMENTS_COLUMNS,
   RELATED_DOCUMENTS_EXAMPLE_DATA,
 } from './related-documents-columns';
 import { TEXT1, TEXT1Abandono, TEXT2 } from './related-documents-message';
+import { RelatedDocumentsService } from './services/related-documents.service';
 
 @Component({
   selector: 'app-related-documents',
@@ -50,18 +51,16 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }.`;
   pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paramsGestionDictamen: IOficioDictamenParams = {
-    parametros: '',
-    p_gest_ok: '',
-    p_no_tramite: '',
-    tipo_of: '',
+  paramsGestionDictamen: IJuridicalDocumentManagementParams = {
+    volante: null,
+    expediente: null,
+    doc: null,
+    tipoOf: null,
     sale: '',
-    doc: '',
     bien: '',
-    volante: '',
-    expediente: '',
-    pllamo: '',
-    p_dictamen: '',
+    pGestOk: null,
+    pNoTramite: null,
+    pDictamen: null,
   };
   se_refiere_a = {
     A: 'Se refiere a todos los bienes',
@@ -84,12 +83,14 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   pantallaActual: string = '';
   disabledRadio: boolean = false;
   oficioGestion: IMJobManagement;
+  disabledAddresse: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private flyerService: FlyersService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private serviceRelatedDocumentsService: RelatedDocumentsService
   ) {
     super();
     this.settings = {
@@ -108,6 +109,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       return;
     } else {
       if (this.pantallaActual == '2' || this.pantallaActual == '1') {
+        this.setDataParams();
         this.pantallaOption = this.flyerService.getPantallaOption(
           this.pantallaActual
         );
@@ -116,8 +118,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.paramsGestionDictamen.sale = 'C';
         // if (params['parametros']) {
         if (this.pantallaOption) {
-          // Pantalla dictamen
-          this.initComponentDictamen();
+          this.getDictationByWheel();
+          // // Pantalla dictamen
+          // this.initComponentDictamen();
         } else {
           // Pantalla relacionados
         }
@@ -142,18 +145,29 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   setInitVariables() {
     this.paramsGestionDictamen = {
-      parametros: null,
-      p_gest_ok: null,
-      p_no_tramite: null,
-      tipo_of: null,
-      sale: null,
+      volante: null,
+      expediente: null,
       doc: null,
-      bien: null,
-      volante: '1557783',
-      expediente: '529402',
-      pllamo: null,
-      p_dictamen: null,
+      tipoOf: null,
+      sale: '',
+      bien: '',
+      pGestOk: null,
+      pNoTramite: null,
+      pDictamen: null,
     };
+    // {
+    //   parametros: null,
+    //   p_gest_ok: null,
+    //   p_no_tramite: null,
+    //   tipo_of: null,
+    //   sale: null,
+    //   doc: null,
+    //   bien: null,
+    //   volante: '1557802',
+    //   expediente: '619252',
+    //   pllamo: null,
+    //   p_dictamen: null,
+    // };
     this.variables = {
       dictamen: '',
       b: '',
@@ -168,13 +182,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     };
   }
 
+  setDataParams() {
+    this.managementForm
+      .get('noVolante')
+      .setValue(this.paramsGestionDictamen.volante);
+    this.managementForm
+      .get('noExpediente')
+      .setValue(this.paramsGestionDictamen.expediente);
+  }
+
   prepareForm() {
     this.managementForm = this.fb.group({
       noVolante: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
       tipoOficio: [null],
       relacionado: [null, Validators.pattern(STRING_PATTERN)],
-      numero: [404558],
+      numero: [],
       cveGestion: [null],
       noRemitente: [null],
       remitente: [null],
@@ -237,7 +260,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       next: res => {
         console.log(res);
         if (res.count == 0) {
-          this.getDictationByWheel();
+          // this.getDictationByWheel();
         } else {
           this.oficioGestion = res.data[0];
           this.setDataOficioGestion();
@@ -247,7 +270,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.getDictationByWheel();
+        // this.getDictationByWheel();
       },
     });
   }
@@ -299,8 +322,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('wheelNumber', this.managementForm.get('noVolante').value);
+    params.addFilter(
+      'expedientNumber',
+      this.managementForm.get('noExpediente').value
+    );
     await this.flyerService
-      .getNotificationByWheel(params.getParams())
+      .getNotificationByFilter(params.getParams())
       .subscribe({
         next: res => {
           console.log(res);
@@ -318,16 +345,16 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   validOficioEXTERNO() {
     if (
-      this.managementForm.get('tipoOficio').value == 'EXTERNO' &&
-      this.paramsGestionDictamen.pllamo != 'ABANDONO'
+      this.managementForm.get('tipoOficio').value == 'EXTERNO' // &&
+      // this.paramsGestionDictamen.pllamo != 'ABANDONO'
     ) {
       this.managementForm
         .get('parrafoInicial')
         .setValue(TEXT1(this.managementForm.get('noOficio').value));
       this.managementForm.get('parrafoFinal').setValue(TEXT2);
     } else if (
-      this.managementForm.get('tipoOficio').value == 'EXTERNO' &&
-      this.paramsGestionDictamen.pllamo == 'ABANDONO'
+      this.managementForm.get('tipoOficio').value == 'EXTERNO' // &&
+      // this.paramsGestionDictamen.pllamo == 'ABANDONO'
     ) {
       this.managementForm.get('parrafoInicial').setValue(TEXT1Abandono);
       this.managementForm.get('parrafoFinal').setValue('SASASASASAS');
@@ -372,8 +399,25 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   changeSender() {
     if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
+      this.managementForm.get('destinatario').disable();
+      this.managementForm.get('destinatario').updateValueAndValidity();
+      this.disabledAddresse = true;
     } else if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
+      this.managementForm.get('destinatario').enable();
+      this.managementForm.get('destinatario').updateValueAndValidity();
+      this.disabledAddresse = false;
+    } else {
+      this.managementForm.get('destinatario').enable();
+      this.managementForm.get('destinatario').updateValueAndValidity();
+      this.disabledAddresse = false;
     }
+  }
+
+  changeTextType() {
+    let textRespone = this.serviceRelatedDocumentsService.changeTextType(
+      this.managementForm.get('tipoTexto').value,
+      this.managementForm.get('noOficio').value
+    );
   }
 
   /**

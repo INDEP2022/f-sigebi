@@ -127,38 +127,22 @@
           <h6>Tipos de Texto:</h6>
           <div class="col-md-3">
             <form-radio label="ACUSE DE RECIBO">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="UNO" />
+              <input type="radio" formControlName="tipoTexto" value="UNO" />
             </form-radio>
           </div>
           <div class="col-md-3">
             <form-radio label="DOCUMENTO DEVOLUCIÓN">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="DOS" />
+              <input type="radio" formControlName="tipoTexto" value="DOS" />
             </form-radio>
           </div>
           <div class="col-md-3">
             <form-radio label="DOCUMENTO DE BIENES">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="TRES" />
+              <input type="radio" formControlName="tipoTexto" value="TRES" />
             </form-radio>
           </div>
           <div class="col-md-3">
             <form-radio label="DOCUMENTO DE NUMERARIO">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="CUATRO" />
+              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
             </form-radio>
           </div>
           <div class="col-md-3">
@@ -195,8 +179,8 @@
           <h6>Se Refiere A:</h6>
           <div class="col-md-3">
             <form-radio label="{{ se_refiere_a.A }}">
+              <!-- [attr.disabled]="paramsGestionDictamen.sale == 'C'" -->
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'C'"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.A }}" />
@@ -204,8 +188,8 @@
           </div>
           <div class="col-md-4">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
+              <!-- [attr.disabled]="paramsGestionDictamen.sale == 'C'" -->
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'C'"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.B }}" />
@@ -213,8 +197,8 @@
           </div>
           <div class="col-md-4">
             <form-radio label="{{ se_refiere_a.C }}">
+              <!-- [attr.disabled]="paramsGestionDictamen.sale == 'D'" -->
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'D'"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.C }}" />
@@ -222,8 +206,8 @@
           </div>
           <div class="col-md-1">
             <form-radio label="{{ se_refiere_a.D }}">
+              <!-- [attr.disabled]="paramsGestionDictamen.sale == 'C'" -->
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'C'"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.D }}" />
@@ -254,6 +238,17 @@
             type="text"
             class="form-control"
             formControlName="justificacionDetalle"
+            readonly
+            [disabled]="true" />
+        </form-field>
+        <form-field
+          [control]="managementForm.get('noOficio')"
+          class="col-md-12 mt-2"
+          label="Número de Oficio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noOficio"
             readonly
             [disabled]="true" />
         </form-field>

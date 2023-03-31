@@ -101,7 +101,7 @@ export class FlyersService {
     return this.msMJobManagementService.getAllFiltered(params);
   }
 
-  getNotificationByWheel(params: _Params) {
+  getNotificationByFilter(params: _Params) {
     return this.msNotificationService.getAllFilter(params);
   }
 
