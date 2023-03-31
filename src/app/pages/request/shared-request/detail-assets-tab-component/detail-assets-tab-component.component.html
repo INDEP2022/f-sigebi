@@ -756,8 +756,8 @@
               (fetchItems)="getBrand($event)"
               [data]="selectBrand"
               label="Marca"
-              value="id"
-              bindLabel="id"></ngx-select>
+              value="flexValue"
+              bindLabel="flexValueMeaning"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -765,9 +765,9 @@
               (fetchItems)="getBrand($event)"
               [data]="selectBrand"
               label="Marca"
-              value="id"
+              value="flexValue"
               [readonly]="isDisabled"
-              bindLabel="id"></ngx-select>
+              bindLabel="flexValueMeaning"></ngx-select>
           </div>
           <div class="col-md-3">
             <form-field
@@ -801,8 +801,8 @@
               (fetchItems)="getSubBrand($event)"
               [data]="selectSubBrand"
               label="Sub Marca"
-              value="idSubBrand"
-              bindLabel="idSubBrand"></ngx-select>
+              value="flexValueDependent"
+              bindLabel="flexValueMeaningDependent"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -810,9 +810,9 @@
               (fetchItems)="getSubBrand($event)"
               [data]="selectSubBrand"
               label="Sub Marca"
-              value="idSubBrand"
+              value="flexValueDependent"
               [readonly]="isDisabled"
-              bindLabel="idSubBrand"></ngx-select>
+              bindLabel="flexValueMeaningDependent"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field

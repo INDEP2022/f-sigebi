@@ -150,10 +150,10 @@ export class ClassifyAssetsTabComponent
       ],
       unitMeasure: [null], // preguntar Unidad Medida Transferente
       saeDestiny: [null],
-      brand: [null, [Validators.required, Validators.maxLength(350)]],
-      subBrand: [null, [Validators.required, Validators.maxLength(300)]],
+      brand: [null, [Validators.required, Validators.maxLength(30)]],
+      subBrand: [null, [Validators.required, Validators.maxLength(30)]],
       armor: [null],
-      model: [null, [Validators.required, Validators.maxLength(300)]],
+      model: [null, [Validators.required, Validators.maxLength(30)]],
       doorsNumber: [null],
       axesNumber: [
         null,
@@ -180,7 +180,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(30),
         ],
       ],
       chassis: [null],
@@ -248,7 +248,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(30),
         ],
       ],
       shipName: [
@@ -256,7 +256,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(40),
         ],
       ],
       publicRegistry: [
@@ -289,7 +289,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(30),
         ],
       ], //kilatage
       material: [
@@ -297,7 +297,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(30),
         ],
       ],
       weight: [
@@ -553,6 +553,7 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
+    debugger;
     const info = this.classiGoodsForm.getRawValue();
     if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
       this.classiGoodsForm.get('stateConservation').setValue(1);
@@ -578,6 +579,14 @@ export class ClassifyAssetsTabComponent
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
     }
+    if (!goods.idGoodProperty) {
+      goods.idGoodProperty =
+        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    }
+    if (goods.fractionId.id) {
+      goods.fractionId = Number(goods.fractionId.id);
+    }
+
     let goodAction: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);

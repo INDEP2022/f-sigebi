@@ -35,4 +35,12 @@ export class GoodsInvService extends HttpService {
   getCodePostalByStateKey(params: Object) {
     return this.post(IGoodsinvEndpoint.GetCodePostalByParams, params);
   }
+
+  getAllBrandWithFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetCatBrandWithFilter, params);
+  }
+
+  getAllSubBrandWithFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetCatSubBrandWithFilter, params);
+  }
 }

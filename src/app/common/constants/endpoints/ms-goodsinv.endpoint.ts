@@ -4,4 +4,6 @@ export enum IGoodsinvEndpoint {
   GetMunicipalityByParams = 'views/cat-municipalities-view-sb',
   GetTownshipByParams = 'views/cat-township-view-sb-one',
   GetCodePostalByParams = 'views/cat-postal-codes-view-sb-one',
+  GetCatBrandWithFilter = 'views/cat-auto-brands-view-sb',
+  GetCatSubBrandWithFilter = 'views/cat-auto-sub-brands-view-sb',
 }

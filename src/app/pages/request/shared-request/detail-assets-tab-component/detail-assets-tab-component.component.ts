@@ -194,6 +194,12 @@ export class DetailAssetsTabComponentComponent
           this.goodDomicilieForm.disable();
         }
       }
+
+      if (this.detailAssets.controls['subBrand'].value) {
+        console.log(this.detailAssets.controls['subBrand'].value);
+        const subBrand = this.detailAssets.controls['subBrand'].value;
+        this.getSubBrand(new ListParams(), subBrand);
+      }
     }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
@@ -248,6 +254,7 @@ export class DetailAssetsTabComponentComponent
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
     this.isSavingData();
+    this.getBrand(new ListParams());
 
     if (
       this.requestObject != undefined &&
@@ -535,11 +542,14 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getBrand(params: ListParams) {
-    const pa = new FilterParams();
-    pa.addFilter('id', params.text, SearchFilter.ILIKE);
+  getBrand(params: ListParams, brandId?: string) {
+    const filter = new FilterParams();
+    filter.addFilter('flexValueMeaning', params.text, SearchFilter.ILIKE);
+    if (brandId) {
+      filter.addFilter('flexValue', brandId);
+    }
 
-    this.parameterBrandsService.getAll(pa.getParams()).subscribe({
+    this.goodsInvService.getAllBrandWithFilter(filter.getParams()).subscribe({
       next: resp => {
         this.selectBrand = new DefaultSelect(resp.data, resp.count);
       },
@@ -548,12 +558,14 @@ export class DetailAssetsTabComponentComponent
 
   getSubBrand(params: ListParams, brandId?: string) {
     const idBrand = brandId ? brandId : this.brandId;
-    const pa = new FilterParams();
-    pa.limit = 20;
-    pa.addFilter('idBrand', idBrand);
-    pa.addFilter('idSubBrand', params.text, SearchFilter.ILIKE);
+    const filter = new ListParams();
+    filter.limit = 20;
+    if (brandId) {
+      filter['filter.flexValueDependent'] = `$eq:${idBrand}`;
+    }
+    filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
-    this.parameterSubBrandsService.getAll(pa.getParams()).subscribe({
+    this.goodsInvService.getAllSubBrandWithFilter(filter).subscribe({
       next: resp => {
         this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
       },
