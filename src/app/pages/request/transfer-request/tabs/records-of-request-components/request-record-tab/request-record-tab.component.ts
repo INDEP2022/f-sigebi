@@ -1,11 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IRequest } from '../../../../../../core/models/requests/request.model';
 import { AffairService } from '../../../../../../core/services/catalogs/affair.service';
@@ -43,7 +48,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
-
+    this.prepareForm();
     this.requestForm.controls['affair'].valueChanges.subscribe(val => {
       if (this.requestForm.controls['affair'].value != null) {
         this.getAffair(this.requestForm.controls['affair'].value);
@@ -83,7 +88,96 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       }
     });
   }
-
+  prepareForm() {
+    //formulario de solicitudes
+    this.requestForm = this.fb.group({
+      applicationDate: [null],
+      recordId: [null],
+      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
+      regionalDelegationId: [null],
+      keyStateOfRepublic: [null],
+      transferenceId: [null],
+      stationId: [null],
+      authorityId: [null],
+      //typeUser: [''],
+      //receiUser: [''],
+      id: [null],
+      urgentPriority: [null],
+      priorityDate: [null],
+      originInfo: [null],
+      receptionDate: [{ value: null, disabled: true }],
+      paperDate: [null, [Validators.required]],
+      typeRecord: [null],
+      publicMinistry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      nameOfOwner: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], //nombre remitente
+      holderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], //cargo remitente
+      phoneOfOwner: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+      ], //telefono remitente
+      emailOfOwner: [
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(100)],
+      ], //email remitente
+      court: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+      crime: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      receiptRoute: [null],
+      destinationManagement: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      indicatedTaxpayer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+      affair: [null],
+      transferEntNotes: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
+      observations: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
+      transferenceFile: [null],
+      previousInquiry: [null],
+      trialType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      circumstantialRecord: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      lawsuit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      tocaPenal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      protectNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+    });
+  }
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
     this.minPub.getAll(params).subscribe({
