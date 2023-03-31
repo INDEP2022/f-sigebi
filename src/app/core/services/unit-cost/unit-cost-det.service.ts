@@ -25,7 +25,7 @@ export class UnitCostDetService extends HttpService {
   }
 
   update(id: string | number, model: IUnitCostDet) {
-    const route = `${UnitCostDetEndpoints.UnitCost}/id/${id}`;
+    const route = `${UnitCostDetEndpoints.UnitCost}/${id}`;
     return this.put(route, model);
   }
 
@@ -34,7 +34,7 @@ export class UnitCostDetService extends HttpService {
   }
 
   remove(id: string | number) {
-    const route = `${UnitCostDetEndpoints.UnitCost}/id/${id}`;
+    const route = `${UnitCostDetEndpoints.UnitCost}/${id}`;
     return this.delete(route);
   }
 }
