@@ -3,42 +3,48 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     title: 'Bien',
     type: 'number',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.goodId;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.goodId;
+    },
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.description;
-    // },
+    sort: true,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.description;
+    },
   },
   quantity: {
     title: 'Valor',
-    type: 'string',
+    type: 'number',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.quantity;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.quantity;
+    },
   },
 };
 
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
-  name: {
-    title: 'Nombre',
+  idGoodNumber: {
+    title: 'Bien',
     type: 'number',
-    sort: false,
+    sort: true,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idGoodNumber.goodId;
+    // },
   },
   description: {
     title: 'Descripción',
     type: 'number',
-    sort: false,
+    sort: true,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.description;
+    },
   },
   value: {
     title: 'Valor',
     type: 'number',
-    sort: false,
+    sort: true,
   },
 };
