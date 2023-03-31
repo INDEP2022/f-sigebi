@@ -179,11 +179,18 @@ export class DetailAssetsTabComponentComponent
           this.goodDomicilieForm.disable();
         }
       }
+
+      if (this.detailAssets.controls['subBrand'].value) {
+        console.log(this.detailAssets.controls['subBrand'].value);
+        const subBrand = this.detailAssets.controls['subBrand'].value;
+        this.getSubBrand(new ListParams(), subBrand);
+      }
     }
-    //verifica si la vista es verificacion de cumplimiento o bien
+    /* //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
+
         this.getGoodDomicilie(this.addressId);
       }
       //verifica si la vista es verificacion de cumplimiento
@@ -200,7 +207,7 @@ export class DetailAssetsTabComponentComponent
         const subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(new ListParams(), subBrand);
       }
-    }
+    } */
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
     if (this.detailAssets.controls['goodTypeId'].value != null) {
@@ -476,10 +483,9 @@ export class DetailAssetsTabComponentComponent
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
-    if (municipalyId) {
+    /*if (municipalyId) {
       params['filter.municipalityKey'] = `$eq:${municipalyId}`;
-    }
-    params['limit'] = 20;
+    }*/
     this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
@@ -494,12 +500,16 @@ export class DetailAssetsTabComponentComponent
     }); */
   }
 
-  getLocality(params: ListParams, municipalityId?: number, stateKey?: number) {
-    params.limit = 20;
-    params['filter.municipalityId'] = `$eq:${municipalityId}`;
+  getLocality(
+    params: ListParams,
+    municipalityId?: number | string,
+    stateKey?: number | string
+  ) {
+    params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
-    this.localityService.getAll(params).subscribe({
+    this.goodsInvService.getAllTownshipByFilter(params).subscribe({
       next: data => {
+        console.log(data.data);
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
       error: error => {},
@@ -644,7 +654,7 @@ export class DetailAssetsTabComponentComponent
       this.stateOfRepublicService.getById(keyState).subscribe({
         next: data => {
           this.selectState = new DefaultSelect([data]);
-          this.domicileForm.controls['statusKey'].setValue(data.id);
+          //this.domicileForm.controls['statusKey'].setValue(data.id);
         },
         /*error: error => {
           console.log(error);
@@ -921,9 +931,11 @@ export class DetailAssetsTabComponentComponent
     this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
-        this.getStateOfRepublic(new ListParams(), value.statusKey);
+        debugger;
+        /* this.getStateOfRepublic(new ListParams(), value.statusKey);
         //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
-        this.domicileForm.patchValue(value);
+        this.domicileForm.patchValue(value);*/
+        this.setGoodDomicilieSelected(resp);
       },
     });
   }
@@ -962,10 +974,10 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
-        this.stateOfRepId = data;
+        /*this.stateOfRepId = data;
         this.municipalityId =
           this.domicileForm.controls['municipalityKey'].value ?? '';
-        this.getMunicipaly(new ListParams());
+        this.getMunicipaly(new ListParams());*/
       }
     });
 
@@ -1047,16 +1059,37 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  setGoodDomicilieSelected(domicilie: IDomicilies) {
-    debugger;
+  setGoodDomicilieSelected(domicilie: any) {
+    console.log(domicilie);
+    domicilie.localityKey = Number(domicilie.localityKey);
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
-    this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     this.stateOfRepId = domicilie.statusKey;
-    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
-    this.domicileForm.patchValue(domicilie);
+    this.municipalityId = domicilie.municipalityKey;
 
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
+    this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
+    this.getMunicipaly(new ListParams(), this.municipalityId);
+
+    this.getLocality(
+      new ListParams(),
+      Number(this.municipalityId),
+      this.stateOfRepId
     );
+
+    this.domicileForm.patchValue(domicilie);
+    this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
+    /* setTimeout(() => {
+      this.domicileForm.patchValue(domicilie);
+      console.log(this.domicileForm.getRawValue());
+    }, 3000); */
+
+    /* this.domicileForm.controls['municipalityKey'].setValue(
+      domicilie.municipalityKey
+    );*/
+    //this.stateOfRepId = domicilie.statusKey;
+    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
+
+    /* this.domicileForm.controls['municipalityKey'].setValue(
+      domicilie.municipalityKey
+    ); */
   }
 }
