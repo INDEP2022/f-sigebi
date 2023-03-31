@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -21,6 +22,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   bsPriorityDate: any;
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
+  selectMinPub = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
   priority: boolean = false;
@@ -31,7 +33,8 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     public fb: FormBuilder,
     private affairService: AffairService,
     private genericsService: GenericService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private minPub: MinPubService
   ) {
     super();
   }
@@ -39,6 +42,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
+    this.getPublicMinister(new ListParams());
 
     this.requestForm.controls['affair'].valueChanges.subscribe(val => {
       if (this.requestForm.controls['affair'].value != null) {
@@ -77,6 +81,15 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         const date = new Date(this.requestForm.controls['priorityDate'].value);
         this.bsPriorityDate = date;
       }
+    });
+  }
+
+  getPublicMinister(params: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.minPub.getAll(params).subscribe({
+      next: resp => {
+        this.selectMinPub = new DefaultSelect(resp.data, resp.count);
+      },
     });
   }
 
@@ -158,6 +171,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
+        this.loading = false;
         console.log(error);
       },
     });

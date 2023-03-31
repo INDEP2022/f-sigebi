@@ -67,7 +67,7 @@ export class DetailAssetsTabComponentComponent
   bsModalRef: BsModalRef;
   request: IRequest;
   stateOfRepId: number = null;
-  municipalityId: number = null;
+  municipalityId: number | string = null;
 
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
@@ -194,6 +194,12 @@ export class DetailAssetsTabComponentComponent
           this.goodDomicilieForm.disable();
         }
       }
+
+      if (this.detailAssets.controls['subBrand'].value) {
+        console.log(this.detailAssets.controls['subBrand'].value);
+        const subBrand = this.detailAssets.controls['subBrand'].value;
+        this.getSubBrand(new ListParams(), subBrand);
+      }
     }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
@@ -248,6 +254,7 @@ export class DetailAssetsTabComponentComponent
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
     this.isSavingData();
+    this.getBrand(new ListParams());
 
     if (
       this.requestObject != undefined &&
@@ -569,15 +576,24 @@ export class DetailAssetsTabComponentComponent
 
   getState(event: any) {}
 
-  getMunicipaly(params: ListParams, keyState?: number) {
-    params['filter.stateKey'] = `$eq:${keyState}`;
+  getMunicipaly(params: ListParams, municipalyId?: number | string) {
+    params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
+    if (municipalyId) {
+      params['filter.municipalityKey'] = `$eq:${municipalyId}`;
+    }
     params['limit'] = 20;
-    this.municipeSeraService.getAll(params).subscribe({
+    this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
+      next: resp => {
+        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+      },
+      error: error => {},
+    });
+    /* this.municipeSeraService.getAll(params).subscribe({
       next: data => {
         this.selectMunicipe = new DefaultSelect(data.data, data.count);
       },
       error: error => {},
-    });
+    }); */
   }
 
   getLocality(params: ListParams, municipalityId?: number, stateKey?: number) {
@@ -637,11 +653,14 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getBrand(params: ListParams) {
-    const pa = new FilterParams();
-    pa.addFilter('id', params.text, SearchFilter.ILIKE);
+  getBrand(params: ListParams, brandId?: string) {
+    const filter = new FilterParams();
+    filter.addFilter('flexValueMeaning', params.text, SearchFilter.ILIKE);
+    if (brandId) {
+      filter.addFilter('flexValue', brandId);
+    }
 
-    this.parameterBrandsService.getAll(pa.getParams()).subscribe({
+    this.goodsInvService.getAllBrandWithFilter(filter.getParams()).subscribe({
       next: resp => {
         this.selectBrand = new DefaultSelect(resp.data, resp.count);
       },
@@ -650,12 +669,14 @@ export class DetailAssetsTabComponentComponent
 
   getSubBrand(params: ListParams, brandId?: string) {
     const idBrand = brandId ? brandId : this.brandId;
-    const pa = new FilterParams();
-    pa.limit = 20;
-    pa.addFilter('idBrand', idBrand);
-    pa.addFilter('idSubBrand', params.text, SearchFilter.ILIKE);
+    const filter = new ListParams();
+    filter.limit = 20;
+    if (brandId) {
+      filter['filter.flexValueDependent'] = `$eq:${idBrand}`;
+    }
+    filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
-    this.parameterSubBrandsService.getAll(pa.getParams()).subscribe({
+    this.goodsInvService.getAllSubBrandWithFilter(filter).subscribe({
       next: resp => {
         this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
       },
@@ -1044,32 +1065,34 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
         this.stateOfRepId = data;
-        this.getMunicipaly(new ListParams(), data);
+        this.municipalityId =
+          this.domicileForm.controls['municipalityKey'].value ?? '';
+        this.getMunicipaly(new ListParams());
       }
     });
 
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          var stateKey =
+          /*var stateKey =
             this.request !== undefined
               ? this.request.keyStateOfRepublic
               : this.domicileForm.controls['statusKey'].value;
 
           this.municipalityId = data;
-          this.getLocality(new ListParams(), data, stateKey);
+          this.getLocality(new ListParams(), data, stateKey);*/
         }
       }
     );
     this.domicileForm.controls['localityKey'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          this.getCP(
+          /*  this.getCP(
             new ListParams(),
             this.municipalityId,
             this.stateOfRepId,
             Number(data)
-          );
+          ); */
         }
       }
     );
@@ -1127,8 +1150,11 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: IDomicilies) {
+    debugger;
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
+    this.stateOfRepId = domicilie.statusKey;
+    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['municipalityKey'].setValue(
