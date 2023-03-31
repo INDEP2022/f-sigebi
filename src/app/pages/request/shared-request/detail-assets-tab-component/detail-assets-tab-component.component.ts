@@ -40,7 +40,7 @@ import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -260,7 +260,10 @@ export class DetailAssetsTabComponentComponent
   initForm() {
     this.domicileForm = this.fb.group({
       id: [null],
-      warehouseAlias: [],
+      warehouseAlias: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       wayref2Key: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -269,10 +272,19 @@ export class DetailAssetsTabComponentComponent
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      statusKey: [null],
-      municipalityKey: [null],
-      localityKey: [null],
-      code: [''],
+      statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      municipalityKey: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      localityKey: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(100))],
+      ],
+      code: [
+        '',
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(6))],
+      ],
       latitude: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -289,8 +301,14 @@ export class DetailAssetsTabComponentComponent
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      exteriorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
-      interiorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
+      exteriorNumber: [
+        '',
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+      ],
+      interiorNumber: [
+        '',
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+      ],
       wayDestiny: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -307,53 +325,131 @@ export class DetailAssetsTabComponentComponent
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      regionalDelegationId: [null],
-      requestId: [null],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
-      description: [null],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
       status: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       propertyType: [null, [Validators.required, Validators.maxLength(30)]],
-      surfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
-      consSurfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
-      publicDeed: [null, [Validators.required, Validators.maxLength(30)]],
-      pubRegProperty: [null, [Validators.required, Validators.maxLength(100)]],
-      appraisalValue: [0, [Validators.required, Validators.maxLength(30)]],
+      surfaceMts: [
+        0,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      consSurfaceMts: [
+        0,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      publicDeed: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      pubRegProperty: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      appraisalValue: [
+        0,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       appraisalDate: [null],
       certLibLien: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
       ],
       guardCustody: [
         null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      vigilanceRequired: [
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      vigilanceRequired: [null],
       vigilanceLevel: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      mtsOfiWarehouse: [null, [Validators.maxLength(5)]],
-      bedrooms: [null, [Validators.maxLength(5)]],
-      bathroom: [null, [Validators.maxLength(5)]],
-      kitchen: [null, [Validators.maxLength(5)]],
-      diningRoom: [null, [Validators.maxLength(5)]],
-      livingRoom: [null, [Validators.maxLength(5)]],
-      study: [null, [Validators.maxLength(5)]],
-      espPark: [null, [Validators.maxLength(5)]],
-      userCreation: [null],
+      mtsOfiWarehouse: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      bedrooms: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      bathroom: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      kitchen: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      diningRoom: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      livingRoom: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      study: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      espPark: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      userCreation: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       creationDate: [null],
-      addressId: [null],
-      userModification: [null],
+      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      userModification: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       modificationDate: [null],
-      forProblems: [null, [Validators.required, Validators.maxLength(30)]],
+      forProblems: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       certLibLienDate: [null],
       pffDate: [null],
       gravFavorThird: [
@@ -396,8 +492,14 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      propTitleFolio: [null, [Validators.pattern(STRING_PATTERN)]],
-      measuresAdjacent: [null, [Validators.pattern(STRING_PATTERN)]],
+      propTitleFolio: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      measuresAdjacent: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       vouchersWater: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],

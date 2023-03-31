@@ -19,7 +19,7 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
 import { GoodDomiciliesService } from '../../../../../../core/services/good/good-domicilies.service';
@@ -102,10 +102,19 @@ export class AddressTransferorTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      statusKey: [null],
-      municipalityKey: [null],
-      localityKey: [null],
-      code: [null],
+      statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      municipalityKey: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      localityKey: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(100))],
+      ],
+      code: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(6))],
+      ],
       latitude: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -122,8 +131,14 @@ export class AddressTransferorTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      exteriorNumber: [null, [Validators.pattern(STRING_PATTERN)]],
-      interiorNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      exteriorNumber: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+      ],
+      interiorNumber: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+      ],
       wayDestiny: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -140,13 +155,16 @@ export class AddressTransferorTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      regionalDelegationId: [null],
-      requestId: [null],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       creationDate: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      userCreation: [null],
+      userCreation: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
 
     if (this.isNewAddress === true) {
