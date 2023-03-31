@@ -15,6 +15,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   signatories: ISignatories;
   data: any = {};
   fileForm: ModelForm<any>;
+  hide = true;
   certiToUpload: File | null = null;
   keyCertiToUpload: File | null = null;
   typeReport: string = '';
