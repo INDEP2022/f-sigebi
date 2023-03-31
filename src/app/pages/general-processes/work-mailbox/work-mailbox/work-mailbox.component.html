@@ -277,12 +277,17 @@
                 >Cancelar</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showValDoc">
               <a class="dropdown-item" (click)="validDoc()"
-                >Validar documentación</a
+                >Validar Documentación</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showPGRDocs">
+              <a class="dropdown-item" (click)="validDoc()"
+                >Ver Documentación</a
+              >
+            </li>
+            <li role="menuitem" *ngIf="showScan">
               <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
             </li>
           </ul>

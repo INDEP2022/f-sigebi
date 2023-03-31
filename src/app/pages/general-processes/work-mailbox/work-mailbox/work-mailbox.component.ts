@@ -71,6 +71,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
@@ -170,6 +171,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     return this.filterForm.controls['endDate'];
   }
 
+  type: 'SAT' | 'PGR' = null;
+  showScan: boolean = false;
+  showPGRDocs: boolean = false;
+  showValDoc: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private workService: WorkMailboxService,
@@ -188,7 +194,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private goodsParamerterService: GoodParametersService,
-    private notificationsService: NotificationService
+    private notificationsService: NotificationService,
+    private interfaceFgrService: InterfacefgrService
   ) {
     super();
     this.settings.actions = false;
@@ -575,6 +582,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   selectEvent(e: any) {
+    this.showPGRDocs, this.showScan, (this.showValDoc = false);
     console.log(e);
     this.dataSelect = {};
     if (e.selected.length > 0) {
@@ -593,6 +601,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               ...this.selectedRow,
               typeManagement: resp?.typeManagement || null,
             };
+            this.determinateDocuments();
             //GET  MAX(FEC_TURNADO)
             this.workService
               .getProcedureManagementHistorical(processNumber)
@@ -989,6 +998,42 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
+  determinateDocuments() {
+    const typeManagement = this.selectedRow.typeManagement;
+    if (typeManagement == 3) {
+      this.type = 'PGR';
+      this.pgrDocs().subscribe();
+    } else if (typeManagement == 2) {
+      this.type = 'SAT';
+    } else {
+      this.showScan = true;
+      this.showPGRDocs, (this.showValDoc = false);
+    }
+  }
+
+  pgrDocs() {
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrOffice', officeNumber);
+    return this.interfaceFgrService
+      .getPgrTransferFiltered(params.getParams())
+      .pipe(
+        catchError(error => {
+          if (error.status < 500) {
+            this.showScan = true;
+          }
+          return throwError(() => error);
+        }),
+        tap(response => {
+          if (response.count > 0) {
+            this.showPGRDocs = true;
+          } else {
+            this.showScan = true;
+          }
+        })
+      );
   }
 
   turnPaperwork() {
