@@ -5,7 +5,7 @@ import { ITransferente } from '../catalogs/transferente.model';
 
 export interface IRequest {
   id?: number;
-  idRecord?: number;
+  recordId?: number;
   applicationDate?: string;
   receptionDate?: string;
   nameOfOwner?: string;
