@@ -100,7 +100,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .subscribe(() => this.getSignatories());
   }
 
-  //Trae todo el listado de los firmantes
+  //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
     const learnedType = this.idTypeDoc;
     const learnedId = this.idDoc;

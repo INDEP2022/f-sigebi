@@ -255,15 +255,17 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          style="overflow-y: scroll; height: 30rem"
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings"
-          [source]="documentsData"
-          (edit)="showDocument($event)"
-          (delete)="viewDocument($event)">
-        </ng2-smart-table>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            style="overflow-y: scroll; height: 30rem"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="documentsData"
+            (edit)="showDocument($event)"
+            (delete)="viewDocument($event)">
+          </ng2-smart-table>
+        </div>
       </div>
       <!-- <app-pagination
   [filterParams]="params"

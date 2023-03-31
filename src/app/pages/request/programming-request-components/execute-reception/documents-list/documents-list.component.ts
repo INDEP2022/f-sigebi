@@ -16,6 +16,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
+import { ViewDocumentsComponent } from '../../../shared-request/view-documents/view-documents.component';
 import {
   DOCUMENTS_LIST_COLUMNS,
   DOCUMENTS_LIST_EST_COLUMNS,
@@ -232,8 +233,22 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   //ver documento
   viewDocument(event: any) {
     const docName = event.data.dDocName;
+    let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
+
+    console.log('documento nombre', docName);
+    let config: ModalOptions = {
+      initialState: {
+        linkDoc1,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDocumentsComponent, config);
+
     this.wcontetService.obtainFile(docName).subscribe({
       next: resp => {
+        console.log('respuesta al traer archivos: ', resp);
         let linkSource = '';
         let downloadLink = null;
         let fileName = '';
