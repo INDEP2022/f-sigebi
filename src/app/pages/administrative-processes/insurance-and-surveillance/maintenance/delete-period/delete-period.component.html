@@ -22,16 +22,6 @@
         </form-field>
       </div>
       <div class="col-md-4">
-        <!-- <form-field [control]="form.get('delegation')">
-          <ngx-select
-            [form]="form"
-            [data]="delegations"
-            bindLabel="name"
-            label="Delegación"
-            value="id"
-            (fetchItems)="getDelegations($event)"
-            control="delegation"></ngx-select>
-        </form-field> -->
         <form-field
           [control]="form.get('delegation')"
           label="Delegación"
@@ -51,22 +41,15 @@
     </div>
     <div class="row">
       <div class="col-md-4">
-        <form-field class="form-group" [control]="form.get('process')">
-          <!-- <ngx-select
-            [form]="form"
-            [data]="procesess"
-            bindLabel="name"
-            label="Procesos"
-            value="id"
-            (fetchItems)="getProcesess($event)"
-            control="process"></ngx-select> -->
-          <ng-select formControlName="process" class="form-control">
-            <ng-option *ngFor="let item of processes" [value]="item.id">
-              {{ item.name }}
-            </ng-option>
-          </ng-select>
+        <form-field
+          label="Proceso"
+          class="form-group"
+          [control]="form.get('process')">
+          <select class="form-control" formControlName="process">
+            <option value="1">Supervisión</option>
+            <option value="2">Validación</option>
+          </select>
         </form-field>
-        <!-- <app-processes-shared [form]="form"></app-processes-shared> -->
       </div>
     </div>
 

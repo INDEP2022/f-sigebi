@@ -53,15 +53,14 @@
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('process')">
-            <ngx-select
-              [form]="form"
-              [data]="procesess"
-              bindLabel="name"
-              label="Procesos"
-              value="id"
-              (fetchItems)="getProcesess($event)"
-              control="process"></ngx-select>
+          <form-field
+            label="Proceso"
+            class="form-group"
+            [control]="form.get('process')">
+            <select class="form-control" formControlName="process">
+              <option value="1">Supervisión</option>
+              <option value="2">Validación</option>
+            </select>
           </form-field>
         </div>
       </div>
@@ -117,15 +116,14 @@
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('process')">
-            <ngx-select
-              [form]="form"
-              [data]="procesess"
-              bindLabel="name"
-              label="Procesos"
-              value="id"
-              (fetchItems)="getProcesess($event)"
-              control="process"></ngx-select>
+          <form-field
+            label="Proceso"
+            class="form-group"
+            [control]="form.get('processDestiny')">
+            <select class="form-control" formControlName="processDestiny">
+              <option value="1">Supervisión</option>
+              <option value="2">Validación</option>
+            </select>
           </form-field>
         </div>
       </div>

@@ -49,7 +49,7 @@ export class CustomSelectComponent
   @ContentChild(TemplateRef, { static: false }) template: TemplateRef<any>;
   @Input() path: string;
   @Input() label: string;
-  @Input() isLoadInOnInit: boolean = true;
+  @Input() isLoadInOnInit: boolean = false;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';

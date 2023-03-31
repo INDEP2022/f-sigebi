@@ -45,7 +45,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       Validators.pattern(STRING_PATTERN),
     ]),
     depositAmount: new FormControl(null, [Validators.required]),
-    exchangeType: new FormControl(null, [Validators.required]),
+    conversionType: new FormControl(null, [Validators.required]),
     expenses: new FormControl(null, [Validators.required]),
   });
   fileForm: FormGroup = new FormGroup({
@@ -103,6 +103,29 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   numeraireColumns: any[] = [];
   fileName: string = 'Seleccionar archivo';
+
+  conversionTypes = [
+    {
+      value: 'CBD',
+      text: 'Bien decomisado cambiado a numerario por enajenación',
+    },
+    {
+      text: 'Bien decomisado cambiado a numerario por siniestro',
+      value: 'CDS',
+    },
+    {
+      text: 'Bien asegurado cambiado a numerario por enajenación.',
+      value: 'CNE1',
+    },
+    {
+      text: 'Bien asegurado cambiado a numerario por siniestro.',
+      value: 'CNS',
+    },
+    {
+      text: 'Bien generado por pago parcial por siniestro',
+      value: 'BBB',
+    },
+  ];
 
   // individualGoodTestData: any = [
   //   {
@@ -431,3 +454,53 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     // input[0].setSelectionRange(caret_pos, caret_pos);
   }
 }
+
+`
+selector de cuentas bancarias
+
+SELECT ban.cve_banco, ban.nombre, 
+       cue.no_cuenta, cue.cve_cuenta, cve_moneda
+FROM   cuentas_bancarias cue, cat_bancos ban
+WHERE  cue.cve_banco = ban.cve_banco
+AND    cue.tipo_cuenta = 'CONCENTRADORA'
+ORDER BY ban.nombre
+
+
+-------------------------------------------------------------------------------------------
+
+
+path = /accountmvmnt/api/v1/account-movements
+
+SELECT 
+  FEC_MOVIMIENTO = dateMotion,
+  DEPOSITO = deposit, 
+  FOLIO_FICHA = InvoiceFile, 
+  NO_MOVIMIENTO = numberMotion, 
+  NO_CUENTA = numberAccount, 
+  CATEGORIA = category
+FROM MOVIMIENTOS_CUENTAS
+WHERE (ES_FICHA_DEPOSITO = isFileDeposit) = 'S'
+AND (NO_BIEN = numberGood) IS NULL
+AND (NO_CUENTA = numberAccount) = :BLK_CONTROL.DI_NO_CUENTA_DEPOSITO as una variable que no existe en el layout
+asignar valor a una variable
+FEC_MOVIMIENTO = BLK_CONTROL.TI_FECHA_NEW  -> fecha
+DEPOSITO = BLK_CONTROL.DI_DEPOSITO -> importe
+FOLIO_FICHA = BLK_CONTROL.TI_FICHA_NEW -> referencia
+NO_MOVIMIENTO = BLK_CONTROL.DI_NO_MOVIMIENTO -> #campo fuera del layout
+CATEGORIA = BLK_CONTROL.DI_CATEGORIA -> #campo fuera del layout
+
+-------------------------------------------------------------------------------------------
+para tabla de gastos
+
+path = /spent/api/v1/expense-concept
+
+select 
+  no_concepto_gasto = id ,
+  descripcion = descripiton
+from concepto_gasto
+
+-- item de la tabla de gastos
+NO_CONCEPTO_GASTO = BLK_CTR.ID_GASTO
+DESCRIPCION = BLK_CTR.DESCGASTO
+
+`;

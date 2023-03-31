@@ -49,15 +49,14 @@
         </form-field>
       </div>
       <div class="col-md-4 mt-3">
-        <form-field [control]="form.get('process')">
-          <ngx-select
-            [form]="form"
-            [data]="procesess"
-            bindLabel="name"
-            label="Procesos"
-            value="id"
-            (fetchItems)="getProcesess($event)"
-            control="process"></ngx-select>
+        <form-field
+          label="Proceso"
+          class="form-group"
+          [control]="form.get('process')">
+          <select class="form-control" formControlName="process">
+            <option value="1">Supervisión</option>
+            <option value="2">Validación</option>
+          </select>
         </form-field>
       </div>
       <div class="col-md-4 mt-3">

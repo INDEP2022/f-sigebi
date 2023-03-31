@@ -288,6 +288,9 @@
                         class="form-control"
                         paramSearch="filter.cveBank"
                         prefixSearch="$ilike"
+                        [moreParams]="{
+                          'filter.accountType': '$eq:CONCENTRADORA'
+                        }"
                         value="accountNumber"
                         formControlName="account"
                         path="accountmvmnt/api/v1/bank-account"
@@ -419,17 +422,27 @@
                     </ng-select>
                   </form-field>-->
                   <div class="form-group">
-                    <ng-custom-select
-                      placeholder="Selector de tipo de conversion"
-                      class="form-control"
-                      paramSearch="filter.description"
-                      prefixSearch="$ilike"
-                      formControlName="exchangeType"
+                    <!-- <ng-custom-select placeholder="Selector de tipo de conversion" class="form-control"
+                      paramSearch="filter.description" prefixSearch="$ilike" formControlName="exchangeType"
                       path="spent/api/v1/expense-concept">
                       <ng-template let-item>
                         {{ item.description }}
                       </ng-template>
-                    </ng-custom-select>
+                    </ng-custom-select> -->
+                    <form-field
+                      class="form-group"
+                      label="Tipo de conversión"
+                      [control]="form.get('conversionType')">
+                      <select
+                        class="form-control"
+                        formControlName="conversionType">
+                        <option
+                          [value]="type.value"
+                          *ngFor="let type of conversionTypes">
+                          {{ type.text }}
+                        </option>
+                      </select>
+                    </form-field>
                   </div>
                 </div>
                 <div class="col-sm-6 col-md-4 d-flex justify-content-center">

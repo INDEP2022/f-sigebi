@@ -23,52 +23,73 @@
     </div>
     <div class="row mt-4">
       <div class="col-md-6">
-        <form-field [control]="form.get('from')">
-          <ngx-select
-            [form]="form"
-            [data]="from"
-            bindLabel="name"
-            label="Envía"
-            value="id"
-            (fetchItems)="getFrom($event)"
-            control="from"></ngx-select>
+        <form-field
+          label="Envía"
+          class="form-group"
+          [control]="form.get('from')">
+          <ng-custom-select
+            [moreParams]="{ 'filter.status': '$eq:1' }"
+            class="form-control"
+            path="email/api/v1/vig-email-send"
+            paramSearch="filter.nameSend"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ item.nameSend }} / {{ item.emailSend }}
+            </ng-template>
+          </ng-custom-select>
         </form-field>
       </div>
       <div class="col-md-6">
-        <form-field [control]="form.get('to')">
-          <ngx-select
-            [form]="form"
-            [data]="tos"
-            bindLabel="name"
-            label="Para"
-            value="id"
-            (fetchItems)="getTos($event)"
-            control="to"></ngx-select>
+        <form-field [control]="form.get('to')" label="Para">
+          <ng-custom-select
+            [moreParams]="{
+              'filter.bookType': '$eq:P',
+              'filter.bookStatus': '$eq:1'
+            }"
+            class="form-control"
+            path="email/api/v1/vig-mail-book"
+            paramSearch="filter.bookName"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ item.bookName }}/{{ item.bookEmail }}
+            </ng-template>
+          </ng-custom-select>
         </form-field>
       </div>
     </div>
 
     <div class="row mt-4">
       <div class="col-md-6">
-        <form-field [control]="form.get('cc')">
-          <ngx-select
-            [form]="form"
-            [data]="ccs"
-            bindLabel="name"
-            label="CC"
-            value="id"
-            (fetchItems)="getCcs($event)"
-            control="cc"></ngx-select>
+        <form-field label="CC" [control]="form.get('cc')">
+          <ng-custom-select
+            [moreParams]="{
+              'filter.bookType': '$eq:C',
+              'filter.bookStatus': '$eq:1'
+            }"
+            class="form-control"
+            path="email/api/v1/vig-mail-book"
+            paramSearch="filter.bookName"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ item.bookName }}/{{ item.bookEmail }}
+            </ng-template>
+          </ng-custom-select>
         </form-field>
       </div>
       <div class="col-md-6">
         <form-field [control]="form.get('type')" label="Tipo">
-          <input
-            type="number"
+          <ng-custom-select
+            (valueChange)="changeType($event)"
+            [isLoadInOnInit]="true"
+            [moreParams]="{ 'filter.status': '$eq:1' }"
             class="form-control"
-            formControlName="type"
-            min="1"
-            pattern="^[0-9]+" />
+            path="email/api/v1/vig-email-body"
+            paramSearch="filter.bodyEmail"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ convertEmailBody(item.id) }}
+            </ng-template>
+          </ng-custom-select>
         </form-field>
       </div>
     </div>
@@ -76,12 +97,20 @@
     <div class="row mt-4">
       <div class="col-md-6">
         <form-field [control]="form.get('issue')" label="Asunto">
-          <input type="text" class="form-control" formControlName="issue" />
+          <input
+            readonly
+            type="text"
+            class="form-control px-3"
+            formControlName="issue" />
         </form-field>
       </div>
       <div class="col-md-6">
         <form-field [control]="form.get('body')" label="Cuerpo">
-          <input type="text" class="form-control" formControlName="body" />
+          <input
+            readonly
+            type="text"
+            class="form-control px-3"
+            formControlName="body" />
         </form-field>
       </div>
     </div>

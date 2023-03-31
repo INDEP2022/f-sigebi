@@ -19,7 +19,7 @@
   <tbody>
     <tr *ngFor="let expense of expenses">
       <td>
-        {{ expense.register }}
+        {{ expense.id }}
       </td>
       <td class="w-50">
         {{ expense.descriptionName }}
@@ -29,7 +29,7 @@
       </td>
       <td>
         <button
-          (click)="openCreateOrEditExpense(expense.register)"
+          (click)="openCreateOrEditExpense(expense.id)"
           class="btn-outline-info border-0 btn-sm">
           <i class="fas fa-pen"></i>
         </button>
@@ -40,120 +40,13 @@
         </button>
       </td>
     </tr>
-    <!-- <tr *ngIf="isOpenAddExpense" [formGroup]="formExpenseAdd">
-      <td>
-        <form-field [control]="formExpenseAdd.get('register')">
-          <input
-            type="text"
-            formControlName="register"
-            class="form-custom"
-            placeholder="Registro" />
-        </form-field>
-      </td>
-      <td class="w-50">
-        <form-field [control]="formExpenseAdd.get('description')">
-          <ng-select
-            class="form-custom"
-            placeholder="Descripción"
-            (change)="changeExpenseType($event, formExpenseAdd)">
-            <ng-option [value]="type" *ngFor="let type of expenseType">{{
-              type.description
-            }}</ng-option>
-          </ng-select>
-        </form-field>
-      </td>
-      <td>
-        <form-field [control]="formExpenseAdd.get('import')">
-          <input
-            placeholder="Importe"
-            type="text"
-            formControlName="import"
-            class="form-custom" />
-        </form-field>
-      </td>
-      <td>
-        <div class="d-flex">
-          <button
-            (click)="addExpense()"
-            class="bg-info border-0 btn-sm text-white">
-            Guardar <i class="fas fa-plus"></i>
-          </button>
-          <button
-            (click)="isOpenAddExpense = false"
-            class="bg-danger border-0 btn-sm text-white ml-2">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </td>
-    </tr> -->
-    <!-- <tr
-      *ngFor="let formExpense of formExpenses.controls; let i = index"
-      [formGroup]="formExpense">
-      <ng-container *ngIf="formExpense.disabled; else editTemplate">
-        <td>
-          <span>{{ formExpense.get('register').value }}</span>
-        </td>
-        <td class="w-50">
-          <span>{{ formExpense.get('descriptionName').value }}</span>
-        </td>
-        <td>
-          <span>{{ formExpense.get('import').value }}</span>
-        </td>
-        <td>
-          <button
-            (click)="openEditExpense(i)"
-            class="btn-sm bg-info text-white border-0">
-            <i class="fas fa-pen"></i>
-          </button>
-          <button
-            (click)="removeExpense(i)"
-            class="btn-sm bg-danger text-white ml-2 border-0">
-            <i class="far fa-trash-alt"></i>
-          </button>
-        </td>
-      </ng-container>
-      <ng-template #editTemplate>
-        <td>
-          <form-field [control]="formExpense.get('register')">
-            <input
-              class="form-custom"
-              label="Registro"
-              type="text"
-              formControlName="register" />
-          </form-field>
-        </td>
-        <td class="w-50">
-        </td>
-        <td>
-          <form-field [control]="formExpense.get('import')">
-            <input
-              class="form-custom"
-              placeholder="Importe"
-              type="text"
-              formControlName="import" />
-          </form-field>
-        </td>
-        <td>
-          <button
-            (click)="updateExpense(i)"
-            class="bg-info border-0 btn-sm text-white">
-            Editar <i class="fas fa-plus"></i>
-          </button>
-          <button
-            (click)="closeEditExpense(i)"
-            class="bg-danger border-0 btn-sm text-white ml-2">
-            <i class="fas fa-times"></i>
-          </button>
-        </td>
-      </ng-template>
-    </tr> -->
   </tbody>
 </table>
 
 <ng-template #dialogExpense>
   <div class="modal-header">
     <h4 class="modal-title pull-left font-size-16">
-      {{ registerEdit ? 'Editando Gasto' : 'Agregando Gasto' }}
+      {{ idExpense ? 'Editando Gasto' : 'Agregando Gasto' }}
     </h4>
     <button
       type="button"
@@ -164,17 +57,13 @@
     </button>
   </div>
   <div class="modal-body form-material" [formGroup]="form">
-    <form-field [control]="form.get('register')" Delegación="Registro">
-      <input
-        readonly
-        type="text"
-        formControlName="register"
-        class="form-control" />
+    <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
+      <input readonly type="text" formControlName="id" class="form-control" />
     </form-field>
     <form-field
       class="form-group"
       [control]="form.get('description')"
-      Delegación="Descripciónn">
+      label="Descripción">
       <!-- <ng-select
         (change)="selectedExpenseType($event)"
         class="form-control"
@@ -196,7 +85,7 @@
         </ng-template>
       </ng-custom-select>
     </form-field>
-    <form-field [control]="form.get('import')" Delegación="Importe">
+    <form-field [control]="form.get('import')" label="Importe">
       <input type="number" formControlName="import" class="form-control" />
     </form-field>
   </div>
@@ -204,7 +93,7 @@
     <button
       type="button"
       class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
-      (click)="saveExpense()">
+      (click)="saveInServer()">
       Guardar
       <i class="fas fa-paper-plane"></i>
     </button>
