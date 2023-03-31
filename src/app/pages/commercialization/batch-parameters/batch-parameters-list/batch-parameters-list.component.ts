@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-params.model';
+import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EventSelectionComponent } from '../components/event-selection/event-selection.component';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
@@ -15,7 +17,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
   adding: boolean = false;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paramColumns: any[] = [];
+  lotparams: IRequestLotParam[] = [];
   filterRow: any;
   addOption: any;
   addRowElement: any;
@@ -52,7 +54,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     },
   };
 
-  constructor() {
+  constructor(private lotparamsService: LotParamsService) {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
     this.paramSettings.actions.delete = true;
@@ -75,7 +77,27 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     this.hideFilters();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSearch());
+      .subscribe(() => this.getLotParams());
+  }
+
+  getLotParams() {
+    const params = this.params.getValue();
+
+    this.loading = true;
+    // this.loadingText = 'Cargando';
+    // params.text = this.consultTasksForm.value.txtSearch;
+    // params['others'] = this.userName;
+
+    this.lotparamsService.getAll(params).subscribe({
+      next: response => {
+        console.log('Estos son los lot parametros:', response.data);
+
+        this.loading = false;
+        this.lotparams = response.data;
+        this.totalItems = response.count;
+      },
+      error: () => (this.loading = false),
+    });
   }
 
   getSearch() {

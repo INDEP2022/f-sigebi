@@ -1,18 +1,27 @@
 export const BATCH_PARAMETERS_COLUMNS = {
-  event: {
+  idEvent: {
     title: 'Evento',
     sort: false,
     type: 'html',
-    width: '50%',
+    width: '40%',
   },
-  batch: {
+  publicLot: {
     title: 'Lote Público',
     type: 'number',
     sort: false,
+    width: '20%',
   },
-  warranty: {
+  specialGuarantee: {
     title: 'Garantía Especial',
     type: 'string',
     sort: false,
+    width: '20%',
+    align: 'right',
+  },
+  idLot: {
+    title: 'Id Lote',
+    type: 'number',
+    sort: false,
+    width: '20%',
   },
 };
