@@ -22,9 +22,14 @@
             [control]="fileForm.get('pass')"
             label="Contrase&ntilde;a">
             <input
-              type="password"
+              [type]="hide ? 'password' : 'text'"
               class="form-control"
               formControlName="pass" />
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="hide = !hide">
+              <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
+            </button>
           </form-field>
         </div>
         <!-- *ngIf="!isRFCHided" -->

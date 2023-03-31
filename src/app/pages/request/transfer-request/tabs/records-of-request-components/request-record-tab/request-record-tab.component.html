@@ -40,18 +40,6 @@
               (bsValueChange)="changePriorityDateEvent($event)" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="originInfo"
-            (fetchItems)="getOriginInfo($event)"
-            [data]="selectOriginInfo"
-            [searchable]="false"
-            label="Procedencia Informaci&oacute;n"
-            bindLabel="description"
-            value="keyId">
-          </ngx-select>
-        </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
@@ -106,15 +94,16 @@
           </ngx-select>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('receiptRoute')"
-            label="V&iacute;a de Recepci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="receiptRoute"
-              [readOnly]="true" />
-          </form-field>
+          <ngx-select
+            [form]="requestForm"
+            control="publicMinistry"
+            (fetchItems)="getPublicMinister($event)"
+            [data]="selectMinPub"
+            [searchable]="true"
+            label="Ministerio P&uacute;blico"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
         </div>
       </div>
 
@@ -130,13 +119,8 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('destinationManagement')"
-            label="Gesti&oacute;n de Destino">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="destinationManagement" />
+          <form-field [control]="requestForm.get('court')" label="Juzgado">
+            <input type="text" class="form-control" formControlName="court" />
           </form-field>
         </div>
       </div>
@@ -153,13 +137,8 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="requestForm.get('affair')" label="Asunto">
-            <input
-              type="text"
-              class="form-control"
-              [ngModelOptions]="{ standalone: true }"
-              [ngModel]="affairName"
-              [readOnly]="true" />
+          <form-field [control]="requestForm.get('crime')" label="Delito">
+            <input type="text" class="form-control" formControlName="crime" />
           </form-field>
         </div>
       </div>
@@ -177,12 +156,46 @@
         </div>
         <div class="col-md-4">
           <form-field
+            [control]="requestForm.get('receiptRoute')"
+            label="V&iacute;a de Recepci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receiptRoute"
+              [readOnly]="true" />
+          </form-field>
+        </div>
+
+        <!-- <div class="col-md-4">
+          <form-field
             [control]="requestForm.get('trialType')"
             label="Tipo Juicio">
             <input
               type="text"
               class="form-control"
               formControlName="trialType" />
+          </form-field>
+        </div> -->
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('indicatedTaxpayer')"
+            label="Contribuyente y&#47;o Indiciado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="indicatedTaxpayer" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('affair')" label="Asunto">
+            <input
+              type="text"
+              class="form-control"
+              [ngModelOptions]="{ standalone: true }"
+              [ngModel]="affairName"
+              [readOnly]="true" />
           </form-field>
         </div>
       </div>
@@ -201,45 +214,27 @@
 
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('indicatedTaxpayer')"
-            label="Contribuyente y&#47;o Indiciado">
+            [control]="requestForm.get('destinationManagement')"
+            label="Gesti&oacute;n de Destino">
             <input
               type="text"
               class="form-control"
-              formControlName="indicatedTaxpayer" />
+              formControlName="destinationManagement" />
           </form-field>
         </div>
       </div>
 
-      <div class="row pt-4">
-        <!--<div class="col-md-3">
-          <form-field [control]="receptionForm.get('sender')" label="Remitente">
-            <input type="text" class="form-control" formControlName="sender" />
-          </form-field>
-        </div>-->
-        <div class="col-md-4">
-          <form-field [control]="requestForm.get('court')" label="Juzgado">
-            <input type="text" class="form-control" formControlName="court" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="requestForm.get('crime')" label="Delito">
-            <input type="text" class="form-control" formControlName="crime" />
-          </form-field>
-        </div>
-      </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('publicMinistry')"
-            label="Ministerio P&uacute;blico">
+            [control]="requestForm.get('transferEntNotes')"
+            label="Notas Entidad Transferente">
             <input
               type="text"
               class="form-control"
-              formControlName="publicMinistry" />
+              formControlName="transferEntNotes" />
           </form-field>
         </div>
-
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('observations')"
@@ -255,14 +250,16 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('transferEntNotes')"
-            label="Notas Entidad Transferente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="transferEntNotes" />
-          </form-field>
+          <ngx-select
+            [form]="requestForm"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
+            bindLabel="description"
+            value="keyId">
+          </ngx-select>
         </div>
         <div class="col-md-4">
           <form-field

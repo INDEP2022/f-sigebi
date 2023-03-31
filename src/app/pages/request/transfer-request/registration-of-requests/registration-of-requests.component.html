@@ -15,7 +15,7 @@
         </button>
       </div>
       <!-- *ngIf="approvalProcess" -->
-      <div class="p-2">
+      <div class="p-2" *ngIf="approvalProcess">
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -63,7 +63,7 @@
               <div class="col-md-4">
                 <div>
                   <label for="">Fecha de Solicitud&#58;</label>
-                  {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+                  {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                 </div>
               </div>
               <div class="col-md-4">
