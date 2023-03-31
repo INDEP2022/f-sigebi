@@ -1313,6 +1313,8 @@ export class DocumentsReceptionRegisterComponent
     }
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
+      filterParams.addFilter('idStation', notif.stationNumber);
+      filterParams.addFilter('idTransferer', notif.endTransferNumber);
       this.hideError();
       this.docRegisterService
         .getAuthoritiesFilter(filterParams.getParams())
@@ -2295,6 +2297,8 @@ export class DocumentsReceptionRegisterComponent
     if (key.authorityNum != null) {
       const param = new FilterParams();
       param.addFilter('idAuthority', key.authorityNum);
+      param.addFilter('idStation', key.stationNum);
+      param.addFilter('idTransferer', key.transfereeNum);
       this.hideError();
       this.docRegisterService
         .getAuthoritiesFilter(param.getParams())

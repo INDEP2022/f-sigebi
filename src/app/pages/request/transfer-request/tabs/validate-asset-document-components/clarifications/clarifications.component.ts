@@ -16,7 +16,7 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATION_COLUMNS } from './clarifications-columns';
 
@@ -133,8 +133,11 @@ export class ClarificationsComponent
       goodTypeId: [null],
       color: [null],
       goodDescription: [null],
-      quantity: [1, [Validators.required]],
-      duplicity: ['N'],
+      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      duplicity: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
       capacity: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -156,7 +159,10 @@ export class ClarificationsComponent
       appraisal: [null],
       destiny: [null], //preguntar Destino ligie
       transferentDestiny: [null],
-      compliesNorm: ['N'], //cumple norma
+      compliesNorm: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ], //cumple norma
       notesTransferringEntity: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
