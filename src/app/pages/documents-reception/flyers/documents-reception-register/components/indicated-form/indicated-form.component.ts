@@ -40,7 +40,14 @@ export class IDocReceptionndicatedFormComponent
 
   prepareForm() {
     this.indicatedForm = this.fb.group({
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1000),
+        ],
+      ],
       noRegistration: [null],
       curp: [
         null,
