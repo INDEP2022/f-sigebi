@@ -23,6 +23,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   data1: IGood[] = [];
   good: IGood;
+  id: number = 0;
   finantialList: IFinancialInformationT[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
@@ -53,7 +54,6 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       actions: false,
       columns: FINANCIAL_INFORMATION_COLUMNS1,
     };
-    this.settings.columns = FINANCIAL_INFORMATION_COLUMNS2;
 
     this.settings2 = {
       editable: true,
@@ -84,23 +84,22 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.goodService.getById(idGood).subscribe({
       next: response => {
         this.good = response;
-        this.date = this.datePipe.transform(
-          response.dateIn,
-          'dd-MM-yyyy h:mm a'
-        );
+        // this.date = this.datePipe.transform(
+        //   response.dateIn,
+        //   'dd-MM-yyyy h:mm a'
+        // );
         this.proficientOpinion = response.proficientOpinion;
         this.valuerOpinion = response.valuerOpinion;
         this.observations = response.observations;
         this.quantity = response.quantity;
         this.description = response.description;
-        this.goodId = response.goodId;
-        this.form.controls['date'].setValue(this.date);
+
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
         this.data1.push(this.good);
         console.log(this.data1);
-        this.loadFinancial(this.goodId);
+        // this.loadFinancial(this.goodId);
         // this.setGood(this.good);
       },
       error: err => {
@@ -115,7 +114,14 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       next: response => {
         this.finantialList = response.data;
         console.log(this.finantialList);
-        console.log(this.description);
+        this.finantialList.forEach(date => {
+          this.date = this.datePipe.transform(
+            date.idInfoDate,
+            'dd-MM-yyyy h:mm a'
+          );
+        });
+        this.searchGoods(idGood);
+        this.form.controls['date'].setValue(this.date);
         this.totalItems2 = response.count;
       },
       error: err => {
