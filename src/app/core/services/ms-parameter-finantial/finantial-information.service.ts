@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
+import { ParameterFinantialEndpoints } from 'src/app/common/constants/endpoints/ms-parameter-finantial';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -10,10 +10,11 @@ import { IFinancialInformationT } from '../../models/catalogs/financial-informat
   providedIn: 'root',
 })
 export class FinantialInformationService extends HttpService {
-  private readonly endpoint: string = ENDPOINT_LINKS.FinancialInformation;
+  private readonly endpoint: string = ParameterFinantialEndpoints.FinancialInfo;
+  private readonly find: string = ParameterFinantialEndpoints.FindFinantial;
   constructor() {
     super();
-    this.microservice = ENDPOINT_LINKS.FinancialInformation;
+    this.microservice = ParameterFinantialEndpoints.BasePath;
   }
   getAll(
     params?: ListParams
@@ -28,10 +29,10 @@ export class FinantialInformationService extends HttpService {
     const route = `${this.endpoint}/${id}`;
     return this.get(route);
   }
-  // findGood(search: any) {
-  //   const route = `${this.endpoint}${this.fiterByGood}${search}`;
-  //   return this.get(route);
-  // }
+  findGood(search: any) {
+    const route = `${this.endpoint}${this.find}${search}`;
+    return this.get(route);
+  }
   // findEvent(search: any) {
   //   const route = `${this.endpoint}${this.fiterByEvent}${search}`;
   //   return this.get(route);
