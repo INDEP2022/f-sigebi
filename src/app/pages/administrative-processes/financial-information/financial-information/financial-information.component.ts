@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IFinancialInformationT } from 'src/app/core/models/catalogs/financial-information-model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { FinantialInformationService } from 'src/app/core/services/ms-parameter-finantial/finantial-information.service';
@@ -20,8 +21,9 @@ import {
 })
 export class FinancialInformationComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  data1: any[];
+  data1: IGood[] = [];
   good: IGood;
+  finantialList: IFinancialInformationT[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
   settings1;
@@ -34,8 +36,10 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   valuerOpinion: string;
   observations: string;
   quantity: number;
-  goodDescription: string;
+  description: string;
   goodId: number;
+  selectedRows: any;
+
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
@@ -52,6 +56,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.settings.columns = FINANCIAL_INFORMATION_COLUMNS2;
 
     this.settings2 = {
+      editable: true,
       ...TABLE_SETTINGS,
       ...this.settings,
       actions: false,
@@ -87,17 +92,15 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
         this.valuerOpinion = response.valuerOpinion;
         this.observations = response.observations;
         this.quantity = response.quantity;
-        this.goodDescription = response.goodDescription;
+        this.description = response.description;
         this.goodId = response.goodId;
         this.form.controls['date'].setValue(this.date);
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
-
-        this.data1 = response;
+        this.data1.push(this.good);
         console.log(this.data1);
-        this.totalItems1 = response.count;
-        // this.loadDescriptionStatus(this.good.id);
+        this.loadFinancial(this.goodId);
         // this.setGood(this.good);
       },
       error: err => {
@@ -108,15 +111,14 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     });
   }
   loadFinancial(idGood: number | string) {
-    this.finantialInformationService.getAll(this.params.getValue()).subscribe({
+    this.finantialInformationService.findGood(idGood).subscribe({
       next: response => {
-        // console.log(response);
-        // this.actaER.setValue(response.cve_acta);
-        // this.actaERDate.setValue(new Date(response.fec_elaboracion));
+        this.finantialList = response.data;
+        console.log(this.finantialList);
+        console.log(this.description);
+        this.totalItems2 = response.count;
       },
       error: err => {
-        // this.actaER.setValue('');
-        // this.actaERDate.setValue('');
         this.onLoadToast(
           'info',
           'Opss..',
@@ -126,10 +128,16 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       },
     });
   }
+  onUserRowSelect(event: any) {
+    this.selectedRows = event.selected;
+  }
 
   confirm() {}
 
   cleanForm() {
     this.form.reset();
+    this.form.value.goodId = '';
+    this.data1 = [];
+    this.finantialList = [];
   }
 }

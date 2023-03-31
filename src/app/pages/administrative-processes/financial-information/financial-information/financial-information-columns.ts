@@ -7,17 +7,17 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     //   return row.goodId;
     // },
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     type: 'string',
-    sort: false,
+    sort: true,
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.description;
     // },
   },
   quantity: {
     title: 'Valor',
-    type: 'string',
+    type: 'number',
     sort: false,
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.quantity;
@@ -26,19 +26,19 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
 };
 
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
-  name: {
-    title: 'Nombre',
+  idGoodNumber: {
+    title: 'Bien',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   description: {
     title: 'Descripción',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   value: {
     title: 'Valor',
     type: 'number',
-    sort: false,
+    sort: true,
   },
 };
