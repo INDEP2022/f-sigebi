@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -102,20 +101,20 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     );
   }
 
-  getGoodsByExpedient(id: string | number): void {
-    this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
-      response => {
-        //console.log(response);
-        let data = response.data.map((item: IGood) => {
-          //console.log(item);
-        });
-        // this.data.load(data);
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
-  }
+  // getGoodsByExpedient(id: string | number): void {
+  //   this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
+  //     response => {
+  //       //console.log(response);
+  //       let data = response.data.map((item: IGood) => {
+  //         //console.log(item);
+  //       });
+  //       // this.data.load(data);
+  //       this.totalItems = response.count;
+  //       this.loading = false;
+  //     },
+  //     error => (this.loading = false)
+  //   );
+  // }
 
   onSubmit() {}
 
