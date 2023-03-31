@@ -415,7 +415,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Número de Motor en Información del Vehículo esta vacio, favor de complementar'
               );
               break;
-            } else if (good.origin === null) {
+            } /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -423,7 +423,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información del Vehículo esta vacio, favor de complementar'
               );
               break;
-            } else if (good.theftReport === null) {
+            } */ else if (good.theftReport === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -504,7 +504,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Estado Operativo en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.tuition === null) {
+            } /* else if (good.tuition === null) {
               //Matricula
               tipoRelEmbarca = true;
               this.message(
@@ -513,7 +513,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.shipName === null) {
+            } */ else if (good.shipName === null) {
               //Nombre Barco
               tipoRelEmbarca = true;
               this.message(
@@ -540,7 +540,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Num. Motores en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.origin === null) {
+            } /* else if (good.origin === null) {
               //Procedencia
               tipoRelEmbarca = true;
               this.message(
@@ -549,7 +549,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.publicRegistry === null) {
+            } */ else if (good.publicRegistry === null) {
               //Registro Publico de la embarcación
               tipoRelEmbarca = true;
               this.message(
@@ -606,7 +606,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Num. Motores en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.origin === null) {
+            } /* else if (good.origin === null) {
               //Procedencia
               tipoRelAeronave = true;
               this.message(
@@ -615,7 +615,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.dgacRegistry === null) {
+            } */ else if (good.dgacRegistry === null) {
               //Registro Direccion Gral
               tipoRelAeronave = true;
               this.message(
