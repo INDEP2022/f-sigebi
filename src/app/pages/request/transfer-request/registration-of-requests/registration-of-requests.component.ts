@@ -18,6 +18,7 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -153,21 +154,34 @@ export class RegistrationOfRequestsComponent
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
       recordId: [null],
-      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
-      regionalDelegationId: [null],
-      keyStateOfRepublic: [null],
-      transferenceId: [null],
-      stationId: [null],
-      authorityId: [null],
+      paperNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(30),
+        ],
+      ],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      keyStateOfRepublic: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      transferenceId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      stationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      authorityId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       //typeUser: [''],
       //receiUser: [''],
       id: [null],
-      urgentPriority: [null],
+      urgentPriority: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
       priorityDate: [null],
-      originInfo: [null],
+      originInfo: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       receptionDate: [{ value: null, disabled: true }],
       paperDate: [null, [Validators.required]],
-      typeRecord: [null],
+      typeRecord: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
       publicMinistry: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -196,7 +210,10 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      receiptRoute: [null],
+      receiptRoute: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       destinationManagement: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -205,7 +222,7 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
-      affair: [null],
+      affair: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       transferEntNotes: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
@@ -214,8 +231,14 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      transferenceFile: [null],
-      previousInquiry: [null],
+      transferenceFile: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(1250))],
+      ],
+      previousInquiry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -234,7 +257,7 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
     });
   }

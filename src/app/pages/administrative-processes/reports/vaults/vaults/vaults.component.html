@@ -4,7 +4,10 @@
   </div>
 
   <div body>
-    <form [formGroup]="vaultsForm" class="form-material">
+    <form
+      [formGroup]="vaultsForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field [control]="vaultsForm.get('regional')" label="Regional">
@@ -78,15 +81,15 @@
           </form-field>
         </div>
       </div>
-    </form>
-    <div class="row mt-5">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="justify-content-center">
-          <button type="submit" class="btn btn-danger btn-sm active">
-            Imprimir
-          </button>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-danger btn-sm active">
+              Imprimir
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </app-card>
