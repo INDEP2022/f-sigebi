@@ -59,6 +59,7 @@ import {
 import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   CONFIRM_CANCEL,
+  CONFIRM_FINISH,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
@@ -69,7 +70,6 @@ import {
 } from './work-mailbox-columns';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScanDocumentsModalComponent } from 'src/app/@standalone/modals/scan-documents-modal/scan-documents-modal.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -192,16 +192,25 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private notificationsService: NotificationService
   ) {
     super();
-    this.settings.actions = false;
+    this.settings.actions = true;
     this.settings.columns = WORK_MAILBOX_COLUMNS2;
     this.settings = {
       ...this.settings,
-      selectMode: 'inline',
+      mode: 'inline',
       actions: {
         ...this.settings.actions,
         delete: false,
         add: false,
-        edit: false,
+        edit: true,
+        columnTitle: 'Acciones',
+        position: 'right',
+      },
+      edit: {
+        ...this.settings.edit,
+        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmSave: true,
       },
       hideSubHeader: false,
     };
@@ -259,6 +268,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             this.getData();
           }
         }
+
+        // this.workService.getStatus().subscribe({
+        //   next: (resp: any) => {
+        //     console.log(resp);
+        //
+        //   }
+        // })
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -735,62 +751,71 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   work() {
-    const { processNumber, officeNumber, flierNumber } = this.selectedRow;
+    const { processNumber, officeNumber, flierNumber, processStatus } =
+      this.selectedRow;
 
-    this.workService.getSatOfficeType(officeNumber).subscribe({
-      next: (resp: any) => {
-        if (resp.data) {
-          console.log(resp.data);
-          this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
-          console.log(this.P_SAT_TIPO_EXP);
-          // if (this.P_SAT_TIPO_EXP !== '') {
-          let typeManagement = this.selectedRow.typeManagement;
-          let folio = this.selectedRow.folioRep;
-          //TODO: CHECK BUZON
-          switch (typeManagement) {
-            case '2':
-              folio !== 0
-                ? this.work2()
-                : this.alert(
-                    'info',
-                    'Este trámite es un asunto SAT',
-                    'No se puede trabajar hasta que se genere un folio de recepción'
-                  );
-              break;
-            case '3':
-              folio !== 0
-                ? this.work2()
-                : this.alert(
-                    'info',
-                    'Este trámite es un asunto PGR',
-                    'No se puede trabajar hasta que se genere un folio de recepción'
-                  );
-              break;
-            default:
-              //console.log('No es 2 ni 3, work()');
-              this.work2();
-              break;
+    if (processStatus !== 'FNI') {
+      this.workService.getSatOfficeType(officeNumber).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            console.log(resp.data);
+            this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
+            console.log(this.P_SAT_TIPO_EXP);
+            // if (this.P_SAT_TIPO_EXP !== '') {
+            let typeManagement = this.selectedRow.typeManagement;
+            let folio = this.selectedRow.folioRep;
+            //TODO: CHECK BUZON
+            switch (typeManagement) {
+              case '2':
+                folio !== 0
+                  ? this.work2()
+                  : this.alert(
+                      'info',
+                      'Este trámite es un asunto SAT',
+                      'No se puede trabajar hasta que se genere un folio de recepción'
+                    );
+                break;
+              case '3':
+                folio !== 0
+                  ? this.work2()
+                  : this.alert(
+                      'info',
+                      'Este trámite es un asunto PGR',
+                      'No se puede trabajar hasta que se genere un folio de recepción'
+                    );
+                break;
+              default:
+                //console.log('No es 2 ni 3, work()');
+                this.work2();
+                break;
+            }
+
+            //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
+          } else {
+            this.alert(
+              'info',
+              'Proceso incompleto',
+              'Este trámite no se puede trabajar'
+            );
           }
-
-          //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
-        } else {
-          this.alert(
-            'info',
-            'Proceso incompleto',
-            'Este trámite no se puede trabajar'
-          );
-        }
-        this.loading = false;
-        /*} else {
-          this.alert(
-            'info',
-            'Sin clave de pantalla',
-            'La clave de pantalla no ha sido encontrada'
-          );
-        }*/
-      },
-      error: error => (this.loading = false),
-    });
+          this.loading = false;
+          /*} else {
+            this.alert(
+              'info',
+              'Sin clave de pantalla',
+              'La clave de pantalla no ha sido encontrada'
+            );
+          }*/
+        },
+        error: error => (this.loading = false),
+      });
+    } else {
+      this.alert(
+        'info',
+        'No permitido',
+        'Este oficio no se puede trabajar, el estatus está finalizado'
+      );
+    }
   }
 
   /*Redux NgRX Global Vars Get Initial State*/
@@ -994,7 +1019,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   turnPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     // TODO: descomentar cuando los permisos esten habilitados
@@ -1035,6 +1060,22 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
+  async onFinishPaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    const result = await this.alertQuestion(
+      'question',
+      'Advertencia',
+      CONFIRM_FINISH
+    );
+
+    if (result.isConfirmed) {
+      this.finishPaperwork().subscribe();
+    }
+  }
+
   cancelPaperwork() {
     const { processNumber, turnadoiUser } = this.selectedRow;
     const body = {
@@ -1053,6 +1094,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       }),
       tap(() => {
         this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.getData();
+      })
+    );
+  }
+
+  finishPaperwork() {
+    const { processNumber, turnadoiUser } = this.selectedRow;
+    const body = {
+      status: 'FNI',
+      userTurned: turnadoiUser,
+      situation: 1,
+    };
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al cancelar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se finalizo correctamente', '');
         this.getData();
       })
     );
@@ -1092,11 +1156,16 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   goToScanDocuments(document: IDocuments) {
-    const config = {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: false,
-    };
-    this.modalService.show(ScanDocumentsModalComponent, config);
+    const { id } = document;
+    const url = this.router.createUrlTree(
+      ['/pages/general-processes/scan-documents'],
+      {
+        queryParams: {
+          folio: id,
+        },
+      }
+    );
+    window.open(url.toString(), '_blank');
   }
 
   replicate() {
@@ -1423,5 +1492,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       fromDateCtrl.addValidators(maxDate(min));
     }
     fromDateCtrl.updateValueAndValidity();
+  }
+
+  onSaveConfirm(event: any) {
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Actualizado', '');
   }
 }

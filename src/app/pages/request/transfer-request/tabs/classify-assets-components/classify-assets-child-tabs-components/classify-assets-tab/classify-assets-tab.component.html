@@ -50,21 +50,49 @@
         </div>
       </div>
       <div class="col-md-6">
-        <ngx-select
-          [form]="classiGoodsForm"
-          control="ligieChapter"
-          (fetchItems)="getChapter($event)"
-          [data]="selectChapter"
-          [searchable]="false"
-          bindLabel="description"
-          label="Cap&iacute;tulo"
-          value="id">
-        </ngx-select>
+        <div
+          [formGroup]="classiGoodsForm"
+          class="form-group form-secondary form-static-label">
+          <ng-select
+            class="form-control"
+            formControlName="ligieChapter"
+            [clearable]="false"
+            [items]="selectChapter"
+            [virtualScroll]="true"
+            [loading]="loading"
+            bindLabel="description"
+            bindValue="id">
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <b>{{ item.code }}</b> {{ item.description }}
+            </ng-template>
+          </ng-select>
+          <span class="form-bar"></span>
+          <label class="float-label">Cap&iacute;tulo</label>
+        </div>
       </div>
     </div>
     <div class="row pt-4">
       <div class="col-md-6">
-        <ngx-select
+        <div
+          [formGroup]="classiGoodsForm"
+          class="form-group form-secondary form-static-label">
+          <ng-select
+            class="form-control"
+            formControlName="ligieLevel1"
+            [clearable]="false"
+            [items]="selectLevel1"
+            [virtualScroll]="true"
+            [loading]="loading"
+            bindLabel="description"
+            bindValue="id">
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <b>{{ item.code }}</b> {{ item.description }}
+            </ng-template>
+          </ng-select>
+          <span class="form-bar"></span>
+          <label class="float-label">Nivel 1</label>
+        </div>
+        <!--  <ngx-select
           [form]="classiGoodsForm"
           control="ligieLevel1"
           (fetchItems)="getLevel1($event)"
@@ -73,10 +101,29 @@
           bindLabel="description"
           label="Nivel 1"
           value="id">
-        </ngx-select>
+        </ngx-select> -->
       </div>
       <div class="col-md-6">
-        <ngx-select
+        <div
+          [formGroup]="classiGoodsForm"
+          class="form-group form-secondary form-static-label">
+          <ng-select
+            class="form-control"
+            formControlName="ligieLevel2"
+            [clearable]="false"
+            [items]="selectLevel2"
+            [virtualScroll]="true"
+            [loading]="loading"
+            bindLabel="description"
+            bindValue="id">
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <b>{{ item.code }}</b> {{ item.description }}
+            </ng-template>
+          </ng-select>
+          <span class="form-bar"></span>
+          <label class="float-label">Nivel 2</label>
+        </div>
+        <!-- <ngx-select
           [form]="classiGoodsForm"
           control="ligieLevel2"
           (fetchItems)="getLevel2($event)"
@@ -85,33 +132,51 @@
           bindLabel="description"
           label="Nivel 2"
           value="id">
-        </ngx-select>
+        </ngx-select> -->
       </div>
     </div>
     <div class="row pt-4">
       <div class="col-md-6">
-        <ngx-select
-          [form]="classiGoodsForm"
-          control="ligieLevel3"
-          (fetchItems)="getLevel3($event)"
-          [data]="selectLevel3"
-          [searchable]="false"
-          bindLabel="description"
-          label="Nivel 3"
-          value="id">
-        </ngx-select>
+        <div
+          [formGroup]="classiGoodsForm"
+          class="form-group form-secondary form-static-label">
+          <ng-select
+            class="form-control"
+            formControlName="ligieLevel3"
+            [clearable]="false"
+            [items]="selectLevel3"
+            [virtualScroll]="true"
+            [loading]="loading"
+            bindLabel="description"
+            bindValue="id">
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <b>{{ item.code }}</b> {{ item.description }}
+            </ng-template>
+          </ng-select>
+          <span class="form-bar"></span>
+          <label class="float-label">Nivel 3</label>
+        </div>
       </div>
       <div class="col-md-6">
-        <ngx-select
-          [form]="classiGoodsForm"
-          control="ligieLevel4"
-          (fetchItems)="getLevel4($event)"
-          [data]="selectLevel4"
-          [searchable]="false"
-          bindLabel="description"
-          label="Nivel 4"
-          value="id">
-        </ngx-select>
+        <div
+          [formGroup]="classiGoodsForm"
+          class="form-group form-secondary form-static-label">
+          <ng-select
+            class="form-control"
+            formControlName="ligieLevel4"
+            [clearable]="false"
+            [items]="selectLevel4"
+            [virtualScroll]="true"
+            [loading]="loading"
+            bindLabel="description"
+            bindValue="id">
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <b>{{ item.code }}</b> {{ item.description }}
+            </ng-template>
+          </ng-select>
+          <span class="form-bar"></span>
+          <label class="float-label">Nivel 4</label>
+        </div>
       </div>
     </div>
     <div class="row pt-4" *ngIf="typeDoc === 'assets'">

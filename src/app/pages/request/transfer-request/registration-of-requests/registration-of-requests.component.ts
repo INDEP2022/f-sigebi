@@ -9,7 +9,6 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
-import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -19,6 +18,7 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -88,6 +88,8 @@ export class RegistrationOfRequestsComponent
   delegationName: string = '';
   authorityName: string = '';
 
+  requestList: IRequest;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -152,21 +154,34 @@ export class RegistrationOfRequestsComponent
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
       recordId: [null],
-      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
-      regionalDelegationId: [null],
-      keyStateOfRepublic: [null],
-      transferenceId: [null],
-      stationId: [null],
-      authorityId: [null],
+      paperNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(30),
+        ],
+      ],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      keyStateOfRepublic: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      transferenceId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      stationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      authorityId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       //typeUser: [''],
       //receiUser: [''],
       id: [null],
-      urgentPriority: [null],
+      urgentPriority: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
       priorityDate: [null],
-      originInfo: [null],
+      originInfo: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       receptionDate: [{ value: null, disabled: true }],
       paperDate: [null, [Validators.required]],
-      typeRecord: [null],
+      typeRecord: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
       publicMinistry: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -195,7 +210,10 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      receiptRoute: [null],
+      receiptRoute: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       destinationManagement: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -204,7 +222,7 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
-      affair: [null],
+      affair: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       transferEntNotes: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
@@ -213,8 +231,14 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      transferenceFile: [null],
-      previousInquiry: [null],
+      transferenceFile: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(1250))],
+      ],
+      previousInquiry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -233,7 +257,7 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
     });
   }
@@ -472,25 +496,32 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  finishMethod() {
-    debugger;
-    this.requestService
-      .update(this.requestData.id, this.requestData)
-      .subscribe({
-        next: resp => {
-          if (resp.statusCode !== null) {
-            this.message('error', 'Error', 'Ocurrio un error al guardar');
-          }
-          if (resp.id !== null) {
-            this.message(
-              'success',
-              'Solicitud Guardada',
-              'Se guardo la solicitud correctamente'
-            );
-          }
-        },
-        error: error => {},
-      });
+  async finishMethod() {
+    const updateReq = await this.updateRequest(this.requestData);
+    if (updateReq) {
+      const oldTask: any = await this.getOldTask();
+      if (oldTask.assignees != '') {
+        const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+        const url = 'pages/request/transfer-request/process-approval';
+        const from = 'DESTINO_DOCUMENTAL';
+        const to = 'SOLICITAR_APROBACION';
+        const taskRes = await this.createTaskOrderService(
+          this.requestData,
+          title,
+          url,
+          from,
+          to,
+          oldTask
+        );
+        if (taskRes) {
+          this.msgGuardado(
+            'success',
+            'Solicitud Finalizada',
+            `Se finalizo la solicitud con el folio: ${this.requestData.id}`
+          );
+        }
+      }
+    }
   }
 
   confirm() {
@@ -528,7 +559,25 @@ export class RegistrationOfRequestsComponent
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/classify-assets';
-      const taskResult = await this.createTask(oldTask, title, url);
+      const from = 'VERIFICAR_CUMPLIMIENTO';
+      const to = 'CLASIFICAR_BIEN';
+
+      const taskRes = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskRes) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+      /* const taskResult = await this.createTask(oldTask, title, url);
       if (taskResult === true) {
         const from = 'VERIFICAR_CUMPLIMIENTO';
         const to = 'CLASIFICAR_BIEN';
@@ -540,7 +589,7 @@ export class RegistrationOfRequestsComponent
             `Se guardo la solicitud con el folio: ${this.requestData.id}`
           );
         }
-      }
+      } */
     }
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
@@ -551,10 +600,25 @@ export class RegistrationOfRequestsComponent
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/validate-document';
-      const taskResult = await this.createTask(oldTask, title, url);
+      const from = 'CLASIFICAR_BIEN';
+      const to = 'DESTINO_DOCUMENTAL';
+      const taskRes = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskRes) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+      /* const taskResult = await this.createTask(oldTask, title, url);
       if (taskResult === true) {
-        const from = 'CLASIFICAR_BIEN';
-        const to = 'DESTINO_DOCUMENTAL';
         const orderServResult = await this.createOrderService(from, to);
         if (orderServResult) {
           this.msgGuardado(
@@ -563,7 +627,7 @@ export class RegistrationOfRequestsComponent
             `Se guardo la solicitud con el folio: ${this.requestData.id}`
           );
         }
-      }
+      } */
     }
   }
   /* Fin Metodo para guardar clasificacion de bienes */
@@ -574,10 +638,25 @@ export class RegistrationOfRequestsComponent
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/process-approval';
-      const taskResult = await this.createTask(oldTask, title, url);
+      const from = 'DESTINO_DOCUMENTAL';
+      const to = 'SOLICITAR_APROBACION';
+      const taskRes = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskRes) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+      /* const taskResult = await this.createTask(oldTask, title, url);
       if (taskResult === true) {
-        const from = 'DESTINO_DOCUMENTAL';
-        const to = 'SOLICITAR_APROBACION';
         const orderServResult = await this.createOrderService(from, to);
         if (orderServResult) {
           this.msgGuardado(
@@ -586,7 +665,7 @@ export class RegistrationOfRequestsComponent
             `Se guardo la solicitud con el folio: ${this.requestData.id}`
           );
         }
-      }
+      } */
     }
   }
   /* Fin metodo destino documental */
@@ -604,19 +683,31 @@ export class RegistrationOfRequestsComponent
     const idDoc = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
-    console.log(idDoc);
-    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
-    let config: ModalOptions = {
-      initialState: {
-        idDoc,
-        idTypeDoc,
-        typeAnnex,
-        callback: (next: boolean) => {},
+
+    this.requestService.getById(idDoc).subscribe({
+      next: response => {
+        this.requestList = response;
+
+        let config: ModalOptions = {
+          initialState: {
+            idDoc,
+            idTypeDoc,
+            typeAnnex,
+            response,
+            callback: (next: boolean) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalService.show(
+          GenerateDictumComponent,
+          config
+        );
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.bsModalRef = this.modalService.show(GenerateDictumComponent, config);
+      error: error => (this.loading = false),
+    });
+
+    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
   }
 
   /** Proceso de aprobacion */
@@ -625,26 +716,28 @@ export class RegistrationOfRequestsComponent
     /**Actualizar tarea para aprobacion */
     console.log(this.requestData);
 
-    return;
-
-    /*const oldTask: any = await this.getOldTask();
+    const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/process-approval';
-      const taskResult = await this.createTask(oldTask, title, url);
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'APROBADO';
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
       if (taskResult === true) {
-        const from = 'SOLICITAR_APROBACION';
-        const to = 'APROBADO';
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+        );
       }
-    }*/
+    }
     /*  this.requestService
       .update(this.requestData.id, this.requestData)
       .subscribe({
@@ -664,29 +757,63 @@ export class RegistrationOfRequestsComponent
   }
   /** fin de proceso */
 
-  createTask(oldTask: any, title: string, url: string) {
+  updateRequest(request: any) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
+      this.requestService.update(request.id, request).subscribe({
+        next: resp => {
+          if (resp.id !== null) {
+            resolve(true);
+          }
+        },
+        error: error => {
+          reject(true);
+        },
+      });
+    });
+  }
+  createTaskOrderService(
+    request: any,
+    title: string,
+    url: string,
+    from: string,
+    to: string,
+    oldTask: any
+  ) {
+    return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = oldTask.assignees;
-      body['assigneesDisplayname'] = oldTask.assigneesDisplayname;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(this.requestData.id);
-      body['title'] = title;
-      /* body['isPublic'] = 'S';
-      body['istestTask'] = 'S'; */
-      body['programmingId'] = 0;
-      body['requestId'] = this.requestData.id;
-      body['expedientId'] = this.requestData.recordId;
-      body['urlNb'] = url;
-      this.taskService.createTask(body).subscribe({
+      let body: any = {};
+      body['type'] = 'SOLICITUD TRANSFERENCIA'; //
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = oldTask.assignees;
+      task['assigneesDisplayname'] = oldTask.assigneesDisplayname;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] = title;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = url;
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      console.log(body);
+      this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
-          this.message('error', 'Error', 'Error al crear la tarea');
-          console.log(error);
+          console.log(error.error.message);
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
         },
       });
     });
@@ -707,34 +834,6 @@ export class RegistrationOfRequestsComponent
         },
         error: error => {
           this.message('error', 'Error', 'Error al obtener la tarea antigua');
-          reject(error.error.message);
-        },
-      });
-    });
-  }
-
-  createOrderService(from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = this.requestData.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.message(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
           reject(error.error.message);
         },
       });

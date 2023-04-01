@@ -76,9 +76,12 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
     this.searchForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       recordId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      regionalDelegationId: [null],
-      keyStateOfRepublic: [null],
-      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      keyStateOfRepublic: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      lawsuit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
   }
 
