@@ -493,7 +493,28 @@ export class DocumentsReceptionRegisterComponent
           .subscribe({
             next: data => {
               console.log(data);
-              this.useProcedureData(data);
+              if (data.flierNumber == null) {
+                this.useProcedureData(data);
+              } else {
+                const param = new FilterParams();
+                param.addFilter('wheeelNumber', data.flierNumber);
+                this.notificationService
+                  .getAllFilter(param.getParams())
+                  .subscribe({
+                    next: data => {
+                      this.fillForm(data.data[0]);
+                    },
+                    error: err => {
+                      console.log(err);
+                      this.alert(
+                        'warning',
+                        'Volante no encontrado',
+                        'No se encontró la información del volante registrado en el trámite'
+                      );
+                      this.useProcedureData(data);
+                    },
+                  });
+              }
             },
             error: () => {},
           });
@@ -1313,6 +1334,8 @@ export class DocumentsReceptionRegisterComponent
     }
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
+      filterParams.addFilter('idStation', notif.stationNumber);
+      filterParams.addFilter('idTransferer', notif.endTransferNumber);
       this.hideError();
       this.docRegisterService
         .getAuthoritiesFilter(filterParams.getParams())
@@ -2295,6 +2318,8 @@ export class DocumentsReceptionRegisterComponent
     if (key.authorityNum != null) {
       const param = new FilterParams();
       param.addFilter('idAuthority', key.authorityNum);
+      param.addFilter('idStation', key.stationNum);
+      param.addFilter('idTransferer', key.transfereeNum);
       this.hideError();
       this.docRegisterService
         .getAuthoritiesFilter(param.getParams())
