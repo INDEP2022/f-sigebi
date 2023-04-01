@@ -28,12 +28,13 @@ export class StrategyServiceService extends HttpService {
     return this.post(StrategyEndpoints.StrategyService, model);
   }
 
-  update(model: IStrategyService) {
-    const route = `${StrategyEndpoints.StrategyService}`;
+  update(model: IStrategyService, id: number | string) {
+    const route = `${StrategyEndpoints.StrategyService}/${id}`;
     return this.put(route, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.remove(id);
+    const route = `${StrategyEndpoints.StrategyService}/${id}`;
+    return this.delete(route);
   }
 }
