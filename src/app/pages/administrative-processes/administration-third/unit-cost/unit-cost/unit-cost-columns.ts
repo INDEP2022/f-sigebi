@@ -1,3 +1,4 @@
+import { IZoneContract } from 'src/app/core/models/catalogs/zone-contract.model';
 import { IStrategyProcess } from 'src/app/core/models/ms-strategy-process/strategy-process.model';
 import { IStrategyServiceType } from 'src/app/core/models/ms-strategy-service-type/strategy-service-type.model';
 import { IStrategyService } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
@@ -127,9 +128,24 @@ export const COSTKEY_COLUMNS = {
   },
 };
 export const VALIDITYCOST_COLUMNS = {
-  cveZoneContract: {
+  zone: {
     title: 'Zona',
     sort: false,
+    valuePrepareFunction: (value: IZoneContract) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   startDate: {
     title: 'Fecha inicial',
@@ -152,7 +168,16 @@ export const VALIDITYCOST_COLUMNS = {
     sort: false,
   },
   validity: {
-    title: 'Vig.',
+    title: 'Vigente',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value === '0') {
+        return 'No';
+      } else if (value === '1') {
+        return 'Sí';
+      } else {
+        return '';
+      }
+    },
   },
 };
