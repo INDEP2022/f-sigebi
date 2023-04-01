@@ -149,7 +149,7 @@ export class VerifyComplianceTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      quantity: [1, Validators.pattern(NUMBERS_PATTERN)],
+      quantity: [1, [Validators.pattern(NUMBERS_PATTERN)]],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
