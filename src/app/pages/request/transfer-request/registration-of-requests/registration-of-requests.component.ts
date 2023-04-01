@@ -171,7 +171,7 @@ export class RegistrationOfRequestsComponent
       //receiUser: [''],
       id: [null],
       urgentPriority: [
-        null,
+        'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
       priorityDate: [null],
