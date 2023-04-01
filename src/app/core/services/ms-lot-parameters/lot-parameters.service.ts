@@ -17,7 +17,7 @@ export class LotParamsService extends HttpService {
     return this.get(route, params);
   }
 
-  createTask(body: Object): Observable<any> {
+  createLotParameter(body: any): Observable<any> {
     return this.post<any>(LotParamsEndpoints.Create, body);
   }
 
@@ -27,5 +27,9 @@ export class LotParamsService extends HttpService {
 
   update(id: number | string, body: Object): Observable<any> {
     return this.put<any>(`${LotParamsEndpoints.Update}/${id}`, body);
+  }
+
+  remove(id: number | string): Observable<any> {
+    return this.delete(`${LotParamsEndpoints.Delete}/${id}`);
   }
 }

@@ -18,10 +18,10 @@ export const BATCH_PARAMETERS_COLUMNS = {
     width: '20%',
     align: 'right',
   },
-  idLot: {
-    title: 'Id Lote',
-    type: 'number',
-    sort: false,
-    width: '20%',
-  },
+  // idLot: {
+  //   title: 'Id Lote',
+  //   type: 'number',
+  //   sort: false,
+  //   width: '20%',
+  // },
 };
