@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -85,6 +86,7 @@ import { ValidateVisitResultComponent } from './validate-visit-result/validate-v
 import { ViewExpedientComponent } from './validate-visit-result/view-expedient/view-expedient.component';
 import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
 import { VerifyComplianceGoodsComponent } from './verify-compliance-goods/verify-compliance-goods.component';
+import { ViewDocumentsComponent } from './view-documents/view-documents.component';
 import { ViewReportComponent } from './view-report/view-report.component';
 import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm.component';
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
@@ -176,6 +178,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ResultVisitsComponent,
     ShowDocumentsGoodComponent,
     DocExpedientTabComponent,
+    ViewDocumentsComponent,
   ],
   imports: [
     CommonModule,
@@ -187,6 +190,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     BsDatepickerModule.forRoot(),
     QuillModule.forRoot(),
     FileUploadModule,
+    PdfViewerModule,
   ],
   exports: [
     RequestFormComponent,

@@ -93,7 +93,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     this.requestForm = this.fb.group({
       applicationDate: [null],
       recordId: [null],
-      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
+      paperNumber: [null, [Validators.maxLength(30)]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
       transferenceId: [null],
