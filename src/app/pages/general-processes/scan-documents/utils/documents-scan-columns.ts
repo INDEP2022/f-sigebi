@@ -6,7 +6,7 @@ export const DOCUMENTS_SCAN_COLUMNS = {
     sort: false,
   },
   sheets: {
-    title: 'Hojas',
+    title: 'Documentos',
     sort: false,
   },
   descriptionDocument: {

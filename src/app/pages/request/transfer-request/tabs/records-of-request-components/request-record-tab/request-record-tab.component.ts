@@ -174,7 +174,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
     });
   }

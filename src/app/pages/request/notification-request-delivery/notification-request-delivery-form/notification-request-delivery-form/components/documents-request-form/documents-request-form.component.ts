@@ -51,10 +51,19 @@ export class DocumentsRequestFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      text: [null, [Validators.pattern(STRING_PATTERN)]],
+      text: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       typeDocument: [null],
-      titleDocument: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      titleDocument: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       noDocument: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeTransference: [null],
       delegationRegional: [null],
@@ -65,7 +74,10 @@ export class DocumentsRequestFormComponent extends BasePage implements OnInit {
       responsible: [null],
       contributor: [null],
       numberOffice: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      comments: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
     });
   }
 
