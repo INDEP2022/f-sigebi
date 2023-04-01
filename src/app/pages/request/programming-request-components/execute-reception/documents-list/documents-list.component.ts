@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -16,7 +18,6 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
-import { ViewDocumentsComponent } from '../../../shared-request/view-documents/view-documents.component';
 import {
   DOCUMENTS_LIST_COLUMNS,
   DOCUMENTS_LIST_EST_COLUMNS,
@@ -53,7 +54,8 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     private wcontetService: WContentService,
     private regDelegationService: RegionalDelegationService,
     private delegationStateService: DelegationStateService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings.actions.delete = true;
@@ -236,7 +238,15 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
 
     console.log('documento nombre', docName);
-    let config: ModalOptions = {
+
+    this.wcontetService.obtainFile(docName).subscribe(data => {
+      let blob = this.dataURItoBlob(data);
+      let file = new Blob([blob], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.openPrevPdf(fileURL);
+    });
+
+    /*let config: ModalOptions = {
       initialState: {
         linkDoc1,
         callback: (next: boolean) => {},
@@ -266,7 +276,33 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         downloadLink.download = fileName;
         downloadLink.click();
       },
-    });
+    });*/
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   getRegionalDelegatioin(params: ListParams) {
