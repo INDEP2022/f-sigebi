@@ -680,10 +680,8 @@ export class DetailAssetsTabComponentComponent
   getSubBrand(params: ListParams, brandId?: string) {
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
-    filter.limit = 20;
-    if (brandId) {
-      filter['filter.flexValueDependent'] = `$eq:${idBrand}`;
-    }
+
+    filter['filter.carBrand'] = `$eq:${idBrand}`;
     filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
     this.goodsInvService.getAllSubBrandWithFilter(filter).subscribe({
@@ -1030,10 +1028,10 @@ export class DetailAssetsTabComponentComponent
     } else {
       address = addressId;
     }
+
     this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
         var value = resp;
-        debugger;
         /* this.getStateOfRepublic(new ListParams(), value.statusKey);
         //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
         this.domicileForm.patchValue(value);*/

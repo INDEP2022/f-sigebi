@@ -238,7 +238,6 @@ export class AddressTransferorTabComponent
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
 
-    debugger;
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
         this.selectLocality = new DefaultSelect(resp.data, resp.count);
