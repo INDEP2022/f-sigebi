@@ -1,3 +1,4 @@
+import { IGood } from '../ms-good/good';
 export interface IFinancialInformation {
   idInfoDate: string;
   idGoodNumber: string | number;
@@ -6,7 +7,7 @@ export interface IFinancialInformation {
 }
 export interface IFinancialInformationT {
   idInfoDate: string;
-  idGoodNumber: string | number;
+  idGoodNumber: IGood;
   idAttributeNumber: number;
   value: string | number;
   registryNumber: number;

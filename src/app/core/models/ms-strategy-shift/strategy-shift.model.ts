@@ -1,6 +1,6 @@
 export interface IStrategyShift {
-  shiftNumber: number;
+  shiftNumber?: number;
   description: string;
-  registryNumber: number;
-  nbOrigin: string;
+  registryNumber?: number;
+  nbOrigin?: string;
 }

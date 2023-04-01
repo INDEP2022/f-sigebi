@@ -16,7 +16,7 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATION_COLUMNS } from './clarifications-columns';
 
@@ -122,19 +122,28 @@ export class ClarificationsComponent
   private prepareForm() {
     this.goodForm = this.fb.group({
       id: [null],
-      goodId: [null],
-      ligieSection: [null],
-      ligieChapter: [null],
-      ligieLevel1: [null],
-      ligieLevel2: [null],
-      ligieLevel3: [null],
-      ligieLevel4: [null],
-      requestId: [null],
-      goodTypeId: [null],
-      color: [null],
-      goodDescription: [null],
-      quantity: [1, [Validators.required]],
-      duplicity: ['N'],
+      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieSection: [null, , [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      duplicity: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
       capacity: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -148,21 +157,33 @@ export class ClarificationsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      physicalStatus: [null],
-      stateConservation: [null],
+      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
-      compliesNorm: ['N'], //cumple norma
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      compliesNorm: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ], //cumple norma
       notesTransferringEntity: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       brand: [
         null,
         [
@@ -179,7 +200,10 @@ export class ClarificationsComponent
           Validators.maxLength(300),
         ],
       ],
-      armor: [null],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       model: [
         null,
         [
@@ -188,7 +212,7 @@ export class ClarificationsComponent
           Validators.maxLength(300),
         ],
       ],
-      doorsNumber: [null],
+      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       axesNumber: [
         null,
         [
@@ -221,8 +245,14 @@ export class ClarificationsComponent
           Validators.maxLength(100),
         ],
       ],
-      chassis: [null],
-      cabin: [null],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       fitCircular: [
         'N',
         [
@@ -239,7 +269,7 @@ export class ClarificationsComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null],
+      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       operationalState: [
         null,
         [
@@ -280,8 +310,18 @@ export class ClarificationsComponent
           Validators.maxLength(30),
         ],
       ],
-      sleeve: [null],
-      length: [null, [Validators.required]],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
       shipName: [
         null,
         [
@@ -298,7 +338,10 @@ export class ClarificationsComponent
           Validators.maxLength(30),
         ],
       ], //registro public
-      ships: [null],
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       dgacRegistry: [
         null,
         [
@@ -332,7 +375,7 @@ export class ClarificationsComponent
           Validators.maxLength(30),
         ],
       ],
-      fractionId: [null],
+      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 

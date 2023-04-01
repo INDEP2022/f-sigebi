@@ -98,7 +98,10 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       xidExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
       xidSolicitud: [null],
       xidBien: [null],
-      xnoOficio: [null, [Validators.pattern(STRING_PATTERN)]],
+      xnoOficio: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
