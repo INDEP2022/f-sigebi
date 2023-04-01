@@ -28,12 +28,13 @@ export class StrategyShiftService extends HttpService {
     return this.post(StrategyEndpoints.StrategyShift, model);
   }
 
-  update(model: IStrategyShift) {
-    const route = `${StrategyEndpoints.StrategyShift}`;
+  update(model: IStrategyShift, id: number | string) {
+    const route = `${StrategyEndpoints.StrategyShift}/${id}`;
     return this.put(route, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.remove(id);
+    const route = `${StrategyEndpoints.StrategyShift}/${id}`;
+    return this.delete(route);
   }
 }
