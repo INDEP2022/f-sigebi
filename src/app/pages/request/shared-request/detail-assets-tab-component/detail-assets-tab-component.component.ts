@@ -891,6 +891,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   async save() {
+    debugger;
     const domicilie = this.domicileForm.getRawValue();
     //se guarda bien domicilio
     if (domicilie.id !== null) {
