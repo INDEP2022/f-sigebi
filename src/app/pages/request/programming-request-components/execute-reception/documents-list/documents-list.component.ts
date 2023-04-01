@@ -229,7 +229,21 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   //ver detalle del documento
   showDocument(event: any) {
     const data = event.data;
-    this.openModal(DocumentShowComponent, this.typeDoc, data);
+    const typeDoc = this.typeDoc;
+    const docName = event.data.dDocName;
+
+    // let config: ModalOptions = {
+    //       initialState: {
+
+    //         typeDoc,
+    //         docName,
+    //         callback: (next: boolean) => {},
+    //       },
+    //       class: 'modal-lg modal-dialog-centered',
+    //       ignoreBackdropClick: true,
+    //     };
+    //     this.bsChildModalRef = this.modalService.show(DocumentShowComponent, config );
+    this.openModal(DocumentShowComponent, typeDoc, docName, data);
   }
 
   //ver documento
@@ -333,11 +347,17 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   confirm() {}
 
-  openModal(component: any, typedoc?: string, parameters?: any) {
+  openModal(
+    component: any,
+    typedoc?: string,
+    docName?: string,
+    parameters?: any
+  ) {
     let config: ModalOptions = {
       initialState: {
         parameter: parameters,
         typeDoc: typedoc,
+        docName: docName,
         callback: (next: boolean) => {
           //if(next) this.getExample();
         },
