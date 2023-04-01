@@ -138,11 +138,7 @@ export class ClassifyAssetsTabComponent
       stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       origin: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
@@ -648,7 +644,7 @@ export class ClassifyAssetsTabComponent
       goodAction = this.goodService.create(goods);
     } else {
       goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId.id);
+      goods.addressId = Number(goods.addressId);
       goodAction = this.goodService.update(goods);
     }
 
