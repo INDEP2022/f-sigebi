@@ -48,6 +48,7 @@ export interface IGood {
   transferentDestiny?: string;
   fecResAgreementRecRev?: any;
   fecResAudienceRecRev?: any;
+  programmationStatus?: string;
   notesTransferringEntity?: string;
   saeMeasureUnit?: string;
   compliesNorm?: string;

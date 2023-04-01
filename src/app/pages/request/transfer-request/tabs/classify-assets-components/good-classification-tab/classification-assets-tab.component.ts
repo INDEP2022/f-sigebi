@@ -163,15 +163,16 @@ export class ClassificationAssetsTabComponent
   }
 
   rowSelected(good: IGood) {
-    this.detailArray = null;
+    this.goodService.getById(good.id).subscribe(data => {
+      this.goodsForm.patchValue(data);
+      this.goodSelect = this.goodsForm.value;
+      this.detailArray = this.goodsForm;
+    });
+
     this.requestObject = this.requestObject;
     this.goodObject = good;
     this.assetsId = good.id;
     this.domicilieObject = good.addressId;
-    this.goodService.getById(good.id).subscribe((data: any) => {
-      this.goodsForm.patchValue(data);
-      this.detailArray = this.goodsForm;
-    });
   }
 
   initForm() {

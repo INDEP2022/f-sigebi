@@ -37,10 +37,11 @@
       <tab heading="Clasificacion del Bien" id="tab1">
         <app-classify-assets-tab
           [assetsId]="assetsId"
-          [goodObject]="goodObject"></app-classify-assets-tab>
+          [goodObject]="goodObject"
+          [goodSelect]="goodSelect"></app-classify-assets-tab>
       </tab>
       <tab heading="Atributos del Bien">
-        <div *ngIf="detailArray !== undefined && detailArray !== null">
+        <div>
           <app-detail-assets-tab-component
             [requestObject]="requestObject"
             [detailAssets]="detailArray"

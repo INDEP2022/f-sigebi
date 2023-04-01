@@ -37,6 +37,8 @@ export class ClassifyAssetsTabComponent
   @Input() goodObject: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
+  @Input() goodSelect: any;
+
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -73,10 +75,19 @@ export class ClassifyAssetsTabComponent
       this.getSection(new ListParams());
     }
     this.getReactiveFormActions();
+    this.processView();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      this.process = item.process;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.typeDoc == '') {
+      console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
       }
@@ -87,6 +98,7 @@ export class ClassifyAssetsTabComponent
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good.ligieSection);
+        console.log('asd', this.good);
         this.classiGoodsForm.patchValue(this.good);
       }
     }
@@ -556,18 +568,95 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    const info = this.classiGoodsForm.getRawValue();
-    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
-      this.classiGoodsForm.get('stateConservation').setValue(1);
-    this.classiGoodsForm.get('physicalStatus').setValue(1);
+    if (this.process == 'classify-assets') {
+      this.saveClassifyAssets();
+    } else if (this.process != 'classify-assets') {
+      const goods = this.classiGoodsForm.getRawValue();
 
-    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
-      this.classiGoodsForm.get('stateConservation').setValue(2);
-    this.classiGoodsForm.get('physicalStatus').setValue(2);
-    this.classiGoodsForm.get('destiny').setValue(1);
+      if (goods.addressId === null) {
+        this.message(
+          'error',
+          'Domicilio requerido',
+          'Es requerido el domicilio del bien'
+        );
+        return;
+      }
+
+      if (!goods.idGoodProperty) {
+        goods.idGoodProperty =
+          Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+      }
+      let goodAction: any = null;
+      if (goods.goodId === null) {
+        goods.requestId = Number(goods.requestId);
+        goods.addressId = Number(goods.addressId);
+        goodAction = this.goodService.create(goods);
+      } else {
+        goods.requestId = Number(goods.requestId.id);
+        goods.addressId = Number(goods.addressId.id);
+        goodAction = this.goodService.update(goods);
+      }
+
+      goodAction.subscribe({
+        next: (data: any) => {
+          if (data) {
+            if (data.id) {
+              this.message(
+                'success',
+                'Guardado',
+                `El registro se actualizo exitosamente!`
+              );
+              this.classiGoodsForm.controls['id'].setValue(data.id);
+
+              this.refreshTable(true);
+
+              setTimeout(() => {
+                this.refreshTable(false);
+              }, 5000);
+            }
+          } else {
+            if (data.statusCode === 200) {
+              this.message(
+                'success',
+                'Guardado',
+                `El registro se guardo exitosamente!`
+              );
+              this.classiGoodsForm.controls['id'].setValue(data.id);
+
+              this.refreshTable(true);
+
+              setTimeout(() => {
+                this.refreshTable(false);
+              }, 5000);
+            } else {
+              this.message(
+                'error',
+                'Error',
+                `El registro no sepudo guardar!. ${data.message}`
+              );
+            }
+          }
+        },
+        error: (error: any) => {},
+      });
+    }
+  }
+
+  saveClassifyAssets() {
+    this.classiGoodsForm
+      .get('stateConservation')
+      .setValue(this.goodSelect.stateConservation);
+    this.classiGoodsForm
+      .get('physicalStatus')
+      .setValue(this.goodSelect.physicalStatus);
+    this.classiGoodsForm.get('fractionId').setValue(this.goodSelect.fractionId);
+
+    const info = this.classiGoodsForm.getRawValue();
+    console.log('p', info);
 
     const goods = this.classiGoodsForm.getRawValue();
 
+    console.log('goods', goods);
     if (goods.addressId === null) {
       this.message(
         'error',

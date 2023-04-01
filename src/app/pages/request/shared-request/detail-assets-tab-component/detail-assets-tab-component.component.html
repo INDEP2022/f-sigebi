@@ -1933,7 +1933,7 @@
             <form-field
               [control]="goodDomicilieForm.get('guardCustody')"
               label="Guarda Custodia"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
@@ -2203,7 +2203,7 @@
             <form-field
               [control]="goodDomicilieForm.get('kitchen')"
               label="Cocina"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
@@ -2535,7 +2535,7 @@
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
               label="DecretoExproProc"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
@@ -2884,7 +2884,7 @@
             <form-field
               [control]="goodDomicilieForm.get('photosAttached')"
               label="Fotos Adjuntas"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
