@@ -3,8 +3,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -115,10 +123,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   transferSelect = new DefaultSelect();
   form: FormGroup;
   records: string[] = ['A', 'RT'];
+  recibeSelect = new DefaultSelect();
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceExpedient: ExpedientService,
+    private serviceRNomencla: ParametersService
   ) {
     super();
   }
@@ -139,8 +150,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       ident: [null, [Validators.required]],
-      recibe: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      entrego: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      recibe: [null, [Validators.required]],
       folio: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
@@ -199,6 +213,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.fillActTwo();
   }
 
+  verifyTransferenteAndAct() {
+    if (this.form.get('acta').value != null) {
+      let actaValue = this.form.get('acta').value;
+      this.form
+        .get('transfer')
+        .setValidators([transferenteAndAct(actaValue), Validators.required]);
+      this.fillActTwo();
+    }
+  }
+
   getGoodsByExpedient() {
     this.serviceGood
       .getByExpedient(this.form.get('expediente').value, {
@@ -207,28 +231,53 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res.data.length > 0) {
-            let model: TransferProceeding = {
-              numFile: res.transferNumber as number,
-              typeProceedings: res.expedientType,
-            };
-            this.dataGoods.load(res.data);
-            console.log(model);
-            this.serviceProcVal.getTransfer(model).subscribe(
-              res => {
-                console.log(res);
-                this.transferSelect = new DefaultSelect(res.data, res.count);
-              },
-              err => {
-                console.log(err);
-              }
-            );
+            this.dataGoods.load(res.data); //Pintar los vienes en la tabla
+            this.form.get('ident').setValue('DEV'); //Asignar el valor DEV a ident
+            this.form.get('entrego').setValue('PART');
+            this.serviceExpedient //Busqueda de los datos del expediente, según su número
+              .getById(this.form.get('expediente').value)
+              .subscribe(
+                res => {
+                  let model: TransferProceeding = {
+                    //Llenar los datos del expediente para buscar el transfer
+                    numFile: res.transferNumber as number,
+                    typeProceedings: res.expedientType,
+                  };
+
+                  this.serviceProcVal.getTransfer(model).subscribe(
+                    res => {
+                      console.log(res);
+                      this.transferSelect = new DefaultSelect(
+                        res.data,
+                        res.count
+                      );
+                    },
+                    err => {
+                      console.log(err);
+                    }
+                  );
+                },
+                err => {}
+              );
           }
-          this.form.get('ident').setValue('DEV');
         },
         error: (err: any) => {
           console.error(err);
         },
       });
+  }
+
+  //Catalogs
+  getRecibe(params: ListParams) {
+    console.log(params);
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', params.text, SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+      res => {
+        this.recibeSelect = new DefaultSelect(res.data, res.count);
+      },
+      err => console.log(err)
+    );
   }
 
   //Functions
@@ -253,7 +302,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //Fill Act 2
   fillActTwo() {
-    /*     console.log(this.form.get('admin').value.delegation); */
+    console.log(this.form.get('entrego').value);
     const nameAct =
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
@@ -265,12 +314,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         ? this.form.get('ident').value
         : '') +
       '/' +
-      (this.form.get('recibe').value != null
-        ? this.form.get('recibe').value.delegation
+      (this.form.get('entrego').value != null
+        ? this.form.get('entrego').value
         : '') +
       '/' +
-      (this.form.get('admin').value != null
-        ? this.form.get('admin').value.delegation
+      (this.form.get('recibe').value != null
+        ? this.form.get('recibe').value.delegation
         : '') +
       '/' +
       (this.form.get('folio').value != null
