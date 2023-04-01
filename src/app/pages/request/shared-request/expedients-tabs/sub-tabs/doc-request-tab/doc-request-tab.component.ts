@@ -20,7 +20,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -115,18 +115,49 @@ export class DocRequestTabComponent
   prepareForm(): void {
     this.docRequestForm = this.fb.group({
       id: [null],
-      text: [null, [Validators.pattern(STRING_PATTERN)]],
+      text: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       docType: [null],
-      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
+      docTitle: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      typeTrasf: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       noOfice: [null],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: this.idRequest, disabled: true }],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      comment: [
+        null,
+        [Validators.pattern(STRING_PATTERN)],
+        Validators.maxLength(30),
+      ],
+      noRequest: [
+        { value: this.idRequest, disabled: true },
+        [Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       regDelega: [null],
       state: [null],
       tranfe: [null],

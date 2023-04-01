@@ -661,6 +661,7 @@ export class JuridicalRecordUpdateComponent
     if (this.formControls.wheelNumber.value != null) {
       this.canViewDocuments = true;
     }
+    console.log(this.canViewDocuments);
     // TODO: Deshabilitar dictamen si no es nulo y no cumple condiciones SAT
     // if (this.formControls.dictumKey != null) {
     // } else {
@@ -930,7 +931,7 @@ export class JuridicalRecordUpdateComponent
       doc: catalog.doc,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management'
+      '/pages/documents-reception/flyers-registration/related-document-management/1'
     );
   }
 
@@ -1029,7 +1030,7 @@ export class JuridicalRecordUpdateComponent
       pNoTramite: procedure,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management'
+      '/pages/documents-reception/flyers-registration/related-document-management/2'
     );
   }
 
