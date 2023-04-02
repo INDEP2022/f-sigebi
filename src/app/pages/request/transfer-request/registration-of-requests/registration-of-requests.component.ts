@@ -233,27 +233,27 @@ export class RegistrationOfRequestsComponent
       ],
       transferenceFile: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(1250))],
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(60))],
       ],
       previousInquiry: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       trialType: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       circumstantialRecord: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       lawsuit: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       tocaPenal: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       protectNumber: [
         null,
@@ -275,6 +275,7 @@ export class RegistrationOfRequestsComponent
           data.stationId,
           data.authorityId
         );
+        if (data.urgentPriority === null) data.urgentPriority = 'N';
 
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;

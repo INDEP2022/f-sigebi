@@ -43,7 +43,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsValue = new Date();
   requestForm: ModelForm<any>;
   isReadOnly: boolean = true;
-  prueba: any;
 
   loadingTurn = false;
   bsModalRef: BsModalRef;
@@ -448,9 +447,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
-      console.log(body);
-      this.prueba = body;
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
