@@ -158,8 +158,9 @@ export class DetailAssetsTabComponentComponent
   ngOnChanges(changes: SimpleChanges): void {
     console.log('detalle', this.detailAssets.value);
     if (this.process == 'classify-assets') {
-      this.setDataGood();
+      this.goodData = this.detailAssets.value;
     }
+
     if (this.typeDoc === 'clarification') {
     }
     //verifica si la vista es verificacion de cumplimiento o bien
@@ -187,7 +188,7 @@ export class DetailAssetsTabComponentComponent
         this.getSubBrand(new ListParams(), subBrand);
       }
     }
-    /* //verifica si la vista es verificacion de cumplimiento o bien
+    //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
@@ -208,7 +209,7 @@ export class DetailAssetsTabComponentComponent
         const subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(new ListParams(), subBrand);
       }
-    } */
+    }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
     if (this.detailAssets.controls['goodTypeId'].value != null) {
@@ -216,24 +217,6 @@ export class DetailAssetsTabComponentComponent
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
     }
-  }
-
-  setDataGood() {
-    const idGood = this.assetsId;
-    this.goodService.getById(idGood).subscribe({
-      next: data => {
-        this.goodType(data.goodTypeId);
-        this.typeRelevant(data.goodTypeId);
-        if (data.stateConservation == 1 || data.physicalStatus == 1)
-          data.stateConservation = 'BUENO';
-        data.physicalStatus = 'BUENO';
-        if (data.stateConservation == 2 || data.physicalStatus == 2)
-          data.stateConservation = 'MALO';
-        data.physicalStatus = 'MALO';
-        this.goodData = data;
-      },
-      error: error => {},
-    });
   }
 
   goodType(goodTypeId: number) {

@@ -5,19 +5,25 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IGood } from 'src/app/core/models/good/good.model';
+import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IDomicilies } from 'src/app/core/models/good/good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 
@@ -37,7 +43,7 @@ export class ClassificationAssetsTabComponent
 
   idRequest: number = 0;
   title: string = 'Bienes de la Solicitud';
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsFraction = new BehaviorSubject<ListParams>(new ListParams());
   paramsChapter = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl1 = new BehaviorSubject<ListParams>(new ListParams());
@@ -46,7 +52,7 @@ export class ClassificationAssetsTabComponent
   paramsLvl4 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   assetsId: string | number;
-  detailArray: any;
+  detailArray: IFormGroup<IGood>;
   goodObject: any;
   domicilieObject: any;
   totalItems: number = 0;
@@ -58,8 +64,9 @@ export class ClassificationAssetsTabComponent
   levels1 = new DefaultSelect();
   levels2 = new DefaultSelect();
   levels3 = new DefaultSelect();
+  clarificationData: any = [];
   levels4 = new DefaultSelect();
-  goodSelect: IGood;
+  goodsSelected: any = [];
   idGood: string | number;
   constructor(
     private goodService: GoodService,
@@ -68,7 +75,9 @@ export class ClassificationAssetsTabComponent
     private fb: FormBuilder,
     private fractionService: FractionService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private typeRelevantSevice: TypeRelevantService
+    private typeRelevantSevice: TypeRelevantService,
+    private genericService: GenericService,
+    private goodDomicilieService: GoodDomiciliesService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -114,12 +123,86 @@ export class ClassificationAssetsTabComponent
   }
 
   getData() {
+    this.loading = true;
+    this.params.value.addFilter('requestId', this.idRequest);
+    const filter = this.params.getValue().getParams();
+    this.goodService.getAll(filter).subscribe({
+      next: resp => {
+        var result = resp.data.map(async (item: any) => {
+          const goodTypeName = await this.getTypeGood(item.goodTypeId);
+          item['goodTypeName'] = goodTypeName;
+
+          const physicalStatus = await this.getByTheirStatus(
+            item.physicalStatus,
+            'Estado Fisico'
+          );
+          item['physicstateName'] = physicalStatus;
+
+          const stateConservation = await this.getByTheirStatus(
+            item.stateConservation,
+            'Estado Conservacion'
+          );
+          item['stateConservationName'] = stateConservation;
+
+          const transferentDestiny = await this.getByTheirStatus(
+            item.transferentDestiny,
+            'Destino'
+          );
+          item['transferentDestinyName'] = transferentDestiny;
+
+          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
+          item['destinyName'] = destiny;
+        });
+
+        Promise.all(result).then(data => {
+          this.paragraphs = resp.data;
+          this.totalItems = resp.count;
+          this.loading = false;
+        });
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  getTypeGood(id: number) {
+    return new Promise((resolve, reject) => {
+      if (id) {
+        this.typeRelevantSevice.getById(id).subscribe({
+          next: resp => {
+            resolve(resp.description);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
+
+  getByTheirStatus(id: number | string, typeName: string) {
+    return new Promise((resolve, reject) => {
+      if (id) {
+        var params = new ListParams();
+        params['filter.name'] = `$eq:${typeName}`;
+        params['filter.keyId'] = `$eq:${id}`;
+        this.genericService.getAll(params).subscribe({
+          next: resp => {
+            resolve(resp.data[0].description);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
+
+  /*getData() {
     if (this.idRequest) {
       this.loading = true;
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: data => {
-          this.showHideErrorInterceptorService.showHideError(false);
           const info = data.data.map(items => {
             const fraction: any = items.fractionId;
             this.idFraction = fraction.code;
@@ -151,7 +234,7 @@ export class ClassificationAssetsTabComponent
         },
       });
     }
-  }
+  } */
 
   getGoodType(goodTypeId: string | number) {
     this.showHideErrorInterceptorService.showHideError(false);
@@ -162,20 +245,100 @@ export class ClassificationAssetsTabComponent
     });
   }
 
-  rowSelected(good: IGood) {
-    this.goodService.getById(good.id).subscribe(data => {
-      this.goodsForm.patchValue(data);
-      this.goodSelect = this.goodsForm.value;
-      this.detailArray = this.goodsForm;
-    });
+  selectGood(event: any) {
+    //if (event.isSelected === true) {
+    console.log(event);
+    this.detailArray.reset();
+    this.goodsSelected = event.selected;
+    if (this.goodsSelected.length === 1) {
+      setTimeout(() => {
+        this.detailArray.patchValue(this.goodsSelected[0] as IGood);
+        this.getDomicilieGood(this.goodsSelected[0].addressId);
+      }, 3000);
+    }
+    //} else {
+    //this.clarificationData = [];
+    //}
+  }
 
-    this.requestObject = this.requestObject;
-    this.goodObject = good;
-    this.assetsId = good.id;
-    this.domicilieObject = good.addressId;
+  getDomicilieGood(id: number) {
+    this.goodDomicilieService.getById(id).subscribe({
+      next: resp => {
+        this.domicilieObject = resp as IDomicilies;
+      },
+    });
   }
 
   initForm() {
+    this.detailArray = this.fb.group({
+      id: [null],
+      goodId: [null],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
+      requestId: [null],
+      goodTypeId: [null],
+      goodTypeName: [null],
+      color: [null],
+      goodDescription: [null],
+      quantity: [null],
+      duplicity: [null],
+      capacity: [null],
+      volume: [null],
+      fileeNumber: [null],
+      useType: [null],
+      physicalStatus: [null],
+      stateConservation: [null],
+      stateConservationName: [null],
+      origin: [null],
+      goodClassNumber: [null],
+      ligieUnit: [null],
+      appraisal: [null],
+      destiny: [null], //preguntar Destino ligie
+      destinyName: [null], //preguntar Destino ligie
+      transferentDestiny: [null],
+      compliesNorm: [null],
+      notesTransferringEntity: [null],
+      unitMeasure: [null], // preguntar Unidad Medida Transferente
+      saeDestiny: [null],
+      brand: [null],
+      subBrand: [null],
+      armor: [null],
+      model: [null],
+      doorsNumber: [null],
+      axesNumber: [null],
+      engineNumber: [null], //numero motor
+      tuition: [null],
+      serie: [null],
+      chassis: [null],
+      cabin: [null],
+      fitCircular: [null],
+      theftReport: [null],
+      addressId: [null],
+      operationalState: [null],
+      manufacturingYear: [null],
+      enginesNumber: [null], // numero de motores
+      flag: [null],
+      openwork: [null],
+      sleeve: [null],
+      length: [null],
+      shipName: [null],
+      publicRegistry: [null], //registro public
+      ships: [null],
+      dgacRegistry: [null], //registro direccion gral de aereonautica civil
+      airplaneType: [null],
+      caratage: [null], //kilatage
+      material: [null],
+      weight: [null],
+      physicstateName: [null],
+      descriptionGoodSae: [null],
+    });
+  }
+
+  /*initForm() {
     this.goodsForm = this.fb.group({
       id: [null],
       goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -446,5 +609,5 @@ export class ClassificationAssetsTabComponent
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
-  }
+  } */
 }

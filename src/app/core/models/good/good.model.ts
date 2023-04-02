@@ -19,6 +19,7 @@ export interface IGood {
   classificationGood?: any;
   remarksOrien?: any;
   physicalStatus?: boolean;
+  goodId?: number;
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
@@ -45,6 +46,7 @@ export interface IGood {
   placeNotification?: any;
   fecResdiscardRecRev?: any;
   fecResissueRecRev?: any;
+  goodTypeName: String;
   transferentDestiny?: string;
   fecResAgreementRecRev?: any;
   fecResAudienceRecRev?: any;
@@ -71,6 +73,7 @@ export interface IGood {
   userAuthorizesChangeNumera?: any;
   AuthorizesChangeNumerary?: any;
   fecRatifiesChangeNumerary?: any;
+  physicstateName?: string;
   userRatifiesChange?: any;
   fecNotificationRecRev?: any;
   reasonRecRev?: any;
@@ -133,6 +136,7 @@ export interface IGood {
   fecEntry?: any;
   idUbication?: any;
   clvUnique?: any;
+  stateConservationName: String;
   noProceedings?: any;
   descriptionGood?: any;
   statePhysical?: any;
