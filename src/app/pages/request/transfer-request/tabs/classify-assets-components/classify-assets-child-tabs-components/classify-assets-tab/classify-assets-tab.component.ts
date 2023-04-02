@@ -218,7 +218,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(30),
         ],
       ],
       chassis: [
@@ -295,7 +295,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(30),
         ],
       ],
       shipName: [
@@ -303,7 +303,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(70),
         ],
       ],
       publicRegistry: [
@@ -603,7 +603,6 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    //debugger;
     /*const info = this.classiGoodsForm.getRawValue();
     if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
       this.classiGoodsForm.get('stateConservation').setValue(1);
@@ -614,7 +613,6 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.get('physicalStatus').setValue(2);
     this.classiGoodsForm.get('destiny').setValue(1);*/
 
-    debugger;
     const goods = this.classiGoodsForm.getRawValue();
 
     if (goods.addressId === null) {
@@ -633,10 +631,7 @@ export class ClassifyAssetsTabComponent
     if (Number(goods.goodTypeId) === 1) {
       goods.idGoodProperty = Number(goods.id);
     }
-    /*  if (!goods.idGoodProperty) {
-      goods.idGoodProperty =
-        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    } */
+
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
