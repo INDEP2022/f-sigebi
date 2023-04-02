@@ -17,6 +17,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IAddress } from 'src/app/core/models/administrative-processes/siab-sami-interaction/address.model';
 import {
   IDomicilies,
   IGood,
@@ -156,7 +157,8 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('detalle', this.detailAssets.value);
+    const address: IAddress = this.detailAssets.controls['addressId'].value;
+
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
     }
@@ -167,11 +169,11 @@ export class DetailAssetsTabComponentComponent
     if (
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
-      this.typeDoc === 'approval-process'
+      this.typeDoc === 'approval-process' ||
+      this.typeDoc === 'classify-assets'
     ) {
-      if (this.detailAssets.controls['addressId'].value) {
-        this.addressId = this.detailAssets.controls['addressId'].value;
-        this.getGoodDomicilie(this.addressId);
+      if (address?.id) {
+        this.getGoodDomicilie(address?.id);
       }
       //verifica si la vista es verificacion de cumplimiento
       if (this.typeDoc === 'verify-compliance') {
@@ -183,7 +185,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        console.log(this.detailAssets.controls['subBrand'].value);
         const subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(new ListParams(), subBrand);
       }
@@ -205,7 +206,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        console.log(this.detailAssets.controls['subBrand'].value);
         const subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(new ListParams(), subBrand);
       }
@@ -595,7 +595,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
       next: data => {
-        console.log(data.data);
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
       error: error => {},
@@ -875,7 +874,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   async save() {
-    debugger;
     const domicilie = this.domicileForm.getRawValue();
     //se guarda bien domicilio
     if (domicilie.id !== null) {
@@ -1145,7 +1143,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: any) {
-    console.log(domicilie);
     domicilie.localityKey = Number(domicilie.localityKey);
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.stateOfRepId = domicilie.statusKey;
@@ -1162,19 +1159,19 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.patchValue(domicilie);
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-    /* setTimeout(() => {
+    setTimeout(() => {
       this.domicileForm.patchValue(domicilie);
       console.log(this.domicileForm.getRawValue());
-    }, 3000); */
+    }, 3000);
 
-    /* this.domicileForm.controls['municipalityKey'].setValue(
+    this.domicileForm.controls['municipalityKey'].setValue(
       domicilie.municipalityKey
-    );*/
-    //this.stateOfRepId = domicilie.statusKey;
-    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
+    );
+    this.stateOfRepId = domicilie.statusKey;
+    this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
 
-    /* this.domicileForm.controls['municipalityKey'].setValue(
+    this.domicileForm.controls['municipalityKey'].setValue(
       domicilie.municipalityKey
-    ); */
+    );
   }
 }

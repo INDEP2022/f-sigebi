@@ -66,7 +66,7 @@ export class ClassificationAssetsTabComponent
   levels3 = new DefaultSelect();
   clarificationData: any = [];
   levels4 = new DefaultSelect();
-  goodsSelected: any = [];
+  goodSelect: any = [];
   idGood: string | number;
   constructor(
     private goodService: GoodService,
@@ -246,19 +246,17 @@ export class ClassificationAssetsTabComponent
   }
 
   selectGood(event: any) {
-    //if (event.isSelected === true) {
     console.log(event);
     this.detailArray.reset();
-    this.goodsSelected = event.selected;
-    if (this.goodsSelected.length === 1) {
+    this.goodSelect = event.selected;
+    this.goodObject = event.selected[0];
+    this.assetsId = this.goodSelect[0].id;
+    if (this.goodSelect.length === 1) {
       setTimeout(() => {
-        this.detailArray.patchValue(this.goodsSelected[0] as IGood);
-        this.getDomicilieGood(this.goodsSelected[0].addressId);
+        this.detailArray.patchValue(this.goodSelect[0] as IGood);
+        this.getDomicilieGood(this.goodSelect[0].addressId);
       }, 3000);
     }
-    //} else {
-    //this.clarificationData = [];
-    //}
   }
 
   getDomicilieGood(id: number) {

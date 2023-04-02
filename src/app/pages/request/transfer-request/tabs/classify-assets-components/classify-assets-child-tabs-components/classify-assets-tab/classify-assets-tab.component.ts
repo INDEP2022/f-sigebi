@@ -86,18 +86,19 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.typeDoc == '') {
-      console.log('df', this.assetsId);
+    console.log('td', this.typeDoc);
+
+    /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
-      }
-    }
+      } */
 
     //bienes selecionados
-    this.good = changes['goodObject'].currentValue;
+    this.good = changes['goodObject']?.currentValue;
+    console.log('d', this.good);
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
-        this.getSection(new ListParams(), this.good.ligieSection);
+        this.getSection(new ListParams(), this.good?.ligieSection);
         console.log('asd', this.good);
         this.classiGoodsForm.patchValue(this.good);
       }
@@ -615,90 +616,6 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    if (this.process == 'classify-assets') {
-      this.saveClassifyAssets();
-    } else if (this.process != 'classify-assets') {
-      const goods = this.classiGoodsForm.getRawValue();
-
-      if (goods.addressId === null) {
-        this.message(
-          'error',
-          'Domicilio requerido',
-          'Es requerido el domicilio del bien'
-        );
-        return;
-      }
-
-      if (!goods.idGoodProperty) {
-        goods.idGoodProperty =
-          Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-      }
-      let goodAction: any = null;
-      if (goods.goodId === null) {
-        goods.requestId = Number(goods.requestId);
-        goods.addressId = Number(goods.addressId);
-        goodAction = this.goodService.create(goods);
-      } else {
-        goods.requestId = Number(goods.requestId.id);
-        goods.addressId = Number(goods.addressId.id);
-        goodAction = this.goodService.update(goods);
-      }
-
-      goodAction.subscribe({
-        next: (data: any) => {
-          if (data) {
-            if (data.id) {
-              this.message(
-                'success',
-                'Guardado',
-                `El registro se actualizo exitosamente!`
-              );
-              this.classiGoodsForm.controls['id'].setValue(data.id);
-
-              this.refreshTable(true);
-
-              setTimeout(() => {
-                this.refreshTable(false);
-              }, 5000);
-            }
-          } else {
-            if (data.statusCode === 200) {
-              this.message(
-                'success',
-                'Guardado',
-                `El registro se guardo exitosamente!`
-              );
-              this.classiGoodsForm.controls['id'].setValue(data.id);
-
-              this.refreshTable(true);
-
-              setTimeout(() => {
-                this.refreshTable(false);
-              }, 5000);
-            } else {
-              this.message(
-                'error',
-                'Error',
-                `El registro no sepudo guardar!. ${data.message}`
-              );
-            }
-          }
-        },
-        error: (error: any) => {},
-      });
-    }
-  }
-
-  saveClassifyAssets() {
-    this.classiGoodsForm
-      .get('stateConservation')
-      .setValue(this.goodSelect.stateConservation);
-    this.classiGoodsForm
-      .get('physicalStatus')
-      .setValue(this.goodSelect.physicalStatus);
-    this.classiGoodsForm.get('fractionId').setValue(this.goodSelect.fractionId);
-
-    const info = this.classiGoodsForm.getRawValue();
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
@@ -709,21 +626,10 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    /* if (!goods.idGoodProperty) {
+    if (!goods.idGoodProperty) {
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    } */
-    if (Number(goods.goodTypeId) === 1) {
-      goods.idGoodProperty = Number(goods.id);
     }
-    /*  if (!goods.idGoodProperty) {
-      goods.idGoodProperty =
-        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    } */
-    if (goods.fractionId.id) {
-      goods.fractionId = Number(goods.fractionId.id);
-    }
-
     let goodAction: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
@@ -731,7 +637,7 @@ export class ClassifyAssetsTabComponent
       goodAction = this.goodService.create(goods);
     } else {
       goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId);
+      goods.addressId = Number(goods.addressId.id);
       goodAction = this.goodService.update(goods);
     }
 
