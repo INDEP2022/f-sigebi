@@ -198,7 +198,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
                 cancelButtonColor: '#B38E5D',
                 confirmButtonText: 'Aceptar',
               }).then(result => {
-                this.close();
+                this.closeAll();
               });
               //}
             }
@@ -344,6 +344,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.hide();
+  }
+  closeAll() {
     this.modalRef.hide();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }

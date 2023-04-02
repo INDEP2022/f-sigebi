@@ -709,14 +709,17 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    if (!goods.idGoodProperty) {
+    /* if (!goods.idGoodProperty) {
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    } */
+    if (Number(goods.goodTypeId) === 1) {
+      goods.idGoodProperty = Number(goods.id);
     }
-    if (!goods.idGoodProperty) {
+    /*  if (!goods.idGoodProperty) {
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    }
+    } */
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
