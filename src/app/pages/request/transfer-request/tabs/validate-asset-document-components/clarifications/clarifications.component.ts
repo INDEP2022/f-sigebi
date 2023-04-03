@@ -10,7 +10,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -78,7 +78,7 @@ export class ClarificationsComponent
 {
   @Input() requestObject: any;
   @Input() process: string = '';
-  goodForm: IFormGroup<IGood>;
+  goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   assetsArray: any[] = [];
@@ -101,7 +101,6 @@ export class ClarificationsComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (this.requestObject) {
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         this.getData();
@@ -123,7 +122,7 @@ export class ClarificationsComponent
     this.goodForm = this.fb.group({
       id: [null],
       goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieSection: [null, , [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieSection: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -152,7 +151,10 @@ export class ClarificationsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      fileeNumber: [null],
+      fileeNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
       useType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -380,13 +382,11 @@ export class ClarificationsComponent
   }
 
   getData() {
-    console.log(this.requestObject);
     this.params.value.addFilter('requestId', this.requestObject.id);
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: ({ data }) => {
         this.assetsArray = [...data];
-        console.log(this.assetsArray);
       },
     });
   }
