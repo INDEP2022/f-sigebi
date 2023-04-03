@@ -59,7 +59,7 @@ export class WarehouseTypeModalsComponent extends BasePage implements OnInit {
   }
   create() {
     this.loading = true;
-    this.typeWarehouseService.create(this.warehouseForm.value).subscribe({
+    this.typeWarehouseService.createType(this.warehouseForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -67,7 +67,7 @@ export class WarehouseTypeModalsComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.typeWarehouseService
-      .update(
+      .updateType(
         this.warehouseForm.controls['warehouseTypeId'].value,
         this.warehouseForm.value
       )

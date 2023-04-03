@@ -1,51 +1,51 @@
 export const WAREHOUSETYPE_COLUMNS = {
-  descripcion: {
+  nameGoodType: {
     title: 'Descripción',
     width: '30%',
     sort: false,
   },
-  C: {
+  id: {
     title: 'N.',
     width: '5%',
     sort: false,
   },
 };
 export const WAREHOUSESUBTYPE_COLUMNS = {
-  descripcion: {
+  nameSubtypeGood: {
     title: 'Descripción',
     width: '30%',
     sort: false,
   },
-  C: {
+  id: {
     title: 'N.',
     width: '5%',
     sort: false,
   },
 };
 export const WAREHOUSESUBSUBTYPE_COLUMNS = {
-  descripcion: {
+  description: {
     title: 'Descripción',
     width: '30%',
     sort: false,
   },
-  C: {
+  id: {
     title: 'N.',
     width: '5%',
     sort: false,
   },
 };
 export const WAREHOUSESUBSUBSUBTYPE_COLUMNS = {
-  goods: {
+  numClasifGoods: {
     title: 'Clasif.Bien',
     width: '10%',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     width: '30%',
     sort: false,
   },
-  C: {
+  id: {
     title: 'N.',
     width: '5%',
     sort: false,
