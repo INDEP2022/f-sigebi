@@ -127,14 +127,18 @@ export class ClarificationListTabComponent
         ''
       );
     } else {
-      /*this.rejectedGoodService
+      this.rejectedGoodService
         .remove(clarification.rejectNotificationId)
         .subscribe({
           next: response => {
-            this.onLoadToast('success', `Aclaración eliminada correctamente`, ``);
+            this.onLoadToast(
+              'success',
+              `Aclaración eliminada correctamente`,
+              ``
+            );
             this.getData();
           },
-        }); */
+        });
     }
   }
 }

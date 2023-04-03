@@ -306,8 +306,24 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                         );
                       }
                     },
+                    error: error => {
+                      this.loader.load = false;
+                      this.onLoadToast(
+                        'error',
+                        'Error',
+                        'Error al actualizar la solicitud'
+                      );
+                    },
                   });
               }
+            },
+            error: error => {
+              this.loader.load = false;
+              this.onLoadToast(
+                'error',
+                'Error',
+                'Error al insertar la documentacion'
+              );
             },
           });
         }
@@ -342,23 +358,23 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       newDate =
         oldDate.getFullYear() +
         '' +
-        this.setMonths(oldDate.getMonth() + 1) +
+        this.setMonthsAndDay(oldDate.getMonth() + 1) +
         '' +
-        oldDate.getDate();
+        this.setMonthsAndDay(oldDate.getDate());
     } else {
       const oldDate = date;
       newDate =
         oldDate.getFullYear() +
         '' +
-        this.setMonths(oldDate.getMonth() + 1) +
+        this.setMonthsAndDay(oldDate.getMonth() + 1) +
         '' +
-        oldDate.getDate();
+        this.setMonthsAndDay(oldDate.getDate());
     }
 
     return newDate.toString();
   }
 
-  setMonths(month: number) {
+  setMonthsAndDay(month: number) {
     let result = month.toString();
     if (month === 1) {
       result = '01';

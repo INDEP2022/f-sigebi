@@ -62,8 +62,14 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.searchForm = this.fb.group({
-      code: [null],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      code: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       typeRelevant: [null],
     });
   }

@@ -82,6 +82,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
     this.src = linkDoc1;
+    console.log('URL de reporte', this.src);
     /*this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = LIST_REPORTS_COLUMN;
 
@@ -100,7 +101,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .subscribe(() => this.getSignatories());
   }
 
-  //Trae todo el listado de los firmantes
+  //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
     const learnedType = this.idTypeDoc;
     const learnedId = this.idDoc;

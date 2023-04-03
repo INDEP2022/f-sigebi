@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -131,6 +130,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.requestToTurn.map(async (item: any, i: number) => {
       let index = i + 1;
       item.requestStatus = 'A_TURNAR';
+      item.receiptRoute = 'FISICA';
+      item.affair = 37;
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
@@ -139,27 +140,25 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
       if (resposeRequest) {
         /* crea tarea */
-        const taskResult: any = await this.createTask(resposeRequest);
-        if (taskResult) {
-          /* actualiza estatus del bien */
-          const orderServResult = await this.createOrderService(
-            resposeRequest,
-            'REGISTRO_SOLICITUD',
-            'REGISTRO_SOLICITUD'
-          );
-          if (orderServResult) {
-            /* mensaje de guardado */
-            if (this.requestToTurn.length === index) {
-              this.message(
-                'success',
-                'Turnado Exitoso',
-                'Se turnaron las solicitudes correctamente'
-              );
+        const from = 'REGISTRO_SOLICITUD';
+        const to = 'REGISTRO_SOLICITUD';
+        const taskResult = await this.createTaskOrderService(
+          resposeRequest,
+          from,
+          to
+        );
 
-              this.loading = false;
-              this.modalRef.content.callback(true);
-              this.close();
-            }
+        if (taskResult) {
+          if (this.requestToTurn.length === index) {
+            this.message(
+              'success',
+              'Turnado Exitoso',
+              'Se turnaron las solicitudes correctamente'
+            );
+
+            this.loading = false;
+            this.modalRef.content.callback(true);
+            this.close();
           }
         }
       }
@@ -186,61 +185,44 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     });
   }
 
-  createTask(request: any) {
+  createTaskOrderService(request: any, from: string, to: string) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
       const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = this.user.username;
-      body['assigneesDisplayname'] = this.user.firstName;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(request.id);
-      body['title'] =
-        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      /*  body['isPublic'] = 'S';
-      body['istestTask'] = 'S'; */
-      body['programmingId'] = 0;
-      body['requestId'] = request.id;
-      body['expedientId'] = 0;
-      body['urlNb'] = 'pages/request/transfer-request/registration-request';
-      this.taskService.createTask(body).subscribe({
-        next: resp => {
-          console.log(resp);
-          resolve(true);
-        },
-        error: error => {
-          this.loading = false;
-          this.message('error', 'Error', 'Error al crear la tarea');
-          reject(error.error.message);
-        },
-      });
-    });
-  }
+      let body: any = {};
+      body['type'] = 'SOLICITUD TRANSFERENCIA';
 
-  createOrderService(request: any, from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = request.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.user.username;
+      task['assigneesDisplayname'] = this.user.firstName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] =
+        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = 'pages/request/transfer-request/registration-request';
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
+          console.log(error.error.message);
           this.loading = false;
-          this.message(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
-          reject(error.error.message);
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
         },
       });
     });
