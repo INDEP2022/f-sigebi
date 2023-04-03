@@ -290,8 +290,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   selectRows(event: any) {
-    console.log(event);
     this.listgoodObjects = event.selected;
+    debugger;
     if (this.listgoodObjects.length <= 1) {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
