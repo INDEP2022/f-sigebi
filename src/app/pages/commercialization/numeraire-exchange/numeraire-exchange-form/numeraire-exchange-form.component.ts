@@ -219,8 +219,6 @@ export class NumeraireExchangeFormComponent extends BasePage {
     }
   }
 
-  validateStatusesMassive;
-
   selectAccount(account: any) {
     this.selectedBank = account;
   }
