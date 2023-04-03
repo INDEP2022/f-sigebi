@@ -5,3 +5,10 @@ export interface IFinancialIndicators {
   formula: string;
   //registerNumber: number;
 }
+export interface IFinancialIndicatorsW {
+  idIndicatorDate: string;
+  idGoodNumber: string;
+  idIndicatorNumber: string;
+  value: number;
+  registryNumber: number;
+}
