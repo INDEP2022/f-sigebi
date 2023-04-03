@@ -79,6 +79,7 @@ export class DetailAssetsTabComponentComponent
   goodTypeName: string = '';
   nameTypeRelevant: string = '';
   duplicity: boolean = false;
+  duplicityString: string = 'N';
   armor: boolean = false;
   destinyLigie: string = '';
   addressId: number = null;
@@ -156,10 +157,21 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.detailAssets.getRawValue());
     if (this.process == 'classify-assets') {
       this.setDataGood();
+      if (this.detailAssets.controls['subBrand'].value) {
+        //console.log(this.detailAssets.controls['brand'].value);
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
+      }
     }
     if (this.typeDoc === 'clarification') {
+      if (this.detailAssets.controls['subBrand'].value) {
+        //console.log(this.detailAssets.controls['brand'].value);
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
+      }
     }
     //verifica si la vista es verificacion de cumplimiento o bien
     if (
@@ -181,9 +193,9 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        console.log(this.detailAssets.controls['subBrand'].value);
-        const subBrand = this.detailAssets.controls['subBrand'].value;
-        this.getSubBrand(new ListParams(), subBrand);
+        //console.log(this.detailAssets.controls['brand'].value);
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
       }
     }
     /* //verifica si la vista es verificacion de cumplimiento o bien
@@ -680,10 +692,8 @@ export class DetailAssetsTabComponentComponent
   getSubBrand(params: ListParams, brandId?: string) {
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
-    filter.limit = 20;
-    if (brandId) {
-      filter['filter.flexValueDependent'] = `$eq:${idBrand}`;
-    }
+
+    filter['filter.carBrand'] = `$eq:${idBrand}`;
     filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
     this.goodsInvService.getAllSubBrandWithFilter(filter).subscribe({
@@ -1030,13 +1040,9 @@ export class DetailAssetsTabComponentComponent
     } else {
       address = addressId;
     }
+
     this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
-        var value = resp;
-        debugger;
-        /* this.getStateOfRepublic(new ListParams(), value.statusKey);
-        //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
-        this.domicileForm.patchValue(value);*/
         this.setGoodDomicilieSelected(resp);
       },
     });
@@ -1108,6 +1114,18 @@ export class DetailAssetsTabComponentComponent
         }
       }
     );
+
+    if (this.detailAssets.controls['armor'].value) {
+      //this.armorString = this.detailAssets.controls['armor'].value;
+      this.armor =
+        this.detailAssets.controls['armor'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['duplicity'].value) {
+      this.duplicityString = this.detailAssets.controls['duplicity'].value;
+      this.duplicity =
+        this.detailAssets.controls['duplicity'].value === 'Y' ? true : false;
+    }
 
     if (this.detailAssets.controls['fitCircular'].value) {
       this.circulateString = this.detailAssets.controls['fitCircular'].value;

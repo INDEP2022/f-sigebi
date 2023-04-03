@@ -6,7 +6,6 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -174,28 +173,34 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
               this.data.id;
             const url = 'pages/request/transfer-request/verify-compliance';
+            const from = 'REGISTRO_SOLICITUD';
+            const to = 'VERIFICAR_CUMPLIMIENTO';
             /* crea una nueva tarea */
-            const taskResponse = await this.createTask(title, url);
+            const taskResponse = await this.createTaskOrderService(
+              this.data,
+              title,
+              url,
+              from,
+              to
+            );
             if (taskResponse) {
-              const from = 'REGISTRO_SOLICITUD';
-              const to = 'VERIFICAR_CUMPLIMIENTO';
               /* actualizar status del bien */
-              const orderServResult = await this.createOrderService(from, to);
+              // const orderServResult = await this.createOrderService(from, to);
 
-              if (orderServResult) {
-                this.loader.load = false;
-                Swal.fire({
-                  title: 'Solicitud Turnada',
-                  text: 'La solicitud se turno correctamente',
-                  icon: 'success',
-                  showCancelButton: false,
-                  confirmButtonColor: '#9D2449',
-                  cancelButtonColor: '#B38E5D',
-                  confirmButtonText: 'Aceptar',
-                }).then(result => {
-                  this.close();
-                });
-              }
+              // if (orderServResult) {
+              this.loader.load = false;
+              Swal.fire({
+                title: 'Solicitud Turnada',
+                text: 'La solicitud se turno correctamente',
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#9D2449',
+                cancelButtonColor: '#B38E5D',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                this.closeAll();
+              });
+              //}
             }
           }
         }
@@ -265,32 +270,49 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     });
   }
 
-  createTask(title: string, url: string) {
+  createTaskOrderService(
+    request: any,
+    title: string,
+    url: string,
+    from: string,
+    to: string
+  ) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
       const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = this.user.username;
-      body['assigneesDisplayname'] = this.user.firstName;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(this.data.id);
-      body['title'] =
-        'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
-        this.data.id;
-      /* body['isPublic'] = 's';
-      body['istestTask'] = 's'; */
-      body['programmingId'] = 0;
-      body['requestId'] = this.data.id;
-      body['expedientId'] = this.data.recordId;
-      body['urlNb'] = url;
-      this.taskService.createTask(body).subscribe({
+      let body: any = {};
+      body['type'] = 'SOLICITUD TRANSFERENCIA';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.user.username;
+      task['assigneesDisplayname'] = this.user.firstName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] = title;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = url;
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
+          console.log(error.error.message);
           this.loader.load = false;
-          console.log(error);
-          this.message('error', 'Error', 'Error crear la tarea');
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
         },
       });
     });
@@ -321,36 +343,10 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     });
   }
 
-  createOrderService(from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = this.data.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loader.load = false;
-          this.message(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
-          reject(error.error.message);
-        },
-      });
-    });
-  }
-
   close() {
+    this.modalRef.hide();
+  }
+  closeAll() {
     this.modalRef.hide();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
