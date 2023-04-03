@@ -76,6 +76,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     }
     this.prepareForm();
     this.setTypeColumn();
+    this.getDocType(new ListParams());
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -187,7 +188,11 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     });
   }
 
-  getDocType(event: any) {}
+  getDocType(params: ListParams) {
+    this.wContentService.getDocumentTypes(params).subscribe(data => {
+      this.selectDocType = new DefaultSelect(data.data, data.count);
+    });
+  }
 
   search(): void {}
 

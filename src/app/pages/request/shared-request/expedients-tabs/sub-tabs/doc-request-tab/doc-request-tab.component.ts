@@ -20,7 +20,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -120,10 +120,7 @@ export class DocRequestTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       docType: [null],
-      docTitle: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      docTitle: [null],
       typeTrasf: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -140,20 +137,19 @@ export class DocRequestTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      noOfice: [null],
+      noOfice: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       senderCharge: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       comment: [
         null,
-        [Validators.pattern(STRING_PATTERN)],
-        Validators.maxLength(30),
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      noRequest: [
-        { value: this.idRequest, disabled: true },
-        [Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRequest: [{ value: this.idRequest, disabled: true }],
       responsible: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
