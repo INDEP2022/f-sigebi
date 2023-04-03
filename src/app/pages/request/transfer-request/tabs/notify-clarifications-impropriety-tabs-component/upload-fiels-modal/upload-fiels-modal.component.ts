@@ -43,7 +43,6 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Edición: ', this.edit);
     this.initForm();
     this.setRFCInput();
   }
