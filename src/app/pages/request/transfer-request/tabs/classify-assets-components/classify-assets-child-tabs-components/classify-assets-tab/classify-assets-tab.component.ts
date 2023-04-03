@@ -37,6 +37,8 @@ export class ClassifyAssetsTabComponent
   @Input() goodObject: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
+  @Input() goodSelect: any;
+
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -73,20 +75,29 @@ export class ClassifyAssetsTabComponent
       this.getSection(new ListParams());
     }
     this.getReactiveFormActions();
+    this.processView();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      this.process = item.process;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.typeDoc == '') {
+    console.log('td', this.typeDoc);
+
+    /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
-      }
-    }
+      } */
 
     //bienes selecionados
-    this.good = changes['goodObject'].currentValue;
+    this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
-        this.getSection(new ListParams(), this.good.ligieSection);
+        this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
       }
     }
@@ -603,18 +614,7 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    /*const info = this.classiGoodsForm.getRawValue();
-    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
-      this.classiGoodsForm.get('stateConservation').setValue(1);
-    this.classiGoodsForm.get('physicalStatus').setValue(1);
-
-    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
-      this.classiGoodsForm.get('stateConservation').setValue(2);
-    this.classiGoodsForm.get('physicalStatus').setValue(2);
-    this.classiGoodsForm.get('destiny').setValue(1);*/
-
     const goods = this.classiGoodsForm.getRawValue();
-
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -624,12 +624,9 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    /* if (!goods.idGoodProperty) {
+    if (!goods.idGoodProperty) {
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    } */
-    if (Number(goods.goodTypeId) === 1) {
-      goods.idGoodProperty = Number(goods.id);
     }
 
     if (goods.fractionId.id) {
@@ -643,7 +640,7 @@ export class ClassifyAssetsTabComponent
       goodAction = this.goodService.create(goods);
     } else {
       goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId);
+      goods.addressId = Number(goods.addressId.id);
       goodAction = this.goodService.update(goods);
     }
 
