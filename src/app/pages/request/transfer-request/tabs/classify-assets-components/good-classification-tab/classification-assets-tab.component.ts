@@ -333,6 +333,12 @@ export class ClassificationAssetsTabComponent
       weight: [null],
       physicstateName: [null],
       descriptionGoodSae: [null],
+      type: [null],
+      requestFolio: [null],
+      uniqueKey: [null],
+      description: [null],
+      fileNumber: [null],
+      fractionId: [null],
     });
   }
 

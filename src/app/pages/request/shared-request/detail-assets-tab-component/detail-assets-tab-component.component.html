@@ -275,7 +275,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Id tipo relevante&#58;</label>
-              <span class="fs-4">{{ nameTypeRelevant }}</span>
+              <span class="fs-4">{{ relevantTypeName }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -323,7 +323,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Duplicidad&#58;</label>
-              <span class="fs-4"></span>
+              <span class="fs-4">{{ goodData?.duplicity }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -338,13 +338,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Descripci&oacute;n&#58;</label>
-              <span class="fs-4">{{ goodData?.goodDescription }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Destino ligie&#58;</label>
-              <span class="fs-4"></span>
+              <span class="fs-4">{{ goodData?.description }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -352,7 +346,7 @@
               <label class="col-lg-5 text-right"
                 >Destino transferente&#58;</label
               >
-              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
+              <span class="fs-4">{{ goodData?.destinyName }}</span>
             </div>
           </div>
         </div>
@@ -361,7 +355,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Tipo&#58;</label>
-              <span class="fs-4">{{ goodData?.goodTypeName }}</span>
+              <span class="fs-4">{{ goodData?.type }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -394,7 +388,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Volumen (m3)&#58;</label>
-              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
+              <span class="fs-4">{{ goodData?.volume }}</span>
             </div>
           </div>
         </div>
@@ -403,7 +397,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Tipo de bien&#58;</label>
-              <span class="fs-4">{{ nameGoodType }}</span>
+              <span class="fs-4">{{ goodData?.goodTypeName }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -415,7 +409,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Procedencia&#58;</label>
-              <span class="fs-4">{{ goodData?.useType }}</span>
+              <span class="fs-4">{{ goodData?.origin }}</span>
             </div>
           </div>
         </div>
@@ -430,7 +424,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Aval&uacute;o&#58;</label>
-              <span class="fs-4"></span>
+              <span class="fs-4">{{ goodData?.appraisal }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -447,7 +441,7 @@
               <label class="col-lg-5 text-right"
                 >Desc. bien transferente&#58;</label
               >
-              <span class="fs-4">{{ goodData?.description }}</span>
+              <span class="fs-4">{{ goodData?.goodDescription }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -470,7 +464,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">No. expediente&#58;</label>
-              <span class="fs-4">{{ goodData?.storeNumber }}</span>
+              <span class="fs-4">{{ goodData?.fileeNumber }}</span>
             </div>
           </div>
           <div class="col-md-4">

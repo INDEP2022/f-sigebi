@@ -69,14 +69,13 @@ export class DetailAssetsTabComponentComponent
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number | string = null;
-
+  relevantTypeName: string;
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
-
   goodTypeName: string = '';
   nameTypeRelevant: string = '';
   duplicity: boolean = false;
@@ -152,7 +151,8 @@ export class DetailAssetsTabComponentComponent
     private fb: FormBuilder,
     private modalServise: BsModalService,
     private goodService: GoodService,
-    private goodTypeService: GoodTypeService
+    private goodTypeService: GoodTypeService,
+    private relevantTypeService: TypeRelevantService
   ) {
     super();
   }
@@ -162,7 +162,13 @@ export class DetailAssetsTabComponentComponent
 
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
-      console.log(this.detailAssets.getRawValue());
+      console.log('data', this.goodData);
+      this.relevantTypeService
+        .getById(this.goodData.fractionId.relevantTypeId)
+        .subscribe(data => {
+          this.relevantTypeName = data.description;
+        });
+
       if (this.process == 'classify-assets') {
         if (this.detailAssets.controls['subBrand'].value) {
           //console.log(this.detailAssets.controls['brand'].value);
@@ -1181,6 +1187,7 @@ export class DetailAssetsTabComponentComponent
     );
 
     this.domicileForm.patchValue(domicilie);
+
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
     setTimeout(() => {
       this.domicileForm.patchValue(domicilie);

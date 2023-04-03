@@ -95,11 +95,9 @@ export class ClassifyAssetsTabComponent
 
     //bienes selecionados
     this.good = changes['goodObject']?.currentValue;
-    console.log('d', this.good);
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
-        console.log('asd', this.good);
         this.classiGoodsForm.patchValue(this.good);
       }
     }

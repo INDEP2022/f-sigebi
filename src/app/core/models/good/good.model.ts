@@ -1,3 +1,4 @@
+import { IFraction } from '../catalogs/fraction.model';
 import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 
@@ -19,10 +20,13 @@ export interface IGood {
   classificationGood?: any;
   remarksOrien?: any;
   physicalStatus?: boolean;
+  destinyName?: string;
   goodId?: number;
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
+  fileeNumber: string;
+  appraisal: string;
   appraiserOpinion?: any;
   goodTypeId: number;
   originSignals?: any;
@@ -367,7 +371,7 @@ export interface IGood {
   estatus: Estatus;
   no_expediente: NoExpediente;
   goodClassNumber?: number;
-  fractionId?: number;
+  fractionId?: IFraction;
 }
 
 // TODO: Checar a que interfaz pertenece
