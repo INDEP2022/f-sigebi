@@ -4,11 +4,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IUnitCost } from 'src/app/core/models/administrative-processes/unit-cost.model';
-import { IStrategyProcess } from 'src/app/core/models/ms-strategy-process/strategy-process.model';
-import { IStrategyServiceType } from 'src/app/core/models/ms-strategy-service-type/strategy-service-type.model';
-import { IStrategyService } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
-import { IStrategyShift } from 'src/app/core/models/ms-strategy-shift/strategy-shift.model';
-import { IStrategyVariableCost } from 'src/app/core/models/ms-strategy-variable-cost/strategy-variable-cost.model';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { StrategyServiceTypeService } from 'src/app/core/services/ms-strategy/strategy-service-type.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
@@ -32,7 +27,7 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
   servicesTypes = new DefaultSelect();
   variablesCosts = new DefaultSelect();
 
-  title: string = 'Costo Unitario';
+  title: string = 'Clave de Costo';
   edit: boolean = false;
 
   constructor(
@@ -58,12 +53,8 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    debugger;
     this.unitCostForm = this.fb.group({
-      costId: [null],
-      nbOrigin: [null],
       processNumber: [null],
-      registryNumber: [null],
       serviceNumber: [null],
       serviceTypeNumber: [null],
       shiftNumber: [null],
@@ -74,6 +65,9 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
       strategyServicetype: [null],
       strategyShift: [null],
       strategyVariableCost: [null],
+      costId: [null],
+      nbOrigin: [null],
+      registryNumber: [null],
     });
     if (this.unitCost != null) {
       this.edit = true;
@@ -109,9 +103,7 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
       strategyVariableCost: '',
     };
 
-    console.log(req);
-
-    this.unitCostService.create(req).subscribe({
+    this.unitCostService.create(this.unitCostForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -131,36 +123,6 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
-  }
-
-  onProcessChange(processChange: IStrategyProcess) {
-    // if (this.unitCost) {
-    //   this.unitCost.processNumber = processChange.processNumber;
-    // }
-  }
-
-  onVarCostChange(varCostChange: IStrategyVariableCost) {
-    // if (this.unitCost) {
-    //   this.unitCost.varCostNumber = varCostChange.varCostNumber;
-    // }
-  }
-
-  onShiftChange(shiftChange: IStrategyShift) {
-    // if (this.unitCost) {
-    //   this.unitCost.varCostNumber = shiftChange.shiftNumber;
-    // }
-  }
-
-  onServiceChange(serviceChange: IStrategyService) {
-    // if (this.unitCost) {
-    //   this.unitCost.varCostNumber = serviceChange.varCostNumber;
-    // }
-  }
-
-  onServiceTypeChange(serviceTypeChange: IStrategyServiceType) {
-    // if (this.serviceTypeChange) {
-    //   this.unitCost.varCostNumber = serviceChange.varCostNumber;
-    // }
   }
 
   getVarCosts(params: ListParams) {

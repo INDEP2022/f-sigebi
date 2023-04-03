@@ -480,7 +480,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   /**
    * Obtener el listado de Transferencia PGR
    */
-  getReportTransferenciaPgr() {
+  getReportTransferenciaPgr(filtroForm: boolean = false) {
     let objParams: any = {
       aveprev: this.pgrTransferForm.value.issue,
       pgrGoodNumber: this.pgrTransferForm.value.pgrGoodNumber,
@@ -498,7 +498,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    if (filtroForm == true) {
+      filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    }
+    // filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
     this.downloadingTransferente = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'transferencia_pgr')

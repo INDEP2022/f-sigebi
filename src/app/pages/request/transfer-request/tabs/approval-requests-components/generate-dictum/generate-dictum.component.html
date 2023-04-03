@@ -1,67 +1,67 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Generar Dictamen</h5>
+    <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body class="body">
     <form [formGroup]="dictumForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field
-            [control]="dictumForm.get('paragraph1Dictum')"
+            [control]="dictumForm.get('paragraphOneRuling')"
             label="Párrafo uno">
             <textarea
               class="form-control"
-              formControlName="paragraph1Dictum"
+              formControlName="paragraphOneRuling"
               cols="10"
-              rows="3"></textarea>
+              rows="5"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
           <form-field
-            [control]="dictumForm.get('paragraph2Dictum')"
+            [control]="dictumForm.get('paragraphTwoRuling')"
             label="Párrafo dos">
             <textarea
               class="form-control"
-              formControlName="paragraph2Dictum"
+              formControlName="paragraphTwoRuling"
               cols="10"
-              rows="3"></textarea>
+              rows="5"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
           <form-field
-            [control]="dictumForm.get('ccpDictum')"
+            [control]="dictumForm.get('ccpRuling')"
             label="C.c.p Dictamen">
             <textarea
               class="form-control"
-              formControlName="ccpDictum"
+              formControlName="ccpRuling"
               cols="10"
-              rows="2"></textarea>
+              rows="3"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="dictumForm.get('nameRecipientDictum')"
+            [control]="dictumForm.get('nameRecipientRuling')"
             label="Destinatario">
             <input
               type="text"
               class="form-control"
-              formControlName="nameRecipientDictum" />
+              formControlName="nameRecipientRuling" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="dictumForm.get('chargeRecipientDictum')"
+            [control]="dictumForm.get('postRecipientRuling')"
             label="Cargo Destinatario Dictamen">
             <input
               type="text"
               class="form-control"
-              formControlName="chargeRecipientDictum" />
+              formControlName="postRecipientRuling" />
           </form-field>
         </div>
       </div>
@@ -73,6 +73,7 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
+          [disabled]="!dictumForm.valid"
           (click)="signDictum()">
           Firmar dictámen</button
         ><!-- [disabled]="requestForm.invalid" -->

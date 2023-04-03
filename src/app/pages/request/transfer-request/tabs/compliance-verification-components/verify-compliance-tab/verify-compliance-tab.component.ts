@@ -48,6 +48,7 @@ export class VerifyComplianceTabComponent
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
   existArt: number = 0;
+  isGoodSelected: any;
 
   goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -89,6 +90,9 @@ export class VerifyComplianceTabComponent
   }
 
   ngOnInit(): void {
+    /* aclaraciones */
+    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
+
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.goodSettings.columns = DETAIL_ESTATE_COLUMNS;
@@ -101,6 +105,7 @@ export class VerifyComplianceTabComponent
         });
       },
     };
+    this.initForm();
 
     this.articleColumns.cumple = {
       ...this.articleColumns.cumple,
@@ -110,17 +115,19 @@ export class VerifyComplianceTabComponent
         });
       },
     };
-    this.initForm();
-
-    /* aclaraciones */
-    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
       this.transferenceId = this.requestObject.transferenceId;
-      this.getArticle3();
-      this.getArticle1213();
+      if (
+        this.transferenceId === 1 ||
+        this.transferenceId === 3 ||
+        this.transferenceId === 120
+      ) {
+        this.getArticle3();
+        this.getArticle1213();
+      }
 
       this.params
         .pipe(takeUntil(this.$unSubscribe))
@@ -198,6 +205,7 @@ export class VerifyComplianceTabComponent
   }
 
   newClarification() {
+    console.log(this.goodsSelected);
     if (this.goodsSelected.length === 0) {
       this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
     } else {
@@ -391,6 +399,9 @@ export class VerifyComplianceTabComponent
   }
 
   selectGood(event: any) {
+    //if (event.isSelected === true) {
+    this.clarificationData = [];
+    console.log(event);
     this.detailArray.reset();
     this.goodsSelected = event.selected;
     if (this.goodsSelected.length === 1) {
@@ -400,6 +411,9 @@ export class VerifyComplianceTabComponent
         this.getDomicilieGood(this.goodsSelected[0].addressId);
       }, 3000);
     }
+    //} else {
+    //this.clarificationData = [];
+    //}
   }
 
   getArticlesById(article: any, typeArt: string) {
@@ -456,6 +470,7 @@ export class VerifyComplianceTabComponent
 
   /*  Metodo para traer las solicitudes de un bien  */
   getClarifications(id: number | string) {
+    this.clarificationData = [];
     let params = new ListParams();
     params['filter.goodId'] = `$eq:${id}`;
     this.rejectedGoodService.getAllFilter(params).subscribe({
@@ -519,7 +534,12 @@ export class VerifyComplianceTabComponent
   }
 
   async confirm() {
-    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
+    if (
+      (this.article3array.length < 3 || this.article12and13array.length < 3) &&
+      (this.transferenceId === 1 ||
+        this.transferenceId === 3 ||
+        this.transferenceId === 120)
+    ) {
       this.alert(
         'error',
         'Error',
@@ -528,61 +548,70 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    if (this.existArt > 0) {
-      const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
-      console.log(allArt);
+    if (
+      this.transferenceId === 1 ||
+      this.transferenceId === 3 ||
+      this.transferenceId === 120
+    ) {
+      if (this.existArt > 0) {
+        const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
+        console.log(allArt);
 
-      allArt.map(async (item: any) => {
-        await this.deleteDocumentRequest(item);
+        allArt.map(async (item: any) => {
+          await this.deleteDocumentRequest(item);
+        });
+      }
+
+      /* insertar articulo 3 */
+      this.article3array.map(async (item: any) => {
+        await this.createDocRequest(item, 'S');
+      });
+
+      /* ingresar articulo 12 , 13 */
+      this.paragraphsTable2.map(async (list: any, i: number) => {
+        if (list.cumple === true) {
+          await this.createDocRequest(list, 'S');
+        } else if (list.cumple === false) {
+          await this.createDocRequest(list, 'N');
+        } else {
+          await this.createDocRequest(list, 'N');
+        }
       });
     }
 
-    /* insertar articulo 3 */
-    this.article3array.map(async (item: any) => {
-      await this.createDocRequest(item, 'S');
-    });
+    this.goodData.map(async (item: any, i: number) => {
+      let index = i + 1;
+      const result = await this.updateGoods(item);
 
-    /* ingresar articulo 12 , 13 */
-    this.paragraphsTable2.map(async (list: any, i: number) => {
-      if (list.cumple === true) {
-        await this.createDocRequest(list, 'S');
-      } else if (list.cumple === false) {
-        await this.createDocRequest(list, 'N');
-      } else {
-        await this.createDocRequest(list, 'N');
+      if (this.goodData.length === index) {
+        this.alert(
+          'success',
+          'Verificación Guardad',
+          'Los datos se guardaron correctamente'
+        );
       }
     });
-
-    const result = await this.updateGoods();
   }
 
-  updateGoods() {
+  updateGoods(item: any) {
     return new Promise((resolve, reject) => {
-      const goods = this.goodData;
-      goods.map((item: any) => {
-        let body: any = {};
-        body['id'] = item.id;
-        body['goodId'] = item.goodId;
-        body['descriptionGoodSae'] = item.descriptionGoodSae;
-        this.goodServices.update(body).subscribe({
-          next: resp => {
-            resolve(true);
-            console.log(resp);
-            this.alert(
-              'success',
-              'Verificación Guardad',
-              'Los datos se guardaron correctamente'
-            );
-          },
-          error: error => {
-            console.log(error.error.message);
-            this.alert(
-              'error',
-              'Error al guardar',
-              'No se pudieron guardar los datos'
-            );
-          },
-        });
+      let body: any = {};
+      body['id'] = item.id;
+      body['goodId'] = item.goodId;
+      body['descriptionGoodSae'] = item.descriptionGoodSae;
+      this.goodServices.update(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.alert(
+            'error',
+            'Error al guardar',
+            'No se pudieron guardar los datos'
+          );
+          reject(false);
+        },
       });
     });
   }

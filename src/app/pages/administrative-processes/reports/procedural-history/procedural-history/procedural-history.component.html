@@ -6,7 +6,10 @@
   </div>
 
   <div body>
-    <form [formGroup]="proceduralHistoryForm" class="form-material">
+    <form
+      [formGroup]="proceduralHistoryForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
@@ -74,22 +77,46 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
+          <!-- <form-field [control]="proceduralHistoryForm.get('users')" label="Usuario">
+            <input type="text" class="form-control" formControlName="users" />
+          </form-field> -->
+          <form-field class="mb-3 mt-3" [control]="filterForm.get('user')">
+            <ngx-select
+              [form]="filterForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="user"
+              label="Usuario"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+          <!-- <form-field
             [control]="proceduralHistoryForm.get('users')"
             label="Usuario">
-            <input type="text" class="form-control" formControlName="users" />
-          </form-field>
+            <ngx-select
+              [form]="filterForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              label=""
+              control="user"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field> -->
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Reporte
+            </button>
+          </div>
         </div>
       </div>
     </form>
-    <div class="row mt-5">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="justify-content-center">
-          <button type="submit" class="btn btn-primary btn-sm active">
-            Reporte
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </app-card>

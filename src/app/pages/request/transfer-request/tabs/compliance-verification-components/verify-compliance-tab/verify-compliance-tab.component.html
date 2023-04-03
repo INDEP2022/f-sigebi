@@ -14,30 +14,35 @@
     </div>
   </div>
   <!--  <form [formGroup]="verifComplianceForm" class="form-material"> -->
-  <div class="row pt-4">
-    <p>
-      Seleccione al menos los 3 primeros cumplimientos de los Arituculos 3&#44;
-      12 y 13
-    </p>
-  </div>
-  <div class="row pt-1">
-    <div class="col-md-6">
-      <ng2-smart-table
-        (userRowSelect)="article3Selected($event)"
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="settings"
-        [source]="paragraphsTable1">
-      </ng2-smart-table>
+  <div
+    *ngIf="
+      transferenceId === 1 || transferenceId === 120 || transferenceId === 3
+    ">
+    <div class="row pt-4">
+      <p>
+        Seleccione al menos los 3 primeros cumplimientos de los Arituculos
+        3&#44; 12 y 13
+      </p>
     </div>
-    <!-- </div>
+    <div class="row pt-1">
+      <div class="col-md-6">
+        <ng2-smart-table
+          (userRowSelect)="article3Selected($event)"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphsTable1">
+        </ng2-smart-table>
+      </div>
+      <!-- </div>
   <div class="row pt-4"> -->
-    <div class="col-md-6">
-      <ng2-smart-table
-        (userRowSelect)="article12y13Selected($event)"
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="settings"
-        [source]="paragraphsTable2">
-      </ng2-smart-table>
+      <div class="col-md-6">
+        <ng2-smart-table
+          (userRowSelect)="article12y13Selected($event)"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphsTable2">
+        </ng2-smart-table>
+      </div>
     </div>
   </div>
   <!-- </form> -->
@@ -191,7 +196,7 @@
   </div>
 
   <!-- Componente donde se muestra el detalle de los bienes -->
-  <div *ngIf="goodsSelected.length == 1" class="row pt-4">
+  <div *ngIf="goodsSelected.length === 1" class="row pt-4">
     <app-detail-assets-tab-component
       [typeDoc]="typeDoc"
       [requestObject]="requestObject"

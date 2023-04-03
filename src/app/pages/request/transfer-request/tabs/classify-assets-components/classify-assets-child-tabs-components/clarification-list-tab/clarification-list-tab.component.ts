@@ -11,6 +11,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRejectGood } from 'src/app/core/models/good-reject/good-reject.model';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -26,10 +27,11 @@ export class ClarificationListTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
-  @Input() idGood: any;
+  @Input() good: IGood;
   paragraphs: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  idClarification: number = 0;
   constructor(
     private modalService: BsModalService,
     private rejectedGoodService: RejectedGoodService,
@@ -39,7 +41,7 @@ export class ClarificationListTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.idGood) this.getData();
+    if (this.good) this.getData();
   }
 
   ngOnInit(): void {
@@ -55,12 +57,13 @@ export class ClarificationListTabComponent
   }
 
   getData(): void {
-    if (this.idGood) {
+    if (this.good) {
       this.loading = true;
-      this.params.getValue()['filter.goodId'] = this.idGood;
+      this.params.getValue()['filter.goodId'] = this.good.id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
         next: async data => {
           const info = data.data.map(async item => {
+            this.idClarification = item.clarificationId;
             const clarification: any = await this.getClarification(
               item.clarificationId
             );
@@ -91,17 +94,20 @@ export class ClarificationListTabComponent
   }
 
   openForm(clarification?: IRejectGood): void {
-    if (clarification.answered == 'CONTESTADA') {
+    if (clarification?.answered == 'CONTESTADA') {
       this.onLoadToast(
         'warning',
         'No se puede editar una aclaración ya contestada',
         ''
       );
     } else {
+      if (clarification?.clarificationId)
+        clarification.clarificationId = this.idClarification;
+
       let config: ModalOptions = {
         initialState: {
           docClarification: clarification,
-          idGood: this.idGood,
+          goodTransfer: this.good,
           callback: (next: boolean) => {
             if (next) this.getData();
           },
@@ -114,7 +120,6 @@ export class ClarificationListTabComponent
   }
 
   delete(clarification: IRejectGood) {
-    console.log('eliminar', clarification);
     if (clarification.answered == 'CONTESTADA') {
       this.onLoadToast(
         'warning',
@@ -122,14 +127,18 @@ export class ClarificationListTabComponent
         ''
       );
     } else {
-      /*this.rejectedGoodService
+      this.rejectedGoodService
         .remove(clarification.rejectNotificationId)
         .subscribe({
           next: response => {
-            this.onLoadToast('success', `Aclaración eliminada correctamente`, ``);
+            this.onLoadToast(
+              'success',
+              `Aclaración eliminada correctamente`,
+              ``
+            );
             this.getData();
           },
-        }); */
+        });
     }
   }
 }
