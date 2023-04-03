@@ -157,18 +157,15 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.detailAssets.getRawValue());
     if (this.process == 'classify-assets') {
       this.setDataGood();
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
     }
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -193,7 +190,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -623,7 +619,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
       next: data => {
-        console.log(data.data);
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
       error: error => {},
@@ -1180,7 +1175,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: any) {
-    console.log(domicilie);
     domicilie.localityKey = Number(domicilie.localityKey);
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.stateOfRepId = domicilie.statusKey;
@@ -1197,19 +1191,5 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.patchValue(domicilie);
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-    /* setTimeout(() => {
-      this.domicileForm.patchValue(domicilie);
-      console.log(this.domicileForm.getRawValue());
-    }, 3000); */
-
-    /* this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );*/
-    //this.stateOfRepId = domicilie.statusKey;
-    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
-
-    /* this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    ); */
   }
 }
