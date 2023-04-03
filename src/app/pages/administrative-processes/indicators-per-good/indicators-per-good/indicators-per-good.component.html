@@ -6,16 +6,26 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-12 col-sm-12 col-md-5">
+          <search-bar-simple
+            (eventEmit)="loadIndicator($event)"
+            [label]="''"
+            [placeholder]="'N&uacute;mero de Bien'">
+          </search-bar-simple>
+        </div>
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('good')" label="No Bien">
             <input type="text" class="form-control" formControlName="good" />
           </form-field>
-        </div>
+        </div> -->
+      </div>
+      <div class="row mt-4">
         <div class="col-md-6">
           <form-field [control]="form.get('date')" label="Fecha de cierre">
             <input formControlName="date" class="form-control" bsDatepicker />
           </form-field>
         </div>
+
         <div class="row mt-4 float-right">
           <div class="">
             <button type="button" class="btn btn-primary btn-sm active mx-4">
@@ -24,6 +34,7 @@
           </div>
         </div>
       </div>
+
       <div class="row mt-4">
         <div class="col-md-6">
           <div class="row pt-4">
