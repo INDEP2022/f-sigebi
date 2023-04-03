@@ -231,7 +231,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(30),
         ],
       ],
       chassis: [
@@ -308,7 +308,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(30),
         ],
       ],
       shipName: [
@@ -316,7 +316,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(70),
         ],
       ],
       publicRegistry: [
@@ -630,6 +630,11 @@ export class ClassifyAssetsTabComponent
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
     }
+
+    if (goods.fractionId.id) {
+      goods.fractionId = Number(goods.fractionId.id);
+    }
+
     let goodAction: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
