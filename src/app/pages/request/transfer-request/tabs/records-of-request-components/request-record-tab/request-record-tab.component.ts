@@ -105,7 +105,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       urgentPriority: ['N'],
       priorityDate: [null],
       originInfo: [null],
-      receptionDate: [{ value: null, disabled: true }],
+      receptionDate: [null],
       paperDate: [null, [Validators.required]],
       typeRecord: [null],
       publicMinistry: [
@@ -177,6 +177,8 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
     });
+    this.requestForm.get('receptionDate').disable();
+    this.requestForm.updateValueAndValidity();
   }
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
