@@ -59,6 +59,15 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
       serviceTypeNumber: [null],
       shiftNumber: [null],
       varCostNumber: [null],
+      strategyDetCostDetail: [null],
+      strategyProcess: [null],
+      strategyService: [null],
+      strategyServicetype: [null],
+      strategyShift: [null],
+      strategyVariableCost: [null],
+      costId: [null],
+      nbOrigin: [null],
+      registryNumber: [null],
     });
     if (this.unitCost != null) {
       this.edit = true;
@@ -76,6 +85,23 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    const data: IUnitCost = this.unitCostForm.value;
+    const req: IUnitCost = {
+      processNumber: data.processNumber,
+      serviceNumber: data.serviceNumber,
+      serviceTypeNumber: data.serviceTypeNumber,
+      shiftNumber: data.shiftNumber,
+      varCostNumber: data.varCostNumber,
+      costId: 0,
+      registryNumber: 0,
+      nbOrigin: '',
+      strategyDetCostDetail: undefined,
+      strategyProcess: '',
+      strategyService: '',
+      strategyServicetype: '',
+      strategyShift: '',
+      strategyVariableCost: '',
+    };
 
     this.unitCostService.create(this.unitCostForm.value).subscribe({
       next: data => this.handleSuccess(),
