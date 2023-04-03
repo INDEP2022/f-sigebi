@@ -17,6 +17,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IAddress } from 'src/app/core/models/administrative-processes/siab-sami-interaction/address.model';
 import {
   IDomicilies,
   IGood,
@@ -40,7 +41,7 @@ import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -68,17 +69,17 @@ export class DetailAssetsTabComponentComponent
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number | string = null;
-
+  relevantTypeName: string;
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
-
   goodTypeName: string = '';
   nameTypeRelevant: string = '';
   duplicity: boolean = false;
+  duplicityString: string = 'N';
   armor: boolean = false;
   destinyLigie: string = '';
   addressId: number = null;
@@ -150,26 +151,49 @@ export class DetailAssetsTabComponentComponent
     private fb: FormBuilder,
     private modalServise: BsModalService,
     private goodService: GoodService,
-    private goodTypeService: GoodTypeService
+    private goodTypeService: GoodTypeService,
+    private relevantTypeService: TypeRelevantService
   ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    const address: IAddress = this.detailAssets.controls['addressId'].value;
+
     if (this.process == 'classify-assets') {
-      this.setDataGood();
+      this.goodData = this.detailAssets.value;
+      console.log('data', this.goodData);
+      this.relevantTypeService
+        .getById(this.goodData.fractionId.relevantTypeId)
+        .subscribe(data => {
+          this.relevantTypeName = data.description;
+        });
+
+      if (this.process == 'classify-assets') {
+        if (this.detailAssets.controls['subBrand'].value) {
+          //console.log(this.detailAssets.controls['brand'].value);
+          const brand = this.detailAssets.controls['brand'].value;
+          this.getSubBrand(new ListParams(), brand);
+        }
+      }
     }
+
     if (this.typeDoc === 'clarification') {
+      if (this.detailAssets.controls['subBrand'].value) {
+        //console.log(this.detailAssets.controls['brand'].value);
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
+      }
     }
     //verifica si la vista es verificacion de cumplimiento o bien
     if (
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
-      this.typeDoc === 'approval-process'
+      this.typeDoc === 'approval-process' ||
+      this.typeDoc === 'classify-assets'
     ) {
-      if (this.detailAssets.controls['addressId'].value) {
-        this.addressId = this.detailAssets.controls['addressId'].value;
-        this.getGoodDomicilie(this.addressId);
+      if (address?.id) {
+        this.getGoodDomicilie(address?.id);
       }
       //verifica si la vista es verificacion de cumplimiento
       if (this.typeDoc === 'verify-compliance') {
@@ -179,11 +203,18 @@ export class DetailAssetsTabComponentComponent
           this.goodDomicilieForm.disable();
         }
       }
+
+      if (this.detailAssets.controls['subBrand'].value) {
+        //console.log(this.detailAssets.controls['brand'].value);
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
+      }
     }
     //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
+
         this.getGoodDomicilie(this.addressId);
       }
       //verifica si la vista es verificacion de cumplimiento
@@ -196,7 +227,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        console.log(this.detailAssets.controls['subBrand'].value);
         const subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(new ListParams(), subBrand);
       }
@@ -208,24 +238,6 @@ export class DetailAssetsTabComponentComponent
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
     }
-  }
-
-  setDataGood() {
-    const idGood = this.assetsId;
-    this.goodService.getById(idGood).subscribe({
-      next: data => {
-        this.goodType(data.goodTypeId);
-        this.typeRelevant(data.goodTypeId);
-        if (data.stateConservation == 1 || data.physicalStatus == 1)
-          data.stateConservation = 'BUENO';
-        data.physicalStatus = 'BUENO';
-        if (data.stateConservation == 2 || data.physicalStatus == 2)
-          data.stateConservation = 'MALO';
-        data.physicalStatus = 'MALO';
-        this.goodData = data;
-      },
-      error: error => {},
-    });
   }
 
   goodType(goodTypeId: number) {
@@ -267,7 +279,10 @@ export class DetailAssetsTabComponentComponent
   initForm() {
     this.domicileForm = this.fb.group({
       id: [null],
-      warehouseAlias: [],
+      warehouseAlias: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       wayref2Key: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -276,10 +291,19 @@ export class DetailAssetsTabComponentComponent
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      statusKey: [null],
-      municipalityKey: [null],
-      localityKey: [null],
-      code: [''],
+      statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      municipalityKey: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      localityKey: [
+        null,
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(100))],
+      ],
+      code: [
+        '',
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(6))],
+      ],
       latitude: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -296,8 +320,14 @@ export class DetailAssetsTabComponentComponent
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      exteriorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
-      interiorNumber: ['', [Validators.pattern(STRING_PATTERN)]],
+      exteriorNumber: [
+        '',
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+      ],
+      interiorNumber: [
+        '',
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+      ],
       wayDestiny: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -314,53 +344,131 @@ export class DetailAssetsTabComponentComponent
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      regionalDelegationId: [null],
-      requestId: [null],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
-      description: [null],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
       status: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       propertyType: [null, [Validators.required, Validators.maxLength(30)]],
-      surfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
-      consSurfaceMts: [0, [Validators.required, Validators.maxLength(30)]],
-      publicDeed: [null, [Validators.required, Validators.maxLength(30)]],
-      pubRegProperty: [null, [Validators.required, Validators.maxLength(100)]],
-      appraisalValue: [0, [Validators.required, Validators.maxLength(30)]],
+      surfaceMts: [
+        0,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      consSurfaceMts: [
+        0,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      publicDeed: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      pubRegProperty: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      appraisalValue: [
+        0,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       appraisalDate: [null],
       certLibLien: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
       ],
       guardCustody: [
         null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      vigilanceRequired: [
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      vigilanceRequired: [null],
       vigilanceLevel: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      mtsOfiWarehouse: [null, [Validators.maxLength(5)]],
-      bedrooms: [null, [Validators.maxLength(5)]],
-      bathroom: [null, [Validators.maxLength(5)]],
-      kitchen: [null, [Validators.maxLength(5)]],
-      diningRoom: [null, [Validators.maxLength(5)]],
-      livingRoom: [null, [Validators.maxLength(5)]],
-      study: [null, [Validators.maxLength(5)]],
-      espPark: [null, [Validators.maxLength(5)]],
-      userCreation: [null],
+      mtsOfiWarehouse: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      bedrooms: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      bathroom: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      kitchen: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      diningRoom: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      livingRoom: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      study: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      espPark: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      userCreation: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       creationDate: [null],
-      addressId: [null],
-      userModification: [null],
+      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      userModification: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       modificationDate: [null],
-      forProblems: [null, [Validators.required, Validators.maxLength(30)]],
+      forProblems: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
       certLibLienDate: [null],
       pffDate: [null],
       gravFavorThird: [
@@ -403,8 +511,14 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      propTitleFolio: [null, [Validators.pattern(STRING_PATTERN)]],
-      measuresAdjacent: [null, [Validators.pattern(STRING_PATTERN)]],
+      propTitleFolio: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      measuresAdjacent: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       vouchersWater: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -476,10 +590,9 @@ export class DetailAssetsTabComponentComponent
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
-    if (municipalyId) {
+    /*if (municipalyId) {
       params['filter.municipalityKey'] = `$eq:${municipalyId}`;
-    }
-    params['limit'] = 20;
+    }*/
     this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
@@ -494,11 +607,14 @@ export class DetailAssetsTabComponentComponent
     }); */
   }
 
-  getLocality(params: ListParams, municipalityId?: number, stateKey?: number) {
-    params.limit = 20;
-    params['filter.municipalityId'] = `$eq:${municipalityId}`;
+  getLocality(
+    params: ListParams,
+    municipalityId?: number | string,
+    stateKey?: number | string
+  ) {
+    params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
-    this.localityService.getAll(params).subscribe({
+    this.goodsInvService.getAllTownshipByFilter(params).subscribe({
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
@@ -568,10 +684,8 @@ export class DetailAssetsTabComponentComponent
   getSubBrand(params: ListParams, brandId?: string) {
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
-    filter.limit = 20;
-    if (brandId) {
-      filter['filter.flexValueDependent'] = `$eq:${idBrand}`;
-    }
+
+    filter['filter.carBrand'] = `$eq:${idBrand}`;
     filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
     this.goodsInvService.getAllSubBrandWithFilter(filter).subscribe({
@@ -644,7 +758,7 @@ export class DetailAssetsTabComponentComponent
       this.stateOfRepublicService.getById(keyState).subscribe({
         next: data => {
           this.selectState = new DefaultSelect([data]);
-          this.domicileForm.controls['statusKey'].setValue(data.id);
+          //this.domicileForm.controls['statusKey'].setValue(data.id);
         },
         /*error: error => {
           console.log(error);
@@ -918,12 +1032,10 @@ export class DetailAssetsTabComponentComponent
     } else {
       address = addressId;
     }
+
     this.goodDomicilie.getById(address).subscribe({
       next: (resp: any) => {
-        var value = resp;
-        this.getStateOfRepublic(new ListParams(), value.statusKey);
-        //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
-        this.domicileForm.patchValue(value);
+        this.setGoodDomicilieSelected(resp);
       },
     });
   }
@@ -962,10 +1074,10 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
-        this.stateOfRepId = data;
+        /*this.stateOfRepId = data;
         this.municipalityId =
           this.domicileForm.controls['municipalityKey'].value ?? '';
-        this.getMunicipaly(new ListParams());
+        this.getMunicipaly(new ListParams());*/
       }
     });
 
@@ -994,6 +1106,18 @@ export class DetailAssetsTabComponentComponent
         }
       }
     );
+
+    if (this.detailAssets.controls['armor'].value) {
+      //this.armorString = this.detailAssets.controls['armor'].value;
+      this.armor =
+        this.detailAssets.controls['armor'].value === 'Y' ? true : false;
+    }
+
+    if (this.detailAssets.controls['duplicity'].value) {
+      this.duplicityString = this.detailAssets.controls['duplicity'].value;
+      this.duplicity =
+        this.detailAssets.controls['duplicity'].value === 'Y' ? true : false;
+    }
 
     if (this.detailAssets.controls['fitCircular'].value) {
       this.circulateString = this.detailAssets.controls['fitCircular'].value;
@@ -1047,13 +1171,34 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  setGoodDomicilieSelected(domicilie: IDomicilies) {
-    debugger;
+  setGoodDomicilieSelected(domicilie: any) {
+    domicilie.localityKey = Number(domicilie.localityKey);
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
-    this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     this.stateOfRepId = domicilie.statusKey;
-    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
+    this.municipalityId = domicilie.municipalityKey;
+
+    this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
+    this.getMunicipaly(new ListParams(), this.municipalityId);
+
+    this.getLocality(
+      new ListParams(),
+      Number(this.municipalityId),
+      this.stateOfRepId
+    );
+
     this.domicileForm.patchValue(domicilie);
+
+    this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
+    setTimeout(() => {
+      this.domicileForm.patchValue(domicilie);
+      console.log(this.domicileForm.getRawValue());
+    }, 3000);
+
+    this.domicileForm.controls['municipalityKey'].setValue(
+      domicilie.municipalityKey
+    );
+    this.stateOfRepId = domicilie.statusKey;
+    this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
 
     this.domicileForm.controls['municipalityKey'].setValue(
       domicilie.municipalityKey

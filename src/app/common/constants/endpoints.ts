@@ -124,8 +124,8 @@ export enum ENDPOINT_LINKS {
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
-  WarehouseTypeWarehouse = 'parametergood/almacen-tipos-almacen',
-  WarehouseClassifyCosts = 'parametergood/almacen-clasif-costos',
+  WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',
+  WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
   Document = 'documents',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
@@ -166,4 +166,5 @@ export enum ENDPOINT_LINKS {
   DinamicTablesSelect = 'dynamiccatalog/dinamic-tables',
   StrategyContract = 'contract/strategy-contract',
   ZoneContract = 'catalog/zones-contract',
+  Process = 'strategy/strategy-process',
 }

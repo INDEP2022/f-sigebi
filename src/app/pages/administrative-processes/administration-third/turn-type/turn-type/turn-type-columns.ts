@@ -1,12 +1,10 @@
 export const TURNTYPE_COLUMNS = {
-  number: {
+  shiftNumber: {
     title: 'Número',
-    width: '10%',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    width: '30%',
     sort: false,
   },
 };
