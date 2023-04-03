@@ -48,7 +48,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
-    this.prepareForm();
+    //this.prepareForm();
     this.requestForm.controls['affair'].valueChanges.subscribe(val => {
       if (this.requestForm.controls['affair'].value != null) {
         this.getAffair(this.requestForm.controls['affair'].value);
@@ -93,7 +93,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     this.requestForm = this.fb.group({
       applicationDate: [null],
       recordId: [null],
-      paperNumber: [null, [Validators.required, Validators.maxLength(30)]],
+      paperNumber: [null, [Validators.maxLength(30)]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
       transferenceId: [null],
@@ -102,7 +102,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       //typeUser: [''],
       //receiUser: [''],
       id: [null],
-      urgentPriority: [null],
+      urgentPriority: ['N'],
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [{ value: null, disabled: true }],
@@ -174,7 +174,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
     });
   }
@@ -246,28 +246,46 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     }
   }
 
-  confirm() {
+  async confirm() {
     this.loading = true;
     const request = this.requestForm.getRawValue() as IRequest;
-    this.requestService.update(request.id, request).subscribe({
-      next: (resp: any) => {
-        if (resp.id != null) {
-          this.message(
-            'success',
-            'Guardado',
-            'Se guardo la solicitud correctamente'
-          );
-        }
-        if (resp.statusCode != null) {
-          this.message('error', 'Error', 'No se guardo la solicitud!');
-        }
 
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        console.log(error);
-      },
+    const requestResult = await this.updateRequest(request);
+    if (requestResult === true) {
+      this.message(
+        'success',
+        'Guardado',
+        'Se guardo la solicitud correctamente'
+      );
+    } else {
+      this.message('error', 'Error', 'No se guardo la solicitud!');
+    }
+  }
+
+  updateRequest(request: any) {
+    return new Promise((resolve, reject) => {
+      this.requestService.update(request.id, request).subscribe({
+        next: (resp: any) => {
+          if (resp.id != null) {
+            resolve(true);
+          }
+          if (resp.statusCode != null) {
+            resolve(false);
+          }
+
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.message(
+            'error',
+            'Error',
+            `No se guardo la solicitud!. ${error.error.message}`
+          );
+          console.log(error);
+          reject(false);
+        },
+      });
     });
   }
 

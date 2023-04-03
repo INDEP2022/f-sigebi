@@ -264,7 +264,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(unitCostDet.costId);
+        this.delete2(unitCostDet.costId);
         Swal.fire('Borrado', '', 'success');
       }
     });

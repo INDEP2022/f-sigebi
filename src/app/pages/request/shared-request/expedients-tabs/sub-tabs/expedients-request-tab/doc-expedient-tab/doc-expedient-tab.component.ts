@@ -19,7 +19,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DOC_REQUEST_TAB_COLUMNS } from '../../doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from '../../doc-request-tab/see-information/see-information.component';
@@ -111,8 +111,14 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
       noOfice: [null],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: 157, disabled: true }],
+      comment: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      noRequest: [
+        { value: 157, disabled: true },
+        [Validators.pattern(NUMBERS_PATTERN)],
+      ],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
 
       /* Solicitud Transferencia */

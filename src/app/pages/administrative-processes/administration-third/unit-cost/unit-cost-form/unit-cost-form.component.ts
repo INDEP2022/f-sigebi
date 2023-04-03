@@ -54,10 +54,7 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.unitCostForm = this.fb.group({
-      costId: [null],
-      nbOrigin: [null],
       processNumber: [null],
-      registryNumber: [null],
       serviceNumber: [null],
       serviceTypeNumber: [null],
       shiftNumber: [null],
@@ -79,18 +76,8 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    const data: IUnitCost = this.unitCostForm.value;
-    const req: IUnitCost = {
-      processNumber: data.processNumber,
-      serviceNumber: data.serviceNumber,
-      serviceTypeNumber: data.serviceTypeNumber,
-      shiftNumber: data.shiftNumber,
-      varCostNumber: data.varCostNumber,
-    };
 
-    console.log(req);
-
-    this.unitCostService.create(req).subscribe({
+    this.unitCostService.create(this.unitCostForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

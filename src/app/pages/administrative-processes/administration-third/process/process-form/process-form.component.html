@@ -1,0 +1,81 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="processForm">
+      <div class="row">
+        <div class="col-md-6 mt-4">
+          <form-field label="Clave" [control]="processForm.get('desShort')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="3"
+              formControlName="desShort" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Relación de Bienes"
+            [control]="processForm.get('relayEstate')">
+            <select class="form-control" formControlName="relayEstate">
+              <option value="S">Sí</option>
+              <option value="N">No</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Requiere Est. Admon."
+            [control]="processForm.get('relayStrategy')">
+            <select class="form-control" formControlName="relayStrategy">
+              <option value="S">Sí</option>
+              <option value="N">No</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Tipo de Programación"
+            [control]="processForm.get('programmingType')">
+            <input
+              type="text"
+              maxlength="3"
+              class="form-control"
+              formControlName="programmingType" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Descripción"
+            [control]="processForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              maxlength="80"
+              required />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
