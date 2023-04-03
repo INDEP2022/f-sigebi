@@ -60,14 +60,16 @@
               typeDoc === 'request-assets'
             ">
             <div class="col-md-4">
-              <ngx-select
-                [form]="docRequestForm"
-                control="regDelega"
-                (fetchItems)="getRegDelegation($event)"
-                [data]="selectRegDelegation"
-                label="Delegaci&oacute;n Regional"
-                value="regDelega">
-              </ngx-select>
+              <form-field [control]="docRequestForm.get('regDelega')">
+                <ngx-select
+                  [form]="docRequestForm"
+                  control="regDelega"
+                  [data]="selectRegDelegation"
+                  value="id"
+                  bindLabel="description"
+                  label="Selecciona una delegaci&oacute;n regional"
+                  (fetchItems)="getRegDelegation($event)"></ngx-select>
+              </form-field>
             </div>
             <div class="col-md-4">
               <ngx-select

@@ -48,7 +48,7 @@
                 [data]="selectDocType"
                 label="Tipo de Documento"
                 bindLabel="ddescription"
-                value="docType">
+                value="ddescription">
               </ngx-select>
             </div>
           </div>
@@ -66,7 +66,9 @@
                 (fetchItems)="getRegDelegation($event)"
                 [data]="selectRegDelegation"
                 label="Delegaci&oacute;n Regional"
-                value="regDelega">
+                value="id"
+                bindLabel="description"
+                (change)="delegationSelect($event)">
               </ngx-select>
             </div>
             <div class="col-md-4">
@@ -76,7 +78,9 @@
                 (fetchItems)="getState($event)"
                 [data]="selectState"
                 label="Estado"
-                value="state">
+                bindLabel="descCondition"
+                value="id"
+                (change)="stateSelect($event)">
               </ngx-select>
             </div>
             <div class="col-md-4">
@@ -86,7 +90,8 @@
                 (fetchItems)="getTransfe($event)"
                 [data]="selectTransfe"
                 label="Transferente"
-                value="tranfe">
+                bindLabel="nametransferent"
+                value="id">
               </ngx-select>
             </div>
           </div>
@@ -211,6 +216,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  [readOnly]="true"
                   formControlName="noRequest" />
               </form-field>
             </div>

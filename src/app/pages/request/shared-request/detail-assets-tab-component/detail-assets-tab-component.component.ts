@@ -162,9 +162,12 @@ export class DetailAssetsTabComponentComponent
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
       this.relevantTypeService
-        .getById(this.goodData.fractionId.relevantTypeId)
-        .subscribe(data => {
-          this.relevantTypeName = data.description;
+        .getById(this.goodData.fractionId?.relevantTypeId)
+        .subscribe({
+          next: data => {
+            this.relevantTypeName = data.description;
+          },
+          error: error => {},
         });
 
       if (this.detailAssets.controls['subBrand'].value) {

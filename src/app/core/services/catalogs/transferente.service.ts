@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from 'src/app/common/services/http.service';
+import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
@@ -12,7 +14,10 @@ import { ITransferente } from '../../models/catalogs/transferente.model';
 export class TransferenteService extends HttpService {
   private readonly route: string = ENDPOINT_LINKS.Transferente;
   private readonly endpoint: string = 'transferent';
-  constructor(private transferenteRepository: Repository<ITransferente>) {
+  constructor(
+    private transferenteRepository: Repository<ITransferente>,
+    private http: HttpClient
+  ) {
     super();
     this.microservice = 'catalog';
   }
@@ -38,9 +43,12 @@ export class TransferenteService extends HttpService {
     return this.transferenteRepository.getAllPaginated(route, params);
   }
 
-  getByIdState(id: string | number): Observable<ITransferente> {
-    const route = `catalog/transferent/get-entity-transferent-by-state`;
-    return this.transferenteRepository.getById(route, id);
+  getByIdState(id: string | number): Observable<IListResponse<ITransferente>> {
+    const route = `catalog/api/v1/transferent/get-entity-transferent-by-state/${id}`;
+    return this.http.get<IListResponse<ITransferente>>(
+      `${environment.API_URL}/${route}`
+    );
+    //return this.httpService.get<IListResponse<T>>(``);
   }
 
   create(transferente: ITransferente) {
