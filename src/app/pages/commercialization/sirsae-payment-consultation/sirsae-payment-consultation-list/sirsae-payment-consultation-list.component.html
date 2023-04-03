@@ -59,20 +59,11 @@
                   class="form-group"
                   [control]="form.get('status')"
                   label="Estatus Mov.">
-                  <!-- <ng-select
-                    formControlName="status"
-                    [items]="statusesMov"
-                    bindLabel="statusDescription"
-                    bindValue="id"
-                    [searchable]="false"
-                    class="form-control"
-                    [clearable]="false"
-                    (change)="filterStatus($event)">
-                  </ng-select>  -->
                   <ng-custom-select
                     formControlName="status"
                     class="form-control"
                     path="interfacesirsae/api/v1/statusmov-sirsae"
+                    [isLoadInOnInit]="true"
                     paramSearch="statusDescription"
                     prefixSearch="$ilike"
                     value="id">

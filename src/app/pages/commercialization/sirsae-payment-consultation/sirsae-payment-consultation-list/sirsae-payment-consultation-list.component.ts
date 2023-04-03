@@ -46,20 +46,10 @@ export class SirsaePaymentConsultationListComponent
   }
 
   ngOnInit(): void {
-    // this.getStatusesMov();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(event => this.search(event));
   }
-
-  // getStatusesMov(): void {
-  //   this.interfaceSirsaeService
-  //     .getStatusesMov({ limit: 100, page: 1 })
-  //     .subscribe(res => {
-  //       console.log(res);
-  //       this.statusesMov = res.data;
-  //     });
-  // }
 
   resetFilter() {
     this.tableSource.empty().then(res => {

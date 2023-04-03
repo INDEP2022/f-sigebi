@@ -4,8 +4,13 @@ import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 // import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
+import {
+  readFile,
+  showQuestion,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 // import { showToast } from 'src/app/common/helpers/helpers';
+import { LocalDataSource } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -61,25 +66,25 @@ export class NumeraireExchangeFormComponent extends BasePage {
   selectedBank: any = null;
   numeraireSettings = {
     columns: {
-      number_good: { title: 'N° Bien' },
+      id: { title: 'N° Bien' },
       description: { title: 'Descripción' },
       salePrice: { title: 'Precio de venta' },
       saleTax: { title: 'Iva Venta' },
       commission: { title: 'Comisión' },
       commissionTax: { title: 'Iva Comisión' },
-      expenseTotal: { title: 'Gasto Total' },
+      totalExpenses: { title: 'Gasto Total' },
       appraisalAmount: { title: 'Importe Avaluó' },
       status: { title: 'Estatus' },
-      identification: { title: 'Ident.' },
-      extDomine: { title: 'Ext. Dominio' },
-      commentNewGood: { title: 'Comentario nuevo bien' },
+      identifier: { title: 'Ident.' },
+      domain: { title: 'Ext. Dominio' },
+      commentary: { title: 'Comentario nuevo bien' },
     },
     selectedRowIndex: -1,
     actions: false,
     editable: false,
   };
 
-  numeraireColumns: any[] = [];
+  numeraireMassiveColumns = new LocalDataSource();
   fileName: string = 'Seleccionar archivo';
 
   conversionTypes = [
@@ -102,14 +107,6 @@ export class NumeraireExchangeFormComponent extends BasePage {
     {
       text: 'Bien generado por pago parcial por siniestro',
       value: 'BBB',
-    },
-  ];
-
-  expenseTestData = [
-    {
-      id: 3000,
-      description: 'PASAJES NACIONALES',
-      amount: 12000,
     },
   ];
 
@@ -198,6 +195,11 @@ export class NumeraireExchangeFormComponent extends BasePage {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1)
       throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
+
+    readFile(files[0], 'BinaryString').then(data => {
+      this.readCsv(data.result);
+    });
+
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readCsv(fileReader.result);
@@ -206,35 +208,28 @@ export class NumeraireExchangeFormComponent extends BasePage {
   readCsv(binaryExcel: string | ArrayBuffer) {
     try {
       this.loading = true;
-      this.numeraireColumns = this.excelService.getData(binaryExcel);
-      this.totalItems = this.numeraireColumns.length;
+      const dataCvs = this.excelService.getData(binaryExcel);
+      this.numeraireMassiveColumns.load(dataCvs);
+      console.log(dataCvs);
+      this.totalItems = dataCvs.length;
       this.loading = false;
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.loading = false;
+      showToast({ icon: 'error', text: 'Ocurrió un error al leer el archivo' });
     }
   }
 
-  // exchange() {
-  //   this.form.controls['expenses'].setValue(this.expenseTestData);
-  //   console.log(this.form.value);
-  // }
+  validateStatusesMassive;
 
   selectAccount(account: any) {
     this.selectedBank = account;
   }
 
   formatNumber(n: string) {
-    // format number 1000000 to 1,234,567
     return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   formatCurrency2(event: any, blur: boolean = false) {
-    // appends $ to value, validates decimal side
-    // and puts cursor back in right position.
-    // event.target.value = this.currencyPipe.transform(event.target.value, '$');
-
-    // return;
-
     // get input value
     var input_val = event.target.value;
 
@@ -243,37 +238,25 @@ export class NumeraireExchangeFormComponent extends BasePage {
     }
 
     // original length
-    var original_len = input_val.length;
-
-    // initial caret position
-    // var caret_pos = event.prop("selectionStart");
+    // var original_len = input_val.length;
 
     // check for decimal
     if (input_val.indexOf('.') >= 0) {
-      // get position of first decimal
-      // this prevents multiple decimals from
-      // being entered
       var decimal_pos = input_val.indexOf('.');
 
-      // split number by decimal point
       var left_side = input_val.substring(0, decimal_pos);
       var right_side = input_val.substring(decimal_pos);
 
-      // add commas to left side of number
       left_side = this.formatNumber(left_side);
 
-      // validate right side
       right_side = this.formatNumber(right_side);
 
-      // On blur make sure 2 numbers after decimal
       if (blur) {
         right_side += '00';
       }
 
-      // Limit decimal to only 2 digits
       right_side = right_side.substring(0, 2);
 
-      // join number by .
       input_val = '$' + left_side + '.' + right_side;
     } else {
       input_val = this.formatNumber(input_val);

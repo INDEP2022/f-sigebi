@@ -85,7 +85,7 @@ export function convertFormatDate(
 export function readFile(
   file: File,
   type: 'BinaryString' | 'ArrayBuffer' | 'Text' | 'DataUrl' = 'Text'
-) {
+): Promise<{ result: any; ext: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = event => {

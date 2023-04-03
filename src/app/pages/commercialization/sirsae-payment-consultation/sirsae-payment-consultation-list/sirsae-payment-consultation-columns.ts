@@ -45,7 +45,18 @@ export const CONSULT_SIRSAE_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {
-      return row.statusMov?.statusDescription;
+      const status = row.statusMov?.id;
+      if (status == 0) {
+        return 'Pagado';
+      }
+      if (status == 1) {
+        return 'Cheque salvo buen cobro';
+      }
+      if (status == 2) {
+        return 'Cheque Devuelto';
+      }
+
+      return '';
     },
   },
 };
