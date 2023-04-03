@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -34,7 +34,7 @@ export class ClassifyAssetsTabComponent
   @Input() requestObject: any;
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
-  @Input() goodObject: IFormGroup<any> = null;
+  @Input() goodObject: ModelForm<IGood>; //: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
   @Input() goodSelect: any;
@@ -87,7 +87,6 @@ export class ClassifyAssetsTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('td', this.typeDoc);
-
     /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio

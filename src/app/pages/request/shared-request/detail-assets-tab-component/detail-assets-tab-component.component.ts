@@ -180,7 +180,6 @@ export class DetailAssetsTabComponentComponent
 
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -205,7 +204,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -1189,7 +1187,8 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-    setTimeout(() => {
+
+    /*setTimeout(() => {
       this.domicileForm.patchValue(domicilie);
       console.log(this.domicileForm.getRawValue());
     }, 3000);
@@ -1202,6 +1201,6 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['municipalityKey'].setValue(
       domicilie.municipalityKey
-    );
+    );*/
   }
 }
