@@ -46,7 +46,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="color" />
+                  formControlName="color"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -57,7 +58,8 @@
                 label="Descripci&oacute;n de bien Transferente">
                 <textarea
                   class="form-control"
-                  formControlName="goodDescription"></textarea>
+                  formControlName="goodDescription"
+                  [readOnly]="isGoodInfReadOnly"></textarea>
               </form-field>
             </div>
             <div class="col-md-4">
@@ -67,7 +69,8 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="quantity" />
+                  formControlName="quantity"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -91,7 +94,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="capacity" />
+                  formControlName="capacity"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -103,7 +107,8 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="fileeNumber" />
+                  formControlName="fileeNumber"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -113,7 +118,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="volume" />
+                  formControlName="volume"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -127,7 +133,8 @@
                 label="Estado F&iacute;sico"
                 [searchable]="false"
                 bindLabel="description"
-                value="keyId"></ngx-select>
+                value="keyId"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
             <div class="col-md-4">
               <form-field
@@ -136,7 +143,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="useType" />
+                  formControlName="useType"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -150,7 +158,8 @@
                 label="Estado de Concervaci&oacute;n"
                 [searchable]="false"
                 bindLabel="description"
-                value="keyId"></ngx-select>
+                value="keyId"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
             <div class="col-md-4">
               <form-field
@@ -159,7 +168,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="origin" />
+                  formControlName="origin"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -182,7 +192,8 @@
                   type="checkbox"
                   [ngModelOptions]="{ standalone: true }"
                   [(ngModel)]="appraisal"
-                  (change)="handleAppraisalEvent($event)" />
+                  (change)="handleAppraisalEvent($event)"
+                  [disabled]="disableDuplicity" />
               </form-check>
             </div>
           </div>
@@ -196,7 +207,8 @@
                 label="Unid&#46; Medida Transferente"
                 [searchable]="true"
                 bindLabel="unitMeasureTl"
-                value="unitMeasureTl"></ngx-select>
+                value="unitMeasureTl"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
             <div
               class="col-md-3"
@@ -207,7 +219,8 @@
                   type="checkbox"
                   [ngModelOptions]="{ standalone: true }"
                   [(ngModel)]="complyNorm"
-                  (change)="handleCumpliesNormEvent($event)" />
+                  (change)="handleCumpliesNormEvent($event)"
+                  [disabled]="isGoodInfReadOnly" />
               </form-check>
             </div>
           </div>
@@ -233,7 +246,8 @@
                 label="Destino Transferente"
                 [searchable]="false"
                 bindLabel="description"
-                value="keyId"></ngx-select>
+                value="keyId"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
@@ -243,7 +257,8 @@
                 label="Notas">
                 <textarea
                   class="form-control"
-                  formControlName="notesTransferringEntity"></textarea>
+                  formControlName="notesTransferringEntity"
+                  [readOnly]="isGoodInfReadOnly"></textarea>
               </form-field>
             </div>
           </div>
@@ -256,7 +271,8 @@
                 [data]="selectDestintSae"
                 label="Destino SEA"
                 value="id"
-                bindLabel="saeDestiny"></ngx-select>
+                bindLabel="saeDestiny"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
           </div>
         </div>
@@ -751,7 +767,8 @@
               [data]="selectBrand"
               label="Marca"
               value="flexValue"
-              bindLabel="flexValueMeaning"></ngx-select>
+              bindLabel="flexValueMeaning"
+              [readonly]="isGoodTypeReadOnly"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -771,7 +788,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="tuition" />
+                formControlName="tuition"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               *ngIf="process == 'classify-assets'"
@@ -796,7 +814,8 @@
               [data]="selectSubBrand"
               label="Sub Marca"
               value="flexValueDependent"
-              bindLabel="flexValueMeaningDependent"></ngx-select>
+              bindLabel="flexValueMeaningDependent"
+              [readonly]="isGoodTypeReadOnly"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -813,7 +832,11 @@
               [control]="detailAssets.get('serie')"
               label="Serie"
               *ngIf="process != 'classify-assets'">
-              <input type="text" class="form-control" formControlName="serie" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="serie"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('serie')"
@@ -838,7 +861,7 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
-                [readOnly]="true"
+                [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
             </form-check>
             <form-check
@@ -862,7 +885,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="chassis" />
+                formControlName="chassis"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('chassis')"
@@ -886,7 +910,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="model" />
+                formControlName="model"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('model')"
@@ -907,7 +932,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="cabin" />
+                formControlName="cabin"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('cabin')"
@@ -931,7 +957,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="doorsNumber" />
+                formControlName="doorsNumber"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('doorsNumber')"
@@ -952,7 +979,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="origin" />
+                formControlName="origin"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('origin')"
@@ -975,7 +1003,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="axesNumber" />
+                formControlName="axesNumber"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('axesNumber')"
@@ -998,7 +1027,8 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="circulate"
-                (change)="handleCirculateEvent($event)" />
+                (change)="handleCirculateEvent($event)"
+                [disabled]="isGoodTypeReadOnly" />
             </form-check>
             <form-check
               label="Apto para Circular"
@@ -1024,7 +1054,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="engineNumber" />
+                formControlName="engineNumber"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
@@ -1047,7 +1078,8 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="theftReport"
-                (change)="handleTheftReportEvent($event)" />
+                (change)="handleTheftReportEvent($event)"
+                [disabled]="isGoodTypeReadOnly" />
             </form-check>
             <form-check
               label="Cuenta con reporte de robos"
@@ -1091,7 +1123,8 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
-                (change)="handleArmor($event)" />
+                (change)="handleArmor($event)"
+                [disabled]="isGoodTypeReadOnly" />
             </form-check>
             <form-check
               label="Blindaje"
@@ -1114,7 +1147,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="operationalState" />
+                formControlName="operationalState"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('operationalState')"
@@ -1137,7 +1171,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="engineNumber" />
+                formControlName="engineNumber"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
@@ -1158,7 +1193,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="enginesNumber" />
+                formControlName="enginesNumber"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
@@ -1182,7 +1218,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="tuition" />
+                formControlName="tuition"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('tuition')"
@@ -1203,7 +1240,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="flag" />
+                formControlName="flag"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('flag')"
@@ -1227,7 +1265,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="cabin" />
+                formControlName="cabin"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('cabin')"
@@ -1248,7 +1287,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="openwork" />
+                formControlName="openwork"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('openwork')"
@@ -1272,7 +1312,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="volume" />
+                formControlName="volume"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('volume')"
@@ -1293,7 +1334,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="length" />
+                formControlName="length"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('length')"
@@ -1317,7 +1359,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="origin" />
+                formControlName="origin"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('origin')"
@@ -1338,7 +1381,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="sleeve" />
+                formControlName="sleeve"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('sleeve')"
@@ -1362,7 +1406,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="useType" />
+                formControlName="useType"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('useType')"
@@ -1383,7 +1428,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="shipName" />
+                formControlName="shipName"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('shipName')"
@@ -1407,7 +1453,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="manufacturingYear" />
+                formControlName="manufacturingYear"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
@@ -1428,7 +1475,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="publicRegistry" />
+                formControlName="publicRegistry"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('publicRegistry')"
@@ -1452,7 +1500,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="capacity" />
+                formControlName="capacity"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('capacity')"
@@ -1473,7 +1522,8 @@
               <input
                 type="string"
                 class="form-control"
-                formControlName="ships" />
+                formControlName="ships"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('ships')"
@@ -1513,7 +1563,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="caratage" />
+                formControlName="caratage"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('caratage')"
@@ -1534,7 +1585,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="material" />
+                formControlName="material"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('material')"
@@ -1555,7 +1607,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="weight" />
+                formControlName="weight"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('weight')"
@@ -1597,7 +1650,8 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
-                (change)="handleArmor($event)" />
+                (change)="handleArmor($event)"
+                [disabled]="isGoodTypeReadOnly" />
             </form-check>
             <form-check
               label="Blindaje"
@@ -1620,7 +1674,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="manufacturingYear" />
+                formControlName="manufacturingYear"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
@@ -1644,7 +1699,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="model" />
+                formControlName="model"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('model')"
@@ -1665,7 +1721,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="operationalState" />
+                formControlName="operationalState"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('operationalState')"
@@ -1689,7 +1746,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="engineNumber" />
+                formControlName="engineNumber"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
@@ -1710,7 +1768,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="enginesNumber" />
+                formControlName="enginesNumber"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
@@ -1734,7 +1793,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="tuition" />
+                formControlName="tuition"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('tuition')"
@@ -1755,7 +1815,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="dgacRegistry" />
+                formControlName="dgacRegistry"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('dgacRegistry')"
@@ -1775,7 +1836,11 @@
               [control]="detailAssets.get('serie')"
               label="Serie"
               *ngIf="process != 'classify-assets'">
-              <input type="text" class="form-control" formControlName="serie" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="serie"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('serie')"
@@ -1796,7 +1861,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="airplaneType" />
+                formControlName="airplaneType"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('airplaneType')"
@@ -1820,7 +1886,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="origin" />
+                formControlName="origin"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('origin')"
@@ -1839,7 +1906,11 @@
               [control]="detailAssets.get('flag')"
               label="Bandera"
               *ngIf="process != 'classify-assets'">
-              <input type="text" class="form-control" formControlName="flag" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="flag"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('flag')"
@@ -1862,7 +1933,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="useType" />
+                formControlName="useType"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="detailAssets.get('useType')"
@@ -1901,7 +1973,8 @@
               *ngIf="process != 'classify-assets'">
               <textarea
                 class="form-control"
-                formControlName="description"></textarea>
+                formControlName="description"
+                [readonly]="isGoodTypeReadOnly"></textarea>
             </form-field>
 
             <form-field
@@ -1922,7 +1995,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="guardCustody" />
+                formControlName="guardCustody"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('guardCustody')"
@@ -1946,7 +2020,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="status" />
+                formControlName="status"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('status')"
@@ -1967,7 +2042,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="vigilanceRequired" />
+                formControlName="vigilanceRequired"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('vigilanceRequired')"
@@ -1991,7 +2067,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="propertyType" />
+                formControlName="propertyType"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('propertyType')"
@@ -2012,7 +2089,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="vigilanceLevel" />
+                formControlName="vigilanceLevel"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('vigilanceLevel')"
@@ -2036,7 +2114,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="surfaceMts" />
+                formControlName="surfaceMts"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('surfaceMts')"
@@ -2057,7 +2136,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="mtsOfiWarehouse" />
+                formControlName="mtsOfiWarehouse"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('mtsOfiWarehouse')"
@@ -2081,7 +2161,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="consSurfaceMts" />
+                formControlName="consSurfaceMts"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('consSurfaceMts')"
@@ -2102,7 +2183,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="bedrooms" />
+                formControlName="bedrooms"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('bedrooms')"
@@ -2126,7 +2208,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="publicDeed" />
+                formControlName="publicDeed"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
@@ -2147,7 +2230,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="bathroom" />
+                formControlName="bathroom"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('bathroom')"
@@ -2171,7 +2255,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="pubRegProperty" />
+                formControlName="pubRegProperty"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
@@ -2192,7 +2277,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="kitchen" />
+                formControlName="kitchen"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('kitchen')"
@@ -2216,7 +2302,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="appraisalValue" />
+                formControlName="appraisalValue"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('appraisalValue')"
@@ -2237,7 +2324,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="livingRoom" />
+                formControlName="livingRoom"
+                [readonly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('livingRoom')"
@@ -2264,7 +2352,8 @@
                 [bsValue]="bsEvaluoDate"
                 #dp="bsDatepicker"
                 bsDatepicker
-                (bsValueChange)="changeDateEvaluoEvent($event)" />
+                (bsValueChange)="changeDateEvaluoEvent($event)"
+                [isDisabled]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('appraisalDate')"
@@ -2288,7 +2377,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="diningRoom" />
+                formControlName="diningRoom"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('diningRoom')"
@@ -2312,7 +2402,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="certLibLien" />
+                formControlName="certLibLien"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('certLibLien')"
@@ -2333,7 +2424,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="study" />
+                formControlName="study"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('study')"
@@ -2357,7 +2449,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="espPark" />
+                formControlName="espPark"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('espPark')"
@@ -2381,7 +2474,8 @@
                 [bsValue]="bsPffDate"
                 #dp="bsDatepicker"
                 bsDatepicker
-                (bsValueChange)="changeCertiviffDateEvent($event)" />
+                (bsValueChange)="changeCertiviffDateEvent($event)"
+                [isDisabled]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('pffDate')"
@@ -2411,7 +2505,8 @@
                 [bsValue]="bsCertifiDate"
                 #dp="bsDatepicker"
                 bsDatepicker
-                (bsValueChange)="changeCertiviDateEvent($event)" />
+                (bsValueChange)="changeCertiviDateEvent($event)"
+                [isDisabled]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('certLibLienDate')"
@@ -2435,7 +2530,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="attachment" />
+                formControlName="attachment"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('attachment')"
@@ -2459,7 +2555,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="gravFavorThird" />
+                formControlName="gravFavorThird"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('gravFavorThird')"
@@ -2480,7 +2577,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="coOwnership" />
+                formControlName="coOwnership"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('coOwnership')"
@@ -2503,7 +2601,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="embFavorThird" />
+                formControlName="embFavorThird"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('embFavorThird')"
@@ -2524,7 +2623,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="ownershipPercentage" />
+                formControlName="ownershipPercentage"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
@@ -2547,7 +2647,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="ownershipPercentage" />
+                formControlName="ownershipPercentage"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
@@ -2568,7 +2669,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="declareRemediation" />
+                formControlName="declareRemediation"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('declareRemediation')"
@@ -2591,7 +2693,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="decreeExproSupe" />
+                formControlName="decreeExproSupe"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('decreeExproSupe')"
@@ -2612,7 +2715,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="assurance" />
+                formControlName="assurance"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('assurance')"
@@ -2635,7 +2739,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="heritage" />
+                formControlName="heritage"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('heritage')"
@@ -2656,7 +2761,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="propTitleFolio" />
+                formControlName="propTitleFolio"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('propTitleFolio')"
@@ -2679,7 +2785,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="propTitleFolio" />
+                formControlName="propTitleFolio"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('propTitleFolio')"
@@ -2700,7 +2807,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="vouchersWater" />
+                formControlName="vouchersWater"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('vouchersWater')"
@@ -2723,7 +2831,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="measuresAdjacent" />
+                formControlName="measuresAdjacent"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('measuresAdjacent')"
@@ -2744,7 +2853,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="physicalPossession" />
+                formControlName="physicalPossession"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('physicalPossession')"
@@ -2764,7 +2874,11 @@
               [control]="goodDomicilieForm.get('debts')"
               label="Adeudos"
               *ngIf="process != 'classify-assets'">
-              <input type="text" class="form-control" formControlName="debts" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="debts"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('debts')"
@@ -2785,7 +2899,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="familyHeritage" />
+                formControlName="familyHeritage"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('familyHeritage')"
@@ -2808,7 +2923,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="closed" />
+                formControlName="closed"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('closed')"
@@ -2829,7 +2945,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="forProblems" />
+                formControlName="forProblems"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('forProblems')"
@@ -2852,7 +2969,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="problemDesc" />
+                formControlName="problemDesc"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('problemDesc')"
@@ -2873,7 +2991,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="photosAttached" />
+                formControlName="photosAttached"
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('photosAttached')"

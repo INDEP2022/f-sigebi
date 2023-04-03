@@ -146,6 +146,8 @@ export class DetailAssetsTabComponentComponent
   menajeSelected: any;
   isSaveMenaje: boolean = false;
   disableDuplicity: boolean = false; //para verificar cumplimientos = false
+  isGoodInfReadOnly: boolean = false;
+  isGoodTypeReadOnly: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -176,6 +178,7 @@ export class DetailAssetsTabComponentComponent
           this.getSubBrand(new ListParams(), brand);
         }
       }
+      this.isGoodTypeReadOnly = true;
     }
 
     if (this.typeDoc === 'clarification') {
@@ -189,7 +192,8 @@ export class DetailAssetsTabComponentComponent
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
       this.typeDoc === 'approval-process' ||
-      this.typeDoc === 'classify-assets'
+      this.typeDoc === 'classify-assets' ||
+      this.typeDoc === 'clarification'
     ) {
       if (address?.id) {
         this.getGoodDomicilie(address?.id);
@@ -201,6 +205,12 @@ export class DetailAssetsTabComponentComponent
         if (this.goodDomicilieForm !== undefined) {
           this.goodDomicilieForm.disable();
         }
+      }
+
+      if (this.typeDoc === 'clarification') {
+        this.isGoodInfReadOnly = true;
+        this.disableDuplicity = true;
+        this.isGoodTypeReadOnly = true;
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
