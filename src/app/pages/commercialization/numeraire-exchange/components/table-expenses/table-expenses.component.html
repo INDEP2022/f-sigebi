@@ -64,21 +64,11 @@
       class="form-group"
       [control]="form.get('description')"
       label="Descripción">
-      <!-- <ng-select
-        (change)="selectedExpenseType($event)"
-        class="form-control"
-        formControlName="description">
-        <ng-option [value]="type.id" *ngFor="let type of expenseType">{{
-          type.description
-        }}</ng-option>
-      </ng-select> -->
       <ng-custom-select
         class="form-control"
         formControlName="description"
         path="spent/api/v1/expense-concept"
         value="id"
-        paramSearch="filter.description"
-        prefixSearch="$ilike"
         (valueChange)="selectedExpenseType($event)">
         <ng-template let-item>
           {{ item.description }}
@@ -93,7 +83,7 @@
     <button
       type="button"
       class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
-      (click)="saveInServer()">
+      (click)="addExpense()">
       Guardar
       <i class="fas fa-paper-plane"></i>
     </button>

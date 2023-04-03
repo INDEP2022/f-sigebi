@@ -1,9 +1,10 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CurrencyPipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 // import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 // import { showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -15,7 +16,7 @@ import { TableExpensesComponent } from '../components/table-expenses/table-expen
 @Component({
   selector: 'app-numeraire-exchange-form',
   templateUrl: './numeraire-exchange-form.component.html',
-  styles: [],
+  styles: ['::ng-deep .ws-pre{white-space: pre-wrap;}'],
   providers: [CurrencyPipe],
   animations: [
     trigger('OnGoodSelected', [
@@ -27,10 +28,10 @@ import { TableExpensesComponent } from '../components/table-expenses/table-expen
     ]),
   ],
 })
-export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
+export class NumeraireExchangeFormComponent extends BasePage {
   @ViewChild(TableExpensesComponent) tableExpense: TableExpensesComponent;
   form: FormGroup = new FormGroup({
-    id: new FormControl(null, [Validators.required]),
+    goodId: new FormControl(null, [Validators.required]),
     salePrice: new FormControl(null, [Validators.required]),
     saleTaxPercent: new FormControl(16, [Validators.required]),
     saleTax: new FormControl(null, [Validators.required]),
@@ -38,7 +39,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     commission: new FormControl(null, [Validators.required]),
     commissionTaxPercent: new FormControl(null, [Validators.required]),
     commissionTax: new FormControl(null, [Validators.required]),
-    account: new FormControl(null, [Validators.required]),
+    bank: new FormControl(null, [Validators.required]),
     depositDate: new FormControl(null, [Validators.required]),
     depositReference: new FormControl(null, [
       Validators.required,
@@ -47,40 +48,17 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     depositAmount: new FormControl(null, [Validators.required]),
     conversionType: new FormControl(null, [Validators.required]),
     expenses: new FormControl(null, [Validators.required]),
+    ckk_movban: new FormControl(null),
+    current: new FormControl(null),
   });
   fileForm: FormGroup = new FormGroup({
     file: new FormArray([], [Validators.required]),
   });
-  good: any;
-  hasExpenses: boolean = false;
   toggleExpenses: boolean = true;
-  adding: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   selectedGood: IGood = null;
   selectedBank: any = null;
-  // expenseTypeTest = [
-  //   {
-  //     id: 3107,
-  //     description: 'SERVICIO DE AGUA',
-  //   },
-  //   {
-  //     id: 3201,
-  //     description: 'ARRENDAMIENTO DE SERVICIO Y LOCALES',
-  //   },
-  //   {
-  //     id: 3305,
-  //     description: 'CAPACITACIONES',
-  //   },
-  //   {
-  //     id: 3306,
-  //     description: 'SERVICIOS DE INFORMÁTICA',
-  //   },
-  //   {
-  //     id: 3408,
-  //     description: 'COMISIONES POR VENTAS',
-  //   },
-  // ];
   numeraireSettings = {
     columns: {
       number_good: { title: 'N° Bien' },
@@ -127,87 +105,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     },
   ];
 
-  // individualGoodTestData: any = [
-  //   {
-  //     id: 1,
-  //     code: 'ASEG',
-  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  //     appraisal: 200,
-  //     status: 'Bien entregado en Administración',
-  //     domain: 'ASEGURADO',
-  //     converted: false,
-  //   },
-  //   {
-  //     id: 2,
-  //     code: 'BIEN',
-  //     description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
-  //     appraisal: 500,
-  //     status: 'Bien entregado en Administración',
-  //     domain: 'ASEGURADO',
-  //     converted: false,
-  //   },
-  //   {
-  //     id: 3,
-  //     code: 'GOOD',
-  //     description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
-  //     appraisal: 100,
-  //     status: 'Bien entregado en Administración',
-  //     domain: 'ASEGURADO',
-  //     converted: false,
-  //   },
-  //   {
-  //     id: 4,
-  //     code: 'ASEG',
-  //     description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
-  //     appraisal: 700,
-  //     status: 'Bien entregado en Administración',
-  //     domain: 'ASEGURADO',
-  //     converted: false,
-  //   },
-  //   {
-  //     id: 5,
-  //     code: 'BIEN',
-  //     description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
-  //     appraisal: 50,
-  //     status: 'Bien entregado en Administración',
-  //     domain: 'ASEGURADO',
-  //     converted: false,
-  //   },
-  // ];
-
-  // accountsTestData = [
-  //   {
-  //     id: 'BANAMEX1',
-  //     number: 7522422,
-  //     currency: 'M',
-  //     description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 1',
-  //   },
-  //   {
-  //     id: 'BANAMEX2',
-  //     number: 7522842,
-  //     currency: 'M',
-  //     description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 2',
-  //   },
-  //   {
-  //     id: 'BANAMEX3',
-  //     number: 7529231,
-  //     currency: 'M',
-  //     description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 3',
-  //   },
-  //   {
-  //     id: 'BANAMEX4',
-  //     number: 7249315,
-  //     currency: 'M',
-  //     description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 4',
-  //   },
-  //   {
-  //     id: 'BANAMEX5',
-  //     number: 7823647,
-  //     currency: 'M',
-  //     description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 5',
-  //   },
-  // ];
-
   expenseTestData = [
     {
       id: 3000,
@@ -216,31 +113,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     },
   ];
 
-  expenses: any[] = [];
-
   constructor(private excelService: ExcelService) {
     super();
-  }
-
-  ngOnInit(): void {
-    // this.expenseSettings.columns = EXPENSE_COLUMNS;
-    // this.expenseSettings.columns = {
-    //   ...this.expenseSettings.columns,
-    //   description: {
-    //     title: 'Descripción',
-    //     sort: false,
-    //     type: 'html',
-    //     width: '50%',
-    //     editor: {
-    //       type: 'custom',
-    //       component: TableSelectComponent,
-    //     },
-    //   },
-    // };
-    // this.numeraireSettings.columns = NUMERAIRE_COLUMNS;
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getSearch());
   }
 
   selectGood(event: any) {
@@ -249,12 +123,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   multiCalculate(event: any): void {
     this.formatCurrency2(event);
-    const {
-      // salePrice,
-      saleTaxPercent,
-      commissionPercent,
-      commissionTaxPercent,
-    } = this.form.value;
+    const { saleTaxPercent, commissionPercent, commissionTaxPercent } =
+      this.form.value;
     if (!event.target.value) {
       return;
     }
@@ -286,16 +156,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   validateCurrency(event: any): boolean {
-    // console.log(event.target.value);
-    // var regex = new RegExp('^[0-9,.]+$');
-    // // let regex = new RegExp('^$d{1,3}(,d{3})*(.d+)?$');
-    // var key = String.fromCharCode(
-    //   !event.charCode ? event.which : event.charCode
-    // );
-    // if (!regex.test(event.target.value)) {
-    //   event.preventDefault();
-    //   return false;
-    // }
     return true;
   }
 
@@ -354,24 +214,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     }
   }
 
-  exchange() {
-    this.form.controls['expenses'].setValue(this.expenseTestData);
-    console.log(this.form.value);
-  }
-
-  getAttributes() {
-    this.loading = true;
-    // this.attributes
-    //   .getAll(this.params.getValue())
-    //   .subscribe({
-    //     next: response => {
-    //       this.attributes = response.data;
-    //       this.totalItems = response.count;
-    //       this.loading = false;
-    //     },
-    //     error: error => (this.loading = false),
-    //   });
-  }
+  // exchange() {
+  //   this.form.controls['expenses'].setValue(this.expenseTestData);
+  //   console.log(this.form.value);
+  // }
 
   selectAccount(account: any) {
     this.selectedBank = account;
@@ -430,28 +276,144 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       // join number by .
       input_val = '$' + left_side + '.' + right_side;
     } else {
-      // no decimal entered
-      // add commas to number
-      // remove all non-digits
       input_val = this.formatNumber(input_val);
       input_val = '$' + input_val;
 
-      // final formatting
       if (blur) {
         input_val += '.00';
       }
     }
-
-    // send updated string to input
-    // input.val(input_val);
     event.target.value = input_val;
-
     this.form.get('salePrice').markAllAsTouched();
+  }
 
-    // put caret back in the right position
-    // var updated_len = input_val.length;
-    // caret_pos = updated_len - original_len + caret_pos;
-    // input[0].setSelectionRange(caret_pos, caret_pos);
+  saveInServer(): void {
+    this.validateForm().then(isValid => {
+      if (!isValid) {
+        return;
+      }
+
+      this.saveNumeraireExchange();
+    });
+  }
+
+  saveNumeraireExchange(): void {
+    const sumExpense = this.getExpensesSum();
+  }
+
+  validateNumeraire() {
+    //     FUNCTION PUP_VALIDANUME (V_BIEN NUMBER)
+    // RETURN CHAR IS
+    // DI_DISPNUME		CHAR(1);
+    // vc_pantalla 	VARCHAR2(100) := GET_APPLICATION_PROPERTY(CURRENT_FORM_NAME);
+    // BEGIN
+    //   DI_DISPNUME := 'N';
+    // 	FOR reg in (SELECT 'S'
+    //                 FROM BIENES BIE,
+    //                      ESTATUS_X_PANTALLA EXP
+    //                WHERE BIE.ESTATUS         = EXP.ESTATUS
+    //                  AND EXP.CVE_PANTALLA    = vc_pantalla
+    //                  AND EXP.PROCESO_EXT_DOM = BIE.PROCESO_EXT_DOM
+    //                  AND BIE.NO_BIEN         = V_BIEN
+    //                  AND NO_CLASIF_BIEN IN (SELECT NO_CLASIF_BIEN
+    //                                           FROM CAT_SSSUBTIPO_BIEN
+    //    	 	                                   WHERE NO_TIPO = 7))
+    // 	LOOP
+    //    	DI_DISPNUME := 'S';
+    //     EXIT;
+    // 	END LOOP;
+    // RETURN DI_DISPNUME;
+    // END;
+  }
+
+  getExpensesSum() {
+    const expense = this.tableExpense.getExpense();
+    if (expense.length < 1) {
+      return 0;
+    }
+    return expense.reduce((a, b) => a + b.import, 0);
+  }
+
+  getImport() {
+    const { salePrice, saleTax, commission, commissionTax } = this.form.value;
+    const sumExpense = this.getExpensesSum();
+    const totalImport = salePrice || 0 + saleTax || 0;
+    const totalExpense =
+      sumExpense + commission || 0 + commissionTax || 0 + saleTax || 0;
+    const subTotalImport =
+      totalImport - (commission || 0) - (commissionTax || 0) - sumExpense;
+
+    let importec;
+    if (Math.trunc(totalImport) !== totalImport) {
+      importec = totalImport.toFixed(2).replace(/\.?0+$/, '');
+    } else {
+      importec = totalImport.toString();
+    }
+    if (Math.trunc(subTotalImport) !== subTotalImport) {
+      importec = subTotalImport.toFixed(2).replace(/\.?0+$/, '');
+    } else {
+      importec = subTotalImport.toString();
+    }
+  }
+
+  validateForm(): Promise<boolean> {
+    const {
+      conversionType,
+      goodId,
+      bank,
+      ckk_movban,
+      salePrice,
+      saleTax,
+      commission,
+      commissionTax,
+    } = this.form.value;
+    const message: string[] = [];
+    if (goodId) {
+      message.push(
+        'Debe especificar el bien que se quiere cambiar a numerario'
+      );
+    }
+
+    if (ckk_movban && !bank) {
+      message.push('Debe especificar el banco');
+    }
+
+    if (!conversionType) {
+      message.push('No ha seleccionado el tipo de conversión');
+    }
+
+    if (message.length > 0) {
+      showToast({
+        html: message.join('\n'),
+        customClass: 'ws-pre',
+        icon: 'warning',
+        text: '',
+      });
+      return Promise.resolve(false);
+    }
+
+    if (!salePrice) {
+      return showQuestion({
+        title: 'Confirmación',
+        text: 'El nuevo bien se generara con un precio de venta de 1.\n ¿Seguro que desea cambiar el bien a numerario?',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.form.controls['salePrice'].setValue(1);
+          return Promise.resolve(true);
+        }
+        return Promise.resolve(false);
+      });
+    }
+
+    return showQuestion({
+      title: 'Confirmación',
+      text: '¿Seguro que desea cambiar el bien a numerario?',
+    }).then(result => {
+      if (result.isConfirmed) {
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+    });
   }
 }
 

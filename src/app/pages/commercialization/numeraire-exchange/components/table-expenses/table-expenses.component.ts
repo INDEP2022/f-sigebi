@@ -4,47 +4,25 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { showToast } from 'src/app/common/helpers/helpers';
 import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
 
-interface IExpenseConcept {
+interface IExpense {
   id: string;
   register?: string;
   description: string;
   descriptionName: string;
-  import: string;
+  import: number;
 }
 @Component({
   selector: 'app-table-expenses',
   templateUrl: './table-expenses.component.html',
-  styles: [
-    `
-      .form-custom {
-        width: 100%;
-        height: 39px;
-        padding: 1px 12px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-        -webkit-transition: border-color ease-in-out 0.15s,
-          box-shadow ease-in-out 0.15s;
-        transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-        outline: none;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class TableExpensesComponent {
   @ViewChild('dialogExpense') dialogExpenseTemplateRef: TemplateRef<any>;
-  constructor(
-    // private spentService: SpentService,
-    private dialogService: BsModalService
-  ) {}
+  constructor(private dialogService: BsModalService) {}
 
   dialogExpenseRef: BsModalRef;
-  // ngOnInit(): void {
-  //   // this.getExpenses();
-  // }
 
-  expenses: IExpenseConcept[] = [];
+  expenses: IExpense[] = [];
   idExpense: string | null = null;
 
   form = new FormGroup({
@@ -53,16 +31,8 @@ export class TableExpensesComponent {
     descriptionName: new FormControl({ disabled: true, value: null }, [
       Validators.required,
     ]),
-    import: new FormControl('', [Validators.required]),
+    import: new FormControl(0, [Validators.required]),
   });
-
-  // expenseType: ISpentConcept[] = [];
-
-  // getExpenses(): void {
-  //   // this.spentService.getExpensesConcept().subscribe(res => {
-  //   //   this.expenseType = res.data;
-  //   // });
-  // }
 
   selectedExpenseType(spent: ISpentConcept): void {
     this.form.patchValue({
@@ -71,12 +41,12 @@ export class TableExpensesComponent {
     });
   }
 
-  saveInServer(): void {
+  addExpense(): void {
     if (this.form.invalid) {
       showToast({
         icon: 'error',
         title: 'Gasto invalido',
-        text: 'Revise el gasto que va a ingresar unos de sus campos es invalido',
+        text: 'Revise el gasto que va a ingresar unos de sus campos es invalido o es requerido',
       });
       return;
     }
@@ -92,12 +62,11 @@ export class TableExpensesComponent {
 
     if (this.idExpense) {
       const expense = this.expenses.find(x => x.id == this.idExpense);
-      // expense.id = register;
       expense.description = description;
       expense.descriptionName = descriptionName;
       expense.import = importValue;
     } else {
-      const expense: IExpenseConcept = {
+      const expense: IExpense = {
         id,
         description,
         descriptionName: descriptionName,
@@ -111,6 +80,10 @@ export class TableExpensesComponent {
   removeExpense(register: any) {
     const index = this.expenses.findIndex(x => x.register == register);
     this.expenses.splice(index, 1);
+  }
+
+  getExpense(): IExpense[] {
+    return this.expenses;
   }
 
   openCreateOrEditExpense(id?: any): void {

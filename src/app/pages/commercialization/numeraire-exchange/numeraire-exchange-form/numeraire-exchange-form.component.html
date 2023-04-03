@@ -14,10 +14,7 @@
                 <i
                   class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">N° Bien</h5>
-                <app-goods-shared
-                  goodField="id"
-                  (good)="selectGood($event)"
-                  [form]="form">
+                <app-goods-shared (good)="selectGood($event)" [form]="form">
                 </app-goods-shared>
               </div>
               <ng-container *ngIf="selectedGood">
@@ -72,57 +69,7 @@
                   </div>
                 </div>
               </ng-container>
-              <!-- <div
-                class="col-sm-12 col-md-8"
-                @OnGoodSelected>
-                <div class="row">
-                  <div class="col-4 d-flex justify-content-center">
-                    <div>
-                      <i
-                        class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
-                      <h5 class="font-size-14 mb-2 d-inline">Siglas</h5>
-                      <p class="text-muted">
-                        {{ selectedGood?.originSignals }}
-                      </p>
-                    </div>
-                  </div>
-                  <div class="col-8">
-                    <i
-                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                    <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
-                    <p class="text-muted">
-                      {{ selectedGood?.description }}
-                    </p>
-                  </div>
-                </div>
-              </div>-->
             </div>
-            <!-- <div class="row mt-3" *ngIf="selectedGood != null" @OnGoodSelected>
-              <div class="col-sm-12 col-md-3">
-                <i
-                  class="bx bx-dollar text-success me-2 d-inline float-icon"></i>
-                <h5 class="font-size-14 mb-2 d-inline">Importe Avalúo</h5>
-                <p class="text-muted">
-                  {{ selectedGood?.appraisedValue }}
-                </p>
-              </div>
-              <div class="col-sm-12 col-md-5">
-                <i
-                  class="bx bx-check-circle text-success me-2 d-inline float-icon"></i>
-                <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
-                <p class="text-muted">
-                  {{ selectedGood?.status }}
-                </p>
-              </div>
-              <div class="col-sm-12 col-md-4">
-                <i
-                  class="bx bx-table text-success me-2 d-inline float-icon"></i>
-                <h5 class="font-size-14 mb-2 d-inline">Ext. Dominio</h5>
-                <p class="text-muted">
-                  {{ selectedGood?.extDomProcess }}
-                </p>
-              </div>
-            </div> -->
 
             <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
               <div class="ms-n2 mb-2">
@@ -239,14 +186,6 @@
                 [collapse]="!toggleExpenses">
                 <div class="table-container">
                   <div [class]="loading ? 'table-loading' : ''">
-                    <!-- <ng2-smart-table
-                      id="expenses-table"
-                      [attr.class]="'table-bordered'"
-                      [settings]="expenseSettings"
-                      [source]="expenseColumns"
-                      (createConfirm)="addEntry($event)"
-                      (editConfirm)="editEntry($event)">
-                    </ng2-smart-table> -->
                     <app-table-expenses></app-table-expenses>
                   </div>
                 </div>
@@ -268,20 +207,6 @@
                     <i
                       class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Banco</h5>
-                    <!-- <ngx-select
-                      [form]="form"
-                      [data]="banksAccounts"
-                      value="accountNumber"
-                      bindLabel="cveBank"
-                      (fetchItems)="getBanks($event)"
-                      (change)="selectAccount($event)"
-                      control="account">
-                    </ngx-select> -->
-                    <!-- <app-banks-shared
-                      [form]="form"
-                      bankField="account"
-                      (nameBank)="changeBank($event)"></app-banks-shared> -->
-
                     <div class="form-group">
                       <ng-custom-select
                         placeholder="Buscador de bancos"
@@ -292,7 +217,7 @@
                           'filter.accountType': '$eq:CONCENTRADORA'
                         }"
                         value="accountNumber"
-                        formControlName="account"
+                        formControlName="bank"
                         path="accountmvmnt/api/v1/bank-account"
                         (valueChange)="selectAccount($event)">
                         <ng-template let-item> {{ item.cveBank }} </ng-template>
@@ -340,7 +265,7 @@
               </div>
               <hr class="mw-98" />
               <div class="row">
-                <div class="col-sm-6 col-md-4">
+                <div class="col-sm-12 col-md-3">
                   <form-field [control]="form.get('depositDate')" label="Fecha">
                     <input
                       type="text"
@@ -349,17 +274,20 @@
                       bsDatepicker />
                   </form-field>
                 </div>
-                <div class="col-sm-6 col-md-4">
+                <div class="col-md-4">
                   <form-field
+                    class="form-group"
                     [control]="form.get('depositReference')"
                     label="Referencia">
-                    <input
-                      type="text"
+                    <ng-custom-select
                       class="form-control"
-                      formControlName="depositReference" />
+                      path="/accountmvmnt/api/v1/account-movements"
+                      formControlName="depositReference">
+                      <ng-template let-item> {{ item.cveBank }} </ng-template>
+                    </ng-custom-select>
                   </form-field>
                 </div>
-                <div class="col-sm-6 col-md-4">
+                <div class="col-md-3">
                   <form-field
                     [control]="form.get('depositAmount')"
                     label="Importe">
@@ -383,52 +311,7 @@
               <hr class="mw-98" />
               <div class="row">
                 <div class="col-sm-12 col-md-8 pt-sm-5 pt-md-2">
-                  <!--<form-field
-                    [control]="form.get('exchangeType')"
-                    label="Tipo de conversión">
-                     <ng-select
-                      formControlName="exchangeType"
-                      [searchable]="false"
-                      class="form-control"
-                      [clearable]="false">
-                      <ng-option value="CBD"
-                        >Bien decomisado cambiado a numerario por
-                        enajenación</ng-option
-                      >
-                      <ng-option value="CDS"
-                        >Bien decomisado cambiado a numerario por
-                        siniestro</ng-option
-                      >
-                      <ng-option value="CNE1"
-                        >Bien asegurado cambiado a numerario por
-                        enajenación</ng-option
-                      >
-                      <ng-option value="CNS"
-                        >Bien asegurado cambiado a numerario por
-                        siniestro</ng-option
-                      >
-                      <ng-option value="BBB"
-                        >Bien generado por pago parcial por siniestro</ng-option
-                      >
-                      <ng-option value="CNR"
-                        >Bien cambiado a numerario por
-                        responsabilidad</ng-option
-                      >
-                      <ng-option value="CNE"
-                        >Bien cambiado a numerario por enajenaci&oacute;n de
-                        valores y divisas</ng-option
-                      >
-                      <ng-option value="1">Activo</ng-option>
-                    </ng-select>
-                  </form-field>-->
                   <div class="form-group">
-                    <!-- <ng-custom-select placeholder="Selector de tipo de conversion" class="form-control"
-                      paramSearch="filter.description" prefixSearch="$ilike" formControlName="exchangeType"
-                      path="spent/api/v1/expense-concept">
-                      <ng-template let-item>
-                        {{ item.description }}
-                      </ng-template>
-                    </ng-custom-select> -->
                     <form-field
                       class="form-group"
                       label="Tipo de conversión"
@@ -447,9 +330,17 @@
                 </div>
                 <div class="col-sm-6 col-md-4 d-flex justify-content-center">
                   <div>
-                    <button class="btn btn-primary active" (click)="exchange()">
-                      Cambiar a numerario
-                    </button>
+                    <div class="col-12">
+                      <input formControlName="" type="checkbox" />
+                      Genera Mov. Bancarios
+                    </div>
+                    <div class="col-12">
+                      <button
+                        class="btn btn-primary active"
+                        (click)="saveInServer()">
+                        Cambiar a numerario
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -504,39 +395,3 @@
     </div>
   </div>
 </app-card>
-
-<!-- <ng-template #dialogExpense>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">{{ dialogData.title }}</h4>
-    <button
-      type="button"
-      class="close pull-right"
-      aria-label="Close"
-      (click)="dialogExpenseRef?.hide()">
-      <span aria-hidden="true">×</span>
-    </button>
-  </div>
-  <div class="modal-body form-material" [formGroup]="formExpense">
-    <form-field [control]="formExpense.get('register')" label="Registro">
-      <input type="text" formControlName="register" class="form-control" />
-    </form-field>
-    <form-field [control]="formExpense.get('description')" label="Desripcion">
-      <ng-select class="form-control" formControlName="description">
-        <ng-option [value]="type.id" *ngFor="let type of expenseTypeTest">{{
-          type.description
-        }}</ng-option>
-      </ng-select>
-    </form-field>
-    <form-field [control]="formExpense.get('import')" label="Importe">
-      <input type="text" formControlName="import" class="form-control" />
-    </form-field>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-default"
-      (click)="dialogExpenseRef?.hide()">
-      Cerrar
-    </button>
-  </div>
-</ng-template> -->
