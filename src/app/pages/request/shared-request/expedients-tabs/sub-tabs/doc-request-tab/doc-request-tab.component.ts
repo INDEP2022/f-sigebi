@@ -18,9 +18,11 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -55,11 +57,12 @@ export class DocRequestTabComponent
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
-  selectRegDelegation = new DefaultSelect<any>();
+  selectRegDelegation = new DefaultSelect<IDelegation>();
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
@@ -70,7 +73,8 @@ export class DocRequestTabComponent
     private modalRef: BsModalRef,
     private activatedRoute: ActivatedRoute,
     private wContentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private regDelService: RegionalDelegationService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -81,6 +85,7 @@ export class DocRequestTabComponent
   ngOnInit(): void {
     this.prepareForm();
     this.setTypeColumn();
+    this.getRegDelegation(new ListParams());
     this.getDocType(new ListParams());
     this.typeDoc = this.type ? this.type : this.typeDoc;
     if (this.typeDoc === 'doc-request') {
@@ -120,10 +125,7 @@ export class DocRequestTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       docType: [null],
-      docTitle: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      docTitle: [null],
       typeTrasf: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -140,20 +142,19 @@ export class DocRequestTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      noOfice: [null],
+      noOfice: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       senderCharge: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       comment: [
         null,
-        [Validators.pattern(STRING_PATTERN)],
-        Validators.maxLength(30),
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      noRequest: [
-        { value: this.idRequest, disabled: true },
-        [Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRequest: [{ value: this.idRequest, disabled: true }],
       responsible: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -422,7 +423,14 @@ export class DocRequestTabComponent
     this.modalService.show(SeeInformationComponent, config);
   }
 
-  getRegDelegation(event: any) {}
+  getRegDelegation(event: any) {
+    this.regDelService.getAll(this.paramsRegDel.getValue()).subscribe({
+      next: data => {
+        this.selectRegDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {},
+    });
+  }
 
   getState(event: any) {}
 

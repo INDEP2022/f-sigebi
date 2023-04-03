@@ -176,7 +176,7 @@ export class RegistrationOfRequestsComponent
       ],
       priorityDate: [null],
       originInfo: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      receptionDate: [{ value: null, disabled: true }],
+      receptionDate: [null],
       paperDate: [null, [Validators.required]],
       typeRecord: [
         null,
@@ -260,6 +260,8 @@ export class RegistrationOfRequestsComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
     });
+    this.registRequestForm.get('receptionDate').disable();
+    this.registRequestForm.updateValueAndValidity();
   }
 
   getRequest(id: any) {

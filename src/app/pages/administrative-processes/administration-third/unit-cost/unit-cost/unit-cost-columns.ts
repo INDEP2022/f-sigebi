@@ -8,6 +8,7 @@ import { IStrategyVariableCost } from 'src/app/core/models/ms-strategy-variable-
 export const COSTKEY_COLUMNS = {
   processNumber: {
     title: 'N°',
+    // width: '5%',
     sort: false,
   },
   strategyProcess: {
@@ -161,10 +162,6 @@ export const VALIDITYCOST_COLUMNS = {
   },
   porceInflation: {
     title: '% Indice inflación',
-    sort: false,
-  },
-  amount: {
-    title: 'Importe',
     sort: false,
   },
   validity: {

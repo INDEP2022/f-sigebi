@@ -17,6 +17,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IAddress } from 'src/app/core/models/administrative-processes/siab-sami-interaction/address.model';
 import {
   IDomicilies,
   IGood,
@@ -68,14 +69,13 @@ export class DetailAssetsTabComponentComponent
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number | string = null;
-
+  relevantTypeName: string;
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
-
   goodTypeName: string = '';
   nameTypeRelevant: string = '';
   duplicity: boolean = false;
@@ -151,24 +151,34 @@ export class DetailAssetsTabComponentComponent
     private fb: FormBuilder,
     private modalServise: BsModalService,
     private goodService: GoodService,
-    private goodTypeService: GoodTypeService
+    private goodTypeService: GoodTypeService,
+    private relevantTypeService: TypeRelevantService
   ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.detailAssets.getRawValue());
+    const address: IAddress = this.detailAssets.controls['addressId'].value;
     if (this.process == 'classify-assets') {
-      this.setDataGood();
+      this.goodData = this.detailAssets.value;
+      this.relevantTypeService
+        .getById(this.goodData.fractionId?.relevantTypeId)
+        .subscribe({
+          next: data => {
+            this.relevantTypeName = data.description;
+          },
+          error: error => {},
+        });
+
       if (this.detailAssets.controls['subBrand'].value) {
         //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
     }
+
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -177,11 +187,11 @@ export class DetailAssetsTabComponentComponent
     if (
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
-      this.typeDoc === 'approval-process'
+      this.typeDoc === 'approval-process' ||
+      this.typeDoc === 'classify-assets'
     ) {
-      if (this.detailAssets.controls['addressId'].value) {
-        this.addressId = this.detailAssets.controls['addressId'].value;
-        this.getGoodDomicilie(this.addressId);
+      if (address?.id) {
+        this.getGoodDomicilie(address?.id);
       }
       //verifica si la vista es verificacion de cumplimiento
       if (this.typeDoc === 'verify-compliance') {
@@ -193,12 +203,11 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
     }
-    /* //verifica si la vista es verificacion de cumplimiento o bien
+    //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
         this.addressId = this.detailAssets.controls['addressId'].value;
@@ -215,11 +224,10 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        console.log(this.detailAssets.controls['subBrand'].value);
         const subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(new ListParams(), subBrand);
       }
-    } */
+    }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
     if (this.detailAssets.controls['goodTypeId'].value != null) {
@@ -227,24 +235,6 @@ export class DetailAssetsTabComponentComponent
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
     }
-  }
-
-  setDataGood() {
-    const idGood = this.assetsId;
-    this.goodService.getById(idGood).subscribe({
-      next: data => {
-        this.goodType(data.goodTypeId);
-        this.typeRelevant(data.goodTypeId);
-        if (data.stateConservation == 1 || data.physicalStatus == 1)
-          data.stateConservation = 'BUENO';
-        data.physicalStatus = 'BUENO';
-        if (data.stateConservation == 2 || data.physicalStatus == 2)
-          data.stateConservation = 'MALO';
-        data.physicalStatus = 'MALO';
-        this.goodData = data;
-      },
-      error: error => {},
-    });
   }
 
   goodType(goodTypeId: number) {
@@ -623,7 +613,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
       next: data => {
-        console.log(data.data);
         this.selectLocality = new DefaultSelect(data.data, data.count);
       },
       error: error => {},
@@ -1180,7 +1169,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   setGoodDomicilieSelected(domicilie: any) {
-    console.log(domicilie);
     domicilie.localityKey = Number(domicilie.localityKey);
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.stateOfRepId = domicilie.statusKey;
@@ -1196,20 +1184,22 @@ export class DetailAssetsTabComponentComponent
     );
 
     this.domicileForm.patchValue(domicilie);
+
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-    /* setTimeout(() => {
+
+    /*setTimeout(() => {
       this.domicileForm.patchValue(domicilie);
       console.log(this.domicileForm.getRawValue());
-    }, 3000); */
+    }, 3000);
 
-    /* this.domicileForm.controls['municipalityKey'].setValue(
+    this.domicileForm.controls['municipalityKey'].setValue(
+      domicilie.municipalityKey
+    );
+    this.stateOfRepId = domicilie.statusKey;
+    this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
+
+    this.domicileForm.controls['municipalityKey'].setValue(
       domicilie.municipalityKey
     );*/
-    //this.stateOfRepId = domicilie.statusKey;
-    //this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
-
-    /* this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    ); */
   }
 }

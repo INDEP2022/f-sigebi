@@ -1,41 +1,36 @@
 export const DOCUMENTS_SENT_COLUMNS = {
-  exp: {
+  id: {
     title: 'Exp.',
     type: 'string',
     sort: false,
   },
-  area: {
+  areaSends: {
     title: 'Area Envía',
     type: 'string',
     sort: false,
   },
-  userScan: {
+  userRequestsScan: {
     title: 'Usuario Solicita Escaneo',
     type: 'string',
     sort: false,
   },
-  cveDocumentType: {
+  keyTypeDocument: {
     title: 'Tipo de documento',
     type: 'string',
     sort: false,
   },
   diDocument: {
-    title: '',
+    title: 'Documento',
     type: 'string',
     sort: false,
   },
-  description: {
+  descriptionDocument: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  natural: {
+  natureDocument: {
     title: 'Natural',
-    type: 'string',
-    sort: false,
-  },
-  check: {
-    title: 'Check',
     type: 'string',
     sort: false,
   },
