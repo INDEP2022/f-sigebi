@@ -223,12 +223,14 @@
             </tab>
             <tab
               heading="{{ tab4 }}"
-              *ngIf="requestRegistration || approvalProcess">
+              *ngIf="requestRegistration && !isExpedient">
               <app-registration-request-form
                 *ngIf="requestRegistration"
                 [requestForm]="
                   registRequestForm
                 "></app-registration-request-form>
+            </tab>
+            <tab heading="{{ tab4 }}" *ngIf="approvalProcess">
               <!-- Aprovacion de de solicitudes -->
               <app-classification-assets-tab
                 *ngIf="approvalProcess"
