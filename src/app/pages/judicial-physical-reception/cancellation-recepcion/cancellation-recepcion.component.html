@@ -17,8 +17,13 @@
             </div>
             <div class="col-md-3">
               <button
+                [disabled]="
+                  form.get('expediente').value == null ||
+                  form.get('expediente').value < 0
+                "
                 id="expedient-number"
-                class="btn btn-primary btn-sm disabled active">
+                class="btn btn-primary btn-sm active"
+                (click)="getGoodsByExpedient()">
                 Buscar
               </button>
             </div>
@@ -61,11 +66,19 @@
               </form-field>
             </div>
             <div class="col">
-              <form-field [control]="form.get('autoridad')" label="Autoridad">
-                <input
+              <form-field [control]="form.get('autoridad')">
+                <select name="" id=""></select>
+                <ngx-select
+                  id="transfer"
+                  control="autoridad"
+                  label="Autoridad"
+                  bindLabel="transferentkey"
+                  [data]="transferSelect"
+                  [form]="form"></ngx-select>
+                <!-- <input
                   type="text"
                   class="form-control"
-                  formControlName="autoridad" />
+                  formControlName="autoridad" /> -->
               </form-field>
             </div>
             <div class="col">
@@ -118,7 +131,7 @@
                   formControlName="mes" />
               </form-field>
             </div>
-            <div class="col">
+            <!--  <div class="col">
               <form-field [control]="form.get('status')" label="Status">
                 <input
                   type="number"
@@ -133,7 +146,7 @@
                   class="form-control"
                   formControlName="nombre" />
               </form-field>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

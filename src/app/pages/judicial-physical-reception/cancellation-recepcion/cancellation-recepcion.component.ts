@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -12,7 +18,7 @@ import { DefaultSelect } from '../../../shared/components/select/default-select'
   templateUrl: './cancellation-recepcion.component.html',
   styleUrls: ['cancellation-recepcion.component.scss'],
 })
-export class CancellationRecepcionComponent implements OnInit {
+export class CancellationRecepcionComponent extends BasePage implements OnInit {
   itemsSelect = new DefaultSelect();
   settings1 = {
     ...TABLE_SETTINGS,
@@ -106,21 +112,22 @@ export class CancellationRecepcionComponent implements OnInit {
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
   form: FormGroup;
-  records: string[] = ['C', 'NA', 'D', 'NS'];
-  constructor(private fb: FormBuilder) {}
+  records: string[] = ['C', 'A', 'S'];
+  dataGoods = new LocalDataSource();
+  transferSelect = new DefaultSelect();
+
+  constructor(
+    private fb: FormBuilder,
+    private serviceGood: GoodService,
+    private serviceExpedient: ExpedientService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private render: Renderer2
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
-  }
-
-  //VALIDATE PROCEEDING
-  changeAct() {
-    console.log(this.form.get('acta').value);
-    if (this.form.get('acta').value === 'C') {
-      this.form.get('ident').setValue('CAN');
-    } else {
-      this.form.get('ident').setValue('SUS');
-    }
   }
 
   prepareForm() {
@@ -173,6 +180,67 @@ export class CancellationRecepcionComponent implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+  }
+
+  //VALIDATE PROCEEDING
+  changeAct() {
+    console.log(this.form.get('acta').value);
+    if (this.form.get('acta').value === 'C') {
+      this.form.get('ident').setValue('CAN');
+    } else {
+      this.form.get('ident').setValue('SUS');
+    }
+  }
+
+  disabledElement(elmt: string) {
+    const element = document.getElementById(elmt);
+    this.render.addClass(element, 'disabled');
+  }
+
+  enableElement(elmt: string) {
+    const element = document.getElementById(elmt);
+    this.render.removeClass(element, 'disabled');
+  }
+
+  //Catalogs and data
+  getGoodsByExpedient() {
+    this.serviceGood
+      .getByExpedient(this.form.get('expediente').value, {
+        text: '?expedient=',
+      })
+      .subscribe({
+        next: (res: any) => {
+          const dataTry = res.data.filter((item: any) => {
+            item.status != 'ADM';
+          });
+          if (res.data.length > 0) {
+            this.form.get('ident').setValue('ADM');
+            this.dataGoods.load(res.data);
+            this.serviceExpedient
+              .getById(this.form.get('expediente').value)
+              .subscribe(res => {
+                let model: TransferProceeding = {
+                  numFile: res.transferNumber as number,
+                  typeProceedings: res.expedientType,
+                };
+
+                this.serviceProcVal.getTransfer(model).subscribe(res => {
+                  this.transferSelect = new DefaultSelect(res.data, res.count);
+                });
+                this.enableElement('acta');
+              });
+          } else {
+            this.alert(
+              'warning',
+              'Sin bienes válidos',
+              'El número de expediente registrado no tiene bienes válidos'
+            );
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+      });
   }
 }
 
