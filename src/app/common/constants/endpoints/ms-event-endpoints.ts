@@ -8,4 +8,5 @@ export enum EventEndpoints {
   ComerLotEvent = 'comer-datamart-remevents',
   FilterEvent = '?search=&filter.event.id',
   FilterGood = '?search=&filter.goodNumber',
+  FilterLot = '?search=&filter.lot',
 }

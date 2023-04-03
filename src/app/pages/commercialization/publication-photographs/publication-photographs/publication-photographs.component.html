@@ -7,29 +7,34 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
-          <h5 class="font-size-14 d-inline">Seleccione Cve Proceso</h5>
-          <ngx-select
-            [form]="form"
-            [data]="cveItems"
-            value="id"
-            bindLabel="observations"
-            (fetchItems)="getCve($event)"
-            (change)="selectCve($event)"
-            control="id">
-          </ngx-select>
+        <div class="row justify-content-center">
+          <div class="ch-content">
+            <h5 class="title">Evento</h5>
+          </div>
+          <div class="col-12 col-sm-12 col-md-5">
+            <search-bar-simple
+              (eventEmit)="loadEvent($event)"
+              [label]="''"
+              [placeholder]="'N&uacute;mero de Evento'">
+            </search-bar-simple>
+          </div>
         </div>
-        <div class="col-md-3" *ngIf="selectedCve != null">
+        <!-- <h5 class="font-size-14 d-inline">Seleccione Cve Proceso</h5>
+          <ngx-select [form]="form" [data]="cveItems" value="id" bindLabel="observations" (fetchItems)="getCve($event)"
+            (change)="selectCve($event)" control="id">
+          </ngx-select> -->
+
+        <div class="col-md-3">
           <h5 class="font-size-14 d-inline">ID de Proceso</h5>
           <p class="mt-2 font-size-28 text-muted">{{ selectedCve.id }}</p>
         </div>
-        <div class="col-md-3" *ngIf="selectedCve != null">
+        <div class="col-md-3">
           <h5 class="font-size-14 d-inline">Tipo</h5>
           <p class="mt-2 font-size-28 text-muted">
             {{ selectedCve.tpeventoId }}
           </p>
         </div>
-        <div class="col-md-3" *ngIf="selectedCve != null">
+        <div class="col-md-3">
           <h5 class="font-size-14 d-inline">Estatus</h5>
           <p class="mt-2 font-size-28 text-muted">
             {{ selectedCve.statusvtaId }}
@@ -40,7 +45,7 @@
   </div>
 </app-card>
 
-<app-card [header]="true" *ngIf="selectedCve != null">
+<app-card [header]="true" *ngIf="selectedCve">
   <div header>
     <div class="ch-content">
       <h5 class="title">Lotes</h5>
@@ -55,14 +60,12 @@
           class="w-50" />
       </div>
     </div>
-    <div class="col-md-10">
+    <!-- <div class="col-md-10">
       <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings1"
-          [source]="data1"
+        <ng2-smart-table [settings]="settings1" [source]="data1"
           (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
       </div>
-    </div>
+    </div> -->
   </div>
 </app-card>
 
@@ -72,15 +75,12 @@
       <h5 class="title">Bienes del lote {{ rowAllotment }}</h5>
     </div>
   </div>
-  <div body>
+  <!-- <div body>
     <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings2"
-        [source]="data2"
-        (userRowSelect)="selectRowGood()">
+      <ng2-smart-table [settings]="settings2" [source]="data2" (userRowSelect)="selectRowGood()">
       </ng2-smart-table>
     </div>
-  </div>
+  </div> -->
 </app-card>
 
 <app-card [header]="true" *ngIf="rowSelectedGood">
@@ -124,7 +124,7 @@
                 formControlName="favorite"
                 class="form-control" />
             </form-check>
-            <div class="carousel-caption">
+            <div class="carousel-csaption">
               <h6>Fotograf&iacute;a {{ index }}</h6>
             </div>
           </slide>
