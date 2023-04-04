@@ -46,7 +46,6 @@ export interface IProceedingInfo {
 export function deliveryReceptionToInfo(
   item: IProceedingDeliveryReception
 ): IProceedingInfo {
-  // debugger;
   return {
     id: +item.id,
     numFile: item.numFile,

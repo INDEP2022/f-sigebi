@@ -15,6 +15,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -110,7 +111,8 @@ export class RegistrationOfRequestsComponent
     private registrationHelper: RegistrationHelper,
     private taskService: TaskService,
     private authService: AuthService,
-    private orderService: OrderServiceService
+    private orderService: OrderServiceService,
+    private wcontentService: WContentService
   ) {
     super();
   }
@@ -817,6 +819,8 @@ export class RegistrationOfRequestsComponent
       });
     });
   }
+
+  getDictamen() {}
 
   msgSaveModal(
     btnTitle: string,
