@@ -11,7 +11,6 @@ import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-se
 //Provisional Data
 import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
-import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -342,14 +341,31 @@ export class RequestFormComponent extends BasePage implements OnInit {
       if (result.isConfirmed) {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
-
-        /* crea la solicitud */
         const requestResult: any = await this.createRequest(form);
         if (requestResult) {
-          /* genera una tarea */
+          const form = requestResult;
+          const from = 'REGISTRO_SOLICITUD';
+          const to = 'REGISTRO_SOLICITUD';
+          const taskResult = await this.createTaskOrderService(form, from, to);
+          if (taskResult === true) {
+            this.loadingTurn = false;
+            this.msgModal(
+              'Se turnar la solicitud con el Folio Nº '
+                .concat(`<strong>${requestResult.id}</strong>`)
+                .concat(` al usuario ${this.userName}`),
+              'Solicitud Creada',
+              'success'
+            );
+          }
+        }
+
+        this.loadingTurn = false;
+        /* const requestResult: any = await this.createRequest(form);
+        if (requestResult) {
+
           const taskResult = await this.createTask(requestResult);
           if (taskResult === true) {
-            /* actualiza el estatus del bien */
+
             const orderServ = await this.createOrderService(
               requestResult,
               'REGISTRO_SOLICITUD',
@@ -371,7 +387,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           this.loadingTurn = false;
           this.msgModal('error', 'Error', 'Error al guardar la solicitud');
           console.error('error');
-        }
+        } */
       }
     });
   }
@@ -379,6 +395,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   createRequest(form: any) {
     return new Promise((resolve, reject) => {
       form.requestStatus = 'A_TURNAR';
+      form.receiptRoute = 'FISICA';
+      form.affair = 37;
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
 
@@ -401,7 +419,49 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTask(request: any) {
+  createTaskOrderService(request: any, from: string, to: string) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      body['type'] = 'SOLICITUD TRANSFERENCIA';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.nickName;
+      task['assigneesDisplayname'] = this.userName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] =
+        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = 'pages/request/transfer-request/registration-request';
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.loadingTurn = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  /* createTask(request: any) {
     return new Promise((resolve, reject) => {
       let body: any = {};
 
@@ -413,8 +473,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       body['taskNumber'] = Number(request.id);
       body['title'] =
         'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      /*       body['isPublic'] = 'S';
-      body['istestTask'] = 'S'; */
       body['programmingId'] = 0;
       body['requestId'] = request.id;
       body['expedientId'] = 0;
@@ -430,9 +488,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         },
       });
     });
-  }
+  }*/
 
-  createOrderService(request: any, from: string, to: string) {
+  /*createOrderService(request: any, from: string, to: string) {
     return new Promise((resolve, reject) => {
       let orderservice: IOrderService = {};
       orderservice.P_ESTATUS_ACTUAL = from;
@@ -459,7 +517,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         },
       });
     });
-  }
+  }*/
 
   getTaskByTaskNumer(taskNumber: number) {
     return new Promise((resolve, reject) => {

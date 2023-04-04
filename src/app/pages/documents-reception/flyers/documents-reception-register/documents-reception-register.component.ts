@@ -493,7 +493,29 @@ export class DocumentsReceptionRegisterComponent
           .subscribe({
             next: data => {
               console.log(data);
-              this.useProcedureData(data);
+              const procedure = data;
+              if (data.flierNumber == null) {
+                this.useProcedureData(data);
+              } else {
+                const param = new FilterParams();
+                param.addFilter('wheeelNumber', data.flierNumber);
+                this.notificationService
+                  .getAllFilter(param.getParams())
+                  .subscribe({
+                    next: data => {
+                      this.fillForm(data.data[0]);
+                    },
+                    error: err => {
+                      console.log(err);
+                      this.alert(
+                        'warning',
+                        'Volante no encontrado',
+                        'No se encontró la información del volante registrado en el trámite'
+                      );
+                      this.useProcedureData(procedure);
+                    },
+                  });
+              }
             },
             error: () => {},
           });
@@ -1313,6 +1335,8 @@ export class DocumentsReceptionRegisterComponent
     }
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
+      filterParams.addFilter('idStation', notif.stationNumber);
+      filterParams.addFilter('idTransferer', notif.endTransferNumber);
       this.hideError();
       this.docRegisterService
         .getAuthoritiesFilter(filterParams.getParams())
@@ -1670,47 +1694,24 @@ export class DocumentsReceptionRegisterComponent
   }
 
   viewDocuments() {
-    this.getDocumentsByFlyer(this.wheelNumber.value);
-    // const params = new FilterParams();
-    // params.addFilter('flyerNumber', this.wheelNumber.value);
+    // this.getDocumentsByFlyer(this.wheelNumber.value);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.wheelNumber.value);
     // params.addFilter('scanStatus', 'ESCANEADO');
-    // this.documentsService.getAllFilter(params.getParams()).subscribe({
-    //   next: data => {
-    //     console.log(data);
-    //     const documents = data.data;
-    //     if (data.count == 1) {
-    //       if (documents[0].associateUniversalFolio) {
-    //         this.onLoadToast(
-    //           'info',
-    //           'Enlace no disponible',
-    //           'El enlace al documento no se encuentra disponible'
-    //         );
-    //       } else {
-    //         this.onLoadToast(
-    //           'info',
-    //           'No disponible',
-    //           'No tiene documentos digitalizados.'
-    //         );
-    //       }
-    //     } else if (data.count > 1) {
-    //       this.openModalDocuments();
-    //     } else {
-    //       this.onLoadToast(
-    //         'info',
-    //         'No disponible',
-    //         'No tiene documentos digitalizados.'
-    //       );
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.onLoadToast(
-    //       'info',
-    //       'No disponible',
-    //       'No se encontraron documentos asociados.'
-    //     );
-    //   },
-    // });
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDocumentsByFlyer(this.wheelNumber.value);
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'El volante no tiene documentos relacionados.'
+        );
+      },
+    });
   }
 
   openModalDocuments() {
@@ -2295,6 +2296,8 @@ export class DocumentsReceptionRegisterComponent
     if (key.authorityNum != null) {
       const param = new FilterParams();
       param.addFilter('idAuthority', key.authorityNum);
+      param.addFilter('idStation', key.stationNum);
+      param.addFilter('idTransferer', key.transfereeNum);
       this.hideError();
       this.docRegisterService
         .getAuthoritiesFilter(param.getParams())

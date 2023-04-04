@@ -44,7 +44,6 @@ export class UnitCostDetFormComponent extends BasePage implements OnInit {
       costUnitarian: [null, []],
       finalDate: [null, []],
       porceInflation: [null, []],
-      recordNumber: [null, []],
       validity: [null, []],
     });
     if (this.unitCostDet != null) {

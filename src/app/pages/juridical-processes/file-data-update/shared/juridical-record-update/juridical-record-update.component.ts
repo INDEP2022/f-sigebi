@@ -85,6 +85,10 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
         font-weight: 600 !important;
         color: #74788d !important;
       }
+
+      .form-material {
+        margin-bottom: 0.7rem !important;
+      }
     `,
   ],
 })
@@ -661,6 +665,7 @@ export class JuridicalRecordUpdateComponent
     if (this.formControls.wheelNumber.value != null) {
       this.canViewDocuments = true;
     }
+    console.log(this.canViewDocuments);
     // TODO: Deshabilitar dictamen si no es nulo y no cumple condiciones SAT
     // if (this.formControls.dictumKey != null) {
     // } else {
@@ -930,7 +935,7 @@ export class JuridicalRecordUpdateComponent
       doc: catalog.doc,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management'
+      '/pages/documents-reception/flyers-registration/related-document-management/1'
     );
   }
 
@@ -1007,7 +1012,9 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
     };
-    this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
+    this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
+      queryParams: { origin: this.layout },
+    });
   }
 
   sendToRelatedDocumentsManagement() {
@@ -1029,7 +1036,7 @@ export class JuridicalRecordUpdateComponent
       pNoTramite: procedure,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management'
+      '/pages/documents-reception/flyers-registration/related-document-management/2'
     );
   }
 

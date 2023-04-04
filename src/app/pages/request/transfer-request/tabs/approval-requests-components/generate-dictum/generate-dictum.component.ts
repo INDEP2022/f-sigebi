@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -17,7 +17,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   idTypeDoc: any;
   response: IRequest;
 
-  title: string = 'Generar Dictamen';
+  title: string = 'Generar reporte dictamen procedencia';
   edit: boolean = false;
 
   pdfurl: string = '';
@@ -43,7 +43,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   initForm(): void {
     this.dictumForm = this.fb.group({
       id: [null],
-      idRecord: [null],
+      recordId: [null],
       applicationDate: [null],
       receptionDate: [null],
       nameOfOwner: [null],
@@ -51,12 +51,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       phoneOfOwner: [null],
       emailOfOwner: [null],
       transferenceId: [null],
-      transferent: [null],
       stationId: [null],
-      emisora: [null],
       authorityId: [null],
       regionalDelegationId: [null],
-      regionalDelegation: [null],
       sender: [null],
       observations: [null],
       targetUser: [null],
@@ -82,7 +79,6 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       affair: [null],
       satDeterminant: [null],
       satDirectory: [null],
-      authority: [null],
       satZoneCoordinator: [null],
       userCreated: [null],
       creationDate: [null],
@@ -105,15 +101,16 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       stateRequestId: [null],
       searchSiab: [null],
       priorityDate: [null],
-      ofRejectionsNumber: [null],
+      rejectionNumber: [null],
       rulingDocumentId: [null],
-      nameRecipientRuling: [null],
-      postRecipientRuling: [null],
-      paragraphOneRuling: [null],
-      paragraphTwoRuling: [null],
+      reportSheet: [null],
+      nameRecipientRuling: [null, [Validators.maxLength(100)]],
+      postRecipientRuling: [null, [Validators.maxLength(100)]],
+      paragraphOneRuling: [null, [Validators.maxLength(4000)]],
+      paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
-      ccpRuling: [null],
+      ccpRuling: [null, [Validators.maxLength(200)]],
       rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],
