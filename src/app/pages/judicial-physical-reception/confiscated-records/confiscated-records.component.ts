@@ -10,6 +10,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { GoodGetData } from 'src/app/core/models/ms-good/good';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -323,6 +324,26 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           if (res.data.length > 0) {
             this.form.get('ident').setValue('ADM');
             this.dataGoods.load(res.data);
+            console.log(res.data);
+            for (let i = 0; i < res.data.length; i++) {
+              const model: GoodGetData = {
+                goodNumber: res.data[i]['id'],
+                subDelegationNumber: res.data[i]['subDelegationNumber'],
+                clasifGoodNumber: res.data[i]['goodClassNumber'],
+                expedientNumber: parseInt(this.form.get('expediente').value),
+                delegationNumber: res.data[i]['delegationNumber'],
+                dateElaboration: '2002-06-28T00:00:00.000Z',
+                identificator: res.data[i]['identifier'],
+                processExt: res.data[i]['extDomProcess'],
+                statusGood: res.data[i]['status'],
+                screenKey: 'FACTREFACTAENTREC',
+              };
+
+              this.serviceGood
+                .getData(model)
+                .subscribe(res => console.log(res));
+            }
+
             this.serviceExpedient
               .getById(this.form.get('expediente').value)
               .subscribe(res => {

@@ -1,10 +1,17 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -115,19 +122,28 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   records: string[] = ['C', 'A', 'S'];
   dataGoods = new LocalDataSource();
   transferSelect = new DefaultSelect();
+  dataTransferSave: any[];
+  countTransferSave: any;
+  adminSelect = new DefaultSelect();
+  recibeSelect = new DefaultSelect();
+  initialBool = true;
 
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
     private serviceExpedient: ExpedientService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
-    private render: Renderer2
+    private render: Renderer2,
+    private serviceRNomencla: ParametersService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.checkChange();
+    this.form.get('year').setValue(format(new Date(), 'yyyy'));
+    this.form.get('mes').setValue(format(new Date(), 'MM'));
   }
 
   prepareForm() {
@@ -135,13 +151,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       expediente: [null, [Validators.required]],
       averPrev: [null, [Validators.required]],
       acta: [null, [Validators.required]],
-      autoridad: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      autoridad: [null, [Validators.required]],
       ident: [null, [Validators.required]],
-      recibe: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      recibe: [null, [Validators.required]],
+      admin: [null, [Validators.required]],
       folio: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
@@ -203,6 +216,35 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   //Catalogs and data
+  fetchTransfer(params: ListParams) {
+    this.transferSelect = new DefaultSelect(
+      this.dataTransferSave,
+      this.countTransferSave
+    );
+  }
+
+  getAdmin(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', params.text, SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+      res => {
+        this.adminSelect = new DefaultSelect(res.data, res.count);
+      },
+      err => console.log(err)
+    );
+  }
+
+  getRecibe(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', params.text, SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+      res => {
+        this.recibeSelect = new DefaultSelect(res.data, res.count);
+      },
+      err => console.log(err)
+    );
+  }
+
   getGoodsByExpedient() {
     this.serviceGood
       .getByExpedient(this.form.get('expediente').value, {
@@ -214,7 +256,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             item.status != 'ADM';
           });
           if (res.data.length > 0) {
-            this.form.get('ident').setValue('ADM');
             this.dataGoods.load(res.data);
             this.serviceExpedient
               .getById(this.form.get('expediente').value)
@@ -225,9 +266,20 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 };
 
                 this.serviceProcVal.getTransfer(model).subscribe(res => {
-                  this.transferSelect = new DefaultSelect(res.data, res.count);
+                  const filteredArray = res.data.filter((element: any) => {
+                    return (
+                      element.transferentkey.includes('PGR') ||
+                      element.transferentkey.includes('PJF')
+                    );
+                  });
+                  this.transferSelect = new DefaultSelect(
+                    filteredArray,
+                    res.count
+                  );
+                  this.dataTransferSave = filteredArray;
+                  this.countTransferSave = res.count;
                 });
-                this.enableElement('acta');
+                this.initialBool = false;
               });
           } else {
             this.alert(
@@ -241,6 +293,72 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           console.error(err);
         },
       });
+  }
+
+  //Acta 2
+  zeroAdd(number: number, lengthS: number) {
+    if (number != null) {
+      const stringNum = number.toString();
+      let newString = '';
+      if (stringNum.length < lengthS) {
+        lengthS = lengthS - stringNum.length;
+        for (let i = 0; i < lengthS; i++) {
+          newString = newString + '0';
+        }
+        newString = newString + stringNum;
+        return newString;
+      } else {
+        return stringNum;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  checkChange() {
+    this.form.get('acta').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('autoridad').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('recibe').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('admin').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('folio').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('year').valueChanges.subscribe(res => this.fillActTwo());
+    this.form.get('mes').valueChanges.subscribe(res => this.fillActTwo());
+  }
+
+  fillActTwo() {
+    /*     console.log(this.form.get('admin').value.delegation); */
+    const nameAct =
+      (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
+      '/' +
+      (this.form.get('autoridad').value != null
+        ? this.form.get('autoridad').value.transferentkey
+        : '') +
+      '/' +
+      (this.form.get('ident').value != null
+        ? this.form.get('ident').value
+        : '') +
+      '/' +
+      (this.form.get('recibe').value != null
+        ? this.form.get('recibe').value.delegation
+        : '') +
+      '/' +
+      (this.form.get('admin').value != null
+        ? this.form.get('admin').value.delegation
+        : '') +
+      '/' +
+      (this.form.get('folio').value != null
+        ? this.zeroAdd(this.form.get('folio').value, 5)
+        : '') +
+      '/' +
+      (this.form.get('year').value != null
+        ? this.form.get('year').value.toString().substr(2, 2)
+        : '') +
+      '/' +
+      (this.form.get('mes').value != null
+        ? this.zeroAdd(this.form.get('mes').value, 2)
+        : '');
+    this.form.get('acta2').setValue(nameAct);
   }
 }
 

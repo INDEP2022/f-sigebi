@@ -54,6 +54,7 @@
                   id="acta"
                   class="form-control"
                   formControlName="acta"
+                  [class]="initialBool ? 'disabled' : ''"
                   (change)="changeAct()">
                   <option *ngFor="let record of records" [value]="record">
                     {{ record }}
@@ -65,68 +66,79 @@
                   [data]="itemsSelect"></ngx-select> -->
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-2">
               <form-field [control]="form.get('autoridad')">
-                <select name="" id=""></select>
                 <ngx-select
+                  (fetchItems)="fetchTransfer($event)"
                   id="transfer"
+                  [class]="initialBool ? 'disabled' : ''"
                   control="autoridad"
                   label="Autoridad"
                   bindLabel="transferentkey"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
-                <!-- <input
-                  type="text"
-                  class="form-control"
-                  formControlName="autoridad" /> -->
               </form-field>
             </div>
             <div class="col">
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
+                  [class]="initialBool ? 'disabled' : ''"
                   class="form-control disabled"
                   formControlName="ident" />
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-2">
               <div class="col">
-                <form-field [control]="form.get('recibe')" label="Recibe">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="recibe" />
+                <form-field [control]="form.get('recibe')">
+                  <ngx-select
+                    (fetchItems)="getRecibe($event)"
+                    id="transfer"
+                    [class]="initialBool ? 'disabled' : ''"
+                    control="recibe"
+                    label="Recibe"
+                    bindLabel="delegation"
+                    [data]="recibeSelect"
+                    [form]="form"></ngx-select>
                 </form-field>
               </div>
             </div>
-            <div class="col">
-              <form-field [control]="form.get('admin')" label="Admin">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="admin" />
+            <div class="col-md-2">
+              <form-field [control]="form.get('admin')">
+                <ngx-select
+                  (fetchItems)="getAdmin($event)"
+                  id="transfer"
+                  [class]="initialBool ? 'disabled' : ''"
+                  control="admin"
+                  label="Admin"
+                  bindLabel="delegation"
+                  [data]="adminSelect"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-2">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="text"
+                  [class]="initialBool ? 'disabled' : ''"
                   class="form-control"
                   formControlName="folio" />
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
                   class="form-control"
+                  [readOnly]="true"
                   formControlName="year" />
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('mes')" label="Mes">
                 <input
                   type="number"
+                  [readOnly]="true"
                   class="form-control"
                   formControlName="mes" />
               </form-field>
@@ -161,6 +173,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  [readonly]="true"
                   formControlName="acta2" />
               </form-field>
             </div>
