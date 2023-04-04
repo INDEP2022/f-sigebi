@@ -1,7 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
-  goodNum: {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -16,7 +16,7 @@ export const COLUMNS = {
     type: 'number',
     sort: false,
   },
-  proceedings: {
+  associatedFileNumber: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
@@ -36,10 +36,13 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  warehouse: {
+  storeNumber: {
     title: 'Almacén',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (warehouse: any) => {
+      return warehouse ? warehouse.description : '';
+    },
   },
   select: {
     title: 'Sel.',
@@ -47,6 +50,8 @@ export const COLUMNS = {
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
+        console.log(data);
+
         data.row.to = data.toggle;
       });
     },
