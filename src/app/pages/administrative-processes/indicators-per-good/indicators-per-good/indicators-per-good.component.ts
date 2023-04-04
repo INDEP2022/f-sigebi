@@ -56,7 +56,7 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      good: [null, Validators.required],
+      noBien: [null, Validators.required],
       date: [null, Validators.required],
     });
   }

@@ -5,35 +5,56 @@
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row mt-4">
-        <div class="col-12 col-sm-12 col-md-5">
-          <search-bar-simple
-            (eventEmit)="loadIndicator($event)"
-            [label]="''"
-            [placeholder]="'N&uacute;mero de Bien'">
-          </search-bar-simple>
+      <div class="row">
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-12 col-md-5">
+            <search-bar-simple
+              (eventEmit)="loadIndicator($event)"
+              [label]="''"
+              [placeholder]="'N&uacute;mero de Bien'">
+            </search-bar-simple>
+          </div>
         </div>
-        <!-- <div class="col-md-6">
-          <form-field [control]="form.get('good')" label="No Bien">
-            <input type="text" class="form-control" formControlName="good" />
-          </form-field>
-        </div> -->
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field [control]="form.get('date')" label="Fecha de cierre">
-            <input formControlName="date" class="form-control" bsDatepicker />
-          </form-field>
-        </div>
-
-        <div class="row mt-4 float-right">
-          <div class="">
+        <br /><br /><br /><br />
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('date')" label="Fecha de cierre">
+              <input
+                class="form-control"
+                formControlName="date"
+                bsDatepicker
+                readonly />
+            </form-field>
             <button type="button" class="btn btn-primary btn-sm active mx-4">
               CALCULAR
             </button>
           </div>
+
+          <!-- <div class="col-12 col-sm-12 col-md-5">
+          <search-bar-simple (eventEmit)="loadIndicator($event)" [label]="''" [placeholder]="'N&uacute;mero de Bien'">
+          </search-bar-simple>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('noBien')" label="No Bien">
+            <input type="text" class="form-control" formControlName="noBien" />
+          </form-field>
+        </div> -->
         </div>
       </div>
+      <!--  <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('date')" label="Fecha de cierre">
+            <input formControlName="date" class="form-control" bsDatepicker readonly />
+          </form-field>
+
+        </div>
+
+         <div class="row mt-4 float-right">
+          <div class="">
+
+          </div>
+        </div> 
+      </div>-->
 
       <div class="row mt-4">
         <div class="col-md-6">
