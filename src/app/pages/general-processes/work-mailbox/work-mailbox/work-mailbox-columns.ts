@@ -269,7 +269,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     editable: false,
   },
   sheets: {
-    title: 'Hojas',
+    title: 'Documentos',
     sort: false,
     editable: false,
   },
