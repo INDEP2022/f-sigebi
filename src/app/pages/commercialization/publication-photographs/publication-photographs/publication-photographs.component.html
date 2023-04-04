@@ -15,7 +15,7 @@
             <search-bar-simple
               (eventEmit)="loadEvent($event)"
               [label]="''"
-              [placeholder]="'N&uacute;mero de Evento'">
+              [placeholder]="'N&uacute;mero de Evento Padre'">
             </search-bar-simple>
           </div>
         </div>
@@ -24,17 +24,17 @@
             (change)="selectCve($event)" control="id">
           </ngx-select> -->
 
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="selectedCve != null">
           <h5 class="font-size-14 d-inline">ID de Proceso</h5>
           <p class="mt-2 font-size-28 text-muted">{{ selectedCve.id }}</p>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="selectedCve != null">
           <h5 class="font-size-14 d-inline">Tipo</h5>
           <p class="mt-2 font-size-28 text-muted">
             {{ selectedCve.tpeventoId }}
           </p>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="selectedCve != null">
           <h5 class="font-size-14 d-inline">Estatus</h5>
           <p class="mt-2 font-size-28 text-muted">
             {{ selectedCve.statusvtaId }}

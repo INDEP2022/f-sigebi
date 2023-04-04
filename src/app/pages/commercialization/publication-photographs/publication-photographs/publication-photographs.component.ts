@@ -55,6 +55,7 @@ export class PublicationPhotographsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   batchList: any;
   selectedCve: any = null;
+  selectedLot: any[] = [];
   cveItems = new DefaultSelect();
   totalItems: number = 0;
   totalItemsL: number = 0;
@@ -142,8 +143,9 @@ export class PublicationPhotographsComponent
   loadEvent(search: any) {
     this.comerLotService.findEvent(search).subscribe({
       next(data) {
-        // this.eventList = data.data;
+        // this.eventList = data;
         console.log(data);
+        console.log(data.data.count);
       },
       error(err) {
         console.log(err);
@@ -158,23 +160,23 @@ export class PublicationPhotographsComponent
     // }
   }
 
-  findEvent(search: any) {
-    // this.form.value.price = this.form.controls['price'].value;
-    if (this.form.value.noBien !== null) {
-      this.comerLotService.findEvent(search).subscribe({
-        next: data => {
-          this.rowSelectedGood = true;
-          console.log(data.tpEvent);
-          this.selectedCve = data;
-          // this.form.controls['noBien'].setValue(noBien);
-          // this.form.controls['tpeventoId'].setValue(noBien);
-          // this.form.controls['statusvtaId'].setValue(noBien);
-          this.loading = false;
-        },
-        error: error => console.error,
-      });
-    }
-  }
+  // findLot(search: any) {
+  //   // this.form.value.price = this.form.controls['price'].value;
+  //   if (this.form.value.noBien !== null) {
+  //     this.comerLotService.findEvent(search).subscribe({
+  //       next: data => {
+  //         this.rowSelectedGood = true;
+  //         this.selectedCve = data;
+  //         console.log(this.selectedCve.id);
+  //         // this.form.controls['noBien'].setValue(noBien);
+  //         // this.form.controls['tpeventoId'].setValue(noBien);
+  //         // this.form.controls['statusvtaId'].setValue(noBien);
+  //         this.loading = false;
+  //       },
+  //       error: error => console.error,
+  //     });
+  //   }
+  // }
 
   // selectCve(event: any) {
   //   this.selectedCve = event;
