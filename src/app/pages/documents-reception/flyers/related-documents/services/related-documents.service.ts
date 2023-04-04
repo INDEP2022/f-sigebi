@@ -9,11 +9,11 @@ export class RelatedDocumentsService {
     private svFileUpdateCommunicationService: FileUpdateCommunicationService
   ) {}
 
-  getParams(opcion: number) {
-    if (opcion == 1) {
+  getParams(opcion: string): any {
+    if (opcion == '1') {
       return this.svFileUpdateCommunicationService
         .juridicalDocumentManagementParams;
-    } else if (opcion == 2) {
+    } else if (opcion == '2') {
       return this.svFileUpdateCommunicationService
         .juridicalRelatedDocumentManagementParams;
     } else {

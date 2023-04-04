@@ -7,4 +7,6 @@ export enum GoodEndpoints {
   GoodsTransAva = 'goods-trans-ava',
   DeleteByExpedient = `good/deleteByExpendient`,
   DiStatusGood = 'status-good/diStatusGood',
+  SearchGoodByFile = 'searchGoodByFile',
+  SearchGoodByClasif = 'searchGoodByClasif',
 }

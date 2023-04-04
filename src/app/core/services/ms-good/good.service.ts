@@ -9,6 +9,8 @@ import {
   IDescriptionByNoGoodResponse,
   IFromGoodsAndExpedientsBody,
   IFromGoodsAndExpedientsResponse,
+  IGoodSearchGoodByClasification,
+  IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
 import { IGood } from '../../models/ms-good/good';
@@ -167,6 +169,18 @@ export class GoodService extends HttpService {
   getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
     return this.post<IListResponse<IFromGoodsAndExpedientsResponse>>(
       GoodEndpoints.DiStatusGood,
+      body
+    );
+  }
+  getSearchGoodByFile(body: IGoodSearchGoodByFile) {
+    return this.post<IListResponse<IGood>>(
+      GoodEndpoints.SearchGoodByFile,
+      body
+    );
+  }
+  getSearchGoodByClasif(body: IGoodSearchGoodByClasification) {
+    return this.post<IListResponse<IGood>>(
+      GoodEndpoints.SearchGoodByClasif,
       body
     );
   }
