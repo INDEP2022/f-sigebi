@@ -4,7 +4,6 @@
       <div class="mr-auto p-2">
         <h5 class="title">{{ title }}</h5>
       </div>
-
       <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
         <button
           type="button"
@@ -23,7 +22,7 @@
           <i class="bx bxs-pencil"></i> Firmar Dictamen
         </button>
       </div>
-      <div class="p-2">
+      <div class="p-2" *ngIf="!approvalProcess">
         <button
           type="button"
           class="btn btn-secondary btn-sm active"
@@ -31,7 +30,20 @@
           <i class="bx bxs-right-arrow-square"></i> Finalizar
         </button>
       </div>
-      <div class="p-2">
+      <div
+        class="p-2"
+        *ngIf="
+          requestData?.typeOfTransfer === 'SAT_SAE' ||
+          requestData?.typeOfTransfer === 'PGR_SAE'
+        ">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active"
+          (click)="returnar()">
+          <i class="bx bxs-right-arrow-square"></i> Returnar
+        </button>
+      </div>
+      <div class="p-2" *ngIf="!approvalProcess">
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -40,7 +52,14 @@
           <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
         </button>
       </div>
-
+      <div class="p-2" *ngIf="approvalProcess">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="approveRequest()">
+          <i class="bx bxs-right-arrow-square"></i> Aprobar
+        </button>
+      </div>
       <div class="p-2" *ngIf="approvalProcess">
         <button type="button" class="btn btn-primary btn-sm active">
           <i class="bx bx-minus"></i> Rechazar

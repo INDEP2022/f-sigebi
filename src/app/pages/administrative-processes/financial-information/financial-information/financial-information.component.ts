@@ -50,17 +50,15 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     super();
     this.settings1 = {
       ...TABLE_SETTINGS,
-      ...this.settings,
       actions: false,
-      columns: FINANCIAL_INFORMATION_COLUMNS1,
+      columns: { ...FINANCIAL_INFORMATION_COLUMNS1 },
     };
 
     this.settings2 = {
       editable: true,
       ...TABLE_SETTINGS,
-      ...this.settings,
       actions: false,
-      columns: FINANCIAL_INFORMATION_COLUMNS2,
+      columns: { ...FINANCIAL_INFORMATION_COLUMNS2 },
     };
   }
 
@@ -81,26 +79,21 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.searchGoods(this.form.value.noBien);
   }
   searchGoods(idGood: number | string) {
-    this.goodService.getById(idGood).subscribe({
+    this.goodService.getByIdNew(idGood, idGood).subscribe({
       next: response => {
         this.good = response;
-        // this.date = this.datePipe.transform(
-        //   response.dateIn,
-        //   'dd-MM-yyyy h:mm a'
-        // );
         this.proficientOpinion = response.proficientOpinion;
         this.valuerOpinion = response.valuerOpinion;
         this.observations = response.observations;
         this.quantity = response.quantity;
         this.description = response.description;
-
+        console.log(this.description);
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
         this.data1.push(this.good);
+        // this.data1 = response;
         console.log(this.data1);
-        // this.loadFinancial(this.goodId);
-        // this.setGood(this.good);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
@@ -113,7 +106,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.finantialInformationService.findGood(idGood).subscribe({
       next: response => {
         this.finantialList = response.data;
-        console.log(this.finantialList);
+        // console.log(this.finantialList);
         this.finantialList.forEach(date => {
           this.date = this.datePipe.transform(
             date.idInfoDate,
