@@ -91,6 +91,31 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       response => {
         if (response !== null) {
           this.response = !this.response;
+          this.actForm.controls['act'].setValue(response.registerNumber);
+          this.actForm.controls['preliminaryAscertainment'].setValue(
+            response.preliminaryInquiry
+          );
+          this.actForm.controls['statusAct'].setValue(response.expedientStatus);
+          this.actForm.controls['deliveryName'].setValue(
+            response.nameInstitution
+          );
+          this.actForm.controls['receiverName'].setValue(
+            response.indicatedName
+          );
+          this.actForm.controls['observations'].setValue(response.insertMethod);
+          this.actForm.controls['causePenal'].setValue(response.criminalCase);
+          this.actForm.controls['destinationDelivDate'].setValue(
+            this.datePipe.transform(response.receptionDate, 'dd/MM/yyyy')
+          );
+          this.actForm.controls['captureDate'].setValue(
+            this.datePipe.transform(response.insertDate, 'dd/MM/yyyy')
+          );
+          this.actForm.controls['elabDate'].setValue(
+            this.datePipe.transform(
+              response.dictaminationReturnDate,
+              'dd/MM/yyyy'
+            )
+          );
         } else {
           this.alert('info', 'No se encontrarón registros', '');
         }
