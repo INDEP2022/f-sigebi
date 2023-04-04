@@ -360,34 +360,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
         }
 
         this.loadingTurn = false;
-        /* const requestResult: any = await this.createRequest(form);
-        if (requestResult) {
-
-          const taskResult = await this.createTask(requestResult);
-          if (taskResult === true) {
-
-            const orderServ = await this.createOrderService(
-              requestResult,
-              'REGISTRO_SOLICITUD',
-              'REGISTRO_SOLICITUD'
-            );
-
-            if (orderServ === true) {
-              this.loadingTurn = false;
-              this.msgModal(
-                'Se turnar la solicitud con el Folio Nº '
-                  .concat(`<strong>${requestResult.id}</strong>`)
-                  .concat(` al usuario ${this.userName}`),
-                'Solicitud Creada',
-                'success'
-              );
-            }
-          }
-        } else {
-          this.loadingTurn = false;
-          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
-          console.error('error');
-        } */
       }
     });
   }

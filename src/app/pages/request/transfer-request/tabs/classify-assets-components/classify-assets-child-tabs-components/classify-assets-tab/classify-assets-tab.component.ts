@@ -90,7 +90,6 @@ export class ClassifyAssetsTabComponent
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
       } */
-
     //bienes selecionados
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
@@ -817,8 +816,10 @@ export class ClassifyAssetsTabComponent
     );
   }
 
-  getRelevantTypeId(arrayData: any, id: number): number {
-    return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+  getRelevantTypeId(arrayData: any, id: number): any {
+    if (arrayData) {
+      return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+    }
   }
 
   //inserta en el formulario el id del tipo de bien
