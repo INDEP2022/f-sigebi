@@ -67,7 +67,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   handleError(error: HttpErrorResponse) {
-    console.log(error);
     const status = error.status;
     let message = '';
     if (Array.isArray(error?.error?.message) === true) {
@@ -78,8 +77,8 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       message = 'Error del servidor';
     }
     if (status === 0 && this.showError && !this.blockAllErrors) {
-      message = 'Error del Servidor';
-      this.onLoadToast('error', 'Advertencia', message);
+      message = 'Inténtelo nuevamente';
+      this.onLoadToast('error', 'Conexión no disponible', message);
       return;
     }
     if (status === 400 && this.showError && !this.blockAllErrors) {
@@ -89,15 +88,14 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     }
     if (status === 500 && this.showError && !this.blockAllErrors) {
       message = 'Error del Servidor';
-      this.onLoadToast('warning', 'Advertencia', message);
-      console.log(status, this.showError, message);
+      //this.onLoadToast('warning', 'Advertencia', message);
       return;
     }
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';
-      //this.onLoadToast('error', 'No autorizado', message);
+      this.onLoadToast('error', 'No autorizado', message);
       this.router.navigate(['/auth/login']);
       return;
     }

@@ -116,7 +116,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         const { id } = document;
         const { expedient, folio } = this.controls;
-        expedient.setValue(Number(document.numberProceedings));
+        if (document.numberProceedings) {
+          expedient.setValue(Number(document.numberProceedings));
+        }
         folio.setValue(this.folio);
         const _params = new FilterParams();
         _params.addFilter('numberProceedings', document.numberProceedings);
@@ -261,11 +263,17 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   updateSheets() {
+    let scanStatus = null;
     const sheets = `${this.files.length}`;
-    this.documentsService.update(this.folio, { sheets }).subscribe(() => {
-      const params = this.documentsParams.getValue();
-      this.documentsParams.next(params);
-    });
+    if (this.files.length > 0) {
+      scanStatus = 'ESCANEADO';
+    }
+    this.documentsService
+      .update(this.folio, { sheets, scanStatus })
+      .subscribe(() => {
+        const params = this.documentsParams.getValue();
+        this.documentsParams.next(params);
+      });
   }
 
   deleteFile(name: string) {

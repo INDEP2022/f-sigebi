@@ -146,6 +146,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
+          console.log(err);
           this.loading = false;
           this.form.reset();
           this.onLoadToast('error', err.error.message, '');
@@ -214,10 +215,19 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.get('id').disable();
         },
         error: err => {
-          this.loading = false;
+          if (err.status === 500) {
+            this.onLoadToast(
+              'warning',
+              'Error del Servidor',
+              'No se pudo obtener todos los datos relacionados'
+            );
+          }
+
           if (err.status === 400) {
             this.countDoc = 0;
           }
+
+          this.loading = false;
         },
       });
   }

@@ -111,12 +111,13 @@
             (change)="changeDictum($event)"
             [searchOnInit]="true"
             termMaxLength="80"
-            [showTooltip]="true">
+            [showTooltip]="true"
+            [readonly]="layout == 'ABANDONMENT'">
           </ngx-select>
         </form-field>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="layout == 'FILE-UPDATE'">
         <div>
           <button
             type="button"
@@ -563,7 +564,7 @@
               Reasignaci&oacute;n de Turno
             </button>
           </div>
-          <div>
+          <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
               type="button"
@@ -573,7 +574,7 @@
               Oficio Relacionado
             </button>
           </div>
-          <div>
+          <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
               type="button"
