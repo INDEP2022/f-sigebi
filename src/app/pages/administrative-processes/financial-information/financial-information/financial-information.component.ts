@@ -50,17 +50,15 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     super();
     this.settings1 = {
       ...TABLE_SETTINGS,
-      ...this.settings,
       actions: false,
-      columns: FINANCIAL_INFORMATION_COLUMNS1,
+      columns: { ...FINANCIAL_INFORMATION_COLUMNS1 },
     };
 
     this.settings2 = {
       editable: true,
       ...TABLE_SETTINGS,
-      ...this.settings,
       actions: false,
-      columns: FINANCIAL_INFORMATION_COLUMNS2,
+      columns: { ...FINANCIAL_INFORMATION_COLUMNS2 },
     };
   }
 
