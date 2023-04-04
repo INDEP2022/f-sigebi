@@ -87,14 +87,13 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
         this.observations = response.observations;
         this.quantity = response.quantity;
         this.description = response.description;
-
+        console.log(this.description);
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
         this.data1.push(this.good);
+        // this.data1 = response;
         console.log(this.data1);
-        // this.loadFinancial(this.goodId);
-        // this.setGood(this.good);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
@@ -107,7 +106,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.finantialInformationService.findGood(idGood).subscribe({
       next: response => {
         this.finantialList = response.data;
-        console.log(this.finantialList);
+        // console.log(this.finantialList);
         this.finantialList.forEach(date => {
           this.date = this.datePipe.transform(
             date.idInfoDate,

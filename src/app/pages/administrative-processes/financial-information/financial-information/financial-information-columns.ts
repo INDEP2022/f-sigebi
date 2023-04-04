@@ -11,11 +11,11 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
   },
   description: {
     title: 'Descripción',
-    type: 'string',
+    type: 'text',
     sort: true,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idGoodNumber.description;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.description;
+    },
   },
   value: {
     title: 'Valor',
@@ -30,7 +30,7 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
   idGoodNumber: {
     title: 'Bien',
-    type: 'number',
+    type: 'list',
     sort: true,
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.idGoodNumber.goodId;
@@ -40,9 +40,9 @@ export const FINANCIAL_INFORMATION_COLUMNS2 = {
     title: 'Descripción',
     type: 'number',
     sort: true,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idGoodNumber.description;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.description;
+    },
   },
   value: {
     title: 'Seleccionar',
