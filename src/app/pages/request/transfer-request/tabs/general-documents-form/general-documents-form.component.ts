@@ -118,21 +118,48 @@ export class GeneralDocumentsFormComponent
   initSearchForm() {
     this.searchForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      authorityId: [null],
-      typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      authorityId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      typeOfTransfer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       recordId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      indicatedTaxpayer: [null],
-      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
-      regionalDelegationId: [null],
-      transferenceFile: [null],
-      trialType: [null], //tipo de juicio
-      keyStateOfRepublic: [null],
-      trial: [null, [Validators.pattern(STRING_PATTERN)]],
-      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
-      transferenceId: [null],
-      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
-      stationId: [null],
-      protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      indicatedTaxpayer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+      domainExtinction: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      transferenceFile: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
+      trialType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], //tipo de juicio
+      keyStateOfRepublic: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      trial: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+      previousInquiry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      transferenceId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      lawsuit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      stationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      protectNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
   }
 
@@ -374,7 +401,7 @@ export class GeneralDocumentsFormComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        /*this.requestService.update(this.requestId, request).subscribe({
+        this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
               this.onLoadToast(
@@ -385,10 +412,21 @@ export class GeneralDocumentsFormComponent
             }
 
             if (resp.id != null) {
-              this.updateStateRequestTab();
+              Swal.fire({
+                title: 'Solicitud asociada al expediente: ' + this.requestId,
+                showDenyButton: false,
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+                denyButtonText: `Don't save`,
+                confirmButtonColor: '#9D2449',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  this.updateStateRequestTab();
+                }
+              });
             }
           },
-        });*/
+        });
       }
     });
   }

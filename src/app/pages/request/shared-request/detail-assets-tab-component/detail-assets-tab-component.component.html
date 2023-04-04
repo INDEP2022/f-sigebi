@@ -16,9 +16,9 @@
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
-            <div class="col-md-4" *ngIf="detailAssets.get('goodId').value">
+            <div class="col-md-4">
               <form-field
-                [control]="detailAssets.get('goodId')"
+                [control]="detailAssets?.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
                 <input
                   type="text"
@@ -176,7 +176,7 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-check label="Avalúo" for="appraisal">
+              <form-check label="Aval&uacute;o" for="appraisal">
                 <input
                   id="appraisal"
                   type="checkbox"
@@ -275,7 +275,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Id tipo relevante&#58;</label>
-              <span class="fs-4">{{ nameTypeRelevant }}</span>
+              <span class="fs-4">{{ relevantTypeName }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -323,7 +323,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Duplicidad&#58;</label>
-              <span class="fs-4"></span>
+              <span class="fs-4">{{ goodData?.duplicity }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -343,16 +343,10 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label class="col-lg-5 text-right">Destino ligie&#58;</label>
-              <span class="fs-4"></span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
               <label class="col-lg-5 text-right"
                 >Destino transferente&#58;</label
               >
-              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
+              <span class="fs-4">{{ goodData?.destinyName }}</span>
             </div>
           </div>
         </div>
@@ -394,7 +388,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Volumen (m3)&#58;</label>
-              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
+              <span class="fs-4">{{ goodData?.volume }}</span>
             </div>
           </div>
         </div>
@@ -403,7 +397,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Tipo de bien&#58;</label>
-              <span class="fs-4">{{ nameGoodType }}</span>
+              <span class="fs-4">{{ goodData?.goodTypeName }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -415,7 +409,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Procedencia&#58;</label>
-              <span class="fs-4">{{ goodData?.useType }}</span>
+              <span class="fs-4">{{ goodData?.origin }}</span>
             </div>
           </div>
         </div>
@@ -430,7 +424,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">Aval&uacute;o&#58;</label>
-              <span class="fs-4"></span>
+              <span class="fs-4">{{ goodData?.appraisal }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -447,7 +441,7 @@
               <label class="col-lg-5 text-right"
                 >Desc. bien transferente&#58;</label
               >
-              <span class="fs-4">{{ goodData?.description }}</span>
+              <span class="fs-4">{{ goodData?.goodDescription }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -470,7 +464,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="col-lg-5 text-right">No. expediente&#58;</label>
-              <span class="fs-4">{{ goodData?.storeNumber }}</span>
+              <span class="fs-4">{{ goodData?.fileeNumber }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -478,7 +472,7 @@
               <label class="col-lg-5 text-right"
                 >Estado f&iacute;sico&#58;</label
               >
-              <span class="fs-4">{{ goodData?.physicalStatus }}</span>
+              <span class="fs-4">{{ goodData?.physicstateName }}</span>
             </div>
           </div>
           <div class="col-md-4">
@@ -496,7 +490,7 @@
               <label class="col-lg-5 text-right"
                 >Estado de conservaci&oacute;n&#58;</label
               >
-              <span class="fs-4">{{ goodData?.stateConservation }}</span>
+              <span class="fs-4">{{ goodData?.stateConservationName }}</span>
             </div>
           </div>
         </div>
@@ -559,9 +553,9 @@
               control="municipalityKey"
               (fetchItems)="getMunicipaly($event)"
               [data]="selectMunicipe"
-              bindLabel="nameMunicipality"
               label="Municipio"
-              value="idMunicipality"
+              bindLabel="municipality"
+              value="municipalityKey"
               [readonly]="isDisabled"></ngx-select>
           </div>
         </div>
@@ -574,8 +568,8 @@
               (fetchItems)="getLocality($event)"
               [data]="selectLocality"
               label="Colonia"
-              bindLabel="nameLocation"
-              value="id"
+              bindLabel="township"
+              value="townshipKey"
               [readonly]="isDisabled"></ngx-select>
           </div>
           <div class="col-md-4">
@@ -585,8 +579,8 @@
               (fetchItems)="getCP($event)"
               [data]="selectCP"
               label="C&#46;P&#46;"
-              value="codePostal"
-              bindLabel="codePostal"
+              value="postalCode"
+              bindLabel="postalCode"
               [readonly]="isDisabled"></ngx-select>
           </div>
           <div class="col-md-4">
@@ -713,7 +707,7 @@
               [control]="domicileForm.get('wayChaining')"
               label="Kil&oacute;metro de la V&iacute;a">
               <input
-                type="number"
+                type="string"
                 class="form-control"
                 formControlName="wayChaining"
                 [readonly]="isDisabled" />
@@ -756,8 +750,8 @@
               (fetchItems)="getBrand($event)"
               [data]="selectBrand"
               label="Marca"
-              value="id"
-              bindLabel="id"></ngx-select>
+              value="flexValue"
+              bindLabel="flexValueMeaning"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -765,9 +759,9 @@
               (fetchItems)="getBrand($event)"
               [data]="selectBrand"
               label="Marca"
-              value="id"
+              value="flexValue"
               [readonly]="isDisabled"
-              bindLabel="id"></ngx-select>
+              bindLabel="flexValueMeaning"></ngx-select>
           </div>
           <div class="col-md-3">
             <form-field
@@ -801,8 +795,8 @@
               (fetchItems)="getSubBrand($event)"
               [data]="selectSubBrand"
               label="Sub Marca"
-              value="idSubBrand"
-              bindLabel="idSubBrand"></ngx-select>
+              value="flexValueDependent"
+              bindLabel="flexValueMeaningDependent"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -810,9 +804,9 @@
               (fetchItems)="getSubBrand($event)"
               [data]="selectSubBrand"
               label="Sub Marca"
-              value="idSubBrand"
+              value="flexValueDependent"
               [readonly]="isDisabled"
-              bindLabel="idSubBrand"></ngx-select>
+              bindLabel="flexValueMeaningDependent"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
@@ -1933,7 +1927,7 @@
             <form-field
               [control]="goodDomicilieForm.get('guardCustody')"
               label="Guarda Custodia"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
@@ -2203,7 +2197,7 @@
             <form-field
               [control]="goodDomicilieForm.get('kitchen')"
               label="Cocina"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
@@ -2535,7 +2529,7 @@
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
               label="DecretoExproProc"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
@@ -2884,7 +2878,7 @@
             <form-field
               [control]="goodDomicilieForm.get('photosAttached')"
               label="Fotos Adjuntas"
-              *ngIf="process != 'classify-assets'">
+              *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"

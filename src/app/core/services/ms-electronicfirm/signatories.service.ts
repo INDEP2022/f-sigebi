@@ -29,4 +29,13 @@ export class SignatoriesService extends HttpService {
     const route = `${ElectronicFirmEndpoint.Signatories}?filter.learnedType=${learnedType}&filter.learnedId=${learnedId}`;
     return this.get(route, params);
   }
+
+  create(model: ISignatories) {
+    return this.post(ElectronicFirmEndpoint.Signatories, model);
+  }
+
+  update(id: string | number, model: ISignatories) {
+    const route = `${ElectronicFirmEndpoint.Signatories}/${id}`;
+    return this.put(route, model);
+  }
 }
