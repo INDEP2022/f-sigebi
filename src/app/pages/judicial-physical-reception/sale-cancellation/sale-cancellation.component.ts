@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -17,6 +17,7 @@ import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-pr
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -124,6 +125,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   form: FormGroup;
   records: string[] = ['A', 'RT'];
   recibeSelect = new DefaultSelect();
+  maxDatefecElab = subDays(new Date(), 1);
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -138,6 +141,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
+
+    this.form.get('fecElab').valueChanges.subscribe(res => {
+      this.form.get('fecRecepFisica').setValue(res);
+    });
   }
 
   prepareForm() {
@@ -155,10 +162,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       recibe: [null, [Validators.required]],
-      folio: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      folio: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       year: [null, [Validators.required]],
       mes: [null, [Validators.required]],
       status: [null, [Validators.required]],

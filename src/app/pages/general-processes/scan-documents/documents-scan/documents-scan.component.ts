@@ -116,7 +116,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         const { id } = document;
         const { expedient, folio } = this.controls;
-        expedient.setValue(Number(document.numberProceedings));
+        if (document.numberProceedings) {
+          expedient.setValue(Number(document.numberProceedings));
+        }
         folio.setValue(this.folio);
         const _params = new FilterParams();
         _params.addFilter('numberProceedings', document.numberProceedings);

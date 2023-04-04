@@ -85,6 +85,10 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
         font-weight: 600 !important;
         color: #74788d !important;
       }
+
+      .form-material {
+        margin-bottom: 0.7rem !important;
+      }
     `,
   ],
 })
@@ -1008,7 +1012,9 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
     };
-    this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
+    this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
+      queryParams: { origin: this.layout },
+    });
   }
 
   sendToRelatedDocumentsManagement() {
