@@ -17,7 +17,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   idTypeDoc: any;
   response: IRequest;
 
-  title: string = 'Generar Dictamen';
+  title: string = 'Generar reporte dictamen procedencia';
   edit: boolean = false;
 
   pdfurl: string = '';
