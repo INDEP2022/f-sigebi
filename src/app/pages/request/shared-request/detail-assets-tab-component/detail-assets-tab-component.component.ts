@@ -161,6 +161,7 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
+
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
       this.relevantTypeService
@@ -974,14 +975,16 @@ export class DetailAssetsTabComponentComponent
           }
 
           if (data.id != null) {
-            this.message(
-              'success',
-              'Actualizado',
-              `Se actualizo el domicilio del bien!`
-            );
             this.domicileForm.controls['id'].setValue(data.id);
             resolve('Se actualizo el registro del domicilio del bien');
           }
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
+          );
         },
       });
     });
@@ -1017,16 +1020,13 @@ export class DetailAssetsTabComponentComponent
             );
             reject('El registro del bien del inmueble no se guardo!');
           }
-
-          if (data.id != null) {
-            this.message(
-              'success',
-              'Guardado',
-              `Se guardo correctamente el bien inmueble!`
-            );
-
-            resolve('Se guardo correctamente el bien inmueble!');
-          }
+        },
+        error: error => {
+          this.message(
+            'success',
+            'Guardado',
+            `Se guardo correctamente el bien inmueble!`
+          );
         },
       });
     });

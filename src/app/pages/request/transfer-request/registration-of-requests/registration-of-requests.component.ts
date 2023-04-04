@@ -283,6 +283,7 @@ export class RegistrationOfRequestsComponent
         this.isExpedient = data.recordId ? true : false;
 
         this.registRequestForm.patchValue(data);
+        this.requestData = data as IRequest;
         /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
@@ -596,19 +597,6 @@ export class RegistrationOfRequestsComponent
           `Se guardo la solicitud con el folio: ${this.requestData.id}`
         );
       }
-      /* const taskResult = await this.createTask(oldTask, title, url);
-      if (taskResult === true) {
-        const from = 'VERIFICAR_CUMPLIMIENTO';
-        const to = 'CLASIFICAR_BIEN';
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
-      } */
     }
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
@@ -636,17 +624,6 @@ export class RegistrationOfRequestsComponent
           `Se guardo la solicitud con el folio: ${this.requestData.id}`
         );
       }
-      /* const taskResult = await this.createTask(oldTask, title, url);
-      if (taskResult === true) {
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
-      } */
     }
   }
   /* Fin Metodo para guardar clasificacion de bienes */
@@ -674,17 +651,6 @@ export class RegistrationOfRequestsComponent
           `Se guardo la solicitud con el folio: ${this.requestData.id}`
         );
       }
-      /* const taskResult = await this.createTask(oldTask, title, url);
-      if (taskResult === true) {
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
-      } */
     }
   }
   /* Fin metodo destino documental */
@@ -730,9 +696,17 @@ export class RegistrationOfRequestsComponent
   }
 
   /** Proceso de aprobacion */
-  async approveRequest() {
-    /**Verificar datos */
-    /**Actualizar tarea para aprobacion */
+  approveRequest() {
+    this.msgSaveModal(
+      'Aprobar',
+      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      this.typeDocument
+    );
+  }
+
+  async approveRequestMethod() {
     console.log(this.requestData);
 
     const oldTask: any = await this.getOldTask();
@@ -757,22 +731,6 @@ export class RegistrationOfRequestsComponent
         );
       }
     }
-    /*  this.requestService
-      .update(this.requestData.id, this.requestData)
-      .subscribe({
-        next: resp => {
-          if (resp.statusCode !== null) {
-            this.message('error', 'Error', 'Ocurrio un error al guardar');
-          }
-          if (resp.id !== null) {
-            this.message(
-              'success',
-              'Solicitud Guardada',
-              'Se guardo la solicitud correctamente'
-            );
-          }
-        },
-      }); */
   }
   /** fin de proceso */
 
@@ -790,6 +748,7 @@ export class RegistrationOfRequestsComponent
       });
     });
   }
+
   createTaskOrderService(
     request: any,
     title: string,
