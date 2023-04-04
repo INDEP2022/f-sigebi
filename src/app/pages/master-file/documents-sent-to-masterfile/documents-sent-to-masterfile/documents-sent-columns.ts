@@ -34,6 +34,4 @@ export const DOCUMENTS_SENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-
-
 };

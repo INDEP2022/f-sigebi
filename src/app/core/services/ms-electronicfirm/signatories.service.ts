@@ -34,7 +34,7 @@ export class SignatoriesService extends HttpService {
     return this.post(ElectronicFirmEndpoint.Signatories, model);
   }
 
-  update(id: string | number, model: ISignatories) {
+  update(id: string | number, model: FormData) {
     const route = `${ElectronicFirmEndpoint.Signatories}/${id}`;
     return this.put(route, model);
   }
