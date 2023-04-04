@@ -81,13 +81,9 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.searchGoods(this.form.value.noBien);
   }
   searchGoods(idGood: number | string) {
-    this.goodService.getById(idGood).subscribe({
+    this.goodService.getByIdNew(idGood, idGood).subscribe({
       next: response => {
         this.good = response;
-        // this.date = this.datePipe.transform(
-        //   response.dateIn,
-        //   'dd-MM-yyyy h:mm a'
-        // );
         this.proficientOpinion = response.proficientOpinion;
         this.valuerOpinion = response.valuerOpinion;
         this.observations = response.observations;
