@@ -198,7 +198,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
   getDocType(params: ListParams) {
     this.wContentService.getDocumentTypes(params).subscribe(data => {
-      console.log('data', data);
       this.selectDocType = new DefaultSelect(data.data, data.count);
     });
   }
