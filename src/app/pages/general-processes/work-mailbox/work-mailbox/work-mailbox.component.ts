@@ -1451,6 +1451,34 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'viewIndicatorsHistory':
           this.viewIndicatorsHistory();
           break;
+        case 'replicate':
+          this.replicate();
+          break;
+        case 'turnPaperwork':
+          this.turnPaperwork();
+          break;
+        case 'viewPictures':
+          this.viewPictures();
+          break;
+        case 'acptionBienes':
+          this.acptionBienes();
+          break;
+        case 'onFinishPaperwork':
+          this.onFinishPaperwork();
+          break;
+        case 'onCancelPaperwork':
+          this.onCancelPaperwork();
+          break;
+        case 'validDoc':
+          this.validDoc();
+          break;
+        case 'scanDocuments':
+          this.scanDocuments();
+          break;
+        case 'getSolicitud':
+          this.getSolicitud();
+          break;
+
         default:
           this.alertQuestion(
             'info',

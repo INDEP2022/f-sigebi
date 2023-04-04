@@ -14,7 +14,7 @@ export const DOCUMENTS_SCAN_COLUMNS = {
     sort: false,
     type: 'custom',
     renderComponent: SeeMoreComponent,
-    valuePrepareFunction: (value: string) => value,
+    valuePrepareFunction: (value: string) => value ?? '',
     onComponentInitFunction: (instance: SeeMoreComponent) =>
       (instance.maxLenght = 6),
   },
