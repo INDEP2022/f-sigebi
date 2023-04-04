@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
+import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -26,6 +27,8 @@ var data = [
 export class PrintReportModalComponent extends BasePage implements OnInit {
   idDoc: any;
   idTypeDoc: any;
+  nameTypeDoc: string = 'DictamenProcendecia';
+  sign: boolean = true;
 
   signatories: ISignatories[] = [];
 
@@ -54,7 +57,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
-    private signatoriesService: SignatoriesService
+    private signatoriesService: SignatoriesService,
+    private gelectronicFirmService: GelectronicFirmService
   ) {
     super();
     this.settings = {
@@ -201,9 +205,42 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
+          this.firm();
           console.log('enviar mensaje');
         }
       }
     );
+  }
+
+  firm() {
+    const id = this.idDoc;
+    const nameTypeReport = this.nameTypeDoc;
+    const firma = this.sign;
+    // console.log(id, nameTypeReport, firma);
+    // const formData = new FormData();
+    // formData.append('id', this.idDoc );
+    // formData.append('firma', String(this.sign) );
+    // formData.append('tipoDocumento', this.nameTypeDoc );
+    // console.log(formData);
+    const formData: Object = {
+      id: this.idDoc,
+      firma: true,
+      tipoDocumento: this.nameTypeDoc,
+    };
+    console.log(formData);
+    this.gelectronicFirmService
+      .firmDocument(id, nameTypeReport, formData)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  handleSuccess() {
+    const message: string = 'Firmado';
+    this.onLoadToast('success', 'Reporte formado', `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }

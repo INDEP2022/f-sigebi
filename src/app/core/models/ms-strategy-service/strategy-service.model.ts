@@ -1,6 +1,6 @@
 export interface IStrategyService {
-  serviceNumber: number;
+  serviceNumber?: number;
   description: string;
-  registryNumber: number;
-  nbOrigin: string;
+  registryNumber?: number;
+  nbOrigin?: string;
 }

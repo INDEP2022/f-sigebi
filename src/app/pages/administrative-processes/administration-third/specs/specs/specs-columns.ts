@@ -1,12 +1,10 @@
 export const SPECS_COLUMNS = {
-  number: {
+  serviceTypeNumber: {
     title: 'Número',
-    width: '10%',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    width: '30%',
     sort: false,
   },
 };

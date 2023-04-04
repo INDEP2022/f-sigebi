@@ -136,11 +136,11 @@ export class AddressTransferorTabComponent
       ],
       exteriorNumber: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+        [(Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10))],
       ],
       interiorNumber: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+        [(Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10))],
       ],
       wayDestiny: [
         null,
