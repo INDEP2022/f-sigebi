@@ -60,6 +60,7 @@ import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   CONFIRM_CANCEL,
   CONFIRM_FINISH,
+  CONFIRM_SAVE,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
@@ -1060,6 +1061,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
+  async onSavePaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    const result = await this.alertQuestion(
+      'question',
+      'Advertencia',
+      CONFIRM_SAVE
+    );
+
+    if (result.isConfirmed) {
+      if (!this.selectedRow.userATurn && !this.selectedRow.areaATurn) {
+        return this.onLoadToast(
+          'error',
+          'Error',
+          'No se ha asignado el usuario o el area en el trámite, favor de agregarla'
+        );
+      }
+      this.savePaperwork().subscribe();
+    }
+  }
+
   async onFinishPaperwork() {
     if (!this.selectedRow) {
       this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
@@ -1074,6 +1098,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (result.isConfirmed) {
       this.finishPaperwork().subscribe();
     }
+  }
+
+  savePaperwork() {
+    const { processNumber, userATurn, areaATurn } = this.selectedRow;
+    const body = {
+      areaToTurn: areaATurn,
+      userToTurn: userATurn,
+      situation: 1,
+    };
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al cancelar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.getData();
+      })
+    );
   }
 
   cancelPaperwork() {
@@ -1451,6 +1498,34 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'viewIndicatorsHistory':
           this.viewIndicatorsHistory();
           break;
+        case 'replicate':
+          this.replicate();
+          break;
+        case 'turnPaperwork':
+          this.turnPaperwork();
+          break;
+        case 'viewPictures':
+          this.viewPictures();
+          break;
+        case 'acptionBienes':
+          this.acptionBienes();
+          break;
+        case 'onFinishPaperwork':
+          this.onFinishPaperwork();
+          break;
+        case 'onCancelPaperwork':
+          this.onCancelPaperwork();
+          break;
+        case 'validDoc':
+          this.validDoc();
+          break;
+        case 'scanDocuments':
+          this.scanDocuments();
+          break;
+        case 'getSolicitud':
+          this.getSolicitud();
+          break;
+
         default:
           this.alertQuestion(
             'info',

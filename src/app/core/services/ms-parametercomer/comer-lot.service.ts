@@ -17,6 +17,7 @@ export class ComerLotService extends HttpService {
   private readonly fiterByEvent: string = EventEndpoints.FilterEvent;
   private readonly evento: string = EventEndpoints.ComerE;
   private readonly fiterByGood: string = EventEndpoints.FilterGood;
+  private readonly fiterByLot: string = EventEndpoints.FilterLot;
 
   constructor() {
     super();
@@ -33,6 +34,10 @@ export class ComerLotService extends HttpService {
   }
   findGood(search: any) {
     const route = `${this.endpoint}${this.fiterByGood}${search}`;
+    return this.get(route);
+  }
+  findGLot(search: any) {
+    const route = `${this.endpoint}${this.fiterByLot}${search}`;
     return this.get(route);
   }
   findEvent(search: any) {

@@ -14,6 +14,8 @@ import { SharedJuridicalProcessesModule } from '../shared-juridical-processes/sh
 import { AbandonmentsDeclarationTradesRoutingModule } from './abandonments-declaration-trades-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { FileDataUpdateModule } from '../file-data-update/file-data-update.module';
+import { FormSearchHandlerModule } from '../shared/form-search-handler/form-search-handler.module';
 import { AbandonmentsDeclarationTradesComponent } from './abandonments-declaration-trades/abandonments-declaration-trades.component';
 
 @NgModule({
@@ -24,6 +26,8 @@ import { AbandonmentsDeclarationTradesComponent } from './abandonments-declarati
     SharedModule,
     SharedJuridicalProcessesModule,
     TabsModule,
+    FileDataUpdateModule,
+    FormSearchHandlerModule,
   ],
 })
 export class AbandonmentsDeclarationTradesModule {}

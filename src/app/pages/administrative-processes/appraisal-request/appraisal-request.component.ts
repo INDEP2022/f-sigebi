@@ -15,7 +15,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IListResponse } from '../../../../app/core/interfaces/list-response.interface';
 import { DelegationService } from '../../../core/services/catalogs/delegation.service';
 import { InstitutionClasificationService } from '../../../core/services/catalogs/institution-classification.service';
-import { InstitutionClassificationDetailComponent } from '../../../pages/catalogs/institution-classification/institution-classification-detail/institution-classification-detail.component';
+import { AppraisalRequestDetailComponent } from './appraisal-request-detail/appraisal-request-detail.component';
 
 @Component({
   selector: 'app-appraisal-request',
@@ -178,15 +178,12 @@ export class AppraisalRequestComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<InstitutionClassificationDetailComponent>) {
-    const modalRef = this.modalService.show(
-      InstitutionClassificationDetailComponent,
-      {
-        initialState: context,
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+  openModal(context?: Partial<AppraisalRequestDetailComponent>) {
+    const modalRef = this.modalService.show(AppraisalRequestDetailComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
   public add() {
