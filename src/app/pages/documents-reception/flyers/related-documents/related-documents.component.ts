@@ -6,18 +6,27 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
 import {
-  IOficioDictamenParams,
   RELATED_DOCUMENTS_COLUMNS,
   RELATED_DOCUMENTS_EXAMPLE_DATA,
 } from './related-documents-columns';
-import { TEXT1, TEXT1Abandono, TEXT2 } from './related-documents-message';
+import {
+  MANAGEMENTOFFICESTATUSSEND,
+  PARAMETERSALEC,
+  TEXT1,
+  TEXT1Abandono,
+  TEXT2,
+} from './related-documents-message';
+import { RelatedDocumentsService } from './services/related-documents.service';
 
 @Component({
   selector: 'app-related-documents',
@@ -50,24 +59,28 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }.`;
   pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paramsGestionDictamen: IOficioDictamenParams = {
-    parametros: '',
-    p_gest_ok: '',
-    p_no_tramite: '',
-    tipo_of: '',
+  paramsGestionDictamen: IJuridicalDocumentManagementParams = {
+    volante: null,
+    expediente: null,
+    doc: null,
+    tipoOf: null,
     sale: '',
-    doc: '',
     bien: '',
-    volante: '',
-    expediente: '',
-    pllamo: '',
-    p_dictamen: '',
+    pGestOk: null,
+    pNoTramite: null,
+    pDictamen: null,
   };
   se_refiere_a = {
     A: 'Se refiere a todos los bienes',
     B: 'Se refiere a algun(os) bien(es) del expediente',
     C: 'No se refiere a nigun bien asegurado, decomisado o abandonado',
     D: 'd',
+  };
+  se_refiere_a_Disabled = {
+    A: false,
+    B: false,
+    C: false,
+    D: false,
   };
   variables = {
     dictamen: '',
@@ -84,12 +97,18 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   pantallaActual: string = '';
   disabledRadio: boolean = false;
   oficioGestion: IMJobManagement;
+  disabledAddresse: boolean = false;
+  screenKeyManagement: string = 'FACTADBOFICIOGEST';
+  screenKeyRelated: string = '';
+  screenKey: string = '';
+  notificationData: INotification;
 
   constructor(
     private fb: FormBuilder,
     private flyerService: FlyersService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private serviceRelatedDocumentsService: RelatedDocumentsService
   ) {
     super();
     this.settings = {
@@ -108,6 +127,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       return;
     } else {
       if (this.pantallaActual == '2' || this.pantallaActual == '1') {
+        this.setDataParams();
         this.pantallaOption = this.flyerService.getPantallaOption(
           this.pantallaActual
         );
@@ -116,9 +136,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.paramsGestionDictamen.sale = 'C';
         // if (params['parametros']) {
         if (this.pantallaOption) {
+          this.screenKey = this.screenKeyManagement;
+          // this.getDictationByWheel();
           // Pantalla dictamen
           this.initComponentDictamen();
         } else {
+          this.screenKey = this.screenKeyRelated;
           // Pantalla relacionados
         }
         // } else {
@@ -142,18 +165,27 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   setInitVariables() {
     this.paramsGestionDictamen = {
-      parametros: null,
-      p_gest_ok: null,
-      p_no_tramite: null,
-      tipo_of: null,
-      sale: null,
-      doc: null,
-      bien: null,
-      volante: '1557783',
-      expediente: '529402',
-      pllamo: null,
-      p_dictamen: null,
+      expediente: 32440,
+      volante: 1558043,
+      pDictamen: '10',
+      pNoTramite: 1044254,
+      tipoOf: 'EXTERNO',
+      bien: 'N',
+      sale: 'D',
+      doc: 'N',
+      pGestOk: null,
     };
+    // {
+    //   volante: 1557802,
+    //   expediente: 619252,
+    //   doc: null,
+    //   tipoOf: null,
+    //   sale: '',
+    //   bien: '',
+    //   pGestOk: null,
+    //   pNoTramite: null,
+    //   pDictamen: null,
+    // };
     this.variables = {
       dictamen: '',
       b: '',
@@ -166,15 +198,36 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       doc_bien: '',
       proc_doc_dic: '',
     };
+    this.notificationData = null;
+  }
+
+  setDataParams() {
+    let paramsData = this.serviceRelatedDocumentsService.getParams(
+      this.pantallaActual
+    );
+    if (paramsData != false && paramsData) {
+      if (this.pantallaActual == '1') {
+        // this.paramsGestionDictamen = paramsData;
+      } else {
+        console.log(paramsData);
+      }
+    }
+    console.log(paramsData, this.paramsGestionDictamen);
+    this.managementForm
+      .get('noVolante')
+      .setValue(this.paramsGestionDictamen.volante);
+    this.managementForm
+      .get('noExpediente')
+      .setValue(this.paramsGestionDictamen.expediente);
   }
 
   prepareForm() {
     this.managementForm = this.fb.group({
-      noVolante: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
+      noVolante: [null, [Validators.required, Validators.maxLength(11)]],
+      noExpediente: [null, [Validators.required, Validators.maxLength(11)]],
       tipoOficio: [null],
       relacionado: [null, Validators.pattern(STRING_PATTERN)],
-      numero: [404558],
+      numero: [],
       cveGestion: [null],
       noRemitente: [null],
       remitente: [null],
@@ -185,22 +238,23 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       claveOficio: [null],
       parrafoInicial: [null, Validators.pattern(STRING_PATTERN)],
       tipoTexto: [null],
-      justificacion: [null],
+      justificacion: [null, Validators.pattern(STRING_PATTERN)],
       justificacionDetalle: [null],
       noOficio: [null],
       subtipo: [null],
-      indPDoctos: [null],
+      // indPDoctos: [null],
       noBienes: [null],
-      bienes: [null],
+      // bienes: [null],
       noBienes2: [null],
-      bienes2: [null],
+      // bienes2: [null],
       noDocumento: [null],
-      documento: [null],
+      // documento: [null],
       noDocumento2: [null],
-      documento2: [null],
+      // documento2: [null],
       parrafoFinal: [null, Validators.pattern(STRING_PATTERN)],
       text3: [null, Validators.pattern(STRING_PATTERN)],
-      parrafoAusencia: [null, Validators.pattern(STRING_PATTERN)],
+      // parrafoAusencia: [null, Validators.pattern(STRING_PATTERN)],
+      fechaAcuse: [{ value: '', disabled: true }],
       ccp: [null],
       ccp2: [null],
       ccp3: [null],
@@ -211,19 +265,20 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   initComponentDictamen() {
-    if (
-      this.managementForm.get('numero').value ||
-      this.managementForm.get('numero').value == '0' ||
-      this.managementForm.get('numero').value == 0
-    ) {
-      this.validOficioGestion();
-    } else {
-      this.alert(
-        'warning',
-        'No existe un valor para Número de Gestión',
-        'Sin valor'
-      );
-    }
+    this.getNotificationData();
+    // if (
+    //   this.managementForm.get('numero').value ||
+    //   this.managementForm.get('numero').value == '0' ||
+    //   this.managementForm.get('numero').value == 0
+    // ) {
+    //   this.validOficioGestion();
+    // } else {
+    //   this.alert(
+    //     'warning',
+    //     'No existe un valor para Número de Gestión',
+    //     'Sin valor'
+    //   );
+    // }
   }
 
   async validOficioGestion() {
@@ -237,7 +292,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       next: res => {
         console.log(res);
         if (res.count == 0) {
-          this.getDictationByWheel();
+          // this.getDictationByWheel();
         } else {
           this.oficioGestion = res.data[0];
           this.setDataOficioGestion();
@@ -247,7 +302,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.getDictationByWheel();
+        // this.getDictationByWheel();
       },
     });
   }
@@ -296,11 +351,21 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   async getDictationByWheel() {
+    if (
+      this.managementForm.get('noVolante').invalid ||
+      this.managementForm.get('noExpediente').invalid
+    ) {
+      return;
+    }
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('wheelNumber', this.managementForm.get('noVolante').value);
+    params.addFilter(
+      'expedientNumber',
+      this.managementForm.get('noExpediente').value
+    );
     await this.flyerService
-      .getNotificationByWheel(params.getParams())
+      .getNotificationByFilter(params.getParams())
       .subscribe({
         next: res => {
           console.log(res);
@@ -318,16 +383,16 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   validOficioEXTERNO() {
     if (
-      this.managementForm.get('tipoOficio').value == 'EXTERNO' &&
-      this.paramsGestionDictamen.pllamo != 'ABANDONO'
+      this.managementForm.get('tipoOficio').value == 'EXTERNO' // &&
+      // this.paramsGestionDictamen.pllamo != 'ABANDONO'
     ) {
       this.managementForm
         .get('parrafoInicial')
         .setValue(TEXT1(this.managementForm.get('noOficio').value));
       this.managementForm.get('parrafoFinal').setValue(TEXT2);
     } else if (
-      this.managementForm.get('tipoOficio').value == 'EXTERNO' &&
-      this.paramsGestionDictamen.pllamo == 'ABANDONO'
+      this.managementForm.get('tipoOficio').value == 'EXTERNO' // &&
+      // this.paramsGestionDictamen.pllamo == 'ABANDONO'
     ) {
       this.managementForm.get('parrafoInicial').setValue(TEXT1Abandono);
       this.managementForm.get('parrafoFinal').setValue('SASASASASAS');
@@ -337,43 +402,203 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   /**
-   * INCIDENCIA 581
+   * INCIDENCIA 581 --- CORRECTO
    * @returns
    */
-  getJustification(params: ListParams) {
-    // params.take = 20;
-    // params['order'] = 'DESC';
-    // let subscription = this.flyerService
-    //   .getStatusBySearch(params)
-    //   .subscribe(
-    //     data => {
-    //       this.justificacion = new DefaultSelect(
-    //         data.data.map(i => {
-    //           i.description = '#' + i.id + ' -- ' + i.description;
-    //           return i;
-    //         }),
-    //         data.count
-    //       );
-    //       subscription.unsubscribe();
-    //     },
-    //     err => {
-    //       this.onLoadToast(
-    //         'error',
-    //         'Error',
-    //         err.status === 0 ? ERROR_INTERNET : err.error.message
-    //       );
-    //       subscription.unsubscribe();
-    //     },
-    //     () => {
-    //       subscription.unsubscribe();
-    //     }
-    //   );
+  getJustification(paramsData: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('type', 3, SearchFilter.NOT);
+    params.addFilter('clarifications', paramsData['search'], SearchFilter.LIKE);
+    let subscription = this.flyerService
+      .getJustificacion(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data);
+          this.justificacion = new DefaultSelect(
+            data.data.map(i => {
+              i.clarifications = '#' + i.id + ' -- ' + i.clarifications;
+              return i;
+            }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: err => {
+          console.log(err);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al consultar las Justificaciones'
+          );
+          subscription.unsubscribe();
+        },
+      });
   }
 
   changeSender() {
     if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
+      this.managementForm.get('destinatario').disable();
+      this.managementForm.get('destinatario').updateValueAndValidity();
+      this.disabledAddresse = true;
     } else if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
+      this.managementForm.get('destinatario').enable();
+      this.managementForm.get('destinatario').updateValueAndValidity();
+      this.disabledAddresse = false;
+    } else {
+      this.managementForm.get('destinatario').enable();
+      this.managementForm.get('destinatario').updateValueAndValidity();
+      this.disabledAddresse = false;
     }
+  }
+
+  changeTextType() {
+    let textRespone = this.serviceRelatedDocumentsService.changeTextType(
+      this.managementForm.get('tipoTexto').value,
+      this.managementForm.get('noOficio').value
+    );
+    this.managementForm.get('parrafoInicial').setValue(textRespone.text1);
+    this.managementForm.get('parrafoFinal').setValue(textRespone.text2);
+  }
+
+  changeOffice() {
+    if (this.paramsGestionDictamen.sale == 'C') {
+      this.alertInfo('warning', PARAMETERSALEC, '');
+      return;
+    }
+    if (this.oficioGestion.statusOf == 'ENVIADO') {
+      this.alertInfo('warning', MANAGEMENTOFFICESTATUSSEND, '');
+      return;
+    }
+    if (this.oficioGestion.managementNumber) {
+      // /api/v1/m-job-management por numero de gestion
+      // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;
+      this.getGoodsJobManagement();
+      // /api/v1/document-job-management por numero de gestion
+      // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;  ---  y setea VARIABLES.D en S
+      ///
+      /// se refiere a --- activa opcion A y B
+      ///
+      this.se_refiere_a_Disabled.A = false;
+      this.se_refiere_a_Disabled.B = false;
+    }
+    if (this.paramsGestionDictamen.sale == 'D') {
+      this.se_refiere_a_Disabled.C = false;
+    } else {
+      this.se_refiere_a_Disabled.C = true;
+    }
+    // y setea VARIABLES.B en N
+  }
+
+  async getGoodsJobManagement() {
+    if (this.oficioGestion.managementNumber) {
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+      await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
+        next: res => {
+          console.log(res);
+          if (res.count != 0) {
+            this.managementForm.get('tipoOficio').setValue('D');
+          }
+          this.getDocumentsJobManagement();
+        },
+        error: err => {
+          console.log(err);
+          this.getDocumentsJobManagement();
+        },
+      });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No existe el Número de Gestión: ' +
+          this.oficioGestion.managementNumber,
+        ''
+      );
+    }
+  }
+
+  async getDocumentsJobManagement() {
+    if (this.oficioGestion.managementNumber) {
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+      await this.flyerService
+        .getDocumentOficioGestion(params.getParams())
+        .subscribe({
+          next: res => {
+            console.log(res);
+            if (res.count != 0) {
+              this.variables.d = 'S';
+            }
+            this.getGoods();
+          },
+          error: err => {
+            this.getGoods();
+            console.log(err);
+          },
+        });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No existe el Número de Gestión: ' +
+          this.oficioGestion.managementNumber,
+        ''
+      );
+    }
+  }
+
+  // INCIDENCIAS 675 Y 681 --- ESPERA
+  getGoods() {
+    // getGoodSearchGoodByFileAndClasif
+  }
+
+  async getNotificationData() {
+    if (
+      this.paramsGestionDictamen.volante ||
+      this.paramsGestionDictamen.expediente
+    ) {
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter('wheelNumber', this.paramsGestionDictamen.volante);
+      if (this.paramsGestionDictamen.expediente) {
+        params.addFilter(
+          'expedientNumber',
+          this.paramsGestionDictamen.expediente
+        );
+      }
+      await this.flyerService
+        .getNotificationByFilter(params.getParams())
+        .subscribe({
+          next: res => {
+            console.log(res);
+            this.notificationData = res.data[0];
+            this.setDataNotification();
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No existe el Número de Expediente: ' +
+          this.paramsGestionDictamen.expediente +
+          ' ni el Número de Volante: ' +
+          this.paramsGestionDictamen.volante +
+          ' para consultar la información.',
+        ''
+      );
+    }
+  }
+
+  setDataNotification() {
+    this.managementForm
+      .get('noOficio')
+      .setValue(this.notificationData.officeExternalKey);
+    this.managementForm
+      .get('fechaAcuse')
+      .setValue(this.notificationData.desKnowingDate);
   }
 
   /**
