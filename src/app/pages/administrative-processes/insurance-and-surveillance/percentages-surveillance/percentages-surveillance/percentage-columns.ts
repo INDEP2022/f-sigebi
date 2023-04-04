@@ -3,6 +3,7 @@ export const PERCENTAGE_COLUMNS = {
     title: 'Proceso',
     type: 'number',
     sort: false,
+
     valuePrepareFunction: (_cell: any, row: any) => {
       const process = row.cveProcess;
       if (process == 1) {

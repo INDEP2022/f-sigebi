@@ -1,10 +1,10 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, forkJoin } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   convertFormatDate,
@@ -128,34 +128,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     },
   };
   events = new DefaultSelect<IComerEvent>();
-  // [] = [
-  //   // {
-  //   //   id: 22410,
-  //   //   cve: 'LPBM PRUEBAS',
-  //   //   date: '14/07/2021',
-  //   //   place: 'CIUDAD DE MÉXICO',
-  //   //   rulingDate: '15/07/2021',
-  //   //   status: 'VENDIDO',
-  //   // },
-  // ];
-
-  // batchTestData: any[] = [
-  //   {
-  //     id: 1,
-  //   },
-  //   {
-  //     id: 2,
-  //   },
-  //   {
-  //     id: 3,
-  //   },
-  //   {
-  //     id: 4,
-  //   },
-  //   {
-  //     id: 5,
-  //   },
-  // ];
 
   operationTestData: any[] = [
     {
@@ -380,15 +352,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   ];
 
   form = new FormGroup({
-    eventId: new FormControl(null, [Validators.required]),
+    eventId: new FormControl(null),
     batchId: new FormControl(null),
     status: new FormControl(null),
     operationId: new FormControl(null),
     insertDate: new FormControl(null),
-    validityDate: new FormControl(null),
-
-    client_id: new FormControl(null),
-    rfc: new FormControl(null),
+    validityDate: new FormControl({ value: null, disabled: true }),
   });
 
   constructor(
@@ -421,59 +390,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
   }
 
-  // prepareForm() {
-  //   this.form = this.fb.group({
-  //     id: [null, [Validators.required]],
-  //     batchId: [null],
-  //     status: [null],
-  //     operationId: [null],
-  //     insertDate: [null],
-  //     validityDate: [null],
-  //   });
-  // }
-
-  // getEvents(params: ListParams) {
-  //   // if (params.text == '') {
-  //   //   this.eventItems = new DefaultSelect(this.events, 5);
-  //   // } else {
-  //   //   const id = parseInt(params.text);
-  //   //   const item = [this.events.filter((i: any) => i.id == id)];
-  //   //   this.eventItems = new DefaultSelect(item[0], 1);
-  //   // }
-  //   if (!params.text) {
-  //     this.events = new DefaultSelect([], 1);
-  //   }
-  //   if (!isNaN(params.text as any)) {
-  //     this.comerEventosService.getById(params.text).subscribe({
-  //       next: (res: any) => {
-  //         this.events = new DefaultSelect([res], 1);
-  //       },
-  //       error: () => {
-  //         this.events = new DefaultSelect([], 1);
-  //       },
-  //     });
-  //   } else {
-  //     this.comerEventosService.getAll(params).subscribe({
-  //       next: (res: any) => {
-  //         this.events = new DefaultSelect(res.data, 1);
-  //       },
-  //       error: () => {
-  //         this.events = new DefaultSelect([], 1);
-  //       },
-  //     });
-  //   }
-  // }
-
-  // getBatches(params: ListParams) {
-  //   if (params.text == '') {
-  //     this.batchItems = new DefaultSelect(this.batchTestData, 5);
-  //   } else {
-  //     const id = parseInt(params.text);
-  //     const item = [this.batchTestData.filter((i: any) => i.id == id)];
-  //     this.batchItems = new DefaultSelect(item[0], 1);
-  //   }
-  // }
-
   getOperations(params: ListParams) {
     if (params.text == '') {
       this.operationItems = new DefaultSelect(this.operationTestData, 5);
@@ -497,10 +413,54 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.form.controls['validityDate'].setValue(null);
   }
 
-  consult() {
-    // console.log(this.form.value);
-    // this.dataColumns = this.checkTestData;
-    this.getData();
+  consultInServer() {
+    // sql= '../tools/sql/consul-btn-click.sql';
+    if (!this.validConsult()) {
+      showToast({
+        text: 'No se ha insertado ningún filtro de búsqueda.',
+        icon: 'warning',
+      });
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    forkJoin([
+      this.capturelineService.getTmpLcComer(this.form.value),
+      this.capturelineService.getComerRefWarranties(),
+    ]).subscribe(([tmpLcComer, comerRefWarranties]) => {
+      console.log(tmpLcComer);
+      console.log(comerRefWarranties);
+    });
+  }
+
+  getTmpLcComerObservable(list: ListParams) {
+    const params = this.makeFiltersParams(list);
+    return this.capturelineService.getTmpLcComer(params.getFilterParams());
+  }
+
+  makeFiltersParams(list: ListParams): FilterParams {
+    const params = new FilterParams();
+    params.page = list.page || 1;
+    params.limit = list.limit || 10;
+    const filters: any = this.form.value;
+    Object.keys(filters).forEach((key: string) => {
+      if (filters[key]) {
+        params.addFilter(key, filters[key]);
+      }
+    });
+    return params;
+  }
+
+  makeWhereConsult(table: string) {
+    const { eventId, batchId, insertDate, status, operationId } =
+      this.form.value;
+    let where = '1 = 1';
+    if (table === 'TMP_LC_COMER') {
+    }
+  }
+
+  validConsult(): boolean {
+    return Object.values(this.form.value).some((value: any) => Boolean(value));
   }
 
   readFile(event: Event, type: 'rfc' | 'client_id') {
@@ -537,9 +497,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       }
       console.log(data);
       this.maintenance = true;
-      this.form
-        .get(type)
-        ?.setValue(data.map((item: any) => item[type.toUpperCase()]));
+      // this.form
+      //   .get(type)
+      //   ?.setValue(data.map((item: any) => item[type.toUpperCase()]));
       this.getData(null, true);
     } catch (error) {
       showToast({

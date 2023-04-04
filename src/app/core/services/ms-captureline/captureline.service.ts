@@ -16,4 +16,8 @@ export class CapturelineService extends HttpService {
   getTmpLcComer(params?: _Params) {
     return this.get<TmpLcComer>(this.route.TmpLcComer, params);
   }
+
+  getComerRefWarranties(params?: _Params) {
+    return this.get<TmpLcComer>(this.route.ComerRefWarranties, params);
+  }
 }

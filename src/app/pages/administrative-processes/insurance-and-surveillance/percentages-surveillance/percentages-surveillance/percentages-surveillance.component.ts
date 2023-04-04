@@ -19,8 +19,6 @@ export class PercentagesSurveillanceComponent
   extends BasePage
   implements OnInit
 {
-  // percentages: VigProcessPercentages[] = [];
-  // @ViewChild(Ng2SmartTableComponent) percentageTable: Ng2SmartTableComponent;
   sources = new LocalDataSource();
   processes = [
     { name: 'Supervisión', value: 1 },
@@ -38,7 +36,11 @@ export class PercentagesSurveillanceComponent
   editDialogData: IVigProcessPercentages | null = null;
   @ViewChild('dialogPercentage') dialogPercentageTemplateRef: TemplateRef<any>;
   form = new FormGroup({
-    percentage: new FormControl('', [Validators.required]),
+    percentage: new FormControl('', [
+      Validators.required,
+      Validators.min(0),
+      Validators.max(100),
+    ]),
     cveProcess: new FormControl('', [Validators.required]),
     delegationNumber: new FormControl('', [Validators.required]),
     delegationType: new FormControl('', [Validators.required]),
@@ -49,7 +51,11 @@ export class PercentagesSurveillanceComponent
     private dialogService: BsModalService
   ) {
     super();
+
     this.settings.columns = PERCENTAGE_COLUMNS;
+
+    this.settings.hideSubHeader = true;
+    this.settings.actions.add = false;
     this.settings.actions.delete = true;
   }
 

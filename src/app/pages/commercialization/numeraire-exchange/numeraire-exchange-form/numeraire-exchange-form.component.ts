@@ -14,6 +14,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
@@ -84,6 +85,7 @@ export class NumeraireExchangeFormComponent extends BasePage {
     editable: false,
   };
 
+  readonly VC_PANTALLA = 'FACTADBCAMBIONUME';
   numeraireMassiveColumns = new LocalDataSource();
   fileName: string = 'Seleccionar archivo';
 
@@ -110,7 +112,10 @@ export class NumeraireExchangeFormComponent extends BasePage {
     },
   ];
 
-  constructor(private excelService: ExcelService) {
+  constructor(
+    private excelService: ExcelService,
+    private numeraryService: NumeraryService
+  ) {
     super();
   }
 
@@ -219,6 +224,23 @@ export class NumeraireExchangeFormComponent extends BasePage {
     }
   }
 
+  validateCvs(data: any[]): Promise<any> {
+    const goodKey = 'goodId';
+    const goodIds = data.map((item: any) => item[goodKey]);
+    return new Promise((resolve, reject) => {
+      this.numeraryService
+        .validateCvs({ goodIds, vcScreen: this.VC_PANTALLA })
+        .subscribe({
+          next: (res: any) => {
+            return resolve('error');
+          },
+          error: (error: any) => {
+            return reject(error);
+          },
+        });
+    });
+  }
+
   selectAccount(account: any) {
     this.selectedBank = account;
   }
@@ -282,30 +304,7 @@ export class NumeraireExchangeFormComponent extends BasePage {
     const sumExpense = this.getExpensesSum();
   }
 
-  validateNumeraire() {
-    //     FUNCTION PUP_VALIDANUME (V_BIEN NUMBER)
-    // RETURN CHAR IS
-    // DI_DISPNUME		CHAR(1);
-    // vc_pantalla 	VARCHAR2(100) := GET_APPLICATION_PROPERTY(CURRENT_FORM_NAME);
-    // BEGIN
-    //   DI_DISPNUME := 'N';
-    // 	FOR reg in (SELECT 'S'
-    //                 FROM BIENES BIE,
-    //                      ESTATUS_X_PANTALLA EXP
-    //                WHERE BIE.ESTATUS         = EXP.ESTATUS
-    //                  AND EXP.CVE_PANTALLA    = vc_pantalla
-    //                  AND EXP.PROCESO_EXT_DOM = BIE.PROCESO_EXT_DOM
-    //                  AND BIE.NO_BIEN         = V_BIEN
-    //                  AND NO_CLASIF_BIEN IN (SELECT NO_CLASIF_BIEN
-    //                                           FROM CAT_SSSUBTIPO_BIEN
-    //    	 	                                   WHERE NO_TIPO = 7))
-    // 	LOOP
-    //    	DI_DISPNUME := 'S';
-    //     EXIT;
-    // 	END LOOP;
-    // RETURN DI_DISPNUME;
-    // END;
-  }
+  validateNumeraire() {}
 
   getExpensesSum() {
     const expense = this.tableExpense.getExpense();
