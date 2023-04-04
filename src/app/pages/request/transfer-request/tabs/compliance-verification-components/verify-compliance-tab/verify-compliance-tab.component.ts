@@ -48,7 +48,7 @@ export class VerifyComplianceTabComponent
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
   existArt: number = 0;
-  isGoodSelected: any;
+  isGoodSelected: boolean = false;
 
   goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -205,7 +205,6 @@ export class VerifyComplianceTabComponent
   }
 
   newClarification() {
-    console.log(this.goodsSelected);
     if (this.goodsSelected.length === 0) {
       this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
     } else {
@@ -359,13 +358,11 @@ export class VerifyComplianceTabComponent
     const elemento = event.data;
 
     const index = this.article3array.indexOf(elemento);
-    console.log(index, this.article3array);
     if (index !== -1) {
       delete this.article3array[index];
     } else {
       this.article3array.push(elemento);
     }
-    console.log(this.article3array);
   }
 
   article12y13Selected(event: any): void {
@@ -401,15 +398,20 @@ export class VerifyComplianceTabComponent
   selectGood(event: any) {
     //if (event.isSelected === true) {
     this.clarificationData = [];
-    console.log(event);
     this.detailArray.reset();
     this.goodsSelected = event.selected;
+    console.log(this.isGoodSelected);
+
     if (this.goodsSelected.length === 1) {
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
-      }, 3000);
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+          console.log(this.isGoodSelected);
+        }
+      }, 2000);
     }
     //} else {
     //this.clarificationData = [];
@@ -584,9 +586,9 @@ export class VerifyComplianceTabComponent
       const result = await this.updateGoods(item);
 
       if (this.goodData.length === index) {
-        this.alert(
+        this.onLoadToast(
           'success',
-          'Verificación Guardad',
+          'Verificación Guardada',
           'Los datos se guardaron correctamente'
         );
       }

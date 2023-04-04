@@ -110,7 +110,6 @@ export class ClassificationAssetsTabComponent
   showGoods() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('data', this.dataObject);
     if (changes['requestObject'].currentValue) {
       this.tablePaginator();
     }

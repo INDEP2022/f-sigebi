@@ -159,28 +159,26 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
-      console.log('data', this.goodData);
       this.relevantTypeService
-        .getById(this.goodData.fractionId.relevantTypeId)
-        .subscribe(data => {
-          this.relevantTypeName = data.description;
+        .getById(this.goodData.fractionId?.relevantTypeId)
+        .subscribe({
+          next: data => {
+            this.relevantTypeName = data.description;
+          },
+          error: error => {},
         });
 
-      if (this.process == 'classify-assets') {
-        if (this.detailAssets.controls['subBrand'].value) {
-          //console.log(this.detailAssets.controls['brand'].value);
-          const brand = this.detailAssets.controls['brand'].value;
-          this.getSubBrand(new ListParams(), brand);
-        }
+      if (this.detailAssets.controls['subBrand'].value) {
+        //console.log(this.detailAssets.controls['brand'].value);
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
       }
     }
 
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -205,7 +203,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -1189,7 +1186,8 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-    setTimeout(() => {
+
+    /*setTimeout(() => {
       this.domicileForm.patchValue(domicilie);
       console.log(this.domicileForm.getRawValue());
     }, 3000);
@@ -1202,6 +1200,6 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['municipalityKey'].setValue(
       domicilie.municipalityKey
-    );
+    );*/
   }
 }

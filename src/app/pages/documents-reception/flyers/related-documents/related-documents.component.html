@@ -26,7 +26,8 @@
         <form-field
           [control]="managementForm.get('noVolante')"
           label="No. Volante"
-          class="col-md-3">
+          class="col-md-3"
+          maxLength="11">
           <input
             class="form-control"
             type="number"
@@ -36,14 +37,22 @@
         <form-field
           [control]="managementForm.get('noExpediente')"
           label="No. Expediente"
-          class="col-md-3">
+          class="col-md-3"
+          maxLength="11">
           <input
             class="form-control"
             type="number"
             formControlName="noExpediente" />
         </form-field>
 
-        <div class="col-md-6"></div>
+        <div class="col-md-6 text-right">
+          <button
+            type="button"
+            class="btn btn-success active btn-sm m-2 p-2"
+            (click)="changeOffice()">
+            Cambio
+          </button>
+        </div>
 
         <form-field
           [control]="managementForm.get('tipoOficio')"
@@ -126,58 +135,48 @@
         <div class="col-md-12 mb-3">
           <h6>Tipos de Texto:</h6>
           <div class="col-md-3">
-            <form-radio label="ACUSE DE RECIBO">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="UNO" />
+            <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="UNO" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="DOCUMENTO DEVOLUCIÓN">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="DOS" />
+            <form-radio
+              label="DOCUMENTO DEVOLUCIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="DOS" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="DOCUMENTO DE BIENES">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="TRES" />
+            <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="TRES" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="DOCUMENTO DE NUMERARIO">
-              <input
-                [attr.disabled]="disabledRadio"
-                type="radio"
-                formControlName="tipoTexto"
-                value="CUATRO" />
+            <form-radio
+              label="DOCUMENTO DE NUMERARIO"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="ACLARA INFORMACIÓN">
+            <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
               <input type="radio" formControlName="tipoTexto" value="CINCO" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="SOLICITAR INFORMACIÓN">
+            <form-radio
+              label="SOLICITAR INFORMACIÓN"
+              (change)="changeTextType()">
               <input type="radio" formControlName="tipoTexto" value="SEIS" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="SAT">
+            <form-radio label="SAT" (change)="changeTextType()">
               <input type="radio" formControlName="tipoTexto" value="SIETE" />
             </form-radio>
           </div>
           <div class="col-md-3">
-            <form-radio label="ABANDONO">
+            <form-radio label="ABANDONO" (change)="changeTextType()">
               <input type="radio" formControlName="tipoTexto" value="OCHO" />
             </form-radio>
           </div>
@@ -196,7 +195,7 @@
           <div class="col-md-3">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'C'"
+                [attr.disabled]="se_refiere_a_Disabled.A"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.A }}" />
@@ -205,7 +204,7 @@
           <div class="col-md-4">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'C'"
+                [attr.disabled]="se_refiere_a_Disabled.B"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.B }}" />
@@ -214,7 +213,7 @@
           <div class="col-md-4">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'D'"
+                [attr.disabled]="se_refiere_a_Disabled.C"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.C }}" />
@@ -223,7 +222,7 @@
           <div class="col-md-1">
             <form-radio label="{{ se_refiere_a.D }}">
               <input
-                [attr.disabled]="paramsGestionDictamen.sale == 'C'"
+                [attr.disabled]="se_refiere_a_Disabled.D"
                 type="radio"
                 formControlName="tipoOficio"
                 value="{{ se_refiere_a.D }}" />
@@ -235,11 +234,11 @@
       <div class="row pt-4">
         <form-field
           [control]="managementForm.get('justificacion')"
-          class="col-md-3">
+          class="col-md-4">
           <ngx-select
             (fetchItems)="getJustification($event)"
             value="id"
-            bindLabel="description"
+            bindLabel="clarifications"
             [form]="managementForm"
             control="justificacion"
             [data]="justificacion"
@@ -248,7 +247,7 @@
         </form-field>
         <form-field
           [control]="managementForm.get('justificacionDetalle')"
-          class="col-md-9"
+          class="col-md-8"
           label="Justificación">
           <input
             type="text"
@@ -257,6 +256,33 @@
             readonly
             [disabled]="true" />
         </form-field>
+        <form-field
+          [control]="managementForm.get('noOficio')"
+          class="col-md-4 mt-2"
+          label="Número de Oficio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noOficio"
+            readonly
+            [disabled]="true" />
+        </form-field>
+        <form-field
+          [control]="managementForm.get('fechaAcuse')"
+          class="col-md-4 mt-2"
+          label="Fecha de Acuse">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="fechaAcuse"
+            readonly
+            [disabled]="true" />
+        </form-field>
+        <div class="col-md-4">
+          <button type="button" class="btn btn-primary active btn-sm mr-2">
+            Respuestas FGR
+          </button>
+        </div>
       </div>
       <hr class="row" />
       <div class="row pb-5">
