@@ -31,7 +31,6 @@ export class ReturnConfiscationPropertyComponent implements OnInit {
       receiptDateOf: [null, Validators.required],
       receptionDateTo: [null, Validators.required],
       movementType: [null, Validators.required],
-      select: [null, Validators.required],
     });
   }
   onSubmit() {

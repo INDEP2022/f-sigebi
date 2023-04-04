@@ -75,10 +75,8 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field
-            [control]="returnConfiscationForm.get('movementType')"
-            label="Tipo Movimiento">
-            <select class="form-control" formControlName="select">
+          <form-field label="Tipo Movimiento">
+            <select class="form-control" formControlName="movementType">
               <option [value]="null">Seleccione un tipo</option>
               <option [value]="'1'">VALOR 1</option>
               <option [value]="'2'">VALOR 2</option>
