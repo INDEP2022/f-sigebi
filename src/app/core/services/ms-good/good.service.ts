@@ -13,7 +13,7 @@ import {
   IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
-import { IGood } from '../../models/ms-good/good';
+import { GoodGetData, IGood } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 
 @Injectable({
@@ -31,6 +31,10 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
+  getData(goodData: GoodGetData): Observable<IListResponse<IGood>> {
+    return this.post(GoodEndpoints.GoodGetDat, goodData);
+  }
+
   getAllFilter(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
@@ -43,6 +47,7 @@ export class GoodService extends HttpService {
   create(good: IGood) {
     return this.post(GoodEndpoints.Good, good);
   }
+
   //
   update(good: IGood) {
     const route = `${GoodEndpoints.Good}`;

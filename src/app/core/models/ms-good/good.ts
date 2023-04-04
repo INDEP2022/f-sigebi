@@ -359,6 +359,19 @@ export interface Estatus {
   destiny: string;
 }
 
+export interface GoodGetData {
+  goodNumber: number;
+  subDelegationNumber: number;
+  clasifGoodNumber: number;
+  expedientNumber: number;
+  delegationNumber: number;
+  dateElaboration: string | Date;
+  identificator: string;
+  processExt: string;
+  statusGood: string;
+  screenKey: string;
+}
+
 // TODO: Checar si la interfaz es la del modelo:
 // ? src\app\core\models\administrative-processes\record.model.ts
 export interface NoExpediente {
