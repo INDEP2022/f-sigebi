@@ -31,6 +31,19 @@
           <i class="bx bxs-right-arrow-square"></i> Finalizar
         </button>
       </div>
+      <div
+        class="p-2"
+        *ngIf="
+          this.requestData.typeOfTransfer === 'SAT_SAE' ||
+          this.requestData.typeOfTransfer === 'PGR_SAE'
+        ">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active"
+          (click)="returnar()">
+          <i class="bx bxs-right-arrow-square"></i> Returnar
+        </button>
+      </div>
       <div class="p-2">
         <button
           type="button"

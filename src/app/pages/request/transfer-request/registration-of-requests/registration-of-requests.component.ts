@@ -473,11 +473,21 @@ export class RegistrationOfRequestsComponent
   }
 
   finish() {
-    this.requestData.requestStatus = 'FINALIZADA';
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Asegurse de guardar toda la información antes de Finalizar la solicitud!',
+      'Esta seguro de finalizar la solicitud actual?',
+      'Confirmación',
+      undefined,
+      typeCommit
+    );
+  }
+
+  returnar() {
+    const typeCommit = 'returnar';
+    this.msgSaveModal(
+      'Finalizar Solicitud',
+      'Esta seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -500,6 +510,8 @@ export class RegistrationOfRequestsComponent
   }
 
   async finishMethod() {
+    const request = this.requestData;
+    request.requestStatus = 'FINALIZADA';
     const updateReq = await this.updateRequest(this.requestData);
     if (updateReq) {
       const oldTask: any = await this.getOldTask();
@@ -525,6 +537,10 @@ export class RegistrationOfRequestsComponent
         }
       }
     }
+  }
+
+  returnarMethod() {
+    this.openModal(SelectTypeUserComponent, this.requestData, 'returnado');
   }
 
   confirm() {
@@ -863,6 +879,9 @@ export class RegistrationOfRequestsComponent
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           this.finishMethod();
+        }
+        if (typeCommit === 'returnar') {
+          this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
           this.confirmMethod();
