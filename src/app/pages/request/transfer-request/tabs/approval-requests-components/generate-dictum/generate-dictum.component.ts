@@ -4,7 +4,6 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 
@@ -110,46 +109,14 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       rulingDocumentId: [null],
       nameRecipientRuling: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
+        [Validators.required, Validators.maxLength(100)],
       ],
-      postRecipientRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      paragraphOneRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ],
-      paragraphTwoRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ],
+      postRecipientRuling: [null, [Validators.maxLength(100)]],
+      paragraphOneRuling: [null, [Validators.maxLength(4000)]],
+      paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
-      ccpRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(200),
-        ],
-      ],
+      ccpRuling: [null, [Validators.maxLength(200)]],
       rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],

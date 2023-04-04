@@ -196,7 +196,9 @@
   </div>
 
   <!-- Componente donde se muestra el detalle de los bienes -->
-  <div *ngIf="goodsSelected.length === 1" class="row pt-4">
+  <div
+    *ngIf="goodsSelected.length === 1 && isGoodSelected === true"
+    class="row pt-4">
     <app-detail-assets-tab-component
       [typeDoc]="typeDoc"
       [requestObject]="requestObject"
