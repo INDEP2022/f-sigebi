@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -95,10 +95,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   selectedProceedings: IProceedingDeliveryReception[] = [];
   notifData: INotification = null;
   pageParams: IJuridicalShiftChangeParams = null;
+  origin: any;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private router: Router,
+    private route: ActivatedRoute,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
     private notifService: NotificationService,
@@ -124,6 +126,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
+    this.route.queryParamMap.subscribe(params => {
+      this.origin = params.get('origin');
+    });
   }
 
   private get formControls() {
@@ -381,7 +386,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       params.dictamen = false;
     }
     this.fileUpdComService.fileDataUpdateParams = params;
-    this.router.navigateByUrl('/pages/juridical/file-data-update');
+    if (this.origin == 'ABANDONMENT') {
+      this.router.navigateByUrl(
+        '/pages/juridical/abandonments-declaration-trades'
+      );
+    } else {
+      this.router.navigateByUrl('/pages/juridical/file-data-update');
+    }
   }
 
   showHistory() {

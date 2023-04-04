@@ -401,7 +401,7 @@ export class GeneralDocumentsFormComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        /*this.requestService.update(this.requestId, request).subscribe({
+        this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
               this.onLoadToast(
@@ -412,10 +412,21 @@ export class GeneralDocumentsFormComponent
             }
 
             if (resp.id != null) {
-              this.updateStateRequestTab();
+              Swal.fire({
+                title: 'Solicitud asociada al expediente: ' + this.requestId,
+                showDenyButton: false,
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+                denyButtonText: `Don't save`,
+                confirmButtonColor: '#9D2449',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  this.updateStateRequestTab();
+                }
+              });
             }
           },
-        });*/
+        });
       }
     });
   }

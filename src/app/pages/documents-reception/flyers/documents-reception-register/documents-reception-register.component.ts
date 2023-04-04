@@ -493,6 +493,7 @@ export class DocumentsReceptionRegisterComponent
           .subscribe({
             next: data => {
               console.log(data);
+              const procedure = data;
               if (data.flierNumber == null) {
                 this.useProcedureData(data);
               } else {
@@ -511,7 +512,7 @@ export class DocumentsReceptionRegisterComponent
                         'Volante no encontrado',
                         'No se encontró la información del volante registrado en el trámite'
                       );
-                      this.useProcedureData(data);
+                      this.useProcedureData(procedure);
                     },
                   });
               }
@@ -1693,47 +1694,24 @@ export class DocumentsReceptionRegisterComponent
   }
 
   viewDocuments() {
-    this.getDocumentsByFlyer(this.wheelNumber.value);
-    // const params = new FilterParams();
-    // params.addFilter('flyerNumber', this.wheelNumber.value);
+    // this.getDocumentsByFlyer(this.wheelNumber.value);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.wheelNumber.value);
     // params.addFilter('scanStatus', 'ESCANEADO');
-    // this.documentsService.getAllFilter(params.getParams()).subscribe({
-    //   next: data => {
-    //     console.log(data);
-    //     const documents = data.data;
-    //     if (data.count == 1) {
-    //       if (documents[0].associateUniversalFolio) {
-    //         this.onLoadToast(
-    //           'info',
-    //           'Enlace no disponible',
-    //           'El enlace al documento no se encuentra disponible'
-    //         );
-    //       } else {
-    //         this.onLoadToast(
-    //           'info',
-    //           'No disponible',
-    //           'No tiene documentos digitalizados.'
-    //         );
-    //       }
-    //     } else if (data.count > 1) {
-    //       this.openModalDocuments();
-    //     } else {
-    //       this.onLoadToast(
-    //         'info',
-    //         'No disponible',
-    //         'No tiene documentos digitalizados.'
-    //       );
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.onLoadToast(
-    //       'info',
-    //       'No disponible',
-    //       'No se encontraron documentos asociados.'
-    //     );
-    //   },
-    // });
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDocumentsByFlyer(this.wheelNumber.value);
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'El volante no tiene documentos relacionados.'
+        );
+      },
+    });
   }
 
   openModalDocuments() {

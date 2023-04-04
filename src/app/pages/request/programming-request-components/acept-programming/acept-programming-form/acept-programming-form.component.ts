@@ -195,7 +195,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           const usersData = response.data.map(items => {
-            items.userCharge = items.charge.description;
+            items.userCharge = items.charge?.description;
             return items;
           });
 
@@ -359,8 +359,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-
-          console.log('El brincos dieras', response);
           this.goodsInfoWarehouse.push(response);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();

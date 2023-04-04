@@ -1,3 +1,4 @@
+import { IFraction } from '../catalogs/fraction.model';
 import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 
@@ -19,9 +20,13 @@ export interface IGood {
   classificationGood?: any;
   remarksOrien?: any;
   physicalStatus?: boolean;
+  destinyName?: string;
+  goodId?: number;
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
+  fileeNumber: string;
+  appraisal: string;
   appraiserOpinion?: any;
   goodTypeId: number;
   originSignals?: any;
@@ -45,9 +50,11 @@ export interface IGood {
   placeNotification?: any;
   fecResdiscardRecRev?: any;
   fecResissueRecRev?: any;
+  goodTypeName: String;
   transferentDestiny?: string;
   fecResAgreementRecRev?: any;
   fecResAudienceRecRev?: any;
+  programmationStatus?: string;
   notesTransferringEntity?: string;
   saeMeasureUnit?: string;
   compliesNorm?: string;
@@ -70,6 +77,7 @@ export interface IGood {
   userAuthorizesChangeNumera?: any;
   AuthorizesChangeNumerary?: any;
   fecRatifiesChangeNumerary?: any;
+  physicstateName?: string;
   userRatifiesChange?: any;
   fecNotificationRecRev?: any;
   reasonRecRev?: any;
@@ -132,6 +140,7 @@ export interface IGood {
   fecEntry?: any;
   idUbication?: any;
   clvUnique?: any;
+  stateConservationName: String;
   noProceedings?: any;
   descriptionGood?: any;
   statePhysical?: any;
@@ -362,7 +371,7 @@ export interface IGood {
   estatus: Estatus;
   no_expediente: NoExpediente;
   goodClassNumber?: number;
-  fractionId?: number;
+  fractionId?: IFraction;
 }
 
 // TODO: Checar a que interfaz pertenece
@@ -614,4 +623,14 @@ export interface IFromGoodsAndExpedientsResponse {
   fec_acuerdo_aseg: Date;
   averiguacion_previa: string;
   causa_penal: string;
+}
+
+export interface IGoodSearchGoodByFile {
+  screenKey: string;
+  fileNumber: number;
+}
+
+export interface IGoodSearchGoodByClasification {
+  screenKey: string;
+  clasifGoodNumber: number;
 }

@@ -4,7 +4,6 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 
@@ -18,7 +17,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   idTypeDoc: any;
   response: IRequest;
 
-  title: string = 'Generar Dictamen';
+  title: string = 'Generar reporte dictamen procedencia';
   edit: boolean = false;
 
   pdfurl: string = '';
@@ -44,7 +43,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   initForm(): void {
     this.dictumForm = this.fb.group({
       id: [null],
-      idRecord: [null],
+      recordId: [null],
       applicationDate: [null],
       receptionDate: [null],
       nameOfOwner: [null],
@@ -52,12 +51,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       phoneOfOwner: [null],
       emailOfOwner: [null],
       transferenceId: [null],
-      transferent: [null],
       stationId: [null],
-      emisora: [null],
       authorityId: [null],
       regionalDelegationId: [null],
-      regionalDelegation: [null],
       sender: [null],
       observations: [null],
       targetUser: [null],
@@ -83,7 +79,6 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       affair: [null],
       satDeterminant: [null],
       satDirectory: [null],
-      authority: [null],
       satZoneCoordinator: [null],
       userCreated: [null],
       creationDate: [null],
@@ -106,50 +101,16 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       stateRequestId: [null],
       searchSiab: [null],
       priorityDate: [null],
-      ofRejectionsNumber: [null],
+      rejectionNumber: [null],
       rulingDocumentId: [null],
-      nameRecipientRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      postRecipientRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      paragraphOneRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ],
-      paragraphTwoRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ],
+      reportSheet: [null],
+      nameRecipientRuling: [null, [Validators.maxLength(100)]],
+      postRecipientRuling: [null, [Validators.maxLength(100)]],
+      paragraphOneRuling: [null, [Validators.maxLength(4000)]],
+      paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
-      ccpRuling: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(200),
-        ],
-      ],
+      ccpRuling: [null, [Validators.maxLength(200)]],
       rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],
