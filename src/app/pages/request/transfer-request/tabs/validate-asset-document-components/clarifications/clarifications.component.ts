@@ -10,7 +10,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -78,7 +78,7 @@ export class ClarificationsComponent
 {
   @Input() requestObject: any;
   @Input() process: string = '';
-  goodForm: IFormGroup<IGood>;
+  goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   assetsArray: any[] = [];
@@ -101,7 +101,6 @@ export class ClarificationsComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (this.requestObject) {
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         this.getData();
@@ -122,17 +121,23 @@ export class ClarificationsComponent
   private prepareForm() {
     this.goodForm = this.fb.group({
       id: [null],
-      goodId: [null],
-      ligieSection: [null],
-      ligieChapter: [null],
-      ligieLevel1: [null],
-      ligieLevel2: [null],
-      ligieLevel3: [null],
-      ligieLevel4: [null],
-      requestId: [null],
-      goodTypeId: [null],
-      color: [null],
-      goodDescription: [null],
+      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieSection: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       duplicity: [
         'N',
@@ -146,19 +151,28 @@ export class ClarificationsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      fileeNumber: [null],
+      fileeNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
       useType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      physicalStatus: [null],
-      stateConservation: [null],
+      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       origin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
@@ -167,8 +181,11 @@ export class ClarificationsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       brand: [
         null,
         [
@@ -185,7 +202,10 @@ export class ClarificationsComponent
           Validators.maxLength(300),
         ],
       ],
-      armor: [null],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       model: [
         null,
         [
@@ -194,7 +214,7 @@ export class ClarificationsComponent
           Validators.maxLength(300),
         ],
       ],
-      doorsNumber: [null],
+      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       axesNumber: [
         null,
         [
@@ -227,8 +247,14 @@ export class ClarificationsComponent
           Validators.maxLength(100),
         ],
       ],
-      chassis: [null],
-      cabin: [null],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       fitCircular: [
         'N',
         [
@@ -245,7 +271,7 @@ export class ClarificationsComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null],
+      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       operationalState: [
         null,
         [
@@ -286,8 +312,18 @@ export class ClarificationsComponent
           Validators.maxLength(30),
         ],
       ],
-      sleeve: [null],
-      length: [null, [Validators.required]],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
       shipName: [
         null,
         [
@@ -304,7 +340,10 @@ export class ClarificationsComponent
           Validators.maxLength(30),
         ],
       ], //registro public
-      ships: [null],
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       dgacRegistry: [
         null,
         [
@@ -338,18 +377,16 @@ export class ClarificationsComponent
           Validators.maxLength(30),
         ],
       ],
-      fractionId: [null],
+      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
   getData() {
-    console.log(this.requestObject);
     this.params.value.addFilter('requestId', this.requestObject.id);
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: ({ data }) => {
         this.assetsArray = [...data];
-        console.log(this.assetsArray);
       },
     });
   }

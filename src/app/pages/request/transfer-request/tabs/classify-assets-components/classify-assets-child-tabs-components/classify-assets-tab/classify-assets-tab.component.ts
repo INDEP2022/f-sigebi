@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -34,9 +34,11 @@ export class ClassifyAssetsTabComponent
   @Input() requestObject: any;
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
-  @Input() goodObject: IFormGroup<any> = null;
+  @Input() goodObject: ModelForm<IGood>; //: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
+  @Input() goodSelect: any;
+
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -73,20 +75,27 @@ export class ClassifyAssetsTabComponent
       this.getSection(new ListParams());
     }
     this.getReactiveFormActions();
+    this.processView();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      this.process = item.process;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.typeDoc == '') {
+    /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
-      }
-    }
+      } */
 
     //bienes selecionados
-    this.good = changes['goodObject'].currentValue;
+    this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
-        this.getSection(new ListParams(), this.good.ligieSection);
+        this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
       }
     }
@@ -104,11 +113,20 @@ export class ClassifyAssetsTabComponent
       ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       requestId: [requestId],
-      goodTypeId: [null],
-      color: [null],
-      goodDescription: [null],
+      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      duplicity: ['N'],
+      duplicity: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
       capacity: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -129,17 +147,19 @@ export class ClassifyAssetsTabComponent
       stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       origin: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
@@ -148,19 +168,46 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
-      brand: [null, [Validators.required, Validators.maxLength(30)]],
-      subBrand: [null, [Validators.required, Validators.maxLength(30)]],
-      armor: [null],
-      model: [null, [Validators.required, Validators.maxLength(30)]],
-      doorsNumber: [null, [Validators.maxLength(7)]],
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      brand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      model: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       axesNumber: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
+          Validators.maxLength(30),
         ],
       ],
       engineNumber: [
@@ -168,23 +215,29 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(5),
+          Validators.maxLength(30),
         ],
       ], //numero motor
       tuition: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       serie: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
+          Validators.maxLength(30),
         ],
       ],
-      chassis: [null, [Validators.maxLength(10)]],
-      cabin: [null, Validators.maxLength(5)],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       fitCircular: [
         'N',
         [
@@ -201,7 +254,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null],
+      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       operationalState: [
         null,
         [
@@ -223,7 +276,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
+          Validators.maxLength(30),
         ],
       ], // numero de motores
       flag: [
@@ -242,7 +295,10 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(30),
         ],
       ],
-      sleeve: [null],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       length: [
         null,
         [
@@ -256,7 +312,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(70),
         ],
       ],
       publicRegistry: [
@@ -267,7 +323,10 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(30),
         ],
       ], //registro public
-      ships: [null],
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       dgacRegistry: [
         null,
         [
@@ -289,7 +348,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(80),
         ],
       ], //kilatage
       material: [
@@ -297,7 +356,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(80),
         ],
       ],
       weight: [
@@ -308,7 +367,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(30),
         ],
       ],
-      fractionId: [null],
+      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
 
     if (this.goodObject != null) {
@@ -553,19 +612,7 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    //debugger;
-    /*const info = this.classiGoodsForm.getRawValue();
-    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
-      this.classiGoodsForm.get('stateConservation').setValue(1);
-    this.classiGoodsForm.get('physicalStatus').setValue(1);
-
-    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
-      this.classiGoodsForm.get('stateConservation').setValue(2);
-    this.classiGoodsForm.get('physicalStatus').setValue(2);
-    this.classiGoodsForm.get('destiny').setValue(1);*/
-
     const goods = this.classiGoodsForm.getRawValue();
-
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -579,10 +626,7 @@ export class ClassifyAssetsTabComponent
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
     }
-    if (!goods.idGoodProperty) {
-      goods.idGoodProperty =
-        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    }
+
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
