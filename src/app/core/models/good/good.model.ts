@@ -624,3 +624,13 @@ export interface IFromGoodsAndExpedientsResponse {
   averiguacion_previa: string;
   causa_penal: string;
 }
+
+export interface IGoodSearchGoodByFile {
+  screenKey: string;
+  fileNumber: number;
+}
+
+export interface IGoodSearchGoodByClasification {
+  screenKey: string;
+  clasifGoodNumber: number;
+}
