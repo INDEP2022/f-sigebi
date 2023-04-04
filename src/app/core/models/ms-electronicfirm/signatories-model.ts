@@ -3,13 +3,13 @@ export interface ISignatories {
   learnedId?: string;
   name?: string;
   post?: string;
-  certificate?: Buffer;
-  keycertificate?: Buffer;
+  certificate?: string | Buffer;
+  keycertificate?: string | Buffer;
   pass?: string;
   userCreation?: string;
-  creationDate?: Date;
+  creationDate?: string | Date;
   userModification?: string;
-  modificationDate?: Date;
+  modificationDate?: string | Date;
   version?: number;
   signature?: string;
   mistakemsg?: string;

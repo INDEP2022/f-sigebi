@@ -578,7 +578,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          this.usersData.load(response.data);
+          const userData = response.data.map(items => {
+            items.userCharge = items.charge?.description;
+            return items;
+          });
+
+          this.usersData.load(userData);
+          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => (this.loading = false),

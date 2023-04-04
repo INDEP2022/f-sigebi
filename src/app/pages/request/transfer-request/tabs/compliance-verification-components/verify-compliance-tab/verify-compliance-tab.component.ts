@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -26,7 +26,6 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
 import { VerificationComplianceService } from 'src/app/core/services/requests/verification-compliance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
@@ -49,6 +48,7 @@ export class VerifyComplianceTabComponent
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
   existArt: number = 0;
+  isGoodSelected: boolean = false;
 
   goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -90,6 +90,9 @@ export class VerifyComplianceTabComponent
   }
 
   ngOnInit(): void {
+    /* aclaraciones */
+    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
+
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.goodSettings.columns = DETAIL_ESTATE_COLUMNS;
@@ -102,6 +105,7 @@ export class VerifyComplianceTabComponent
         });
       },
     };
+    this.initForm();
 
     this.articleColumns.cumple = {
       ...this.articleColumns.cumple,
@@ -111,17 +115,19 @@ export class VerifyComplianceTabComponent
         });
       },
     };
-    this.initForm();
-
-    /* aclaraciones */
-    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
       this.transferenceId = this.requestObject.transferenceId;
-      this.getArticle3();
-      this.getArticle1213();
+      if (
+        this.transferenceId === 1 ||
+        this.transferenceId === 3 ||
+        this.transferenceId === 120
+      ) {
+        this.getArticle3();
+        this.getArticle1213();
+      }
 
       this.params
         .pipe(takeUntil(this.$unSubscribe))
@@ -132,188 +138,65 @@ export class VerifyComplianceTabComponent
   initForm() {
     this.detailArray = this.fb.group({
       id: [null],
-      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieSection: [null, , [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      color: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      goodDescription: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-      ],
-      quantity: [1, [Validators.pattern(NUMBERS_PATTERN)]],
-      duplicity: [
-        'N',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      capacity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      volume: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      fileeNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
-      ],
-      useType: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      origin: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieUnit: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      appraisal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      compliesNorm: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      notesTransferringEntity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
-      ],
-      unitMeasure: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], // preguntar Unidad Medida Transferente
-      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      brand: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(350)],
-      ],
-      subBrand: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(300)],
-      ],
-      armor: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      model: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(300)],
-      ],
-      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      axesNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      engineNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], //numero motor
-      tuition: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      serie: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
-      chassis: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      cabin: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      fitCircular: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      theftReport: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      operationalState: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      manufacturingYear: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      enginesNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], // numero de motores
-      flag: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      openwork: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      sleeve: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      length: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
-      ],
-      shipName: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
-      publicRegistry: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], //registro public
-      ships: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      dgacRegistry: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], //registro direccion gral de aereonautica civil
-      airplaneType: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      caratage: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
-      ], //kilatage
-      material: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
-      ],
-      weight: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      descriptionGoodSae: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-      ],
+      goodId: [null],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
+      requestId: [null],
+      goodTypeId: [null],
+      color: [null],
+      goodDescription: [null],
+      quantity: [1],
+      duplicity: ['N'],
+      capacity: [null],
+      volume: [null],
+      fileeNumber: [null],
+      useType: [null],
+      physicalStatus: [null],
+      stateConservation: [null],
+      origin: [null],
+      goodClassNumber: [null],
+      ligieUnit: [null],
+      appraisal: [null],
+      destiny: [null], //preguntar Destino ligie
+      transferentDestiny: [null],
+      compliesNorm: [null],
+      notesTransferringEntity: [null],
+      unitMeasure: [null], // preguntar Unidad Medida Transferente
+      saeDestiny: [null],
+      brand: [null],
+      subBrand: [null],
+      armor: [null],
+      model: [null],
+      doorsNumber: [null],
+      axesNumber: [null],
+      engineNumber: [null], //numero motor
+      tuition: [null],
+      serie: [null],
+      chassis: [null],
+      cabin: [null],
+      fitCircular: [null],
+      theftReport: [null],
+      addressId: [null],
+      operationalState: [null],
+      manufacturingYear: [null],
+      enginesNumber: [null], // numero de motores
+      flag: [null],
+      openwork: [null],
+      sleeve: [null],
+      length: [null],
+      shipName: [null],
+      publicRegistry: [null], //registro public
+      ships: [null],
+      dgacRegistry: [null], //registro direccion gral de aereonautica civil
+      airplaneType: [null],
+      caratage: [null], //kilatage
+      material: [null],
+      weight: [null],
+      descriptionGoodSae: [null],
     });
   }
 
@@ -475,13 +358,11 @@ export class VerifyComplianceTabComponent
     const elemento = event.data;
 
     const index = this.article3array.indexOf(elemento);
-    console.log(index, this.article3array);
     if (index !== -1) {
       delete this.article3array[index];
     } else {
       this.article3array.push(elemento);
     }
-    console.log(this.article3array);
   }
 
   article12y13Selected(event: any): void {
@@ -515,15 +396,26 @@ export class VerifyComplianceTabComponent
   }
 
   selectGood(event: any) {
+    //if (event.isSelected === true) {
+    this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
+    console.log(this.isGoodSelected);
+
     if (this.goodsSelected.length === 1) {
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
-      }, 3000);
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+          console.log(this.isGoodSelected);
+        }
+      }, 2000);
     }
+    //} else {
+    //this.clarificationData = [];
+    //}
   }
 
   getArticlesById(article: any, typeArt: string) {
@@ -580,6 +472,7 @@ export class VerifyComplianceTabComponent
 
   /*  Metodo para traer las solicitudes de un bien  */
   getClarifications(id: number | string) {
+    this.clarificationData = [];
     let params = new ListParams();
     params['filter.goodId'] = `$eq:${id}`;
     this.rejectedGoodService.getAllFilter(params).subscribe({
@@ -643,7 +536,12 @@ export class VerifyComplianceTabComponent
   }
 
   async confirm() {
-    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
+    if (
+      (this.article3array.length < 3 || this.article12and13array.length < 3) &&
+      (this.transferenceId === 1 ||
+        this.transferenceId === 3 ||
+        this.transferenceId === 120)
+    ) {
       this.alert(
         'error',
         'Error',
@@ -652,61 +550,70 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    if (this.existArt > 0) {
-      const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
-      console.log(allArt);
+    if (
+      this.transferenceId === 1 ||
+      this.transferenceId === 3 ||
+      this.transferenceId === 120
+    ) {
+      if (this.existArt > 0) {
+        const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
+        console.log(allArt);
 
-      allArt.map(async (item: any) => {
-        await this.deleteDocumentRequest(item);
+        allArt.map(async (item: any) => {
+          await this.deleteDocumentRequest(item);
+        });
+      }
+
+      /* insertar articulo 3 */
+      this.article3array.map(async (item: any) => {
+        await this.createDocRequest(item, 'S');
+      });
+
+      /* ingresar articulo 12 , 13 */
+      this.paragraphsTable2.map(async (list: any, i: number) => {
+        if (list.cumple === true) {
+          await this.createDocRequest(list, 'S');
+        } else if (list.cumple === false) {
+          await this.createDocRequest(list, 'N');
+        } else {
+          await this.createDocRequest(list, 'N');
+        }
       });
     }
 
-    /* insertar articulo 3 */
-    this.article3array.map(async (item: any) => {
-      await this.createDocRequest(item, 'S');
-    });
+    this.goodData.map(async (item: any, i: number) => {
+      let index = i + 1;
+      const result = await this.updateGoods(item);
 
-    /* ingresar articulo 12 , 13 */
-    this.paragraphsTable2.map(async (list: any, i: number) => {
-      if (list.cumple === true) {
-        await this.createDocRequest(list, 'S');
-      } else if (list.cumple === false) {
-        await this.createDocRequest(list, 'N');
-      } else {
-        await this.createDocRequest(list, 'N');
+      if (this.goodData.length === index) {
+        this.onLoadToast(
+          'success',
+          'Verificación Guardada',
+          'Los datos se guardaron correctamente'
+        );
       }
     });
-
-    const result = await this.updateGoods();
   }
 
-  updateGoods() {
+  updateGoods(item: any) {
     return new Promise((resolve, reject) => {
-      const goods = this.goodData;
-      goods.map((item: any) => {
-        let body: any = {};
-        body['id'] = item.id;
-        body['goodId'] = item.goodId;
-        body['descriptionGoodSae'] = item.descriptionGoodSae;
-        this.goodServices.update(body).subscribe({
-          next: resp => {
-            resolve(true);
-            console.log(resp);
-            this.alert(
-              'success',
-              'Verificación Guardad',
-              'Los datos se guardaron correctamente'
-            );
-          },
-          error: error => {
-            console.log(error.error.message);
-            this.alert(
-              'error',
-              'Error al guardar',
-              'No se pudieron guardar los datos'
-            );
-          },
-        });
+      let body: any = {};
+      body['id'] = item.id;
+      body['goodId'] = item.goodId;
+      body['descriptionGoodSae'] = item.descriptionGoodSae;
+      this.goodServices.update(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.alert(
+            'error',
+            'Error al guardar',
+            'No se pudieron guardar los datos'
+          );
+          reject(false);
+        },
       });
     });
   }

@@ -69,6 +69,9 @@ export class RegistrationHelper extends BasePage {
         next: resp => {
           resolve(resp);
         },
+        error: error => {
+          resolve(0);
+        },
       });
     });
   }
@@ -80,7 +83,8 @@ export class RegistrationHelper extends BasePage {
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
           //console.log(resp);
-          resolve(resp.data.lenght);
+          const length = resp.data.length;
+          resolve(length);
         },
         error: error => {
           resolve(0);
@@ -108,8 +112,7 @@ export class RegistrationHelper extends BasePage {
     const urgentPriority = request.urgentPriority;
     const priorityDate = request.priorityDate;
 
-    const lisDocument = await this.getDocument(idRequest);
-
+    const lisDocument: any = await this.getDocument(idRequest);
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
@@ -277,7 +280,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una unidad de medida'
             );
             break;
-          } else if (good.goodDescription == null) {
+          } /* else if (good.goodDescription == null) {
             sinDescripcionT = true;
             this.message(
               'error',
@@ -285,7 +288,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una descripción de bien transferente'
             );
             break;
-          }
+          } */
 
           // Se valida si la clasificacion tenga 8 caracteres
           if (good.fractionId !== null) {
@@ -326,9 +329,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else {
-              const realEstate: any = await this.getGoodRealEstate(
-                good.idGoodProperty
-              );
+              const realEstate: any = await this.getGoodRealEstate(good.id); //
               if (realEstate.publicDeed === null) {
                 tipoRelInmueble = true;
                 this.message(

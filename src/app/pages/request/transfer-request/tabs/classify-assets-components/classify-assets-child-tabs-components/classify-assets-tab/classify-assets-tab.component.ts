@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -34,9 +34,11 @@ export class ClassifyAssetsTabComponent
   @Input() requestObject: any;
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
-  @Input() goodObject: IFormGroup<any> = null;
+  @Input() goodObject: ModelForm<IGood>; //: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
+  @Input() goodSelect: any;
+
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -73,20 +75,27 @@ export class ClassifyAssetsTabComponent
       this.getSection(new ListParams());
     }
     this.getReactiveFormActions();
+    this.processView();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      this.process = item.process;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.typeDoc == '') {
+    /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
-      }
-    }
+      } */
 
     //bienes selecionados
-    this.good = changes['goodObject'].currentValue;
+    this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
-        this.getSection(new ListParams(), this.good.ligieSection);
+        this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
       }
     }
@@ -138,11 +147,7 @@ export class ClassifyAssetsTabComponent
       stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       origin: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
@@ -222,7 +227,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(30),
         ],
       ],
       chassis: [
@@ -299,7 +304,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(30),
         ],
       ],
       shipName: [
@@ -307,7 +312,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(70),
         ],
       ],
       publicRegistry: [
@@ -607,19 +612,7 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    //debugger;
-    /*const info = this.classiGoodsForm.getRawValue();
-    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
-      this.classiGoodsForm.get('stateConservation').setValue(1);
-    this.classiGoodsForm.get('physicalStatus').setValue(1);
-
-    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
-      this.classiGoodsForm.get('stateConservation').setValue(2);
-    this.classiGoodsForm.get('physicalStatus').setValue(2);
-    this.classiGoodsForm.get('destiny').setValue(1);*/
-
     const goods = this.classiGoodsForm.getRawValue();
-
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -633,10 +626,7 @@ export class ClassifyAssetsTabComponent
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
     }
-    if (!goods.idGoodProperty) {
-      goods.idGoodProperty =
-        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    }
+
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
