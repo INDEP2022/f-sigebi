@@ -6,7 +6,6 @@ import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-param
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
-import { EventSelectionComponent } from '../components/event-selection/event-selection.component';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
 
 @Component({
@@ -59,19 +58,6 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
     this.paramSettings.actions.delete = true;
-    this.paramSettings.columns = {
-      ...this.paramSettings.columns,
-      event: {
-        title: 'Evento',
-        sort: false,
-        type: 'html',
-        width: '25%',
-        editor: {
-          type: 'custom',
-          component: EventSelectionComponent,
-        },
-      },
-    };
   }
 
   ngOnInit(): void {
@@ -83,28 +69,15 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
 
   getLotParams() {
     const params = this.params.getValue();
-
     this.loading = true;
-    // this.loadingText = 'Cargando';
-    // params.text = this.consultTasksForm.value.txtSearch;
-    // params['others'] = this.userName;
-
     this.lotparamsService.getAll(params).subscribe({
       next: response => {
-        console.log('Estos son los lot parametros:', response.data);
-
         this.loading = false;
         this.lotparams = response.data;
         this.totalItems = response.count;
       },
       error: () => (this.loading = false),
     });
-  }
-
-  getSearch() {
-    this.loading = true;
-    console.log(this.params.getValue());
-    this.loading = false;
   }
 
   hideFilters() {
@@ -148,30 +121,27 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
   }
 
   async addEntry(event: any) {
-    // console.log("Agregando nuevo parametro");
     let { newData, confirm } = event;
-    if (!newData.event || newData.batch == '' || newData.warranty == '') {
+
+    if (
+      !newData.idEvent ||
+      newData.idLot == '' ||
+      newData.specialGuarantee == ''
+    ) {
       this.alertTable();
       return;
     }
-    // newData.event = newData.event.id;
     const requestBody = {
       idLot: '',
       idEvent: event.newData.idEvent,
       publicLot: event.newData.publicLot,
       specialGuarantee: event.newData.specialGuarantee,
-      nbOrigin: 'Agregado desde angular',
+      nbOrigin: '',
     };
-    // console.log("Request body create: ", requestBody);
 
     // Llamar servicio para agregar registro
-    // this.lotparamsService.createLotParameter();
-    // await this.lotparamsService.createLotParameter(requestBody);
     this.lotparamsService.createLotParameter(requestBody).subscribe({
       next: resp => {
-        // console.log("resp: ", resp);
-
-        // this.loadingTurn = false;
         this.msgModal(
           'Guardado con exito '.concat(`<strong>${requestBody.idLot}</strong>`),
           'Parametro Guardado',
@@ -194,7 +164,11 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
 
   editEntry(event: any) {
     let { newData, confirm } = event;
-    if (!newData.event || newData.batch == '' || newData.warranty == '') {
+    if (
+      !newData.idEvent ||
+      newData.idLot == '' ||
+      newData.specialGuarantee == ''
+    ) {
       this.alertTable();
       return;
     }
@@ -204,12 +178,11 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       idEvent: event.newData.idEvent,
       publicLot: event.newData.publicLot,
       specialGuarantee: event.newData.specialGuarantee,
-      nbOrigin: 'Actualizardo desde angualar',
+      nbOrigin: '',
     };
     // Llamar servicio para eliminar
     this.lotparamsService.update(event.newData.idLot, requestBody).subscribe({
       next: resp => {
-        // this.loadingTurn = false;
         this.msgModal(
           'Actualizaci&oacute;n exitosa '.concat(
             `<strong>${requestBody.idLot}</strong>`
@@ -259,14 +232,6 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
-    }).then(result => {
-      // if (result.isConfirmed) {
-      //   // this.requestForm.reset();
-      //   // this.requestForm.controls['applicationDate'].patchValue(this.bsValue);
-      //   // this.getRegionalDeleg(new ListParams());
-      //   // this.userName = '';
-      //   // this.loadingTurn = false;
-      // }
-    });
+    }).then(result => {});
   }
 }

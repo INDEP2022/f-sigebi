@@ -21,8 +21,16 @@ export class LotParamsService extends HttpService {
     return this.post<any>(LotParamsEndpoints.Create, body);
   }
 
-  getAll(params: ListParams | string): Observable<any> {
-    return this.get<any>(LotParamsEndpoints.FindAll, params);
+  getAll(params: ListParams): Observable<any> {
+    let filterParams =
+      params.text === '' ? '' : 'filter.idEvent=' + params.text + '&';
+    filterParams += 'page=' + params.page + '&';
+    filterParams += 'pagesize=' + params.pageSize + '&';
+    filterParams += 'take=' + params.take + '&';
+    filterParams += 'limit=' + params.limit;
+
+    const route = `${LotParamsEndpoints.FindAll}?${filterParams}`;
+    return this.get<any>(route);
   }
 
   update(id: number | string, body: Object): Observable<any> {
