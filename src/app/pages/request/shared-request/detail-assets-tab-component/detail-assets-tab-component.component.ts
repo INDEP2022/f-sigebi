@@ -146,6 +146,8 @@ export class DetailAssetsTabComponentComponent
   menajeSelected: any;
   isSaveMenaje: boolean = false;
   disableDuplicity: boolean = false; //para verificar cumplimientos = false
+  isGoodInfReadOnly: boolean = false;
+  isGoodTypeReadOnly: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -159,6 +161,7 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
+
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
       this.relevantTypeService
@@ -171,10 +174,10 @@ export class DetailAssetsTabComponentComponent
         });
 
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
+      this.isGoodTypeReadOnly = true;
     }
 
     if (this.typeDoc === 'clarification') {
@@ -188,7 +191,8 @@ export class DetailAssetsTabComponentComponent
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
       this.typeDoc === 'approval-process' ||
-      this.typeDoc === 'classify-assets'
+      this.typeDoc === 'classify-assets' ||
+      this.typeDoc === 'clarification'
     ) {
       if (address?.id) {
         this.getGoodDomicilie(address?.id);
@@ -200,6 +204,12 @@ export class DetailAssetsTabComponentComponent
         if (this.goodDomicilieForm !== undefined) {
           this.goodDomicilieForm.disable();
         }
+      }
+
+      if (this.typeDoc === 'clarification') {
+        this.isGoodInfReadOnly = true;
+        this.disableDuplicity = true;
+        this.isGoodTypeReadOnly = true;
       }
 
       if (this.detailAssets.controls['subBrand'].value) {
@@ -893,6 +903,7 @@ export class DetailAssetsTabComponentComponent
 
   async save() {
     const domicilie = this.domicileForm.getRawValue();
+
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
@@ -964,14 +975,16 @@ export class DetailAssetsTabComponentComponent
           }
 
           if (data.id != null) {
-            this.message(
-              'success',
-              'Actualizado',
-              `Se actualizo el domicilio del bien!`
-            );
             this.domicileForm.controls['id'].setValue(data.id);
             resolve('Se actualizo el registro del domicilio del bien');
           }
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
+          );
         },
       });
     });
@@ -1007,16 +1020,13 @@ export class DetailAssetsTabComponentComponent
             );
             reject('El registro del bien del inmueble no se guardo!');
           }
-
-          if (data.id != null) {
-            this.message(
-              'success',
-              'Guardado',
-              `Se guardo correctamente el bien inmueble!`
-            );
-
-            resolve('Se guardo correctamente el bien inmueble!');
-          }
+        },
+        error: error => {
+          this.message(
+            'success',
+            'Guardado',
+            `Se guardo correctamente el bien inmueble!`
+          );
         },
       });
     });
