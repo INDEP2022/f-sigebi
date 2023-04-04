@@ -80,7 +80,6 @@ export class DocumentsSentToMasterfileComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
-          debugger;
           let filters = change.filter.filters;
 
           filters.map((filter: any) => {

@@ -254,7 +254,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      addressId: [null],
       operationalState: [
         null,
         [
@@ -635,54 +635,50 @@ export class ClassifyAssetsTabComponent
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      goodAction = this.goodService.create(goods);
+      this.createGood(goods);
     } else {
-      goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId.id);
-      goodAction = this.goodService.update(goods);
+      this.updateGood(goods);
     }
+  }
 
-    goodAction.subscribe({
-      next: (data: any) => {
-        if (data) {
-          if (data.id) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
+  createGood(good: any) {
+    this.goodService.create(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `El registro se guardo exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            this.refreshTable(true);
+        this.refreshTable(true);
 
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          }
-        } else {
-          if (data.statusCode === 200) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se guardo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
-
-            this.refreshTable(true);
-
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          } else {
-            this.message(
-              'error',
-              'Error',
-              `El registro no sepudo guardar!. ${data.message}`
-            );
-          }
-        }
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
       },
-      error: (error: any) => {},
+      error: error => {},
+    });
+  }
+
+  updateGood(good: any) {
+    good.requestId = good.requestId.id;
+    this.goodService.update(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `El registro se actualizo exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
+
+        this.refreshTable(true);
+
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
+      },
+      error: error => {},
     });
   }
 

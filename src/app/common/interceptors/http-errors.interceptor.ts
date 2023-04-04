@@ -67,7 +67,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   handleError(error: HttpErrorResponse) {
-    console.log(error);
     const status = error.status;
     let message = '';
     if (Array.isArray(error?.error?.message) === true) {
@@ -90,7 +89,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     if (status === 500 && this.showError && !this.blockAllErrors) {
       message = 'Error del Servidor';
       this.onLoadToast('warning', 'Advertencia', message);
-      console.log(status, this.showError, message);
       return;
     }
     if (status === 401) {
