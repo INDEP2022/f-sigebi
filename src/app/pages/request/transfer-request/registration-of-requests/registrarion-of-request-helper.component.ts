@@ -208,7 +208,6 @@ export class RegistrationHelper extends BasePage {
     }
 
     let goods: any = null;
-    //debugger;
     if (validoOk === true) {
       goods = await this.getGoodQuantity(Number(request.id));
       if (goods.count < 1) {

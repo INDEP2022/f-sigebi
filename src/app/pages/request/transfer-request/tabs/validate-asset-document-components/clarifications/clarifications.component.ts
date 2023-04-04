@@ -404,8 +404,9 @@ export class ClarificationsComponent
   }
 
   clicked(event: any) {
-    this.rowSelected = event;
+    this.goodForm.reset();
     this.goodForm.patchValue({ ...event });
+    this.rowSelected = event;
   }
 
   selectAll(event?: any) {
