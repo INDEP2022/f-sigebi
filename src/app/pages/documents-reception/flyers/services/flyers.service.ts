@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
+import {
+  IGoodSearchGoodByClasification,
+  IGoodSearchGoodByFile,
+} from 'src/app/core/models/good/good.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ClarificationsService } from 'src/app/core/services/ms-office-management/clarifications.service';
+import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
@@ -17,7 +24,10 @@ export class FlyersService {
     private msMJobManagementService: MJobManagementService,
     private msNotificationService: NotificationService,
     private msCityService: CityService,
-    private msUsersService: UsersService
+    private msUsersService: UsersService,
+    private msGoodsJobManagementService: GoodsJobManagementService,
+    private msClarificationsService: ClarificationsService,
+    private msGoodService: GoodService
   ) {}
 
   /**
@@ -101,7 +111,11 @@ export class FlyersService {
     return this.msMJobManagementService.getAllFiltered(params);
   }
 
-  getNotificationByWheel(params: _Params) {
+  getDocumentOficioGestion(params: _Params) {
+    return this.msGoodsJobManagementService.getAllFiltered(params);
+  }
+
+  getNotificationByFilter(params: _Params) {
     return this.msNotificationService.getAllFilter(params);
   }
 
@@ -111,5 +125,20 @@ export class FlyersService {
 
   getSenderUser(params: ListParams) {
     return this.msUsersService.getAllSegXAreas(params);
+  }
+
+  getJustificacion(params: _Params) {
+    return this.msClarificationsService.getAllFiltered(params);
+  }
+  getGoodSearchGoodByFileAndClasif(
+    body: IGoodSearchGoodByClasification,
+    body2: IGoodSearchGoodByFile,
+    option: string
+  ) {
+    if (option == 'file') {
+      return this.msGoodService.getSearchGoodByFile(body2);
+    } else {
+      return this.msGoodService.getSearchGoodByClasif(body);
+    }
   }
 }
