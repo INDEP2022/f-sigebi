@@ -751,62 +751,71 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   work() {
-    const { processNumber, officeNumber, flierNumber } = this.selectedRow;
+    const { processNumber, officeNumber, flierNumber, processStatus } =
+      this.selectedRow;
 
-    this.workService.getSatOfficeType(officeNumber).subscribe({
-      next: (resp: any) => {
-        if (resp.data) {
-          console.log(resp.data);
-          this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
-          console.log(this.P_SAT_TIPO_EXP);
-          // if (this.P_SAT_TIPO_EXP !== '') {
-          let typeManagement = this.selectedRow.typeManagement;
-          let folio = this.selectedRow.folioRep;
-          //TODO: CHECK BUZON
-          switch (typeManagement) {
-            case '2':
-              folio !== 0
-                ? this.work2()
-                : this.alert(
-                    'info',
-                    'Este trámite es un asunto SAT',
-                    'No se puede trabajar hasta que se genere un folio de recepción'
-                  );
-              break;
-            case '3':
-              folio !== 0
-                ? this.work2()
-                : this.alert(
-                    'info',
-                    'Este trámite es un asunto PGR',
-                    'No se puede trabajar hasta que se genere un folio de recepción'
-                  );
-              break;
-            default:
-              //console.log('No es 2 ni 3, work()');
-              this.work2();
-              break;
+    if (processStatus !== 'FNI') {
+      this.workService.getSatOfficeType(officeNumber).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            console.log(resp.data);
+            this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
+            console.log(this.P_SAT_TIPO_EXP);
+            // if (this.P_SAT_TIPO_EXP !== '') {
+            let typeManagement = this.selectedRow.typeManagement;
+            let folio = this.selectedRow.folioRep;
+            //TODO: CHECK BUZON
+            switch (typeManagement) {
+              case '2':
+                folio !== 0
+                  ? this.work2()
+                  : this.alert(
+                      'info',
+                      'Este trámite es un asunto SAT',
+                      'No se puede trabajar hasta que se genere un folio de recepción'
+                    );
+                break;
+              case '3':
+                folio !== 0
+                  ? this.work2()
+                  : this.alert(
+                      'info',
+                      'Este trámite es un asunto PGR',
+                      'No se puede trabajar hasta que se genere un folio de recepción'
+                    );
+                break;
+              default:
+                //console.log('No es 2 ni 3, work()');
+                this.work2();
+                break;
+            }
+
+            //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
+          } else {
+            this.alert(
+              'info',
+              'Proceso incompleto',
+              'Este trámite no se puede trabajar'
+            );
           }
-
-          //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
-        } else {
-          this.alert(
-            'info',
-            'Proceso incompleto',
-            'Este trámite no se puede trabajar'
-          );
-        }
-        this.loading = false;
-        /*} else {
-          this.alert(
-            'info',
-            'Sin clave de pantalla',
-            'La clave de pantalla no ha sido encontrada'
-          );
-        }*/
-      },
-      error: error => (this.loading = false),
-    });
+          this.loading = false;
+          /*} else {
+            this.alert(
+              'info',
+              'Sin clave de pantalla',
+              'La clave de pantalla no ha sido encontrada'
+            );
+          }*/
+        },
+        error: error => (this.loading = false),
+      });
+    } else {
+      this.alert(
+        'info',
+        'No permitido',
+        'Este oficio no se puede trabajar, el estatus está finalizado'
+      );
+    }
   }
 
   /*Redux NgRX Global Vars Get Initial State*/

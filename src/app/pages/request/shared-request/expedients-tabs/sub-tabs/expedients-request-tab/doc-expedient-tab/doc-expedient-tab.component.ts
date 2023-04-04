@@ -16,10 +16,15 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DOC_REQUEST_TAB_COLUMNS } from '../../doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from '../../doc-request-tab/see-information/see-information.component';
@@ -41,6 +46,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   selectDocType = new DefaultSelect<any>();
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsDelReg = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
@@ -52,7 +58,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   idExpedient: number = 0;
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  delegationId: number = 0;
+  stateId: string = '';
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -60,7 +67,10 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private wContentService: WContentService,
     private sanitizer: DomSanitizer,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private delRegService: RegionalDelegationService,
+    private stateService: DelegationStateService,
+    private transferentService: TransferenteService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -75,7 +85,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       this.container.createEmbeddedView(this.template);
     }
     this.prepareForm();
-    this.setTypeColumn();
+    this.getRegDelegation(new ListParams());
+    this.getDocType(new ListParams());
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -111,8 +122,11 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
       noOfice: [null],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: 157, disabled: true }],
+      comment: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      noRequest: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
 
       /* Solicitud Transferencia */
@@ -125,6 +139,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   getRequestData() {
     this.requestService.getById(this.idRequest).subscribe(data => {
       this.idExpedient = data.recordId;
+      this.docRequestForm.get('noRequest').setValue(this.idExpedient);
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData());
@@ -181,12 +196,245 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     });
   }
 
-  getDocType(event: any) {}
+  getDocType(params: ListParams) {
+    this.wContentService.getDocumentTypes(params).subscribe(data => {
+      console.log('data', data);
+      this.selectDocType = new DefaultSelect(data.data, data.count);
+    });
+  }
 
-  search(): void {}
+  search(): void {
+    const typeDoc = this.docRequestForm.get('docType').value;
+    const delegation = this.docRequestForm.get('regDelega').value;
+    const state = this.docRequestForm.get('state').value;
+    const transf = this.docRequestForm.get('tranfe').value;
+    const titleDoc = this.docRequestForm.get('docTitle').value;
+    const sender = this.docRequestForm.get('sender').value;
+    const author = this.docRequestForm.get('dDocAuthor').value;
+    const contributor = this.docRequestForm.get('contributor').value;
+    const noOfice = this.docRequestForm.get('noOfice').value;
+    const senderCharge = this.docRequestForm.get('senderCharge').value;
+    const comment = this.docRequestForm.get('comment').value;
+    const responsible = this.docRequestForm.get('responsible').value;
+
+    //filtrando por el tipo de documento//
+    if (typeDoc) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xtipoDocumento == typeDoc) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    //Filtrando por la delegación regional//
+    if (delegation && state == null) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xdelegacionRegional == delegation) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    //Filtrando por estado
+    if (state && delegation && transf == null) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xestado == state && item.xdelegacionRegional == delegation)
+          return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    //Filtrando por transferente//
+    if (transf && state && delegation) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (
+          item.xestado == state &&
+          item.xdelegacionRegional == delegation &&
+          item.xidTransferente == transf
+        )
+          return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (titleDoc) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.ddocTitle == titleDoc) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (sender) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xremitente == sender) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (author) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.ddocTitle == author) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (contributor) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xcontribuyente == contributor) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (noOfice) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xnoOficio == noOfice) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (senderCharge) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xcargoRemitente == senderCharge) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (comment) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xcomments == comment) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (responsible) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xresponsable == responsible) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+  }
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.getRequestData();
   }
 
   openDetail(data: any): void {
@@ -268,22 +516,48 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     this.modalService.show(SeeInformationComponent, config);
   }
 
-  getRegDelegation(event: any) {}
+  getRegDelegation(params: ListParams) {
+    this.paramsDelReg;
+    this.delRegService.getAll(this.paramsDelReg.getValue()).subscribe({
+      next: data => {
+        this.selectRegDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {},
+    });
+  }
 
-  getState(event: any) {}
+  delegationSelect(delegation: IDelegation) {
+    this.delegationId = delegation.id;
+    this.getState(new ListParams());
+  }
 
-  getTransfe(event: any) {}
+  getState(params: ListParams) {
+    params['filter.regionalDelegation'] = this.delegationId;
+    this.stateService.getAll(params).subscribe(data => {
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
 
-  setTypeColumn() {
-    /*if (this.displayName === 'validateEyeVisitResult') {
-      this.columns.noReq.title = 'No. Expediente';
-    } else {
-      if (this.typeDoc === 'request-assets') {
-        this.columns.noReq.title = 'No. Bien';
-      } else {
-        this.columns.noReq.title = 'No. Solicitud';
-      }
-    } */
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
+      this.selectState = new DefaultSelect(states, data.count);
+    });
+  }
+
+  stateSelect(state: IStateOfRepublic) {
+    this.stateId = state.id;
+    this.getTransfe(new ListParams());
+  }
+
+  getTransfe(params: ListParams) {
+    this.transferentService.getByIdState(this.stateId).subscribe({
+      next: data => {
+        console.log('d', data);
+        this.selectTransfe = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {},
+    });
   }
 
   setTitle(value: string) {

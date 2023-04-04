@@ -8,7 +8,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
@@ -425,7 +425,11 @@ export class GoodsCaptureComponent
       institutionNumber: institutionNumber?.id ?? null,
       subDelegation: subDelegation?.id ?? null,
     };
-    return this.goodsCaptureService.createNotification(_notification);
+    return this.goodsCaptureService.createNotification(_notification).pipe(
+      tap(notification => {
+        this.goodToSave.flyerNumber = notification.wheelNumber;
+      })
+    );
   }
 
   saveGood() {

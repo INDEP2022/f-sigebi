@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -107,13 +107,16 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       priorityDate: [null],
       ofRejectionsNumber: [null],
       rulingDocumentId: [null],
-      nameRecipientRuling: [null],
-      postRecipientRuling: [null],
-      paragraphOneRuling: [null],
-      paragraphTwoRuling: [null],
+      nameRecipientRuling: [
+        null,
+        [Validators.required, Validators.maxLength(100)],
+      ],
+      postRecipientRuling: [null, [Validators.maxLength(100)]],
+      paragraphOneRuling: [null, [Validators.maxLength(4000)]],
+      paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
-      ccpRuling: [null],
+      ccpRuling: [null, [Validators.maxLength(200)]],
       rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],
