@@ -176,6 +176,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
     this.requestForm.updateValueAndValidity();

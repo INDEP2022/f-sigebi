@@ -56,7 +56,7 @@ export const WORK_BIENES_COLUMNS = {
 
 export const WORK_ANTECEDENTES_COLUMNS = {
   proceedingsNum: {
-    title: 'No. Antecedente',
+    title: 'No. Expediente',
     sort: false,
   },
   flierNum: {
@@ -64,19 +64,19 @@ export const WORK_ANTECEDENTES_COLUMNS = {
     sort: false,
   },
   attended: {
-    title: 'Aatendió',
-    sort: false,
-  },
-  registryUsr: {
-    title: 'USR registro',
+    title: 'Atendió',
     sort: false,
   },
   type: {
+    title: 'Dictamen o Des.',
+    sort: false,
+  },
+  registryUsr: {
     title: 'Tipo',
     sort: false,
   },
   armedTradeKey: {
-    title: 'Clave oficio',
+    title: 'Clave Dic. u Oficio',
     sort: false,
   },
 };
