@@ -275,7 +275,7 @@ export class AddressTransferorTabComponent
           this.message(
             'success',
             'Guadado',
-            'El domicio se guardo correctamente'
+            'El domicio se guardó correctamente'
           );
 
           if (this.isNewAddress === true) {

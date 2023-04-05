@@ -38,13 +38,13 @@ export const DOCUMENTS_LIST_COLUMNS = {
 
 export const DOCUMENTS_LIST_REQ_COLUMNS = {
   ddocName: {
-    title: 'No° documento',
+    title: 'No. Documento',
     type: 'number',
     sort: false,
   },
 
   xidSolicitud: {
-    title: 'No° solicitud',
+    title: 'No. Solicitud',
     type: 'number',
     sort: false,
   },

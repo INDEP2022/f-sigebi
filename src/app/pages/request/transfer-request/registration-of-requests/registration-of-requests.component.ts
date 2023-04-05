@@ -1,12 +1,12 @@
 import { Location } from '@angular/common';
-import { Component,OnInit,ViewChild } from '@angular/core';
-import { FormBuilder,Validators } from '@angular/forms';
-import { ActivatedRoute,Router } from '@angular/router';
-import { BsModalRef,BsModalService,ModalOptions } from 'ngx-bootstrap/modal';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
-FilterParams,
-ListParams
+  FilterParams,
+  ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -18,10 +18,10 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-EMAIL_PATTERN,
-NUMBERS_PATTERN,
-PHONE_PATTERN,
-STRING_PATTERN
+  EMAIL_PATTERN,
+  NUMBERS_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { IRequest } from '../../../../core/models/requests/request.model';
@@ -606,7 +606,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -633,7 +633,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -660,7 +660,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -740,7 +740,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     } */

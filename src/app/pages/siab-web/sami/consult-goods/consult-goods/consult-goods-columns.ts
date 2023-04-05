@@ -176,7 +176,7 @@ export const CONSULTGOODS_COLUMNS = {
     sort: false,
   },
   cantTransferSae: {
-    title: 'Cant.Transferencia SAE',
+    title: 'Cant.Transferencia INDEP',
     sort: false,
   },
   cantReserved: {

@@ -565,7 +565,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.goodsWareh.push(response);
           this.goodsWarehouse.load(this.goodsWareh);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
         },
       });
     });

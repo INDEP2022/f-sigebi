@@ -304,7 +304,7 @@ export class PerformProgrammingFormComponent
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Para crear un almacén necesitas seleccionar una delegación regional'
+        'Para crear un almacén necesitas seleccionar una Delegación Regional'
       );
     }
   }
