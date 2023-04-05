@@ -20,3 +20,6 @@ export const NAME_PATTERN = '^[A-Za-z\\áéíóúÁÉÍÓÚñÑ\\ \\.]+$';
 export const NUMBERS_BY_COMMA = '^(d+,?)+$';
 
 //'^[A-ZÑa-zñáéíóúÁÉÍÓÚ'° ]+$'
+
+export const NUM_POSITIVE_LETTERS = '^[0-9]+|[a-zA-Z]+$';
+export const NUM_POSITIVE = '^[0-9]+';

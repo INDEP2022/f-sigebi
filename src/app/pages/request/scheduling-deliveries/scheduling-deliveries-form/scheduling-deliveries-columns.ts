@@ -35,7 +35,7 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
   },
 
   saeNumber: {
-    title: 'Número SAE',
+    title: 'Número INDEP',
     type: 'number',
     sort: false,
   },
@@ -78,7 +78,7 @@ export const SCHEDULING_DELIVERIES_SALES_COLUMNS = {
   },
 
   saeNumber: {
-    title: 'Número SAE',
+    title: 'Número INDEP',
     type: 'number',
     sort: false,
   },
@@ -140,7 +140,7 @@ export const SEARCH_SALES_TABLE = {
   },
 
   saeNumber: {
-    title: 'Número SAE',
+    title: 'Número INDEP',
     type: 'number',
     sort: false,
   },

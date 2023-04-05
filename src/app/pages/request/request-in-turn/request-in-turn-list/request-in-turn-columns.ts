@@ -30,7 +30,7 @@ export const REQUEST_IN_TURN_COLUMNS = {
     sort: false,
   },
   delegationName: {
-    title: 'Delegacion regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },

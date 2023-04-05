@@ -218,7 +218,7 @@ export class VerifyComplianceTabComponent
       delete clarify[0].clarificationName;
       this.openForm(clarify[0]);
     } else {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', 'Seleccione solo una aclaración!');
     }
   }
 
@@ -509,13 +509,13 @@ export class VerifyComplianceTabComponent
 
   deleteClarification() {
     if (this.clarifyRowSelected.length !== 1) {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
     }
 
     Swal.fire({
       title: 'Eliminar Aclaración?',
-      text: 'Desea eliminar la aclaracion?',
+      text: '¿Desea eliminar la aclaración?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',

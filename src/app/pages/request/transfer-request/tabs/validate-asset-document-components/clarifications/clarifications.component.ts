@@ -62,7 +62,7 @@ var data2 = [
     typeClarification: 'Aclaracíon',
     clarification: 'ERROR EN DOCUMENTACION ANEXA',
     reason: 'No cuenta con documentacion',
-    status: 'NUEVA ACLARACION',
+    status: 'NUEVA ACLARACIÓN',
     observation: '',
   },
 ];
@@ -455,7 +455,7 @@ export class ClarificationsComponent
   deleteClarification() {
     let data = this.clariArraySelected[0];
     if (!data) {
-      this.alert('warning', 'Cuidado', 'Tiene que seleccionar una aclaracion');
+      this.alert('warning', 'Cuidado', 'Tiene que seleccionar una aclaración');
     }
     this.alertQuestion(
       'warning',
@@ -468,7 +468,7 @@ export class ClarificationsComponent
             this.onLoadToast(
               'success',
               'Eliminada con exito',
-              'La aclaracion fue eliminada con exito.'
+              'La aclaración fue eliminada con éxito.'
             );
           },
           complete: () => {
@@ -482,7 +482,7 @@ export class ClarificationsComponent
     if (this.clariArraySelected.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
     }
   }
 
