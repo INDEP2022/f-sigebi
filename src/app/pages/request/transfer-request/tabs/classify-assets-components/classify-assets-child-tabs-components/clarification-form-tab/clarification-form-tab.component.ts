@@ -103,7 +103,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     let clarification = this.clarificationForm.getRawValue();
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
-    clarification['answered'] = 'NUEVA ACLARACION';
+    clarification['answered'] = 'NUEVA ACLARACIÓN';
     clarification.goodId = this.goodTransfer.id;
     //clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
@@ -118,8 +118,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       next: val => {
         this.onLoadToast(
           'success',
-          `Aclaracion guardada`,
-          `Se guardo la aclaracion correctamente`
+          `Aclaración guardada`,
+          `Se guardó la aclaración correctamente`
         );
       },
       complete: () => {
@@ -136,8 +136,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         next: val => {
           this.onLoadToast(
             'success',
-            `Aclaracion actualizada`,
-            `Se actualizo la aclaracion correctamente`
+            `Aclaración actualizada`,
+            `Se actualizo la aclaración correctamente`
           );
         },
         complete: () => {

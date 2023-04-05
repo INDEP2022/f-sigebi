@@ -104,7 +104,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./sat-classification/sat-classification.module'))
         .SatClasificationModule,
-    data: { title: 'Sat Clasificacion' },
+    data: { title: 'Sat Clasificación' },
   },
   {
     path: 'sat-subclasification',
@@ -493,7 +493,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./siab-clasification/siab-clasification.module'))
         .SiabClasificationModule,
-    data: { title: 'Clasificacion SIAB' },
+    data: { title: 'Clasificación SIAB' },
   },
   {
     path: 'edos-x-coor',

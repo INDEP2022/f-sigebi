@@ -61,7 +61,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   regionalDelegationName: {
-    title: 'Delegación regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
@@ -253,7 +253,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   regionalDelegationName: {
-    title: 'Delegación regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
