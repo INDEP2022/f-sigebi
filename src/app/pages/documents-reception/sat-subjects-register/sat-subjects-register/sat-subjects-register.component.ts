@@ -418,8 +418,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   getCoordinador(params: ListParams) {
     let subscription = this.satSubjectsRegisterService
       .getCoordinadorBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -429,7 +429,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.cordinators = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -437,10 +438,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -449,12 +447,19 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getStatusProcess(params: ListParams) {
-    params.take = 20;
+    params.take = 10;
+    params['orderColumn'] = 'id';
     params['order'] = 'DESC';
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.satSubjectsRegisterService
       .getStatusBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.processStatus = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -464,7 +469,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.processStatus = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -472,10 +478,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -490,6 +493,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * Dejar en blanco el campo de delegación
    */
   resetStatusProcess() {
+    this.satForm.get('processStatus').reset();
     this.satForm.get('processStatus').setValue(null);
     this.satForm.get('processStatus').updateValueAndValidity();
   }
