@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,8 +17,8 @@ import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-proc
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
 import {
-  RELATED_DOCUMENTS_COLUMNS,
-  RELATED_DOCUMENTS_EXAMPLE_DATA,
+  IDataGoodsTable,
+  RELATED_DOCUMENTS_COLUMNS_GOODS,
 } from './related-documents-columns';
 import {
   MANAGEMENTOFFICESTATUSSEND,
@@ -48,9 +49,11 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
   select = new DefaultSelect();
   justificacion = new DefaultSelect();
+  goodTypes = new DefaultSelect();
   cities = new DefaultSelect();
   senders = new DefaultSelect();
-  data = RELATED_DOCUMENTS_EXAMPLE_DATA;
+  dataGoodFilter: IGood[] = [];
+  dataGood: IDataGoodsTable[] = [];
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -102,6 +105,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   screenKeyRelated: string = '';
   screenKey: string = '';
   notificationData: INotification;
+  loadingGoods: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -114,7 +118,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...RELATED_DOCUMENTS_COLUMNS },
+      columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
     };
   }
 
@@ -219,15 +223,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.managementForm
       .get('noExpediente')
       .setValue(this.paramsGestionDictamen.expediente);
+    this.managementForm
+      .get('tipoOficio')
+      .setValue(this.paramsGestionDictamen.tipoOf);
+    this.managementForm.updateValueAndValidity();
   }
 
   prepareForm() {
     this.managementForm = this.fb.group({
       noVolante: [null, [Validators.required, Validators.maxLength(11)]],
       noExpediente: [null, [Validators.required, Validators.maxLength(11)]],
-      tipoOficio: [null],
-      relacionado: [null, Validators.pattern(STRING_PATTERN)],
-      numero: [],
+      tipoOficio: [null, [Validators.required, Validators.maxLength(20)]],
+      relacionado: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
+      ],
+      numero: [{ value: '', disabled: true }, [Validators.maxLength(40)]],
       cveGestion: [null],
       noRemitente: [null],
       remitente: [null],
@@ -242,6 +253,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       justificacionDetalle: [null],
       noOficio: [null],
       subtipo: [null],
+      goodTypes: [null],
       // indPDoctos: [null],
       noBienes: [null],
       // bienes: [null],
@@ -401,41 +413,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }
   }
 
-  /**
-   * INCIDENCIA 581 --- CORRECTO
-   * @returns
-   */
-  getJustification(paramsData: ListParams) {
-    const params = new FilterParams();
-    params.removeAllFilters();
-    params.addFilter('type', 3, SearchFilter.NOT);
-    params.addFilter('clarifications', paramsData['search'], SearchFilter.LIKE);
-    let subscription = this.flyerService
-      .getJustificacion(params.getFilterParams())
-      .subscribe({
-        next: data => {
-          console.log(data);
-          this.justificacion = new DefaultSelect(
-            data.data.map(i => {
-              i.clarifications = '#' + i.id + ' -- ' + i.clarifications;
-              return i;
-            }),
-            data.count
-          );
-          subscription.unsubscribe();
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al consultar las Justificaciones'
-          );
-          subscription.unsubscribe();
-        },
-      });
-  }
-
   changeSender() {
     if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
       this.managementForm.get('destinatario').disable();
@@ -548,9 +525,129 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }
   }
 
-  // INCIDENCIAS 675 Y 681 --- ESPERA
-  getGoods() {
-    // getGoodSearchGoodByFileAndClasif
+  // INCIDENCIAS 675 Y 681 --- INTEGRADO
+  async getGoods() {
+    this.loadingGoods = true;
+    this.dataGood = [];
+    let objBody: any = {
+      screenKey: this.screenKey,
+    };
+    // Validar con tipos de notificaciones
+    if (
+      this.managementForm.get('goodTypes').value == '' ||
+      this.managementForm.get('goodTypes').value == 'null' ||
+      this.managementForm.get('goodTypes').value == null
+    ) {
+      // Por expediente
+      objBody['fileNumber'] = this.notificationData.expedientNumber;
+    } else {
+      // Por número de clasificación
+      objBody['clasifGoodNumber'] = this.managementForm.get('goodTypes').value;
+    }
+    await this.flyerService
+      .getGoodSearchGoodByFileAndClasif(
+        objBody,
+        objBody,
+        objBody['fileNumber'] ? 'file' : ''
+      )
+      .subscribe({
+        next: res => {
+          console.log(res);
+          // this.dataGood = res.data;
+          for (let index = 0; index < res.data.length; index++) {
+            const element = res.data[index];
+            if (element) {
+              this.dataGood.push({
+                goodId: element.goodId,
+                description: element.description,
+                quantity: element.quantity,
+                identifier: element.identifier,
+                status: element.status,
+                desEstatus: '',
+                seleccion: false,
+                improcedencia: false,
+              });
+            }
+          }
+          this.reviewGoodData(this.dataGood[0], 0, res.count);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+
+  reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
+    this.getGoodStatusDescription(dataGoodRes, count, total);
+  }
+
+  // AGREGAR UN FOR PARA LOS BIENES
+  async getGoodStatusDescription(
+    dataGoodRes: IDataGoodsTable,
+    count: number,
+    total: number
+  ) {
+    const params = new ListParams();
+    params['filter.status'] = '$eq:' + dataGoodRes.status;
+    console.log(params, this.dataGood);
+    await this.flyerService.getGoodStatusDescription(params).subscribe({
+      next: res => {
+        console.log(res);
+        console.log('params, ', this.dataGood);
+        this.dataGood[count].desEstatus = res.data[0].description;
+        this.validStatusGood(this.dataGood[count], count, total);
+      },
+      error: err => {
+        console.log(err);
+        console.log('params, ', this.dataGood);
+        this.dataGood[count].desEstatus = 'Error al cargar la descripción.';
+        this.validStatusGood(this.dataGood[count], count, total);
+      },
+    });
+  }
+
+  async validStatusGood(
+    dataGoodRes: IDataGoodsTable,
+    count: number,
+    total: number
+  ) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('goodNumber', dataGoodRes.goodId);
+    await this.flyerService
+      .getGoodExtensionsFields(params.getFilterParams())
+      .subscribe({
+        next: res => {
+          console.log(res);
+          if (res.data[0].managementJob == '1') {
+            this.dataGood[count].seleccion = true;
+            this.dataGood[count].improcedencia = false;
+          } else if (res.data[0].managementJob == '2') {
+            this.dataGood[count].seleccion = false;
+            this.dataGood[count].improcedencia = true;
+          } else {
+            this.dataGood[count].seleccion = false;
+            this.dataGood[count].improcedencia = false;
+          }
+          count++;
+          if (total > count) {
+            this.reviewGoodData(this.dataGood[count], count, total);
+          } else if (total == count) {
+            this.loadingGoods = false;
+          }
+        },
+        error: err => {
+          console.log(err);
+          this.dataGood[count].seleccion = false;
+          this.dataGood[count].improcedencia = false;
+          count++;
+          if (total > count) {
+            this.reviewGoodData(this.dataGood[count], count, total);
+          } else if (total == count) {
+            this.loadingGoods = false;
+          }
+        },
+      });
   }
 
   async getNotificationData() {
@@ -599,11 +696,49 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.managementForm
       .get('fechaAcuse')
       .setValue(this.notificationData.desKnowingDate);
+    this.getGoods();
   }
 
   /**
    * Data Selects
    */
+
+  // INCIDENCIA 702 --- CARGAR SUBTIPOS
+
+  /**
+   * INCIDENCIA 581 --- CORRECTO
+   * @returns
+   */
+  getJustification(paramsData: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('type', 3, SearchFilter.NOT);
+    params.addFilter('clarifications', paramsData['search'], SearchFilter.LIKE);
+    let subscription = this.flyerService
+      .getJustificacion(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data);
+          this.justificacion = new DefaultSelect(
+            data.data.map(i => {
+              i.clarifications = '#' + i.id + ' -- ' + i.clarifications;
+              return i;
+            }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: err => {
+          console.log(err);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al consultar las Justificaciones'
+          );
+          subscription.unsubscribe();
+        },
+      });
+  }
 
   /**
    * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
@@ -641,7 +776,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   getSenderByDetail(params: ListParams) {
     params.take = 20;
     params['order'] = 'DESC';
-    console.log(params);
     let subscription = this.flyerService.getSenderUser(params).subscribe({
       next: data => {
         console.log(data);
