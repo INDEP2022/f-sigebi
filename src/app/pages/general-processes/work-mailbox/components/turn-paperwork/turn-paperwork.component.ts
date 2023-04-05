@@ -112,6 +112,8 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       }),
       tap(() => {
         this.onLoadToast('success', 'El trámite se turno correctamente', '');
+        this.modalRef.content.callback(true);
+        this.close();
       })
     );
   }

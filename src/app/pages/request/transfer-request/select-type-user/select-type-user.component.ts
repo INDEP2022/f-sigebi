@@ -17,7 +17,10 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
-import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
+import {
+  RETURN_USER_SELECTED_COLUMNS,
+  TURN_SELECTED_COLUMNS,
+} from './request-in-turn-selected-columns';
 
 @Component({
   selector: 'app-select-tipe-user',
@@ -52,21 +55,35 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
+    let column: any = null;
+    if (this.typeAnnex === 'commit-request') {
+      column = TURN_SELECTED_COLUMNS;
+    } else if (this.typeAnnex === 'returnado') {
+      column = RETURN_USER_SELECTED_COLUMNS;
+    }
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
-      columns: TURN_SELECTED_COLUMNS,
+      columns: column,
     };
     this.initForm();
 
-    this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
-      this.getUsers();
-      this.TLPMessage();
-    });
+    //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
+    if (this.typeAnnex === 'commit-request') {
+      this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.getUsers();
+        this.TLPMessage();
+      });
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getUsers();
-    });
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getUsers();
+      });
+      //TRAE USUARIOS PARA RE TURNAR LA SOLICIUTD
+    } else if (this.typeAnnex === 'returnado') {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getReturnUsers();
+      });
+    }
   }
 
   initForm() {
@@ -123,6 +140,28 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     } else {
       this.user = null;
     }
+  }
+
+  getReturnUsers() {
+    /*this.params.value.addFilter(
+      'rol',
+      'SolicitudProgramacion.DelegadosRegionales'
+    );
+    this.params.value.addFilter('employeetype', 'DR');*/
+    const filter = this.params.getValue().getParams();
+    this.userProcessService.getAllUsersWithRol(filter).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+        this.params.value.removeAllFilters();
+      },
+      error: error => {
+        this.loading = false;
+        this.params.value.removeAllFilters();
+      },
+    });
   }
 
   async turnRequest() {
@@ -211,6 +250,32 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         'Seleccione un usuario',
         'Es requerido seleccionar un usuario'
       );
+    }
+  }
+
+  async ReturnRequest() {
+    this.loader.load = true;
+    this.data.observations =
+      'Solicitud Returnada por la Delegacion Regional ' +
+      this.user.delegationreg;
+    this.data.targetUserType = 'DR';
+    this.data.requestStatus = 'Captura';
+    this.data.targetUser = this.user.id;
+
+    const requestResult = await this.saveRequest(this.data);
+    if (requestResult === true) {
+      this.loader.load = false;
+      Swal.fire({
+        title: 'Solicitud Returnada',
+        text: 'La solicitud se returno correctamente',
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        this.closeAll();
+      });
     }
   }
 

@@ -23,4 +23,13 @@ export class UserProcessService extends HttpService {
       params
     );
   }
+
+  getAllUsersWithRol(
+    params?: ListParams | string
+  ): Observable<IListResponse<IUserProcess>> {
+    return this.get<IListResponse<IUserProcess>>(
+      UserProcessEndpoint.UserListWithRol,
+      params
+    );
+  }
 }
