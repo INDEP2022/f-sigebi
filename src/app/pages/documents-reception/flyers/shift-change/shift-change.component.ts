@@ -376,15 +376,15 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   return() {
     let params = this.fileUpdComService.fileDataUpdateParams;
-    if (params == null) {
-      params = {
-        pGestOk: 1,
-        pNoTramite: this.pageParams.pNoTramite,
-        dictamen: false,
-      };
-    } else {
-      params.dictamen = false;
-    }
+    params = {
+      pGestOk: 1,
+      pNoTramite: this.pageParams.pNoTramite,
+      dictamen: false,
+    };
+    // if (params == null) {
+    // } else {
+    //   params.dictamen = false;
+    // }
     this.fileUpdComService.fileDataUpdateParams = params;
     if (this.origin == 'ABANDONMENT') {
       this.router.navigateByUrl(
