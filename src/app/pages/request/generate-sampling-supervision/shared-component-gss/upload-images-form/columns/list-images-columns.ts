@@ -17,7 +17,7 @@ export const LIST_IMAGES_COLUMNS = {
     sort: false,
   },
   titleDocument: {
-    title: 'Titulo Documento',
+    title: 'Título Documento',
     type: 'string',
     sort: false,
   },

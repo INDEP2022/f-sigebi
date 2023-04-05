@@ -57,7 +57,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectStation = new DefaultSelect<any>();
 
   selectAuthority = new DefaultSelect<any>();
-  selectTransfe = new DefaultSelect<any>();
+  selectTransfe: any; //= new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectIssue = new DefaultSelect<any>();
 

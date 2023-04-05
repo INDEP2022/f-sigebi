@@ -583,8 +583,18 @@ export class DetailAssetsTabComponentComponent
     params['filter.name'] = '$eq:Destino';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
+        console.log('bien:', this.detailAssets.getRawValue());
         this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
-        this.detailAssets.controls['transferentDestiny'].setValue('1');
+
+        if (this.detailAssets.controls['transferentDestiny'].value === null) {
+          this.detailAssets.controls['transferentDestiny'].setValue('1');
+        } else {
+          const destinyTransf =
+            this.detailAssets.controls['transferentDestiny'].value;
+          this.detailAssets.controls['transferentDestiny'].setValue(
+            destinyTransf
+          );
+        }
       },
     });
   }
@@ -619,6 +629,7 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
+    params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
@@ -666,6 +677,7 @@ export class DetailAssetsTabComponentComponent
     params['filter.description'] = `$ilike:${params.text}`;
     this.goodsInvService.getCatUnitMeasureView(params).subscribe({
       next: resp => {
+        //console.log('medida transferente', resp.data);
         this.selectTansferUnitMeasure = new DefaultSelect(
           resp.data,
           resp.count
@@ -1196,20 +1208,5 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-
-    /*setTimeout(() => {
-      this.domicileForm.patchValue(domicilie);
-      console.log(this.domicileForm.getRawValue());
-    }, 3000);
-
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );
-    this.stateOfRepId = domicilie.statusKey;
-    this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
-
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );*/
   }
 }

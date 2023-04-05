@@ -238,7 +238,7 @@
       <div class="row pt-4">
         <form-field
           [control]="managementForm.get('justificacion')"
-          class="col-md-4">
+          class="col-md-6">
           <ngx-select
             (fetchItems)="getJustification($event)"
             value="id"
@@ -252,7 +252,7 @@
         </form-field>
         <form-field
           [control]="managementForm.get('justificacionDetalle')"
-          class="col-md-8"
+          class="col-md-6"
           label="Justificación">
           <input
             type="text"

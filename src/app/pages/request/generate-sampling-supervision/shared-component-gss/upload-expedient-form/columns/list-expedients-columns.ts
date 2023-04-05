@@ -12,7 +12,7 @@ export const LIST_EXPEDIENTS_COLUMN = {
     sort: false,
   },
   titleDocument: {
-    title: 'Titulo del Documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
