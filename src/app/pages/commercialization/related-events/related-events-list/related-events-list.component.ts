@@ -3,7 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IRequestEventRelated } from 'src/app/core/models/requests/request-event-related.model';
+import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
@@ -29,6 +35,8 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   eventItems = new DefaultSelect();
   selectedEvent: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+
   totalItems: number = 0;
   relatedEventsColumns: any[] = [];
   filterRow: any;
@@ -68,7 +76,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     },
   };
 
-  eventTestData = [
+  eventsData = [
     {
       id: 11122,
       process: 'DECBMI0107',
@@ -92,25 +100,12 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     },
   ];
 
-  relatedEventsTestData = [
-    {
-      id: 456789,
-      process: 'LPBI N° 5/19',
-      status: 'EN PREPARACIÓN',
-    },
-    {
-      id: 543210,
-      process: 'TEST DATA',
-      status: 'EN PREPARACIÓN',
-    },
-    {
-      id: 678912,
-      process: 'EVENT TEST DATA',
-      status: 'EN PREPARACIÓN',
-    },
-  ];
+  relatedEventsData: IRequestEventRelated[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private eventRelatedService: EventRelatedService
+  ) {
     super();
     this.relatedEventsSettings.columns = RELATED_EVENTS_COLUMNS;
     this.relatedEventsSettings.actions.delete = true;
@@ -130,28 +125,64 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getEvents({ page: 1, text: '' });
+    this.getRelatedEvents({ page: 1, text: '' });
     this.eventForm = this.fb.group({
       event: [null],
+      txtSearch: [''],
     });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSearch());
   }
 
-  getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.eventTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
+  getRelatedEvents(params: ListParams) {
+    // if (params.text == '') {
+    //   this.eventItems = new DefaultSelect(this.eventsData, 5);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.eventsData.filter((i: any) => i.id == id)];
+    //   this.eventItems = new DefaultSelect(item[0], 1);
+    // }
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = params.page;
+
+    if (this.eventForm.value.txtSearch) {
+      this.filterParams
+        .getValue()
+        .addFilter('title', this.eventForm.value.txtSearch, SearchFilter.ILIKE);
     }
+
+    this.eventRelatedService
+      .getEventRelsByUser(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          console.log('Response: ', response);
+          let arrEventRel: IRequestEventRelated[] = [];
+          if (response.data) {
+            response.data.forEach((item: any) => {
+              let eventRel: IRequestEventRelated = {
+                eventRelId: item.eventRel.id,
+                processKey: item.eventRel.processKey,
+                statusvtaId: item.eventRel.statusvtaId,
+                tpeventoId: item.eventRel.tpeventoId,
+                address: item.eventRel.address,
+              };
+              console.log('eventRel: ', eventRel);
+              arrEventRel.push(eventRel);
+            });
+          }
+
+          this.loading = false;
+          this.relatedEventsData = arrEventRel; //response.data;
+          this.totalItems = response.count;
+        },
+        error: () => (this.loading = false),
+      });
   }
 
   selectEvent(event: any) {
     this.selectedEvent = event;
-    this.relatedEventsColumns = this.relatedEventsTestData;
+    this.relatedEventsColumns = this.relatedEventsData;
     this.totalItems = this.relatedEventsColumns.length;
     this.hideFilters();
   }

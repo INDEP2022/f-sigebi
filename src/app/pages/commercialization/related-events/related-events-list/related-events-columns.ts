@@ -5,13 +5,13 @@ export const RELATED_EVENTS_COLUMNS = {
     type: 'html',
     width: '50%',
   },
-  process: {
+  processKey: {
     title: 'Proceso',
     type: 'string',
     sort: false,
     editable: false,
   },
-  status: {
+  statusvtaId: {
     title: 'Estatus',
     type: 'string',
     sort: false,
