@@ -870,12 +870,19 @@ export class ClassifyAssetsTabComponent
             this.goodsQueryService
               .getLigieUnitDescription(data.ligieUnit)
               .subscribe((data: any) => {
-                this.classiGoodsForm.controls['unitMeasure'].setValue(
-                  data.description
-                );
                 this.classiGoodsForm.controls['ligieUnit'].setValue(
                   data.description
                 );
+
+                if (
+                  this.classiGoodsForm.controls['unitMeasure'].value === null
+                ) {
+                  const ligieUnit =
+                    this.classiGoodsForm.controls['ligieUnit'].value;
+                  this.classiGoodsForm.controls['unitMeasure'].setValue(
+                    ligieUnit
+                  );
+                }
               });
           });
       }

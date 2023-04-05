@@ -61,6 +61,7 @@ import { DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS } from '../../../../docume
 import { MailboxModalTableComponent } from '../../../../general-processes/work-mailbox/components/mailbox-modal-table/mailbox-modal-table.component';
 import { RELATED_FOLIO_TITLE } from '../../../../general-processes/work-mailbox/utils/modal-titles';
 import { RELATED_FOLIO_COLUMNS } from '../../../../general-processes/work-mailbox/utils/related-folio-columns';
+import { AbandonmentsDeclarationTradesService } from '../../../abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { FlyerCopiesModalComponent } from '../../flyer-copies-modal/flyer-copies-modal.component';
 import {
   IJuridicalFileDataUpdateForm,
@@ -141,7 +142,7 @@ export class JuridicalRecordUpdateComponent
   globals: IGlobalVars;
   items: DefaultSelect<any>;
   @Input() selectedNotification: INotification;
-  @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT';
+  @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT' = 'FILE-UPDATE';
   @Input() searchMode: boolean = false;
   @Input() confirmSearch: boolean = false;
   @Output() onSearch = new EventEmitter<
@@ -166,7 +167,8 @@ export class JuridicalRecordUpdateComponent
     private docRegisterService: DocReceptionRegisterService,
     private showHideService: showHideErrorInterceptorService,
     private authService: AuthService,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private abandonmentsService: AbandonmentsDeclarationTradesService
   ) {
     super();
     const id = this.activiveRoute.snapshot.paramMap.get('id');
@@ -271,7 +273,16 @@ export class JuridicalRecordUpdateComponent
       this.pageParams.dictamen != null &&
       this.pageParams.dictamen != undefined
     ) {
-      if (this.fileUpdateService.juridicalFileDataUpdateForm != null) {
+      if (
+        this.layout == 'FILE-UPDATE' &&
+        this.fileUpdateService.juridicalFileDataUpdateForm != null
+      ) {
+        this.deactivateSearch();
+      }
+      if (
+        this.layout == 'ABANDONMENT' &&
+        this.abandonmentsService.abandonmentsFlyerForm != null
+      ) {
         this.deactivateSearch();
       }
       this.checkDictum();
@@ -688,9 +699,16 @@ export class JuridicalRecordUpdateComponent
     this.fileDataUpdateForm.enable();
     this.prevDictumKey = this.formControls.dictumKey.value;
     this.prevInitialCondition = this.initialCondition;
-    this.fileUpdateService.juridicalFileDataUpdateForm =
-      this.fileDataUpdateForm.value;
-    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
+    if (this.layout == 'FILE-UPDATE')
+      this.fileUpdateService.juridicalFileDataUpdateForm =
+        this.fileDataUpdateForm.value;
+    if (this.layout == 'ABANDONMENT')
+      this.abandonmentsService.abandonmentsFlyerForm =
+        this.fileDataUpdateForm.value;
+    console.log(
+      this.fileUpdateService.juridicalFileDataUpdateForm,
+      this.abandonmentsService.abandonmentsFlyerForm
+    );
     this.fileDataUpdateForm.reset();
     this.fileDataUpdateForm.enable();
   }
@@ -699,10 +717,20 @@ export class JuridicalRecordUpdateComponent
     console.log(this.searchMode);
     console.log(this.confirmSearch);
     this.fileDataUpdateForm.enable();
-    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
-    this.fileDataUpdateForm.patchValue(
-      this.fileUpdateService.juridicalFileDataUpdateForm
+    console.log(
+      this.fileUpdateService.juridicalFileDataUpdateForm,
+      this.abandonmentsService.abandonmentsFlyerForm
     );
+    if (this.layout == 'FILE-UPDATE') {
+      this.fileDataUpdateForm.patchValue(
+        this.fileUpdateService.juridicalFileDataUpdateForm
+      );
+    }
+    if (this.layout == 'ABANDONMENT') {
+      this.fileDataUpdateForm.patchValue(
+        this.abandonmentsService.abandonmentsFlyerForm
+      );
+    }
     if (this.prevInitialCondition !== '') {
       this.initialCondition = this.prevInitialCondition;
     } else {
@@ -1049,7 +1077,24 @@ export class JuridicalRecordUpdateComponent
   }
 
   viewDocuments() {
-    this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+    // this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
+    // params.addFilter('scanStatus', 'ESCANEADO');
+    this.fileUpdateService.getDocuments(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'El volante no tiene documentos relacionados.'
+        );
+      },
+    });
   }
 
   openDocumentsModal(flyerNum: string | number, title: string) {

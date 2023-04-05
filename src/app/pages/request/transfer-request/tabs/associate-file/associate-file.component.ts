@@ -286,10 +286,12 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                   },
                                   error: error => {
                                     this.loader.load = false;
+                                    console.log(error.error.message);
+
                                     this.onLoadToast(
                                       'error',
                                       'Error',
-                                      'Error guardar la carátula al contenedor'
+                                      'Error guardar la carátula al contenedor:'
                                     );
                                   },
                                 });

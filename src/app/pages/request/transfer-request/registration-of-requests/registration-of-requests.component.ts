@@ -261,6 +261,14 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      typeOfTransfer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      domainExtinction: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
     this.registRequestForm.get('receptionDate').disable();
     this.registRequestForm.updateValueAndValidity();
@@ -558,6 +566,8 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    this.cambiarTipoUsuario(this.requestData);
+    return;
     /* trae solicitudes actualizadas */
     const request = await this.getAsyncRequestById();
     if (request) {
@@ -710,8 +720,9 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     console.log(this.requestData);
-
-    const oldTask: any = await this.getOldTask();
+    const dictamenResult = await this.getDictamen();
+    console.log(dictamenResult);
+    /*  const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/process-approval';
@@ -732,7 +743,7 @@ export class RegistrationOfRequestsComponent
           `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
-    }
+    } */
   }
   /** fin de proceso */
 
@@ -820,7 +831,20 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getDictamen() {}
+  getDictamen() {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = this.requestData.id;
+      body['xTipoDocumento'] = 50;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: resp => {
+          if (resp.data.length > 0) {
+            resolve(true);
+          }
+        },
+      });
+    });
+  }
 
   msgSaveModal(
     btnTitle: string,
@@ -861,7 +885,7 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'proceso-aprovacion') {
-          this.approveRequest();
+          this.approveRequestMethod();
         }
       }
     });

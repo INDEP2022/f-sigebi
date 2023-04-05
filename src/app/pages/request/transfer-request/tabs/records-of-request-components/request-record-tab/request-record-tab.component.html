@@ -96,13 +96,13 @@
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"
-            control="publicMinistry"
-            (fetchItems)="getPublicMinister($event)"
-            [data]="selectMinPub"
-            [searchable]="true"
-            label="Ministerio P&uacute;blico"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
             bindLabel="description"
-            value="description">
+            value="keyId">
           </ngx-select>
         </div>
       </div>
@@ -165,17 +165,6 @@
               [readOnly]="true" />
           </form-field>
         </div>
-
-        <!-- <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('trialType')"
-            label="Tipo Juicio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="trialType" />
-          </form-field>
-        </div> -->
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
@@ -203,23 +192,22 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Email del Remitente">
-            <input
-              type="email"
-              class="form-control"
-              formControlName="emailOfOwner" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('destinationManagement')"
-            label="Gesti&oacute;n de Destino">
+            [control]="requestForm.get('transferenceFile')"
+            label="Expediente Transferente/PAMA">
             <input
               type="text"
               class="form-control"
-              formControlName="destinationManagement" />
+              formControlName="transferenceFile" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('protectNumber')"
+            label="N&uacute;mero Amparo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="protectNumber" />
           </form-field>
         </div>
       </div>
@@ -247,31 +235,7 @@
           </form-field>
         </div>
       </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="originInfo"
-            (fetchItems)="getOriginInfo($event)"
-            [data]="selectOriginInfo"
-            [searchable]="false"
-            label="Procedencia Informaci&oacute;n"
-            bindLabel="description"
-            value="keyId">
-          </ngx-select>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('protectNumber')"
-            label="N&uacute;mero Amparo">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="protectNumber" />
-          </form-field>
-        </div>
-      </div>
+      <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
       <div class="row pt-4">
         <div class="col-md-4" *ngIf="transferenceNumber === 1">
           <form-field
@@ -315,6 +279,52 @@
             label="Causa Penal">
             <input type="text" class="form-control" formControlName="lawsuit" />
           </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+          <form-field
+            [control]="requestForm.get('domainExtinction')"
+            label="Extinci&oacute;n Dominio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domainExtinction" />
+          </form-field>
+        </div>
+      </div>
+      <!-- FIN TRANSFERENTES 1 Y 3 -->
+      <div class="row pt-4" *ngIf="transferenceNumber === 120">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('trialType')"
+            label="Tipo de Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="trialType" />
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="
+          requestForm.get('typeOfTransfer').value === 'FGR' ||
+          requestForm.get('typeOfTransfer').value === 'CE'
+        ">
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="publicMinistry"
+            (fetchItems)="getPublicMinister($event)"
+            [data]="selectMinPub"
+            [searchable]="true"
+            label="Ministerio P&uacute;blico"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
         </div>
       </div>
     </form>
