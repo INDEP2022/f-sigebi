@@ -47,14 +47,32 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.fileForm = this.fb.group({
       learnedType: [null],
       learnedId: [null],
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      post: [null, [Validators.pattern(STRING_PATTERN)]],
-      certificate: [null],
-      keycertificate: [null],
-      pass: [null],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      post: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      certificate: [null, [Validators.required]],
+      keycertificate: [null, [Validators.required]],
+      pass: [null, [Validators.required]],
       rfcUser: [
         null,
-        [Validators.pattern(RFCCURP_PATTERN), Validators.maxLength(13)],
+        [
+          Validators.required,
+          Validators.pattern(RFCCURP_PATTERN),
+          Validators.maxLength(13),
+        ],
       ],
       signatoryId: [null],
     });
