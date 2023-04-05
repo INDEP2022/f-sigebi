@@ -1,6 +1,6 @@
 export const MENAJE_COLUMN = {
   id: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

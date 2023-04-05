@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IWarehouseClassifyCosts } from 'src/app/core/models/catalogs/warehouse-classify-costs';
 import { WarehouseClassifyCostsService } from 'src/app/core/services/catalogs/warehouse-classify-costs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -15,7 +14,7 @@ import { TypeGoodComponent } from '../type-good/type-good.component';
   styles: [],
 })
 export class WarehouseTypeModalComponent extends BasePage implements OnInit {
-  warehouseForm: ModelForm<IWarehouseClassifyCosts>;
+  warehouseForm: FormGroup = new FormGroup({});
   edit: boolean = false;
   title: string = 'Tipo de Almacén';
   data: IWarehouseClassifyCosts;
@@ -33,10 +32,14 @@ export class WarehouseTypeModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
   private prepareForm() {
+    if (this.data != null) {
+      this.edit = true;
+    }
     this.warehouseForm = this.fb.group({
       warehouseTypeId: [null],
+      warehouseName: [{ value: null, disabled: true }],
       classifGoodNumber: [null, Validators.required],
-      descClassif: [null],
+      descClassif: [{ value: null, disabled: this.edit ? true : false }],
       costId: [null, Validators.required],
       descCost: [null],
       registryNumber: [null],
@@ -50,10 +53,16 @@ export class WarehouseTypeModalComponent extends BasePage implements OnInit {
       this.warehouseForm.controls['warehouseTypeId'].setValue(
         warehouseTypeId.warehouseTypeId
       );
+      this.warehouseForm.controls['warehouseName'].setValue(
+        warehouseTypeId.descriptionType
+      );
     } else {
       // console.log(this.value.warehouseTypeId);
       this.warehouseForm.controls['warehouseTypeId'].setValue(
         this.value.warehouseTypeId
+      );
+      this.warehouseForm.controls['warehouseName'].setValue(
+        this.value.descriptionType
       );
     }
   }

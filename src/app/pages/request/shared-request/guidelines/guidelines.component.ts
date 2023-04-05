@@ -51,7 +51,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   guidelinesTestData = [
     {
-      guideline: 'ACTA DE TRANSFERENCIA SAE',
+      guideline: 'ACTA DE TRANSFERENCIA INDEP',
       firstRevision: 'SI',
       firstRevisionObserv: 'EJEMPLO OBSERVACION 1',
       secondRevision: 'N/A',

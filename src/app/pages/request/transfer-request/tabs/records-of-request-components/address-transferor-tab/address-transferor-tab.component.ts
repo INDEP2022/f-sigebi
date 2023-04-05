@@ -234,6 +234,7 @@ export class AddressTransferorTabComponent
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
     //params.limit = 20;
+    params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
@@ -274,7 +275,7 @@ export class AddressTransferorTabComponent
           this.message(
             'success',
             'Guadado',
-            'El domicio se guardo correctamente'
+            'El domicio se guardó correctamente'
           );
 
           if (this.isNewAddress === true) {

@@ -47,14 +47,32 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.fileForm = this.fb.group({
       learnedType: [null],
       learnedId: [null],
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      post: [null, [Validators.pattern(STRING_PATTERN)]],
-      certificate: [null],
-      keycertificate: [null],
-      pass: [null],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      post: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      certificate: [null, [Validators.required]],
+      keycertificate: [null, [Validators.required]],
+      pass: [null, [Validators.required]],
       rfcUser: [
         null,
-        [Validators.pattern(RFCCURP_PATTERN), Validators.maxLength(13)],
+        [
+          Validators.required,
+          Validators.pattern(RFCCURP_PATTERN),
+          Validators.maxLength(13),
+        ],
       ],
       signatoryId: [null],
     });
@@ -141,6 +159,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
+    formData.append('pass', this.password.encriptarResult);
+    formData.append('post', this.signatories.post);
     console.log('FormData', formData);
 
     const idSingnatorie = this.signatories.signatoryId;
