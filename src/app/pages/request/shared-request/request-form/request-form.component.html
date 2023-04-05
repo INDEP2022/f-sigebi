@@ -112,7 +112,7 @@
                   (fetchItems)="getTransferent($event)"
                   [showTooltip]="true"
                   [data]="transferents$"
-                  bindLabel="nameTransferent"
+                  bindLabel="nameAndId"
                   label="Transferente"
                   value="id"></ngx-select>
               </div>
@@ -123,7 +123,7 @@
                   (fetchItems)="getStation($event)"
                   [showTooltip]="true"
                   [data]="selectStation"
-                  bindLabel="stationName"
+                  bindLabel="nameAndId"
                   [searchable]="false"
                   label="Emisora"
                   value="id"></ngx-select>
@@ -135,7 +135,7 @@
                   (fetchItems)="getAuthority($event)"
                   [showTooltip]="true"
                   [data]="selectAuthority"
-                  bindLabel="authorityName"
+                  bindLabel="nameAndId"
                   [searchable]="false"
                   label="Autoridad"
                   value="idAuthority"></ngx-select>
