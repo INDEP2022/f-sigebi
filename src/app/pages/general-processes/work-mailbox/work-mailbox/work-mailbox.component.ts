@@ -90,6 +90,11 @@ import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperw
         margin-top: -15px !important;
         margin-bottom: -15px !important;
       }
+
+      .drop-scroll {
+        height: 220px;
+        overflow-y: auto;
+      }
     `,
   ],
 })
@@ -153,6 +158,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   resetDataFilter: boolean = false;
 
   get user() {
+    this.dataTable.count;
     return this.filterForm.controls['user'];
   }
   get managementAreaF() {
