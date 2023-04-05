@@ -134,7 +134,6 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
     };
     this.typeWarehouseService.getAllType(params).subscribe({
       next: response => {
-        console.log(response);
         this.typeWarehouse = response.data;
         this.data2.load(this.typeWarehouse);
         this.data2.refresh();
@@ -187,10 +186,10 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
           },
         });
       }
+      this.loading = true;
       for (let i = 0; i < classif.length; i++) {
         var params2 = new ListParams();
         params2['filter.costId'] = `$eq:${classif[i].costId}`;
-        // this.loading = true;
         this.unitCostService.getAll(params2).subscribe({
           next: response2 => {
             let descProcess: IStrategyProcess = response2.data[0]
@@ -215,7 +214,6 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
               (descVariableCost != null ? descVariableCost.description : '');
             classif[i].descCost = desc;
             if (i == classif.length - 1) {
-              console.log(classif);
               this.classifyCosts = classif;
               this.data1.load(this.classifyCosts);
               this.data1.refresh();
@@ -231,7 +229,6 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
     }
   }
   rowsSelected(event: any) {
-    console.log(event.data.warehouseTypeId);
     this.values = event.data;
   }
   openType(data?: IWarehouseTypeWarehouse) {
