@@ -12,7 +12,7 @@ export const DOCUMENTS_LIST_COLUMNS = {
   },
 
   ddocTitle: {
-    title: 'Titulo del documento',
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },
@@ -50,7 +50,7 @@ export const DOCUMENTS_LIST_REQ_COLUMNS = {
   },
 
   ddocTitle: {
-    title: 'Titulo del documento',
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },
@@ -88,7 +88,7 @@ export const DOCUMENTS_LIST_EST_COLUMNS = {
   },
 
   ddocTitle: {
-    title: 'Titulo del documento',
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },

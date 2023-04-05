@@ -1,6 +1,6 @@
 export const EXECUTE_RETURN_COLUMNS = {
   title: {
-    title: 'Titulo',
+    title: 'Título',
     type: 'string',
     sort: false,
   },

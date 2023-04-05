@@ -67,6 +67,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
       const contentType = 'img';
       const docName = `IMG_${this.date}${contentType}`;
 
+      console.log('img', formData);
       this.wContentService
         .addImagesToContent(
           docName,
@@ -75,7 +76,8 @@ export class UploadFileComponent extends BasePage implements OnInit {
           fileEvent.file
         )
         .subscribe({
-          next: () => {
+          next: data => {
+            console.log('imagen', data);
             this.close();
             this.onLoadToast('success', 'Imagen guardada correctamente', '');
           },

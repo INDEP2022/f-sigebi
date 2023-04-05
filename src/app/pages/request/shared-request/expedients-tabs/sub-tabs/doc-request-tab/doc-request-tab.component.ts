@@ -389,11 +389,11 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
     let config: ModalOptions = {
       initialState: {
-        idrequest,
+        idRequest,
         typeDoc,
         callback: (next: boolean) => {
           if (next == true) {

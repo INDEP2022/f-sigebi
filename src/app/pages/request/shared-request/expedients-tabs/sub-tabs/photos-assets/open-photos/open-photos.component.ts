@@ -52,7 +52,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
   getImagesGood() {
     const idReq: Object = {
-      xidSolicitud: this.information.requestId,
       xidBien: this.information.id,
     };
 
