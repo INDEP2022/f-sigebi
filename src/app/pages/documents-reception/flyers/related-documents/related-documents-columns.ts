@@ -2,7 +2,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   goodId: {
     title: 'No. Bien',
     type: 'number',
-    sort: true,
+    sort: false,
   },
   description: {
     title: 'Descripcion',
@@ -12,7 +12,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   quantity: {
     title: 'Cantidad',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   identifier: {
     title: 'Ident.',
