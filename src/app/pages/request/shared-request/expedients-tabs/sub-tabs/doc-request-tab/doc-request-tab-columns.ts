@@ -13,7 +13,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
   },
 
   ddocTitle: {
-    title: 'Titulo del Documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
