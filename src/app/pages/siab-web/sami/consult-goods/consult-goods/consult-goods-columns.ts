@@ -1,6 +1,6 @@
 export const CONSULTGOODS_COLUMNS = {
   management: {
-    title: 'No.Gestion',
+    title: 'No.Gestión',
     sort: false,
   },
   inventory: {
