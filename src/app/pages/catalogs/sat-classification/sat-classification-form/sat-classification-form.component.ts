@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class SatClassificationFormComponent extends BasePage implements OnInit {
   satClassificationForm: ModelForm<ISatClassification>;
-  title: string = 'SAT Clasificacion';
+  title: string = 'SAT Clasificación';
   edit: boolean = false;
   satclassification: ISatClassification;
   constructor(

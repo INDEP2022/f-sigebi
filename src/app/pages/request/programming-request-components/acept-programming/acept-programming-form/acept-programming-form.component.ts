@@ -79,7 +79,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
-  headingWarehouse: string = `Almacén SAE(0)`;
+  headingWarehouse: string = `Almacén INDEP(0)`;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -362,7 +362,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           this.goodsInfoWarehouse.push(response);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
         },
       });
     });

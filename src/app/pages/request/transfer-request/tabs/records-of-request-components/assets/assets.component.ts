@@ -211,7 +211,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (stateConcervation !== null) {
         var params = new ListParams();
         params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservacion`;
+        params['filter.name'] = `$eq:Estado Conservación`;
         this.genericService.getAll(params).subscribe({
           next: data => {
             resolve(data.data[0].description);
@@ -408,10 +408,10 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'success',
                 'Actualizado',
-                `Se guardo correctamente el bien del domicilio!`
+                `¡Se guardó correctamente el bien del domicilio!`
               );
               this.isSaveDomicilie = false;
-              resolve('Se guardo correctamente el bien del domicilio!');
+              resolve('¡Se guardó correctamente el bien del domicilio!');
             }
           },
         });
@@ -431,19 +431,19 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -460,8 +460,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           next: resp => {
             this.message(
               'success',
-              'Fraccion guardada',
-              `Se guardo la fraccion exitosamente`
+              'Fracción guardada',
+              `Se guardó la fracción exitosamente`
             );
             this.refreshTable();
           },
@@ -478,7 +478,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        text: '¿Esta seguro de querer eliminar el bien seleccionado?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',

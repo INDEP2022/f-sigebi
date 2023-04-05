@@ -25,6 +25,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
+import compareDesc from 'date-fns/compareDesc';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { WorkMailboxService } from '../work-mailbox.service';
@@ -70,10 +71,12 @@ import {
   WORK_MAILBOX_COLUMNS2,
 } from './work-mailbox-columns';
 
+import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -86,6 +89,11 @@ import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperw
         padding-bottom: -15px !important;
         margin-top: -15px !important;
         margin-bottom: -15px !important;
+      }
+
+      .drop-scroll {
+        height: 220px;
+        overflow-y: auto;
       }
     `,
   ],
@@ -147,7 +155,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   users$ = new DefaultSelect<ISegUsers>();
   areas$ = new DefaultSelect<IManagementArea>();
 
+  resetDataFilter: boolean = false;
+
   get user() {
+    this.dataTable.count;
     return this.filterForm.controls['user'];
   }
   get managementAreaF() {
@@ -190,7 +201,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private goodsParamerterService: GoodParametersService,
-    private notificationsService: NotificationService
+    private notificationsService: NotificationService,
+    private tmpManagementProcedureService: TmpManagementProcedureService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings.actions = true;
@@ -218,6 +231,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.resetDataFilter = false;
     this.dataTable
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
@@ -262,7 +276,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          console.log(this.columnFilters);
+          console.log(this.columnFilters, this.resetDataFilter);
+          if (this.resetDataFilter) {
+            this.resetDataFilter = false;
+            this.columnFilters = [];
+          }
           if (this.predeterminedF.value) {
             this.getUser();
           } else {
@@ -357,17 +375,52 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } = this.filterForm.value;
 
     let field = `filter.processEntryDate`;
+    console.log(
+      this.filterForm.get('startDate').invalid,
+      this.filterForm.get('endDate').invalid,
+      this.filterForm.get('startDate').valid,
+      this.filterForm.get('endDate').valid
+    );
 
     /*DATEFILTER*/
-    if (startDate !== null && endDate !== null) {
-      const startTemp = `${startDate.getFullYear()}-0${
-        startDate.getUTCMonth() + 1
-      }-0${startDate.getDate()}`;
-      const endTemp = `${endDate.getFullYear()}-0${
-        endDate.getUTCMonth() + 1
-      }-0${endDate.getDate()}`;
-
-      this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
+    if (
+      this.filterForm.get('startDate').invalid ||
+      this.filterForm.get('endDate').invalid
+    ) {
+      this.onLoadToast(
+        'warning',
+        'Fechas incorrectas',
+        'Ingrese Fechas correctas para realizar la búsqueda.'
+      );
+      return;
+    } else if (
+      this.filterForm.get('startDate').valid &&
+      this.filterForm.get('endDate').valid &&
+      startDate &&
+      endDate
+    ) {
+      let validDate = null;
+      validDate = compareDesc(startDate, endDate);
+      console.log(validDate);
+      if (validDate >= 0) {
+        const startTemp = `${startDate.getFullYear()}-0${
+          startDate.getUTCMonth() + 1
+        }-0${startDate.getDate()}`;
+        const endTemp = `${endDate.getFullYear()}-0${
+          endDate.getUTCMonth() + 1
+        }-0${endDate.getDate()}`;
+        this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
+      } else {
+        let mensaje = '';
+        if (validDate == -1) {
+          mensaje =
+            'La Fecha "Desde" debe ser menor o igual a la Fecha "Hasta".';
+        } else {
+          mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
+        }
+        this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+        return;
+      }
     } else {
       delete this.columnFilters[field];
     }
@@ -592,8 +645,20 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
   }
 
+  insertIntoTmp(body: any) {
+    console.log(body);
+    return this.tmpManagementProcedureService.create(body);
+  }
+
+  deleteFromTmp(id: string | number) {
+    console.log(id);
+    return this.tmpManagementProcedureService.remove(id);
+  }
+
   selectEvent(e: any) {
-    console.log(e);
+    console.log(e.data);
+
+    const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
     if (e.selected.length > 0) {
       this.selectedRow = e.data;
@@ -1023,6 +1088,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+    const tmp = {
+      id: this.selectedRow.processNumber,
+      InvoiceRep: this.selectedRow.folioRep,
+      usrturned: this.selectedRow.turnadoiUser,
+    };
+    this.insertIntoTmp(tmp).subscribe();
     // TODO: descomentar cuando los permisos esten habilitados
     // if(!this.turnar) {
     //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
@@ -1032,8 +1103,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (user: any) => {
-          this.turnToUser(user);
+        callback: (refresh: boolean) => {
+          this.afterTurn(refresh);
         },
         paperwork: this.selectedRow,
       },
@@ -1041,8 +1112,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(TurnPaperworkComponent, config);
   }
 
-  turnToUser(user: any) {
-    console.log(user);
+  afterTurn(refresh: boolean) {
+    this.deleteFromTmp(this.selectedRow.processNumber).subscribe();
+    if (refresh) {
+      this.getData();
+    }
   }
 
   async onCancelPaperwork() {
@@ -1451,14 +1525,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   resetFilters(): void {
+    this.dataTable.reset();
     this.filterForm.reset();
     this.filterForm = this.fb.group({
       managementArea: [null],
       user: [null],
-      verTramiteG: [false],
-      actualizarBuzon: [true],
-      pendientes: [false],
-      predetermined: [true],
+      verTramiteG: [null],
+      actualizarBuzon: [null],
+      pendientes: [null],
+      predetermined: [null],
       priority: [null],
       processStatus: [null],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -1469,7 +1544,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     console.log(this.filterForm.value);
     let field = `filter.processEntryDate`;
     delete this.columnFilters[field];
-    this.getUser();
+    this.resetDataFilter = true;
+    // this.getUser();
+    // this.getData();
+    // this.dataTable.refresh();
+    this.buildFilters();
   }
 
   notAvailable(): void {
