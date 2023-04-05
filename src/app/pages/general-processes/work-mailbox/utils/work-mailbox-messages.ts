@@ -9,3 +9,5 @@ export const CONFIRM_CANCEL =
 
 export const CONFIRM_FINISH =
   '¿Estas seguro de fianlizar el trámite seleccionado?';
+
+export const CONFIRM_SAVE = '¿Estas seguro de enviar el trámite seleccionado?';

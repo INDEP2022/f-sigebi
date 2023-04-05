@@ -498,7 +498,7 @@ export class DocumentsReceptionRegisterComponent
                 this.useProcedureData(data);
               } else {
                 const param = new FilterParams();
-                param.addFilter('wheeelNumber', data.flierNumber);
+                param.addFilter('wheelNumber', data.flierNumber);
                 this.notificationService
                   .getAllFilter(param.getParams())
                   .subscribe({

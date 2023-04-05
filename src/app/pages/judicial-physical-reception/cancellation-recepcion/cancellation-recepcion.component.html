@@ -31,7 +31,8 @@
         </div>
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <span>STATUS</span>
+            <!--  <div class="col-md-9">
               <form-field
                 [control]="form.get('averPrev')"
                 label="Averiguaci&oacute;n Previa">
@@ -40,7 +41,7 @@
                   class="form-control"
                   formControlName="averPrev" />
               </form-field>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -168,7 +169,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col">
               <form-field [control]="form.get('acta2')" label="Acta 2">
                 <input
                   type="text"
@@ -177,33 +178,35 @@
                   formControlName="acta2" />
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <form-field
                 [control]="form.get('fecElab')"
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
+                  (ngModelChange)="fecElab()"
                   class="form-control"
+                  [maxDate]="maxDate"
                   formControlName="fecElab" />
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <form-field
                 [control]="form.get('fecCierreActa')"
                 label="Fecha Cierre Acta">
                 <input
                   bsDatepicker
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="fecCierreActa" />
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <form-field
                 [control]="form.get('fecCaptura')"
                 label="Fecha  Captura">
                 <input
                   bsDatepicker
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="fecCaptura" />
               </form-field>
             </div>
@@ -234,14 +237,83 @@
           </form-field>
         </div>
       </div>
-
       <hr class="row" />
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-6">
+            <form-field
+              [control]="form.get('autoridadCancela')"
+              label="Autoridad Cancela&#47;Suspende">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="autoridadCancela" />
+            </form-field>
+          </div>
+          <div class="col">
+            <form-field [control]="form.get('elabora')" label="Elabora C&#47;S">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="elabora" />
+            </form-field>
+          </div>
+          <div class="col">
+            <form-field
+              [control]="form.get('testigo')"
+              label="Testigo de la Contrataci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="testigo" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row mb-4">
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              type="button"
+              [class]="btnCSSAct"
+              class="btn btn-sm active mr-2 ml-2"
+              (click)="toggleActa()"
+              size="small">
+              {{ labelActa }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm active mr-2 ml-2"
+              size="small">
+              Envia PGR
+            </button>
+            <a
+              [routerLink]="['partialization']"
+              class="btn btn-secondary btn-sm active mr-2 ml-2"
+              size="small"
+              >Parcializaci&oacute;n</a
+            >
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm active mr-2 ml-2"
+              size="small">
+              Eliminar Acta
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm active mr-2 ml-2"
+              size="small">
+              Carga Masiva
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
-              <label for="">Autoridad Cancela&#47;Suspende</label>
-            </div>
             <div class="col">
               <form-field
                 [control]="form.get('folioEscaneo')"
@@ -252,53 +324,21 @@
                   formControlName="folioEscaneo" />
               </form-field>
             </div>
+
             <div class="col">
-              <form-field
-                [control]="form.get('elabora')"
-                label="Elabora C&#47;S">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="elabora" />
-              </form-field>
-            </div>
-            <div class="col">
-              <form-field
-                [control]="form.get('testigo')"
-                label="Testigo de la Contrataci&oacute;n">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="testigo" />
-              </form-field>
-            </div>
-            <div class="col">
-              <button type="button" size="small">Replicar Folio</button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-2 ml-2"
+                [disabled]="form.get('folioEscaneo').value == null"
+                size="small">
+                Replicar Folio
+              </button>
             </div>
           </div>
         </div>
       </div>
 
       <hr class="row" />
-      <div class="row">
-        <div class="d-flex justify-content-center">
-          <button type="button" class="my-1 mx-2" size="small">
-            Cerrar Acta
-          </button>
-          <button type="button" class="my-1 mx-2" size="small">
-            Envia PGR
-          </button>
-          <a [routerLink]="['partialization']" class="my-1 mx-2" size="small"
-            >Parcializaci&oacute;n</a
-          >
-          <button type="button" class="my-1 mx-2" size="small">
-            Eliminar Acta
-          </button>
-          <button type="button" class="my-1 mx-2" size="small">
-            Carga Masiva
-          </button>
-        </div>
-      </div>
 
       <div class="row pt-2 scroll-table">
         <ng2-smart-table

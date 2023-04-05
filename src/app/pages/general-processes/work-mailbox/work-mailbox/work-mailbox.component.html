@@ -225,7 +225,9 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="replicate()">Replicar</a>
+              <a class="dropdown-item" (click)="workFunction('replicate')"
+                >Replicar</a
+              >
             </li>
             <li role="menuitem">
               <a
@@ -235,7 +237,9 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="turnPaperwork()">Turnar</a>
+              <a class="dropdown-item" (click)="workFunction('turnPaperwork')"
+                >Turnar</a
+              >
             </li>
             <li role="menuitem">
               <a class="dropdown-item disabled" (click)="notAvailable()"
@@ -248,16 +252,21 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="getSolicitud()">Solicitud</a>
+              <a class="dropdown-item" (click)="workFunction('getSolicitud')"
+                >Solicitud de Digitalizaci&oacute;n</a
+              >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="viewPictures()"
+              <a class="dropdown-item" (click)="workFunction('viewPictures')"
                 >Im&aacute;genes</a
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="acptionBienes()">Bienes</a>
+              <a class="dropdown-item" (click)="workFunction('acptionBienes')"
+                >Bienes</a
+              >
             </li>
+
             <li role="menuitem">
               <a
                 class="dropdown-item"
@@ -273,14 +282,21 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="onFinishPaperwork()"
+              <a
+                class="dropdown-item"
+                (click)="workFunction('onFinishPaperwork')"
                 >Finalizar</a
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="onCancelPaperwork()"
+              <a
+                class="dropdown-item"
+                (click)="workFunction('onCancelPaperwork')"
                 >Cancelar</a
               >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="onSavePaperwork()">Enviar</a>
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="validDoc()"
@@ -288,7 +304,9 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
+              <a class="dropdown-item" (click)="workFunction('scanDocuments')"
+                >Escaneo</a
+              >
             </li>
           </ul>
         </div>
@@ -310,9 +328,9 @@
         </div>
       </div>
     </div>
-    <app-pagination
+    <!-- <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"></app-pagination>-->
 
     <form [formGroup]="form" class="form-material">
       <div class="row justify-content-end">
