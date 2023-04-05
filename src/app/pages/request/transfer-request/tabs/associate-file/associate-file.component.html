@@ -32,7 +32,9 @@
               bindLabel="Nombre"
               bindValue="usrID">
               <ng-template ng-option-tmp let-item="item" let-index="index">
-                {{ item.Nombre }}
+                <div [title]="item.Nombre">
+                  {{ item.Nombre }}
+                </div>
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
@@ -50,16 +52,6 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <!-- <form-field [control]="associateFileForm.get('unit')">
-            <ngx-select
-              [form]="associateFileForm"
-              control="unit"
-              [data]="units"
-              value="IdUnidad"
-              bindLabel="DscUnidad"
-              label="Unidad"
-              (fetchItems)="getUnitSelect($event)"></ngx-select>
-          </form-field> -->
           <div
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
@@ -73,7 +65,9 @@
               bindLabel="DscUnidad"
               bindValue="IdUnidad">
               <ng-template ng-option-tmp let-item="item" let-index="index">
-                {{ item.DscUnidad }}
+                <div [title]="item.DscUnidad">
+                  {{ item.DscUnidad }}
+                </div>
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
@@ -114,7 +108,9 @@
               bindLabel="arhDescripcion"
               bindValue="arhID">
               <ng-template ng-option-tmp let-item="item" let-index="index">
-                {{ item.arhDescripcion }}
+                <div [title]="item.arhDescripcion">
+                  {{ item.arhDescripcion }}
+                </div>
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
@@ -155,7 +151,9 @@
               bindLabel="ddcCodificacion"
               bindValue="ddcId">
               <ng-template ng-option-tmp let-item="item" let-index="index">
-                {{ item.ddcCodificacion }}
+                <div [title]="item.ddcCodificacion">
+                  {{ item.ddcCodificacion }}
+                </div>
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
@@ -198,7 +196,9 @@
               bindLabel="Nombre"
               bindValue="usrID">
               <ng-template ng-option-tmp let-item="item" let-index="index">
-                {{ item.Nombre }}
+                <div [title]="item.Nombre">
+                  {{ item.Nombre }}
+                </div>
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
@@ -231,7 +231,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right"
-              >Secci&oacute;n docuemental&#58;</label
+              >Secci&oacute;n documental&#58;</label
             >
             <span>
               {{ associateFileForm.get('documentarySectionInai').value }}
@@ -312,7 +312,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-6 text-right"
-              >Delegaci&oacute;n regional&#58;</label
+              >DELEGACI&Oacute;N REGIONAL&#58;</label
             >
             <span> {{ regionalDelegacionName }} </span>
           </div>
@@ -336,7 +336,7 @@
         <confirm-button
           [loading]="loading"
           [btnSmall]="true"
-          [text]="'Generar Caratula'"
+          [text]="'Generar Car&aacute;tula'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

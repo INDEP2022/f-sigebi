@@ -127,6 +127,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   adminSelect = new DefaultSelect();
   recibeSelect = new DefaultSelect();
   initialBool = true;
+  maxDate = new Date();
+  labelActa = 'Cerrar acta';
+  btnCSSAct = 'btn-primary';
 
   constructor(
     private fb: FormBuilder,
@@ -176,6 +179,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       fecElab: [null, [Validators.required]],
       fecCierreActa: [null, [Validators.required]],
       fecCaptura: [null, [Validators.required]],
+      autoridadCancela: [null, [Validators.required]],
       elabora: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -213,6 +217,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   enableElement(elmt: string) {
     const element = document.getElementById(elmt);
     this.render.removeClass(element, 'disabled');
+  }
+
+  fecElab() {
+    console.log(this.form.get('fecElab').value);
+    this.form.get('fecCierreActa').setValue(this.form.get('fecElab').value);
   }
 
   //Catalogs and data
@@ -359,6 +368,17 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         ? this.zeroAdd(this.form.get('mes').value, 2)
         : '');
     this.form.get('acta2').setValue(nameAct);
+  }
+
+  //Functions
+  toggleActa() {
+    if (this.labelActa == 'Abrir acta') {
+      this.labelActa = 'Cerrar acta';
+      this.btnCSSAct = 'btn-primary';
+    } else {
+      this.labelActa = 'Abrir acta';
+      this.btnCSSAct = 'btn-success';
+    }
   }
 }
 
