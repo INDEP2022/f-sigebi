@@ -46,12 +46,17 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   stateConservationName: {
-    title: 'Estado de Concervación',
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
   destinyName: {
     title: 'Destino Ligie',
+    type: 'string',
+    sort: false,
+  },
+  ligieUnit: {
+    title: 'Uni. de Medida Ligie',
     type: 'string',
     sort: false,
   },

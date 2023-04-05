@@ -1,6 +1,6 @@
 export const ASSETS_COLUMNS = {
   noManagement: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
