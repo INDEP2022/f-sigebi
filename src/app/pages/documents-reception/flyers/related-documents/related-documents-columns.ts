@@ -1,49 +1,46 @@
-export const RELATED_DOCUMENTS_COLUMNS = {
-  noBien: {
+export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
-    sort: false,
+    sort: true,
   },
   description: {
     title: 'Descripcion',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
+    type: 'string',
+    sort: true,
+  },
+  identifier: {
+    title: 'Ident.',
     type: 'string',
     sort: false,
   },
-  ident: {
-    title: 'Ident.',
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  desEstatus: {
+    title: 'Des. Estatus',
+    type: 'string',
+    sort: false,
+  },
+  seleccion: {
+    title: '',
+    type: 'string',
+    sort: false,
+  },
+  improcedencia: {
+    title: 'Improcedencia',
     type: 'string',
     sort: false,
   },
 };
 
-export const RELATED_DOCUMENTS_EXAMPLE_DATA = [
-  {
-    noBien: 12345,
-    description: 'UNA BOLSA',
-    cantidad: 1,
-    ident: 'ENGD',
-    proceso: 'ASEGURADO',
-  },
-  {
-    noBien: 12345,
-    description: 'UNA BOLSA',
-    cantidad: 1,
-    ident: 'ENGD',
-    proceso: 'ASEGURADO',
-  },
-  {
-    noBien: 12345,
-    description: 'UNA BOLSA',
-    cantidad: 1,
-    ident: 'ENGD',
-    proceso: 'ASEGURADO',
-  },
-];
 export interface IOficioDictamenParams {
   parametros: string; //PARAMETROS;
   p_gest_ok: string; //P_GEST_OK;
@@ -56,4 +53,15 @@ export interface IOficioDictamenParams {
   expediente: string; //EXPEDIENTE;
   pllamo: string; //PLLAMO;
   p_dictamen: string; //P_DICTAMEN;
+}
+
+export interface IDataGoodsTable {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedencia: boolean;
 }

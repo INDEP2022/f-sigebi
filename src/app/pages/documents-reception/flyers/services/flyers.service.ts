@@ -7,6 +7,8 @@ import {
 } from 'src/app/core/models/good/good.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodsExtensionFieldsService } from 'src/app/core/services/ms-good/goods-extension-fields.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ClarificationsService } from 'src/app/core/services/ms-office-management/clarifications.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
@@ -27,7 +29,9 @@ export class FlyersService {
     private msUsersService: UsersService,
     private msGoodsJobManagementService: GoodsJobManagementService,
     private msClarificationsService: ClarificationsService,
-    private msGoodService: GoodService
+    private msGoodService: GoodService,
+    private msStatusGoodService: StatusGoodService,
+    private msGoodsExtensionFieldsService: GoodsExtensionFieldsService
   ) {}
 
   /**
@@ -140,5 +144,11 @@ export class FlyersService {
     } else {
       return this.msGoodService.getSearchGoodByClasif(body);
     }
+  }
+  getGoodStatusDescription(params: ListParams) {
+    return this.msStatusGoodService.getAll(params);
+  }
+  getGoodExtensionsFields(params: string) {
+    return this.msGoodsExtensionFieldsService.getAllFilter(params);
   }
 }
