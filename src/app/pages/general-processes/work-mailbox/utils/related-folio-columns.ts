@@ -4,7 +4,7 @@ export const RELATED_FOLIO_COLUMNS = {
     sort: false,
   },
   sheets: {
-    title: 'Hojas',
+    title: 'Documentos',
     sort: false,
   },
   descriptionDocument: {
