@@ -218,7 +218,12 @@
             *dropdownMenu
             class="dropdown-menu"
             role="menu"
-            aria-labelledby="button-basic">
+            aria-labelledby="button-basic"
+            [attr.class]="
+              dataTable.count() < 9
+                ? 'dropdown-menu drop-scroll'
+                : 'dropdown-menu'
+            ">
             <li role="menuitem">
               <a class="dropdown-item" (click)="workFunction('work')"
                 >Trabajar</a

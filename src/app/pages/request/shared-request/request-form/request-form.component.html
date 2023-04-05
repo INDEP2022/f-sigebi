@@ -110,7 +110,8 @@
                   [form]="requestForm"
                   control="transferenceId"
                   (fetchItems)="getTransferent($event)"
-                  [data]="selectTransfe"
+                  [showTooltip]="true"
+                  [data]="transferents$"
                   bindLabel="nameTransferent"
                   label="Transferente"
                   value="id"></ngx-select>
@@ -120,6 +121,7 @@
                   [form]="requestForm"
                   control="stationId"
                   (fetchItems)="getStation($event)"
+                  [showTooltip]="true"
                   [data]="selectStation"
                   bindLabel="stationName"
                   [searchable]="false"
@@ -131,12 +133,14 @@
                   [form]="requestForm"
                   control="authorityId"
                   (fetchItems)="getAuthority($event)"
+                  [showTooltip]="true"
                   [data]="selectAuthority"
                   bindLabel="authorityName"
                   [searchable]="false"
                   label="Autoridad"
                   value="idAuthority"></ngx-select>
               </div>
+
               <div *ngIf="op == 2" class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
