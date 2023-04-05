@@ -480,14 +480,14 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    const idRequest = this.idRequest;
     let typeDoc = 'doc-expedient';
     const idExpedient = this.idExpedient;
     //console.log(this.typeDoc);
 
     let config: ModalOptions = {
       initialState: {
-        idrequest,
+        idRequest,
         idExpedient,
         typeDoc,
         callback: (next: boolean) => {

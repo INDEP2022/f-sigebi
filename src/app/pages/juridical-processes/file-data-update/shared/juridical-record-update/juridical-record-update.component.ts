@@ -468,6 +468,13 @@ export class JuridicalRecordUpdateComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.fileDataUpdateForm.patchValue({ ...values });
+    if (notif.expedientNumber == null) {
+      this.onLoadToast(
+        'warning',
+        'Expediente no disponible',
+        'Este volante no tiene asociado un expediente.'
+      );
+    }
     this.formControls.receiptDate.setValue(
       format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
     );
@@ -648,7 +655,14 @@ export class JuridicalRecordUpdateComponent
                 )
               );
           },
-          error: () => {},
+          error: err => {
+            console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos de Área no encontrados',
+              'No se encontraron todos los datos del area correspondiente.'
+            );
+          },
         });
       }
     }
@@ -1077,7 +1091,24 @@ export class JuridicalRecordUpdateComponent
   }
 
   viewDocuments() {
-    this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+    // this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
+    // params.addFilter('scanStatus', 'ESCANEADO');
+    this.fileUpdateService.getDocuments(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'El volante no tiene documentos relacionados.'
+        );
+      },
+    });
   }
 
   openDocumentsModal(flyerNum: string | number, title: string) {

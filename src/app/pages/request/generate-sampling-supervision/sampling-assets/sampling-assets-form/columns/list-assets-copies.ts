@@ -5,7 +5,7 @@ export const LIST_ASSETS_COPIES_COLUMN = {
     sort: false,
   },
   noManagement: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

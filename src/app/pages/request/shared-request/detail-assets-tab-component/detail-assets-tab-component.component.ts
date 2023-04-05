@@ -41,7 +41,12 @@ import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE,
+  NUM_POSITIVE_LETTERS,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -368,16 +373,13 @@ export class DetailAssetsTabComponentComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       propertyType: [null, [Validators.required, Validators.maxLength(30)]],
-      surfaceMts: [
-        0,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       consSurfaceMts: [
         0,
         [
           Validators.required,
           Validators.maxLength(30),
-          Validators.pattern(NUMBERS_PATTERN),
+          Validators.pattern(NUM_POSITIVE),
         ],
       ],
       publicDeed: [
@@ -398,7 +400,11 @@ export class DetailAssetsTabComponentComponent
       ],
       appraisalValue: [
         0,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(30),
+        ],
       ],
       appraisalDate: [null],
       certLibLien: [
@@ -427,35 +433,35 @@ export class DetailAssetsTabComponentComponent
       ],
       mtsOfiWarehouse: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       bedrooms: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       bathroom: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       kitchen: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       diningRoom: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       livingRoom: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       study: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       espPark: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
       ],
       userCreation: [
         null,
@@ -480,7 +486,7 @@ export class DetailAssetsTabComponentComponent
       pffDate: [null],
       gravFavorThird: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
       ],
       attachment: [
         null,
@@ -488,7 +494,7 @@ export class DetailAssetsTabComponentComponent
       ],
       embFavorThird: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
       ],
       coOwnership: [
         null,
@@ -571,7 +577,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getConcervationState(params: ListParams) {
-    params['filter.name'] = '$eq:Estado Conservacion';
+    params['filter.name'] = '$eq:Estado Conservación';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectConcervationState = new DefaultSelect(data.data, data.count);
@@ -583,8 +589,18 @@ export class DetailAssetsTabComponentComponent
     params['filter.name'] = '$eq:Destino';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
+        console.log('bien:', this.detailAssets.getRawValue());
         this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
-        this.detailAssets.controls['transferentDestiny'].setValue('1');
+
+        if (this.detailAssets.controls['transferentDestiny'].value === null) {
+          this.detailAssets.controls['transferentDestiny'].setValue('1');
+        } else {
+          const destinyTransf =
+            this.detailAssets.controls['transferentDestiny'].value;
+          this.detailAssets.controls['transferentDestiny'].setValue(
+            destinyTransf
+          );
+        }
       },
     });
   }
@@ -619,6 +635,7 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
+    params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
@@ -666,6 +683,7 @@ export class DetailAssetsTabComponentComponent
     params['filter.description'] = `$ilike:${params.text}`;
     this.goodsInvService.getCatUnitMeasureView(params).subscribe({
       next: resp => {
+        //console.log('medida transferente', resp.data);
         this.selectTansferUnitMeasure = new DefaultSelect(
           resp.data,
           resp.count
@@ -938,19 +956,19 @@ export class DetailAssetsTabComponentComponent
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.id != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -1016,16 +1034,16 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `No se guardo el registro del bien inmueble!\n. ${data.message}`
+              `¡No se guardó el registro del bien inmueble!\n. ${data.message}`
             );
-            reject('El registro del bien del inmueble no se guardo!');
+            reject('¡El registro del bien del inmueble no se guardó!');
           }
         },
         error: error => {
           this.message(
             'success',
             'Guardado',
-            `Se guardo correctamente el bien inmueble!`
+            `¡Se guardó correctamente el bien inmueble!`
           );
         },
       });
@@ -1196,20 +1214,5 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-
-    /*setTimeout(() => {
-      this.domicileForm.patchValue(domicilie);
-      console.log(this.domicileForm.getRawValue());
-    }, 3000);
-
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );
-    this.stateOfRepId = domicilie.statusKey;
-    this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
-
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );*/
   }
 }

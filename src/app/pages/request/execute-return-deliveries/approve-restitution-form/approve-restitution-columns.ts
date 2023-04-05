@@ -30,7 +30,7 @@ export const APPROVE_RESTITUTION_COLUMNS = {
   },
 
   numberSae: {
-    title: 'Número SAE',
+    title: 'Número INDEP',
     type: 'number',
     sort: false,
   },

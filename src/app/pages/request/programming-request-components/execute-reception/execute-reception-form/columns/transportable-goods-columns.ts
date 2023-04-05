@@ -23,7 +23,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   descriptionSae: {
-    title: 'Descripción SAE',
+    title: 'Descripción INDEP',
     type: 'string',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   saeAmmount: {
-    title: 'Cantidad SAE',
+    title: 'Cantidad INDEP',
     type: 'string',
     sort: false,
   },
@@ -47,7 +47,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   unitMeasure: {
-    title: 'Unidad medida SAE',
+    title: 'Unidad medida INDEP',
     type: 'string',
     sort: false,
   },
@@ -59,7 +59,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   physicalStateSae: {
-    title: 'Estado Físico SAE',
+    title: 'Estado Físico INDEP',
     type: 'string',
     sort: false,
   },
@@ -71,7 +71,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   convrsationConStatus: {
-    title: 'Estado conversación SAE',
+    title: 'Estado conversación INDEP',
     type: 'string',
     sort: false,
   },
@@ -102,7 +102,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   descriptionSae: {
-    title: 'Descripción SAE',
+    title: 'Descripción INDEP',
     type: 'string',
     sort: false,
   },
@@ -114,7 +114,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   saeAmmount: {
-    title: 'Cantidad SAE',
+    title: 'Cantidad INDEP',
     type: 'string',
     sort: false,
   },
@@ -126,7 +126,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   unitMedidSae: {
-    title: 'Unidad medida SAE',
+    title: 'Unidad medida INDEP',
     type: 'string',
     sort: false,
   },
@@ -138,7 +138,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   stateSae: {
-    title: 'Estado Físico SAE',
+    title: 'Estado Físico INDEP',
     type: 'string',
     sort: false,
   },
