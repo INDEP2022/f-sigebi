@@ -242,7 +242,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           data.data.map(data => {
-            data.nameAndId = `${data.id} / ${data.nameTransferent}`;
+            data.nameAndId = `${data.id} - ${data.nameTransferent}`;
             return data;
           });
           this.transferents$ = new DefaultSelect(data.data, data.count);
