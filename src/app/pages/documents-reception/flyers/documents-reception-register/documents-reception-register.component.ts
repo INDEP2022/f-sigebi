@@ -1234,6 +1234,13 @@ export class DocumentsReceptionRegisterComponent
     };
     this.documentsReceptionForm.patchValue({ ...values });
     this.blockErrors(true);
+    if (notif.expedientNumber == null) {
+      this.onLoadToast(
+        'warning',
+        'Expediente no disponible',
+        'Este volante no tiene asociado un expediente.'
+      );
+    }
     if (notif.dailyEviction == 0) {
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
@@ -1440,6 +1447,11 @@ export class DocumentsReceptionRegisterComponent
           },
           error: err => {
             console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos de Área no encontrados',
+              'No se encontraron todos los datos del area correspondiente.'
+            );
           },
         });
       }
