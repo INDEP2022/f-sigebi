@@ -22,4 +22,12 @@ export class TmpManagementProcedureService extends HttpService {
   folioReception(body: {}) {
     return this.post('tmp-management-procedure/folio-reception', body);
   }
+
+  create(temp: any) {
+    return this.post('tmp-management-procedure', temp);
+  }
+
+  remove(id: string | number) {
+    return this.delete('tmp-management-procedure/' + id);
+  }
 }
