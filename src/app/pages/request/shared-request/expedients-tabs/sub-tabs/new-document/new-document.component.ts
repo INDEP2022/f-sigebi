@@ -128,7 +128,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getInfoRequest() {
     this.requestService.getById(this.idRequest).subscribe(data => {
-      console.log('tipo documento', data);
       this.idTransferent = data.transferenceId;
       this.regionalDelId = data.regionalDelegationId;
       this.stateId = data.keyStateOfRepublic;
@@ -167,7 +166,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typeDocumentSelect(item: ITypeDocument) {
-    console.log(item.ddocType);
     this.typeDocument = item.ddocType;
   }
 
@@ -177,6 +175,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   confirm() {
     this.loading = true;
+    console.log('typeDoc', this.typeDoc);
     if (this.typeDoc == 'good') {
       const formData = {
         dInDate: new Date(),
@@ -234,7 +233,12 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
-      this.wContentService
+
+      console.log('name', docName);
+      console.log('extension', extension);
+      console.log('data documentos', formData);
+      console.log('archivo', this.selectedFile);
+      /*this.wContentService
         .addDocumentToContent(
           docName,
           extension,
@@ -244,6 +248,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
+            console.log('documentos guardados', resp);
             this.onLoadToast('success', 'Documento Guardado correctamente', '');
             this.loading = false;
             this.modalRef.content.callback(true);
@@ -252,7 +257,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           error: error => {
             console.log(error);
           },
-        });
+        }); */
     }
 
     if (this.typeDoc == 'doc-request') {
@@ -310,7 +315,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
-      this.wContentService
+
+      console.log('formData', formData);
+      /*this.wContentService
         .addDocumentToContent(
           docName,
           extension,
@@ -322,7 +329,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           this.loading = false;
           this.modalRef.content.callback(true);
           this.close();
-        });
+        }); */
     }
 
     if (this.typeDoc == 'doc-expedient') {
@@ -381,7 +388,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
-      this.wContentService
+
+      console.log('data', formData);
+      /*this.wContentService
         .addDocumentToContent(
           docName,
           extension,
@@ -400,7 +409,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           error: error => {
             console.log(error);
           },
-        });
+        }); */
     }
   }
 

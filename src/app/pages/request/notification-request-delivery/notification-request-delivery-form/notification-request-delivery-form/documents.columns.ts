@@ -12,7 +12,7 @@ export const DOCUMENTS_COLUMNS = {
   },
 
   titleDocument: {
-    title: 'titulo documento',
+    title: 'Título documento',
     type: 'string',
     sort: false,
   },
