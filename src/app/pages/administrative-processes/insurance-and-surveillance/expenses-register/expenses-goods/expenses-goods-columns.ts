@@ -58,17 +58,17 @@ export const EXPENSES_GOODS_COLUMNS2 = {
     sort: false,
   },
   file: {
-    title: 'Numero Expediente',
+    title: 'Número Expediente',
     type: 'number',
     sort: false,
   },
   tipoBien: {
-    title: 'Clasificacion',
+    title: 'Clasificación',
     type: 'number',
     sort: false,
   },
   appraisal: {
-    title: 'Valor de Avaúo',
+    title: 'Valor de Avalúo',
     type: 'number',
     sort: false,
   },

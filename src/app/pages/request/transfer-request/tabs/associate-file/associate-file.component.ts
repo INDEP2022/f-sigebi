@@ -13,7 +13,7 @@ import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedie
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
@@ -107,11 +107,19 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       reserveDateInai: [null], //fecha reserva
       sheetsInai: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.required,
+          Validators.maxLength(10),
+        ],
       ], //foja
       filesInai: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.required,
+          Validators.maxLength(10),
+        ],
       ],
       fullCoding: [null], // codificacion
       reservePeriodInai: [null], //periodo de reserva
@@ -130,14 +138,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'error',
         '',
-        'Se requerier tener una delegacion regional'
+        'Se requiere tener una Delegación Regional'
       );
     } else if (!request.transferenceId) {
-      this.onLoadToast('error', '', 'Se requerier tener una transferente');
+      this.onLoadToast('error', '', 'Se requiere tener una transferente');
     }
     Swal.fire({
-      title: 'Generar Caratula',
-      text: 'Esta seguro de querer generar una caratula?',
+      title: 'Generar Carátula',
+      text: '¿Esta seguro de querer generar una carátula?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -211,7 +219,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                               const docName = `Reporte_${94}${this.getDocNameDate()}`;
                               const body = {
                                 ddocTitle:
-                                  'Caratula del Expediente ' +
+                                  'Carátula del Expediente ' +
                                   solicitud.recordId,
                                 ddocAuthor: '',
                                 ddocType: '',
@@ -281,7 +289,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                     this.onLoadToast(
                                       'error',
                                       'Error',
-                                      'Error guardar la caratula al contenedor'
+                                      'Error guardar la carátula al contenedor'
                                     );
                                   },
                                 });
@@ -291,7 +299,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                               this.onLoadToast(
                                 'error',
                                 'Error',
-                                'Error al generar la caratula'
+                                'Error al generar la carátula'
                               );
                             },
                           });

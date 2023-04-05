@@ -324,7 +324,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/management',
       },
       {
-        label: 'Sat Clasificacion',
+        label: 'Sat Clasificación',
         link: '/pages/catalogs/sat-clasification',
       },
       {

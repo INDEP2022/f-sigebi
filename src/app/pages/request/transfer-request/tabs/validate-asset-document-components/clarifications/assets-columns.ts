@@ -10,7 +10,7 @@ export const ASSETS_COLUMNS = {
     sort: false,
   },
   assetsDescripSAE: {
-    title: 'Descripción de Bien SAE',
+    title: 'Descripción de Bien INDEP',
     type: 'string',
     sort: false,
   },

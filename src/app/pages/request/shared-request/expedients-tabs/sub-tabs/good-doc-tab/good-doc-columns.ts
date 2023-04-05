@@ -1,6 +1,6 @@
 export const GOOD_DOCUMENTES_COLUMNS = {
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

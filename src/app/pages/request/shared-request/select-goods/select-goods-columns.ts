@@ -55,7 +55,7 @@ export const SELECT_GOODS_COLUMNS = {
     sort: false,
   },
   saeNo: {
-    title: 'No. SAE',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },

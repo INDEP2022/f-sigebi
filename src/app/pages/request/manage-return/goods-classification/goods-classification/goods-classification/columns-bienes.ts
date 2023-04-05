@@ -1,6 +1,6 @@
 export const LIST_BIENES_COLUMN = {
   title: {
-    title: 'Titulo',
+    title: 'Título',
     type: 'string',
     sort: false,
   },

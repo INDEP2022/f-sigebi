@@ -12,7 +12,7 @@ export const DOCUMENTS_COLUMNS = {
   },
 
   titleDocument: {
-    title: 'titulo documento',
+    title: 'Título documento',
     type: 'string',
     sort: false,
   },
@@ -74,7 +74,7 @@ export const GOODS_REQUEST_COLUMNS = {
   },
 
   descriptionGoodSae: {
-    title: 'Descripción bien sae',
+    title: 'Descripción bien INDEP',
     type: 'string',
     sort: false,
   },
@@ -110,7 +110,7 @@ export const GOODS_REQUEST_COLUMNS = {
   },
 
   saeDestiny: {
-    title: 'Destino sae',
+    title: 'Destino INDEP',
     type: 'string',
     sort: false,
   },

@@ -596,7 +596,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -623,7 +623,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -650,7 +650,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -729,7 +729,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }

@@ -294,7 +294,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 next: resp => {
                   this.loadingTurn = false;
                   this.msgModal(
-                    'Se guardo la solicitud con el Folio Nº '.concat(
+                    'Se guardó la solicitud con el Folio Nº '.concat(
                       `<strong>${data.id}</strong>`
                     ),
                     'Solicitud Guardada',
@@ -510,7 +510,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.taskService.update(body.id, body).subscribe({
         next: resp => {
           this.msgModal(
-            'Se guardo la solicitud con el Folio Nº '.concat(
+            'Se guardó la solicitud con el Folio Nº '.concat(
               `<strong>${idRequest}</strong>`
             ),
             'Solicitud Guardada',

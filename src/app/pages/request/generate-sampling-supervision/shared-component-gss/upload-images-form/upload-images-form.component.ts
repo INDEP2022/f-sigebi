@@ -92,7 +92,7 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   }
 
   messageSuccess() {
-    const message = 'La(s) fotografias se han cargado correctamente';
+    const message = 'La(s) fotografías se han cargado correctamente';
     Swal.fire({
       icon: undefined,
       title: 'Información',
