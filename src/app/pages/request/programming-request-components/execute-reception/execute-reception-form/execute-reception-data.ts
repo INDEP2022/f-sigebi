@@ -13,6 +13,6 @@ export const tranGoods = [
     uniqueKey: 42,
     record: 'Expediente',
     description: 'Descripción',
-    descriptionSae: 'Sae descripción',
+    descriptionSae: 'INDEP descripción',
   },
 ];

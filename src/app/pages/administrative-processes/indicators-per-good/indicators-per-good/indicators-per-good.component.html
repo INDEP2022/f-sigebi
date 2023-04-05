@@ -1,14 +1,15 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">INDICADORES POR BIEN</h5>
   </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <div class="row justify-content-center">
-          <div class="col-12 col-sm-12 col-md-5">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <div class="row pt-4">
             <search-bar-simple
+              id="clean"
               (eventEmit)="loadIndicator($event)"
               [label]="''"
               [placeholder]="'N&uacute;mero de Bien'">
@@ -16,8 +17,8 @@
           </div>
         </div>
         <br /><br /><br /><br />
-        <div class="row mt-4">
-          <div class="col-md-6">
+        <div class="col-md-3">
+          <div class="row pt-3">
             <form-field [control]="form.get('date')" label="Fecha de cierre">
               <input
                 class="form-control"
@@ -25,63 +26,46 @@
                 bsDatepicker
                 readonly />
             </form-field>
-            <button type="button" class="btn btn-primary btn-sm active mx-4">
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="row pt-2">
+            <button type="button" class="btn btn-primary btn-sm active mx-2">
               CALCULAR
             </button>
           </div>
-
-          <!-- <div class="col-12 col-sm-12 col-md-5">
-          <search-bar-simple (eventEmit)="loadIndicator($event)" [label]="''" [placeholder]="'N&uacute;mero de Bien'">
-          </search-bar-simple>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('noBien')" label="No Bien">
-            <input type="text" class="form-control" formControlName="noBien" />
-          </form-field>
-        </div> -->
         </div>
       </div>
-      <!--  <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field [control]="form.get('date')" label="Fecha de cierre">
-            <input formControlName="date" class="form-control" bsDatepicker readonly />
-          </form-field>
-
-        </div>
-
-         <div class="row mt-4 float-right">
-          <div class="">
-
-          </div>
-        </div> 
-      </div>-->
 
       <div class="row mt-4">
         <div class="col-md-6">
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings1" [source]="data1">
+                      </ng2-smart-table> -->
                 <ng2-smart-table
+                  class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings1"
-                  [source]="data1">
-                </ng2-smart-table>
+                  [source]="data1"
+                  (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
               </div>
             </div>
-            <app-pagination
-              [params]="params1"
-              [totalItems]="totalItems1"></app-pagination>
           </div>
         </div>
         <div class="col-md-6">
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data2">
+                      </ng2-smart-table> -->
                 <ng2-smart-table
+                  class="col-md-12"
                   [attr.class]="'table-bordered'"
-                  [settings]="settings"
-                  [source]="data2">
-                </ng2-smart-table>
+                  [settings]="settings2"
+                  [source]="indicatorsTotal"></ng2-smart-table>
               </div>
             </div>
             <app-pagination
@@ -91,5 +75,25 @@
         </div>
       </div>
     </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Copiar"
+          [disabled]="!valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

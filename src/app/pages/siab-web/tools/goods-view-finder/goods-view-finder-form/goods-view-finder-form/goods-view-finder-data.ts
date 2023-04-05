@@ -13,7 +13,7 @@ export const goodsViewData = [
     subType: 'Articulos de viaje',
     process: 'Programación',
     almacén: 'Almacén SAT',
-    delegation: 'Delegación regional golfo',
+    delegation: 'Delegación Regional Golfo',
     transferent: 'Agencia nacional de aduanas en México',
   },
 ];

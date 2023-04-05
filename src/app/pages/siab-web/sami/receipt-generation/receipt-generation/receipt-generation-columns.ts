@@ -16,7 +16,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   descriptionGoodSae: {
-    title: 'Descripción Bien Sae',
+    title: 'Descripción Bien INDEP',
     sort: false,
   },
   amount: {
@@ -24,7 +24,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   amountSae: {
-    title: 'Cantidad Sae',
+    title: 'Cantidad INDEP',
     sort: false,
   },
   unitMeasure: {
@@ -32,7 +32,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   unitMeasureSae: {
-    title: 'Unidad medida Sae',
+    title: 'Unidad medida INDEP',
     sort: false,
   },
   physicalState: {
@@ -40,7 +40,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   physicalStateSae: {
-    title: 'Estado físico Sae',
+    title: 'Estado físico INDEP',
     sort: false,
   },
   stateConservation: {
@@ -48,7 +48,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   stateConservationSae: {
-    title: 'Estado Conservación Sae',
+    title: 'Estado Conservación INDEP',
     sort: false,
   },
   destiny: {
@@ -60,7 +60,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   destinySae: {
-    title: 'Destino Sae',
+    title: 'Destino INDEP',
     sort: false,
   },
   route: {

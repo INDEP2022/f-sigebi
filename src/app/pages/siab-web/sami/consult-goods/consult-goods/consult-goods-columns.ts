@@ -1,6 +1,6 @@
 export const CONSULTGOODS_COLUMNS = {
   management: {
-    title: 'No.Gestion',
+    title: 'No.Gestión',
     sort: false,
   },
   inventory: {
@@ -176,7 +176,7 @@ export const CONSULTGOODS_COLUMNS = {
     sort: false,
   },
   cantTransferSae: {
-    title: 'Cant.Transferencia SAE',
+    title: 'Cant.Transferencia INDEP',
     sort: false,
   },
   cantReserved: {

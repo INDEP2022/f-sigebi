@@ -125,7 +125,7 @@ export class DocRequestTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       docType: [null],
-      docTitle: [null],
+      docTitle: [null, []],
       typeTrasf: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -389,11 +389,11 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
     let config: ModalOptions = {
       initialState: {
-        idrequest,
+        idRequest,
         typeDoc,
         callback: (next: boolean) => {
           if (next == true) {

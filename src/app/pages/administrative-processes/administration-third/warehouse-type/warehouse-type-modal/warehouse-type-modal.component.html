@@ -33,6 +33,20 @@
           </form-field>
         </div>
       </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="warehouseForm.get('warehouseName')"
+            label="Tipo de Almacen">
+            <input
+              type="text"
+              formControlName="warehouseName"
+              placeholder="Tipo de Almacen"
+              class="form-control"
+              (click)="openGood()" />
+          </form-field>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>
