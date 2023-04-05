@@ -46,7 +46,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   stateConservationName: {
-    title: 'Estado de Concervación',
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },

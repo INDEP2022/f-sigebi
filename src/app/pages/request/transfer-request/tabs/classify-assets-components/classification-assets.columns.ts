@@ -40,7 +40,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     sort: false,
   },
   stateConservationName: {
-    title: 'Estado de Concervación',
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },

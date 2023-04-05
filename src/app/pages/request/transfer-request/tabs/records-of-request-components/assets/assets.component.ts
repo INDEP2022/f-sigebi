@@ -211,7 +211,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (stateConcervation !== null) {
         var params = new ListParams();
         params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservacion`;
+        params['filter.name'] = `$eq:Estado Conservación`;
         this.genericService.getAll(params).subscribe({
           next: data => {
             resolve(data.data[0].description);
