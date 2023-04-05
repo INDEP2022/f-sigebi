@@ -57,7 +57,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectStation = new DefaultSelect<any>();
 
   selectAuthority = new DefaultSelect<any>();
-  selectTransfe = new DefaultSelect<any>();
+  selectTransfe:any //= new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectIssue = new DefaultSelect<any>();
 
@@ -208,7 +208,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.transferentService
       .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
-        this.selectTransfe = new DefaultSelect(data.data, data.count);
+        this.selectTransfe = data.data //= new DefaultSelect(data.data, data.count);
       });
   }
 
