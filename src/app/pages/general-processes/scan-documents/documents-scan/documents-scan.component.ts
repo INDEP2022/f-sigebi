@@ -263,11 +263,17 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   updateSheets() {
+    let scanStatus = null;
     const sheets = `${this.files.length}`;
-    this.documentsService.update(this.folio, { sheets }).subscribe(() => {
-      const params = this.documentsParams.getValue();
-      this.documentsParams.next(params);
-    });
+    if (this.files.length > 0) {
+      scanStatus = 'ESCANEADO';
+    }
+    this.documentsService
+      .update(this.folio, { sheets, scanStatus })
+      .subscribe(() => {
+        const params = this.documentsParams.getValue();
+        this.documentsParams.next(params);
+      });
   }
 
   deleteFile(name: string) {
