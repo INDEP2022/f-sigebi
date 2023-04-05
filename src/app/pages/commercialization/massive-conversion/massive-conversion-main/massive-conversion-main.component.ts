@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject, forkJoin } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   convertFormatDate,
@@ -50,8 +50,6 @@ import {
 export class MassiveConversionMainComponent extends BasePage implements OnInit {
   // form: FormGroup = new FormGroup({});
   selectedEvent: any = null;
-  // eventItems: IComerEvent[] = []//new DefaultSelect();
-  // batchItems = new DefaultSelect();
   operationItems = new DefaultSelect();
   toggleFilter: boolean = true;
   maintenance: boolean = false;
@@ -63,7 +61,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   dataColumns = new LocalDataSource();
   layout: string = 'RFC'; // 'RFC' || 'clientId'
   reworkType: string = 'CLIENT'; // 'BATCH' || 'CLIENT'
-  lcSource: LocalDataSource;
+  // lcSource: LocalDataSource;
   addRows: any[] = [];
   editedRowModal: any;
   editedRowTable: any;
@@ -73,7 +71,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   clientIdTotalItems: number = 0;
   batchReworkTotalItems: number = 0;
   rfcReworkTotalItems: number = 0;
-  lcsColumns: any[] = [];
+  // lcsColumns: any[] = [];
   rfcColumns: any[] = [];
   clientIdColumns: any[] = [];
   batchReworkColumns: any[] = [];
@@ -360,11 +358,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     validityDate: new FormControl({ value: null, disabled: true }),
   });
 
+  dataSource = new LocalDataSource();
+  rfcSource = new LocalDataSource();
+  clientSource = new LocalDataSource();
+  lcsSource = new LocalDataSource();
+
   constructor(
-    // private fb: FormBuilder,
     private excelService: ExcelService,
     private modalService: BsModalService,
-    private capturelineService: CapturelineService // private comerEventosService: ComerEventosService
+    private capturelineService: CapturelineService
   ) {
     super();
     this.dataSettings.columns = DATA_COLUMNS;
@@ -379,14 +381,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     // this.prepareForm();
     // this.getEvents({ page: 1, text: '' });
     // this.getBatches({ page: 1, text: '' });
-    this.getOperations({ page: 1, text: '' });
+    // this.getOperations({ page: 1, text: '' });
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
     this.clientIdSettings.columns = this.modifyColumns(
       this.clientIdSettings.columns
     );
 
     this.dataParams.subscribe(params => {
-      this.getData(params);
+      this.searchData(params);
     });
   }
 
@@ -423,25 +425,51 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+    this.searchData();
+    this.searchLcs();
+  }
 
-    forkJoin([
-      this.capturelineService.getTmpLcComer(this.form.value),
-      this.capturelineService.getComerRefWarranties(),
-    ]).subscribe(([tmpLcComer, comerRefWarranties]) => {
-      console.log(tmpLcComer);
-      console.log(comerRefWarranties);
+  searchData(list?: ListParams) {
+    this.loading = true;
+    const params = this.makeFiltersParams(list);
+    this.capturelineService.getTmpLcComer(params.getFilterParams()).subscribe({
+      next: res => {
+        this.loading = false;
+        this.dataSource.load(res.data);
+        this.dataTotalItems = res.count;
+
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
     });
   }
 
-  getTmpLcComerObservable(list: ListParams) {
+  isLoadingLcs = false;
+  searchLcs(list?: ListParams) {
+    this.loading = true;
     const params = this.makeFiltersParams(list);
-    return this.capturelineService.getTmpLcComer(params.getFilterParams());
+    this.capturelineService
+      .getComerRefWarranties(params.getFilterParams())
+      .subscribe({
+        next: res => {
+          this.isLoadingLcs = false;
+          this.lcsSource.load(res.data);
+          this.lcsTotalItems = res.count;
+
+          this.isLoadingLcs = false;
+        },
+        error: () => {
+          this.isLoadingLcs = false;
+        },
+      });
   }
 
   makeFiltersParams(list: ListParams): FilterParams {
     const params = new FilterParams();
-    params.page = list.page || 1;
-    params.limit = list.limit || 10;
+    params.page = list?.page || 1;
+    params.limit = list?.limit || 10;
     const filters: any = this.form.value;
     Object.keys(filters).forEach((key: string) => {
       if (filters[key]) {
@@ -449,14 +477,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       }
     });
     return params;
-  }
-
-  makeWhereConsult(table: string) {
-    const { eventId, batchId, insertDate, status, operationId } =
-      this.form.value;
-    let where = '1 = 1';
-    if (table === 'TMP_LC_COMER') {
-    }
   }
 
   validConsult(): boolean {
@@ -500,7 +520,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       // this.form
       //   .get(type)
       //   ?.setValue(data.map((item: any) => item[type.toUpperCase()]));
-      this.getData(null, true);
+      this.searchData();
     } catch (error) {
       showToast({
         icon: 'error',
@@ -534,26 +554,26 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   loadChecksInServer(): void {}
 
   generateLcs() {
-    this.lcsColumns = this.lcsTestData;
-    this.lcsTotalItems = this.lcsColumns.length;
-    if (this.layout == 'RFC') {
-      this.rfcColumns = this.rfcTestdata;
-      this.rfcColumns = this.modifyType(this.rfcColumns);
-      this.rfcTotalItems = this.rfcColumns.length;
-      this.lcSource = new LocalDataSource(this.rfcColumns);
-    }
-    if (this.layout == 'clientId') {
-      this.clientIdColumns = this.clientIdTestData;
-      this.clientIdColumns = this.modifyType(this.clientIdColumns);
-      this.clientIdTotalItems = this.clientIdColumns.length;
-      this.lcSource = new LocalDataSource(this.clientIdColumns);
-    }
-    this.batchReworkColumns = this.batchReworkTestData;
-    this.batchReworkTotalItems = this.batchReworkColumns.length;
-    this.rfcReworkColumns = this.rfcReworkTestData;
-    this.rfcReworkTotalItems = this.rfcReworkColumns.length;
-    this.maintenance = true;
-    this.lcsTabs.tabs[1].active = true;
+    // this.lcsColumns = this.lcsTestData;
+    // this.lcsTotalItems = this.lcsColumns.length;
+    // if (this.layout == 'RFC') {
+    //   this.rfcColumns = this.rfcTestdata;
+    //   this.rfcColumns = this.modifyType(this.rfcColumns);
+    //   this.rfcTotalItems = this.rfcColumns.length;
+    //   // this.lcSource = new LocalDataSource(this.rfcColumns);
+    // }
+    // if (this.layout == 'clientId') {
+    //   this.clientIdColumns = this.clientIdTestData;
+    //   this.clientIdColumns = this.modifyType(this.clientIdColumns);
+    //   this.clientIdTotalItems = this.clientIdColumns.length;
+    //   // this.lcSource = new LocalDataSource(this.clientIdColumns);
+    // }
+    // this.batchReworkColumns = this.batchReworkTestData;
+    // this.batchReworkTotalItems = this.batchReworkColumns.length;
+    // this.rfcReworkColumns = this.rfcReworkTestData;
+    // this.rfcReworkTotalItems = this.rfcReworkColumns.length;
+    // this.maintenance = true;
+    // this.lcsTabs.tabs[1].active = true;
   }
 
   hideActions() {
@@ -658,14 +678,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.lcSource.remove(lc);
-        let row = this.revertType(lc);
-        let idx = this.addRows.findIndex(
-          c => JSON.stringify(c) == JSON.stringify(row)
-        );
-        if (idx != -1) {
-          this.addRows.splice(idx, 1);
-        }
+        // this.lcSource.remove(lc);
+        // let row = this.revertType(lc);
+        // let idx = this.addRows.findIndex(
+        //   c => JSON.stringify(c) == JSON.stringify(row)
+        // );
+        // if (idx != -1) {
+        //   this.addRows.splice(idx, 1);
+        // }
       }
     });
   }
@@ -673,17 +693,17 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   addRow(lc: any) {
     let arr = [lc];
     arr = this.modifyType(arr);
-    this.lcSource.append(arr[0]);
-    this.layout == 'RFC'
-      ? (this.rfcTotalItems = this.lcSource.count())
-      : (this.clientIdTotalItems = this.lcSource.count());
+    // this.lcSource.append(arr[0]);
+    // this.layout == 'RFC'
+    //   ? (this.rfcTotalItems = this.lcSource.count())
+    //   : (this.clientIdTotalItems = this.lcSource.count());
     this.addRows.push(lc);
   }
 
   editRow(lc: any) {
     let arr = [lc];
     arr = this.modifyType(arr);
-    this.lcSource.update(this.editedRowTable, arr[0]);
+    // this.lcSource.update(this.editedRowTable, arr[0]);
     let idx = this.addRows.findIndex(
       c => JSON.stringify(c) == JSON.stringify(this.editedRowModal)
     );
@@ -725,30 +745,32 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   exportExcel() {
     const filename: string = 'Líneas_de_Captura';
-    this.excelService.export(this.lcsColumns, { filename });
-  }
-
-  getData(listParams?: ListParams, notValidate: boolean = false): void {
-    if (this.form.invalid && !notValidate) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    this.loading = true;
-    const params = this.makeParams();
-    params.page = listParams?.page || 1;
-    params.limit = listParams?.pageSize || 10;
-    this.capturelineService.getTmpLcComer(params.getParams()).subscribe({
-      next: (res: any) => {
-        this.loading = false;
-        this.dataColumns.load(res.data);
-        this.totalEntries = res.count;
-      },
-      error: (err: any) => {
-        this.loading = false;
-        this.onLoadToast('error', 'Error', err);
-      },
+    this.lcsSource.getAll().then((data: any) => {
+      this.excelService.export(data, { filename });
     });
   }
+
+  // getData(listParams?: ListParams, notValidate: boolean = false): void {
+  //   if (this.form.invalid && !notValidate) {
+  //     this.form.markAllAsTouched();
+  //     return;
+  //   }
+  //   this.loading = true;
+  //   const params = this.makeParams();
+  //   params.page = listParams?.page || 1;
+  //   params.limit = listParams?.pageSize || 10;
+  //   this.capturelineService.getTmpLcComer(params.getParams()).subscribe({
+  //     next: (res: any) => {
+  //       this.loading = false;
+  //       this.dataColumns.load(res.data);
+  //       this.totalEntries = res.count;
+  //     },
+  //     error: (err: any) => {
+  //       this.loading = false;
+  //       this.onLoadToast('error', 'Error', err);
+  //     },
+  //   });
+  // }
 
   makeParams(): FilterParams {
     const params = new FilterParams();

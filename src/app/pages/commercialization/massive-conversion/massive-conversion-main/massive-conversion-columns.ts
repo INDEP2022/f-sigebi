@@ -48,11 +48,49 @@ export const DATA_COLUMNS = {
     title: 'Estatus',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, _row: any) => {
+      console.log({ cell });
+      if (cell == 1) return 'LC GENERADA';
+      if (cell == 0) return 'SOLICITADA';
+      return '';
+    },
   },
   observations: {
     title: 'Observaciones',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      let observation = '';
+      if (!item.customerId) {
+        observation += 'No se ingreso el cliente. ';
+      }
+      if (!item.batchId) {
+        observation += 'No se ingreso el lote. ';
+      }
+      /**TODO: 
+         * 
+         * cuando traigan las relaciones de comer_lote y comer_clientes
+        if (item.{relacion-cliente} == null) {
+          observation += 'El ID Cliente no Existe. ';
+        }
+        if (item.{relacion-lote} == null) {
+          observation += 'El ID Lote no Existe. ';
+        }
+        */
+      if (!item.amount) {
+        observation += 'No se ingreso el monto. ';
+      }
+
+      if (!item.validityDate) {
+        observation += 'No se ingreso la fecha de vigencia. ';
+      }
+      if (!item.checkNumber) {
+        observation += 'No se ingreso el número de cheque. ';
+      }
+      if (!item.bankExpCheck) {
+        observation += 'No se ingreso el Expide. Cheque. ';
+      }
+    },
   },
 };
 

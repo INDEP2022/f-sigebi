@@ -1,0 +1,320 @@
+/*
+*PROCESO:				PB_INSERT_ARCHIVO;
+*DESCRIPCION:		'INSERTAR ARCHIVO';
+*OBJETIVO: 			BOTON PARA INSERTAR LOS REGISTROS EN ARCHIVO .CSV.
+*/
+DECLARE
+   c_RESP_LAYOUT CHAR;
+BEGIN
+	IF PUF_MENSAJE_SI_NO('¿Insertar el archivo? ') = 'N' THEN
+	  	GO_ITEM('TMP_LC_COMER.ID_EVENTO');
+	    RAISE FORM_TRIGGER_FAILURE;
+	ELSE
+			:BLK_CONTROL.TIPO_CONS := 'INSERT';
+			PUP_CLEAR_BLOCK;
+      c_RESP_LAYOUT := PUF_TIPO_LAYOUT;
+      IF c_RESP_LAYOUT = 'X' THEN
+	  	   GO_ITEM('TMP_LC_COMER.ID_EVENTO');
+         RAISE FORM_TRIGGER_FAILURE;
+      END IF;
+			PUP_ABRIR_ARCHIVO;
+			SET_APPLICATION_PROPERTY(CURSOR_STYLE, 'BUSY'); 
+      IF c_RESP_LAYOUT = 'A' THEN
+			   PUP_INSERT_REGISTROS;
+      ELSE
+         PUP_INSERT_REGISTROS_NVO;
+      END IF;
+			BEGIN
+					:BLK_CONTROL.WHEREF := PUF_GEN_WHERE('TMP_LC_COMER',
+																								NULL,
+																								NULL,
+																								NULL,
+																								NULL,
+																								:BLK_CONTROL.ID_OPERACION,
+																								NULL,
+																								NULL		
+					              					            );
+			EXCEPTION
+					WHEN OTHERS THEN
+							LIP_MENSAJE('Error al generar la busqueda.','A');
+			END;			
+			LIP_COMMIT_SILENCIOSO;
+			SET_APPLICATION_PROPERTY(CURSOR_STYLE, 'NORMAL');
+			PUP_GEN_CONSULTA('TMP_LC_COMER','CONSULTA',:BLK_CONTROL.WHEREF);
+	END IF;	
+END;	
+	
+
+
+
+PROCEDURE PUP_CLEAR_BLOCK IS
+BEGIN
+		
+		GO_BLOCK('TMP_LC_COMER');
+		CLEAR_BLOCK;    
+		
+		GO_BLOCK('COMER_REF_GARANTIAS');
+		CLEAR_BLOCK; 
+		   
+		:BLK_CONTROL.ID_OPERACION_PROC := NULL;
+END;
+
+
+FUNCTION PUF_TIPO_LAYOUT RETURN CHAR IS
+   vn_boton_seleccionado NUMBER;
+BEGIN
+   vn_boton_seleccionado := SHOW_ALERT('ALR_MENSAJE_LAYOUT');
+   IF vn_boton_seleccionado = ALERT_BUTTON1 THEN
+      RETURN 'N';
+   ELSIF vn_boton_seleccionado = ALERT_BUTTON2 THEN
+      RETURN 'A';
+   ELSE
+      RETURN 'X';
+   END IF;
+END;
+
+
+PROCEDURE PUP_ABRIR_ARCHIVO IS
+		L_FILE          VARCHAR2(4000);
+    L_PATH          VARCHAR2(4000);
+    VC_FILTRO       VARCHAR2(200);
+    LFIARCHIVO      TEXT_IO.FILE_TYPE;
+    LST_ARCHIVO_IMG	VARCHAR2(4000);
+
+BEGIN
+  BEGIN
+  	LFIARCHIVO := TEXT_IO.FOPEN('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpath.pth', 'r');        
+    IF TEXT_IO.IS_OPEN(LFIARCHIVO) THEN
+    	TEXT_IO.GET_LINE(LFIARCHIVO, L_PATH);
+      TEXT_IO.FCLOSE(LFIARCHIVO);
+    END IF;
+	EXCEPTION 
+  	WHEN OTHERS THEN
+    	L_PATH := 'c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\';
+  END;        
+  VC_FILTRO := 'Todos (*.*)|*.*|';
+  VC_FILTRO := 'Archivos de Texto CSV (*.csv)|*.csv|';  --Archivo CSV
+  L_FILE := GET_FILE_NAME(FILE_FILTER=> VC_FILTRO,DIRECTORY_NAME=>L_PATH);
+  LFIARCHIVO := TEXT_IO.FOPEN('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpath.pth', 'w');
+  TEXT_IO.PUT_LINE(LFIARCHIVO, L_PATH);
+  TEXT_IO.FCLOSE(LFIARCHIVO);              
+  BEGIN
+  	WIN_API_UTILITY.COPY_FILE(L_FILE, 'c:\IMTMPSIAB\'||:GLOBAL.VG_DIRUSR||'\FCOMERLCMASIV.CSV', TRUE, TRUE);                 
+  EXCEPTION 
+  	WHEN NO_DATA_FOUND THEN
+    	LIP_MENSAJE('No se puede copiar el archivo de CSV.','A');
+      RAISE FORM_TRIGGER_FAILURE;
+  	WHEN OTHERS THEN
+    	LIP_MENSAJE('Error al leer el Archivo...  '||SQLERRM,'A');                                                
+  END;
+  
+END;
+
+
+PROCEDURE PUP_INSERT_REGISTROS IS
+		LST_ARCHIVO_DESTINO   VARCHAR2 (4000);
+		LFIARCHIVO            TEXT_IO.FILE_TYPE;
+		LST_CADENA            VARCHAR2 (4000);
+		
+		V_ID_CLIENTE				TMP_LC_COMER.ID_CLIENTE%TYPE;
+		V_ID_PALETA					TMP_LC_COMER.ID_PALETA%TYPE;
+		V_ID_LOTE						TMP_LC_COMER.ID_LOTE%TYPE;
+		V_MONTO 						TMP_LC_COMER.MONTO%TYPE;
+		V_NO_CHEQUE					TMP_LC_COMER.NO_CHEQUE%TYPE;
+		V_FEC_VIGENCIA			TMP_LC_COMER.FEC_VIGENCIA%TYPE;
+		
+		V_BANCO_EXP_CHEQUE	TMP_LC_COMER.BANCO_EXP_CHEQUE%TYPE;	
+		V_ID_OPERACION			TMP_LC_COMER.ESTATUS%TYPE;	
+		
+		V_INSERT						BOOLEAN := TRUE;
+		V_CONT							NUMBER(10);
+		
+BEGIN
+
+		LST_ARCHIVO_DESTINO := 'c:\IMTMPSIAB\'||:GLOBAL.VG_DIRUSR||'\FCOMERLCMASIV.CSV';
+		LFIARCHIVO := TEXT_IO.FOPEN (LST_ARCHIVO_DESTINO, 'R');
+		
+		V_ID_OPERACION := PUF_OBT_CONSEC_OPER;
+		
+		:BLK_CONTROL.ID_OPERACION 			:= V_ID_OPERACION;
+		:BLK_CONTROL.ID_OPERACION_PROC	:= V_ID_OPERACION;
+		--V_CONT := 0;
+		BEGIN
+				LOOP
+						TEXT_IO.GET_LINE (LFIARCHIVO, LST_CADENA);	
+						IF    UPPER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,1)))) NOT IN ('ID_CLIENTE','CLIENTEID') 
+						  AND UPPER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,2)))) NOT IN ('ID_PALETA','PALETAID') 
+						  AND UPPER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,3)))) NOT IN ('ID_LOTE','LOTE') THEN
+								BEGIN
+								  	
+										V_ID_CLIENTE				:= TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,1))));
+										V_ID_PALETA					:= TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,2))));
+										V_ID_LOTE						:= TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,3))));
+										V_MONTO 						:= TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,4))));
+										V_NO_CHEQUE					:= TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,5))));
+										V_BANCO_EXP_CHEQUE	:= LTRIM(RTRIM(UPPER(GETWORDCSV(LST_CADENA,6))));
+										V_FEC_VIGENCIA			:= TO_DATE(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,7))),'DD/MM/YYYY');
+										
+										V_INSERT := TRUE;
+										
+								EXCEPTION 
+										WHEN OTHERS THEN
+												V_INSERT := FALSE; 
+								END;
+								
+								IF V_INSERT THEN
+										--INSERTA REGISTROS 
+										BEGIN
+												/*
+												El resto de las columnas se insertan en el trigger.	
+												*/
+												INSERT INTO TMP_LC_COMER (  
+												                            ID_OPERACION,
+												                            ID_CLIENTE, 
+												                            ID_PALETA,
+												                            ID_LOTE, 
+												                            MONTO, 
+												                            NO_CHEQUE,
+												                            BANCO_EXP_CHEQUE,
+												                            FEC_VIGENCIA
+												                         )
+											    VALUES (
+											    				V_ID_OPERACION,
+											    				V_ID_CLIENTE,
+											    				V_ID_PALETA,
+											    				V_ID_LOTE,
+											    				V_MONTO,
+											    				V_NO_CHEQUE,
+											    				V_BANCO_EXP_CHEQUE,
+											    				V_FEC_VIGENCIA
+											    				);
+												--V_CONT := V_CONT + 1;											    									
+										EXCEPTION
+													WHEN OTHERS THEN
+															LIP_MENSAJE('Al Insertar en TMP_LC_COMER, '||'Lote: '||V_ID_LOTE||', Cheque: '||V_NO_CHEQUE||', <-> '||SQLERRM,'S');
+										END;									
+								END IF;	
+						END IF;		
+				END LOOP;                        
+		EXCEPTION
+				WHEN OTHERS THEN
+		  			TEXT_IO.FCLOSE (LFIARCHIVO);		
+		END;
+		--LIP_MENSAJE('CONT_REG: '||V_CONT,'A');
+		--:BLK_CONTROL.REG_DATOS_INSERT := V_CONT; 	
+
+EXCEPTION
+		WHEN OTHERS THEN
+	  LIP_MENSAJE ('Error desconocido en apertura de conexión con Archivo. -> '|| SQLERRM,'S');
+END;
+
+
+-- JACG 18-02-19 -- Se restructura el layout de cheques, se adiciona el Evento, Lote publico y RFC de CLiente. Se elimina el ID_CLIENTE y ID_LOTE --
+PROCEDURE PUP_INSERT_REGISTROS_NVO IS
+   LST_ARCHIVO_DESTINO VARCHAR2 (4000);
+   LFIARCHIVO          TEXT_IO.FILE_TYPE;
+   LST_CADENA          VARCHAR2 (4000);
+   V_ID_CLIENTE        TMP_LC_COMER.ID_CLIENTE%TYPE;
+   V_ID_PALETA         TMP_LC_COMER.ID_PALETA%TYPE;
+   V_ID_LOTE           TMP_LC_COMER.ID_LOTE%TYPE;
+   V_MONTO             TMP_LC_COMER.MONTO%TYPE;
+   V_NO_CHEQUE         TMP_LC_COMER.NO_CHEQUE%TYPE;
+   V_FEC_VIGENCIA      TMP_LC_COMER.FEC_VIGENCIA%TYPE;
+   V_BANCO_EXP_CHEQUE  TMP_LC_COMER.BANCO_EXP_CHEQUE%TYPE;	
+   V_ID_OPERACION      TMP_LC_COMER.ESTATUS%TYPE;	
+   n_ID_EVENTO         COMER_LOTES.ID_EVENTO%TYPE;
+   n_LOTE_PUBLICO      COMER_LOTES.LOTE_PUBLICO%TYPE;
+   c_RFC               COMER_CLIENTES.RFC%TYPE;
+   V_INSERT            BOOLEAN := TRUE;
+   V_CONT              NUMBER(10);
+BEGIN
+   LST_ARCHIVO_DESTINO := 'c:\IMTMPSIAB\'||:GLOBAL.VG_DIRUSR||'\FCOMERLCMASIV.CSV';
+   LFIARCHIVO := TEXT_IO.FOPEN (LST_ARCHIVO_DESTINO, 'R');
+   V_ID_OPERACION := PUF_OBT_CONSEC_OPER;
+   :BLK_CONTROL.ID_OPERACION 			:= V_ID_OPERACION;
+   :BLK_CONTROL.ID_OPERACION_PROC	:= V_ID_OPERACION;
+   V_CONT := 0;
+   BEGIN
+      LOOP
+         TEXT_IO.GET_LINE (LFIARCHIVO, LST_CADENA);	
+         IF UPPER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,1)))) NOT IN ('RFC') AND 
+            UPPER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,2)))) NOT IN ('ID_PALETA','PALETAID') AND 
+            UPPER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,3)))) NOT IN ('ID_EVENTO','EVENTO') THEN
+            BEGIN
+               c_RFC              := LTRIM(RTRIM(UPPER(GETWORDCSV(LST_CADENA,1)))); -- RFC --
+               V_ID_PALETA        := TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,2)))); -- PALETAID --
+               n_ID_EVENTO        := TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,3)))); -- EVENTO --
+               n_LOTE_PUBLICO     := TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,4)))); -- LOTE --
+               V_MONTO            := TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,5)))); -- MONTO --
+               V_NO_CHEQUE        := TO_NUMBER(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,6)))); -- NO_CHEQUE --
+               V_BANCO_EXP_CHEQUE := LTRIM(RTRIM(UPPER(GETWORDCSV(LST_CADENA,7)))); -- EXP_CHEQUE --
+               BEGIN
+                  V_FEC_VIGENCIA     := TO_DATE(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,8))),'DD/MM/YYYY'); -- FECHA --
+               EXCEPTION
+                  WHEN OTHERS THEN
+                     V_FEC_VIGENCIA     := TO_DATE(LTRIM(RTRIM(GETWORDCSV(LST_CADENA,8))),'YYYY/MM/DD'); -- FECHA --
+               END;
+               BEGIN
+                  SELECT ID_CLIENTE
+                    INTO V_ID_CLIENTE
+                    FROM COMER_CLIENTES
+                   WHERE RFC = c_RFC;
+                  BEGIN
+                     SELECT ID_LOTE
+                       INTO V_ID_LOTE
+                       FROM COMER_LOTES
+                      WHERE ID_EVENTO = n_ID_EVENTO
+                        AND LOTE_PUBLICO = n_LOTE_PUBLICO;
+                     V_INSERT := TRUE;
+                  EXCEPTION
+                     WHEN OTHERS THEN
+                        LIP_MENSAJE('Lote inexistente ('||TO_CHAR(n_LOTE_PUBLICO)||')','S');
+                        V_INSERT := FALSE;
+                  END;
+               EXCEPTION
+                  WHEN OTHERS THEN
+                     LIP_MENSAJE('R.F.C inexistente ('||c_RFC||')','S');
+                     V_INSERT := FALSE;
+               END;
+            EXCEPTION 
+               WHEN OTHERS THEN
+                  V_INSERT := FALSE; 
+            END;
+            IF V_INSERT THEN
+               --INSERTA REGISTROS 
+               BEGIN
+                  /* El resto de las columnas se insertan en el trigger. */
+                  INSERT INTO TMP_LC_COMER (ID_OPERACION,
+                                            ID_CLIENTE, 
+                                            ID_PALETA,
+                                            ID_LOTE, 
+                                            MONTO, 
+                                            NO_CHEQUE,
+                                            BANCO_EXP_CHEQUE,
+                                            FEC_VIGENCIA
+                                           )
+                                    VALUES (V_ID_OPERACION,
+                                            V_ID_CLIENTE,
+                                            V_ID_PALETA,
+                                            V_ID_LOTE,
+                                            V_MONTO,
+                                            V_NO_CHEQUE,
+                                            V_BANCO_EXP_CHEQUE,
+                                            V_FEC_VIGENCIA);
+                  V_CONT := V_CONT + 1;											    									
+               EXCEPTION
+                  WHEN OTHERS THEN
+                     LIP_MENSAJE('Al Insertar en TMP_LC_COMER, '||'Lote: '||TO_CHAR(n_LOTE_PUBLICO)||', Cheque: '||V_NO_CHEQUE||', <-> '||SQLERRM,'S');
+               END;									
+            END IF;	
+         END IF;		
+      END LOOP;                        
+   EXCEPTION
+      WHEN OTHERS THEN
+         TEXT_IO.FCLOSE (LFIARCHIVO);		
+   END;
+EXCEPTION
+   WHEN OTHERS THEN
+      LIP_MENSAJE ('Error desconocido en apertura de conexión con Archivo. -> '|| SQLERRM,'S');
+END;
+

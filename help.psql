@@ -1,0 +1,248 @@
+/*
+*PROCESO:				PUP_CONS_LC;
+*DESCRIPCION:		'CONSULTAR';
+*OBJETIVO: 			BOTON PARA CONSULTAR LOS REGISTROS DE ACUERDO A LOS FILTROS INGRESADOS.
+*/
+DECLARE
+
+	V_WHERE		VARCHAR2(4000) := NULL;	
+	
+BEGIN
+		:BLK_CONTROL.TIPO_CONS := 'CONSULTA';
+		PUP_CLEAR_BLOCK;
+		BEGIN
+				V_WHERE := PUF_GEN_WHERE('TMP_LC_COMER',
+																	:BLK_CONTROL.ID_EVENTO,
+																	:BLK_CONTROL.ID_LOTE,
+																	:BLK_CONTROL.FEC_INSERT,
+																	:BLK_CONTROL.ESTATUS,
+																	:BLK_CONTROL.ID_OPERACION,
+																	NULL,
+																	NULL		
+				              					);
+				:BLK_CONTROL.WHEREF := V_WHERE;
+		EXCEPTION
+				WHEN OTHERS THEN
+						LIP_MENSAJE('Error al generar la busqueda.','A');
+		END;
+		
+		
+		IF V_WHERE IS NOT NULL THEN
+			PUP_GEN_CONSULTA('TMP_LC_COMER','CONSULTA',:BLK_CONTROL.WHEREF);
+			PUP_GEN_CONSULTA('COMER_REF_GARANTIAS','CONSULTA',:BLK_CONTROL.WHEREF);
+			GO_ITEM('BLK_CONTROL.ID_EVENTO');
+		ELSE
+			LIP_MENSAJE('No se ha insertado ningun filtro de busqueda.','A');	
+			GO_ITEM('BLK_CONTROL.ID_EVENTO');		
+		END IF;
+		
+
+END;	
+
+
+PROCEDURE PUP_GEN_CONSULTA (P_TABLA VARCHAR2, P_TIPO_PROC VARCHAR2, P_WHERE VARCHAR2) IS
+   OLDMSG VARCHAR2(2) := :SYSTEM.MESSAGE_LEVEL;
+BEGIN
+
+		IF P_TIPO_PROC = 'CONSULTA' THEN
+        :SYSTEM.MESSAGE_LEVEL := '10';
+				IF P_TABLA = 'TMP_LC_COMER' THEN 
+						SET_BLOCK_PROPERTY('TMP_LC_COMER',DEFAULT_WHERE, P_WHERE);
+						GO_BLOCK('TMP_LC_COMER');
+						EXECUTE_QUERY;
+				ELSIF P_TABLA = 'COMER_REF_GARANTIAS' THEN 
+						SET_BLOCK_PROPERTY('COMER_REF_GARANTIAS',DEFAULT_WHERE, 'ESTATUS = ''GEN''
+																																	    AND USER_GENERA = ''TERCERO''
+																																	    AND EXISTS (SELECT    1
+																																	                        FROM TMP_LC_COMER TCL
+																																	                        WHERE        TCL.ID_LOTE = CRG.ID_LOTE
+																																	                        AND       TCL.ID_CLIENTE = CRG.ID_CLIENTE
+																																	                        AND     TCL.FEC_VIGENCIA = CRG.FEC_VIGENCIA
+																																	                        AND  TRUNC(FEC_INSERT) = TRUNC(SYSDATE) 
+																																	                        AND '||P_WHERE||')');
+						GO_BLOCK('COMER_REF_GARANTIAS');
+						EXECUTE_QUERY;
+				END IF;	
+        :SYSTEM.MESSAGE_LEVEL := OLDMSG;
+		ELSIF P_TIPO_PROC = 'UPDATE' THEN
+					PUP_EXEC_SQL('UPDATE TMP_LC_COMER TCL 
+													SET ESTATUS = 1 
+														WHERE ESTATUS = 0 
+												    AND EXISTS (SELECT  1
+												                    FROM COMER_REF_GARANTIAS CRG
+												                    WHERE CRG.ID_LOTE = TCL.ID_LOTE
+												                    AND CRG.NO_CHEQUE = TCL.NO_CHEQUE
+												                    AND UPPER(CRG.BANCO_EXP_CHEQUE) = UPPER(TCL.BANCO_EXP_CHEQUE)   
+												               ) 
+														AND '||P_WHERE
+											);		
+					PUP_EXEC_SQL('COMMIT');				
+		END IF;	
+
+END;
+
+
+
+PROCEDURE PUP_EXEC_SQL(LS_sqlstr VARCHAR2) IS
+  connection_id EXEC_SQL.CONNTYPE;
+  bIsConnected BOOLEAN;
+  cursorID EXEC_SQL.CURSTYPE;
+  nIgn PLS_INTEGER;
+  nRows PLS_INTEGER := 0;
+  nTimes PLS_INTEGER := 0;
+  mynum NUMBER;
+
+BEGIN
+	
+	 IF LS_sqlstr IS NOT NULL THEN
+		 -- obtain the default connection and check that it is valid
+		 connection_id := EXEC_SQL.DEFAULT_CONNECTION;
+		 bIsConnected := EXEC_SQL.IS_CONNECTED;
+		 
+		 IF bIsConnected THEN 
+		 	
+		 	-- subsequent calls to EXEC_SQL.Open_Cursor, EXEC_SQL.Parse, EXEC_SQL.Define_Column,
+  
+		 	-- EXEC_SQL.Execute, EXEC_SQL.Fetch_Rows, EXEC_SQL.Column_Value,
+  
+		 	-- EXEC_SQL.Close_Cursor, EXEC_SQL.Close_Connection all use this connection 
+  
+		 	-- implicitly from the cache
+  --
+  
+		 	
+			 	cursorID := EXEC_SQL.OPEN_CURSOR;
+			 	EXEC_SQL.PARSE(cursorID, LS_sqlstr, exec_sql.V7);
+			 	
+			 	nIgn := EXEC_SQL.EXECUTE(cursorID);
+			 	
+			 	EXEC_SQL.CLOSE_CURSOR(cursorID);
+			 	EXEC_SQL.CLOSE_CONNECTION;
+			END IF; 	
+ 	END IF;
+END;
+
+
+
+
+----------- POST-QUERY TMP_LC_COMER ----------------
+DECLARE
+
+BEGIN
+   BEGIN
+      SELECT LOTE_PUBLICO
+        INTO :TMP_LC_COMER.LOTE_PUBLICO
+        FROM COMER_LOTES
+       WHERE ID_LOTE = :TMP_LC_COMER.ID_LOTE;
+   EXCEPTION
+      WHEN OTHERS THEN
+         :TMP_LC_COMER.LOTE_PUBLICO := NULL;
+   END;
+   BEGIN
+      SELECT RFC
+        INTO :TMP_LC_COMER.RFC
+        FROM COMER_CLIENTES
+       WHERE ID_CLIENTE = :TMP_LC_COMER.ID_CLIENTE;
+   EXCEPTION
+      WHEN OTHERS THEN
+         :TMP_LC_COMER.RFC := NULL;
+   END;
+
+	IF :TMP_LC_COMER.ESTATUS = 1 THEN
+			:TMP_LC_COMER.DESC_ESTATUS := 'LC GENERADA'; 	 
+	ELSIF :TMP_LC_COMER.ESTATUS = 0 THEN       
+			:TMP_LC_COMER.DESC_ESTATUS := 'SOLICITADA';
+	ELSE			                                      
+			:TMP_LC_COMER.DESC_ESTATUS := NULL;
+	END IF;	
+
+	:TMP_LC_COMER.OBSERVACIONES :=  PUF_VAL_DATOS(
+																								'VALIDA',
+																								'TMP_LC_COMER',
+																								:TMP_LC_COMER.ID_CLIENTE,
+																								:TMP_LC_COMER.ID_LOTE,
+																								:TMP_LC_COMER.MONTO,
+																								:TMP_LC_COMER.FEC_VIGENCIA,
+																								:TMP_LC_COMER.NO_CHEQUE,
+																								:TMP_LC_COMER.BANCO_EXP_CHEQUE,
+																								NULL,
+																								NULL
+	             																  );
+	
+END;	
+
+
+
+
+FUNCTION PUF_VAL_DATOS (
+													P_TIPO_PROC			VARCHAR2,
+													P_TIPO_DATOS		VARCHAR2,
+													P_ID_CLIENTE		NUMBER,
+											    P_ID_LOTE				NUMBER, 
+											    P_MONTO					NUMBER,
+											    P_FEC_VIG				DATE,
+											    P_NO_CHEQUE			NUMBER,
+											    P_EXP_CHEQUE		VARCHAR2,
+											    P_PARAM01				VARCHAR2,	  													
+											    P_PARAM02				VARCHAR2
+                        ) RETURN VARCHAR2 IS
+	V_OBSERV					VARCHAR2(4000);                        
+	VAL_CLIENTE				NUMBER(5);
+	VAL_LOTE					NUMBER(5);
+BEGIN
+		
+		V_OBSERV := NULL;
+		
+		IF P_TIPO_PROC = 'VALIDA' THEN
+
+				IF P_TIPO_DATOS = 'TMP_LC_COMER' THEN
+				
+						IF P_ID_CLIENTE IS NULL THEN
+								V_OBSERV := V_OBSERV||'No se ingreso el cliente. ';		
+						END IF;	
+						
+						IF P_ID_LOTE IS NULL THEN
+								V_OBSERV := V_OBSERV||'No se ingreso el Lote. ';		
+						END IF;	
+						
+						SELECT COUNT(0)
+						INTO VAL_LOTE
+								FROM COMER_LOTES
+								WHERE ID_LOTE = P_ID_LOTE; 
+								
+						IF VAL_LOTE = 0 THEN 
+								V_OBSERV := V_OBSERV||'El ID Lote no Existe. ';
+						END IF;	
+						
+						SELECT COUNT(0)
+						INTO VAL_CLIENTE
+								FROM COMER_CLIENTES
+								WHERE ID_CLIENTE = P_ID_CLIENTE;
+								
+						IF VAL_CLIENTE = 0 THEN 
+								V_OBSERV := V_OBSERV||'El ID Cliente no Existe. ';
+						END IF;	
+											
+						IF P_MONTO IS NULL THEN
+								V_OBSERV := V_OBSERV||'No se ingreso el Monto. ';		
+						END IF;	
+						
+						IF P_FEC_VIG IS NULL THEN
+								V_OBSERV := V_OBSERV||'No se ingreso la Fecha Vigencia. ';		
+						END IF;	
+						
+						IF P_NO_CHEQUE IS NULL THEN
+								V_OBSERV := V_OBSERV||'No se ingreso el No. Cheque. ';		
+						END IF;								
+						
+						IF P_EXP_CHEQUE IS NULL THEN
+								V_OBSERV := V_OBSERV||'No se ingreso el Expide. Cheque. ';		
+						END IF;							
+						
+				END IF;	
+
+		END IF;
+
+		RETURN V_OBSERV;
+		
+END;

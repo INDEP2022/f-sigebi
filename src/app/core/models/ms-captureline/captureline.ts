@@ -1,4 +1,4 @@
-export interface TmpLcComer {
+export interface ITmpLcComer {
   eventId: string;
   batchId: string;
   customerId: string;

@@ -308,7 +308,7 @@
                   id="data-table"
                   [attr.class]="'table-bordered'"
                   [settings]="dataSettings"
-                  [source]="dataColumns">
+                  [source]="dataSource">
                 </ng2-smart-table>
               </div>
             </div>
@@ -345,12 +345,12 @@
                       </div>
                     </div>
                     <div class="table-responsive">
-                      <div [class]="loading ? 'table-loading' : ''">
+                      <div [class]="isLoadingLcs ? 'table-loading' : ''">
                         <ng2-smart-table
                           id="lcsTable"
                           [attr.class]="'table-bordered'"
                           [settings]="lcsSettings"
-                          [source]="lcsColumns">
+                          [source]="lcsSource">
                         </ng2-smart-table>
                       </div>
                     </div>
@@ -414,7 +414,7 @@
                           id="rfcTable"
                           [attr.class]="'table-bordered'"
                           [settings]="rfcSettings"
-                          [source]="lcSource"
+                          [source]="rfcSource"
                           (edit)="openForm($event.data)"
                           (delete)="delete($event.data)">
                         </ng2-smart-table>
@@ -426,7 +426,7 @@
                           id="clientIdTable"
                           [attr.class]="'table-bordered'"
                           [settings]="clientIdSettings"
-                          [source]="lcSource"
+                          [source]="clientSource"
                           (edit)="openForm($event.data)"
                           (delete)="delete($event.data)">
                         </ng2-smart-table>
