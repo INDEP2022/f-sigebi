@@ -136,8 +136,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       this.onLoadToast('error', '', 'Se requerier tener una transferente');
     }
     Swal.fire({
-      title: 'Generar Caratula',
-      text: 'Esta seguro de querer generar una caratula?',
+      title: 'Generar Carátula',
+      text: 'Esta seguro de querer generar una carátula?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -278,10 +278,13 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                   },
                                   error: error => {
                                     this.loader.load = false;
+                                    console.log(error.error.message);
+
                                     this.onLoadToast(
                                       'error',
                                       'Error',
-                                      'Error guardar la caratula al contenedor'
+                                      'Error guardar la caratula al contenedor: ' +
+                                        error.error.message
                                     );
                                   },
                                 });
