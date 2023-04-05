@@ -1,12 +1,19 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
-import { ExampleService } from 'src/app/core/services/catalogs/example.service';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS,
+  JURIDICAL_FILE_UPDATE_SEARCH_FIELDS,
+} from '../../file-data-update/interfaces/columns';
+import { IJuridicalFileDataUpdateForm } from '../../file-data-update/interfaces/file-data-update-form';
+import { JuridicalFileUpdateService } from '../../file-data-update/services/juridical-file-update.service';
 
 /** ROUTING MODULE */
 
@@ -33,6 +40,13 @@ export class AbandonmentsDeclarationTradesComponent
   public formDeclaratoriaTabla: FormGroup;
   public formOficiopageFin: FormGroup;
   public formDeclaratoriapageFin: FormGroup;
+  searchMode: boolean = false;
+  confirmSearch: boolean = false;
+  formData: Partial<IJuridicalFileDataUpdateForm> = null;
+  selectedRow: INotification;
+  columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
+  fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
+  showTabs: boolean = true;
 
   /** Tabla bienes */
   data1 = [
@@ -125,7 +139,12 @@ export class AbandonmentsDeclarationTradesComponent
   };
   /** Tabla bienes */
 
-  constructor(private fb: FormBuilder, private exampleService: ExampleService) {
+  constructor(
+    private fb: FormBuilder,
+    public fileUpdateService: JuridicalFileUpdateService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private docDataService: DocumentsReceptionDataService
+  ) {
     super();
   }
 
@@ -243,5 +262,27 @@ export class AbandonmentsDeclarationTradesComponent
 
   capturaCopias(event: any) {
     console.log('Captura copias', event);
+  }
+
+  checkSearchMode(searchMode: boolean) {
+    this.searchMode = searchMode;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  confirm(confirm: boolean) {
+    this.confirmSearch = confirm;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  search(formData: Partial<IJuridicalFileDataUpdateForm>) {
+    this.formData = formData;
+    this.changeDetectorRef.detectChanges();
+    console.log(formData);
+  }
+
+  selectData(data: INotification) {
+    this.selectedRow = data;
+    this.changeDetectorRef.detectChanges();
+    console.log(data);
   }
 }

@@ -219,6 +219,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.render.removeClass(element, 'disabled');
   }
 
+
   fecElab() {
     console.log(this.form.get('fecElab').value);
     this.form.get('fecCierreActa').setValue(this.form.get('fecElab').value);
@@ -370,6 +371,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('acta2').setValue(nameAct);
   }
 
+
   //Functions
   toggleActa() {
     if (this.labelActa == 'Abrir acta') {
@@ -380,6 +382,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.btnCSSAct = 'btn-success';
     }
   }
+
 }
 
 const EXAMPLE_DATA = [
