@@ -55,6 +55,11 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  ligieUnit: {
+    title: 'Uni. de Medida Ligie',
+    type: 'string',
+    sort: false,
+  },
   transferentDestinyName: {
     title: 'Destino Transferente',
     type: 'string',
