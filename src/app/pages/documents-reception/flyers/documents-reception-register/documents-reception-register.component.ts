@@ -1447,6 +1447,11 @@ export class DocumentsReceptionRegisterComponent
           },
           error: err => {
             console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos de Área no encontrados',
+              'No se encontraron todos los datos del area correspondiente.'
+            );
           },
         });
       }
