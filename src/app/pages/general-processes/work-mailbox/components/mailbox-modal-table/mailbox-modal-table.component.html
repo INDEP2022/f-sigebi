@@ -4,10 +4,12 @@
   </div>
   <div body>
     <div class="row" [class.table-loading]="loading">
-      <ng2-smart-table
-        [source]="rows"
-        [settings]="settings"
-        (userRowSelect)="selectedRow = $event.data"></ng2-smart-table>
+      <div style="overflow: auto">
+        <ng2-smart-table
+          [source]="rows"
+          [settings]="settings"
+          (userRowSelect)="selectedRow = $event.data"></ng2-smart-table>
+      </div>
       <app-pagination
         [filterParams]="$params"
         [totalItems]="totalItems"></app-pagination>

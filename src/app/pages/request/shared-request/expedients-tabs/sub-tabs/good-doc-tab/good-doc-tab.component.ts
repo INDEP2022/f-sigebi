@@ -113,7 +113,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
           idGood,
           idRequest,
           parameter: '',
-          type: 'good',
+          type: 'request-assets',
           callback: (next: boolean) => {
             //if(next) this.getExample();
           },

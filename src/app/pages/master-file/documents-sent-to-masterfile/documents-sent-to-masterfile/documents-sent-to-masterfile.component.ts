@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DOCUMENTS_SENT_COLUMNS } from './documents-sent-columns';
 
@@ -18,7 +21,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 })
 export class DocumentsSentToMasterfileComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup;
 
   data: LocalDataSource = new LocalDataSource();
@@ -30,7 +34,8 @@ export class DocumentsSentToMasterfileComponent
   columnFilters: any = [];
 
   blk_doc: any = {};
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private documentsService: DocumentsService
   ) {
     super();
@@ -75,7 +80,6 @@ export class DocumentsSentToMasterfileComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
-          debugger;
           let filters = change.filter.filters;
 
           filters.map((filter: any) => {
@@ -98,12 +102,9 @@ export class DocumentsSentToMasterfileComponent
         }
       });
 
-
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDocument());
-
   }
 
   prepareForm() {
@@ -118,39 +119,31 @@ export class DocumentsSentToMasterfileComponent
   }
 
   onFilterChange(event: any) {
-    let filtros = []
+    let filtros = [];
 
     const expediente = this.form.get('file').value;
     const areaSends = this.form.get('area').value;
     const userRequestsScan = this.form.get('sentBy').value;
-
 
     const recordValue = this.form.get('record').value;
     const responsibleValue = this.form.get('responsible').value;
 
     if (areaSends != null) {
       if (areaSends.length > 0) {
-        filtros.push(
-          { field: 'areaSends', search: areaSends, }
-        );
+        filtros.push({ field: 'areaSends', search: areaSends });
       }
     }
 
     if (expediente != null) {
-      filtros.push(
-        { field: 'id', search: expediente, }
-      )
+      filtros.push({ field: 'id', search: expediente });
     }
 
     if (userRequestsScan != null) {
-      filtros.push(
-        { field: 'userSend', search: userRequestsScan, }
-      )
+      filtros.push({ field: 'userSend', search: userRequestsScan });
     }
 
     this.data.setFilter(filtros);
     this.data.refresh();
-
   }
 
   getDocument() {
@@ -171,8 +164,6 @@ export class DocumentsSentToMasterfileComponent
       },
       error: error => (this.loading = false),
     });
-
-
   }
 
   getFormElements() {
@@ -183,11 +174,24 @@ export class DocumentsSentToMasterfileComponent
     const responsibleInput = this.form.get('responsible');
     const sendButton = document.getElementById('send');
 
-    return { fileInput, areaSelect, sentByInput, recordInput, responsibleInput, sendButton };
+    return {
+      fileInput,
+      areaSelect,
+      sentByInput,
+      recordInput,
+      responsibleInput,
+      sendButton,
+    };
   }
 
   getFormData() {
-    const { fileInput, areaSelect, sentByInput, recordInput, responsibleInput } = this.getFormElements();
+    const {
+      fileInput,
+      areaSelect,
+      sentByInput,
+      recordInput,
+      responsibleInput,
+    } = this.getFormElements();
 
     const file = fileInput.value;
     const area = areaSelect.value;
@@ -211,7 +215,6 @@ export class DocumentsSentToMasterfileComponent
   /***************
    * Aqui cambia la logica del check pero no hay secuencia
    */
-
 
   enviarDocumento(data: any) {
     const estatus_escaneo = data.scanStatus;
@@ -237,11 +240,12 @@ export class DocumentsSentToMasterfileComponent
 
     const ti_usuario = this.form.get('sentBy').value;
 
-
     // Realizar la lógica de negocio
     if (this.blk_doc.cb_enviado === 'S') {
       if (estatus_escaneo === 'SOLICITADO') {
-        alert('Documento pendiente de digitalizar, para su envio al archivo debe digitalizarlo.');
+        alert(
+          'Documento pendiente de digitalizar, para su envio al archivo debe digitalizarlo.'
+        );
         return;
       } else if (ti_usuario === '') {
         alert('Falta quien lo Envia.');
@@ -255,15 +259,22 @@ export class DocumentsSentToMasterfileComponent
         // Realizar la acción correspondiente, como enviar una solicitud HTTP al servidor para guardar los cambios
         fetch('/guardarDocumento', {
           method: 'POST',
-          body: JSON.stringify({ usuario_envia, area_envia, fecha_envio, estatus_archivo }),
+          body: JSON.stringify({
+            usuario_envia,
+            area_envia,
+            fecha_envio,
+            estatus_archivo,
+          }),
           headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(() => {
-          alert('Documento enviado correctamente.');
-        }).catch((error) => {
-          console.error('Error al enviar el documento:', error);
-        });
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(() => {
+            alert('Documento enviado correctamente.');
+          })
+          .catch(error => {
+            console.error('Error al enviar el documento:', error);
+          });
       }
     } else {
       /*
@@ -286,7 +297,6 @@ export class DocumentsSentToMasterfileComponent
       */
     }
   }
-
 
   objblk() {
     this.blk_doc.area_envia = null;
@@ -359,6 +369,4 @@ export class DocumentsSentToMasterfileComponent
     this.blk_doc.vigencia_fin = null;
     this.blk_doc.vigencia_inicio = null;
   }
-
-
 }
