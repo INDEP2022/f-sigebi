@@ -10,7 +10,7 @@
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
         <h5 class="title">
-          <strong>Informaci&oacute;n de Recepci&oacute;n de Solicitud</strong>
+          <strong>Informaci&oacute;n de la Solicitud</strong>
         </h5>
       </div>
 
@@ -30,7 +30,7 @@
         <div class="col-sm-2">
           <span style="line-height: 3">Prioridad</span>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
           <input
             id="urgentPriority"
             type="checkbox"
@@ -38,22 +38,13 @@
             [(ngModel)]="priority"
             [disabled]="true" />
         </div>
-        <!--  <div class="col-sm-2">
-          <form-radio label="">
-            <input
-              type="radio"
-              formControlName="priority"
-              value="priority"
-              id="priority" />
-          </form-radio>
-        </div> -->
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="label">Procedencia Informaci&oacute;n&#58;</label>
           {{ requestForm?.get('originInfo').value || '' }}
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-4">
         <div class="col-md-4">
           <label class="label">Fecha de Recepci&oacute;n&#58;</label>
           {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
@@ -62,9 +53,17 @@
           <label class="label">Fecha de Oficio&#58;</label>
           {{ infoRequest?.paperDate | date: 'dd/MM/yyyy' }}
         </div>
-        <div class="col-md-4">
-          <label class="label">Tipo Expediente&#58;</label>
-          {{ infoRequest?.typeRecord }}
+      </div>
+      <div class="row pt-3">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <label class="label">Tipo Expediente&#58;</label>
+            {{ infoRequest?.typeRecord }}
+          </div>
+          <div class="col-md-4">
+            <label class="label">Ministerio Publico&#58;</label>
+            {{ infoRequest }}
+          </div>
         </div>
       </div>
       <div class="row pt-3">
@@ -73,37 +72,45 @@
           {{ infoRequest?.nameOfOwner }}
         </div>
         <div class="col-md-4">
-          <label class="label">Cargo del Remitente&#58;</label>
-          {{ infoRequest?.holderCharge }}
-        </div>
-        <div class="col-md-4">
-          <label class="label">Tel&eacute;fono del Remitente&#58;</label>
-          {{ infoRequest?.phoneOfOwner }}
-        </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-4">
-          <label class="label">Email del Remitente&#58;</label>
-          {{ infoRequest?.emailOfOwner }}
-        </div>
-        <div class="col-md-4">
           <label class="label">Juzgado&#58;</label>
           {{ infoRequest?.court }}
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <label class="label">Cargo del Remitente&#58;</label>
+          {{ infoRequest?.holderCharge }}
         </div>
         <div class="col-md-4">
           <label class="label">Delito&#58;</label>
           {{ infoRequest?.crime }}
         </div>
       </div>
-      <div class="row pt-3">
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <label class="label">Tel&eacute;fono del Remitente&#58;</label>
+          {{ infoRequest?.phoneOfOwner }}
+        </div>
         <div class="col-md-4">
           <label class="label">V&iacute;a de Recepci&oacute;n&#58;</label
           >{{ infoRequest?.receiptRoute }}
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <label class="label">Email del Remitente&#58;</label>
+          {{ infoRequest?.emailOfOwner }}
         </div>
         <div class="col-md-4">
           <label class="label">Gesti&oacute;n de Destino&#58;</label>
           {{ infoRequest?.destinationManagement }}
         </div>
+      </div>
+
+      <div class="row pt-3">
         <div class="col-md-4">
           <label class="label">Contribuyente y&#47;o Indiciado&#58;</label>
           {{ infoRequest?.indicatedTaxpayer }}
@@ -114,6 +121,8 @@
           <label class="label">Asunto&#58;</label>
           {{ infoRequest?.affair }}
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <label class="label">Expediente Transferente&#47;PAMA&#58;</label>
           {{ infoRequest?.transferenceFile }}
@@ -151,7 +160,7 @@
   </div>
   <form [formGroup]="requestForm" class="form-material form-horizontal">
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right align-baseline"
             >Prioridad&#58;</label
@@ -162,6 +171,14 @@
             [ngModelOptions]="{ standalone: true }"
             [(ngModel)]="priority"
             [disabled]="true" />
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Procedencia informaci&oacute;n&#58;</label
+            >
+            <span class="fs-4"> </span>
+          </div>
         </div>
       </div>
     </div>
@@ -180,13 +197,13 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Tipo expediente&#58;</label>
           <span class="fs-4"> {{ infoRequest?.typeRecord }} </span>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-6 text-right">No. amparo&#58;</label>
           <span class="fs-4"> {{ infoRequest?.protectNumber }}</span>
@@ -194,13 +211,13 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Tipo expediente&#58;</label>
           <span class="fs-4"> </span>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-6 text-right">Toca penal&#58;</label>
           <span class="fs-4"> {{ infoRequest?.tocaPenal }}</span>
@@ -208,13 +225,13 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Nombre titular&#58;</label>
           <span class="fs-4"> {{ infoRequest?.nameOfOwner }} </span>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-6 text-right">Fecha de oficio&#58;</label>
           <span class="fs-4"> {{ infoRequest?.paperDate }}</span>
@@ -222,13 +239,13 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Cargo titular&#58;</label>
           <span class="fs-4"> {{ infoRequest?.holderCharge }}</span>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-6 text-right">Ministerio publico&#58;</label>
           <span class="fs-4">{{ infoRequest?.publicMinistry }}</span>
@@ -236,13 +253,13 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Telefono titular&#58;</label>
           <span class="fs-4"> {{ infoRequest?.phoneOfOwner }} </span>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-6 text-right">Juzgado&#58;</label>
           <span class="fs-4"> {{ infoRequest?.court }} </span>
@@ -250,13 +267,13 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Email titular&#58;</label>
           <span class="fs-4"> {{ infoRequest?.emailOfOwner }} </span>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-6 text-right">Delito&#58;</label>
           <span class="fs-4"> {{ infoRequest?.crime }} </span>
@@ -316,14 +333,6 @@
       </div>
     </div>
     <div class="row pt-3">
-      <div class="col-md-6">
-        <div class="form-group">
-          <label class="col-lg-5 text-right"
-            >Procedencia informaci&oacute;n&#58;</label
-          >
-          <span class="fs-4"> </span>
-        </div>
-      </div>
       <div class="col-md-6">
         <div class="form-group">
           <label class="col-lg-6 text-right"
