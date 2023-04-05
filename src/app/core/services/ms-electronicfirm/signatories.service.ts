@@ -30,7 +30,7 @@ export class SignatoriesService extends HttpService {
     return this.get(route, params);
   }
 
-  create(model: ISignatories) {
+  create(model: Object) {
     return this.post(ElectronicFirmEndpoint.Signatories, model);
   }
 

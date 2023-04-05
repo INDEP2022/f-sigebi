@@ -5,13 +5,13 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     title: 'Bien',
     type: 'number',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idGoodNumber.goodId;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.goodId;
+    },
   },
   description: {
     title: 'Descripción',
-    type: 'text',
+    type: 'string',
     sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idGoodNumber.description;
@@ -21,16 +21,16 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     title: 'Valor',
     type: 'number',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idGoodNumber.quantity;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.quantity;
+    },
   },
 };
 
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
   idGoodNumber: {
     title: 'Bien',
-    type: 'list',
+    type: 'number',
     sort: true,
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.idGoodNumber.goodId;
@@ -38,14 +38,14 @@ export const FINANCIAL_INFORMATION_COLUMNS2 = {
   },
   description: {
     title: 'Descripción',
-    type: 'number',
+    type: 'string',
     sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idGoodNumber.description;
     },
   },
   value: {
-    title: 'Seleccionar',
+    title: '',
     sort: true,
     type: 'custom',
     renderComponent: CheckboxElementComponent,

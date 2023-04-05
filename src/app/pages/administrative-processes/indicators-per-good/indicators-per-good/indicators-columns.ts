@@ -1,30 +1,38 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const INDICATORS_GOOD_COLUMNS1 = {
-  name: {
-    title: 'Nombre',
-    type: 'string',
+  description: {
+    title: 'Descripción',
+    type: 'text',
     sort: false,
   },
   value: {
     title: 'Valor',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
 };
 
 export const INDICATORS_COLUMNS2 = {
-  name: {
-    title: 'Nombre',
+  idGoodNumber: {
+    title: 'Bien',
     type: 'number',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    type: 'number',
+    type: 'text',
     sort: false,
   },
-  check: {
-    title: 'Check',
-    type: 'number',
-    sort: false,
+  value: {
+    title: '',
+    sort: true,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
 };
