@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -34,7 +34,7 @@ export class ClassifyAssetsTabComponent
   @Input() requestObject: any;
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
-  @Input() goodObject: IFormGroup<any> = null;
+  @Input() goodObject: ModelForm<IGood>; //: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
   @Input() goodSelect: any;
@@ -86,13 +86,10 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('td', this.typeDoc);
-
     /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
       } */
-
     //bienes selecionados
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
@@ -256,7 +253,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      addressId: [null],
       operationalState: [
         null,
         [
@@ -637,54 +634,50 @@ export class ClassifyAssetsTabComponent
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      goodAction = this.goodService.create(goods);
+      this.createGood(goods);
     } else {
-      goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId.id);
-      goodAction = this.goodService.update(goods);
+      this.updateGood(goods);
     }
+  }
 
-    goodAction.subscribe({
-      next: (data: any) => {
-        if (data) {
-          if (data.id) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
+  createGood(good: any) {
+    this.goodService.create(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `El registro se guardo exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            this.refreshTable(true);
+        this.refreshTable(true);
 
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          }
-        } else {
-          if (data.statusCode === 200) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se guardo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
-
-            this.refreshTable(true);
-
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          } else {
-            this.message(
-              'error',
-              'Error',
-              `El registro no sepudo guardar!. ${data.message}`
-            );
-          }
-        }
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
       },
-      error: (error: any) => {},
+      error: error => {},
+    });
+  }
+
+  updateGood(good: any) {
+    good.requestId = good.requestId.id;
+    this.goodService.update(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `El registro se actualizo exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
+
+        this.refreshTable(true);
+
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
+      },
+      error: error => {},
     });
   }
 
@@ -823,8 +816,10 @@ export class ClassifyAssetsTabComponent
     );
   }
 
-  getRelevantTypeId(arrayData: any, id: number): number {
-    return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+  getRelevantTypeId(arrayData: any, id: number): any {
+    if (arrayData) {
+      return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+    }
   }
 
   //inserta en el formulario el id del tipo de bien

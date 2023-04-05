@@ -1,5 +1,7 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const FINANCIAL_INFORMATION_COLUMNS1 = {
-  goodId: {
+  idGoodNumber: {
     title: 'Bien',
     type: 'number',
     sort: false,
@@ -15,7 +17,7 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
       return row.idGoodNumber.description;
     },
   },
-  quantity: {
+  value: {
     title: 'Valor',
     type: 'number',
     sort: false,
@@ -36,15 +38,21 @@ export const FINANCIAL_INFORMATION_COLUMNS2 = {
   },
   description: {
     title: 'Descripción',
-    type: 'number',
+    type: 'string',
     sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idGoodNumber.description;
     },
   },
   value: {
-    title: 'Valor',
-    type: 'number',
+    title: '',
     sort: true,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
 };

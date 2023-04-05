@@ -51,4 +51,8 @@ export class CityService extends HttpService implements ICrudMethods<ICity> {
     const route = `${CityEndpoints.City}/id/${id}`;
     return this.delete(route);
   }
+
+  getAllFiltered(params: string): Observable<IListResponse<ICity>> {
+    return this.get<IListResponse<ICity>>(CityEndpoints.City, params);
+  }
 }

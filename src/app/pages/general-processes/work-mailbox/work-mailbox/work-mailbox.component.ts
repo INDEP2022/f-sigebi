@@ -60,6 +60,7 @@ import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   CONFIRM_CANCEL,
   CONFIRM_FINISH,
+  CONFIRM_SAVE,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
@@ -73,6 +74,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -189,7 +191,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private goodsParamerterService: GoodParametersService,
-    private notificationsService: NotificationService
+    private notificationsService: NotificationService,
+    private tmpManagementProcedureService: TmpManagementProcedureService
   ) {
     super();
     this.settings.actions = true;
@@ -591,8 +594,20 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
   }
 
+  insertIntoTmp(body: any) {
+    console.log(body);
+    return this.tmpManagementProcedureService.create(body);
+  }
+
+  deleteFromTmp(id: string | number) {
+    console.log(id);
+    return this.tmpManagementProcedureService.remove(id);
+  }
+
   selectEvent(e: any) {
-    console.log(e);
+    console.log(e.data);
+
+    const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
     if (e.selected.length > 0) {
       this.selectedRow = e.data;
@@ -1022,6 +1037,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+    const tmp = {
+      id: this.selectedRow.processNumber,
+      InvoiceRep: this.selectedRow.folioRep,
+      usrturned: this.selectedRow.turnadoiUser,
+    };
+    this.insertIntoTmp(tmp).subscribe();
     // TODO: descomentar cuando los permisos esten habilitados
     // if(!this.turnar) {
     //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
@@ -1031,8 +1052,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (user: any) => {
-          this.turnToUser(user);
+        callback: (refresh: boolean) => {
+          this.afterTurn(refresh);
         },
         paperwork: this.selectedRow,
       },
@@ -1040,8 +1061,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(TurnPaperworkComponent, config);
   }
 
-  turnToUser(user: any) {
-    console.log(user);
+  afterTurn(refresh: boolean) {
+    this.deleteFromTmp(this.selectedRow.processNumber).subscribe();
+    if (refresh) {
+      this.getData();
+    }
   }
 
   async onCancelPaperwork() {
@@ -1060,6 +1084,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
+  async onSavePaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    const result = await this.alertQuestion(
+      'question',
+      'Advertencia',
+      CONFIRM_SAVE
+    );
+
+    if (result.isConfirmed) {
+      if (!this.selectedRow.userATurn && !this.selectedRow.areaATurn) {
+        return this.onLoadToast(
+          'error',
+          'Error',
+          'No se ha asignado el usuario o el area en el trámite, favor de agregarla'
+        );
+      }
+      this.savePaperwork().subscribe();
+    }
+  }
+
   async onFinishPaperwork() {
     if (!this.selectedRow) {
       this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
@@ -1074,6 +1121,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (result.isConfirmed) {
       this.finishPaperwork().subscribe();
     }
+  }
+
+  savePaperwork() {
+    const { processNumber, userATurn, areaATurn } = this.selectedRow;
+    const body = {
+      areaToTurn: areaATurn,
+      userToTurn: userATurn,
+      situation: 1,
+    };
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al cancelar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.getData();
+      })
+    );
   }
 
   cancelPaperwork() {
@@ -1451,6 +1521,34 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'viewIndicatorsHistory':
           this.viewIndicatorsHistory();
           break;
+        case 'replicate':
+          this.replicate();
+          break;
+        case 'turnPaperwork':
+          this.turnPaperwork();
+          break;
+        case 'viewPictures':
+          this.viewPictures();
+          break;
+        case 'acptionBienes':
+          this.acptionBienes();
+          break;
+        case 'onFinishPaperwork':
+          this.onFinishPaperwork();
+          break;
+        case 'onCancelPaperwork':
+          this.onCancelPaperwork();
+          break;
+        case 'validDoc':
+          this.validDoc();
+          break;
+        case 'scanDocuments':
+          this.scanDocuments();
+          break;
+        case 'getSolicitud':
+          this.getSolicitud();
+          break;
+
         default:
           this.alertQuestion(
             'info',

@@ -61,6 +61,7 @@ import { DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS } from '../../../../docume
 import { MailboxModalTableComponent } from '../../../../general-processes/work-mailbox/components/mailbox-modal-table/mailbox-modal-table.component';
 import { RELATED_FOLIO_TITLE } from '../../../../general-processes/work-mailbox/utils/modal-titles';
 import { RELATED_FOLIO_COLUMNS } from '../../../../general-processes/work-mailbox/utils/related-folio-columns';
+import { AbandonmentsDeclarationTradesService } from '../../../abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { FlyerCopiesModalComponent } from '../../flyer-copies-modal/flyer-copies-modal.component';
 import {
   IJuridicalFileDataUpdateForm,
@@ -84,6 +85,10 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
         font-size: 10px !important;
         font-weight: 600 !important;
         color: #74788d !important;
+      }
+
+      .form-material {
+        margin-bottom: 0.7rem !important;
       }
     `,
   ],
@@ -137,7 +142,7 @@ export class JuridicalRecordUpdateComponent
   globals: IGlobalVars;
   items: DefaultSelect<any>;
   @Input() selectedNotification: INotification;
-  @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT';
+  @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT' = 'FILE-UPDATE';
   @Input() searchMode: boolean = false;
   @Input() confirmSearch: boolean = false;
   @Output() onSearch = new EventEmitter<
@@ -162,7 +167,8 @@ export class JuridicalRecordUpdateComponent
     private docRegisterService: DocReceptionRegisterService,
     private showHideService: showHideErrorInterceptorService,
     private authService: AuthService,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private abandonmentsService: AbandonmentsDeclarationTradesService
   ) {
     super();
     const id = this.activiveRoute.snapshot.paramMap.get('id');
@@ -267,7 +273,16 @@ export class JuridicalRecordUpdateComponent
       this.pageParams.dictamen != null &&
       this.pageParams.dictamen != undefined
     ) {
-      if (this.fileUpdateService.juridicalFileDataUpdateForm != null) {
+      if (
+        this.layout == 'FILE-UPDATE' &&
+        this.fileUpdateService.juridicalFileDataUpdateForm != null
+      ) {
+        this.deactivateSearch();
+      }
+      if (
+        this.layout == 'ABANDONMENT' &&
+        this.abandonmentsService.abandonmentsFlyerForm != null
+      ) {
         this.deactivateSearch();
       }
       this.checkDictum();
@@ -684,9 +699,16 @@ export class JuridicalRecordUpdateComponent
     this.fileDataUpdateForm.enable();
     this.prevDictumKey = this.formControls.dictumKey.value;
     this.prevInitialCondition = this.initialCondition;
-    this.fileUpdateService.juridicalFileDataUpdateForm =
-      this.fileDataUpdateForm.value;
-    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
+    if (this.layout == 'FILE-UPDATE')
+      this.fileUpdateService.juridicalFileDataUpdateForm =
+        this.fileDataUpdateForm.value;
+    if (this.layout == 'ABANDONMENT')
+      this.abandonmentsService.abandonmentsFlyerForm =
+        this.fileDataUpdateForm.value;
+    console.log(
+      this.fileUpdateService.juridicalFileDataUpdateForm,
+      this.abandonmentsService.abandonmentsFlyerForm
+    );
     this.fileDataUpdateForm.reset();
     this.fileDataUpdateForm.enable();
   }
@@ -695,10 +717,20 @@ export class JuridicalRecordUpdateComponent
     console.log(this.searchMode);
     console.log(this.confirmSearch);
     this.fileDataUpdateForm.enable();
-    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
-    this.fileDataUpdateForm.patchValue(
-      this.fileUpdateService.juridicalFileDataUpdateForm
+    console.log(
+      this.fileUpdateService.juridicalFileDataUpdateForm,
+      this.abandonmentsService.abandonmentsFlyerForm
     );
+    if (this.layout == 'FILE-UPDATE') {
+      this.fileDataUpdateForm.patchValue(
+        this.fileUpdateService.juridicalFileDataUpdateForm
+      );
+    }
+    if (this.layout == 'ABANDONMENT') {
+      this.fileDataUpdateForm.patchValue(
+        this.abandonmentsService.abandonmentsFlyerForm
+      );
+    }
     if (this.prevInitialCondition !== '') {
       this.initialCondition = this.prevInitialCondition;
     } else {
@@ -1008,7 +1040,9 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
     };
-    this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
+    this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
+      queryParams: { origin: this.layout },
+    });
   }
 
   sendToRelatedDocumentsManagement() {

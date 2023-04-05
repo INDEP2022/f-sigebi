@@ -9,11 +9,12 @@ export const LIST_REPORTS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  statusRegistration: {
-    title: 'Estatus Registro',
+  check: {
+    title: 'Estatus registro',
     type: 'string',
     sort: false,
   },
+
   /*button: {
     title: '',
     type: 'custom',
