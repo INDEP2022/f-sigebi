@@ -15,7 +15,7 @@ export const LIST_ORDERS_COLUMNS = {
     sort: false,
   },
   regionalDelegation: {
-    title: 'Delegacion Regional',
+    title: 'Delegación Regional',
     type: 'text',
     sort: false,
   },

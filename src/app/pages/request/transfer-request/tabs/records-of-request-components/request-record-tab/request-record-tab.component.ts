@@ -258,10 +258,10 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       this.message(
         'success',
         'Guardado',
-        'Se guardo la solicitud correctamente'
+        'Se guardó la solicitud correctamente'
       );
     } else {
-      this.message('error', 'Error', 'No se guardo la solicitud!');
+      this.message('error', 'Error', '¡No se guardó la solicitud!');
     }
   }
 
@@ -283,7 +283,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
           this.message(
             'error',
             'Error',
-            `No se guardo la solicitud!. ${error.error.message}`
+            `¡No se guardó la solicitud!. ${error.error.message}`
           );
           console.log(error);
           reject(false);

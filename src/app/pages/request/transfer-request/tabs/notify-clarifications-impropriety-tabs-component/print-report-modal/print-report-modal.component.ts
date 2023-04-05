@@ -248,7 +248,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'success',
               'Documento Guardado',
-              'El documento guardo correctamente'
+              'El documento guardó correctamente'
             );
 
             this.close();

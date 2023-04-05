@@ -10,7 +10,9 @@
           bindLabel="description"
           label="Tipo Documento"
           [control]="documentField"
-          (change)="onDocumentChange($event)">
+          [searchOnInit]="true"
+          (change)="onDocumentChange($event)"
+          termMaxLength="30">
         </ngx-select>
       </form-field>
     </div>

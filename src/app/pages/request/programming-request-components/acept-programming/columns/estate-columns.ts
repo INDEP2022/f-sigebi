@@ -23,7 +23,7 @@ export const ESTATE_COLUMNS = {
   },
 
   decriptionGoodSae: {
-    title: 'Descripción SAE',
+    title: 'Descripción INDEP',
     type: 'string',
     sort: false,
   },
@@ -84,7 +84,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   decriptionGoodSae: {
-    title: 'Descripción SAE',
+    title: 'Descripción INDEP',
     type: 'string',
     sort: false,
   },
