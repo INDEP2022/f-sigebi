@@ -74,6 +74,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -190,7 +191,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private goodsParamerterService: GoodParametersService,
-    private notificationsService: NotificationService
+    private notificationsService: NotificationService,
+    private tmpManagementProcedureService: TmpManagementProcedureService
   ) {
     super();
     this.settings.actions = true;
@@ -592,8 +594,20 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
   }
 
+  insertIntoTmp(body: any) {
+    console.log(body);
+    return this.tmpManagementProcedureService.create(body);
+  }
+
+  deleteFromTmp(id: string | number) {
+    console.log(id);
+    return this.tmpManagementProcedureService.remove(id);
+  }
+
   selectEvent(e: any) {
-    console.log(e);
+    console.log(e.data);
+
+    const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
     if (e.selected.length > 0) {
       this.selectedRow = e.data;
@@ -1023,6 +1037,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+    const tmp = {
+      id: this.selectedRow.processNumber,
+      InvoiceRep: this.selectedRow.folioRep,
+      usrturned: this.selectedRow.turnadoiUser,
+    };
+    this.insertIntoTmp(tmp).subscribe();
     // TODO: descomentar cuando los permisos esten habilitados
     // if(!this.turnar) {
     //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
@@ -1032,8 +1052,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (user: any) => {
-          this.turnToUser(user);
+        callback: (refresh: boolean) => {
+          this.afterTurn(refresh);
         },
         paperwork: this.selectedRow,
       },
@@ -1041,8 +1061,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(TurnPaperworkComponent, config);
   }
 
-  turnToUser(user: any) {
-    console.log(user);
+  afterTurn(refresh: boolean) {
+    this.deleteFromTmp(this.selectedRow.processNumber).subscribe();
+    if (refresh) {
+      this.getData();
+    }
   }
 
   async onCancelPaperwork() {
