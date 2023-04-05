@@ -1234,6 +1234,13 @@ export class DocumentsReceptionRegisterComponent
     };
     this.documentsReceptionForm.patchValue({ ...values });
     this.blockErrors(true);
+    if (notif.expedientNumber == null) {
+      this.onLoadToast(
+        'warning',
+        'Expediente no disponible',
+        'Este volante no tiene asociado un expediente.'
+      );
+    }
     if (notif.dailyEviction == 0) {
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
