@@ -1077,7 +1077,24 @@ export class JuridicalRecordUpdateComponent
   }
 
   viewDocuments() {
-    this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+    // this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
+    // params.addFilter('scanStatus', 'ESCANEADO');
+    this.fileUpdateService.getDocuments(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'El volante no tiene documentos relacionados.'
+        );
+      },
+    });
   }
 
   openDocumentsModal(flyerNum: string | number, title: string) {
