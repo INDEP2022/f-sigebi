@@ -88,6 +88,7 @@ export class RegistrationOfRequestsComponent
   stationName: string = '';
   delegationName: string = '';
   authorityName: string = '';
+  haveDictamen: boolean = false;
 
   requestList: IRequest;
 
@@ -289,9 +290,11 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
+        /*  if ((this.typeDocument = 'proceso-aprovacion')) {
+          await this.getDictamen(data.id);
+        } */
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
-
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
         /*request.receptionDate = new Date().toISOString();
@@ -717,14 +720,10 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    console.log(this.requestData);
-    const dictamenResult = await this.getDictamen();
-    console.log(dictamenResult);
-
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
-      const title = `Solicitud de Progracimacion con el folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/process-approval';
+      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+      const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
       const taskResult = await this.createTaskOrderService(
@@ -746,6 +745,7 @@ export class RegistrationOfRequestsComponent
   }
   /** fin de proceso */
 
+  /* Inicio de rechazar aprovacion */
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
@@ -782,6 +782,7 @@ export class RegistrationOfRequestsComponent
       }
     }
   }
+  /* Fin rechazo de aprovacion */
 
   updateRequest(request: any) {
     return new Promise((resolve, reject) => {
@@ -867,15 +868,15 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getDictamen() {
+  getDictamen(id: number) {
     return new Promise((resolve, reject) => {
       let body: any = {};
-      body['xidSolicitud'] = this.requestData.id;
+      body['xidSolicitud'] = id;
       body['xTipoDocumento'] = 50;
       this.wcontentService.getDocumentos(body).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
-            resolve(true);
+            this.haveDictamen = false;
           }
         },
       });

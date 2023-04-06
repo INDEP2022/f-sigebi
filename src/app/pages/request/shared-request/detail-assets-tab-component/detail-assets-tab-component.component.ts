@@ -104,7 +104,7 @@ export class DetailAssetsTabComponentComponent
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
-  boatAssets: boolean = false;
+  boatAssets: boolean = true;
   jewelerAssets: boolean = false;
   aircraftAssets: boolean = false;
   especialMachineryAssets: boolean = false;
@@ -589,7 +589,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.name'] = '$eq:Destino';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
-        console.log('bien:', this.detailAssets.getRawValue());
         this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
 
         if (this.detailAssets.controls['transferentDestiny'].value === null) {
