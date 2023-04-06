@@ -566,8 +566,6 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
-    this.cambiarTipoUsuario(this.requestData);
-    return;
     /* trae solicitudes actualizadas */
     const request = await this.getAsyncRequestById();
     if (request) {
@@ -722,9 +720,10 @@ export class RegistrationOfRequestsComponent
     console.log(this.requestData);
     const dictamenResult = await this.getDictamen();
     console.log(dictamenResult);
-    /*  const oldTask: any = await this.getOldTask();
+
+    const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const title = `Solicitud de Progracimacion con el folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/process-approval';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
@@ -743,9 +742,46 @@ export class RegistrationOfRequestsComponent
           `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
-    } */
+    }
   }
   /** fin de proceso */
+
+  refuseRequest() {
+    this.msgSaveModal(
+      'Rechazar',
+      'Deseas rechazar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      'refuse'
+    );
+  }
+
+  async refuseMethod() {
+    console.log(this.requestData);
+
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/verify-compliance';
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'VERIFICAR_CUMPLIMIENTO';
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskResult === true) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+    }
+  }
 
   updateRequest(request: any) {
     return new Promise((resolve, reject) => {
@@ -886,6 +922,10 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'proceso-aprovacion') {
           this.approveRequestMethod();
+        }
+
+        if (typeCommit === 'refuse') {
+          this.refuseMethod();
         }
       }
     });
