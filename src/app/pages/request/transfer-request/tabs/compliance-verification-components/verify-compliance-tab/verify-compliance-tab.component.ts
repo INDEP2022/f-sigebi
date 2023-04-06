@@ -119,15 +119,8 @@ export class VerifyComplianceTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      this.transferenceId = this.requestObject.transferenceId;
-      if (
-        this.transferenceId === 1 ||
-        this.transferenceId === 3 ||
-        this.transferenceId === 120
-      ) {
-        this.getArticle3();
-        this.getArticle1213();
-      }
+      this.getArticle3();
+      this.getArticle1213();
 
       this.params
         .pipe(takeUntil(this.$unSubscribe))
@@ -332,24 +325,34 @@ export class VerifyComplianceTabComponent
 
   getArticle3() {
     const params = new ListParams();
-    params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
+    if (this.transferenceId === 1 || this.transferenceId === 120) {
+      params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
+    } else {
+      params['filter.idTransferee'] = `$null`;
+    }
     params['filter.article'] = `$eq:Articulo 3 Ley`;
 
     this.verifiCompliance.getAll(params).subscribe({
       next: async resp => {
-        await this.getArticlesById(resp, 'article3');
+        this.paragraphsTable1 = resp.data;
+        //await this.getArticlesById(resp, 'article3');
       },
     });
   }
 
   getArticle1213() {
     const params = new ListParams();
-    params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
-    params['filter.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    if (this.transferenceId === 1 || this.transferenceId === 120) {
+      params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
+    } else {
+      params['filter.idTransferee'] = `$null`;
+    }
 
+    params['filter.article'] = `$eq:Articulo 12 y 13 Reglamento`;
     this.verifiCompliance.getAll(params).subscribe({
       next: async resp => {
-        await this.getArticlesById(resp, 'article12');
+        this.paragraphsTable2 = resp.data;
+        //await this.getArticlesById(resp, 'article12');
       },
     });
   }
@@ -512,7 +515,7 @@ export class VerifyComplianceTabComponent
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
     }
-
+    this.loader.load = true;
     Swal.fire({
       title: 'Eliminar Aclaración?',
       text: '¿Desea eliminar la aclaración?',
@@ -536,12 +539,7 @@ export class VerifyComplianceTabComponent
   }
 
   async confirm() {
-    if (
-      (this.article3array.length < 3 || this.article12and13array.length < 3) &&
-      (this.transferenceId === 1 ||
-        this.transferenceId === 3 ||
-        this.transferenceId === 120)
-    ) {
+    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
       this.alert(
         'error',
         'Error',
@@ -550,36 +548,30 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    if (
-      this.transferenceId === 1 ||
-      this.transferenceId === 3 ||
-      this.transferenceId === 120
-    ) {
-      if (this.existArt > 0) {
-        const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
-        console.log(allArt);
+    if (this.existArt > 0) {
+      const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
+      console.log(allArt);
 
-        allArt.map(async (item: any) => {
-          await this.deleteDocumentRequest(item);
-        });
-      }
-
-      /* insertar articulo 3 */
-      this.article3array.map(async (item: any) => {
-        await this.createDocRequest(item, 'S');
-      });
-
-      /* ingresar articulo 12 , 13 */
-      this.paragraphsTable2.map(async (list: any, i: number) => {
-        if (list.cumple === true) {
-          await this.createDocRequest(list, 'S');
-        } else if (list.cumple === false) {
-          await this.createDocRequest(list, 'N');
-        } else {
-          await this.createDocRequest(list, 'N');
-        }
+      allArt.map(async (item: any) => {
+        await this.deleteDocumentRequest(item);
       });
     }
+
+    /* insertar articulo 3 */
+    this.article3array.map(async (item: any) => {
+      await this.createDocRequest(item, 'S');
+    });
+
+    /* ingresar articulo 12 , 13 */
+    this.paragraphsTable2.map(async (list: any, i: number) => {
+      if (list.cumple === true) {
+        await this.createDocRequest(list, 'S');
+      } else if (list.cumple === false) {
+        await this.createDocRequest(list, 'N');
+      } else {
+        await this.createDocRequest(list, 'N');
+      }
+    });
 
     this.goodData.map(async (item: any, i: number) => {
       let index = i + 1;
