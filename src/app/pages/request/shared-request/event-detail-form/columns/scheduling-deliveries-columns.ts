@@ -6,7 +6,7 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
   },
 
   numberSae: {
-    title: 'Número SAE',
+    title: 'Número INDEP',
     type: 'string',
     sort: false,
   },

@@ -154,8 +154,8 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      transferenceFile: [null],
-      previousInquiry: [null],
+      transferenceFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
