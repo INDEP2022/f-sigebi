@@ -104,7 +104,7 @@ export class DetailAssetsTabComponentComponent
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
-  boatAssets: boolean = true;
+  boatAssets: boolean = false;
   jewelerAssets: boolean = false;
   aircraftAssets: boolean = false;
   especialMachineryAssets: boolean = false;
