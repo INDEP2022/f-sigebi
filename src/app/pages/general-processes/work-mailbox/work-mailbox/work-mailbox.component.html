@@ -73,13 +73,23 @@
                     <ngx-select
                       [form]="filterForm"
                       [data]="users$"
+                      (change)="userChange($event)"
                       (fetchItems)="getUsers($event)"
                       bindLabel="userAndName"
                       control="user"
                       label="Usuario"
                       [searchOnInit]="true"
-                      termMaxLength="30">
+                      termMaxLength="30"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
                     </ngx-select>
+
+                    <ng-template #userLabel let-item="item"
+                      >{{ item.id }} - {{ item.name }}</ng-template
+                    >
+                    <ng-template #userOption let-item="item"
+                      >{{ item.id }} - {{ item.name }}</ng-template
+                    >
                   </form-field>
                   <form-field
                     class="mb-3 mt-3"
@@ -88,12 +98,22 @@
                       [form]="filterForm"
                       [data]="areas$"
                       (fetchItems)="getGroupWork($event)"
+                      (change)="areaChange($event)"
                       bindLabel="description"
                       control="managementArea"
                       [searchOnInit]="true"
                       termMaxLength="30"
-                      label="Buz&oacute;n de &Aacute;rea">
+                      label="Buz&oacute;n de &Aacute;rea"
+                      [labelTemplate]="areaLabel"
+                      [optionTemplate]="areaOption">
                     </ngx-select>
+
+                    <ng-template #areaLabel let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
+                    <ng-template #areaOption let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
                   </form-field>
                 </div>
                 <div class="col-12 col-md-12 col-lg-12 col-xl-7">
