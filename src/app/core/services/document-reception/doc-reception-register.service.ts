@@ -67,12 +67,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     return this.get<IListResponse<IStation>>(partials[1], params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(s => {
             return { ...s, nameAndId: `${s.id} - ${s.stationName}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.stationName < b.stationName ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -83,12 +87,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     return this.get<IListResponse<IAuthority>>(partials[1], params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(a => {
             return { ...a, nameAndId: `${a.idAuthority} - ${a.authorityName}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.authorityName < b.authorityName ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -99,12 +107,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     return this.get<IListResponse<IMinpub>>(partials[1], params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(m => {
             return { ...m, nameAndId: `${m.id} - ${m.description}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.description < b.description ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -143,12 +155,16 @@ export class DocReceptionRegisterService extends HttpService {
     const route = `transferent/active/not-in`;
     return this.post<IListResponse<ITransferente>>(route, body).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(t => {
             return { ...t, nameAndId: `${t.id} - ${t.nameTransferent}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.nameTransferent < b.nameTransferent ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -197,12 +213,16 @@ export class DocReceptionRegisterService extends HttpService {
   getManagementAreasFiltered(params?: string) {
     return this.procedureManageService.getManagementAreasFiltered(params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(a => {
             return { ...a, nameAndId: `${a.id} - ${a.description}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.description < b.description ? -1 : 1;
+        });
+        return data;
       })
     );
   }
@@ -216,12 +236,16 @@ export class DocReceptionRegisterService extends HttpService {
       params
     ).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(u => {
             return { ...u, userAndName: `${u.user} - ${u.userDetail.name}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.user < b.user ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -312,12 +336,16 @@ export class DocReceptionRegisterService extends HttpService {
     const route = partials[1];
     return this.get<IListResponse<ICity>>(route, params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(c => {
             return { ...c, nameAndId: `${c.idCity} - ${c.nameCity}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.nameCity < b.nameCity ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -340,12 +368,16 @@ export class DocReceptionRegisterService extends HttpService {
   getDynamicTables(id: number | string, params: ListParams) {
     return this.dynamicTablesService.getTvalTable1ByTableKey(id, params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(t => {
             return { ...t, otKeyAndValue: `${t.otKey} - ${t.value}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.value < b.value ? -1 : 1;
+        });
+        return data;
       })
     );
   }
@@ -413,12 +445,16 @@ export class DocReceptionRegisterService extends HttpService {
   getCourtsUnrelated(params?: _Params) {
     return this.courtService.getAllFiltered(params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(c => {
             return { ...c, nameAndId: `${c.id} - ${c.description}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.description < b.description ? -1 : 1;
+        });
+        return data;
       })
     );
   }
@@ -457,12 +493,16 @@ export class DocReceptionRegisterService extends HttpService {
   getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {
     return this.indiciadosService.getAllFiltered(params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(c => {
             return { ...c, nameAndId: `${c.id} - ${c.name}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.name < b.name ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
