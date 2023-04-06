@@ -1872,8 +1872,9 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    }
     let type: string;
     if (['A', 'P'].includes(this.wheelType.value)) type = 'A';
     if (['AT', 'T'].includes(this.wheelType.value)) type = 'T';
@@ -2075,8 +2076,9 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('name', lparams.text, SearchFilter.LIKE);
+    }
     this.hideError();
     this.docRegisterService.getDefendants(params.getParams()).subscribe({
       next: data => {
@@ -2092,8 +2094,9 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    }
     this.hideError();
     this.docRegisterService.getCities(params.getParams()).subscribe({
       next: data => {
