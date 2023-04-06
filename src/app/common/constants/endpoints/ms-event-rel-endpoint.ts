@@ -3,4 +3,5 @@ export enum EventRelatedEndpoints {
   FindAll = 'comer-events-rel',
   Create = 'comer-events-rel',
   Update = 'comer-events-rel',
+  Delete = 'comer-events-rel',
 }

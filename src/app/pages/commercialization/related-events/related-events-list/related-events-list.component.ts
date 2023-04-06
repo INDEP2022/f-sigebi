@@ -12,8 +12,8 @@ import { IRequestEventRelated } from 'src/app/core/models/requests/request-event
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
-import { SelectRelatedEventComponent } from '../components/select-related-event/select-related-event.component';
 import { RELATED_EVENTS_COLUMNS } from './related-events-columns';
 
 @Component({
@@ -109,19 +109,20 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     super();
     this.relatedEventsSettings.columns = RELATED_EVENTS_COLUMNS;
     this.relatedEventsSettings.actions.delete = true;
-    this.relatedEventsSettings.columns = {
-      ...this.relatedEventsSettings.columns,
-      id: {
-        title: 'Evento',
-        sort: false,
-        type: 'html',
-        width: '25%',
-        editor: {
-          type: 'custom',
-          component: SelectRelatedEventComponent,
-        },
-      },
-    };
+    // this.relatedEventsSettings.columns = {
+    // ...this.relatedEventsSettings.columns
+    // ,
+    // id: {
+    //   title: 'Evento',
+    //   sort: false,
+    //   type: 'html',
+    //   width: '25%',
+    //   editor: {
+    //     type: 'custom',
+    //     component: SelectRelatedEventComponent,
+    //   },
+    // },
+    // };
   }
 
   ngOnInit(): void {
@@ -136,13 +137,13 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   getRelatedEvents(params: ListParams) {
-    // if (params.text == '') {
-    //   this.eventItems = new DefaultSelect(this.eventsData, 5);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.eventsData.filter((i: any) => i.id == id)];
-    //   this.eventItems = new DefaultSelect(item[0], 1);
-    // }
+    if (params.text == '') {
+      this.eventItems = new DefaultSelect(this.eventsData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.eventsData.filter((i: any) => i.id == id)];
+      this.eventItems = new DefaultSelect(item[0], 1);
+    }
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
 
@@ -156,18 +157,21 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       .getEventRelsByUser(this.filterParams.getValue().getParams())
       .subscribe({
         next: response => {
-          console.log('Response: ', response);
+          // console.log('Response: ', response);
           let arrEventRel: IRequestEventRelated[] = [];
           if (response.data) {
             response.data.forEach((item: any) => {
+              // console.log("item: ", item);
+
               let eventRel: IRequestEventRelated = {
+                eventDadId: item.eventDadId,
                 eventRelId: item.eventRel.id,
                 processKey: item.eventRel.processKey,
                 statusvtaId: item.eventRel.statusvtaId,
                 tpeventoId: item.eventRel.tpeventoId,
                 address: item.eventRel.address,
               };
-              console.log('eventRel: ', eventRel);
+              // console.log('eventRel: ', eventRel);
               arrEventRel.push(eventRel);
             });
           }
@@ -205,6 +209,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   addRow() {
+    console.log('Agregando renglon...');
     this.adding = true;
     this.addOption.click();
     setTimeout(() => {
@@ -242,36 +247,107 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   addEntry(event: any) {
+    console.log('Agregando evento relacionado... ');
+
     let { newData, confirm } = event;
-    console.log(newData);
-    if (!newData.id || newData.id == undefined) {
+    console.log('newData: ', newData);
+    if (!newData.eventDadId || newData.eventDadId == undefined) {
       this.alertTable();
       return;
     }
-    newData.process = newData.id.process;
-    newData.status = newData.id.status;
-    newData.id = newData.id.id;
+    // newData.process = newData.id.process;
+    // newData.status = newData.id.status;
+    // newData.id = newData.id.id;
+    const requestBody: any = {
+      id: newData.eventRelId,
+      eventDadId: newData.eventDadId,
+      registrationNumber: 11111,
+      //process: 'C',//newData.process,
+      // statusvtaId: newData.process.eventRel.statusvtaId,
+      // tpeventoId: newData.status,
+      // address: newData.process.address,
+    };
+    console.log('Datos a agregar: ', requestBody);
+
+    console.log('requestBody: ', requestBody);
+
     // Llamar servicio para agregar registro
-    confirm.resolve(newData);
-    this.adding = false;
-    this.totalItems += 1;
+    this.eventRelatedService.createEventRel(requestBody).subscribe({
+      next: resp => {
+        console.log('resp: ', resp);
+
+        this.msgModal(
+          'Guardado con exito '.concat(`<strong>${resp.id}</strong>`),
+          'Evento relacionado Guardado',
+          'success'
+        );
+        confirm.resolve(newData);
+        this.adding = false;
+        this.totalItems += 1;
+      },
+      error: err => {
+        console.log('Hubo un error: ', err);
+        this.msgModal(
+          'Error: '.concat(`<strong>${err.error.message}</strong>`),
+          'Error al guardar',
+          'error'
+        );
+      },
+
+      // confirm.resolve(newData);
+      // this.adding = false;
+      // this.totalItems += 1;
+    });
   }
 
   editEntry(event: any) {
     let { newData, confirm } = event;
-    if (!newData.id || newData.id == undefined) {
+    if (!newData.eventDadId || newData.eventDadId == undefined) {
       this.alertTable();
       return;
     }
-    newData.process = newData.id.process;
-    newData.status = newData.id.status;
-    newData.id = newData.id.id;
+    // newData.process = newData.id.process;
+    // newData.status = newData.id.status;
+    // newData.id = newData.id.id;
     // Llamar servicio para eliminar
+    const requestBody: any = {
+      eventRelid: newData.eventRelId,
+      eventDadId: newData.eventDadId,
+      registrationNumber: 22222,
+      //process: 'U',//newData.process,
+      // statusvtaId: newData.process.eventRel.statusvtaId,
+      // tpeventoId: newData.status,
+      // address: newData.process.address,
+    };
+
+    this.eventRelatedService
+      .update(requestBody.eventDadId, requestBody)
+      .subscribe({
+        next: resp => {
+          this.msgModal(
+            'Actualizaci&oacute;n exitosa '.concat(
+              `<strong>${requestBody.eventDadId}</strong>`
+            ),
+            'Evento relacionado guardado',
+            'success'
+          );
+        },
+        error: err => {
+          console.log('Hubo un error: ', err);
+          this.msgModal(
+            'Error: '.concat(`<strong>${err.error.message}</strong>`),
+            'Error al actualizar',
+            'error'
+          );
+        },
+      });
     confirm.resolve(newData);
   }
 
   deleteEntry(event: any) {
     let { confirm } = event;
+    console.log('event: ', event);
+    const eventId = event.data.eventDadId;
     this.alertQuestion(
       'question',
       'Eliminar',
@@ -280,9 +356,41 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         // Llamar servicio para eliminar
+        this.eventRelatedService.remove(eventId).subscribe({
+          next: resp => {
+            this.msgModal(
+              'Eliminazaci&oacute;n exitosa '.concat(
+                `<strong>${eventId}</strong>`
+              ),
+              'Evento relacionado eliminado',
+              'success'
+            );
+          },
+          error: err => {
+            console.log('Hubo un error: ', err);
+            this.msgModal(
+              'Error: '.concat(`<strong>${err.error.message}</strong>`),
+              'Error al eliminar',
+              'error'
+            );
+          },
+        });
+
         confirm.resolve(event.newData);
         this.totalItems -= 1;
       }
     });
+  }
+
+  msgModal(message: string, title: string, typeMsg: any) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: typeMsg,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {});
   }
 }

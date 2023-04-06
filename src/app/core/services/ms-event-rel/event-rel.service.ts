@@ -55,4 +55,8 @@ export class EventRelatedService extends HttpService {
   update(id: number | string, body: Object): Observable<any> {
     return this.put<any>(`${EventRelatedEndpoints.Update}/${id}`, body);
   }
+
+  remove(id: number | string): Observable<any> {
+    return this.delete(`${EventRelatedEndpoints.Delete}/${id}`);
+  }
 }
