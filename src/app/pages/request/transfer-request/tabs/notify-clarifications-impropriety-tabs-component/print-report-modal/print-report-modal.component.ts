@@ -91,25 +91,18 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Verifica si ya existe ese usuario en la lista de firmantes
     this.signatoriesService
-      .getSignatoriesFilter(this.idTypeDoc, this.idDoc)
+      .getSignatoriesName(this.idTypeDoc, this.idDoc, token.name)
       .subscribe({
         next: response => {
           this.signatories = response.data;
-          for (let i = 0; i < this.signatories.length; i++) {
-            if ((this.signatories[i].name = token.name)) {
-              console.log(
-                'Ya hay firmantes con el mismo nombre, no se puede registarr más'
-              );
-            } else {
-              this.registerSign();
-              console.log(
-                'No hay firmantes con el mismo nombre, proceder a registrar con el usuario logeado'
-              );
-            }
-          }
+          console.log(
+            'Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más'
+          );
+          //Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más
         },
         error: error => {
           //Si no hay firmantes, entonces asignar nuevos
+          console.log('Si no hay firmantes, entonces asignar nuevos');
           this.registerSign();
         },
       });
