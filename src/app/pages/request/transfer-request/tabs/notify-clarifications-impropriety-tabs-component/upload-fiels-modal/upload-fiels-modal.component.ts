@@ -159,6 +159,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
+    formData.append('pass', this.password.encriptarResult);
+    formData.append('post', this.signatories.post);
     console.log('FormData', formData);
 
     const idSingnatorie = this.signatories.signatoryId;

@@ -78,6 +78,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.isPdfLoaded = true;
   }
 
+  userName: any[] = [];
+
   ngOnInit(): void {
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
     this.src = linkDoc1;
@@ -87,11 +89,40 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     let token = this.authService.decodeToken();
     console.log('Información de usuario', token);
 
+    //Verifica si ya existe ese usuario en la lista de firmantes
+    this.signatoriesService
+      .getSignatoriesFilter(this.idTypeDoc, this.idDoc)
+      .subscribe({
+        next: response => {
+          this.signatories = response.data;
+          for (let i = 0; i < this.signatories.length; i++) {
+            if ((this.signatories[i].name = token.name)) {
+              console.log(
+                'Ya hay firmantes con el mismo nombre, no se puede registarr más'
+              );
+            } else {
+              this.registerSign();
+              console.log(
+                'No hay firmantes con el mismo nombre, proceder a registrar con el usuario logeado'
+              );
+            }
+          }
+        },
+        error: error => {
+          //Si no hay firmantes, entonces asignar nuevos
+          this.registerSign();
+        },
+      });
+
+    this.signParams();
+  }
+
+  registerSign() {
+    let token = this.authService.decodeToken();
     const formData: Object = {
       name: token.name,
       learnedType: this.idTypeDoc,
       learnedId: this.idDoc,
-      signatoryId: this.idDoc,
     };
 
     //Asigna un firmante según el usuario logeado
@@ -101,8 +132,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       },
       error: error => console.log('No se puede crear: ', error),
     });
-
-    this.signParams();
   }
 
   signParams() {
@@ -248,7 +277,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'success',
               'Documento Guardado',
-              'El documento guardo correctamente'
+              'El documento guardó correctamente'
             );
 
             this.close();

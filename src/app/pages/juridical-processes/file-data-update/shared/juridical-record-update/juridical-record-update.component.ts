@@ -468,6 +468,13 @@ export class JuridicalRecordUpdateComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.fileDataUpdateForm.patchValue({ ...values });
+    if (notif.expedientNumber == null) {
+      this.onLoadToast(
+        'warning',
+        'Expediente no disponible',
+        'Este volante no tiene asociado un expediente.'
+      );
+    }
     this.formControls.receiptDate.setValue(
       format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
     );
@@ -648,7 +655,14 @@ export class JuridicalRecordUpdateComponent
                 )
               );
           },
-          error: () => {},
+          error: err => {
+            console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos de Área no encontrados',
+              'No se encontraron todos los datos del area correspondiente.'
+            );
+          },
         });
       }
     }

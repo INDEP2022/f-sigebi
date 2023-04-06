@@ -646,7 +646,7 @@ export class ClassifyAssetsTabComponent
         this.message(
           'success',
           'Guardado',
-          `El registro se guardo exitosamente!`
+          `¡El registro se guardó exitosamente!`
         );
         this.classiGoodsForm.controls['id'].setValue(data.id);
 

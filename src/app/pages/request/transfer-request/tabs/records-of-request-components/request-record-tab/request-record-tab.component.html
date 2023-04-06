@@ -114,13 +114,18 @@
             label="Nombre del Remitente">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="nameOfOwner" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="requestForm.get('court')" label="Juzgado">
-            <input type="text" class="form-control" formControlName="court" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="court" />
           </form-field>
         </div>
       </div>
@@ -132,13 +137,18 @@
             label="Cargo del Remitente">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="holderCharge" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="requestForm.get('crime')" label="Delito">
-            <input type="text" class="form-control" formControlName="crime" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="crime" />
           </form-field>
         </div>
       </div>
@@ -150,6 +160,7 @@
             label="Tel&eacute;fono del Remitente">
             <input
               type="text"
+              maxlength="13"
               class="form-control"
               formControlName="phoneOfOwner" />
           </form-field>
@@ -173,6 +184,7 @@
             label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
+              maxlength="200"
               class="form-control"
               formControlName="indicatedTaxpayer" />
           </form-field>
@@ -206,6 +218,7 @@
             label="N&uacute;mero Amparo">
             <input
               type="number"
+              maxlength="30"
               class="form-control"
               formControlName="protectNumber" />
           </form-field>
@@ -219,6 +232,7 @@
             label="Notas Entidad Transferente">
             <input
               type="text"
+              maxlength="1500"
               class="form-control"
               formControlName="transferEntNotes" />
           </form-field>
@@ -229,6 +243,7 @@
             label="Observaciones">
             <textarea
               class="form-control"
+              maxlength="1500"
               id="observations"
               formControlName="observations">
             </textarea>
