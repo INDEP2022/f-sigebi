@@ -589,7 +589,6 @@ export class DetailAssetsTabComponentComponent
     params['filter.name'] = '$eq:Destino';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
-        console.log('bien:', this.detailAssets.getRawValue());
         this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
 
         if (this.detailAssets.controls['transferentDestiny'].value === null) {

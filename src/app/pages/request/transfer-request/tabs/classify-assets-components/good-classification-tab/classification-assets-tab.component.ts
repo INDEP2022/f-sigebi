@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -24,6 +24,11 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 
@@ -279,57 +284,261 @@ export class ClassificationAssetsTabComponent
       requestId: [null],
       goodTypeId: [null],
       goodTypeName: [null],
-      color: [null],
-      goodDescription: [null],
-      quantity: [null],
-      duplicity: [null],
-      capacity: [null],
-      volume: [null],
-      fileeNumber: [null],
-      useType: [null],
-      physicalStatus: [null],
-      stateConservation: [null],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      quantity: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(13),
+        ],
+      ],
+      duplicity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      capacity: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      volume: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      fileeNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
+      useType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       stateConservationName: [null],
-      origin: [null],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      destinyName: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
-      compliesNorm: [null],
-      notesTransferringEntity: [null],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
-      brand: [null],
-      subBrand: [null],
-      armor: [null],
-      model: [null],
-      doorsNumber: [null],
-      axesNumber: [null],
-      engineNumber: [null], //numero motor
-      tuition: [null],
-      serie: [null],
-      chassis: [null],
-      cabin: [null],
-      fitCircular: [null],
-      theftReport: [null],
-      addressId: [null],
-      operationalState: [null],
-      manufacturingYear: [null],
-      enginesNumber: [null], // numero de motores
-      flag: [null],
-      openwork: [null],
-      sleeve: [null],
-      length: [null],
-      shipName: [null],
-      publicRegistry: [null], //registro public
-      ships: [null],
-      dgacRegistry: [null], //registro direccion gral de aereonautica civil
-      airplaneType: [null],
-      caratage: [null], //kilatage
-      material: [null],
-      weight: [null],
+      origin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      destinyName: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      compliesNorm: [
+        null,
+        [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
+      ],
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      brand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(350),
+        ],
+      ],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      model: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      doorsNumber: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
+      engineNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //numero motor
+      tuition: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      serie: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      fitCircular: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      theftReport: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      addressId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      operationalState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      manufacturingYear: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
+      enginesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ], // numero de motores
+      flag: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
+      openwork: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      shipName: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      publicRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro public
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      dgacRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro direccion gral de aereonautica civil
+      airplaneType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      caratage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+      ], //kilatage
+      material: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+      ],
+      weight: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       physicstateName: [null],
       descriptionGoodSae: [null],
       type: [null],
