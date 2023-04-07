@@ -119,8 +119,10 @@ export class VerifyComplianceTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      this.getArticle3();
-      this.getArticle1213();
+      const id = this.requestObject.id;
+      const transference = this.requestObject.transferenceId;
+      this.getArticle3(id, transference);
+      this.getArticle1213(id, transference);
 
       this.params
         .pipe(takeUntil(this.$unSubscribe))
@@ -323,74 +325,81 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  getArticle3() {
+  getArticle3(id: number, transferent: number) {
     const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.cumpliance.article'] = `$eq:Articulo 3 Ley`;
     if (this.transferenceId === 1 || this.transferenceId === 120) {
-      params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
+      params['filter.cumpliance.transfereeId'] = `$eq:${transferent}`;
     } else {
-      params['filter.idTransferee'] = `$null`;
+      params['filter.cumpliance.transfereeId'] = `$null`;
     }
-    params['filter.article'] = `$eq:Articulo 3 Ley`;
 
-    this.verifiCompliance.getAll(params).subscribe({
-      next: async resp => {
-        this.paragraphsTable1 = resp.data;
-        //await this.getArticlesById(resp, 'article3');
+    this.requestDocumentService.getAll(params).subscribe({
+      next: resp => {
+        let cumpliance = resp.data.map((item: any) => {
+          item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article3array.push(item.cumpliance);
+          }
+          return item.cumpliance;
+        });
+        this.paragraphsTable1 = cumpliance;
       },
     });
   }
 
-  getArticle1213() {
+  getArticle1213(id: number, tranferent: number) {
     const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.cumpliance.article'] = `$eq:Articulo 12 y 13 Reglamento`;
     if (this.transferenceId === 1 || this.transferenceId === 120) {
-      params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
+      params['filter.cumpliance.transfereeId'] = `$eq:${tranferent}`;
     } else {
-      params['filter.idTransferee'] = `$null`;
+      params['filter.cumpliance.transfereeId'] = `$null`;
     }
 
-    params['filter.article'] = `$eq:Articulo 12 y 13 Reglamento`;
-    this.verifiCompliance.getAll(params).subscribe({
-      next: async resp => {
-        this.paragraphsTable2 = resp.data;
-        //await this.getArticlesById(resp, 'article12');
+    this.requestDocumentService.getAll(params).subscribe({
+      next: resp => {
+        let cumpliance = resp.data.map((item: any) => {
+          item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article12and13array.push(item.cumpliance);
+          }
+          return item.cumpliance;
+        });
+        this.paragraphsTable2 = cumpliance;
       },
     });
   }
 
   article3Selected(event: any): void {
-    const elemento = event.data;
-
-    const index = this.article3array.indexOf(elemento);
-    if (index !== -1) {
-      delete this.article3array[index];
+    let element = event.data;
+    const index = this.article3array.indexOf(element);
+    if (index === -1) {
+      element.cumple = true;
+      this.article3array.push(element);
     } else {
-      this.article3array.push(elemento);
+      delete this.article3array[index];
     }
   }
 
   article12y13Selected(event: any): void {
-    const elemento = event.data;
-    const index = this.article12and13array.indexOf(elemento);
+    let element = event.data;
+    const index = this.paragraphsTable2.indexOf(element);
 
-    const index2 = this.paragraphsTable2.indexOf(elemento);
-    if (index !== -1) {
-      delete this.article12and13array[index];
+    if (this.paragraphsTable2[index].cumple === false) {
+      this.paragraphsTable2[index].cumple = true;
     } else {
-      this.article12and13array.push(elemento);
+      this.paragraphsTable2[index].cumple = false;
     }
 
-    if (
-      this.paragraphsTable2[index2].cumple &&
-      this.paragraphsTable2[index2].cumple === true
-    ) {
-      this.paragraphsTable2[index2].cumple = false;
-    } else if (
-      this.paragraphsTable2[index2].cumple &&
-      this.paragraphsTable2[index2].cumple === false
-    ) {
-      this.paragraphsTable2[index2].cumple = true;
+    const index2 = this.article12and13array.indexOf(element);
+    if (index2 === -1) {
+      element.cumple = true;
+      this.article12and13array.push(element);
     } else {
-      this.paragraphsTable2[index2].cumple = true;
+      delete this.article12and13array[index];
     }
   }
 
@@ -403,7 +412,6 @@ export class VerifyComplianceTabComponent
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
-    console.log(this.isGoodSelected);
 
     if (this.goodsSelected.length === 1) {
       this.getClarifications(this.goodsSelected[0].id);
@@ -412,65 +420,9 @@ export class VerifyComplianceTabComponent
         this.getDomicilieGood(this.goodsSelected[0].addressId);
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
-          console.log(this.isGoodSelected);
         }
       }, 2000);
     }
-    //} else {
-    //this.clarificationData = [];
-    //}
-  }
-
-  getArticlesById(article: any, typeArt: string) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.requestId'] = `$eq:${this.requestObject.id}`;
-      this.requestDocumentService.getAll(params).subscribe({
-        next: resp => {
-          this.existArt = resp.count;
-          resp.data.map((item: any) => {
-            for (let i = 0; i < article.data.length; i++) {
-              const art = article.data[i];
-              if (item.cumplimiento.id === art.complianceId) {
-                if (item.fulfill === 'S') {
-                  art['cumple'] = true;
-                  if (typeArt === 'article3') {
-                    this.article3array.push(art);
-                  } else {
-                    this.article12and13array.push(art);
-                  }
-                } else {
-                  art['cumple'] = false;
-                }
-                break;
-              }
-            }
-          });
-
-          console.log(article);
-          if (typeArt === 'article3') {
-            this.paragraphsTable1 = article.data;
-          } else {
-            this.paragraphsTable2 = article.data;
-          }
-        },
-        error: error => {
-          console.log(error.error.message);
-          this.existArt = 0;
-          if (error.error.message === 'No se encontrarón registros.') {
-            for (let i = 0; i < article.data.length; i++) {
-              const art = article.data[i];
-              art['cumple'] = false;
-            }
-            if (typeArt === 'article3') {
-              this.paragraphsTable1 = article.data;
-            } else {
-              this.paragraphsTable2 = article.data;
-            }
-          }
-        },
-      });
-    });
   }
 
   /*  Metodo para traer las solicitudes de un bien  */
@@ -548,29 +500,12 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    if (this.existArt > 0) {
-      const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
-      console.log(allArt);
+    console.log(this.paragraphsTable2);
 
-      allArt.map(async (item: any) => {
-        await this.deleteDocumentRequest(item);
-      });
-    }
-
-    /* insertar articulo 3 */
-    this.article3array.map(async (item: any) => {
-      await this.createDocRequest(item, 'S');
-    });
-
-    /* ingresar articulo 12 , 13 */
-    this.paragraphsTable2.map(async (list: any, i: number) => {
-      if (list.cumple === true) {
-        await this.createDocRequest(list, 'S');
-      } else if (list.cumple === false) {
-        await this.createDocRequest(list, 'N');
-      } else {
-        await this.createDocRequest(list, 'N');
-      }
+    const articles = this.paragraphsTable2.concat(this.article3array);
+    const id = this.requestObject.id;
+    articles.map(async (item: any) => {
+      await this.updateDocRequest(id, item);
     });
 
     this.goodData.map(async (item: any, i: number) => {
@@ -593,6 +528,7 @@ export class VerifyComplianceTabComponent
       body['id'] = item.id;
       body['goodId'] = item.goodId;
       body['descriptionGoodSae'] = item.descriptionGoodSae;
+
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
@@ -610,15 +546,14 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  createDocRequest(article: any, fullfill: string) {
+  updateDocRequest(requestId: number, article: any) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['requestId'] = this.requestObject.id;
-      body['fulfillmentId'] = article.complianceId;
-      body['fulfill'] = fullfill;
-      body['creationUser'] = user.username;
-      this.requestDocumentService.create(body).subscribe({
+      body['requestId'] = requestId;
+      body['fulfillmentId'] = article.id;
+      body['fulfill'] = article.cumple === true ? 'S' : 'N';
+      this.requestDocumentService.update(body).subscribe({
         next: resp => {
           resolve(true);
         },
@@ -630,24 +565,6 @@ export class VerifyComplianceTabComponent
             'Error al guardar',
             'No se pudieron guardar los datos'
           );
-        },
-      });
-    });
-  }
-
-  deleteDocumentRequest(item: any) {
-    return new Promise((resolve, reject) => {
-      const body = {
-        requestId: this.requestObject.id,
-        fulfillmentId: item.complianceId,
-      };
-      this.requestDocumentService.remove(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-          resolve(true);
         },
       });
     });
