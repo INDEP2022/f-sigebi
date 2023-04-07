@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -23,6 +24,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
+  valuesSign: ISignatories;
 
   src = '';
   isPdfLoaded = false;
@@ -53,7 +55,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     private signatoriesService: SignatoriesService,
     private gelectronicFirmService: GelectronicFirmService,
     private authService: AuthService,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private requestService: RequestService
   ) {
     super();
     this.settings = {
@@ -199,6 +202,17 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.modalService.show(UploadFielsModalComponent, config);
   }
 
+  rowsSelected(event: any) {
+    this.valuesSign = event.data;
+    console.log('Fila seleccionada de firmante', this.valuesSign);
+    const idDoc = this.idDoc;
+    console.log('ID de solicitud', idDoc);
+    // this.requestService.update(idDoc, this.dictumForm.value).subscribe({
+    //   next: data => (this.handleSuccess(), this.signDictum()),
+    //   error: error => (this.loading = false),
+    // });
+  }
+
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
     let message = '¿Está seguro a enviar la información a firmar?';
@@ -294,8 +308,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-    const id = this.idDoc;
-    const nameTypeReport = this.nameTypeDoc;
+    const id = this.idDoc; //ID solicitud
+    const nameTypeReport = this.nameTypeDoc; //Id tipo de documento que es 50
 
     const formData: Object = {
       id: this.idDoc,
