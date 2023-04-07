@@ -20,12 +20,8 @@ export class CheckboxComponent implements OnInit {
   }
 
   checked(event: any) {
-    console.log(event);
+    //console.log(event);
     let text = event.target.value;
     this.input.emit(this.rowData);
   }
-  /* onKeyUp(event: any) {
-    let text = event.target.value;
-    this.input.emit({ data: this.rowData, text: text });
-  } */
 }
