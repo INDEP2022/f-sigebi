@@ -148,19 +148,25 @@ export class ClassifyAssetsTabComponent
       ],
       fileeNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
       ],
       useType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      physicalStatus: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       origin: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      goodClassNumber: [null],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -268,7 +274,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null],
+      addressId: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       operationalState: [
         null,
         [
@@ -297,8 +303,8 @@ export class ClassifyAssetsTabComponent
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       openwork: [
