@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -114,6 +115,15 @@ import {
       }
     `,
   ],
+  animations: [
+    trigger('OnShow', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class DocumentsReceptionRegisterComponent
   extends BasePage
@@ -157,6 +167,7 @@ export class DocumentsReceptionRegisterComponent
   procedureStatusCode: string = '';
   pgrGoodsProcessed: boolean = true;
   loadingPostCapture: boolean = false;
+  formLoading: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -465,6 +476,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   setInitialConditions() {
+    this.formLoading = true;
     if (this.globals.pSatTipoExp != null) {
       const param = new FilterParams();
       param.addFilter('expSat', this.globals.pSatTipoExp);
@@ -517,7 +529,9 @@ export class DocumentsReceptionRegisterComponent
                   });
               }
             },
-            error: () => {},
+            error: () => {
+              this.formLoading = false;
+            },
           });
       } else {
         this.initialCondition = 'T';
@@ -526,13 +540,17 @@ export class DocumentsReceptionRegisterComponent
         param.addFilter('wheelNumber', this.pageParams.pNoVolante);
         this.notificationService.getAllFilter(param.getParams()).subscribe({
           next: data => {
-            this.formControls.wheelType.setValue(data.data[0].wheelType);
-            const { wheelType } = data.data[0];
-            if (['A', 'P'].includes(wheelType)) {
-              this.initialCondition = 'A';
-            } else if (['AT', 'T'].includes(wheelType)) {
-              this.initialCondition = wheelType;
-            }
+            this.fillForm(data.data[0]);
+            // this.formControls.wheelType.setValue(data.data[0].wheelType);
+            // const { wheelType } = data.data[0];
+            // if (['A', 'P'].includes(wheelType)) {
+            //   this.initialCondition = 'A';
+            // } else if (['AT', 'T'].includes(wheelType)) {
+            //   this.initialCondition = wheelType;
+            // }
+          },
+          error: () => {
+            this.formLoading = false;
           },
         });
       }
@@ -628,6 +646,8 @@ export class DocumentsReceptionRegisterComponent
         affairSij,
         delegation
       );
+    } else {
+      this.formLoading = false;
     }
   }
 
@@ -672,6 +692,7 @@ export class DocumentsReceptionRegisterComponent
         next: data =>
           this.formControls.affairKey.setValue(data.data[0].id.toString()),
       });
+      this.formLoading = false;
     }
     if (typeManagement == 2) {
       this.satInterface = true;
@@ -754,6 +775,7 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
       this.destinationAreaChange();
+      this.formLoading = true;
     }
     if (typeManagement == 3) {
       this.formControls.wheelType.setValue('P');
@@ -852,6 +874,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.circumstantialRecord.disable();
       this.formControls.protectionKey.disable();
       this.formControls.touchPenaltyKey.disable();
+      this.formLoading = false;
     }
   }
 
@@ -1209,6 +1232,7 @@ export class DocumentsReceptionRegisterComponent
     this.documentsReceptionForm.reset();
     this.pgrGoodsProcessed = true;
     this.populatingForm = true;
+    this.formLoading = true;
     console.log(notif);
     const filterParams = new FilterParams();
     const values = {
@@ -1467,6 +1491,9 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             console.log(data.data[0].id);
             console.log(data);
+            setTimeout(() => {
+              this.formLoading = false;
+            }, 500);
             this.procedureId = data.data[0].id;
             const { status, areaToTurn, userToTurn, typeManagement } =
               data.data[0];
@@ -1566,6 +1593,7 @@ export class DocumentsReceptionRegisterComponent
               'Datos no encontrados',
               'No se encontraron los datos del trámite asociado al volante.'
             );
+            this.formLoading = false;
           },
         });
     }
