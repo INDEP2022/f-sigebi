@@ -339,6 +339,9 @@ export class VerifyComplianceTabComponent
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article3array.push(item.cumpliance);
+          }
           return item.cumpliance;
         });
         this.paragraphsTable1 = cumpliance;
@@ -360,6 +363,9 @@ export class VerifyComplianceTabComponent
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article12and13array.push(item.cumpliance);
+          }
           return item.cumpliance;
         });
         this.paragraphsTable2 = cumpliance;
@@ -371,6 +377,7 @@ export class VerifyComplianceTabComponent
     let element = event.data;
     const index = this.article3array.indexOf(element);
     if (index === -1) {
+      element.cumple = true;
       this.article3array.push(element);
     } else {
       delete this.article3array[index];
@@ -379,8 +386,17 @@ export class VerifyComplianceTabComponent
 
   article12y13Selected(event: any): void {
     let element = event.data;
-    const index = this.article12and13array.indexOf(element);
-    if (index === -1) {
+    const index = this.paragraphsTable2.indexOf(element);
+
+    if (this.paragraphsTable2[index].cumple === false) {
+      this.paragraphsTable2[index].cumple = true;
+    } else {
+      this.paragraphsTable2[index].cumple = false;
+    }
+
+    const index2 = this.article12and13array.indexOf(element);
+    if (index2 === -1) {
+      element.cumple = true;
       this.article12and13array.push(element);
     } else {
       delete this.article12and13array[index];
@@ -484,13 +500,15 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    const articles = this.article12and13array.concat(this.article3array);
+    console.log(this.paragraphsTable2);
+
+    const articles = this.paragraphsTable2.concat(this.article3array);
     const id = this.requestObject.id;
     articles.map(async (item: any) => {
       await this.updateDocRequest(id, item);
     });
 
-    /* this.goodData.map(async (item: any, i: number) => {
+    this.goodData.map(async (item: any, i: number) => {
       let index = i + 1;
       const result = await this.updateGoods(item);
 
@@ -501,17 +519,17 @@ export class VerifyComplianceTabComponent
           'Los datos se guardaron correctamente'
         );
       }
-    }); */
+    });
   }
 
-  updateGoods(requestId: number, article: any) {
+  updateGoods(item: any) {
     return new Promise((resolve, reject) => {
       let body: any = {};
-      body['requestId'] = requestId;
-      body['fulfillmentId'] = article.id;
-      body['fulfill'] = article.cumple === true ? 'S' : 'N';
-      console.log(body);
-      /*this.goodServices.update(body).subscribe({
+      body['id'] = item.id;
+      body['goodId'] = item.goodId;
+      body['descriptionGoodSae'] = item.descriptionGoodSae;
+
+      this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
         },
@@ -524,19 +542,18 @@ export class VerifyComplianceTabComponent
           );
           reject(false);
         },
-      });*/
+      });
     });
   }
 
-  updateDocRequest(article: any, fullfill: string) {
+  updateDocRequest(requestId: number, article: any) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['requestId'] = this.requestObject.id;
-      body['fulfillmentId'] = article.complianceId;
-      body['fulfill'] = fullfill;
-      body['creationUser'] = user.username;
-      this.requestDocumentService.update('', body).subscribe({
+      body['requestId'] = requestId;
+      body['fulfillmentId'] = article.id;
+      body['fulfill'] = article.cumple === true ? 'S' : 'N';
+      this.requestDocumentService.update(body).subscribe({
         next: resp => {
           resolve(true);
         },
