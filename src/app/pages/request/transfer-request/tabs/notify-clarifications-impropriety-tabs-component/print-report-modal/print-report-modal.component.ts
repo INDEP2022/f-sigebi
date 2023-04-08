@@ -321,7 +321,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
-        error: error => (console.log('Error', error), this.close()),
+        error: error => (
+          console.log('Eror', error),
+          this.onLoadToast('error', 'Error', error.error.error)
+        ),
       });
   }
 
@@ -342,6 +345,5 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.onLoadToast('success', 'Reporte formado', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
-    this.modalRef.hide();
   }
 }
