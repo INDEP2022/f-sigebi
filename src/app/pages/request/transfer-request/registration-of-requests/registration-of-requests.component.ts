@@ -290,9 +290,11 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
-        /*  if ((this.typeDocument = 'proceso-aprovacion')) {
+        /* verifica si existe un dictamen en la solicitud */
+        if ((this.typeDocument = 'proceso-aprovacion')) {
           await this.getDictamen(data.id);
-        } */
+        }
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
@@ -877,7 +879,12 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = false;
+          } else {
+            this.haveDictamen = true;
           }
+        },
+        error: error => {
+          this.haveDictamen = false;
         },
       });
     });

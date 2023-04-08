@@ -217,6 +217,12 @@ export class DetailAssetsTabComponentComponent
         this.isGoodTypeReadOnly = true;
       }
 
+      if (this.typeDoc === 'approval-process') {
+        this.isGoodInfReadOnly = true;
+        this.isGoodTypeReadOnly = true;
+        this.disableDuplicity = true;
+      }
+
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
@@ -229,6 +235,7 @@ export class DetailAssetsTabComponentComponent
 
         this.getGoodDomicilie(this.addressId);
       }
+
       //verifica si la vista es verificacion de cumplimiento
       if (this.typeDoc === 'verify-compliance') {
         this.detailAssets.disable();
@@ -236,6 +243,8 @@ export class DetailAssetsTabComponentComponent
         if (this.goodDomicilieForm !== undefined) {
           this.goodDomicilieForm.disable();
         }
+        this.isGoodInfReadOnly = true;
+        this.isGoodTypeReadOnly = true;
       }
 
       if (this.detailAssets.controls['subBrand'].value) {

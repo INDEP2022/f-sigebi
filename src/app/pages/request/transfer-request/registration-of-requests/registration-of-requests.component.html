@@ -242,11 +242,17 @@
             </tab>
             <tab heading="{{ tab4 }}" *ngIf="approvalProcess">
               <!-- Aprovacion de de solicitudes -->
-              <app-classification-assets-tab
+              <!-- <app-classification-assets-tab
                 *ngIf="approvalProcess"
                 [requestObject]="registRequestForm"
                 [process]="process"
-                [typeDoc]="'approval-process'"></app-classification-assets-tab>
+                [typeDoc]="'approval-process'"></app-classification-assets-tab> -->
+
+              <app-verify-compliance-tab
+                *ngIf="approvalProcess && requestData"
+                [typeDoc]="'approval-process'"
+                [requestObject]="requestData"
+                [process]="process"></app-verify-compliance-tab>
               <!-- Fin -->
             </tab>
             <tab

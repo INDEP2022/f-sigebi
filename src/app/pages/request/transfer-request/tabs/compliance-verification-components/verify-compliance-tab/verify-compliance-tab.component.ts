@@ -26,6 +26,7 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
 import { VerificationComplianceService } from 'src/app/core/services/requests/verification-compliance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
@@ -67,6 +68,7 @@ export class VerifyComplianceTabComponent
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
   goodsSelected: any = [];
+  checkboxReadOnly: boolean = false;
 
   /* aclaraciones */
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -84,7 +86,8 @@ export class VerifyComplianceTabComponent
     private requestDocumentService: RequestDocumentationService,
     private authService: AuthService,
     private clarificationService: ClarificationService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private requestHelperService: RequestHelperService
   ) {
     super();
   }
@@ -111,10 +114,18 @@ export class VerifyComplianceTabComponent
       ...this.articleColumns.cumple,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
+          console.log('data', data);
+
           this.articlesSelected(data);
         });
       },
     };
+
+    /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
+    if (this.typeDoc === 'approval-process') {
+      this.checkboxReadOnly = true;
+      this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -11,6 +11,9 @@ export class RequestHelperService {
   private expedient = new BehaviorSubject<any>(undefined);
   currentExpedient = this.expedient.asObservable();
 
+  private readOnly = new BehaviorSubject<any>(undefined);
+  currentReadOnly = this.readOnly.asObservable();
+
   constructor() {}
 
   isComponentSaving(menaje: boolean) {
@@ -19,5 +22,9 @@ export class RequestHelperService {
 
   associateExpedient(state: boolean) {
     this.expedient.next(state);
+  }
+
+  changeReadOnly(isreadOnly: boolean) {
+    this.readOnly.next(isreadOnly);
   }
 }
