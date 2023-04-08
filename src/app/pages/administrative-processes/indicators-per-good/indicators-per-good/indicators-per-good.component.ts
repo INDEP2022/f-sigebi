@@ -21,7 +21,7 @@ import {
 })
 export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
   form: FormGroup;
-  data1: any[] = [];
+  goodList: IGood[] = [];
   id: number = 0;
   good: IGood;
   description: string;
@@ -35,7 +35,7 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
   proficientOpinion: string;
   valuerOpinion: string;
   observations: string;
-  quantity: string;
+  quantity: number;
   date: string;
   settings1;
   settings2;
@@ -52,6 +52,7 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...INDICATORS_GOOD_COLUMNS1 },
     };
+
     this.settings2 = {
       ...TABLE_SETTINGS,
       ...this.settings,
@@ -78,22 +79,9 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
     this.goodService.getByIdNew(idGood, idGood).subscribe({
       next: response => {
         this.good = response;
-
-        // this.proficientOpinion = response.proficientOpinion;
-        // this.valuerOpinion = response.valuerOpinion;
-        // this.observations = response.observations;
-        // this.quantity = response.quantity;
-        this.description = response.description;
-        this.date = this.datePipe.transform(
-          response.dateOut,
-          'dd-MM-yyyy h:mm a'
-        );
-        this.form.controls['date'].setValue(this.date);
-        this.data1.push(this.good);
-        this.data1 = response;
-        console.log(this.data1);
-        console.log(this.description);
-        this.loadIndicator(response.goodId);
+        this.goodList.push(this.good);
+        console.log(this.goodList);
+        this.loadIndicator(idGood);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
@@ -106,8 +94,13 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
     this.indicatorPeerGoodService.findGood(search).subscribe({
       next: response => {
         this.indicatorsTotal = response.data;
-        // console.log(this.date);
-        // this.searchGoods(response.idGoodNumber);
+        // this.indicatorsTotal.map(data => {
+        //   this.date = this.datePipe.transform(
+        //     data.idIndicatorDate,
+        //     'dd-MM-yyyy h:mm a'
+        //   );
+        // });
+        // this.form.controls['date'].setValue(this.date);
         this.totalItems2 = response.count;
       },
       error: err => {
@@ -129,7 +122,7 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
   cleanForm() {
     this.form.reset();
     this.form.value.noBien = '';
-    this.data1 = [];
+    this.goodList = [];
     this.indicatorsTotal = [];
     this.form.value.noBien.reset();
   }
