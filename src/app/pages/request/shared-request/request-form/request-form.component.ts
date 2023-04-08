@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
 import { BehaviorSubject } from 'rxjs';
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
@@ -55,7 +56,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectEntity = new DefaultSelect<any>();
   selectStation = new DefaultSelect<IStation>();
 
-  selectAuthority = new DefaultSelect<any>();
+  selectAuthority = new DefaultSelect<IAuthority>();
   selectTransfe: any; //= new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectIssue = new DefaultSelect<any>();
@@ -185,72 +186,53 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params.limit = 30;
-    this.stationService
-      .getAll(params)
-      // .subscribe((data: IListResponse<any>) => {
-      //   this.selectStation = new DefaultSelect(data.data, data.count);
-      // });
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.nameAndId = `${data.id}- ${data.stationName}`;
-            return data;
-          });
-          this.selectStation = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.selectStation = new DefaultSelect();
-        },
-      });
+    this.stationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id}- ${data.stationName}`;
+          return data;
+        });
+        this.selectStation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectStation = new DefaultSelect();
+      },
+    });
   }
 
-  getAuthority(params: ListParams) {
+  getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
-    params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
-    this.authorityService
-      .getAll(params)
-      // .subscribe((data: IListResponse<IAuthority>) => {
-      //   this.selectAuthority = new DefaultSelect(data.data, data.count);
-      // });
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
-            return data;
-          });
-          this.selectAuthority = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.selectAuthority = new DefaultSelect();
-        },
-      });
+    // params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
+          return data;
+        });
+        this.selectAuthority = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectAuthority = new DefaultSelect();
+      },
+    });
   }
 
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    this.transferentService
-      .getAll(params)
-      // .subscribe((data: IListResponse<ITransferente>) => {
-      //   data.data.map(tra => {
-      //     tra.nameAndId = `${tra.id}- ${tra.name}`
-      //     return tra;
-      //   })
-      //   this.transferents$ = new DefaultSelect(data.data, data.count);
-      // });
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.nameAndId = `${data.id} - ${data.nameTransferent}`;
-            return data;
-          });
-          this.transferents$ = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.transferents$ = new DefaultSelect();
-        },
-      });
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
   }
 
   getState(event: any): void {}
