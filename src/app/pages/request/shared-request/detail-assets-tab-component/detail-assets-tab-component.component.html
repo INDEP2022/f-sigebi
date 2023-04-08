@@ -70,7 +70,8 @@
                   type="number"
                   class="form-control"
                   formControlName="quantity"
-                  [readOnly]="isGoodInfReadOnly" />
+                  [readOnly]="isGoodInfReadOnly"
+                  min="0" />
               </form-field>
             </div>
           </div>
@@ -93,6 +94,7 @@
                 label="Capacidad &#40;lts&#46;&#41;">
                 <input
                   type="text"
+                  maxlength="30"
                   class="form-control"
                   formControlName="capacity"
                   [readOnly]="isGoodInfReadOnly" />
@@ -105,10 +107,12 @@
                 [control]="detailAssets.get('fileeNumber')"
                 label="No&#46; Exp&#46; de la transferente">
                 <input
-                  type="number"
+                  type="text"
+                  maxlength="1250"
                   class="form-control"
                   formControlName="fileeNumber"
-                  [readOnly]="isGoodInfReadOnly" />
+                  [readOnly]="isGoodInfReadOnly"
+                  maxlength="30" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -911,7 +915,8 @@
                 type="number"
                 class="form-control"
                 formControlName="model"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('model')"
@@ -933,7 +938,8 @@
                 type="number"
                 class="form-control"
                 formControlName="cabin"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('cabin')"
@@ -958,7 +964,8 @@
                 type="number"
                 class="form-control"
                 formControlName="doorsNumber"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('doorsNumber')"
@@ -1004,7 +1011,8 @@
                 type="number"
                 class="form-control"
                 formControlName="axesNumber"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('axesNumber')"
@@ -1194,7 +1202,8 @@
                 type="number"
                 class="form-control"
                 formControlName="enginesNumber"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
@@ -1266,7 +1275,8 @@
                 type="number"
                 class="form-control"
                 formControlName="cabin"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('cabin')"
@@ -1313,7 +1323,8 @@
                 type="number"
                 class="form-control"
                 formControlName="volume"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('volume')"
@@ -1454,7 +1465,8 @@
                 type="number"
                 class="form-control"
                 formControlName="manufacturingYear"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
@@ -1501,7 +1513,8 @@
                 type="number"
                 class="form-control"
                 formControlName="capacity"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('capacity')"
@@ -1608,7 +1621,8 @@
                 type="number"
                 class="form-control"
                 formControlName="weight"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('weight')"
@@ -1675,7 +1689,8 @@
                 type="number"
                 class="form-control"
                 formControlName="manufacturingYear"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('manufacturingYear')"
@@ -1700,7 +1715,8 @@
                 type="number"
                 class="form-control"
                 formControlName="model"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('model')"
@@ -1744,7 +1760,7 @@
               label="Num&#46; Motor"
               *ngIf="process != 'classify-assets'">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="engineNumber"
                 [readOnly]="isGoodTypeReadOnly" />
@@ -1754,7 +1770,7 @@
               label="Num&#46; Motor"
               *ngIf="process == 'classify-assets'">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 [readOnly]="true"
                 formControlName="engineNumber" />
@@ -1769,7 +1785,8 @@
                 type="number"
                 class="form-control"
                 formControlName="enginesNumber"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
@@ -2115,7 +2132,8 @@
                 type="number"
                 class="form-control"
                 formControlName="surfaceMts"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('surfaceMts')"
@@ -2162,7 +2180,8 @@
                 type="number"
                 class="form-control"
                 formControlName="consSurfaceMts"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('consSurfaceMts')"
@@ -2303,7 +2322,8 @@
                 type="number"
                 class="form-control"
                 formControlName="appraisalValue"
-                [readonly]="isGoodTypeReadOnly" />
+                [readonly]="isGoodTypeReadOnly"
+                min="0" />
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('appraisalValue')"

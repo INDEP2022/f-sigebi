@@ -84,6 +84,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
                   (edit)="uploadData($event.data)"
+                  (userRowSelect)="rowsSelected($event)"
                   [source]="signatories">
                 </ng2-smart-table>
               </div>

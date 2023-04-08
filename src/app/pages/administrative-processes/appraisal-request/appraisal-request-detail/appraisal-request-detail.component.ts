@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
+import { AppraisesService } from 'src/app/core/services/ms-appraises/appraises.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { APPRAISAL_COLUMNS } from './appraisal-request-detail-columns';
 
@@ -24,15 +24,15 @@ export class AppraisalRequestDetailComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  public get id() {
-    return this.form.get('id');
-  }
+  // public get id() {
+  //   return this.form.get('id');
+  // }
 
   @Output() refresh = new EventEmitter<true>();
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private institutionService: InstitutionClasificationService
+    private appraisalService: AppraisesService
   ) {
     super();
     this.settings.columns = APPRAISAL_COLUMNS;
@@ -41,6 +41,7 @@ export class AppraisalRequestDetailComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getGoodsbyRequest();
   }
 
   prepareForm() {
@@ -76,10 +77,10 @@ export class AppraisalRequestDetailComponent
 
   create() {
     this.loading = true;
-    this.institutionService.create(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    // this.institutionService.create(this.form.value).subscribe(
+    //   data => this.handleSuccess(),
+    //   error => (this.loading = false)
+    // );
   }
 
   handleSuccess() {
@@ -91,9 +92,22 @@ export class AppraisalRequestDetailComponent
   update() {
     this.loading = true;
 
-    this.institutionService.newUpdate(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    // this.institutionService.newUpdate(this.form.value).subscribe(
+    //   data => this.handleSuccess(),
+    //   error => (this.loading = false)
+    // );
+  }
+
+  getGoodsbyRequest() {
+    this.loading = true;
+    let num = this.appraisalService.id_request;
+    this.appraisalService.getGoodsByAppraises(num).subscribe({
+      next: data => {
+        this.appraisals = data.data;
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 }

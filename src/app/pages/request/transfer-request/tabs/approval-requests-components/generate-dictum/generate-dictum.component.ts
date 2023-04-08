@@ -43,7 +43,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   initForm(): void {
     this.dictumForm = this.fb.group({
       id: [null],
-      recordId: [null],
+      /*recordId: [null],
       applicationDate: [null],
       receptionDate: [null],
       nameOfOwner: [null],
@@ -103,15 +103,15 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       priorityDate: [null],
       rejectionNumber: [null],
       rulingDocumentId: [null],
-      reportSheet: [null],
+      reportSheet: [null],*/
       nameRecipientRuling: [null, [Validators.maxLength(100)]],
       postRecipientRuling: [null, [Validators.maxLength(100)]],
       paragraphOneRuling: [null, [Validators.maxLength(4000)]],
       paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
-      nameSignatoryRuling: [null],
-      postSignatoryRuling: [null],
+      /*nameSignatoryRuling: [null],
+      postSignatoryRuling: [null],*/
       ccpRuling: [null, [Validators.maxLength(200)]],
-      rulingCreatorName: [null],
+      /*rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],
       emailNotification: [null],
@@ -119,7 +119,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       instanceBpel: [null],
       verificationDateCump: [null],
       recordTmpId: [null],
-      coordregsae_ktl: [null],
+      coordregsae_ktl: [null],*/
     });
     if (this.response != null) {
       this.dictumForm.patchValue(this.response);
