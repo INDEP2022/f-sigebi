@@ -576,15 +576,15 @@ export class RegistrationOfRequestsComponent
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
     /* trae solicitudes actualizadas */
-    //  const request = await this.getAsyncRequestById();
-    // if (request) {
-    /* valida campos */
-    //const result = await this.registrationHelper.validateForm(request);
-    //if (result === true) {
-    /* abre modal del elegir usuario */
-    this.cambiarTipoUsuario(this.requestData);
-    //}
-    // }
+    const request = await this.getAsyncRequestById();
+    if (request) {
+      /* valida campos */
+      const result = await this.registrationHelper.validateForm(request);
+      if (result === true) {
+        /* abre modal del elegir usuario */
+        this.cambiarTipoUsuario(this.requestData);
+      }
+    }
   }
 
   cambiarTipoUsuario(request: any) {

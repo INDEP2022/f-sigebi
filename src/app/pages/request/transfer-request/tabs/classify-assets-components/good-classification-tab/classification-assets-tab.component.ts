@@ -264,7 +264,7 @@ export class ClassificationAssetsTabComponent
       }, 1000);
       setTimeout(() => {
         this.formLoading = false;
-      }, 2400);
+      }, 4000);
     }
   }
 

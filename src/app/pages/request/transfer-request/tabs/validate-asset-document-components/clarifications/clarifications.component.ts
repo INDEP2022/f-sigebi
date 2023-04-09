@@ -478,24 +478,24 @@ export class ClarificationsComponent
       this.rowSelected = null;
       this.paragraphs = [];
     }
-    //this.getClarifications(event.data.id)
   }
 
   getClarifications() {
     this.paragraphs = [];
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
-    this.rejectGoodService.getAllFilter(params).subscribe({
-      next: ({ data }) => {
-        console.log(data);
 
-        const clarification = data.map(async (item: any) => {
+    this.rejectGoodService.getAllFilter(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+
+        const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
         });
 
         Promise.all(clarification).then(data => {
-          this.paragraphs = [...data];
+          this.paragraphs = resp.data;
         });
       },
       error: error => {},
