@@ -2796,52 +2796,55 @@
             </form-field>
           </div>
         </div>
+
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
-              [control]="goodDomicilieForm.get('propTitleFolio')"
-              label="Folio T&iacute;tulo de Propietario"
+              [control]="goodDomicilieForm.get('echoForecast')"
+              label="Privisi&oacute;n Ecol&oacute;gica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                formControlName="propTitleFolio"
+                formControlName="echoForecast"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
-              [control]="goodDomicilieForm.get('propTitleFolio')"
-              label="Folio T&iacute;tulo de Propietario"
+              [control]="goodDomicilieForm.get('echoForecast')"
+              label="Privisi&oacute;n Ecol&oacute;gica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="propTitleFolio" />
+                formControlName="echoForecast" />
             </form-field>
           </div>
+
           <div class="col-md-4">
             <form-field
-              [control]="goodDomicilieForm.get('vouchersWater')"
-              label="Comprobantes de Agua"
+              [control]="goodDomicilieForm.get('echoForecastPercentage')"
+              label="% Previsi&oacute;n Ecol&oacute;gica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                formControlName="vouchersWater"
+                formControlName="echoForecastPercentage"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
-              [control]="goodDomicilieForm.get('vouchersWater')"
-              label="Comprobantes de Agua"
+              [control]="goodDomicilieForm.get('echoForecastPercentage')"
+              label="% Previsi&oacute;n Ecol&oacute;gica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="vouchersWater" />
+                formControlName="echoForecastPercentage" />
             </form-field>
           </div>
         </div>
+
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
@@ -3023,6 +3026,30 @@
                 class="form-control"
                 [readOnly]="true"
                 formControlName="photosAttached" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="goodDomicilieForm.get('vouchersWater')"
+              label="Comprobantes de Agua"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="vouchersWater"
+                [readOnly]="isGoodTypeReadOnly" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('vouchersWater')"
+              label="Comprobantes de Agua"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="vouchersWater" />
             </form-field>
           </div>
         </div>

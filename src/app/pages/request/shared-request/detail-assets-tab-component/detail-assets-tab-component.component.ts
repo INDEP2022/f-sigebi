@@ -306,16 +306,16 @@ export class DetailAssetsTabComponentComponent
       ],
       wayref2Key: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayref3Key: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       municipalityKey: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       localityKey: [
         null,
@@ -327,39 +327,39 @@ export class DetailAssetsTabComponentComponent
       ],
       latitude: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       length: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayName: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayOrigin: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       exteriorNumber: [
         '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(40))],
       ],
       interiorNumber: [
         '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(40))],
       ],
       wayDestiny: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayref1Key: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayChaining: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       description: [
         '',
@@ -379,15 +379,15 @@ export class DetailAssetsTabComponentComponent
       ],
       status: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
-      propertyType: [null, [Validators.required, Validators.maxLength(30)]],
+      propertyType: [null, [Validators.required, Validators.maxLength(40)]],
       surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       consSurfaceMts: [
         0,
         [
           Validators.required,
-          Validators.maxLength(30),
+          Validators.maxLength(40),
           Validators.pattern(NUM_POSITIVE),
         ],
       ],
@@ -396,7 +396,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       pubRegProperty: [
@@ -412,7 +412,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(NUM_POSITIVE),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       appraisalDate: [null],
@@ -429,48 +429,48 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.pattern(STRING_PATTERN),
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       vigilanceRequired: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       vigilanceLevel: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       mtsOfiWarehouse: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       bedrooms: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       bathroom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       kitchen: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       diningRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       livingRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       study: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       espPark: [
         null,
-        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
       ],
       userCreation: [
         null,
@@ -488,50 +488,50 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       certLibLienDate: [null],
       pffDate: [null],
       gravFavorThird: [
         null,
-        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
       ],
       attachment: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       embFavorThird: [
         null,
-        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
       ],
       coOwnership: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       ownershipPercentage: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       decreeExproProc: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       decreeExproSupe: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       declareRemediation: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       heritage: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       assurance: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       propTitleFolio: [
         null,
@@ -543,35 +543,43 @@ export class DetailAssetsTabComponentComponent
       ],
       vouchersWater: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       debts: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       physicalPossession: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       closed: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       familyHeritage: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       problemDesc: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       photosAttached: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      echoForecast: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      echoForecastPercentage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
     });
   }
