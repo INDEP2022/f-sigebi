@@ -9,6 +9,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -79,7 +80,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
-    public location: Location
+    public location: Location,
+    private router: Router
   ) {
     super();
   }
@@ -367,6 +369,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         'Información',
         `Seleccione un usuario para poder turnar la solicitud!`
       );
+
       return;
     }
 
@@ -397,6 +400,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
 

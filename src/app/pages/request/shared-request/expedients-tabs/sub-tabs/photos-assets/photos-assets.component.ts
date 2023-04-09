@@ -144,10 +144,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      typeGood: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
