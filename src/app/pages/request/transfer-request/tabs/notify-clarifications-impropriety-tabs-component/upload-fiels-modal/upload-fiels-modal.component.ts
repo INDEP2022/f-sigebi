@@ -28,7 +28,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   typeReport: string = null;
   isRFCHided: boolean = true;
   edit: boolean = false;
-  base64Output: string;
+  base64Cer: string;
+  base64Key: string;
 
   constructor(
     private modalRef: BsModalRef,
@@ -67,7 +68,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       ],
       certificate: [null, [Validators.required]],
       keycertificate: [null, [Validators.required]],
-      pass: [null, [Validators.required, Validators.maxLength(10)]],
+      pass: [null, [Validators.required]],
       rfcUser: [
         null,
         [
@@ -80,9 +81,9 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     });
     if (this.signatories != null) {
       this.edit = true;
-      this.fileForm.controls['name'].setValue(this.signatories.name);
-      this.fileForm.controls['post'].setValue(this.signatories.post);
-      //this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
+      //this.fileForm.controls['name'].setValue(this.signatories.name);
+      //this.fileForm.controls['post'].setValue(this.signatories.post);
+      this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
     }
 
     this.passForm = this.fb.group({
@@ -111,8 +112,18 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
     //Convierte archivo seleccionado a base 64 y lo guarda
     this.convertFile(event.target.files[0]).subscribe(base64 => {
-      this.base64Output = base64;
-      console.log('certificado64: ', this.base64Output);
+      this.base64Key = base64;
+      console.log('certificado64: ', this.base64Key);
+    });
+  }
+
+  chargeKeyCertifications(event: any) {
+    let keyCertiToUpload = event.target.files[0];
+    this.keyCertiFile = keyCertiToUpload;
+    //Convierte archivo seleccionado a base 64 y lo guarda
+    this.convertFile(event.target.files[0]).subscribe(base64 => {
+      this.base64Cer = base64;
+      console.log('Key64: ', this.base64Cer);
     });
   }
 
@@ -123,12 +134,6 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     reader.readAsBinaryString(file);
     reader.onload = event => result.next(btoa(event.target.result.toString()));
     return result;
-  }
-
-  chargeKeyCertifications(event: any) {
-    let keyCertiToUpload = event.target.files[0];
-    this.keyCertiFile = keyCertiToUpload;
-    console.log('Key: ', this.keyCertiFile);
   }
 
   close() {
@@ -183,7 +188,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     );
     formData.append('post', this.fileForm.controls['post'].value);
     formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
-    formData.append('certificatebase64', this.base64Output);
+    formData.append('certificatebase64', this.base64Cer);
     console.log('FormData que se envia para guardar firmante', formData);
 
     this.signatoriesService

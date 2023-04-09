@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
@@ -25,6 +26,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   date: string = '';
   signatories: ISignatories[] = [];
   valuesSign: ISignatories;
+  requestInfo: IRequest;
 
   src = '';
   isPdfLoaded = false;
@@ -204,13 +206,96 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     this.valuesSign = event.data;
-    console.log('Fila seleccionada de firmante', this.valuesSign);
     const idDoc = this.idDoc;
-    console.log('ID de solicitud', idDoc);
-    // this.requestService.update(idDoc, this.dictumForm.value).subscribe({
-    //   next: data => (this.handleSuccess(), this.signDictum()),
-    //   error: error => (this.loading = false),
-    // });
+    const obj: Object = {
+      id: this.requestInfo.id,
+      recordId: this.requestInfo.recordId,
+      applicationDate: this.requestInfo.applicationDate,
+      receptionDate: this.requestInfo.receptionDate,
+      nameOfOwner: this.requestInfo.nameOfOwner,
+      holderCharge: this.requestInfo.holderCharge,
+      phoneOfOwner: this.requestInfo.phoneOfOwner,
+      emailOfOwner: this.requestInfo.emailOfOwner,
+      transferenceId: this.requestInfo.transferenceId,
+      transferent: this.requestInfo.transferent,
+      stationId: this.requestInfo.stationId,
+      emisora: this.requestInfo.emisora,
+      authorityId: this.requestInfo.authorityId,
+      regionalDelegationId: this.requestInfo.regionalDelegationId,
+      regionalDelegation: this.requestInfo.regionalDelegation,
+      sender: this.requestInfo.sender,
+      observations: this.requestInfo.observations,
+      targetUser: this.requestInfo.targetUser,
+      urgentPriority: this.requestInfo.urgentPriority,
+      indicatedTaxpayer: this.requestInfo.indicatedTaxpayer,
+      transferenceFile: this.requestInfo.transferenceFile,
+      transferEntNotes: this.requestInfo.transferEntNotes,
+      idAddress: this.requestInfo.idAddress,
+      originInfo: this.requestInfo.originInfo,
+      circumstantialRecord: this.requestInfo.circumstantialRecord,
+      previousInquiry: this.requestInfo.previousInquiry,
+      lawsuit: this.requestInfo.lawsuit,
+      protectNumber: this.requestInfo.protectNumber,
+      tocaPenal: this.requestInfo.tocaPenal,
+      paperNumber: this.requestInfo.paperNumber,
+      paperDate: this.requestInfo.paperDate,
+      indicated: this.requestInfo.indicated,
+      publicMinistry: this.requestInfo.publicMinistry,
+      court: this.requestInfo.court,
+      crime: this.requestInfo.crime,
+      receiptRoute: this.requestInfo.receiptRoute,
+      destinationManagement: this.requestInfo.destinationManagement,
+      affair: this.requestInfo.affair,
+      satDeterminant: this.requestInfo.satDeterminant,
+      satDirectory: this.requestInfo.satDirectory,
+      authority: this.requestInfo.authority,
+      satZoneCoordinator: this.requestInfo.satZoneCoordinator,
+      userCreated: this.requestInfo.userCreated,
+      creationDate: this.requestInfo.creationDate,
+      userModification: this.requestInfo.userModification,
+      modificationDate: this.requestInfo.modificationDate,
+      typeOfTransfer: this.requestInfo.typeOfTransfer,
+      domainExtinction: this.requestInfo.domainExtinction,
+      version: this.requestInfo.version,
+      targetUserType: this.requestInfo.targetUserType,
+      trialType: this.requestInfo.trialType,
+      typeRecord: this.requestInfo.typeRecord,
+      requestStatus: this.requestInfo.requestStatus,
+      fileLeagueType: this.requestInfo.fileLeagueType,
+      fileLeagueDate: this.requestInfo.fileLeagueDate,
+      rejectionComment: this.requestInfo.rejectionComment,
+      authorityOrdering: this.requestInfo.authorityOrdering,
+      instanceBpm: this.requestInfo.instanceBpm,
+      trial: this.requestInfo.trial,
+      compensationType: this.requestInfo.compensationType,
+      stateRequestId: this.requestInfo.stateRequestId,
+      searchSiab: this.requestInfo.searchSiab,
+      priorityDate: this.requestInfo.priorityDate,
+      ofRejectionsNumber: this.requestInfo.ofRejectionsNumber,
+      rulingDocumentId: this.requestInfo.rulingDocumentId,
+      reportSheet: this.requestInfo.reportSheet,
+      nameRecipientRuling: this.requestInfo.nameRecipientRuling,
+      postRecipientRuling: this.requestInfo.postRecipientRuling,
+      paragraphOneRuling: this.requestInfo.paragraphOneRuling,
+      paragraphTwoRuling: this.requestInfo.paragraphTwoRuling,
+      nameSignatoryRuling: this.valuesSign.name, //Info nueva que se inserta
+      postSignatoryRuling: this.valuesSign.post,
+      ccpRuling: this.requestInfo.ccpRuling,
+      rulingCreatorName: this.requestInfo.rulingCreatorName,
+      rulingSheetNumber: this.requestInfo.rulingSheetNumber,
+      registrationCoordinatorSae: this.requestInfo.registrationCoordinatorSae,
+      emailNotification: this.requestInfo.emailNotification,
+      keyStateOfRepublic: this.requestInfo.keyStateOfRepublic,
+      instanceBpel: this.requestInfo.instanceBpel,
+      verificationDateCump: this.requestInfo.verificationDateCump,
+      recordTmpId: this.requestInfo.recordTmpId,
+      coordregsae_ktl: this.requestInfo.coordregsae_ktl,
+    };
+    //Enviar nueva información a Request
+    this.requestService.update(idDoc, obj).subscribe({
+      next: data => {},
+      error: error => (this.loading = false),
+    });
   }
 
   sendSign() {
@@ -227,6 +312,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   nextStep() {
+    const idDoc = this.idDoc;
+    console.log('ID solicidutd', idDoc);
     //verificar que el estado de registro este como "Correcto" y siguiente paso
     this.listSigns = false;
     this.printReport = true;
@@ -234,6 +321,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.title = 'Imprimir Reporte';
     this.btnTitle = 'Adjuntar Documento';
     this.btnSubTitle = 'Imprimir Reporte';
+
+    //Agregar información del firmante al reporte
+    /*this.requestService.update(idDoc, this.dictumForm.value).subscribe({
+      next: data => (this.handleSuccess(), this.signDictum()),
+      error: error => (this.loading = false),
+    });*/
   }
 
   pdfTempo: string = 'PDF';
