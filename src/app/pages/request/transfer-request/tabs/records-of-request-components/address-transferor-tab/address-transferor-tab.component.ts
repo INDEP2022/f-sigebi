@@ -20,7 +20,11 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUMBERS_POINT_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
 import { GoodDomiciliesService } from '../../../../../../core/services/good/good-domicilies.service';
@@ -120,11 +124,11 @@ export class AddressTransferorTabComponent
       ],
       latitude: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
       ],
       length: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
       ], //por cambiar
       wayName: [
         null,
@@ -136,11 +140,11 @@ export class AddressTransferorTabComponent
       ],
       exteriorNumber: [
         null,
-        [(Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10))],
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(10))],
       ],
       interiorNumber: [
         null,
-        [(Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10))],
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(10))],
       ],
       wayDestiny: [
         null,

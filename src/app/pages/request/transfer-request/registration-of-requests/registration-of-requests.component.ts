@@ -92,6 +92,8 @@ export class RegistrationOfRequestsComponent
 
   requestList: IRequest;
 
+  formLoading: boolean = true;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -291,7 +293,7 @@ export class RegistrationOfRequestsComponent
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
         /* verifica si existe un dictamen en la solicitud */
-        if ((this.typeDocument = 'proceso-aprovacion')) {
+        if (this.typeDocument === 'proceso-aprovacion') {
           await this.getDictamen(data.id);
         }
 
@@ -299,12 +301,14 @@ export class RegistrationOfRequestsComponent
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
+        this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
       },
       error: error => {
+        this.formLoading = false;
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -572,15 +576,15 @@ export class RegistrationOfRequestsComponent
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
     /* trae solicitudes actualizadas */
-    const request = await this.getAsyncRequestById();
-    if (request) {
-      /* valida campos */
-      const result = await this.registrationHelper.validateForm(request);
-      if (result === true) {
-        /* abre modal del elegir usuario */
-        this.cambiarTipoUsuario(this.requestData);
-      }
-    }
+    //  const request = await this.getAsyncRequestById();
+    // if (request) {
+    /* valida campos */
+    //const result = await this.registrationHelper.validateForm(request);
+    //if (result === true) {
+    /* abre modal del elegir usuario */
+    this.cambiarTipoUsuario(this.requestData);
+    //}
+    // }
   }
 
   cambiarTipoUsuario(request: any) {
@@ -722,6 +726,14 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
+    if (this.haveDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'Error',
+        'Es requerido tener dictamen previamente generado'
+      );
+      return;
+    }
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
@@ -878,13 +890,15 @@ export class RegistrationOfRequestsComponent
       this.wcontentService.getDocumentos(body).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
-            this.haveDictamen = false;
-          } else {
             this.haveDictamen = true;
+          } else {
+            this.haveDictamen = false;
           }
+          resolve(true);
         },
         error: error => {
           this.haveDictamen = false;
+          resolve(true);
         },
       });
     });

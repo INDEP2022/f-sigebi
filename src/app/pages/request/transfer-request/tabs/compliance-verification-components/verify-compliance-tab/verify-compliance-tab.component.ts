@@ -74,6 +74,7 @@ export class VerifyComplianceTabComponent
   article12and13array: Array<any> = new Array<any>();
   goodsSelected: any = [];
   checkboxReadOnly: boolean = false;
+  formLoading: boolean = false;
 
   /* aclaraciones */
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -629,6 +630,7 @@ export class VerifyComplianceTabComponent
 
   selectGood(event: any) {
     //if (event.isSelected === true) {
+    this.formLoading = true;
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
@@ -641,7 +643,10 @@ export class VerifyComplianceTabComponent
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
+        this.formLoading = false;
       }, 2000);
+    } else {
+      this.formLoading = false;
     }
   }
 

@@ -30,6 +30,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
   NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -121,13 +122,13 @@ export class GeneralDocumentsFormComponent
 
   initSearchForm() {
     this.searchForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       authorityId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      recordId: [null, [Validators.pattern(NUM_POSITIVE_LETTERS)]],
+      recordId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       indicatedTaxpayer: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],

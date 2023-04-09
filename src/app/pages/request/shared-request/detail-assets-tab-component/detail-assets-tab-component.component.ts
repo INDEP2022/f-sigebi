@@ -586,7 +586,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getConcervationState(params: ListParams) {
-    params['filter.name'] = '$eq:Estado Conservación';
+    params['filter.name'] = '$eq:Estado Conservacion';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectConcervationState = new DefaultSelect(data.data, data.count);

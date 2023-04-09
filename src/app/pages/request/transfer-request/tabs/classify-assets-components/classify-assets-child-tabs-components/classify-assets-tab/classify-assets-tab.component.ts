@@ -59,6 +59,7 @@ export class ClassifyAssetsTabComponent
   detailArray: any = {};
 
   good: any = null;
+  formLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -81,6 +82,7 @@ export class ClassifyAssetsTabComponent
     }
     this.getReactiveFormActions();
     this.processView();
+    this.loadingForm();
   }
 
   //Obtenemos el tipo de proceso//
@@ -96,8 +98,10 @@ export class ClassifyAssetsTabComponent
         //cargar la clasificacion de bienes segun el id que se envio
       } */
     //bienes selecionados
+
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
+      //this.formLoading = true;
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
@@ -152,24 +156,24 @@ export class ClassifyAssetsTabComponent
       ],
       useType: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       physicalStatus: [
         null,
-        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(40)],
       ],
       stateConservation: [
         null,
-        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(40)],
       ],
       origin: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       appraisal: [
         null,
@@ -187,7 +191,7 @@ export class ClassifyAssetsTabComponent
       ],
       unitMeasure: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ], // preguntar Unidad Medida Transferente
       saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       brand: [
@@ -195,7 +199,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       subBrand: [
@@ -203,12 +207,12 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       armor: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       model: [
         null,
@@ -235,24 +239,24 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //numero motor
       tuition: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       serie: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       chassis: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       cabin: [
         null,
@@ -280,7 +284,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       manufacturingYear: [
@@ -312,19 +316,19 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       sleeve: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       length: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       shipName: [
@@ -340,19 +344,19 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //registro public
       ships: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       dgacRegistry: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //registro direccion gral de aereonautica civil
       airplaneType: [
@@ -360,7 +364,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       caratage: [
@@ -384,7 +388,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       fractionId: [null],
@@ -394,6 +398,14 @@ export class ClassifyAssetsTabComponent
       this.getSection(new ListParams(), this.good.ligieSection);
       this.classiGoodsForm.patchValue(this.good);
     }
+  }
+
+  loadingForm() {
+    this.requestHelperService.currentFormLoading.subscribe((data: any) => {
+      if (data === true) {
+        this.formLoading = true;
+      }
+    });
   }
 
   setFractions(listReverse: any) {
@@ -463,7 +475,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -493,7 +507,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -519,7 +535,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -545,7 +563,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -573,6 +593,7 @@ export class ClassifyAssetsTabComponent
       },
       error: error => {
         this.loading = false;
+        this.formLoading = false;
       },
     });
   }

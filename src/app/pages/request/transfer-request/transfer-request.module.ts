@@ -4,6 +4,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
@@ -88,6 +89,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     NgScrollbarModule,
     SharedRequestModule,
     PdfViewerModule,
+    FormLoaderComponent,
   ],
   exports: [VerifyComplianceTabComponent],
 })

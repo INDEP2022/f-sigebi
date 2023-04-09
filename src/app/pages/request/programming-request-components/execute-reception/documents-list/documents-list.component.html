@@ -13,16 +13,29 @@
         </div>
 
         <div class="row pt-4">
-          <form-field [control]="documentForm.get('xtipoDocumento')">
-            <ngx-select
-              [form]="documentForm"
-              control="xtipoDocumento"
-              [data]="typeDocuments"
-              value="ddocType"
-              bindLabel="ddescription"
-              label="Tipo de documento"
-              (fetchItems)="getTypeDocumentSelect($event)"></ngx-select>
-          </form-field>
+          <div class="col-md-12">
+            <div
+              [formGroup]="documentForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="xtipoDocumento"
+                [clearable]="false"
+                [items]="typeDocuments"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="ddescription"
+                bindValue="ddocType">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.ddescription">
+                    {{ item.ddescription }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label">Tipo de documento</label>
+            </div>
+          </div>
         </div>
 
         <div class="row pt-4">
@@ -156,7 +169,8 @@
                 type="text"
                 class="form-control"
                 formControlName="xidSolicitud"
-                readonly />
+                readonly
+                min="0" />
             </form-field>
           </div>
           <!-- documentos solicitud -->
@@ -165,7 +179,7 @@
               [control]="documentForm.get('xidBien')"
               label="No&#46; Bien">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="xidBien"
                 readonly />
@@ -196,9 +210,10 @@
               [control]="documentForm.get('xidSIAB')"
               label="No&#46; SIAB">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="xidSIAB" />
+                formControlName="xidSIAB"
+                min="0" />
             </form-field>
           </div>
           <div class="col-md-4">

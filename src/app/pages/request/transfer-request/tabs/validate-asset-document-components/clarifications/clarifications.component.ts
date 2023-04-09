@@ -9,10 +9,15 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,54 +27,8 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
+import { ASSETS_COLUMNS } from './assets-columns';
 import { CLARIFICATION_COLUMNS } from './clarifications-columns';
-
-//bienes
-var data = [
-  {
-    id: 1,
-    noManagement: '8905184',
-    assetsDescripTransfer: 'VEHICULO NISSAN, MODELO TSUMA',
-    assetsDescripSAE: '',
-    typeAsset: 'VEHICULO',
-    fraction: '8703.24.01',
-    quantityTransfer: '1',
-    ligieUnitMeasure: 'PIEZA',
-    transferUnitMeasure: 'PIEZA',
-    uniqueKey: '1244',
-    physicalState: 'NUEVO',
-    conservationState: '',
-    destinyLigie: 'VENTA',
-    destinyTransfer: 'VENTA',
-  },
-  {
-    id: 2,
-    noManagement: '8751658',
-    assetsDescripTransfer: 'VEHICULO TOYOTA, MODELO SPRINT',
-    assetsDescripSAE: '',
-    typeAsset: 'VEHICULO',
-    fraction: '8703.00.01',
-    quantityTransfer: '1',
-    ligieUnitMeasure: 'PIEZA',
-    transferUnitMeasure: 'PIEZA',
-    uniqueKey: '1211',
-    physicalState: 'NUEVO',
-    conservationState: '',
-    destinyLigie: 'VENTA',
-    destinyTransfer: 'VENTA',
-  },
-];
-// aclaraciones
-var data2 = [
-  {
-    clarificationDate: '11/08/2022',
-    typeClarification: 'Aclaracíon',
-    clarification: 'ERROR EN DOCUMENTACION ANEXA',
-    reason: 'No cuenta con documentacion',
-    status: 'NUEVA ACLARACIÓN',
-    observation: '',
-  },
-];
 
 @Component({
   selector: 'app-clarifications',
@@ -85,6 +44,7 @@ export class ClarificationsComponent
   goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
+  goodSetting: any;
   assetsArray: any[] = [];
   assetsSelected: any[] = [];
   //dataSelected: any[] = [];
@@ -93,13 +53,17 @@ export class ClarificationsComponent
   rowSelected: any;
   detailArray: any;
   typeDoc: string = 'clarification';
+  good: any;
+  totalItems: number = 0;
 
   constructor(
     private modalService: BsModalService,
     private readonly fb: FormBuilder,
     private readonly goodService: GoodService,
     private readonly clarificationService: ClarificationService,
-    private readonly rejectGoodService: RejectedGoodService
+    private readonly rejectGoodService: RejectedGoodService,
+    private readonly typeRelevantService: TypeRelevantService,
+    private readonly genericService: GenericService
   ) {
     super();
   }
@@ -120,6 +84,12 @@ export class ClarificationsComponent
       columns: CLARIFICATION_COLUMNS,
     };
 
+    this.goodSetting = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: ASSETS_COLUMNS,
+    };
     this.prepareForm();
   }
   private prepareForm() {
@@ -416,24 +386,136 @@ export class ClarificationsComponent
   }
 
   getData() {
+    this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
-      next: ({ data }) => {
-        this.assetsArray = [...data];
+      next: resp => {
+        console.log(resp.data);
+        let result = resp.data.map(async (item: any) => {
+          const goodTypeName = await this.getTypeGood(item.goodTypeId);
+          item['goodTypeName'] = goodTypeName;
+
+          item['fraction'] = item.fractionId.description;
+
+          item['quantity'] = Number(item.quantity);
+
+          const physicalStatus = await this.getByTheirStatus(
+            item.physicalStatus,
+            'Estado Fisico'
+          );
+          item['physicstateName'] = physicalStatus;
+
+          const stateConservation = await this.getByTheirStatus(
+            item.stateConservation,
+            'Estado Conservacion'
+          );
+          item['stateConservationName'] = stateConservation;
+
+          const transferentDestiny = await this.getByTheirStatus(
+            item.transferentDestiny,
+            'Destino'
+          );
+          item['transferentDestinyName'] = transferentDestiny;
+
+          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
+          item['destinyName'] = destiny;
+        });
+
+        Promise.all(result).then(data => {
+          this.assetsArray = resp.data;
+          this.loading = false;
+          this.totalItems = resp.count;
+        });
+      },
+      error: error => {
+        this.loading = false;
       },
     });
   }
 
+  getTypeGood(id: number) {
+    return new Promise((resolve, reject) => {
+      if (id) {
+        this.typeRelevantService.getById(id).subscribe({
+          next: resp => {
+            resolve(resp.description);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
+
+  getByTheirStatus(id: number | string, typeName: string) {
+    return new Promise((resolve, reject) => {
+      if (id) {
+        var params = new ListParams();
+        params['filter.name'] = `$eq:${typeName}`;
+        params['filter.keyId'] = `$eq:${id}`;
+        this.genericService.getAll(params).subscribe({
+          next: resp => {
+            resolve(resp.data[0].description);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
+
+  selectGoods(event: any) {
+    if (event.selected.length === 1) {
+      console.log(event);
+      this.good = event.data;
+      this.goodForm.reset();
+      this.goodForm.patchValue({ ...this.good });
+      this.rowSelected = this.good;
+
+      this.getClarifications();
+    } else {
+      this.rowSelected = null;
+      this.paragraphs = [];
+    }
+    //this.getClarifications(event.data.id)
+  }
+
   getClarifications() {
-    let params = new BehaviorSubject<FilterParams>(new FilterParams());
-    params.value.addFilter('goodId', this.assetsArray[0]);
-    const filter = this.params.getValue().getParams();
-    this.rejectGoodService.getAllFilter(filter).subscribe({
+    this.paragraphs = [];
+    const params = new ListParams();
+    params['filter.goodId'] = `$eq:${this.good.id}`;
+    this.rejectGoodService.getAllFilter(params).subscribe({
       next: ({ data }) => {
-        this.paragraphs = [...data];
         console.log(data);
+
+        const clarification = data.map(async (item: any) => {
+          const clarifi = await this.getCatClarification(item.clarificationId);
+          item['clarificationName'] = clarifi;
+        });
+
+        Promise.all(clarification).then(data => {
+          this.paragraphs = [...data];
+        });
       },
+      error: error => {},
+    });
+  }
+
+  /* Metodo para traer las aclaraciones */
+  getCatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.clarificationService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0].clarification);
+        },
+        error: error => {
+          console.log(error.error.message);
+          resolve('');
+        },
+      });
     });
   }
 
@@ -459,7 +541,7 @@ export class ClarificationsComponent
     console.log(this.assetsSelected);
   }
 
-  selectOne(event: any) {
+  /*   selectOne(event: any) {
     if (event.target.checked == true) {
       this.assetsSelected.push(
         this.assetsArray.find(x => x.id == event.target.value)
@@ -473,7 +555,7 @@ export class ClarificationsComponent
       this.assetsSelected.splice(index, 1);
     }
     console.log(this.assetsSelected);
-  }
+  } */
 
   clarifiRowSelected(event: any) {
     this.clariArraySelected = event.selected;
@@ -486,6 +568,7 @@ export class ClarificationsComponent
       this.openForm();
     }
   }
+
   deleteClarification() {
     let data = this.clariArraySelected[0];
     if (!data) {

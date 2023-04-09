@@ -14,6 +14,9 @@ export class RequestHelperService {
   private readOnly = new BehaviorSubject<any>(undefined);
   currentReadOnly = this.readOnly.asObservable();
 
+  private formLoading = new BehaviorSubject<any>(undefined);
+  currentFormLoading = this.formLoading.asObservable();
+
   constructor() {}
 
   isComponentSaving(menaje: boolean) {
@@ -26,5 +29,9 @@ export class RequestHelperService {
 
   changeReadOnly(isreadOnly: boolean) {
     this.readOnly.next(isreadOnly);
+  }
+
+  loadingForm(loading: boolean) {
+    this.formLoading.next(loading);
   }
 }

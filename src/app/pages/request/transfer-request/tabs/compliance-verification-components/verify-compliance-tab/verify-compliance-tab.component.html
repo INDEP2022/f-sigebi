@@ -192,9 +192,14 @@
     <hr />
   </div>
 
+  <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+    <form-loader *ngIf="formLoading"></form-loader>
+  </div>
   <!-- Componente donde se muestra el detalle de los bienes -->
   <div
-    *ngIf="goodsSelected.length === 1 && isGoodSelected === true"
+    *ngIf="
+      goodsSelected.length === 1 && isGoodSelected === true && !formLoading
+    "
     class="row pt-4">
     <app-detail-assets-tab-component
       [typeDoc]="typeDoc"
