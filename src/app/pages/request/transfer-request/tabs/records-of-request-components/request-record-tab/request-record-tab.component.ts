@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -20,7 +26,10 @@ import { AffairService } from '../../../../../../core/services/catalogs/affair.s
   templateUrl: './request-record-tab.component.html',
   styles: [],
 })
-export class RequestRecordTabComponent extends BasePage implements OnInit {
+export class RequestRecordTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() requestForm: ModelForm<IRequest>;
   bsReceptionValue = new Date();
   bsPaperValue: any;
@@ -43,6 +52,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   ) {
     super();
   }
+  ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {
     this.getOriginInfo(new ListParams());

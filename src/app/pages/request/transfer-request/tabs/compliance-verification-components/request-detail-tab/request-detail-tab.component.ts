@@ -55,7 +55,11 @@ export class RequestDetailTabComponent
     this.showDataProg();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe((val: any) => {
+      console.log('request detail tab ', this.requestForm.getRawValue());
+    });
+  }
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
@@ -123,7 +127,7 @@ export class RequestDetailTabComponent
   reactiveFormCalls() {
     this.requestForm.valueChanges.subscribe((val: any) => {
       var v = this.requestForm.getRawValue();
-
+      console.log(v);
       if (this.requestForm.controls['urgentPriority'].value) {
         this.priority =
           this.requestForm.controls['urgentPriority'].value === '0'

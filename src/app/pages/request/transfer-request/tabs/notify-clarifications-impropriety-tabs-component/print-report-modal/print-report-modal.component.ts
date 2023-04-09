@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -23,6 +24,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
+  valuesSign: ISignatories;
 
   src = '';
   isPdfLoaded = false;
@@ -53,7 +55,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     private signatoriesService: SignatoriesService,
     private gelectronicFirmService: GelectronicFirmService,
     private authService: AuthService,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private requestService: RequestService
   ) {
     super();
     this.settings = {
@@ -91,25 +94,18 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Verifica si ya existe ese usuario en la lista de firmantes
     this.signatoriesService
-      .getSignatoriesFilter(this.idTypeDoc, this.idDoc)
+      .getSignatoriesName(this.idTypeDoc, this.idDoc, token.name)
       .subscribe({
         next: response => {
           this.signatories = response.data;
-          for (let i = 0; i < this.signatories.length; i++) {
-            if ((this.signatories[i].name = token.name)) {
-              console.log(
-                'Ya hay firmantes con el mismo nombre, no se puede registarr más'
-              );
-            } else {
-              this.registerSign();
-              console.log(
-                'No hay firmantes con el mismo nombre, proceder a registrar con el usuario logeado'
-              );
-            }
-          }
+          console.log(
+            'Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más'
+          );
+          //Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más
         },
         error: error => {
           //Si no hay firmantes, entonces asignar nuevos
+          console.log('Si no hay firmantes, entonces asignar nuevos');
           this.registerSign();
         },
       });
@@ -204,6 +200,17 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(UploadFielsModalComponent, config);
+  }
+
+  rowsSelected(event: any) {
+    this.valuesSign = event.data;
+    console.log('Fila seleccionada de firmante', this.valuesSign);
+    const idDoc = this.idDoc;
+    console.log('ID de solicitud', idDoc);
+    // this.requestService.update(idDoc, this.dictumForm.value).subscribe({
+    //   next: data => (this.handleSuccess(), this.signDictum()),
+    //   error: error => (this.loading = false),
+    // });
   }
 
   sendSign() {
@@ -301,8 +308,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-    const id = this.idDoc;
-    const nameTypeReport = this.nameTypeDoc;
+    const id = this.idDoc; //ID solicitud
+    const nameTypeReport = this.nameTypeDoc; //Id tipo de documento que es 50
 
     const formData: Object = {
       id: this.idDoc,
