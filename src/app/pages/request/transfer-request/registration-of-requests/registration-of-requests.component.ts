@@ -119,6 +119,7 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    this.loader.load = true;
     const id = this.route.snapshot.paramMap.get('id');
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -954,6 +955,7 @@ export class RegistrationOfRequestsComponent
   dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
+      this.loader.load = false;
     });
   }
 
