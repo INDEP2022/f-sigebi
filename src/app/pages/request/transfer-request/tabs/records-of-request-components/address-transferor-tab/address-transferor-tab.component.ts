@@ -12,7 +12,8 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
@@ -29,6 +30,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
 import { GoodDomiciliesService } from '../../../../../../core/services/good/good-domicilies.service';
 import { BasePage } from '../../../../../../core/shared/base-page';
+import { CopyAddressComponent } from '../records-of-request-child-tabs-components/copy-address/copy-address.component';
 
 @Component({
   selector: 'app-address-transferor-tab',
@@ -72,7 +74,11 @@ export class AddressTransferorTabComponent
   route = inject(ActivatedRoute);
   goodsinvService = inject(GoodsInvService);
 
-  constructor(private fb: FormBuilder, private modelRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modelRef: BsModalRef,
+    private modalService: BsModalService
+  ) {
     super();
     if (this.isNewAddress === false) {
       this.initForm();
@@ -348,6 +354,20 @@ export class AddressTransferorTabComponent
         this.getCP(new ListParams());
       }
     );
+  }
+
+  copyAddress() {
+    let idDelegation = this.domicileForm.get('regionalDelegationId').value;
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modalSizeXL modal-dialog-centered',
+    };
+    config.initialState = {
+      idDelegation,
+      callback: (data: any) => {},
+    };
+
+    const searchUser = this.modalService.show(CopyAddressComponent, config);
   }
 
   close() {

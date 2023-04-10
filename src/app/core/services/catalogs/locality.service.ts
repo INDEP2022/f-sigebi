@@ -25,6 +25,10 @@ export class LocalityService implements ICrudMethods<ILocality> {
     return this.localityRepository.create(this.route, model);
   }
 
+  postById(formData: Object) {
+    return this.localityRepository.create('catalog/locality-sera/id', formData);
+  }
+
   update(id: string | number, model: ILocality): Observable<Object> {
     return this.localityRepository.update(this.route, id, model);
   }
