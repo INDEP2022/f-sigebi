@@ -23,3 +23,43 @@ export const NUMBERS_BY_COMMA = '^(d+,?)+$';
 
 export const NUM_POSITIVE_LETTERS = '^[0-9]+|[a-zA-Z]+$';
 export const NUM_POSITIVE = '^[0-9]+';
+
+export const VALID_VALUE_REGEXP = (
+  value: string,
+  pattern: string | RegExp,
+  maxLength: number,
+  nameField?: string
+) => {
+  let validValue = '';
+  let errorRegExp = false;
+  let errorMaxLength = false;
+  let regExp = new RegExp(pattern);
+  for (let index = 0; index < maxLength; index++) {
+    const element = value[index];
+    if (element) {
+      if (regExp.test(element)) {
+        validValue = validValue + element;
+      } else {
+        errorRegExp = true;
+      }
+    }
+  }
+  if (value.length > maxLength) {
+    errorMaxLength = true;
+  }
+  return {
+    validValue: validValue,
+    errorRegExp: errorRegExp,
+    errorRegExpMessage: ERROR_REG_EXP(nameField),
+    errorMaxLength: errorMaxLength,
+    errorMaxLengthMessage: ERROR_MAX_LENGTH(nameField),
+  };
+};
+const ERROR_REG_EXP = (nameField: string = '') =>
+  `El campo${
+    nameField ? ': ' + nameField + ',' : ''
+  } tiene caracteres incorrectos los cuales se eliminaron.`;
+const ERROR_MAX_LENGTH = (nameField: string = '') =>
+  `El campo${
+    nameField ? ': ' + nameField + ',' : ''
+  } tiene MÁS caracteres de los permitidos, se eliminaron los caracteres después de la longitud permitida.`;
