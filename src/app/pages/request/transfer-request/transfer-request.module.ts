@@ -33,6 +33,7 @@ import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-
 import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
 import { AssetsComponent } from './tabs/records-of-request-components/assets/assets.component';
+import { CopyAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/copy-address/copy-address.component';
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 import { RequestRecordTabComponent } from './tabs/records-of-request-components/request-record-tab/request-record-tab.component';
@@ -79,6 +80,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     SelectTypeUserComponent,
     OpenDescriptionComponent,
     CheckboxComponent,
+    CopyAddressComponent,
   ],
   imports: [
     CommonModule,

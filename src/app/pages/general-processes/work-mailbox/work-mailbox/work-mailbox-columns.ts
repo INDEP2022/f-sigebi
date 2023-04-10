@@ -353,3 +353,17 @@ export const WORK_MAILBOX_COLUMNS2 = {
     editable: false,
   },*/
 };
+
+export const array_column_table = (objColumnsTable: any) => {
+  let response = [];
+  for (const key in objColumnsTable) {
+    if (Object.prototype.hasOwnProperty.call(objColumnsTable, key)) {
+      const element = objColumnsTable[key];
+      if (element) {
+        element['key'] = key;
+        response.push(element);
+      }
+    }
+  }
+  return response;
+};
