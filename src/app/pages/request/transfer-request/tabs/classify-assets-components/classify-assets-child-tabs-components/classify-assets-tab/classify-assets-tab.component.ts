@@ -105,6 +105,9 @@ export class ClassifyAssetsTabComponent
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
+        this.classiGoodsForm.controls['quantity'].setValue(
+          Number(this.good.quantity)
+        );
       }
     }
   }
@@ -397,6 +400,9 @@ export class ClassifyAssetsTabComponent
     if (this.goodObject != null) {
       this.getSection(new ListParams(), this.good.ligieSection);
       this.classiGoodsForm.patchValue(this.good);
+      this.classiGoodsForm.controls['quantity'].setValue(
+        Number(this.good.quantity)
+      );
     }
   }
 
@@ -707,6 +713,7 @@ export class ClassifyAssetsTabComponent
     if (good.addressId.id) {
       good.addressId = Number(good.addressId.id);
     }
+    good.quantity = Number(good.quantity);
     this.goodService.update(good).subscribe({
       next: data => {
         this.message(

@@ -42,6 +42,7 @@ export class RequestRecordTabComponent
   priority: boolean = false;
   priorityString: string = 'N';
   transferenceNumber: number = 0;
+  formLoading: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -266,6 +267,7 @@ export class RequestRecordTabComponent
 
   async confirm() {
     this.loading = true;
+    this.formLoading = true;
     const request = this.requestForm.getRawValue() as IRequest;
 
     const requestResult = await this.updateRequest(request);
@@ -289,12 +291,14 @@ export class RequestRecordTabComponent
           }
           if (resp.statusCode != null) {
             resolve(false);
+            this.message('error', 'Error', `¡No se guardó la solicitud!.`);
           }
-
+          this.formLoading = false;
           this.loading = false;
         },
         error: error => {
           this.loading = false;
+          this.formLoading = false;
           this.message(
             'error',
             'Error',

@@ -81,10 +81,10 @@ export class AddressTransferorTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject != undefined) {
-      this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
-      this.domicileForm.controls['regionalDelegationId'].setValue(
+      //this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
+      /*this.domicileForm.controls['regionalDelegationId'].setValue(
         this.requestObject.regionalDelegationId
-      );
+      );*/
       this.getStateOfRepublic(
         new ListParams(),
         this.requestObject.keyStateOfRepublic
@@ -290,6 +290,10 @@ export class AddressTransferorTabComponent
     this.domicileForm.controls['userCreation'].setValue(username);
 
     const domicile = this.domicileForm.getRawValue();
+    if (this.isNewAddress === false) {
+      domicile.requestId = this.requestObject.id;
+      domicile.regionalDelegationId = this.requestObject.regionalDelegationId;
+    }
 
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {
