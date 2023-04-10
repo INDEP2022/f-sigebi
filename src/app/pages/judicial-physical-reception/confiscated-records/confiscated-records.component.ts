@@ -347,6 +347,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.serviceExpedient
               .getById(this.form.get('expediente').value)
               .subscribe(res => {
+                console.log(res.expedientType)
                 if (
                   res.expedientType != 'A' &&
                   res.expedientType != 'N/A' &&
