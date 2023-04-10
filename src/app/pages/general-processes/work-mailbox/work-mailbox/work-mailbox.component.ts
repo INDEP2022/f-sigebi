@@ -341,7 +341,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            this.removePreviewsMessages(filter.field + '-validation', 'title'); // Remover validaciones previas
+            // this.removePreviewsMessages(filter.field + '-validation', 'title'); // Remover validaciones previas
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'processNumber':
@@ -352,11 +352,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   NUM_POSITIVE,
                   40
                 );
-                this.validChildNode(
-                  valueProcessNumber,
-                  filter.field + '-validation',
-                  'title'
-                ); // Validar el camnpo y crear mensajes necesarios
+                // this.validChildNode(
+                //   valueProcessNumber,
+                //   filter.field + '-validation',
+                //   'title'
+                // ); // Validar el camnpo y crear mensajes necesarios
                 filter.search = valueProcessNumber.validValue;
                 break;
               case 'processStatus':
@@ -368,11 +368,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                     STRING_PATTERN,
                     10
                   );
-                  this.validChildNode(
-                    valueProcessStatus,
-                    filter.field + '-validation',
-                    'title'
-                  ); // Validar el camnpo y crear mensajes necesarios
                   filter.search = valueProcessStatus.validValue.toUpperCase();
                 }
                 break;
@@ -384,12 +379,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   NUM_POSITIVE,
                   40
                 );
-                this.validChildNode(
-                  valueFlier,
-                  filter.field + '-validation',
-                  'title'
-                ); // Validar el camnpo y crear mensajes necesarios
-                filter.search = valueFlier;
+                filter.search = valueFlier.validValue;
                 break;
               case 'issueType':
                 // TIPO DE ASUNTO
@@ -398,6 +388,150 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               case 'count':
                 // DIGITALIZADO
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'officeNumber':
+                // OFICIO
+                let valueOfficeNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  500
+                );
+                filter.search = valueOfficeNumber.validValue;
+                break;
+              case 'proceedingsNumber':
+                // EXPEDIENTE
+                let valueProceedingsNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueProceedingsNumber.validValue;
+                break;
+              case 'issue':
+                // ASUNTO
+                let valueIssue = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  500
+                );
+                filter.search = valueIssue.validValue;
+                break;
+              case 'processSituation':
+                // SITUACION TRAMITE
+                let valueProcessSituation = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueProcessSituation.validValue;
+                break;
+              case 'turnadoiUser':
+                // USUARIO TURNADO
+                let valueTurnadoiUser = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueTurnadoiUser.validValue;
+                break;
+              case 'dailyConsecutiveNumber':
+                // CONSECUTIVO DIARIO
+                let valueDailyConsecutiveNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueDailyConsecutiveNumber.validValue;
+                break;
+              case 'descentfed':
+                // DESCRIPCION ENTIDAD FEDERATIVA
+                let valueDescentfed = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  100
+                );
+                filter.search = valueDescentfed.validValue;
+                break;
+              case 'businessDays':
+                // DIAS HABILES
+                let valueBusinessDays = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueBusinessDays.validValue;
+                break;
+              case 'naturalDays':
+                // DIAS NATURALES HABILES
+                let valueNaturalDays = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueNaturalDays.validValue;
+                break;
+              case 'observation':
+                // OBSERVACIONES
+                let valueObservation = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  200
+                );
+                filter.search = valueObservation.validValue;
+                break;
+              case 'observationAdd':
+                // OBSERVACIONES ADD
+                let valueObservationAdd = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  200
+                );
+                filter.search = valueObservationAdd.validValue;
+                break;
+              case 'priority':
+                // PRIORIDAD
+                let valuePriority = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  10
+                );
+                filter.search = valuePriority.validValue;
+                break;
+              case 'sheets':
+                // DOCUMENTOS
+                let valueSheets = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueSheets.validValue;
+                break;
+              case 'areaATurn':
+                // AREA TURNAR
+                let valueAreaATurn = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueAreaATurn.validValue;
+                break;
+              case 'userATurn':
+                // USUARIO A TURNAR
+                let valueUserATurn = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueUserATurn.validValue;
+                break;
+              case 'folioRep':
+                // FOLIO REP.
+                let valueFolioRep = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  10
+                );
+                filter.search = valueFolioRep.validValue;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
