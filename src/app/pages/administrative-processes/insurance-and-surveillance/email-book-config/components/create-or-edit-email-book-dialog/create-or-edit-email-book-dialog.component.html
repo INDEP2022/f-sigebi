@@ -21,8 +21,10 @@
       [control]="form.get('delegationNumber')"
       label="Delegación Regional">
       <ng-custom-select
+        [initOption]="initOption"
+        value="delegationNumber"
         class="form-control"
-        path="catalog/api/v1/regional-delegation"
+        path="survillance/api/v1/views/v-vig-delegations"
         paramSearch="filter.description"
         prefixSearch="$ilike"
         formControlName="delegationNumber">

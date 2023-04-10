@@ -58,6 +58,7 @@ export class CustomSelectComponent
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
+  @Input() initOption: any = null;
   @Input() moreParams: { [key: string]: any } = {};
   @Output() valueChange = new EventEmitter<any>();
   input$ = new Subject<string>();
@@ -74,8 +75,10 @@ export class CustomSelectComponent
 
   ngOnInit(): void {
     this.onSearch();
+    if (this.initOption) {
+      this.items.push(this.initOption);
+    }
     if (this.isLoadInOnInit) {
-      console.log('load');
       this.input$.next('');
     }
   }
@@ -107,7 +110,6 @@ export class CustomSelectComponent
       this.valueChange.emit(null);
       return;
     }
-    console.log({ event });
     const data = this.items.find(item => item[this.value] === event);
     this.valueChange.emit(data);
   }
@@ -142,7 +144,6 @@ export class CustomSelectComponent
   }
 
   fetchMore(text: any) {
-    console.log(text);
     this.page++;
     this.isLoading = true;
     this.getItemsObservable(text).subscribe({
@@ -151,9 +152,8 @@ export class CustomSelectComponent
         const items = this.getDataForPath(resp);
         this.items = [...this.items, ...items];
       },
-      error: err => {
+      error: () => {
         this.isLoading = false;
-        console.log(err);
       },
     });
   }
@@ -168,7 +168,6 @@ export class CustomSelectComponent
           if (text === null) {
             return of(this.items);
           }
-          // console.log(text);
           this.page = 1;
           this.isLoading = true;
           return this.getItemsObservable(text);

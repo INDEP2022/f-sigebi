@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, skip } from 'rxjs';
 import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
@@ -17,7 +17,7 @@ import { BOOK_EMAIL_COLUMNS } from './book-email-columns';
 })
 export class EmailBookConfigComponent
   extends BasePage
-  implements AfterViewInit
+  implements AfterViewInit, OnInit
 {
   @ViewChild(CreateOrEditEmailBookDialogComponent)
   createOrEditEmailBookDialog: CreateOrEditEmailBookDialogComponent;
@@ -30,6 +30,14 @@ export class EmailBookConfigComponent
     super();
     this.settings.columns = BOOK_EMAIL_COLUMNS;
     this.settings.actions.delete = true;
+  }
+  ngOnInit(): void {
+    this.params.pipe(skip(1)).subscribe(params => {
+      if (this.formControlRegionalDelegation.invalid) {
+        return;
+      }
+      this.getVigMailBook(params);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -60,9 +68,16 @@ export class EmailBookConfigComponent
   }
 
   editEmailBook(event: { data: IVigMailBook }): void {
-    this.createOrEditEmailBookDialog.openDialogEdit(event.data);
+    this.createOrEditEmailBookDialog.openDialogEdit(
+      event.data,
+      this.delegationRegional
+    );
   }
 
+  delegationRegional: any = null;
+  onDelegationRegionalChange(event: any): void {
+    this.delegationRegional = event;
+  }
   getVigMailBook(listParams = new ListParams()): void {
     if (this.formControlRegionalDelegation.invalid) {
       showToast({

@@ -32,6 +32,7 @@ export class CreateOrEditEmailBookDialogComponent {
 
   dialogRef: BsModalRef;
   isLoading = false;
+  initOption: any = null;
 
   constructor(
     private dialogService: BsModalService,
@@ -48,8 +49,9 @@ export class CreateOrEditEmailBookDialogComponent {
     this.dialogRef.hide();
   }
 
-  openDialogEdit(formData: IVigMailBook): void {
+  openDialogEdit(formData: IVigMailBook, item: any): void {
     this.oldData = formData;
+    this.initOption = item;
     this.form.patchValue(formData);
     this.openDialog();
   }

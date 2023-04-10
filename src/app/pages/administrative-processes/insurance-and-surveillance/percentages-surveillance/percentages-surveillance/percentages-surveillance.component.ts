@@ -21,13 +21,13 @@ export class PercentagesSurveillanceComponent
 {
   sources = new LocalDataSource();
   processes = [
-    { name: 'Supervisión', value: 1 },
-    { name: 'Validación', value: 2 },
+    { name: 'Supervisión', value: '1' },
+    { name: 'Validación', value: '2' },
   ];
 
   delegationTypes = [
-    { name: 'Ferronal', value: 1 },
-    { name: 'Sae', value: 2 },
+    { name: 'Ferronal', value: '1' },
+    { name: 'Sae', value: '2' },
   ];
 
   totalItems: number = 0;
@@ -36,7 +36,7 @@ export class PercentagesSurveillanceComponent
   editDialogData: IVigProcessPercentages | null = null;
   @ViewChild('dialogPercentage') dialogPercentageTemplateRef: TemplateRef<any>;
   form = new FormGroup({
-    percentage: new FormControl('', [
+    percentage: new FormControl(null, [
       Validators.required,
       Validators.min(0),
       Validators.max(100),
@@ -69,7 +69,6 @@ export class PercentagesSurveillanceComponent
     this.loading = true;
     this.survillanceService.getVigProcessPercentages(listParams).subscribe({
       next: response => {
-        // this.percentages = response.data;
         this.sources.load(response.data);
         this.totalItems = response.count;
         this.loading = false;
@@ -83,7 +82,14 @@ export class PercentagesSurveillanceComponent
   onEditConfirm(event: { data: IVigProcessPercentages }): void {
     console.log(event);
     this.editDialogData = event.data;
-    this.form.patchValue(event.data);
+    const { cveProcess, delegationNumber, delegationType, percentage } =
+      event.data;
+    this.form.patchValue({
+      cveProcess: cveProcess.toString(),
+      delegationNumber: delegationNumber.toString(),
+      delegationType: delegationType.toString(),
+      percentage: percentage,
+    });
     this.openDialogPercentage();
   }
 
@@ -145,8 +151,7 @@ export class PercentagesSurveillanceComponent
       this.survillanceService
         .putVigProcessPercentages(this.editDialogData.cveProcess as any, values)
         .subscribe({
-          next: response => {
-            console.log(response);
+          next: () => {
             this.loading = false;
             this.sources.update(this.editDialogData, values);
             this.closeDialogPercentage();

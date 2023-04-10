@@ -3,6 +3,7 @@ import { SurvillanceEndpoints } from 'src/app/common/constants/endpoints/ms-surv
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IViewVigDelegations,
   IVigBinnacle,
   IVigProcessPercentages,
 } from '../../models/ms-survillance/survillance';
@@ -20,6 +21,13 @@ export class SurvillanceService extends HttpService {
   getVigProcessPercentages(params?: _Params) {
     return this.get<IListResponse<IVigProcessPercentages>>(
       this.route.VigProcessPercentages,
+      params
+    );
+  }
+
+  getViewVigDelegations(params?: _Params) {
+    return this.get<IListResponse<IViewVigDelegations>>(
+      this.route.View_VigDelegations,
       params
     );
   }

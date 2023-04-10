@@ -45,21 +45,17 @@
   </div>
   <div class="modal-body form-material" [formGroup]="form">
     <form-field [control]="form.get('cveProcess')" label="Proceso">
-      <!-- <input type="text" formControlName="cveProcess" class="form-control" /> -->
       <ng-select formControlName="cveProcess" class="form-control">
-        <ng-option [value]="process.value" *ngFor="let process of processes">{{
-          process.name
-        }}</ng-option>
+        <ng-option [value]="process.value" *ngFor="let process of processes">
+          {{ process.name }}
+        </ng-option>
       </ng-select>
     </form-field>
     <form-field [control]="form.get('delegationNumber')" label="Delegación">
-      <!-- <input
-        type="text"
-        formControlName="delegationNumber"
-        class="form-control" /> -->
       <ng-custom-select
         class="form-control"
-        path="catalog/api/v1/delegation"
+        path="survillance/api/v1/views/v-vig-delegations"
+        value="delegationNumber"
         formControlName="delegationNumber"
         prefixSearch="$ilike"
         paramSearch="filter.description"

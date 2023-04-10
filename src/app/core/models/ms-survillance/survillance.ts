@@ -18,3 +18,20 @@ export interface IVigBinnacle {
   sendId: number;
   bodyId: number;
 }
+
+export interface IViewVigDelegations {
+  delegationNumber: string;
+  description: string;
+  typeDelegation: string;
+  delegation: IDelegation;
+}
+
+export interface IDelegation {
+  id: string;
+  description: string;
+  registerNumber: string;
+  zoneContractKey: string;
+  diffHours: string;
+  phaseEdo: string;
+  zoneVigilanceKey: null;
+}

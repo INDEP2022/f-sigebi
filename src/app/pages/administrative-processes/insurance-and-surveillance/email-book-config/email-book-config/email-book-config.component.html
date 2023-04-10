@@ -16,11 +16,14 @@
             label="Delegación Regional">
             <ng-custom-select
               class="form-control"
-              path="catalog/api/v1/regional-delegation"
+              value="delegationNumber"
+              path="survillance/api/v1/views/v-vig-delegations"
               paramSearch="filter.description"
               prefixSearch="$ilike"
               [formControl]="formControlRegionalDelegation"
-              (valueChange)="getVigMailBook()">
+              (valueChange)="
+                getVigMailBook(); onDelegationRegionalChange($event)
+              ">
               <ng-template let-item>
                 {{ item.description }}
               </ng-template>
@@ -50,6 +53,7 @@
         </div>
       </div>
       <app-pagination
+        [pageSizeOptions]="[1, 3, 5]"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
     </form>
