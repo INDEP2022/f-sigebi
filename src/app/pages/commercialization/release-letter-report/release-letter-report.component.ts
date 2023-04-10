@@ -27,6 +27,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   selectEvent = new DefaultSelect<IComerLotsEG>();
   selectLot = new DefaultSelect<IComerLotsEG>();
   idLot: number = 0;
+  valid: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   settings1 = {
     ...TABLE_SETTINGS,
@@ -118,6 +119,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   confirm(): void {
     console.log(this.form.value);
+    this.valid = true;
     let params = {
       DESTYPE: this.form.controls['evento'].value,
       ID_LOTE: this.form.controls['lote'].value,

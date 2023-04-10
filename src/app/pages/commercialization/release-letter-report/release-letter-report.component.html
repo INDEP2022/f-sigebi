@@ -183,7 +183,7 @@
         <confirm-button
           text="Imprimir"
           [loading]="loading"
-          [disabled]="form.invalid"
+          [disabled]="!valid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
