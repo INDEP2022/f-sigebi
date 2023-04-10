@@ -169,16 +169,17 @@ export class DocRequestTabComponent
     this.loading = true;
     this.wContentService.findDocumentBySolicitud(this.idRequest).subscribe({
       next: async (data: any) => {
-        const info = data.data.map(async (items: any) => {
+        console.log('doc', data);
+        /*const info = data.data.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
           items.xtipoDocumento = filter[0].ddescription;
-        });
+        }); */
 
-        Promise.all(info).then(x => {
+        /*Promise.all(info).then(x => {
           this.paragraphs.load(data.data);
           this.totalItems = this.paragraphs.count();
           this.loading = false;
-        });
+        }); */
       },
       error: error => {
         console.log(error);

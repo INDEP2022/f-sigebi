@@ -96,7 +96,10 @@ export class AddressTransferorTabComponent
 
   initForm() {
     this.domicileForm = this.fb.group({
-      warehouseAlias: ['DOMICILIO TRANSFERENTE'],
+      warehouseAlias: [
+        'DOMICILIO TRANSFERENTE',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       wayref2Key: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -112,11 +115,11 @@ export class AddressTransferorTabComponent
       ],
       localityKey: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(100))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       code: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(6))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(6)],
       ],
       latitude: [
         null,
@@ -128,23 +131,23 @@ export class AddressTransferorTabComponent
       ], //por cambiar
       wayName: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       wayOrigin: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       exteriorNumber: [
         null,
-        [(Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
       ],
       interiorNumber: [
         null,
-        [(Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
       ],
       wayDestiny: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       wayref1Key: [
         null,
@@ -152,7 +155,7 @@ export class AddressTransferorTabComponent
       ],
       wayChaining: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       description: [
         null,

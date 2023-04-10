@@ -10,7 +10,7 @@ export const VERIRY_COMPLIANCE_COLUMNS = {
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
-  downloadCompliance: {
+  fulfill: {
     title: 'Cumplimiento',
     type: 'string',
     sort: false,

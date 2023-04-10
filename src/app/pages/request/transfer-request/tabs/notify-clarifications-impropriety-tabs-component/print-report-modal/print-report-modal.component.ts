@@ -4,10 +4,12 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -23,6 +25,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
+  valuesSign: ISignatories;
+  requestInfo: IRequest;
 
   src = '';
   isPdfLoaded = false;
@@ -53,7 +57,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     private signatoriesService: SignatoriesService,
     private gelectronicFirmService: GelectronicFirmService,
     private authService: AuthService,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private requestService: RequestService
   ) {
     super();
     this.settings = {
@@ -91,25 +96,18 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Verifica si ya existe ese usuario en la lista de firmantes
     this.signatoriesService
-      .getSignatoriesFilter(this.idTypeDoc, this.idDoc)
+      .getSignatoriesName(this.idTypeDoc, this.idDoc, token.name)
       .subscribe({
         next: response => {
           this.signatories = response.data;
-          for (let i = 0; i < this.signatories.length; i++) {
-            if ((this.signatories[i].name = token.name)) {
-              console.log(
-                'Ya hay firmantes con el mismo nombre, no se puede registarr más'
-              );
-            } else {
-              this.registerSign();
-              console.log(
-                'No hay firmantes con el mismo nombre, proceder a registrar con el usuario logeado'
-              );
-            }
-          }
+          console.log(
+            'Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más'
+          );
+          //Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más
         },
         error: error => {
           //Si no hay firmantes, entonces asignar nuevos
+          console.log('Si no hay firmantes, entonces asignar nuevos');
           this.registerSign();
         },
       });
@@ -206,6 +204,100 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.modalService.show(UploadFielsModalComponent, config);
   }
 
+  rowsSelected(event: any) {
+    this.valuesSign = event.data;
+    const idDoc = this.idDoc;
+    const obj: Object = {
+      id: this.requestInfo.id,
+      recordId: this.requestInfo.recordId,
+      applicationDate: this.requestInfo.applicationDate,
+      receptionDate: this.requestInfo.receptionDate,
+      nameOfOwner: this.requestInfo.nameOfOwner,
+      holderCharge: this.requestInfo.holderCharge,
+      phoneOfOwner: this.requestInfo.phoneOfOwner,
+      emailOfOwner: this.requestInfo.emailOfOwner,
+      transferenceId: this.requestInfo.transferenceId,
+      transferent: this.requestInfo.transferent,
+      stationId: this.requestInfo.stationId,
+      emisora: this.requestInfo.emisora,
+      authorityId: this.requestInfo.authorityId,
+      regionalDelegationId: this.requestInfo.regionalDelegationId,
+      regionalDelegation: this.requestInfo.regionalDelegation,
+      sender: this.requestInfo.sender,
+      observations: this.requestInfo.observations,
+      targetUser: this.requestInfo.targetUser,
+      urgentPriority: this.requestInfo.urgentPriority,
+      indicatedTaxpayer: this.requestInfo.indicatedTaxpayer,
+      transferenceFile: this.requestInfo.transferenceFile,
+      transferEntNotes: this.requestInfo.transferEntNotes,
+      idAddress: this.requestInfo.idAddress,
+      originInfo: this.requestInfo.originInfo,
+      circumstantialRecord: this.requestInfo.circumstantialRecord,
+      previousInquiry: this.requestInfo.previousInquiry,
+      lawsuit: this.requestInfo.lawsuit,
+      protectNumber: this.requestInfo.protectNumber,
+      tocaPenal: this.requestInfo.tocaPenal,
+      paperNumber: this.requestInfo.paperNumber,
+      paperDate: this.requestInfo.paperDate,
+      indicated: this.requestInfo.indicated,
+      publicMinistry: this.requestInfo.publicMinistry,
+      court: this.requestInfo.court,
+      crime: this.requestInfo.crime,
+      receiptRoute: this.requestInfo.receiptRoute,
+      destinationManagement: this.requestInfo.destinationManagement,
+      affair: this.requestInfo.affair,
+      satDeterminant: this.requestInfo.satDeterminant,
+      satDirectory: this.requestInfo.satDirectory,
+      authority: this.requestInfo.authority,
+      satZoneCoordinator: this.requestInfo.satZoneCoordinator,
+      userCreated: this.requestInfo.userCreated,
+      creationDate: this.requestInfo.creationDate,
+      userModification: this.requestInfo.userModification,
+      modificationDate: this.requestInfo.modificationDate,
+      typeOfTransfer: this.requestInfo.typeOfTransfer,
+      domainExtinction: this.requestInfo.domainExtinction,
+      version: this.requestInfo.version,
+      targetUserType: this.requestInfo.targetUserType,
+      trialType: this.requestInfo.trialType,
+      typeRecord: this.requestInfo.typeRecord,
+      requestStatus: this.requestInfo.requestStatus,
+      fileLeagueType: this.requestInfo.fileLeagueType,
+      fileLeagueDate: this.requestInfo.fileLeagueDate,
+      rejectionComment: this.requestInfo.rejectionComment,
+      authorityOrdering: this.requestInfo.authorityOrdering,
+      instanceBpm: this.requestInfo.instanceBpm,
+      trial: this.requestInfo.trial,
+      compensationType: this.requestInfo.compensationType,
+      stateRequestId: this.requestInfo.stateRequestId,
+      searchSiab: this.requestInfo.searchSiab,
+      priorityDate: this.requestInfo.priorityDate,
+      ofRejectionsNumber: this.requestInfo.ofRejectionsNumber,
+      rulingDocumentId: this.requestInfo.rulingDocumentId,
+      reportSheet: this.requestInfo.reportSheet,
+      nameRecipientRuling: this.requestInfo.nameRecipientRuling,
+      postRecipientRuling: this.requestInfo.postRecipientRuling,
+      paragraphOneRuling: this.requestInfo.paragraphOneRuling,
+      paragraphTwoRuling: this.requestInfo.paragraphTwoRuling,
+      nameSignatoryRuling: this.valuesSign.name, //Info nueva que se inserta
+      postSignatoryRuling: this.valuesSign.post,
+      ccpRuling: this.requestInfo.ccpRuling,
+      rulingCreatorName: this.requestInfo.rulingCreatorName,
+      rulingSheetNumber: this.requestInfo.rulingSheetNumber,
+      registrationCoordinatorSae: this.requestInfo.registrationCoordinatorSae,
+      emailNotification: this.requestInfo.emailNotification,
+      keyStateOfRepublic: this.requestInfo.keyStateOfRepublic,
+      instanceBpel: this.requestInfo.instanceBpel,
+      verificationDateCump: this.requestInfo.verificationDateCump,
+      recordTmpId: this.requestInfo.recordTmpId,
+      coordregsae_ktl: this.requestInfo.coordregsae_ktl,
+    };
+    //Enviar nueva información a Request
+    this.requestService.update(idDoc, obj).subscribe({
+      next: data => {},
+      error: error => (this.loading = false),
+    });
+  }
+
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
     let message = '¿Está seguro a enviar la información a firmar?';
@@ -220,6 +312,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   nextStep() {
+    const idDoc = this.idDoc;
+    console.log('ID solicidutd', idDoc);
     //verificar que el estado de registro este como "Correcto" y siguiente paso
     this.listSigns = false;
     this.printReport = true;
@@ -227,6 +321,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.title = 'Imprimir Reporte';
     this.btnTitle = 'Adjuntar Documento';
     this.btnSubTitle = 'Imprimir Reporte';
+
+    //Agregar información del firmante al reporte
+    /*this.requestService.update(idDoc, this.dictumForm.value).subscribe({
+      next: data => (this.handleSuccess(), this.signDictum()),
+      error: error => (this.loading = false),
+    });*/
   }
 
   pdfTempo: string = 'PDF';
@@ -301,8 +401,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-    const id = this.idDoc;
-    const nameTypeReport = this.nameTypeDoc;
+    const id = this.idDoc; //ID solicitud
+    const nameTypeReport = this.nameTypeDoc; //Id tipo de documento que es 50
 
     const formData: Object = {
       id: this.idDoc,
@@ -314,7 +414,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
-        error: error => (console.log('Error', error), this.close()),
+        error: error => (
+          console.log('Eror', error),
+          this.onLoadToast('error', 'Error', error.error.error)
+        ),
       });
   }
 
@@ -335,6 +438,5 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.onLoadToast('success', 'Reporte formado', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
-    this.modalRef.hide();
   }
 }

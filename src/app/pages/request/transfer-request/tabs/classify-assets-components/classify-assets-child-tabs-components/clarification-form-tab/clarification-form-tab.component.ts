@@ -99,6 +99,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
+    this.loader.load = true;
     const user: any = this.authService.decodeToken();
     let clarification = this.clarificationForm.getRawValue();
     clarification.creationUser = user.username;
@@ -116,6 +117,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   private save(clarification: ClarificationGoodRejectNotification) {
     this.rejectedGoodService.create(clarification).subscribe({
       next: val => {
+        this.loader.load = false;
         this.onLoadToast(
           'success',
           `Aclaración guardada`,
@@ -134,6 +136,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       .update(clarification.rejectNotificationId, clarification)
       .subscribe({
         next: val => {
+          this.loader.load = false;
           this.onLoadToast(
             'success',
             `Aclaración actualizada`,
