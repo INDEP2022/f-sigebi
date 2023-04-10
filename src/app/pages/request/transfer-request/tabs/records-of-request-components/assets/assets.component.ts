@@ -270,7 +270,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          this.message('success', 'Archivos cargados', `${resp.message}`);
+          this.message(
+            'success',
+            'Archivos cargados',
+            `Se importaron los archivos`
+          );
+          this.closeCreateGoodWIndows();
         },
         error: error => {
           this.message('error', 'Error al guardar', `${error.error.message}`);
