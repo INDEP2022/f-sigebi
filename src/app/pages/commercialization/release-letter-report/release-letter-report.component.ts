@@ -207,8 +207,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     });
   }
   getLot(params?: ListParams) {
-    params['filter.description'] = `$ilike:${params.text}`;
-    params['filter.lotId'] = `$eq:${this.idLot}`;
+    params['filter.event.id'] = `$eq:${this.idEvent}`;
     this.comerLotService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
