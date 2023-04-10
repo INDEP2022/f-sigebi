@@ -8,6 +8,7 @@ import {
   debounceTime,
   map,
   of,
+  switchMap,
   takeUntil,
   tap,
   throwError,
@@ -117,6 +118,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  areasParams = new BehaviorSubject(new FilterParams());
   columnFilters: any = [];
 
   form: FormGroup = this.fb.group({
@@ -347,7 +349,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         });
         this.filterForm.controls['user'].setValue(data.data[0]);
         let $params = new ListParams();
-        this.getGroupWork($params);
+        this.getGroupWork($params, true);
       },
       error: () => {
         //this.users$ = new DefaultSelect();
@@ -428,6 +430,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     console.log(priority);
     field = `filter.processStatus`;
+    let filter = `$eq`;
     if (managementArea !== null) {
       switch (priority) {
         case 'toDo':
@@ -443,13 +446,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           processStatus = `${managementArea.id}D`;
           break;
         default:
-          processStatus = null;
+          processStatus = `${managementArea.id}`;
+          filter = `$ilike`;
           break;
       }
       if (processStatus !== null) {
         //this.filterParams.getValue().addFilter('processStatus',processStatus,SearchFilter.EQ);
 
-        this.columnFilters[field] = `$eq:${processStatus}`;
+        this.columnFilters[field] = `${filter}:${processStatus}`;
       } else {
         delete this.columnFilters[field];
       }
@@ -610,6 +614,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
       this.columnFilters[field] = `$eq:${userId.toUpperCase()}`;
+      if (this.managementAreaF.value !== null) {
+        let managementArea = this.managementAreaF.value;
+        this.columnFilters[
+          'filter.processStatus'
+        ] = `$ilike:${managementArea.id}`;
+      }
       //this.columnFilters[field] = `${userId.toUpperCase()}`;
       //this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
@@ -894,84 +904,143 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       });
   }
 
-  getAreas() {
-    this.procedureManagementService.getManagamentArea({ limit: 20 }).subscribe({
-      next: (resp: any) => {
-        this.areas$ = resp.data;
-      },
-      error: error => (this.loading = false),
+  areaChange(area: IManagementArea) {
+    const user = this.user.value;
+    const _area = this.managementAreaF.value;
+    if (user && _area) {
+      this.setDefaultValuesByArea(_area, user);
+    }
+  }
+
+  setDefaultValuesByArea(area: IManagementArea, user: any) {
+    console.log({ area, user });
+    const params = new FilterParams();
+    params.addFilter('managementArea', area.id);
+    params.addFilter('user', user.id);
+    this.getAllManagementGroupAreas(params).subscribe(response => {
+      const group = response.data[0];
+      if (group) {
+        this.groupNumber = group.groupNumber;
+        this.managementArea = group.managementArea;
+        this.predetermined = group.predetermined;
+        this.send = group.send;
+        this.turnar = group.turnar;
+        this.watch = group.watch;
+      }
     });
   }
 
-  getGroupWork($params: ListParams) {
-    const token = this.authService.decodeToken();
-    let userId = token.preferred_username;
+  getAreas(params: FilterParams) {
+    return this.procedureManagementService
+      .getManagamentArea(params.getParams())
+      .pipe(
+        tap(resp => {
+          this.areas$ = new DefaultSelect(resp.data, resp.count);
+          if (resp.data.length > 0)
+            this.filterForm.controls['managementArea'].setValue(resp.data[0]);
+        })
+      );
+  }
+
+  getAllManagementGroupAreas(params: FilterParams) {
+    return this.procedureManagementService.getManagamentGroupWork(
+      params.getParams()
+    );
+  }
+
+  getGroupWork($params: ListParams, reset?: boolean) {
+    if (reset) {
+      $params.page = 1;
+    }
+    const _params = new FilterParams();
     const params = new FilterParams();
+    _params.limit = 100;
     params.page = $params.page;
     params.limit = $params.limit;
-    let predetermined = this.predeterminedF.value;
+    params.search = $params.text;
 
-    predetermined
-      ? (params.addFilter('predetermined', 'S'),
-        params.addFilter('user', userId.toUpperCase()))
-      : params.removeAllFilters();
+    const user = this.user.value;
+    if (user) {
+      _params.addFilter('user', user.id);
+      this.getAllManagementGroupAreas(_params)
+        .pipe(
+          map(response => response.data.map(group => group.managementArea)),
+          switchMap(areas => {
+            if (areas.length > 0) {
+              params.addFilter('id', areas.join(','), SearchFilter.IN);
+            }
+            return this.getAreas(params);
+          })
+        )
+        .subscribe({
+          next: () => {},
+          error: error => {
+            this.areas$ = new DefaultSelect();
+            this.filterForm.controls['managementArea'].setValue(null);
+          },
+        });
+    } else {
+      this.getAreas(params).subscribe();
+    }
 
-    this.procedureManagementService
-      .getManagamentGroupWork(params.getParams())
-      .subscribe({
-        next: (respGW: any) => {
-          if (respGW.data) {
-            let groups = respGW.data;
-            this.procedureManagementService
-              .getManagamentArea({ limit: 20 })
-              .subscribe({
-                next: (resp: any) => {
-                  /*VALIDAR AREAS POR GRUPO*/
-                  let assignedArea = resp.data.filter((area: any) => {
-                    return groups.some((g: any) => {
-                      return area.id === g.managementArea;
-                    });
-                  });
+    // const token = this.authService.decodeToken();
+    // let userId = token.preferred_username;
+    // const params = new FilterParams();
+    // params.page = $params.page;
+    // params.limit = $params.limit;
+    // let predetermined = this.predeterminedF.value;
 
-                  /*this.areas$.map((area:any)=>{
-                  let filter = groups.findIndex((group:any) =>
-                    group.managementArea === area.id)
+    // predetermined
+    //   ? (params.addFilter('predetermined', 'S'),
+    //     params.addFilter('user', userId.toUpperCase()))
+    //   : params.removeAllFilters();
 
-                  console.log(filter)
-                  if(filter != -1){
-                    return area
-                  }
-                });*/
-                  let data = resp.data.map((area: any) => {
-                    area.description = `${area.id} - ${area.description}`;
-                    return area;
-                  });
+    // this.procedureManagementService
+    //   .getManagamentGroupWork(params.getParams())
+    //   .subscribe({
+    //     next: (respGW: any) => {
+    //       if (respGW.data) {
+    //         let groups = respGW.data;
+    //         this.procedureManagementService
+    //           .getManagamentArea({ limit: 20 })
+    //           .subscribe({
+    //             next: (resp: any) => {
+    //               /*VALIDAR AREAS POR GRUPO*/
+    //               let assignedArea = resp.data.filter((area: any) => {
+    //                 return groups.some((g: any) => {
+    //                   return area.id === g.managementArea;
+    //                 });
+    //               });
+    //               let data = resp.data.map((area: any) => {
+    //                 area.description = `${area.id} - ${area.description}`;
+    //                 return area;
+    //               });
 
-                  this.areas$ = new DefaultSelect(data, resp.count);
+    //               this.areas$ = new DefaultSelect(data, resp.count);
 
-                  //let managementArea=this.areas$.filter(ar=>ar.managementArea===groups.)
-                  console.log(assignedArea);
-                  predetermined
-                    ? this.filterForm.controls['managementArea'].setValue(
-                        assignedArea[0]
-                      )
-                    : this.filterForm.controls['managementArea'].setValue({});
+    //               //let managementArea=this.areas$.filter(ar=>ar.managementArea===groups.)
+    //               console.log(assignedArea);
+    //               predetermined
+    //                 ? this.filterForm.controls['managementArea'].setValue(
+    //                     assignedArea[0]
+    //                   )
+    //                 : this.filterForm.controls['managementArea'].setValue({});
 
-                  this.groupNumber = resp.data[0].groupNumber;
-                  this.managementArea = resp.data[0].managementArea;
-                  this.predetermined = resp.data[0].predetermined;
-                  this.send = resp.data[0].send;
-                  this.turnar = resp.data[0].turnar;
-                  this.watch = resp.data[0].watch;
-                  console.log(this.areas$);
-                  this.getData();
-                },
-                error: error => (this.loading = false),
-              });
-          }
-        },
-        error: error => (this.loading = false),
-      });
+    //               this.groupNumber = resp.data[0].groupNumber;
+    //               this.managementArea = resp.data[0].managementArea;
+    //               this.predetermined = resp.data[0].predetermined;
+    //               this.send = resp.data[0].send;
+    //               this.turnar = resp.data[0].turnar;
+    //               this.watch = resp.data[0].watch;
+    //               console.log(this.areas$);
+    //               this.getData();
+    //             },
+    //             error: error => (this.loading = false),
+    //           });
+    //       }
+    //     },
+    //     error: error => (this.loading = false),
+    //   });
   }
 
   viewFlyerHistory() {
@@ -1496,32 +1565,58 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(MailboxModalTableComponent, config);
   }
 
+  userChange(user: any) {
+    const params = new ListParams();
+    this.areas$ = new DefaultSelect([], 0, true);
+    this.getGroupWork(params, true);
+    const _user = this.user.value;
+    const _area = this.managementAreaF.value;
+    if (_user && _area) {
+      this.setDefaultValuesByArea(_area, _user);
+    }
+  }
+
   getUsers($params: ListParams) {
     console.log($params);
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
+    const area = this.managementAreaF.value;
+    /*if (area) {
+      const _params = new FilterParams();
+      _params.page = params.page;
+      //_params.addFilter('id', area.managementArea);
+      //_params.addFilter('user', params.search, SearchFilter.ILIKE);
+     
+      this.getAllManagementGroupAreas(_params)
+        .pipe(
+          map(response => response.data.map(group => group.user)),
+          switchMap(users => {
+            const __params = new FilterParams();
+            __params.addFilter('id', users.join(','), SearchFilter.IN);
+            return this.getAllUsers(__params);
+          })
+        )
+        .subscribe();
+       this.getAllUsers(_params).subscribe();
+    } else {
+      this.getAllUsers(params).subscribe();
+    }*/
+
     params.addFilter('name', $params.text, SearchFilter.LIKE);
-    //params.addFilter('assigned', 'S');
-    /*if (lparams?.text.length > 0)
+    this.getAllUsers(params).subscribe();
+  }
 
-    if (this.delDestinyNumber.value != null)
-      params.addFilter('delegationNumber', this.delDestinyNumber.value);
-    if (this.subDelDestinyNumber.value != null)
-      params.addFilter('subdelegationNumber', this.subDelDestinyNumber.value);*/
-    this.usersService.getAllSegUsers(params.getParams()).subscribe({
-      next: data => {
-        data.data.map(user => {
-          user.userAndName = `${user.id}- ${user.name}`;
-          return user;
-        });
-
-        this.users$ = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.users$ = new DefaultSelect();
-      },
-    });
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 
   resetFilters(): void {
