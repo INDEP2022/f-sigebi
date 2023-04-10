@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -20,7 +26,10 @@ import { AffairService } from '../../../../../../core/services/catalogs/affair.s
   templateUrl: './request-record-tab.component.html',
   styles: [],
 })
-export class RequestRecordTabComponent extends BasePage implements OnInit {
+export class RequestRecordTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() requestForm: ModelForm<IRequest>;
   bsReceptionValue = new Date();
   bsPaperValue: any;
@@ -43,42 +52,48 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   ) {
     super();
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
     //this.prepareForm();
-    this.requestForm.controls['affair'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['affair'].value != null) {
-        this.getAffair(this.requestForm.controls['affair'].value);
-      }
 
-      if (this.requestForm.controls['urgentPriority'].value) {
-        //establece el campo urgente
-        this.priorityString = this.requestForm.controls['urgentPriority'].value;
+    if (this.requestForm.controls['paperDate'].value != null) {
+      const paperDate = this.requestForm.controls['paperDate'].value;
+      this.bsPaperValue = new Date(paperDate);
+    }
 
-        this.priority =
-          this.requestForm.controls['urgentPriority'].value === 'Y'
-            ? true
-            : false;
-        //this.requestForm.controls['urgentPriority'].setValue(this.priority);
-      }
+    //establecer el asunto
+    if (this.requestForm.controls['affair'].value != null) {
+      this.getAffair(this.requestForm.controls['affair'].value);
+    }
 
-      //establece el campo fecha de oficio
-      if (this.requestForm.controls['paperDate'].value != null) {
-        let date = new Date(this.requestForm.controls['paperDate'].value);
-        this.bsPaperValue = date;
-        //this.requestForm.controls['paperDate'].setValue(date.toISOString());
-      }
+    //establece el campo fecha de oficio
+    if (this.requestForm.controls['urgentPriority'].value) {
+      //establece el campo urgente
+      this.priorityString = this.requestForm.controls['urgentPriority'].value;
 
-      //estable el campo para preguntar en la vista si es del tipo 1 o 3
-      if (this.requestForm.controls['transferenceId'].value != null) {
-        this.transferenceNumber = Number(
-          this.requestForm.controls['transferenceId'].value
-        );
-      }
-    });
+      this.priority =
+        this.requestForm.controls['urgentPriority'].value === 'Y'
+          ? true
+          : false;
+      //this.requestForm.controls['urgentPriority'].setValue(this.priority);
+    }
+
+    //estable el campo para preguntar en la vista si es del tipo 1 o 3
+    if (this.requestForm.controls['transferenceId'].value != null) {
+      this.transferenceNumber = Number(
+        this.requestForm.controls['transferenceId'].value
+      );
+    }
 
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
     this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {

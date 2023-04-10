@@ -26,8 +26,8 @@ export class RequestDocumentationService extends HttpService {
     return this.post(ENDPOINT_LINKS.RequestDocumentation, request);
   }
 
-  update(id: string | number, request: IRequest) {
-    const route = `${ENDPOINT_LINKS.RequestDocumentation}/${id}`;
+  update(request: IRequest) {
+    const route = `${ENDPOINT_LINKS.RequestDocumentation}`;
     return this.put(route, request);
   }
 

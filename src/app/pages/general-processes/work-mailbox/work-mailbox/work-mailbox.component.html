@@ -73,13 +73,23 @@
                     <ngx-select
                       [form]="filterForm"
                       [data]="users$"
+                      (change)="userChange($event)"
                       (fetchItems)="getUsers($event)"
                       bindLabel="userAndName"
                       control="user"
                       label="Usuario"
                       [searchOnInit]="true"
-                      termMaxLength="30">
+                      termMaxLength="30"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
                     </ngx-select>
+
+                    <ng-template #userLabel let-item="item"
+                      >{{ item.id }} - {{ item.name }}</ng-template
+                    >
+                    <ng-template #userOption let-item="item"
+                      >{{ item.id }} - {{ item.name }}</ng-template
+                    >
                   </form-field>
                   <form-field
                     class="mb-3 mt-3"
@@ -88,12 +98,22 @@
                       [form]="filterForm"
                       [data]="areas$"
                       (fetchItems)="getGroupWork($event)"
+                      (change)="areaChange($event)"
                       bindLabel="description"
                       control="managementArea"
                       [searchOnInit]="true"
                       termMaxLength="30"
-                      label="Buz&oacute;n de &Aacute;rea">
+                      label="Buz&oacute;n de &Aacute;rea"
+                      [labelTemplate]="areaLabel"
+                      [optionTemplate]="areaOption">
                     </ngx-select>
+
+                    <ng-template #areaLabel let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
+                    <ng-template #areaOption let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
                   </form-field>
                 </div>
                 <div class="col-12 col-md-12 col-lg-12 col-xl-7">
@@ -301,16 +321,23 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="onSavePaperwork()">Enviar</a>
+              <a class="dropdown-item" (click)="workFunction('onSavePaperwork')"
+                >Enviar</a
+              >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="validDoc()"
+              <a class="dropdown-item" (click)="workFunction('validDoc')"
                 >Validar documentación</a
               >
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="workFunction('scanDocuments')"
                 >Escaneo</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Reporte de notificaciones</a
               >
             </li>
           </ul>
@@ -343,9 +370,9 @@
         </div>
       </div>
     </div>
-    <!-- <app-pagination
+    <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>-->
+      [totalItems]="totalItems"></app-pagination>
 
     <form [formGroup]="form" class="form-material">
       <div class="row justify-content-end">
@@ -372,9 +399,9 @@
           </div>
         </div>-->
         <div class="col-md-6">
-          <button class="btn btn-info btn-sm active mx-1" disabled>
+          <!--<button class="btn btn-info btn-sm active mx-1" disabled>
             Reporte de notificaciones
-          </button>
+          </button>-->
           <!--<button class="btn btn-info btn-sm active mx-1" disabled>
             Im&aacute;genes SIJ
           </button>-->

@@ -88,8 +88,11 @@ export class RegistrationOfRequestsComponent
   stationName: string = '';
   delegationName: string = '';
   authorityName: string = '';
+  haveDictamen: boolean = false;
 
   requestList: IRequest;
+
+  formLoading: boolean = true;
 
   constructor(
     public fb: FormBuilder,
@@ -289,17 +292,23 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
+        /* verifica si existe un dictamen en la solicitud */
+        if (this.typeDocument === 'proceso-aprovacion') {
+          await this.getDictamen(data.id);
+        }
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
-
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
+        this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
       },
       error: error => {
+        this.formLoading = false;
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -566,8 +575,6 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
-    this.cambiarTipoUsuario(this.requestData);
-    return;
     /* trae solicitudes actualizadas */
     const request = await this.getAsyncRequestById();
     if (request) {
@@ -719,13 +726,18 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    console.log(this.requestData);
-    const dictamenResult = await this.getDictamen();
-    console.log(dictamenResult);
-    /*  const oldTask: any = await this.getOldTask();
+    if (this.haveDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'Error',
+        'Es requerido tener dictamen previamente generado'
+      );
+      return;
+    }
+    const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/process-approval';
+      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+      const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
       const taskResult = await this.createTaskOrderService(
@@ -743,9 +755,48 @@ export class RegistrationOfRequestsComponent
           `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
-    } */
+    }
   }
   /** fin de proceso */
+
+  /* Inicio de rechazar aprovacion */
+  refuseRequest() {
+    this.msgSaveModal(
+      'Rechazar',
+      'Deseas rechazar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      'refuse'
+    );
+  }
+
+  async refuseMethod() {
+    console.log(this.requestData);
+
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/verify-compliance';
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'VERIFICAR_CUMPLIMIENTO';
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskResult === true) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+    }
+  }
+  /* Fin rechazo de aprovacion */
 
   updateRequest(request: any) {
     return new Promise((resolve, reject) => {
@@ -831,16 +882,23 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getDictamen() {
+  getDictamen(id: number) {
     return new Promise((resolve, reject) => {
       let body: any = {};
-      body['xidSolicitud'] = this.requestData.id;
+      body['xidSolicitud'] = id;
       body['xTipoDocumento'] = 50;
       this.wcontentService.getDocumentos(body).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
-            resolve(true);
+            this.haveDictamen = true;
+          } else {
+            this.haveDictamen = false;
           }
+          resolve(true);
+        },
+        error: error => {
+          this.haveDictamen = false;
+          resolve(true);
         },
       });
     });
@@ -886,6 +944,10 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'proceso-aprovacion') {
           this.approveRequestMethod();
+        }
+
+        if (typeCommit === 'refuse') {
+          this.refuseMethod();
         }
       }
     });
