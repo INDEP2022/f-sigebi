@@ -430,6 +430,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     console.log(priority);
     field = `filter.processStatus`;
+    let filter = `$eq`;
     if (managementArea !== null) {
       switch (priority) {
         case 'toDo':
@@ -445,13 +446,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           processStatus = `${managementArea.id}D`;
           break;
         default:
-          processStatus = null;
+          processStatus = `${managementArea.id}`;
+          filter = `$ilike`;
           break;
       }
       if (processStatus !== null) {
         //this.filterParams.getValue().addFilter('processStatus',processStatus,SearchFilter.EQ);
 
-        this.columnFilters[field] = `$eq:${processStatus}`;
+        this.columnFilters[field] = `${filter}:${processStatus}`;
       } else {
         delete this.columnFilters[field];
       }
@@ -612,6 +614,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
       this.columnFilters[field] = `$eq:${userId.toUpperCase()}`;
+      if (this.managementAreaF.value !== null) {
+        let managementArea = this.managementAreaF.value;
+        this.columnFilters[
+          'filter.processStatus'
+        ] = `$ilike:${managementArea.id}`;
+      }
       //this.columnFilters[field] = `${userId.toUpperCase()}`;
       //this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
@@ -928,6 +936,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       .pipe(
         tap(resp => {
           this.areas$ = new DefaultSelect(resp.data, resp.count);
+          if (resp.data.length > 0)
+            this.filterForm.controls['managementArea'].setValue(resp.data[0]);
         })
       );
   }
@@ -962,7 +972,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             return this.getAreas(params);
           })
         )
-        .subscribe();
+        .subscribe({
+          next: () => {},
+          error: error => {
+            this.areas$ = new DefaultSelect();
+            this.filterForm.controls['managementArea'].setValue(null);
+          },
+        });
     } else {
       this.getAreas(params).subscribe();
     }
@@ -1561,15 +1577,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getUsers($params: ListParams) {
+    console.log($params);
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
     const area = this.managementAreaF.value;
-    if (area) {
+    /*if (area) {
       const _params = new FilterParams();
       _params.page = params.page;
-      _params.addFilter('id', area.managementArea);
-      _params.addFilter('user', params.search, SearchFilter.ILIKE);
+      //_params.addFilter('id', area.managementArea);
+      //_params.addFilter('user', params.search, SearchFilter.ILIKE);
+     
       this.getAllManagementGroupAreas(_params)
         .pipe(
           map(response => response.data.map(group => group.user)),
@@ -1580,9 +1598,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           })
         )
         .subscribe();
+       this.getAllUsers(_params).subscribe();
     } else {
       this.getAllUsers(params).subscribe();
-    }
+    }*/
+
+    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    this.getAllUsers(params).subscribe();
   }
 
   getAllUsers(params: FilterParams) {
