@@ -246,11 +246,6 @@ export class DetailAssetsTabComponentComponent
         this.isGoodInfReadOnly = true;
         this.isGoodTypeReadOnly = true;
       }
-
-      if (this.detailAssets.controls['subBrand'].value) {
-        const subBrand = this.detailAssets.controls['subBrand'].value;
-        this.getSubBrand(new ListParams(), subBrand);
-      }
     }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
@@ -258,6 +253,11 @@ export class DetailAssetsTabComponentComponent
       const data = this.detailAssets.controls['goodTypeId'].value;
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
+    }
+
+    if (this.detailAssets.controls['subBrand'].value) {
+      const brand = this.detailAssets.controls['brand'].value;
+      this.getSubBrand(new ListParams(), brand);
     }
   }
 

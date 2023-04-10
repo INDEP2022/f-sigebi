@@ -116,6 +116,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       params['filter.relevantTypeId'] = `$eq:${typeRelevant}`;
     }
 
+    this.paragraphs = [];
     this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log(data);
@@ -130,6 +131,8 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   clean(): void {
     this.searchForm.reset();
+    this.paragraphs = [];
+    this.totalItems = 0;
   }
 
   complianceSelected(): void {
