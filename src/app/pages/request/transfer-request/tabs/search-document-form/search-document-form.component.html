@@ -65,10 +65,9 @@
         <form-field [control]="searchForm.get('xIdSIAB')" label="No&#46; siab">
           <input
             type="number"
-            maxlength="30"
-            min="0"
             class="form-control"
-            formControlName="xIdSIAB" />
+            formControlName="xIdSIAB"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -162,10 +161,10 @@
           [control]="searchForm.get('xidExpediente')"
           label="No&#46; expediente">
           <input
-            type="text"
-            maxlength="30"
+            type="number"
             class="form-control"
-            formControlName="xidExpediente" />
+            formControlName="xidExpediente"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -200,10 +199,10 @@
           [control]="searchForm.get('xidSolicitud')"
           label="No&#46; solicitud">
           <input
-            type="text"
-            maxlength="30"
+            type="number"
             class="form-control"
-            formControlName="xidSolicitud" />
+            formControlName="xidSolicitud"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -235,9 +234,9 @@
         <form-field [control]="searchForm.get('xidBien')" label="No&#46; bien">
           <input
             type="text"
-            maxlength="30"
             class="form-control"
-            formControlName="xidBien" />
+            formControlName="xidBien"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-4">
