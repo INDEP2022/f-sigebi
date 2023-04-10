@@ -259,6 +259,7 @@ export class ClassificationAssetsTabComponent
     this.assetsId = this.goodSelect[0].id;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
+        this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
       }, 1000);
