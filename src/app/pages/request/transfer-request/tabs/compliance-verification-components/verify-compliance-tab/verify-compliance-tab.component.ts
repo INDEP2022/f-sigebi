@@ -31,6 +31,7 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
@@ -72,6 +73,8 @@ export class VerifyComplianceTabComponent
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
   goodsSelected: any = [];
+  checkboxReadOnly: boolean = false;
+  formLoading: boolean = false;
 
   /* aclaraciones */
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -89,7 +92,8 @@ export class VerifyComplianceTabComponent
     private requestDocumentService: RequestDocumentationService,
     private authService: AuthService,
     private clarificationService: ClarificationService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private requestHelperService: RequestHelperService
   ) {
     super();
   }
@@ -116,10 +120,18 @@ export class VerifyComplianceTabComponent
       ...this.articleColumns.cumple,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
+          console.log('data', data);
+
           this.articlesSelected(data);
         });
       },
     };
+
+    /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
+    if (this.typeDoc === 'approval-process') {
+      this.checkboxReadOnly = true;
+      this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -618,6 +630,7 @@ export class VerifyComplianceTabComponent
 
   selectGood(event: any) {
     //if (event.isSelected === true) {
+    this.formLoading = true;
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
@@ -630,7 +643,10 @@ export class VerifyComplianceTabComponent
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
+        this.formLoading = false;
       }, 2000);
+    } else {
+      this.formLoading = false;
     }
   }
 

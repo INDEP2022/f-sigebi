@@ -6,9 +6,9 @@ export const INDICATORS_GOOD_COLUMNS1 = {
     type: 'text',
     sort: false,
   },
-  value: {
+  quantity: {
     title: 'Valor',
-    type: 'number',
+    type: 'text',
     sort: false,
   },
 };
@@ -23,6 +23,9 @@ export const INDICATORS_COLUMNS2 = {
     title: 'Descripción',
     type: 'text',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idGoodNumber.description;
+    },
   },
   value: {
     title: '',

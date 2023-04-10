@@ -15,7 +15,11 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
 import { EXPEDIENT_DOC_REQ_COLUMNS } from '../registration-request-form/expedient-doc-columns';
@@ -74,8 +78,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
 
   initForm() {
     this.searchForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      recordId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      recordId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       keyStateOfRepublic: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       lawsuit: [

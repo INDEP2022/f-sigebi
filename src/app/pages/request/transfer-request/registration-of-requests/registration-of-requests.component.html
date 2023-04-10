@@ -22,7 +22,7 @@
           <i class="bx bxs-pencil"></i> Firmar Dictamen
         </button>
       </div>
-      <div class="p-2" *ngIf="!approvalProcess">
+      <div class="p-2" *ngIf="requestRegistration">
         <button
           type="button"
           class="btn btn-secondary btn-sm active"
@@ -68,200 +68,209 @@
     </div>
   </div>
   <div body>
-    <div class="row"></div>
-    <div class="row">
-      <div header>
-        <h5 class="title">Informaci&oacute;n de la Solicitud</h5>
-      </div>
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
     </div>
-    <div>
-      <form [formGroup]="registRequestForm" class="form-material">
-        <app-card [header]="false">
-          <div body>
-            <div class="row pt-2">
-              <div class="col-md-4">
-                <div>
-                  <label for="">No&#46; Solicitud&#58;</label>
-                  {{ infoRequest?.id }}
+    <div *ngIf="!formLoading">
+      <div class="row">
+        <div header>
+          <h5 class="title">Informaci&oacute;n de la Solicitud</h5>
+        </div>
+      </div>
+      <div>
+        <form [formGroup]="registRequestForm" class="form-material">
+          <app-card [header]="false">
+            <div body>
+              <div class="row pt-2">
+                <div class="col-md-4">
+                  <div>
+                    <label for="">No&#46; Solicitud&#58;</label>
+                    {{ infoRequest?.id }}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label for="">Fecha de Solicitud&#58;</label>
+                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label for="">Estado&#58;</label>
+                    {{ stateOfRepublicName }}
+                  </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <div>
-                  <label for="">Fecha de Solicitud&#58;</label>
-                  {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
+              <div class="row pt-2">
+                <div class="col-lg-4">
+                  <div>
+                    <label for="">Transferente&#58;</label>
+                    {{ transferentName }}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label for="">Emisora&#58;</label>
+                    {{ stationName }}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label for="">Autoridad&#58;</label>
+                    {{ authorityName }}
+                  </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <div>
-                  <label for="">Estado&#58;</label>
-                  {{ stateOfRepublicName }}
+              <div class="row pt-2">
+                <div class="col-md-4">
+                  <div>
+                    <label for="">Delegaci&oacute;n Regional&#58;</label>
+                    {{ delegationName }}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label for="">No&#46; Oficio&#58;</label>
+                    {{ registRequestForm?.get('paperNumber').value }}
+                  </div>
+                </div>
+                <div
+                  class="col-md-4"
+                  *ngIf="typeDocument !== 'captura-solicitud'">
+                  <div>
+                    <label for="">Tipo Expediente&#58;</label>
+                    {{ registRequestForm?.get('typeRecord').value }}
+                  </div>
+                </div>
+              </div>
+              <div class="row pt-2">
+                <div
+                  class="col-md-4"
+                  *ngIf="registRequestForm?.get('recordId').value !== null">
+                  <div>
+                    <label for="">No&#46; Expediente&#58;</label>
+                    {{ registRequestForm?.get('recordId').value }}
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="row pt-2">
-              <div class="col-lg-4">
-                <div>
-                  <label for="">Transferente&#58;</label>
-                  {{ transferentName }}
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div>
-                  <label for="">Emisora&#58;</label>
-                  {{ stationName }}
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div>
-                  <label for="">Autoridad&#58;</label>
-                  {{ authorityName }}
-                </div>
-              </div>
-            </div>
-            <div class="row pt-2">
-              <div class="col-md-4">
-                <div>
-                  <label for="">Delegaci&oacute;n Regional&#58;</label>
-                  {{ delegationName }}
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div>
-                  <label for="">No&#46; Oficio&#58;</label>
-                  {{ registRequestForm?.get('paperNumber').value }}
-                </div>
-              </div>
-              <div
-                class="col-md-4"
-                *ngIf="typeDocument !== 'captura-solicitud'">
-                <div>
-                  <label for="">Tipo Expediente&#58;</label>
-                  {{ registRequestForm?.get('typeRecord').value }}
-                </div>
-              </div>
-            </div>
-            <div class="row pt-2">
-              <div
-                class="col-md-4"
-                *ngIf="registRequestForm?.get('recordId').value !== null">
-                <div>
-                  <label for="">No&#46; Expediente&#58;</label>
-                  {{ registRequestForm?.get('recordId').value }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </app-card>
+          </app-card>
 
-        <div class="row pt-2">
-          <tabset class="md-tabs" #staticTabs>
-            <tab [heading]="tab1" id="tab1">
-              <!-- Registro de Solicitudes o bines -->
-              <app-request-record-tab
-                *ngIf="requestRegistration"
-                [requestForm]="registRequestForm"></app-request-record-tab>
-              <!-- Fin -->
-              <!-- cumplimiento de verificacion y clasificacion de bienes-->
-              <!--//en caso de que no funciones el === false ///
+          <div class="row pt-2">
+            <tabset class="md-tabs" #staticTabs>
+              <tab [heading]="tab1" id="tab1">
+                <!-- Registro de Solicitudes o bines -->
+                <app-request-record-tab
+                  *ngIf="requestRegistration"
+                  [requestForm]="registRequestForm"></app-request-record-tab>
+                <!-- Fin -->
+                <!-- cumplimiento de verificacion y clasificacion de bienes-->
+                <!--//en caso de que no funciones el === false ///
                 complianceVerifi ||
                   classifyAssets ||
                   validateDocument ||
                   notifyClarifiOrImpropriety ||
                   approvalProcess
               -->
-              <app-request-detail-tab
-                *ngIf="requestRegistration === false"
-                [requestForm]="registRequestForm"
-                [process]="process"></app-request-detail-tab>
-              <!-- fin -->
-            </tab>
-            <tab heading="{{ tab2 }}">
-              <!-- Registro de Solicitudes o bines -->
-              <app-assets
-                *ngIf="requestRegistration"
-                [requestObject]="requestData"
-                [process]="process"></app-assets>
-              <!-- fin -->
-              <!-- cumplimiento de verificacion -->
-              <app-verify-compliance-tab
-                *ngIf="complianceVerifi && requestData"
-                [typeDoc]="'verify-compliance'"
-                [requestObject]="requestData"
-                [process]="process"></app-verify-compliance-tab>
-              <!-- fin -->
-              <!-- clasificacion de bienes -->
-              <app-classification-assets-tab
-                *ngIf="classifyAssets"
+                <app-request-detail-tab
+                  *ngIf="requestRegistration === false"
+                  [requestForm]="registRequestForm"
+                  [process]="process"></app-request-detail-tab>
+                <!-- fin -->
+              </tab>
+              <tab heading="{{ tab2 }}">
+                <!-- Registro de Solicitudes o bines -->
+                <app-assets
+                  *ngIf="requestRegistration"
+                  [requestObject]="requestData"
+                  [process]="process"></app-assets>
+                <!-- fin -->
+                <!-- cumplimiento de verificacion -->
+                <app-verify-compliance-tab
+                  *ngIf="complianceVerifi && requestData"
+                  [typeDoc]="'verify-compliance'"
+                  [requestObject]="requestData"
+                  [process]="process"></app-verify-compliance-tab>
+                <!-- fin -->
+                <!-- clasificacion de bienes -->
+                <app-classification-assets-tab
+                  *ngIf="classifyAssets"
+                  [requestObject]="registRequestForm"
+                  [process]="process"
+                  [typeDoc]="'classify-assets'"></app-classification-assets-tab>
+                <!-- fin -->
+                <!-- Validacion de Documentos -->
+                <app-clarifications
+                  [requestObject]="requestData"
+                  *ngIf="validateDocument"
+                  [process]="process"></app-clarifications>
+                <!-- fin -->
+                <!-- notificar aclaraciones o improcedencias -->
+                <app-notification-assets-tab
+                  *ngIf="notifyClarifiOrImpropriety"
+                  [isSaving]="saveClarifiObject"
+                  [process]="process"></app-notification-assets-tab>
+                <!-- fin -->
+                <!-- Aprovar solicitudes -->
+                <app-approval-assets-tabs
+                  *ngIf="approvalProcess"
+                  [dataObject]="object"
+                  [process]="process"></app-approval-assets-tabs>
+                <!-- Fin -->
+              </tab>
+              <tab heading="{{ tab3 }}">
+                <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
+                <app-address-transferor-tab
+                  *ngIf="requestRegistration || approvalProcess"
+                  [requestObject]="requestData"></app-address-transferor-tab>
+                <!-- fin -->
+                <!-- cumplimiento de verificacion y clasificacion de bienes -->
+                <app-expedients-tabs
+                  *ngIf="
+                    complianceVerifi ||
+                    classifyAssets ||
+                    validateDocument ||
+                    notifyClarifiOrImpropriety
+                  "></app-expedients-tabs>
+                <!-- fin -->
+              </tab>
+              <tab
+                heading="{{ tab4 }}"
+                *ngIf="requestRegistration && !isExpedient">
+                <app-registration-request-form
+                  *ngIf="requestRegistration"
+                  [requestForm]="
+                    registRequestForm
+                  "></app-registration-request-form>
+              </tab>
+              <tab heading="{{ tab4 }}" *ngIf="approvalProcess">
+                <!-- Aprovacion de de solicitudes -->
+                <!-- <app-classification-assets-tab
+                *ngIf="approvalProcess"
                 [requestObject]="registRequestForm"
                 [process]="process"
-                [typeDoc]="'classify-assets'"></app-classification-assets-tab>
-              <!-- fin -->
-              <!-- Validacion de Documentos -->
-              <app-clarifications
-                [requestObject]="requestData"
-                *ngIf="validateDocument"
-                [process]="process"></app-clarifications>
-              <!-- fin -->
-              <!-- notificar aclaraciones o improcedencias -->
-              <app-notification-assets-tab
-                *ngIf="notifyClarifiOrImpropriety"
-                [isSaving]="saveClarifiObject"
-                [process]="process"></app-notification-assets-tab>
-              <!-- fin -->
-              <!-- Aprovar solicitudes -->
-              <app-approval-assets-tabs
-                *ngIf="approvalProcess"
-                [dataObject]="object"
-                [process]="process"></app-approval-assets-tabs>
-              <!-- Fin -->
-            </tab>
-            <tab heading="{{ tab3 }}">
-              <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
-              <app-address-transferor-tab
-                *ngIf="requestRegistration || approvalProcess"
-                [requestObject]="requestData"></app-address-transferor-tab>
-              <!-- fin -->
-              <!-- cumplimiento de verificacion y clasificacion de bienes -->
-              <app-expedients-tabs
-                *ngIf="
-                  complianceVerifi ||
-                  classifyAssets ||
-                  validateDocument ||
-                  notifyClarifiOrImpropriety
-                "></app-expedients-tabs>
-              <!-- fin -->
-            </tab>
-            <tab
-              heading="{{ tab4 }}"
-              *ngIf="requestRegistration && !isExpedient">
-              <app-registration-request-form
-                *ngIf="requestRegistration"
-                [requestForm]="
-                  registRequestForm
-                "></app-registration-request-form>
-            </tab>
-            <tab heading="{{ tab4 }}" *ngIf="approvalProcess">
-              <!-- Aprovacion de de solicitudes -->
-              <app-classification-assets-tab
-                *ngIf="approvalProcess"
-                [requestObject]="registRequestForm"
-                [process]="process"
-                [typeDoc]="'approval-process'"></app-classification-assets-tab>
-              <!-- Fin -->
-            </tab>
-            <tab
-              heading="{{ tab5 }}"
-              *ngIf="requestRegistration || approvalProcess">
-              <app-expedients-tabs
-                *ngIf="
-                  requestRegistration || approvalProcess
-                "></app-expedients-tabs>
-            </tab>
-          </tabset>
-        </div>
-      </form>
-    </div>
+                [typeDoc]="'approval-process'"></app-classification-assets-tab> -->
 
+                <app-verify-compliance-tab
+                  *ngIf="approvalProcess && requestData"
+                  [typeDoc]="'approval-process'"
+                  [requestObject]="requestData"
+                  [process]="process"></app-verify-compliance-tab>
+                <!-- Fin -->
+              </tab>
+              <tab
+                heading="{{ tab5 }}"
+                *ngIf="requestRegistration || approvalProcess">
+                <app-expedients-tabs
+                  *ngIf="
+                    requestRegistration || approvalProcess
+                  "></app-expedients-tabs>
+              </tab>
+            </tabset>
+          </div>
+        </form>
+      </div>
+    </div>
     <div class="d-flex justify-content-center">
       <!-- <div class="m-3">
         <button

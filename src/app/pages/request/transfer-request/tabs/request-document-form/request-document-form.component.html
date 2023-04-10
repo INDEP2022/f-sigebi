@@ -26,7 +26,11 @@
         <form-field
           [control]="searchForm.get('id')"
           label="N&uacute;mero de solicitud">
-          <input type="text" class="form-control" formControlName="id" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="id"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-6">
@@ -49,7 +53,11 @@
         <form-field
           [control]="searchForm.get('recordId')"
           label="N&uacute;mero de expediente">
-          <input type="text" class="form-control" formControlName="recordId" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="recordId"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-6">
