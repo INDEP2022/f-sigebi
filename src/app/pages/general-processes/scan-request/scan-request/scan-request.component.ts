@@ -11,7 +11,7 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -39,7 +39,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private notificationServ: NotificationService,
     private documentServ: DocumentsService,
-    private token: AuthService,
+    private jasperService: SiabService,
     private modalService: BsModalService,
     private datePipe: DatePipe,
     private route: ActivatedRoute
@@ -71,6 +71,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } = this.formNotification.value;
 
     this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = 1;
 
     if (typeof receiptDate == 'object' && receiptDate) {
       const convertDate = this.datePipe.transform(receiptDate, 'yyyy-MM-dd');
@@ -358,12 +359,20 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
-      //en espera del reporte TODO:
       const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERGENSOLICDIGIT.pdf?PARAMFORM=NO&PN_FOLIO=${this.idFolio}`;
+      //en espera del reporte TODO service:
+      // this.jasperService.getReport('RGERGENSOLICDIGIT', { PARAMFORM: 'NO', PN_FOLIO: this.idFolio }).subscribe(
+      //   {
+      //     next: (data) => {
+      //       console.log(data);
+      //     },
+      //     error: () => {
 
-      window.open(
-        'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf'
-      );
+      //     }
+      //   }
+      // )
+
+      window.open(url, 'REPORTE');
     } else {
       this.onLoadToast(
         'error',
