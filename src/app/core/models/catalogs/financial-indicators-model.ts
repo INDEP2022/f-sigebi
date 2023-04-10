@@ -1,3 +1,4 @@
+import { IGood } from './goods.model';
 export interface IFinancialIndicators {
   id: number;
   name: string;
@@ -7,7 +8,7 @@ export interface IFinancialIndicators {
 }
 export interface IFinancialIndicatorsW {
   idIndicatorDate: string;
-  idGoodNumber: string;
+  idGoodNumber: IGood;
   idIndicatorNumber: string;
   value: number;
   registryNumber: number;

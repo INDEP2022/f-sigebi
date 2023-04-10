@@ -12,6 +12,8 @@
           label="No&#46; Expediente">
           <input
             type="number"
+            min="0"
+            [max-length]="10"
             formControlName="expedientNumber"
             class="form-control" />
         </form-field>
@@ -22,6 +24,8 @@
           label="No&#46; Volante">
           <input
             type="number"
+            min="0"
+            [max-length]="10"
             formControlName="wheelNumber"
             class="form-control" />
         </form-field>
@@ -41,7 +45,10 @@
           class="col-md-6"
           [control]="formNotification.get('preliminaryInquiry')"
           label="Averiguaci&oacute;n Previa">
-          <input formControlName="preliminaryInquiry" class="form-control" />
+          <input
+            [max-length]="200"
+            formControlName="preliminaryInquiry"
+            class="form-control" />
         </form-field>
       </div>
 
@@ -50,28 +57,40 @@
           class="col-md-3"
           [control]="formNotification.get('criminalCase')"
           label="Causa Penal">
-          <input formControlName="criminalCase" class="form-control" />
+          <input
+            formControlName="criminalCase"
+            class="form-control"
+            [max-length]="40" />
         </form-field>
 
         <form-field
           class="col-md-3"
           [control]="formNotification.get('touchPenaltyKey')"
           label="Toca Penal">
-          <input formControlName="touchPenaltyKey" class="form-control" />
+          <input
+            formControlName="touchPenaltyKey"
+            class="form-control"
+            [max-length]="30" />
         </form-field>
 
         <form-field
           class="col-md-3"
           [control]="formNotification.get('circumstantialRecord')"
           label="Acta Circunstanciada">
-          <input formControlName="circumstantialRecord" class="form-control" />
+          <input
+            formControlName="circumstantialRecord"
+            [max-length]="30"
+            class="form-control" />
         </form-field>
 
         <form-field
           class="col-md-3"
           [control]="formNotification.get('protectionKey')"
           label="Amparo">
-          <input formControlName="protectionKey" class="form-control" />
+          <input
+            formControlName="protectionKey"
+            class="form-control"
+            [max-length]="30" />
         </form-field>
       </div>
 

@@ -6,28 +6,43 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="form.get('evento')" label="Evento">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="evento"
-              placeholder="Evento" />
+            <input type="number" class="form-control" formControlName="evento" placeholder="Evento" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('lote')" label="Lote">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="lote"
-              placeholder="Lote" />
+            <input type="number" class="form-control" formControlName="lote" placeholder="Lote" />
           </form-field>
+        </div> -->
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="evento"
+            (fetchItems)="getEvent($event)"
+            [showTooltip]="true"
+            [data]="selectEvent"
+            bindLabel="description"
+            label="Evento"
+            value="id"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="lote"
+            (fetchItems)="getLot($event)"
+            [showTooltip]="true"
+            [data]="selectLot"
+            bindLabel="description"
+            [searchable]="true"
+            label="Lote"
+            value="lotId"></ngx-select>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('oficio')" label="Oficio">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="oficio"
               placeholder="Oficio" />
@@ -93,8 +108,11 @@
           [source]="data"></ng2-smart-table> -->
         <ng2-smart-table
           [settings]="settings2"
-          [source]="dataGood"></ng2-smart-table>
+          [source]="goodList"></ng2-smart-table>
       </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
 
       <hr class="row mt-5" />
       <div class="row">
@@ -165,7 +183,7 @@
         <confirm-button
           text="Imprimir"
           [loading]="loading"
-          [disabled]="form.invalid"
+          [disabled]="!valid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

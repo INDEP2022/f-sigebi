@@ -11,6 +11,11 @@
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
+      <div>
+        <button class="btn btn-primary btn-sm active" (click)="copyAddress()">
+          <i class="bx bx-copy-alt"></i> Copiar domicilio existente
+        </button>
+      </div>
     </div>
   </div>
   <div>
@@ -23,6 +28,7 @@
               label="Alias Almac&eacute;n">
               <input
                 type="text"
+                maxlength="500"
                 class="form-control"
                 formControlName="warehouseAlias"
                 [readOnly]="isreadOnly" />
@@ -89,6 +95,7 @@
               label="Latitud">
               <input
                 type="text"
+                maxlength="30"
                 class="form-control"
                 formControlName="latitude" />
             </form-field>
@@ -100,6 +107,7 @@
             <form-field [control]="domicileForm.get('length')" label="Longitud">
               <input
                 type="text"
+                maxlength="30"
                 class="form-control"
                 formControlName="length" />
             </form-field>
@@ -110,6 +118,7 @@
               label="Nombre de la V&iacute;a">
               <input
                 type="text"
+                maxlength="100"
                 class="form-control"
                 formControlName="wayName" />
             </form-field>
@@ -120,6 +129,7 @@
               label="Origen de la V&iacute;a">
               <input
                 type="text"
+                maxlength="100"
                 class="form-control"
                 formControlName="wayOrigin" />
             </form-field>
@@ -133,6 +143,7 @@
               label="Referencia V&iacute;a 1">
               <input
                 type="text"
+                maxlength="30"
                 class="form-control"
                 formControlName="wayref1Key" />
             </form-field>
@@ -143,6 +154,7 @@
               label="Referencia Via 2">
               <input
                 type="text"
+                maxlength="30"
                 class="form-control"
                 formControlName="wayref2Key" />
             </form-field>
@@ -153,6 +165,7 @@
               label="Referencia Via 3">
               <input
                 type="text"
+                maxlength="30"
                 class="form-control"
                 formControlName="wayref3Key" />
             </form-field>
@@ -165,6 +178,7 @@
               label="Num&#46; Ext&#46;">
               <input
                 type="text"
+                maxlength="10"
                 class="form-control"
                 formControlName="exteriorNumber" />
             </form-field>
@@ -175,6 +189,7 @@
               label="Num&#46; Int&#46;">
               <input
                 type="text"
+                maxlength="10"
                 class="form-control"
                 formControlName="interiorNumber" />
             </form-field>
@@ -185,6 +200,7 @@
               label="Destino de la V&iacute;a">
               <input
                 type="text"
+                maxlength="100"
                 class="form-control"
                 formControlName="wayDestiny" />
             </form-field>
@@ -198,6 +214,7 @@
               label="Kil&oacute;metro de la V&iacute;a">
               <input
                 type="text"
+                maxlength="100"
                 class="form-control"
                 formControlName="wayChaining" />
             </form-field>
@@ -208,6 +225,7 @@
               label="Descripci&oacute;n">
               <textarea
                 class="form-control"
+                maxlength="4000"
                 formControlName="description"></textarea>
             </form-field>
           </div>

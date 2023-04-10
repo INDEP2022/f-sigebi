@@ -92,6 +92,10 @@ export class GoodService implements ICrudMethods<IGood> {
     return this.goodRepository.getAllPaginated(`good/good${route}`, params);
   }
 
+  getGoodsDomicilies(params?: ListParams) {
+    return this.goodRepository.getAllPaginated(`good/domicilies`, params);
+  }
+
   getByStatus(idStatus: string) {
     return this.goodRepository.getById('good/status-good/', idStatus);
   }

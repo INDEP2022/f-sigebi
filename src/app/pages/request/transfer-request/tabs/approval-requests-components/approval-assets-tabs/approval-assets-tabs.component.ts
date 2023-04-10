@@ -152,7 +152,7 @@ export class ApprovalAssetsTabsComponent extends BasePage implements OnInit {
       if (stateConcervation !== null) {
         var params = new ListParams();
         params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservación`;
+        params['filter.name'] = `$eq:Estado Conservacion`;
         this.genericService.getAll(params).subscribe({
           next: data => {
             resolve(data.data[0].description);

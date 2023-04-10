@@ -20,7 +20,10 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
 import { EXPEDIENT_DOC_EST_COLUMNS } from '../registration-request-form/expedient-doc-columns';
@@ -82,9 +85,9 @@ export class EstateDocumentFormComponent
 
   initForm() {
     this.searchForm = this.fb.group({
-      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      goodId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       goodTypeId: [null],
-      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
