@@ -638,6 +638,7 @@ export class VerifyComplianceTabComponent
     if (this.goodsSelected.length === 1) {
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
+        this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
         if (this.detailArray.controls['id'].value !== null) {
