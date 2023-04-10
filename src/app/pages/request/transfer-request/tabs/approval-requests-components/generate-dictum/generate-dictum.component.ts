@@ -15,6 +15,7 @@ import { PrintReportModalComponent } from '../../notify-clarifications-improprie
 export class GenerateDictumComponent extends BasePage implements OnInit {
   idDoc: any; //ID de solicitud, viene desde el componente principal
   idTypeDoc: any;
+  requestData: IRequest;
   response: IRequest;
 
   title: string = 'Generar reporte dictamen procedencia';
@@ -35,8 +36,6 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Data del formulario: ', this.response);
-
     this.initForm();
   }
 
@@ -108,8 +107,8 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       postRecipientRuling: [null, [Validators.maxLength(100)]],
       paragraphOneRuling: [null, [Validators.maxLength(4000)]],
       paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
-      /*nameSignatoryRuling: [null],
-      postSignatoryRuling: [null],*/
+      nameSignatoryRuling: [null],
+      postSignatoryRuling: [null],
       ccpRuling: [null, [Validators.maxLength(200)]],
       /*rulingCreatorName: [null],
       rulingSheetNumber: [null],
@@ -140,12 +139,15 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   update() {
     const idDoc = this.idDoc;
     this.requestService.update(idDoc, this.dictumForm.value).subscribe({
-      next: data => (this.handleSuccess(), this.signDictum()),
+      next: data => {
+        this.handleSuccess(), (this.requestData = data), this.signDictum();
+      },
       error: error => (this.loading = false),
     });
   }
 
   signDictum(): void {
+    const requestInfo = this.requestData;
     const idDoc = this.idDoc;
     const typeAnnex = 'approval-request';
     const idTypeDoc = this.idTypeDoc;
@@ -155,6 +157,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         idDoc,
         idTypeDoc,
         typeAnnex,
+        requestInfo,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
