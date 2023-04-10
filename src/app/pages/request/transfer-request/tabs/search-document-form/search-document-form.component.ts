@@ -12,6 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -112,7 +113,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       ],
       xidExpediente: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       xestado: [null],
       xnoOficio: [
@@ -121,7 +122,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       ],
       xidSolicitud: [
         null,
-        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       xidTransferente: [null],
       xComments: [
@@ -130,7 +131,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       ],
       xidBien: [
         null,
-        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       xremitente: [
         null,

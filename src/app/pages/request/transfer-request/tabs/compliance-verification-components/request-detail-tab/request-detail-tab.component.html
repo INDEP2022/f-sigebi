@@ -4,7 +4,8 @@
     process == 'verify-compliance' ||
     process == 'validate-document' ||
     process == 'process-approval' ||
-    process == 'notify-clarification-inadmissibility'
+    process == 'notify-clarification-inadmissibility' ||
+    process == 'classify-assets'
   ">
   <div class="row">
     <div class="d-flex bd-highlight">
@@ -149,7 +150,7 @@
 
 <!--Si el proceso es clasificación de bienes-->
 
-<div *ngIf="process == 'classify-assets'">
+<!-- <div *ngIf="process == 'classify-assets'">
   <div class="row">
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
@@ -175,7 +176,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right"
+            <label class="col-lg-5"
               >Procedencia informaci&oacute;n&#58;</label
             >
             <span class="fs-4"> </span>
@@ -374,4 +375,4 @@
       </div>
     </div>
   </form>
-</div>
+</div> -->

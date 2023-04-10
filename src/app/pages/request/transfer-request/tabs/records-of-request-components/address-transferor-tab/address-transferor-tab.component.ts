@@ -20,7 +20,11 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUMBERS_POINT_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
 import { GoodDomiciliesService } from '../../../../../../core/services/good/good-domicilies.service';
@@ -56,8 +60,8 @@ export class AddressTransferorTabComponent
   requestId: string = '';
   isNewAddress: boolean = false;
   isreadOnly: boolean = true;
-
   stateKey: string = '';
+  isAddress: boolean = false;
 
   stateOfRepublicService = inject(StateOfRepublicService);
   municipalySeraService = inject(MunicipalityService);
@@ -70,6 +74,9 @@ export class AddressTransferorTabComponent
 
   constructor(private fb: FormBuilder, private modelRef: BsModalRef) {
     super();
+    if (this.isNewAddress === false) {
+      this.initForm();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -82,14 +89,15 @@ export class AddressTransferorTabComponent
         new ListParams(),
         this.requestObject.keyStateOfRepublic
       );
+      this.getDomicileTransferent(this.requestObject.id);
     }
   }
 
   ngOnInit(): void {
+    this.initForm();
     if (this.isNewAddress != true) {
       this.container.createEmbeddedView(this.template);
     }
-    this.initForm();
     this.formReactiveCalls();
     console.log('address');
   }
@@ -113,21 +121,18 @@ export class AddressTransferorTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      localityKey: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
+      localityKey: [null],
       code: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(6)],
       ],
       latitude: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
       ],
       length: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
       ], //por cambiar
       wayName: [
         null,
@@ -161,8 +166,8 @@ export class AddressTransferorTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      regionalDelegationId: [null],
+      requestId: [null],
       creationDate: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -224,14 +229,6 @@ export class AddressTransferorTabComponent
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
       },
     });
-    /* this.municipalySeraService.getAll(params).subscribe({
-      next: data => {
-        this.selectMunicipe = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
-      },
-    }); */
   }
 
   //obtener la colonia
@@ -241,10 +238,15 @@ export class AddressTransferorTabComponent
     params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
-
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
         this.selectLocality = new DefaultSelect(resp.data, resp.count);
+
+        if (this.isAddress === true) {
+          this.domicileForm.controls['localityKey'].setValue(
+            Number(this.localityId)
+          );
+        }
       },
     });
   }
@@ -258,6 +260,23 @@ export class AddressTransferorTabComponent
     this.goodsinvService.getAllCodePostalByFilter(params).subscribe({
       next: resp => {
         this.selectCP = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
+
+  getDomicileTransferent(id: number) {
+    const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.warehouseAlias'] = `$eq:DOMICILIO TRANSFERENTE`;
+    this.goodDomicileService.getAll(params).subscribe({
+      next: (resp: any) => {
+        this.isAddress = true;
+        this.domicileForm.patchValue(resp.data[0]);
+        this.domicileForm.controls['warehouseAlias'].setValue(
+          resp.data[0].warehouseAlias['id']
+        );
+        this.getLocality(new ListParams(), resp.data[0].municipalityKey);
+        this.localityId = resp.data[0].localityKey;
       },
     });
   }
@@ -296,6 +315,7 @@ export class AddressTransferorTabComponent
       },
       error => {
         console.log(error);
+        this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
     );
@@ -312,7 +332,10 @@ export class AddressTransferorTabComponent
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
         this.municipalityId = data;
-        this.getLocality(new ListParams(), data);
+
+        if (this.isAddress === false) {
+          this.getLocality(new ListParams(), data);
+        }
       }
     );
     this.domicileForm.controls['localityKey'].valueChanges.subscribe(

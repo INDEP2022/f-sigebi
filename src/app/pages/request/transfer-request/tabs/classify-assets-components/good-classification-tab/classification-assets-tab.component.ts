@@ -73,6 +73,7 @@ export class ClassificationAssetsTabComponent
   levels4 = new DefaultSelect();
   goodSelect: any = [];
   idGood: string | number;
+  formLoading: boolean = false;
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
@@ -251,6 +252,7 @@ export class ClassificationAssetsTabComponent
 
   selectGood(event: any) {
     console.log(event);
+    this.formLoading = true;
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
@@ -259,7 +261,10 @@ export class ClassificationAssetsTabComponent
       setTimeout(() => {
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-      }, 3000);
+      }, 1000);
+      setTimeout(() => {
+        this.formLoading = false;
+      }, 4000);
     }
   }
 

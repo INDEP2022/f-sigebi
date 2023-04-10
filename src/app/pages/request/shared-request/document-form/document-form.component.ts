@@ -23,7 +23,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class DocumentFormComponent extends BasePage implements OnInit {
   documentForm: FormGroup = new FormGroup({});
   wcontent: ModelForm<IWContent>;
-  typesDocuments = new DefaultSelect();
+  typesDocuments: any = []; //= new DefaultSelect();
   transferents = new DefaultSelect();
   states = new DefaultSelect();
   parameter: any;
@@ -192,7 +192,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   getDocType(params: ListParams) {
     this.wcontentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
       },
     });
   }
