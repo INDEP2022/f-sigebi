@@ -7,8 +7,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { PHONE_PATTERN } from 'src/app/core/shared/patterns';
@@ -32,10 +35,16 @@ export class RequestDetailTabComponent
   priority: any = null;
   idRequest: number = 0;
   infoRequest: IRequest;
+  affairName: string = '';
+  ofiginName: string = '';
+  selectOriginInfo = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private affairService: AffairService,
+    private genericsService: GenericService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -46,7 +55,11 @@ export class RequestDetailTabComponent
     this.showDataProg();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe((val: any) => {
+      console.log('request detail tab ', this.requestForm.getRawValue());
+    });
+  }
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
@@ -88,14 +101,48 @@ export class RequestDetailTabComponent
     this.loading = true;
   }
 
+  getAffair(id: number) {
+    this.affairService.getById(id).subscribe({
+      next: data => {
+        this.affairName = data.description;
+      },
+      error: error => {
+        this.affairName = '';
+        console.log(error.error.massage);
+      },
+    });
+  }
+
+  getOriginInfo(params: ListParams, id: number) {
+    params['filter.name'] = '$eq:Procedencia';
+    params['filter.keyId'] = `$eq:${id}`;
+    params.limit = 20;
+    this.genericsService.getAll(params).subscribe({
+      next: resp => {
+        this.ofiginName = resp.data[0].description;
+      },
+    });
+  }
+
   reactiveFormCalls() {
     this.requestForm.valueChanges.subscribe((val: any) => {
       var v = this.requestForm.getRawValue();
+      console.log(v);
       if (this.requestForm.controls['urgentPriority'].value) {
         this.priority =
           this.requestForm.controls['urgentPriority'].value === '0'
             ? false
             : true;
+      }
+
+      if (this.requestForm.controls['affair'].value) {
+        const affair = Number(this.requestForm.controls['affair'].value);
+        this.getAffair(affair);
+      }
+
+      if (this.requestForm.controls['originInfo'].value) {
+        const originId = Number(this.requestForm.controls['originInfo'].value);
+        this.getOriginInfo(new ListParams(), originId);
       }
     });
   }

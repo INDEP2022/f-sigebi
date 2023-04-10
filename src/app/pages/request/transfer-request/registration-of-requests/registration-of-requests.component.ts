@@ -88,6 +88,7 @@ export class RegistrationOfRequestsComponent
   stationName: string = '';
   delegationName: string = '';
   authorityName: string = '';
+  haveDictamen: boolean = false;
 
   requestList: IRequest;
 
@@ -118,6 +119,7 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    this.loader.load = true;
     const id = this.route.snapshot.paramMap.get('id');
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -261,6 +263,14 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      typeOfTransfer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      domainExtinction: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
     this.registRequestForm.get('receptionDate').disable();
     this.registRequestForm.updateValueAndValidity();
@@ -281,9 +291,11 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
+        /*  if ((this.typeDocument = 'proceso-aprovacion')) {
+          await this.getDictamen(data.id);
+        } */
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
-
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
         /*request.receptionDate = new Date().toISOString();
@@ -596,7 +608,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -623,7 +635,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -650,7 +662,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -709,12 +721,10 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    console.log(this.requestData);
-
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/process-approval';
+      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+      const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
       const taskResult = await this.createTaskOrderService(
@@ -729,12 +739,51 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
   }
   /** fin de proceso */
+
+  /* Inicio de rechazar aprovacion */
+  refuseRequest() {
+    this.msgSaveModal(
+      'Rechazar',
+      'Deseas rechazar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      'refuse'
+    );
+  }
+
+  async refuseMethod() {
+    console.log(this.requestData);
+
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/verify-compliance';
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'VERIFICAR_CUMPLIMIENTO';
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskResult === true) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+    }
+  }
+  /* Fin rechazo de aprovacion */
 
   updateRequest(request: any) {
     return new Promise((resolve, reject) => {
@@ -820,7 +869,20 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getDictamen() {}
+  getDictamen(id: number) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      body['xTipoDocumento'] = 50;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: resp => {
+          if (resp.data.length > 0) {
+            this.haveDictamen = false;
+          }
+        },
+      });
+    });
+  }
 
   msgSaveModal(
     btnTitle: string,
@@ -861,7 +923,11 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'proceso-aprovacion') {
-          this.approveRequest();
+          this.approveRequestMethod();
+        }
+
+        if (typeCommit === 'refuse') {
+          this.refuseMethod();
         }
       }
     });
@@ -889,6 +955,7 @@ export class RegistrationOfRequestsComponent
   dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
+      this.loader.load = false;
     });
   }
 

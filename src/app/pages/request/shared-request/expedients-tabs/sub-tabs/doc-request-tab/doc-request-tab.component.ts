@@ -125,7 +125,7 @@ export class DocRequestTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       docType: [null],
-      docTitle: [null],
+      docTitle: [null, []],
       typeTrasf: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -169,16 +169,17 @@ export class DocRequestTabComponent
     this.loading = true;
     this.wContentService.findDocumentBySolicitud(this.idRequest).subscribe({
       next: async (data: any) => {
-        const info = data.data.map(async (items: any) => {
+        console.log('doc', data);
+        /*const info = data.data.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
           items.xtipoDocumento = filter[0].ddescription;
-        });
+        }); */
 
-        Promise.all(info).then(x => {
+        /*Promise.all(info).then(x => {
           this.paragraphs.load(data.data);
           this.totalItems = this.paragraphs.count();
           this.loading = false;
-        });
+        }); */
       },
       error: error => {
         console.log(error);
@@ -389,11 +390,11 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
     let config: ModalOptions = {
       initialState: {
-        idrequest,
+        idRequest,
         typeDoc,
         callback: (next: boolean) => {
           if (next == true) {

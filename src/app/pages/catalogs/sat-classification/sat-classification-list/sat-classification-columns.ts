@@ -5,7 +5,7 @@ export const SAT_CLASSIFICATION_COLUMNS = {
     sort: false,
   },
   nombre_clasificacion: {
-    title: 'Nombre Clasificacion',
+    title: 'Nombre Clasificación',
     type: 'string',
     sort: false,
   },

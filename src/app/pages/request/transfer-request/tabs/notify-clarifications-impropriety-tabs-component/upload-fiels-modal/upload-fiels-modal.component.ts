@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Observable, ReplaySubject } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IExternalFirm } from 'src/app/core/models/ms-externalfirm/external-firm';
@@ -27,6 +28,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   typeReport: string = null;
   isRFCHided: boolean = true;
   edit: boolean = false;
+  base64Cer: string;
+  base64Key: string;
 
   constructor(
     private modalRef: BsModalRef,
@@ -47,20 +50,40 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.fileForm = this.fb.group({
       learnedType: [null],
       learnedId: [null],
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      post: [null, [Validators.pattern(STRING_PATTERN)]],
-      certificate: [null],
-      keycertificate: [null],
-      pass: [null],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      post: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      certificate: [null, [Validators.required]],
+      keycertificate: [null, [Validators.required]],
+      pass: [null, [Validators.required]],
       rfcUser: [
         null,
-        [Validators.pattern(RFCCURP_PATTERN), Validators.maxLength(13)],
+        [
+          Validators.required,
+          Validators.pattern(RFCCURP_PATTERN),
+          Validators.maxLength(13),
+        ],
       ],
       signatoryId: [null],
     });
     if (this.signatories != null) {
       this.edit = true;
-      this.fileForm.patchValue(this.signatories);
+      //this.fileForm.controls['name'].setValue(this.signatories.name);
+      //this.fileForm.controls['post'].setValue(this.signatories.post);
+      this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
     }
 
     this.passForm = this.fb.group({
@@ -86,13 +109,31 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   chargeCertifications(event: any) {
     let certiToUpload = event.target.files[0];
     this.certiFile = certiToUpload;
-    console.log('certificado: ', this.certiFile);
+
+    //Convierte archivo seleccionado a base 64 y lo guarda
+    this.convertFile(event.target.files[0]).subscribe(base64 => {
+      this.base64Key = base64;
+      console.log('certificado64: ', this.base64Key);
+    });
   }
 
   chargeKeyCertifications(event: any) {
     let keyCertiToUpload = event.target.files[0];
     this.keyCertiFile = keyCertiToUpload;
-    console.log('Key: ', this.keyCertiFile);
+    //Convierte archivo seleccionado a base 64 y lo guarda
+    this.convertFile(event.target.files[0]).subscribe(base64 => {
+      this.base64Cer = base64;
+      console.log('Key64: ', this.base64Cer);
+    });
+  }
+
+  //Convierte archivo a base64
+  convertFile(file: File): Observable<string> {
+    const result = new ReplaySubject<string>(1);
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = event => result.next(btoa(event.target.result.toString()));
+    return result;
   }
 
   close() {
@@ -141,13 +182,21 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
-    console.log('FormData', formData);
-
-    const idSingnatorie = this.signatories.signatoryId;
-    this.signatoriesService.update(idSingnatorie, formData).subscribe(
-      data => this.handleSuccess(),
-      error => this.alert('info', 'No se pudo actualizar', error.data)
+    formData.append(
+      'pass',
+      this.password.encriptarResult || this.fileForm.controls['pass'].value
     );
+    formData.append('post', this.fileForm.controls['post'].value);
+    formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
+    formData.append('certificatebase64', this.base64Cer);
+    console.log('FormData que se envia para guardar firmante', formData);
+
+    this.signatoriesService
+      .update(this.signatories.signatoryId, formData)
+      .subscribe(
+        data => this.handleSuccess(),
+        error => this.alert('info', 'No se pudo actualizar', error.data)
+      );
   }
 
   handleSuccess() {

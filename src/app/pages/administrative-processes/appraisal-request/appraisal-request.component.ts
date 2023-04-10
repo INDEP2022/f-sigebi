@@ -32,6 +32,8 @@ export class AppraisalRequestComponent extends BasePage implements OnInit {
   public department = new DefaultSelect();
   public noRequest = new DefaultSelect();
   public currency = new DefaultSelect();
+  appraisals: any[] = [];
+  totalItems: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -159,6 +161,7 @@ export class AppraisalRequestComponent extends BasePage implements OnInit {
 
   public getRequestAppraisalById() {
     let requestNumber = this.form.controls['noRequest'].value;
+    this.appraisalService.id_request = requestNumber;
     this.appraisalService.getRequestAppraisalById(requestNumber).subscribe({
       next: data => {
         this.form.controls['applicant'].setValue(data.sourceUser);

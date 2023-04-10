@@ -6,6 +6,7 @@
 
 export const EMAIL_PATTERN = '^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$';
 export const NUMBERS_PATTERN = '^-?[0-9]+$';
+export const POSITVE_NUMBERS_PATTERN = '^[0-9]+';
 export const DOUBLE_PATTERN = '[+-]?([0-9]*[.])?[0-9]+';
 export const STRING_PATTERN =
   '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\/\\s\\#$%¡!|*\\.,_\\-\\\\()\\Üü“”;:]*';
@@ -20,3 +21,6 @@ export const NAME_PATTERN = '^[A-Za-z\\áéíóúÁÉÍÓÚñÑ\\ \\.]+$';
 export const NUMBERS_BY_COMMA = '^(d+,?)+$';
 
 //'^[A-ZÑa-zñáéíóúÁÉÍÓÚ'° ]+$'
+
+export const NUM_POSITIVE_LETTERS = '^[0-9]+|[a-zA-Z]+$';
+export const NUM_POSITIVE = '^[0-9]+';

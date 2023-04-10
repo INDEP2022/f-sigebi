@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -26,6 +26,11 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
 import { VerificationComplianceService } from 'src/app/core/services/requests/verification-compliance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
@@ -119,15 +124,10 @@ export class VerifyComplianceTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      this.transferenceId = this.requestObject.transferenceId;
-      if (
-        this.transferenceId === 1 ||
-        this.transferenceId === 3 ||
-        this.transferenceId === 120
-      ) {
-        this.getArticle3();
-        this.getArticle1213();
-      }
+      const id = this.requestObject.id;
+      const transference = this.requestObject.transferenceId;
+      this.getArticle3(id, transference);
+      this.getArticle1213(id, transference);
 
       this.params
         .pipe(takeUntil(this.$unSubscribe))
@@ -147,55 +147,259 @@ export class VerifyComplianceTabComponent
       ligieLevel4: [null],
       requestId: [null],
       goodTypeId: [null],
-      color: [null],
-      goodDescription: [null],
-      quantity: [1],
-      duplicity: ['N'],
-      capacity: [null],
-      volume: [null],
-      fileeNumber: [null],
-      useType: [null],
-      physicalStatus: [null],
-      stateConservation: [null],
-      origin: [null],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
-      compliesNorm: [null],
-      notesTransferringEntity: [null],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
-      brand: [null],
-      subBrand: [null],
-      armor: [null],
-      model: [null],
-      doorsNumber: [null],
-      axesNumber: [null],
-      engineNumber: [null], //numero motor
-      tuition: [null],
-      serie: [null],
-      chassis: [null],
-      cabin: [null],
-      fitCircular: [null],
-      theftReport: [null],
-      addressId: [null],
-      operationalState: [null],
-      manufacturingYear: [null],
-      enginesNumber: [null], // numero de motores
-      flag: [null],
-      openwork: [null],
-      sleeve: [null],
-      length: [null],
-      shipName: [null],
-      publicRegistry: [null], //registro public
-      ships: [null],
-      dgacRegistry: [null], //registro direccion gral de aereonautica civil
-      airplaneType: [null],
-      caratage: [null], //kilatage
-      material: [null],
-      weight: [null],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      quantity: [
+        1,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(13),
+        ],
+      ],
+      duplicity: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      capacity: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      volume: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      fileeNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
+      useType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      origin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      compliesNorm: [
+        null,
+        [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
+      ],
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      brand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(350),
+        ],
+      ],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      model: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      doorsNumber: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
+      engineNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //numero motor
+      tuition: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      serie: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      fitCircular: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      theftReport: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      addressId: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      operationalState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      manufacturingYear: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
+      enginesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ], // numero de motores
+      flag: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
+      openwork: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      shipName: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      publicRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro public
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      dgacRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro direccion gral de aereonautica civil
+      airplaneType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      caratage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+      ], //kilatage
+      material: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+      ],
+      weight: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       descriptionGoodSae: [null],
     });
   }
@@ -218,7 +422,7 @@ export class VerifyComplianceTabComponent
       delete clarify[0].clarificationName;
       this.openForm(clarify[0]);
     } else {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', 'Seleccione solo una aclaración!');
     }
   }
 
@@ -330,64 +534,81 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  getArticle3() {
+  getArticle3(id: number, transferent: number) {
     const params = new ListParams();
-    params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
-    params['filter.article'] = `$eq:Articulo 3 Ley`;
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.cumpliance.article'] = `$eq:Articulo 3 Ley`;
+    if (this.transferenceId === 1 || this.transferenceId === 120) {
+      params['filter.cumpliance.transfereeId'] = `$eq:${transferent}`;
+    } else {
+      params['filter.cumpliance.transfereeId'] = `$null`;
+    }
 
-    this.verifiCompliance.getAll(params).subscribe({
-      next: async resp => {
-        await this.getArticlesById(resp, 'article3');
+    this.requestDocumentService.getAll(params).subscribe({
+      next: resp => {
+        let cumpliance = resp.data.map((item: any) => {
+          item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article3array.push(item.cumpliance);
+          }
+          return item.cumpliance;
+        });
+        this.paragraphsTable1 = cumpliance;
       },
     });
   }
 
-  getArticle1213() {
+  getArticle1213(id: number, tranferent: number) {
     const params = new ListParams();
-    params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
-    params['filter.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.cumpliance.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    if (this.transferenceId === 1 || this.transferenceId === 120) {
+      params['filter.cumpliance.transfereeId'] = `$eq:${tranferent}`;
+    } else {
+      params['filter.cumpliance.transfereeId'] = `$null`;
+    }
 
-    this.verifiCompliance.getAll(params).subscribe({
-      next: async resp => {
-        await this.getArticlesById(resp, 'article12');
+    this.requestDocumentService.getAll(params).subscribe({
+      next: resp => {
+        let cumpliance = resp.data.map((item: any) => {
+          item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article12and13array.push(item.cumpliance);
+          }
+          return item.cumpliance;
+        });
+        this.paragraphsTable2 = cumpliance;
       },
     });
   }
 
   article3Selected(event: any): void {
-    const elemento = event.data;
-
-    const index = this.article3array.indexOf(elemento);
-    if (index !== -1) {
-      delete this.article3array[index];
+    let element = event.data;
+    const index = this.article3array.indexOf(element);
+    if (index === -1) {
+      element.cumple = true;
+      this.article3array.push(element);
     } else {
-      this.article3array.push(elemento);
+      delete this.article3array[index];
     }
   }
 
   article12y13Selected(event: any): void {
-    const elemento = event.data;
-    const index = this.article12and13array.indexOf(elemento);
+    let element = event.data;
+    const index = this.paragraphsTable2.indexOf(element);
 
-    const index2 = this.paragraphsTable2.indexOf(elemento);
-    if (index !== -1) {
-      delete this.article12and13array[index];
+    if (this.paragraphsTable2[index].cumple === false) {
+      this.paragraphsTable2[index].cumple = true;
     } else {
-      this.article12and13array.push(elemento);
+      this.paragraphsTable2[index].cumple = false;
     }
 
-    if (
-      this.paragraphsTable2[index2].cumple &&
-      this.paragraphsTable2[index2].cumple === true
-    ) {
-      this.paragraphsTable2[index2].cumple = false;
-    } else if (
-      this.paragraphsTable2[index2].cumple &&
-      this.paragraphsTable2[index2].cumple === false
-    ) {
-      this.paragraphsTable2[index2].cumple = true;
+    const index2 = this.article12and13array.indexOf(element);
+    if (index2 === -1) {
+      element.cumple = true;
+      this.article12and13array.push(element);
     } else {
-      this.paragraphsTable2[index2].cumple = true;
+      delete this.article12and13array[index];
     }
   }
 
@@ -400,7 +621,6 @@ export class VerifyComplianceTabComponent
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
-    console.log(this.isGoodSelected);
 
     if (this.goodsSelected.length === 1) {
       this.getClarifications(this.goodsSelected[0].id);
@@ -409,65 +629,9 @@ export class VerifyComplianceTabComponent
         this.getDomicilieGood(this.goodsSelected[0].addressId);
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
-          console.log(this.isGoodSelected);
         }
       }, 2000);
     }
-    //} else {
-    //this.clarificationData = [];
-    //}
-  }
-
-  getArticlesById(article: any, typeArt: string) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.requestId'] = `$eq:${this.requestObject.id}`;
-      this.requestDocumentService.getAll(params).subscribe({
-        next: resp => {
-          this.existArt = resp.count;
-          resp.data.map((item: any) => {
-            for (let i = 0; i < article.data.length; i++) {
-              const art = article.data[i];
-              if (item.cumplimiento.id === art.complianceId) {
-                if (item.fulfill === 'S') {
-                  art['cumple'] = true;
-                  if (typeArt === 'article3') {
-                    this.article3array.push(art);
-                  } else {
-                    this.article12and13array.push(art);
-                  }
-                } else {
-                  art['cumple'] = false;
-                }
-                break;
-              }
-            }
-          });
-
-          console.log(article);
-          if (typeArt === 'article3') {
-            this.paragraphsTable1 = article.data;
-          } else {
-            this.paragraphsTable2 = article.data;
-          }
-        },
-        error: error => {
-          console.log(error.error.message);
-          this.existArt = 0;
-          if (error.error.message === 'No se encontrarón registros.') {
-            for (let i = 0; i < article.data.length; i++) {
-              const art = article.data[i];
-              art['cumple'] = false;
-            }
-            if (typeArt === 'article3') {
-              this.paragraphsTable1 = article.data;
-            } else {
-              this.paragraphsTable2 = article.data;
-            }
-          }
-        },
-      });
-    });
   }
 
   /*  Metodo para traer las solicitudes de un bien  */
@@ -509,13 +673,13 @@ export class VerifyComplianceTabComponent
 
   deleteClarification() {
     if (this.clarifyRowSelected.length !== 1) {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
     }
-
+    this.loader.load = true;
     Swal.fire({
       title: 'Eliminar Aclaración?',
-      text: 'Desea eliminar la aclaracion?',
+      text: '¿Desea eliminar la aclaración?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -536,12 +700,7 @@ export class VerifyComplianceTabComponent
   }
 
   async confirm() {
-    if (
-      (this.article3array.length < 3 || this.article12and13array.length < 3) &&
-      (this.transferenceId === 1 ||
-        this.transferenceId === 3 ||
-        this.transferenceId === 120)
-    ) {
+    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
       this.alert(
         'error',
         'Error',
@@ -550,36 +709,13 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    if (
-      this.transferenceId === 1 ||
-      this.transferenceId === 3 ||
-      this.transferenceId === 120
-    ) {
-      if (this.existArt > 0) {
-        const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
-        console.log(allArt);
+    console.log(this.paragraphsTable2);
 
-        allArt.map(async (item: any) => {
-          await this.deleteDocumentRequest(item);
-        });
-      }
-
-      /* insertar articulo 3 */
-      this.article3array.map(async (item: any) => {
-        await this.createDocRequest(item, 'S');
-      });
-
-      /* ingresar articulo 12 , 13 */
-      this.paragraphsTable2.map(async (list: any, i: number) => {
-        if (list.cumple === true) {
-          await this.createDocRequest(list, 'S');
-        } else if (list.cumple === false) {
-          await this.createDocRequest(list, 'N');
-        } else {
-          await this.createDocRequest(list, 'N');
-        }
-      });
-    }
+    const articles = this.paragraphsTable2.concat(this.article3array);
+    const id = this.requestObject.id;
+    articles.map(async (item: any) => {
+      await this.updateDocRequest(id, item);
+    });
 
     this.goodData.map(async (item: any, i: number) => {
       let index = i + 1;
@@ -601,6 +737,7 @@ export class VerifyComplianceTabComponent
       body['id'] = item.id;
       body['goodId'] = item.goodId;
       body['descriptionGoodSae'] = item.descriptionGoodSae;
+
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
@@ -618,15 +755,14 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  createDocRequest(article: any, fullfill: string) {
+  updateDocRequest(requestId: number, article: any) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['requestId'] = this.requestObject.id;
-      body['fulfillmentId'] = article.complianceId;
-      body['fulfill'] = fullfill;
-      body['creationUser'] = user.username;
-      this.requestDocumentService.create(body).subscribe({
+      body['requestId'] = requestId;
+      body['fulfillmentId'] = article.id;
+      body['fulfill'] = article.cumple === true ? 'S' : 'N';
+      this.requestDocumentService.update(body).subscribe({
         next: resp => {
           resolve(true);
         },
@@ -638,24 +774,6 @@ export class VerifyComplianceTabComponent
             'Error al guardar',
             'No se pudieron guardar los datos'
           );
-        },
-      });
-    });
-  }
-
-  deleteDocumentRequest(item: any) {
-    return new Promise((resolve, reject) => {
-      const body = {
-        requestId: this.requestObject.id,
-        fulfillmentId: item.complianceId,
-      };
-      this.requestDocumentService.remove(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-          resolve(true);
         },
       });
     });

@@ -9,8 +9,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -20,7 +22,6 @@ import {
   FilterParams,
   ListParams,
 } from '../../../../common/repository/interfaces/list-params';
-import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
@@ -51,13 +52,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
   nickName: string = '';
   idTransferer: number = null;
   idStation: number = null;
-
+  transferents$ = new DefaultSelect<ITransferente>();
   selectRegionalDeleg = new DefaultSelect<any>();
   selectEntity = new DefaultSelect<any>();
-  selectStation = new DefaultSelect<any>();
+  selectStation = new DefaultSelect<IStation>();
 
-  selectAuthority = new DefaultSelect<any>();
-  selectTransfe = new DefaultSelect<any>();
+  selectAuthority = new DefaultSelect<IAuthority>();
+  selectTransfe: any; //= new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectIssue = new DefaultSelect<any>();
 
@@ -80,7 +81,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
-    public location: Location
+    public location: Location,
+    private router: Router
   ) {
     super();
   }
@@ -186,30 +188,53 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params.limit = 30;
-    this.stationService.getAll(params).subscribe((data: IListResponse<any>) => {
-      this.selectStation = new DefaultSelect(data.data, data.count);
+    this.stationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id}- ${data.stationName}`;
+          return data;
+        });
+        this.selectStation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectStation = new DefaultSelect();
+      },
     });
   }
 
-  getAuthority(params: ListParams) {
+  getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
-    params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
-    this.authorityService
-      .getAll(params)
-      .subscribe((data: IListResponse<IAuthority>) => {
+    // params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
+          return data;
+        });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error: () => {
+        this.selectAuthority = new DefaultSelect();
+      },
+    });
   }
 
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    this.transferentService
-      .getAll(params)
-      .subscribe((data: IListResponse<ITransferente>) => {
-        this.selectTransfe = new DefaultSelect(data.data, data.count);
-      });
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
   }
 
   getState(event: any): void {}
@@ -294,7 +319,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 next: resp => {
                   this.loadingTurn = false;
                   this.msgModal(
-                    'Se guardo la solicitud con el Folio Nº '.concat(
+                    'Se guardó la solicitud con el Folio Nº '.concat(
                       `<strong>${data.id}</strong>`
                     ),
                     'Solicitud Guardada',
@@ -326,6 +351,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         'Información',
         `Seleccione un usuario para poder turnar la solicitud!`
       );
+
       return;
     }
 
@@ -356,6 +382,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
 
@@ -510,7 +537,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.taskService.update(body.id, body).subscribe({
         next: resp => {
           this.msgModal(
-            'Se guardo la solicitud con el Folio Nº '.concat(
+            'Se guardó la solicitud con el Folio Nº '.concat(
               `<strong>${idRequest}</strong>`
             ),
             'Solicitud Guardada',

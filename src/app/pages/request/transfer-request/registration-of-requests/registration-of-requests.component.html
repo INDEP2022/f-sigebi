@@ -14,7 +14,7 @@
         </button>
       </div>
       <!-- *ngIf="approvalProcess" -->
-      <div class="p-2" *ngIf="approvalProcess">
+      <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -81,6 +81,12 @@
             <div class="row pt-2">
               <div class="col-md-4">
                 <div>
+                  <label for="">No&#46; Solicitud&#58;</label>
+                  {{ infoRequest?.id }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div>
                   <label for="">Fecha de Solicitud&#58;</label>
                   {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                 </div>
@@ -91,22 +97,8 @@
                   {{ stateOfRepublicName }}
                 </div>
               </div>
-              <div class="col-md-4">
-                <div>
-                  <label for="">No&#46; Solicitud&#58;</label>
-                  {{ infoRequest?.id }}
-                </div>
-              </div>
             </div>
             <div class="row pt-2">
-              <!--<div class="col-md-3">
-                <label class="label" for=""
-                  >No&#46; Expediente&#58;
-                  <label for="">{{
-                    registRequestForm.get('noExpedient').value
-                  }}</label></label
-                >
-              </div>-->
               <div class="col-lg-4">
                 <div>
                   <label for="">Transferente&#58;</label>
@@ -115,25 +107,16 @@
               </div>
               <div class="col-md-4">
                 <div>
-                  <label for="">No&#46; Oficio&#58;</label>
-                  {{ registRequestForm?.get('paperNumber').value }}
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div>
                   <label for="">Emisora&#58;</label>
                   {{ stationName }}
                 </div>
               </div>
-
-              <!--<div class="col-md-3">
-                <label class="label" for=""
-                  >Tipo de Expediente&#58;
-                  <label for="">{{
-                    registRequestForm.get('typeExpedient').value
-                  }}</label></label
-                >
-              </div>-->
+              <div class="col-md-4">
+                <div>
+                  <label for="">Autoridad&#58;</label>
+                  {{ authorityName }}
+                </div>
+              </div>
             </div>
             <div class="row pt-2">
               <div class="col-md-4">
@@ -142,10 +125,18 @@
                   {{ delegationName }}
                 </div>
               </div>
-              <div class="col-md-8">
+              <div class="col-md-4">
                 <div>
-                  <label for="">Autoridad&#58;</label>
-                  {{ authorityName }}
+                  <label for="">No&#46; Oficio&#58;</label>
+                  {{ registRequestForm?.get('paperNumber').value }}
+                </div>
+              </div>
+              <div
+                class="col-md-4"
+                *ngIf="typeDocument !== 'captura-solicitud'">
+                <div>
+                  <label for="">Tipo Expediente&#58;</label>
+                  {{ registRequestForm?.get('typeRecord').value }}
                 </div>
               </div>
             </div>
@@ -193,7 +184,7 @@
               <!-- fin -->
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
-                *ngIf="complianceVerifi"
+                *ngIf="complianceVerifi && requestData"
                 [typeDoc]="'verify-compliance'"
                 [requestObject]="requestData"
                 [process]="process"></app-verify-compliance-tab>

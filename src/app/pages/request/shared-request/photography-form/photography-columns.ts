@@ -18,7 +18,7 @@ export const PHOTOGRAPHY_COLUMNS = {
   },
 
   titleDocument: {
-    title: 'Titulo del documento',
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },

@@ -128,7 +128,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getInfoRequest() {
     this.requestService.getById(this.idRequest).subscribe(data => {
-      console.log('tipo documento', data);
       this.idTransferent = data.transferenceId;
       this.regionalDelId = data.regionalDelegationId;
       this.stateId = data.keyStateOfRepublic;
@@ -167,7 +166,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typeDocumentSelect(item: ITypeDocument) {
-    console.log(item.ddocType);
     this.typeDocument = item.ddocType;
   }
 
@@ -176,8 +174,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.loading = true;
+    console.log('typeDoc', this.typeDoc);
     if (this.typeDoc == 'good') {
+      this.loading = true;
+      this.loader.load = true;
+
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,
@@ -234,6 +235,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
+
+      console.log('name', docName);
+      console.log('extension', extension);
+      console.log('data documentos', formData);
+      console.log('archivo', this.selectedFile);
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -244,9 +250,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
+            console.log('documentos guardados', resp);
             this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.loading = false;
             this.modalRef.content.callback(true);
+            this.loading = false;
+            this.loader.load = false;
             this.modalRef.hide();
           },
           error: error => {
@@ -256,6 +264,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
 
     if (this.typeDoc == 'doc-request') {
+      this.loading = true;
+      this.loader.load = true;
+
       const formData = {
         dDocAuthor: this.userLogName,
         dInDate: new Date(),
@@ -264,7 +275,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xnombreProceso: 'Clasificar Bien',
         xidSolicitud: this.idRequest,
-        xnivelRegistroNSBDB: 'solicitud',
+        xnivelRegistroNSBDB: 'Solicitud',
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
         xestado: this.stateId,
@@ -310,6 +321,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
+
+      console.log('formData', formData);
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -319,7 +332,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           extension
         )
         .subscribe(data => {
+          console.log('guardado', data);
           this.loading = false;
+          this.loader.load = false;
           this.modalRef.content.callback(true);
           this.close();
         });
@@ -381,7 +396,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
-      this.wContentService
+
+      console.log('data', formData);
+      /*this.wContentService
         .addDocumentToContent(
           docName,
           extension,
@@ -400,7 +417,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           error: error => {
             console.log(error);
           },
-        });
+        }); */
     }
   }
 

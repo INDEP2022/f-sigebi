@@ -17,7 +17,12 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -121,18 +126,25 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      quantity: [
+        1,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(13),
+        ],
+      ],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
       capacity: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       volume: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       fileeNumber: [
         null,
@@ -142,8 +154,14 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       origin: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -157,8 +175,8 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
-      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
@@ -171,7 +189,7 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ], // preguntar Unidad Medida Transferente
-      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       brand: [
         null,
         [
@@ -196,17 +214,20 @@ export class ClassifyAssetsTabComponent
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(NUM_POSITIVE_LETTERS),
+          Validators.maxLength(15),
         ],
       ],
-      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      doorsNumber: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       axesNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       engineNumber: [
@@ -235,7 +256,7 @@ export class ClassifyAssetsTabComponent
       ],
       cabin: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       fitCircular: [
         'N',
@@ -253,7 +274,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null],
+      addressId: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       operationalState: [
         null,
         [
@@ -266,24 +287,24 @@ export class ClassifyAssetsTabComponent
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
         ],
       ],
       enginesNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ], // numero de motores
       flag: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       openwork: [
@@ -366,7 +387,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(30),
         ],
       ],
-      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      fractionId: [null],
     });
 
     if (this.goodObject != null) {
@@ -646,7 +667,7 @@ export class ClassifyAssetsTabComponent
         this.message(
           'success',
           'Guardado',
-          `El registro se guardo exitosamente!`
+          `¡El registro se guardó exitosamente!`
         );
         this.classiGoodsForm.controls['id'].setValue(data.id);
 
@@ -870,12 +891,19 @@ export class ClassifyAssetsTabComponent
             this.goodsQueryService
               .getLigieUnitDescription(data.ligieUnit)
               .subscribe((data: any) => {
-                this.classiGoodsForm.controls['unitMeasure'].setValue(
-                  data.description
-                );
                 this.classiGoodsForm.controls['ligieUnit'].setValue(
                   data.description
                 );
+
+                if (
+                  this.classiGoodsForm.controls['unitMeasure'].value === null
+                ) {
+                  const ligieUnit =
+                    this.classiGoodsForm.controls['ligieUnit'].value;
+                  this.classiGoodsForm.controls['unitMeasure'].setValue(
+                    ligieUnit
+                  );
+                }
               });
           });
       }

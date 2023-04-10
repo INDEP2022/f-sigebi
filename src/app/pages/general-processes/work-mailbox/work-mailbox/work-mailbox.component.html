@@ -218,7 +218,12 @@
             *dropdownMenu
             class="dropdown-menu"
             role="menu"
-            aria-labelledby="button-basic">
+            aria-labelledby="button-basic"
+            [attr.class]="
+              dataTable.count() < 9
+                ? 'dropdown-menu drop-scroll'
+                : 'dropdown-menu'
+            ">
             <li role="menuitem">
               <a class="dropdown-item" (click)="workFunction('work')"
                 >Trabajar</a
@@ -296,16 +301,23 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="onSavePaperwork()">Enviar</a>
+              <a class="dropdown-item" (click)="workFunction('onSavePaperwork')"
+                >Enviar</a
+              >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="validDoc()"
+              <a class="dropdown-item" (click)="workFunction('validDoc')"
                 >Validar documentación</a
               >
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="workFunction('scanDocuments')"
                 >Escaneo</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Reporte de notificaciones</a
               >
             </li>
           </ul>
@@ -357,9 +369,9 @@
           </div>
         </div>-->
         <div class="col-md-6">
-          <button class="btn btn-info btn-sm active mx-1" disabled>
+          <!--<button class="btn btn-info btn-sm active mx-1" disabled>
             Reporte de notificaciones
-          </button>
+          </button>-->
           <!--<button class="btn btn-info btn-sm active mx-1" disabled>
             Im&aacute;genes SIJ
           </button>-->

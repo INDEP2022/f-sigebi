@@ -45,6 +45,7 @@
             [form]="pgrForm"
             control="processStatus"
             [data]="processStatus"
+            [showTooltip]="true"
             label="Estatus del Proceso">
           </ngx-select>
         </form-field>
@@ -61,11 +62,12 @@
           class="col-md-3">
           <ngx-select
             (fetchItems)="getCoordinador($event)"
-            value="noRegister"
+            value="id"
             bindLabel="description"
             [form]="pgrForm"
             control="delegationNumber"
             [data]="cordinators"
+            [showTooltip]="true"
             label="Cord&#46; Regional">
           </ngx-select>
         </form-field>

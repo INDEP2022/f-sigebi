@@ -9,8 +9,13 @@ export const LIST_REPORTS_COLUMN = {
     type: 'string',
     sort: false,
   },
+  /*check: {
+    title: 'Estatus registro',
+    type: 'string',
+    sort: false,
+  },
 
-  /*button: {
+  button: {
     title: '',
     type: 'custom',
     class: 'custom-field',
