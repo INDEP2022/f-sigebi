@@ -265,15 +265,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   uploadFile(file: File, request: string, user: string) {
+    debugger;
     this.procedureManagementService
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          if (resp.statusCode === 200) {
-            this.message('success', 'Archivos cargados', `${resp.message}`);
-          } else {
-            this.message('error', 'Error al guardar', `${resp.message}`);
-          }
+          this.message('success', 'Archivos cargados', `${resp.message}`);
+        },
+        error: error => {
+          this.message('error', 'Error al guardar', `${error.error.message}`);
+          console.log(error);
         },
       });
   }
@@ -401,6 +402,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
+        if (element.requestId.id) {
+          element.requestId = Number(element.requestId.id);
+        }
         this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -503,8 +507,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   deleteGood() {
-    for (let i = 0; i < this.listGoodsFractions.length; i++) {
-      const element = this.listGoodsFractions[i];
+    for (let i = 0; i < this.listgoodObjects.length; i++) {
+      const element = this.listgoodObjects[i];
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {

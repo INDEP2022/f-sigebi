@@ -15,7 +15,10 @@
         </button>
       </div>
     </div>
-    <form [formGroup]="requestForm" class="form-material">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+    <form [formGroup]="requestForm" class="form-material" *ngIf="!formLoading">
       <div class="row pt-4">
         <div class="col-md-2">
           <form-check label="Prioridad" for="urgentPriority">
