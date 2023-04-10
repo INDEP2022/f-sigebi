@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -365,19 +365,31 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
-      const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERGENSOLICDIGIT.pdf?PARAMFORM=NO&PN_FOLIO=${this.idFolio}`;
-      window.open(url, 'REPORTE');
-      //en espera del reporte TODO service:
-      // this.jasperService.getReport('RGERGENSOLICDIGIT', { PN_FOLIO: this.idFolio }).subscribe(
-      //   {
-      //     next: (response) => {
-      //       this.readFile(response);
-      //     },
-      //     error: () => {
-
-      //     }
-      //   }
-      // )
+      this.onLoadToast('success', 'Generando reporte...', '');
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', { PN_FOLIO: this.idFolio })
+          .pipe(
+            tap(response => {
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
     } else {
       this.onLoadToast(
         'error',
