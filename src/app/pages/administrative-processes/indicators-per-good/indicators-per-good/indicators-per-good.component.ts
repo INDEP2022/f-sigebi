@@ -56,6 +56,7 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
     this.settings2 = {
       ...TABLE_SETTINGS,
       ...this.settings,
+      selectMode: 'multi',
       actions: false,
       columns: { ...INDICATORS_COLUMNS2 },
     };
@@ -129,5 +130,10 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
   confirm() {
     this.loading = false;
     this.onLoadToast('success', '', 'Indicador copiado');
+  }
+  calculate() {
+    this.valid = true;
+    this.loading = false;
+    this.onLoadToast('success', '', 'calculando ...');
   }
 }
