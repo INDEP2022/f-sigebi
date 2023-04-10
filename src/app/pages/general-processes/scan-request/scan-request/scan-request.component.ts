@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   SearchFilter,
@@ -11,7 +13,10 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import {
+  IReport,
+  SiabService,
+} from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -42,7 +47,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private jasperService: SiabService,
     private modalService: BsModalService,
     private datePipe: DatePipe,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -360,19 +366,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   proccesReport() {
     if (this.idFolio) {
       const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERGENSOLICDIGIT.pdf?PARAMFORM=NO&PN_FOLIO=${this.idFolio}`;
+      window.open(url, 'REPORTE');
       //en espera del reporte TODO service:
-      // this.jasperService.getReport('RGERGENSOLICDIGIT', { PARAMFORM: 'NO', PN_FOLIO: this.idFolio }).subscribe(
+      // this.jasperService.getReport('RGERGENSOLICDIGIT', { PN_FOLIO: this.idFolio }).subscribe(
       //   {
-      //     next: (data) => {
-      //       console.log(data);
+      //     next: (response) => {
+      //       this.readFile(response);
       //     },
       //     error: () => {
 
       //     }
       //   }
       // )
-
-      window.open(url, 'REPORTE');
     } else {
       this.onLoadToast(
         'error',
@@ -380,6 +385,29 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         ''
       );
     }
+  }
+
+  readFile(file: IReport) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.data);
+    reader.onload = _event => {
+      this.openPrevPdf(reader.result as string);
+    };
+  }
+
+  openPrevPdf(pdfurl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   callScan() {
