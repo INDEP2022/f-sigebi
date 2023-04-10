@@ -211,7 +211,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       if (stateConcervation !== null) {
         var params = new ListParams();
         params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservación`;
+        params['filter.name'] = `$eq:Estado Conservacion`;
         this.genericService.getAll(params).subscribe({
           next: data => {
             resolve(data.data[0].description);
@@ -296,6 +296,11 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
         this.btnCreate = 'Cerrar Bien';
+        const load = true;
+        this.loadLoading(load);
+        setTimeout(() => {
+          this.loadLoading(false);
+        }, 400);
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
@@ -308,6 +313,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
+  loadLoading(loading: boolean) {
+    this.requestHelperService.loadingForm(loading);
+  }
   openSelectAddressModal() {
     if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);

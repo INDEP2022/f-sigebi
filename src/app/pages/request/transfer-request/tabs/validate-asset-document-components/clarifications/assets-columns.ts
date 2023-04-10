@@ -1,20 +1,20 @@
 export const ASSETS_COLUMNS = {
-  noManagement: {
+  goodId: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  assetsDescripTransfer: {
+  descriptionGoodSae: {
     title: 'Descripción de Bien Transferente',
     type: 'string',
     sort: false,
   },
-  assetsDescripSAE: {
+  goodDescription: {
     title: 'Descripción de Bien INDEP',
     type: 'string',
     sort: false,
   },
-  typeAsset: {
+  goodTypeName: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
@@ -24,17 +24,17 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  quantityTransfer: {
+  quantity: {
     title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
-  ligieUnitMeasure: {
+  ligieUnit: {
     title: 'Unidad de Medida Ligia',
     type: 'string',
     sort: false,
   },
-  transferUnitMeasure: {
+  unitMeasure: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
@@ -44,22 +44,22 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  physicalState: {
+  physicstateName: {
     title: 'Estado fisico',
     type: 'string',
     sort: false,
   },
-  conservationState: {
+  stateConservationName: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  destinyLigie: {
+  destinyName: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  destinyTransfer: {
+  transferentDestinyName: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

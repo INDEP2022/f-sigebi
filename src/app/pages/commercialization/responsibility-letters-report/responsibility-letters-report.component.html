@@ -6,7 +6,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="form.get('evento')" label="Evento">
             <input
               type="number"
@@ -23,6 +23,29 @@
               formControlName="lote"
               placeholder="Lote" />
           </form-field>
+        </div> -->
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="evento"
+            (fetchItems)="getEvent($event)"
+            [showTooltip]="true"
+            [data]="selectEvent"
+            bindLabel="description"
+            label="Evento"
+            value="id"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="lote"
+            (fetchItems)="getLot($event)"
+            [showTooltip]="true"
+            [data]="selectLot"
+            bindLabel="description"
+            [searchable]="true"
+            label="Lote"
+            value="lotId"></ngx-select>
         </div>
         <div class="col-md-4">
           <form-field
@@ -106,12 +129,18 @@
       <div class="row">
         <label for="">Bienes</label>
       </div>
-
       <div class="row pt-2 scroll-table">
+        <!-- <ng2-smart-table
+              class="col-md-12"
+              [settings]="settings1"
+              [source]="data"></ng2-smart-table> -->
         <ng2-smart-table
-          [settings]="setting2"
-          [source]="dataGood"></ng2-smart-table>
+          [settings]="settings1"
+          [source]="goodList"></ng2-smart-table>
       </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
       <hr class="row" />
       <br />
 
@@ -140,7 +169,7 @@
       <div class="m-3">
         <confirm-button
           text="Imprimir"
-          [disabled]="!form.valid"
+          [disabled]="!valid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>

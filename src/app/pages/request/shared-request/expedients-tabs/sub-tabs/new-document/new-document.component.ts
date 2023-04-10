@@ -174,9 +174,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.loading = true;
     console.log('typeDoc', this.typeDoc);
     if (this.typeDoc == 'good') {
+      this.loading = true;
+      this.loader.load = true;
+
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,
@@ -238,7 +240,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       console.log('extension', extension);
       console.log('data documentos', formData);
       console.log('archivo', this.selectedFile);
-      /*this.wContentService
+      this.wContentService
         .addDocumentToContent(
           docName,
           extension,
@@ -250,17 +252,21 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             console.log('documentos guardados', resp);
             this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.loading = false;
             this.modalRef.content.callback(true);
+            this.loading = false;
+            this.loader.load = false;
             this.modalRef.hide();
           },
           error: error => {
             console.log(error);
           },
-        }); */
+        });
     }
 
     if (this.typeDoc == 'doc-request') {
+      this.loading = true;
+      this.loader.load = true;
+
       const formData = {
         dDocAuthor: this.userLogName,
         dInDate: new Date(),
@@ -269,7 +275,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xnombreProceso: 'Clasificar Bien',
         xidSolicitud: this.idRequest,
-        xnivelRegistroNSBDB: 'solicitud',
+        xnivelRegistroNSBDB: 'Solicitud',
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
         xestado: this.stateId,
@@ -317,7 +323,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       const docName = `DOC_${this.date}${extension}`;
 
       console.log('formData', formData);
-      /*this.wContentService
+      this.wContentService
         .addDocumentToContent(
           docName,
           extension,
@@ -326,10 +332,12 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           extension
         )
         .subscribe(data => {
+          console.log('guardado', data);
           this.loading = false;
+          this.loader.load = false;
           this.modalRef.content.callback(true);
           this.close();
-        }); */
+        });
     }
 
     if (this.typeDoc == 'doc-expedient') {
