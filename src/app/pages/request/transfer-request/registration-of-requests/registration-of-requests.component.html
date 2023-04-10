@@ -14,7 +14,7 @@
         </button>
       </div>
       <!-- *ngIf="approvalProcess" -->
-      <div class="p-2" *ngIf="approvalProcess">
+      <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -184,7 +184,7 @@
               <!-- fin -->
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
-                *ngIf="complianceVerifi"
+                *ngIf="complianceVerifi && requestData"
                 [typeDoc]="'verify-compliance'"
                 [requestObject]="requestData"
                 [process]="process"></app-verify-compliance-tab>

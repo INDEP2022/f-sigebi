@@ -1668,6 +1668,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'onCancelPaperwork':
           this.onCancelPaperwork();
           break;
+        case 'onSavePaperwork':
+          this.onSavePaperwork();
+          break;
         case 'validDoc':
           this.validDoc();
           break;
