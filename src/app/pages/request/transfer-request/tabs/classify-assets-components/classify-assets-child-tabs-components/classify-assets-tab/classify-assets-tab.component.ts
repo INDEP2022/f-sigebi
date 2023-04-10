@@ -704,6 +704,9 @@ export class ClassifyAssetsTabComponent
 
   updateGood(good: any) {
     good.requestId = good.requestId.id;
+    if (good.addressId.id) {
+      good.addressId = Number(good.addressId.id);
+    }
     this.goodService.update(good).subscribe({
       next: data => {
         this.message(

@@ -415,14 +415,10 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      appraisalDate: [null],
+      appraisalDate: [null, [Validators.required]],
       certLibLien: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(50),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
       guardCustody: [
         null,
@@ -491,8 +487,8 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      certLibLienDate: [null],
-      pffDate: [null],
+      certLibLienDate: [null, [Validators.required]],
+      pffDate: [null, [Validators.required]],
       gravFavorThird: [
         null,
         [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
