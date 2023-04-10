@@ -334,9 +334,9 @@
                           </div>
                           <div>
                             <button
+                              [disabled]="isLoadingExportFile"
                               class="btn btn-sm btn-success active me-2 font-size-14"
-                              (click)="exportExcel()"
-                              [disabled]="!maintenance">
+                              (click)="exportFile()">
                               <i class="fas fa-file-excel text-light me-1"></i>
                               Exportar
                             </button>

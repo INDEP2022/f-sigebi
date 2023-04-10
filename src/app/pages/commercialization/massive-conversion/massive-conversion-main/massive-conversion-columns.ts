@@ -8,6 +8,9 @@ export const DATA_COLUMNS = {
     title: 'Id Lote',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      return item?.comerLots?.description;
+    },
   },
   batch: {
     title: 'Lote',
@@ -23,6 +26,9 @@ export const DATA_COLUMNS = {
     title: 'R.F.C.',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      return item?.comerClient?.rfc;
+    },
   },
   amount: {
     title: 'Monto $',
@@ -67,16 +73,14 @@ export const DATA_COLUMNS = {
       if (!item.batchId) {
         observation += 'No se ingreso el lote. ';
       }
-      /**TODO: 
-         * 
-         * cuando traigan las relaciones de comer_lote y comer_clientes
-        if (item.{relacion-cliente} == null) {
-          observation += 'El ID Cliente no Existe. ';
-        }
-        if (item.{relacion-lote} == null) {
-          observation += 'El ID Lote no Existe. ';
-        }
-        */
+      if (!item.comerClient == null) {
+        observation += 'El ID Cliente no Existe. ';
+      }
+
+      if (!item.comerLots == null) {
+        observation += 'El ID Lote no Existe. ';
+      }
+
       if (!item.amount) {
         observation += 'No se ingreso el monto. ';
       }
@@ -90,27 +94,29 @@ export const DATA_COLUMNS = {
       if (!item.bankExpCheck) {
         observation += 'No se ingreso el Expide. Cheque. ';
       }
+      // console.log({ observation });
+      return observation;
     },
   },
 };
 
 export const LCS_COLUMNS = {
-  id: {
+  idlcg: {
     title: 'Id Lcg',
     type: 'number',
     sort: false,
   },
-  eventId: {
+  idEvent: {
     title: 'Id Evento',
     type: 'number',
     sort: false,
   },
-  batchId: {
+  idBatch: {
     title: 'Id Lote',
     type: 'number',
     sort: false,
   },
-  clientId: {
+  idCustomer: {
     title: 'Id Cliente',
     type: 'number',
     sort: false,
@@ -120,17 +126,17 @@ export const LCS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  gsaeRef: {
+  refGsae: {
     title: 'Ref. Gsae',
     type: 'string',
     sort: false,
   },
-  gbankRef: {
+  refGbank: {
     title: 'Ref. Gbanco',
     type: 'number',
     sort: false,
   },
-  validityDate: {
+  dateValidity: {
     title: 'Fecha Videncia',
     type: 'string',
     sort: false,
@@ -140,17 +146,17 @@ export const LCS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registerDate: {
+  dateRecord: {
     title: 'Fecha Registro',
     type: 'string',
     sort: false,
   },
-  checkBank: {
+  bankExpCheck: {
     title: 'Banco Exp. Cheque',
     type: 'string',
     sort: false,
   },
-  checkNumber: {
+  numberCheck: {
     title: 'N° Cheque',
     type: 'number',
     sort: false,

@@ -86,7 +86,6 @@ export class CustomSelectComponent
   }
 
   writeValue(obj: any): void {
-    console.log(obj);
     this.selectedItem = obj;
   }
 
@@ -103,8 +102,13 @@ export class CustomSelectComponent
   }
 
   onSelectChange(event: any) {
+    this.onChange?.(event || null);
+    if (!event) {
+      this.valueChange.emit(null);
+      return;
+    }
+    console.log({ event });
     const data = this.items.find(item => item[this.value] === event);
-    this.onChange?.(event);
     this.valueChange.emit(data);
   }
 

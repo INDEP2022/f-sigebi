@@ -18,10 +18,7 @@ export class CapturelineService extends HttpService {
     return this.get<IListResponse<ITmpLcComer>>(this.route.TmpLcComer, params);
   }
 
-  getComerRefWarranties(params?: _Params) {
-    return this.get<IListResponse<ITmpLcComer>>(
-      this.route.ComerRefWarranties,
-      params
-    );
+  postTmpLcComer(data: ITmpLcComer) {
+    return this.post<ITmpLcComer>(this.route.TmpLcComer, data);
   }
 }

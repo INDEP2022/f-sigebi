@@ -12,7 +12,7 @@ BEGIN
 	ELSE
 			:BLK_CONTROL.TIPO_CONS := 'INSERT';
 			PUP_CLEAR_BLOCK;
-      c_RESP_LAYOUT := PUF_TIPO_LAYOUT;
+      c_RESP_LAYOUT := PUF_TIPO_LAYOUT; /* 'N' = RFC, 'A' = ID_CLIENT, 'X' = CANCELAR */
       IF c_RESP_LAYOUT = 'X' THEN
 	  	   GO_ITEM('TMP_LC_COMER.ID_EVENTO');
          RAISE FORM_TRIGGER_FAILURE;
@@ -62,16 +62,17 @@ END;
 
 FUNCTION PUF_TIPO_LAYOUT RETURN CHAR IS
    vn_boton_seleccionado NUMBER;
-BEGIN
-   vn_boton_seleccionado := SHOW_ALERT('ALR_MENSAJE_LAYOUT');
-   IF vn_boton_seleccionado = ALERT_BUTTON1 THEN
-      RETURN 'N';
-   ELSIF vn_boton_seleccionado = ALERT_BUTTON2 THEN
-      RETURN 'A';
-   ELSE
-      RETURN 'X';
-   END IF;
-END;
+   BEGIN
+      vn_boton_seleccionado := SHOW_ALERT('ALR_MENSAJE_LAYOUT');
+      IF vn_boton_seleccionado = ALERT_BUTTON1 THEN
+         RETURN 'N';
+      ELSIF vn_boton_seleccionado = ALERT_BUTTON2 THEN
+         RETURN 'A';
+      ELSE
+         RETURN 'X';
+      END IF;
+   END;
+end FUNCTION;
 
 
 PROCEDURE PUP_ABRIR_ARCHIVO IS
@@ -81,35 +82,35 @@ PROCEDURE PUP_ABRIR_ARCHIVO IS
     LFIARCHIVO      TEXT_IO.FILE_TYPE;
     LST_ARCHIVO_IMG	VARCHAR2(4000);
 
-BEGIN
-  BEGIN
-  	LFIARCHIVO := TEXT_IO.FOPEN('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpath.pth', 'r');        
-    IF TEXT_IO.IS_OPEN(LFIARCHIVO) THEN
-    	TEXT_IO.GET_LINE(LFIARCHIVO, L_PATH);
-      TEXT_IO.FCLOSE(LFIARCHIVO);
-    END IF;
-	EXCEPTION 
-  	WHEN OTHERS THEN
-    	L_PATH := 'c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\';
-  END;        
-  VC_FILTRO := 'Todos (*.*)|*.*|';
-  VC_FILTRO := 'Archivos de Texto CSV (*.csv)|*.csv|';  --Archivo CSV
-  L_FILE := GET_FILE_NAME(FILE_FILTER=> VC_FILTRO,DIRECTORY_NAME=>L_PATH);
-  LFIARCHIVO := TEXT_IO.FOPEN('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpath.pth', 'w');
-  TEXT_IO.PUT_LINE(LFIARCHIVO, L_PATH);
-  TEXT_IO.FCLOSE(LFIARCHIVO);              
-  BEGIN
-  	WIN_API_UTILITY.COPY_FILE(L_FILE, 'c:\IMTMPSIAB\'||:GLOBAL.VG_DIRUSR||'\FCOMERLCMASIV.CSV', TRUE, TRUE);                 
-  EXCEPTION 
-  	WHEN NO_DATA_FOUND THEN
-    	LIP_MENSAJE('No se puede copiar el archivo de CSV.','A');
-      RAISE FORM_TRIGGER_FAILURE;
-  	WHEN OTHERS THEN
-    	LIP_MENSAJE('Error al leer el Archivo...  '||SQLERRM,'A');                                                
-  END;
-  
-END;
-
+   BEGIN
+     BEGIN
+     	LFIARCHIVO := TEXT_IO.FOPEN('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpath.pth', 'r');        
+       IF TEXT_IO.IS_OPEN(LFIARCHIVO) THEN
+       	TEXT_IO.GET_LINE(LFIARCHIVO, L_PATH);
+         TEXT_IO.FCLOSE(LFIARCHIVO);
+       END IF;
+   	EXCEPTION 
+     	WHEN OTHERS THEN
+       	L_PATH := 'c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\';
+     END;        
+     VC_FILTRO := 'Todos (*.*)|*.*|';
+     VC_FILTRO := 'Archivos de Texto CSV (*.csv)|*.csv|';  --Archivo CSV
+     L_FILE := GET_FILE_NAME(FILE_FILTER=> VC_FILTRO,DIRECTORY_NAME=>L_PATH);
+     LFIARCHIVO := TEXT_IO.FOPEN('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpath.pth', 'w');
+     TEXT_IO.PUT_LINE(LFIARCHIVO, L_PATH);
+     TEXT_IO.FCLOSE(LFIARCHIVO);              
+     BEGIN
+     	WIN_API_UTILITY.COPY_FILE(L_FILE, 'c:\IMTMPSIAB\'||:GLOBAL.VG_DIRUSR||'\FCOMERLCMASIV.CSV', TRUE, TRUE);                 
+     EXCEPTION 
+     	WHEN NO_DATA_FOUND THEN
+       	LIP_MENSAJE('No se puede copiar el archivo de CSV.','A');
+         RAISE FORM_TRIGGER_FAILURE;
+     	WHEN OTHERS THEN
+       	LIP_MENSAJE('Error al leer el Archivo...  '||SQLERRM,'A');                                                
+     END;
+   
+   END;
+end PROCEDURE;
 
 PROCEDURE PUP_INSERT_REGISTROS IS
 		LST_ARCHIVO_DESTINO   VARCHAR2 (4000);
@@ -318,3 +319,20 @@ EXCEPTION
       LIP_MENSAJE ('Error desconocido en apertura de conexión con Archivo. -> '|| SQLERRM,'S');
 END;
 
+
+
+FUNCTION PUF_OBT_CONSEC_OPER RETURN NUMBER IS
+
+		V_CONSEC NUMBER(10);
+
+   BEGIN
+   
+   		SELECT  NVL(MAX(ID_OPERACION),0) +1
+   		INTO V_CONSEC
+       		FROM TMP_LC_COMER;
+   
+   		RETURN V_CONSEC;
+   
+   END;
+
+end FUNCTION

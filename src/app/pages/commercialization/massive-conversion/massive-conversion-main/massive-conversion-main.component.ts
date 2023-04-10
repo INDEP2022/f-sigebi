@@ -4,11 +4,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, skip } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   convertFormatDate,
-  readFile,
   showQuestion,
   showToast,
 } from 'src/app/common/helpers/helpers';
@@ -18,12 +17,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
+import { readFileClientIdOrRfc } from '../tools/read-file-client-id-or-rfc';
 import {
   BATCH_REWORK_COLUMNS,
   CLIENTID_LAYOUT_COLUMNS,
@@ -187,48 +190,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     },
   ];
 
-  lcsTestData = [
-    {
-      id: 44926,
-      eventId: 22410,
-      batchId: 3482610,
-      clientId: 10381,
-      amount: 20000,
-      gsaeRef: 'REFTEST123',
-      gbankRef: 'BANKREF1234',
-      validityDate: '15/07/2021',
-      status: 'PAG',
-      checkBank: 'BBVA BANCOMER',
-      checkNumber: 2292,
-    },
-    {
-      id: 44927,
-      eventId: 22410,
-      batchId: 3482610,
-      clientId: 12187,
-      amount: 10000,
-      gsaeRef: 'REFTEST123',
-      gbankRef: 'BANKREF1234',
-      validityDate: '15/07/2021',
-      status: 'PAG',
-      checkBank: 'BBVA BANCOMER',
-      checkNumber: 2293,
-    },
-    {
-      id: 44928,
-      eventId: 22410,
-      batchId: 3482610,
-      clientId: 12187,
-      amount: 20000,
-      gsaeRef: 'REFTEST123',
-      gbankRef: 'BANKREF1234',
-      validityDate: '15/07/2021',
-      status: 'PAG',
-      checkBank: 'BBVA BANCOMER',
-      checkNumber: 2294,
-    },
-  ];
-
   rfcTestdata = [
     {
       rfc: 'MOSF690531FK5',
@@ -362,11 +323,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   rfcSource = new LocalDataSource();
   clientSource = new LocalDataSource();
   lcsSource = new LocalDataSource();
+  isLoadingLcs = false;
 
   constructor(
     private excelService: ExcelService,
     private modalService: BsModalService,
-    private capturelineService: CapturelineService
+    private capturelineService: CapturelineService,
+    private guarantyService: GuarantyService,
+    private comerClientsService: ComerClientsService
   ) {
     super();
     this.dataSettings.columns = DATA_COLUMNS;
@@ -378,17 +342,16 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.prepareForm();
-    // this.getEvents({ page: 1, text: '' });
-    // this.getBatches({ page: 1, text: '' });
-    // this.getOperations({ page: 1, text: '' });
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
     this.clientIdSettings.columns = this.modifyColumns(
       this.clientIdSettings.columns
     );
 
-    this.dataParams.subscribe(params => {
+    this.dataParams.pipe(skip(1)).subscribe(params => {
       this.searchData(params);
+    });
+    this.lcsParams.pipe(skip(1)).subscribe(params => {
+      this.searchLcs(params);
     });
   }
 
@@ -416,7 +379,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   consultInServer() {
-    // sql= '../tools/sql/consul-btn-click.sql';
     if (!this.validConsult()) {
       showToast({
         text: 'No se ha insertado ningún filtro de búsqueda.',
@@ -431,46 +393,47 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   searchData(list?: ListParams) {
     this.loading = true;
-    const params = this.makeFiltersParams(list);
-    this.capturelineService.getTmpLcComer(params.getFilterParams()).subscribe({
+    const params = this.makeFiltersParams(list).getParams();
+    this.capturelineService.getTmpLcComer(params).subscribe({
       next: res => {
         this.loading = false;
         this.dataSource.load(res.data);
         this.dataTotalItems = res.count;
-
         this.loading = false;
       },
       error: () => {
+        this.dataSource.load([]);
         this.loading = false;
       },
     });
   }
 
-  isLoadingLcs = false;
-  searchLcs(list?: ListParams) {
-    this.loading = true;
-    const params = this.makeFiltersParams(list);
-    this.capturelineService
-      .getComerRefWarranties(params.getFilterParams())
-      .subscribe({
-        next: res => {
-          this.isLoadingLcs = false;
-          this.lcsSource.load(res.data);
-          this.lcsTotalItems = res.count;
+  searchLcs(listParams?: ListParams) {
+    this.isLoadingLcs = true;
+    const params = this.makeFiltersParams(listParams).getParams();
+    this.guarantyService.getComerRefGuarantees(params).subscribe({
+      next: res => {
+        this.isLoadingLcs = false;
+        this.lcsSource.load(res.data);
+        this.lcsTotalItems = res.count;
 
-          this.isLoadingLcs = false;
-        },
-        error: () => {
-          this.isLoadingLcs = false;
-        },
-      });
+        this.isLoadingLcs = false;
+      },
+      error: () => {
+        this.lcsSource.load([]);
+        this.isLoadingLcs = false;
+      },
+    });
   }
 
-  makeFiltersParams(list: ListParams): FilterParams {
+  makeFiltersParams(list?: ListParams): FilterParams {
     const params = new FilterParams();
     params.page = list?.page || 1;
     params.limit = list?.limit || 10;
     const filters: any = this.form.value;
+    if (filters.insertDate) {
+      filters.insertDate = convertFormatDate(filters.insertDate);
+    }
     Object.keys(filters).forEach((key: string) => {
       if (filters[key]) {
         params.addFilter(key, filters[key]);
@@ -484,51 +447,86 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   readFile(event: Event, type: 'rfc' | 'client_id') {
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1)
+    /* TODO: insertar en la temporal por que tiene que se masivamente */
+    readFileClientIdOrRfc(
+      this.form.get('eventId').value,
+      event,
+      type,
+      this.excelService
+    );
+  }
+
+  isLoadingExportFile = false;
+  exportFile() {
+    if (!this.form.get('eventId').value) {
       showToast({
-        text: 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)',
+        text: 'No se ha seleccionado un evento',
         icon: 'error',
       });
-    readFile(files[0], 'BinaryString').then((res: any) => {
-      console.log(res);
-      this.getDataFile(res.result, type);
+      return;
+    }
+    this.isLoadingExportFile = true;
+    const params = this.makeFiltersParams().getParams();
+    this.guarantyService.getComerRefGuarantees(params).subscribe({
+      next: res => {
+        this.isLoadingExportFile = false;
+        this.excelService.export(res.data, { filename: 'LCS' });
+        this.searchLcs();
+      },
+      error: () => {
+        this.isLoadingExportFile = false;
+      },
     });
   }
 
-  getDataFile(binaryExcel: string | ArrayBuffer, type: 'rfc' | 'client_id') {
-    try {
-      const data = this.excelService.getData(binaryExcel);
-      if (data?.length == 0) {
+  insertTmpLcComer(tmpLcComer: ITmpLcComer) {
+    this.capturelineService.postTmpLcComer(tmpLcComer).subscribe({
+      next: () => {
         showToast({
-          icon: 'error',
-          text: 'El archivo no contiene datos',
-          title: 'Error',
+          text: 'Se insertó correctamente',
+          icon: 'success',
         });
-        return;
-      }
-      if (!data[0].hasOwnProperty(type.toUpperCase())) {
+        this.searchData();
+      },
+      error: () => {
         showToast({
+          text: 'Ocurrió un error al insertar',
           icon: 'error',
-          text: 'El archivo no contiene la columna ' + type.toUpperCase(),
-          title: 'Error',
         });
-        return;
-      }
-      console.log(data);
-      this.maintenance = true;
-      // this.form
-      //   .get(type)
-      //   ?.setValue(data.map((item: any) => item[type.toUpperCase()]));
-      this.searchData();
-    } catch (error) {
-      showToast({
-        icon: 'error',
-        text: 'Ocurrió un error al leer el archivo',
-        title: 'Error',
-      });
-    }
+      },
+    });
   }
+
+  // isValidHeaderExcelOrCvs(
+  //   data: { [key: string]: string },
+  //   type: 'rfc' | 'client_id'
+  // ): boolean {
+  //   const header = [
+  //     'paleta_id',
+  //     'lote',
+  //     'monto',
+  //     'no_cheque',
+  //     'exp_cheque',
+  //     'fec_vigencia',
+  //   ];
+  //   if (type === 'rfc') {
+  //     header.push('rfc');
+  //     header.push('evento');
+  //   } else if (type === 'client_id') {
+  //     header.push('cliente_id');
+  //   }
+  //   return header.every((item: any) => {
+  //     if (!data[0].hasOwnProperty(item)) {
+  //       showToast({
+  //         icon: 'error',
+  //         text: 'El archivo no contiene la columna ' + item,
+  //         title: 'Error',
+  //       });
+  //       return true;
+  //     }
+  //     return false;
+  //   });
+  // }
 
   loadChecks() {
     if (this.form.invalid) {

@@ -86,8 +86,6 @@ FUNCTION PUF_GEN_WHERE (P_TIPO_PROC	VARCHAR2,P_EVENTO VARCHAR2,P_LOTE VARCHAR2,P
 	END;
 END FUNCTION;
 
-
-
 PROCEDURE PUP_GEN_CONSULTA (P_TABLA VARCHAR2, P_TIPO_PROC VARCHAR2, P_WHERE VARCHAR2) IS
    OLDMSG VARCHAR2(2) := :SYSTEM.MESSAGE_LEVEL;
 BEGIN
@@ -99,15 +97,15 @@ BEGIN
 						GO_BLOCK('TMP_LC_COMER');
 						EXECUTE_QUERY;
 				ELSIF P_TABLA = 'COMER_REF_GARANTIAS' THEN 
-						SET_BLOCK_PROPERTY('COMER_REF_GARANTIAS',DEFAULT_WHERE, 'ESTATUS = ''GEN''
-																																	    AND USER_GENERA = ''TERCERO''
-																																	    AND EXISTS (SELECT    1
-																																	                        FROM TMP_LC_COMER TCL
-																																	                        WHERE        TCL.ID_LOTE = CRG.ID_LOTE
-																																	                        AND       TCL.ID_CLIENTE = CRG.ID_CLIENTE
-																																	                        AND     TCL.FEC_VIGENCIA = CRG.FEC_VIGENCIA
-																																	                        AND  TRUNC(FEC_INSERT) = TRUNC(SYSDATE) 
-																																	                        AND '||P_WHERE||')');
+						SET_BLOCK_PROPERTY('COMER_REF_GARANTIAS',DEFAULT_WHERE, 'ESTATUS = ''GEN'' 
+						AND USER_GENERA = ''TERCERO''
+ 						AND EXISTS (SELECT    1
+                     FROM TMP_LC_COMER TCL
+                     WHERE        TCL.ID_LOTE = CRG.ID_LOTE
+                     AND       TCL.ID_CLIENTE = CRG.ID_CLIENTE
+                     AND     TCL.FEC_VIGENCIA = CRG.FEC_VIGENCIA
+                     AND  TRUNC(FEC_INSERT) = TRUNC(SYSDATE) 
+                     AND '||P_WHERE||')');
 						GO_BLOCK('COMER_REF_GARANTIAS');
 						EXECUTE_QUERY;
 				END IF;	
