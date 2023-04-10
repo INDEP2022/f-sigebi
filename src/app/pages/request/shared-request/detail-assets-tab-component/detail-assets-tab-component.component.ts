@@ -319,12 +319,9 @@ export class DetailAssetsTabComponentComponent
       ],
       localityKey: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(100))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      code: [
-        '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(6))],
-      ],
+      code: ['', [Validators.pattern(STRING_PATTERN), Validators.maxLength(6)]],
       latitude: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
@@ -335,23 +332,23 @@ export class DetailAssetsTabComponentComponent
       ],
       wayName: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       wayOrigin: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       exteriorNumber: [
         '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(40))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       interiorNumber: [
         '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(40))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       wayDestiny: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       wayref1Key: [
         null,
@@ -359,7 +356,7 @@ export class DetailAssetsTabComponentComponent
       ],
       wayChaining: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
       description: [
         '',
@@ -373,14 +370,7 @@ export class DetailAssetsTabComponentComponent
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
-      description: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
-      status: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
-      ],
+      description: [null],
       propertyType: [null, [Validators.required, Validators.maxLength(40)]],
       surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       consSurfaceMts: [

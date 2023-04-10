@@ -24,7 +24,11 @@
     <div class="row pt-3">
       <div class="col-md-6">
         <form-field [control]="searchForm.get('texto')" label="Texto">
-          <input type="text" class="form-control" formControlName="texto" />
+          <input
+            type="text"
+            maxlength="1000"
+            class="form-control"
+            formControlName="texto" />
         </form-field>
       </div>
     </div>
@@ -50,7 +54,11 @@
         <form-field
           [control]="searchForm.get('dDocTitle')"
           label="T&iacute;tulo del documento">
-          <input type="text" class="form-control" formControlName="dDocTitle" />
+          <input
+            type="text"
+            maxlength="30"
+            class="form-control"
+            formControlName="dDocTitle" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -68,6 +76,7 @@
           label="Cargo remitente">
           <input
             type="text"
+            maxlength="100"
             class="form-control"
             formControlName="xcargoRemitente" />
         </form-field>
@@ -79,6 +88,7 @@
         <form-field [control]="searchForm.get('dDocAuthor')" label="Autor">
           <input
             type="text"
+            maxlength="100"
             class="form-control"
             formControlName="dDocAuthor" />
         </form-field>
@@ -89,6 +99,7 @@
           label="Tipo transferencia">
           <input
             type="text"
+            maxlength="30"
             class="form-control"
             formControlName="xtipoTransferencia" />
         </form-field>
@@ -99,6 +110,7 @@
           label="Responsable">
           <input
             type="text"
+            maxlength="30"
             class="form-control"
             formControlName="xresponsable" />
         </form-field>
@@ -110,7 +122,11 @@
         <form-field
           [control]="searchForm.get('dDocName')"
           label="Nombre documento">
-          <input type="text" class="form-control" formControlName="dDocName" />
+          <input
+            type="text"
+            maxlength="100"
+            class="form-control"
+            formControlName="dDocName" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -132,6 +148,7 @@
           label="Contribuyente">
           <input
             type="text"
+            maxlength="100"
             class="form-control"
             formControlName="xcontribuyente" />
         </form-field>
@@ -167,7 +184,11 @@
         <form-field
           [control]="searchForm.get('xnoOficio')"
           label="No&#46; oficio">
-          <input type="text" class="form-control" formControlName="xnoOficio" />
+          <input
+            type="text"
+            maxlength="30"
+            class="form-control"
+            formControlName="xnoOficio" />
         </form-field>
       </div>
     </div>
@@ -199,7 +220,11 @@
       </div>
       <div class="col-md-4">
         <form-field [control]="searchForm.get('xComments')" label="Comentarios">
-          <input type="text" class="form-control" formControlName="xComments" />
+          <input
+            type="text"
+            maxlength="1000"
+            class="form-control"
+            formControlName="xComments" />
         </form-field>
       </div>
     </div>
@@ -218,6 +243,7 @@
         <form-field [control]="searchForm.get('xremitente')" label="Remitente">
           <input
             type="text"
+            maxlength="100"
             class="form-control"
             formControlName="xremitente" />
         </form-field>
