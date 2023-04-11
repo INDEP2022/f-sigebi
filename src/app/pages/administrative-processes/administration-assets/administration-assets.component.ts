@@ -46,6 +46,7 @@ export class AdministrationAssetsComponent {
   dataSearch: boolean;
   data: any;
   chargeData(event: any) {
+    console.log(event);
     this.dataSearch = event.exist;
     this.data = event.data;
   }

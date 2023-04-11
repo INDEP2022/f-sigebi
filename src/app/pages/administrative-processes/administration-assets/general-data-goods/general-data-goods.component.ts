@@ -30,7 +30,8 @@ export class GeneralDataGoodsComponent implements OnInit, OnChanges {
     private readonly goodQueryService: GoodsQueryService
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes) {
+    console.log(this.goodId);
+    if (this.goodId) {
       this.getGood();
     }
   }
@@ -39,26 +40,33 @@ export class GeneralDataGoodsComponent implements OnInit, OnChanges {
     this.prepareForm();
   }
   private getGood() {
-    this.goodService.getById(this.goodId).subscribe({
-      next: (val: any) => {
-        this.generalDataForm.get('cantidad').patchValue(val.quantitySae);
-        this.generalDataForm.get('fechaFe').patchValue(val.judicialDate);
-        this.generalDataForm.get('observacion').patchValue(val.observations);
-        this.generalDataForm.get('descripcion').patchValue(val.description);
-        let data: any = {};
+    let params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = params.value;
+    data.addFilter('id', this.goodId);
+    data.addFilter('goodId', this.goodId);
+    console.log(data);
+    this.goodService.getAllFilter(data.getParams()).subscribe({
+      next: ({ count, data }) => {
+        console.log('Entra');
+        let dato: any = { ...data[0] };
+        this.generalDataForm.get('cantidad').patchValue(dato.quantitySae);
+        this.generalDataForm.get('fechaFe').patchValue(dato.judicialDate);
+        this.generalDataForm.get('observacion').patchValue(dato.observations);
+        this.generalDataForm.get('descripcion').patchValue(dato.description);
+        let info: any = {};
         for (let i = 1; i <= 120; i++) {
-          data[`val${i}`] = '';
+          info[`val${i}`] = '';
         }
-        for (const i in val) {
-          for (const j in data) {
-            if (j == i) {
-              data[j] = val[i];
+        Object.keys(dato).forEach(val => {
+          for (const j in info) {
+            if (j == val) {
+              info[j] = dato[`${val}`];
             }
           }
-        }
+        });
         let dataParam = this.params.getValue();
         dataParam.limit = 120;
-        dataParam.addFilter('classifGoodNumber', val.goodClassNumber);
+        dataParam.addFilter('classifGoodNumber', dato.goodClassNumber);
         this.goodQueryService.getAllFilter(dataParam.getParams()).subscribe({
           next: val => {
             let ordered = val.data.sort(
@@ -68,7 +76,7 @@ export class GeneralDataGoodsComponent implements OnInit, OnChanges {
               if (order) {
                 this.list.push({
                   atributo: order.attribute,
-                  valor: data[`val${index + 1}`],
+                  valor: info[`val${index + 1}`],
                 });
               }
             });
