@@ -17,8 +17,20 @@ export const GOOD_ADDRESS_COLUMNS = {
     sort: false,
   },
 
-  localityKey: {
+  municipalityName: {
+    title: 'Municipio',
+    type: 'string',
+    sort: false,
+  },
+
+  localityName: {
     title: 'colonia',
+    type: 'string',
+    sort: false,
+  },
+
+  code: {
+    title: 'Código postal',
     type: 'string',
     sort: false,
   },
@@ -34,16 +46,4 @@ export const GOOD_ADDRESS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-
-  /*municipalityName: {
-    title: 'Municipio',
-    type: 'string',
-    sort: false,
-  },
-  
-  code: {
-    title: 'Código postal',
-    type: 'string',
-    sort: false,
-  }, */
 };

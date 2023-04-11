@@ -529,6 +529,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
+        console.log(data);
         this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
