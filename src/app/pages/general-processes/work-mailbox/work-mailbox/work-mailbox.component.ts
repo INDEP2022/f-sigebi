@@ -1514,10 +1514,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   savePaperwork() {
-    const { processNumber, userATurn, areaATurn } = this.selectedRow;
+    const { processNumber } = this.selectedRow;
     const body = {
-      areaToTurn: areaATurn,
-      userToTurn: userATurn,
+      status: this.managementAreaF.value.id + 'I',
+      userTurned: this.user.value.id,
       situation: 1,
     };
     return this.procedureManagementService.update(processNumber, body).pipe(
