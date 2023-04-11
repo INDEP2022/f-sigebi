@@ -22,7 +22,7 @@ export class ExchangeTypesComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = EXCHANGE_TYPES_COLUMNS;
-    this.settings.actions = false;
+    this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
@@ -49,8 +49,32 @@ export class ExchangeTypesComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe(next => {
-      // if (next) this.getCurrencies();
-    });
+
+    // modalRef.content.onSelect.subscribe(next => {
+    //   if (next) {
+    //     var currency = {
+    //       id: next.currency,
+    //       validityId: "2003-01-01T00:00:00.000Z",
+    //       purchaseValue: '',
+    //       saleValue: "12",
+    //       costValue: "10.33770",
+    //       registerNumber: "23722"
+    //     }
+    //     this.createCurrency(currency);
+    //   }
+    // });
+  }
+
+  // data(event: any) {
+  //   console.log(event.data);
+  // }
+  createCurrency(currency: any) {
+    this.typerateService.create(currency).subscribe(
+      next => {
+        this.getTyperate();
+        console.log(next);
+      },
+      error => (this.loading = false)
+    );
   }
 }

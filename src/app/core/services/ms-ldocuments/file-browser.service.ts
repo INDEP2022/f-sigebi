@@ -1,9 +1,10 @@
 import { HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IPgrFile } from '../../models/ms-ldocument/pgr-file.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -43,5 +44,16 @@ export class FileBrowserService extends HttpService {
 
   deleteByFolioAndFilename(invoiceNumber: string | number, name: string) {
     return this.delete('file-browser/deleteFolio', { invoiceNumber, name });
+  }
+
+  getPgrFiles(params: _Params) {
+    return this.get<IListResponse<IPgrFile>>(
+      'file-browser/getAllRecoverFile',
+      params
+    );
+  }
+
+  findPgrFile(params: _Params) {
+    return this.get<IPgrFile>('file-browser/getOneRecoverFile', params);
   }
 }
