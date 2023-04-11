@@ -79,7 +79,9 @@ import {
 
 import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
@@ -211,7 +213,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private goodsParamerterService: GoodParametersService,
     private notificationsService: NotificationService,
     private tmpManagementProcedureService: TmpManagementProcedureService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private siabService: SiabService
   ) {
     super();
     this.settings.actions = true;
@@ -1972,7 +1975,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'getSolicitud':
           this.getSolicitud();
           break;
-
+        case 'getNotificationsReport':
+          this.getNotificationsReport();
+          break;
         default:
           this.alertQuestion(
             'info',
@@ -2014,6 +2019,61 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       fromDateCtrl.addValidators(maxDate(min));
     }
     fromDateCtrl.updateValueAndValidity();
+  }
+
+  getNotificationsReport(): void {
+    if (!this.selectedRow?.folioRep) {
+      const params = {
+        P_DEF_WHERE: 'WHERE ', //||:T_WHERE);
+      };
+      const report = 'RGESTBUZONTRAMITE';
+      this.onLoadToast(
+        'info',
+        'RGESTBUZONTRAMITE No disponible',
+        'Reporte no disponible en este momento'
+      );
+      console.log(report);
+    } else {
+      if (this.selectedRow?.processStatus === 'OPI') {
+        const params = {
+          PFOLIO: this.selectedRow?.folioRep,
+          PTURNADOA: this.selectedRow?.turnadoiUser,
+        };
+        this.siabService
+          .fetchReport('RFOL_DOCTOSRECIB_SATSAE', params)
+          .subscribe({
+            next: response => {
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                }, //pasar datos por aca
+                class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+                ignoreBackdropClick: true, //ignora el click fuera del modal
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+            },
+            error: error => {
+              this.onLoadToast(
+                'error',
+                'No disponible',
+                'Reporte no disponible'
+              );
+            },
+          });
+      } else {
+        this.alertQuestion(
+          'info',
+          'No permitido',
+          'El reporte para los trámites con estatus diferente a "OPI", no está disponible'
+        );
+      }
+    }
   }
 
   onSaveConfirm(event: any) {
