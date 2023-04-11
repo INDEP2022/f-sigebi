@@ -24,6 +24,7 @@ export function readFileClientIdOrRfc(
   }
 
   readFile(files[0], 'BinaryString').then(res => {
+    console.log({ res });
     try {
       const dataExcel = excelService.getData(res.result);
       if (dataExcel.length == 0) {
@@ -39,6 +40,7 @@ export function readFileClientIdOrRfc(
 
       /* TODO: insertar en la temporal por que tiene que se masivamente */
       // this.insertTmpLcComer(data[0])
+      console.log({ dataExcel });
       alert('TODO: insertar en la temporal por que tiene que se masivamente');
     } catch (error) {
       showToast({
@@ -54,12 +56,12 @@ function isValidHeaderExcelOrCvs(
   type: 'rfc' | 'client_id'
 ): boolean {
   const header = [
-    'paleta_id',
+    'paletaid',
     'lote',
-    'monto',
-    'no_cheque',
+    'monto_in',
+    'no_cheque_in',
     'exp_cheque',
-    'fec_vigencia',
+    'fecvigencia_in',
   ];
   if (type === 'rfc') {
     header.push('rfc');
