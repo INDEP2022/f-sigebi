@@ -6,6 +6,7 @@
   window["env"].API_BACKEND_URL2 = "${ENV_API_BACKEND_URL}";
   window["env"].URL_PREFIX = "${ENV_URL_PREFIX}";
 
+  window["env"].API_REPORTS_BASE = "${ENV_API_REPORTS_BASE}";
   window["env"].API_REPORTS = "${ENV_API_REPORTS}";
   window["env"].API_REPORTS_USR = "${ENV_API_REPORTS_USR";
   window["env"].API_REPORTS_PSW = "${ENV_API_REPORTS_PSW";

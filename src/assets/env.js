@@ -6,7 +6,8 @@
   window["env"].API_BACKEND_URL2 = 'http://sigebimsqa.indep.gob.mx/';
   window["env"].URL_PREFIX = 'api/v1/';
 
-  window["env"].API_REPORTS = 'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/';
+  window["env"].API_REPORTS_BASE = 'http://reports-qa.indep.gob.mx/jasperserver/';
+  window["env"].API_REPORTS = 'http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/';
   window["env"].API_REPORTS_USR = 'sigebiadmon';
   window["env"].API_REPORTS_PSW = '87654321';
 
