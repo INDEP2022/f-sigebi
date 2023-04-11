@@ -1536,7 +1536,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
 
     if (result.isConfirmed) {
-      if (!this.selectedRow.userATurn && !this.selectedRow.areaATurn) {
+      if (!this.managementAreaF && !this.user) {
         return this.onLoadToast(
           'error',
           'Error',
