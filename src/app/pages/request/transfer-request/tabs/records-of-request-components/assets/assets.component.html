@@ -89,17 +89,14 @@
               </a>
             </li>
             <!-- sub menu de importacion -->
-            <li
-              role="menuitem"
-              *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'">
+            <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
+            <li role="menuitem">
               <a class="dropdown-item" (click)="fileInmueble.click()"
                 ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
               </a>
             </li>
-
-            <li
-              role="menuitem"
-              *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'">
+            <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
+            <li role="menuitem">
               <a class="dropdown-item" style="color: red" (click)="delete()">
                 <i class="bx bx-trash"></i> Eliminar
               </a>
