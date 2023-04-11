@@ -1,5 +1,3 @@
-// import { IEvent } from '../commercialization/event.model';
-
 export interface IParameter {
   idParam: string;
   idValue: string;
@@ -232,4 +230,104 @@ export interface IEvent {
   closingEventDate: string;
   tpsolavalId: number;
   applyIva: number;
+}
+
+export interface ILot {}
+
+export interface IComerLots {
+  year: number;
+  week: number;
+  goodNumber: IGoodPhoto;
+  event: IEvent;
+  tpEvent: number;
+  incorporationDate: string;
+  soldout: string;
+  type: number;
+  origin: number;
+  stockNumber: number;
+  eventcom: number;
+  tpeventcom: number;
+  delegationcNumber: number;
+  delegationbNumber: number;
+  amount: number;
+  description: string;
+  eventRem: number;
+  lotRem: number;
+  lot: number;
+  lotComer: number;
+  steve: string;
+  delegationcm: number;
+  status: string;
+  eventDate: string;
+  unit: string;
+  salePrice: number;
+  cost: number;
+  customerId: number;
+  salePriceLot: number;
+  ivaSale: number;
+  ivaSaleLot: number;
+  saleNoappiva: number;
+  incRemeDate: number;
+  ois: number;
+  invoiceNumber: number;
+  invoiceDate: number;
+  statusLot: string;
+  address: string;
+  usernameCreate: string;
+  usernameCreateRem: string;
+  transfereeNumber: number;
+  lotId: number;
+  eventpre: number;
+  lotpre: string;
+  affectationDate: string;
+  eventDad: number;
+}
+
+export interface IComerLotsEG {
+  year: number;
+  week: number;
+  goodNumber: number;
+  event: IEvent;
+  tpEvent: number;
+  incorporationDate: string;
+  soldout: string;
+  type: number;
+  origin: number;
+  stockNumber: number;
+  eventcom: number;
+  tpeventcom: number;
+  delegationcNumber: number;
+  delegationbNumber: number;
+  amount: number;
+  description: string;
+  eventRem: number;
+  lotRem: number;
+  lot: number;
+  lotComer: number;
+  steve: string;
+  delegationcm: number;
+  status: string;
+  eventDate: string;
+  unit: string;
+  salePrice: number;
+  cost: number;
+  customerId: number;
+  salePriceLot: number;
+  ivaSale: number;
+  ivaSaleLot: number;
+  saleNoappiva: number;
+  incRemeDate: number;
+  ois: number;
+  invoiceNumber: number;
+  invoiceDate: number;
+  statusLot: string;
+  address: string;
+  usernameCreate: string;
+  usernameCreateRem: string;
+  transfereeNumber: number;
+  lotId: number;
+  eventpre: number;
+  lotpre: string;
+  affectationDate: string;
+  eventDad: number;
 }

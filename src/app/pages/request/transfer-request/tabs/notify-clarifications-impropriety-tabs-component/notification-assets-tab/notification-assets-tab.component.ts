@@ -28,7 +28,7 @@ var data1 = [
   },
   {
     id: 2,
-    statusAssets: 'SOLICITUD DE ACLARACION',
+    statusAssets: 'SOLICITUD DE ACLARACIÓN',
     management: '890122',
     assetDescription: 'RESEPTOR DE SEÑAL CON NUMERO DE SERIE: 323211',
     unitMeasure: 'PIEZA',
@@ -42,11 +42,11 @@ var data2 = [
     status: 'NUEVO',
     clarificationStatus: '',
     clarificationSAT: '',
-    typeOfClarification: 'ACLARACION',
-    clarification: 'ACLARACION EN ESTADO FISICO',
+    typeOfClarification: 'ACLARACIÓN',
+    clarification: 'ACLARACIÓN EN ESTADO FISICO',
     typeClarification: '2',
     dateClarification: '12/10/2022',
-    reason: 'ACLARACION DEL ESTADO FISICO DEL BIEN',
+    reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
     observation: '',
   },
 ];
@@ -160,7 +160,7 @@ export class NotificationAssetsTabComponent
 
   finishClarifiImpro() {
     let message =
-      '¿Esta seguro de que desea finalizar la aclaracion?\nSe sugiere subir documentación soporte para esta sección';
+      '¿Esta seguro de que desea finalizar la aclaración?\nSe sugiere subir documentación soporte para esta sección';
     this.alertQuestion(
       undefined,
       'Confirmación de Aclaración',
@@ -168,7 +168,7 @@ export class NotificationAssetsTabComponent
       'Aceptar'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('El estatus de la aclaracion cambia a "Aclarado"');
+        console.log('El estatus de la aclaración cambia a "Aclarado"');
         if (
           this.notifyAssetsSelected[0].typeClarification === 'IMPROCEDENCIA'
         ) {

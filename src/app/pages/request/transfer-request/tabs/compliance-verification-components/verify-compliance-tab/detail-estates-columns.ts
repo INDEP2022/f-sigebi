@@ -2,7 +2,7 @@ import { SaeInputComponent } from './sae-input/sae-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
   id: {
-    title: 'Gestion',
+    title: 'Gestión',
     type: 'string',
     sort: false,
   },
@@ -12,7 +12,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   descriptionGoodSae: {
-    title: 'Descripción Bien SAE',
+    title: 'Descripción Bien INDEP',
     type: 'custom',
     class: 'custom-field',
     filter: false,
@@ -46,12 +46,17 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   stateConservationName: {
-    title: 'Estado de Concervación',
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
   destinyName: {
     title: 'Destino Ligie',
+    type: 'string',
+    sort: false,
+  },
+  ligieUnit: {
+    title: 'Uni. de Medida Ligie',
     type: 'string',
     sort: false,
   },

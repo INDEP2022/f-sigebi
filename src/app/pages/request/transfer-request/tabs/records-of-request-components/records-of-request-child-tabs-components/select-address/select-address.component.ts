@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LocalityService } from '../../../../../../../core/services/catalogs/locality.service';
 import { MunicipalityService } from '../../../../../../../core/services/catalogs/municipality.service';
@@ -33,6 +34,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   stateOfRepublicService = inject(StateOfRepublicService);
   municipaliService = inject(MunicipalityService);
   localityService = inject(LocalityService);
+  goodsinvService = inject(GoodsInvService);
 
   constructor(
     private modelRef: BsModalRef,
@@ -116,25 +118,31 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   getMunicipality(item: any) {
     return new Promise((resolve, reject) => {
       var param = new ListParams();
-      param['filter.idMunicipality'] = `$eq:${item.municipalityKey}`;
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
-      this.municipaliService.getAll(param).subscribe({
+
+      this.goodsinvService.getAllMunipalitiesByFilter(param).subscribe({
+        next: resp => {
+          resolve(resp.data[0].municipality);
+        },
+      });
+      /* this.municipaliService.getAll(param).subscribe({
         next: (data: any) => {
           resolve(data.data[0].nameMunicipality);
         },
-      });
+      }); */
     });
   }
 
   getLocation(item: any) {
     return new Promise((resolve, reject) => {
       var param = new ListParams();
-      param['filter.municipalityId'] = `$eq:${item.municipalityKey}`;
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
-      param['filter.id'] = `$eq:${item.localityKey}`;
-      this.localityService.getAll(param).subscribe({
+      param['filter.townshipKey'] = `$eq:${item.localityKey}`;
+      this.goodsinvService.getAllTownshipByFilter(param).subscribe({
         next: (data: any) => {
-          resolve(data.data[0].nameLocation);
+          resolve(data.data[0].township);
         },
       });
     });
@@ -167,10 +175,17 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   selectAddress() {
+    if (!this.rowSelected) {
+      this.onLoadToast(
+        'error',
+        'No hay direccion',
+        'Seleccione una direccion previamente'
+      );
+      return;
+    }
     //delete this.rowSelected.stateOfRepublicName;
     delete this.rowSelected.municipalityName;
     delete this.rowSelected.localityName;
-
     this.event.emit(this.rowSelected as IDomicile);
     this.close();
   }

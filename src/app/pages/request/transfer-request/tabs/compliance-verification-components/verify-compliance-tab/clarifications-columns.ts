@@ -5,7 +5,7 @@ export const CLARIFICATIONS_COLUMNS = {
     sort: false,
   },
   clarificationType: {
-    title: 'Tipo de Aclaracion',
+    title: 'Tipo de Aclaración',
     type: 'string',
     sort: false,
   },

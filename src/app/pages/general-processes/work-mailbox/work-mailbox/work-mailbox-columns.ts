@@ -45,7 +45,7 @@ export const WORK_BIENES_COLUMNS = {
     sort: false,
   },
   parentGoodMenajeNumber: {
-    title: 'No. bienes menaje',
+    title: 'No. Bien Padre Menaje',
     sort: false,
   },
   goodStatus: {
@@ -56,7 +56,7 @@ export const WORK_BIENES_COLUMNS = {
 
 export const WORK_ANTECEDENTES_COLUMNS = {
   proceedingsNum: {
-    title: 'No. Antecedente',
+    title: 'No. Expediente',
     sort: false,
   },
   flierNum: {
@@ -64,19 +64,19 @@ export const WORK_ANTECEDENTES_COLUMNS = {
     sort: false,
   },
   attended: {
-    title: 'Aatendió',
-    sort: false,
-  },
-  registryUsr: {
-    title: 'USR registro',
+    title: 'Atendió',
     sort: false,
   },
   type: {
+    title: 'Dictamen o Des.',
+    sort: false,
+  },
+  registryUsr: {
     title: 'Tipo',
     sort: false,
   },
   armedTradeKey: {
-    title: 'Clave oficio',
+    title: 'Clave Dic. u Oficio',
     sort: false,
   },
 };
@@ -85,14 +85,57 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processNumber: {
     title: 'No. Trámite',
     sort: false,
+    editable: false,
   },
-  issueSijNumber: {
-    title: 'No. Asunto SIJ',
+  officeNumber: {
+    title: 'No. Oficio',
     sort: false,
+    editable: false,
+  },
+  flierNumber: {
+    title: 'No. Volante',
+    sort: false,
+    editable: false,
+  },
+  proceedingsNumber: {
+    title: 'No. Expediente',
+    sort: false,
+    editable: false,
   },
   processStatus: {
     title: 'Estatus',
     sort: false,
+    editor: {
+      type: 'list',
+      config: {
+        selectText: 'Estatus',
+        list: [
+          { value: 'ABI', title: 'ABI' },
+          { value: 'ADI', title: 'ADI' },
+          { value: 'AMI', title: 'AMI' },
+          { value: 'AMP', title: 'AMP' },
+          { value: 'CNI', title: 'CNI' },
+          { value: 'DCI', title: 'DCI' },
+          { value: 'DJI', title: 'DJI' },
+          { value: 'DJP', title: 'DJP' },
+          { value: 'DJS', title: 'DJS' },
+          { value: 'DNI', title: 'DNI' },
+          { value: 'DPI', title: 'DPI' },
+          { value: 'DSI', title: 'DSI' },
+          { value: 'DTI', title: 'DTI' },
+          { value: 'DVI', title: 'DVI' },
+          { value: 'FNI', title: 'FNI' },
+          { value: 'OIP', title: 'OIP' },
+          { value: 'OPI', title: 'OPI' },
+          { value: 'OPP', title: 'OPP' },
+          { value: 'OPS', title: 'OPS' },
+          { value: 'RFI', title: 'RFI' },
+          { value: 'RFP', title: 'RFP' },
+          { value: 'RFS', title: 'RFS' },
+          { value: 'RSI', title: 'RSI' },
+        ],
+      },
+    },
     /*filterFunction(cell?: any, search?: string): boolean {
       let column = cell.processStatus;
       if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
@@ -105,35 +148,33 @@ export const WORK_MAILBOX_COLUMNS2 = {
   processSituation: {
     title: 'Situación Trámite',
     sort: false,
+    editable: false,
   },
   turnadoiUser: {
     title: 'Usr. Turnado',
     sort: false,
+    editable: false,
   },
   dailyConsecutiveNumber: {
     title: 'Consecutivo Diario',
     sort: false,
+    editable: false,
   },
   processEntryDate: {
     title: 'Fecha Ingreso Trámite',
     sort: false,
     filter: false,
-  },
-  flierNumber: {
-    title: 'No. Volante',
-    sort: false,
-  },
-  proceedingsNumber: {
-    title: 'No. Expediente',
-    sort: false,
+    editable: false,
   },
   issue: {
     title: 'Asunto',
     sort: false,
+    editable: false,
   },
   issueType: {
     title: 'Tipo de Asunto',
     sort: false,
+    editable: false,
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         switch (value) {
@@ -178,30 +219,31 @@ export const WORK_MAILBOX_COLUMNS2 = {
       },
     },
   },
-  officeNumber: {
-    title: 'No. Oficio',
-    sort: false,
-  },
   descentfed: {
     title: 'Desc.Entidad Fed.',
     sort: false,
+    editable: false,
   },
   businessDays: {
     title: 'Días Hábiles',
     sort: false,
+    editable: false,
   },
   naturalDays: {
-    title: 'Dias Hab. Nat',
+    title: 'Días Hab. Nat',
     sort: false,
+    editable: false,
   },
   processLastDate: {
     title: 'Fecha Última Actualización',
     sort: false,
     filter: false,
+    editable: false,
   },
   observation: {
     title: 'Observaciones',
     sort: false,
+    editable: false,
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => {
       value !== null ? (value = value) : (value = '');
@@ -210,6 +252,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
   observationAdd: {
     title: 'Observaciones Add.',
     sort: false,
+    editable: false,
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => {
       value !== null ? (value = value) : (value = '');
@@ -218,53 +261,50 @@ export const WORK_MAILBOX_COLUMNS2 = {
   priority: {
     title: 'Prioridad',
     sort: false,
+    editable: false,
   },
   sheets: {
-    title: 'Hojas',
+    title: 'Documentos',
     sort: false,
+    editable: false,
   },
   notaryAutDate: {
     title: 'Fecha Aut. Notario',
     sort: false,
     filter: false,
+    editable: false,
   },
   rebellionDate: {
     title: 'Fecha Rebelión',
     sort: false,
     filter: false,
+    editable: false,
   },
   takePressureDate: {
     title: 'Fecha Toma Poseción',
     sort: false,
     filter: false,
+    editable: false,
   },
   areaATurn: {
     title: 'Área a Turnar',
     sort: false,
+    editable: false,
   },
   userATurn: {
     title: 'Usr. a Turnar',
     sort: false,
+    editable: false,
   },
   folioRep: {
     title: 'Folio Rep.',
     sort: false,
+    editable: false,
   },
-  /*royalProceesDate: {
-    title: 'Fecha Real Trámite',
-    sort: false,
-  },*/
-  /*clasifDict: {
-    title: 'Clasf. Dictámen',
-    sort: false,
-  },
-  registerUser: {
-    title: 'Usr. Registro',
-    sort: false,
-  }*/
   count: {
-    title: 'Escaneado',
+    title: 'Digitalizado',
     sort: false,
+    editable: false,
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         switch (value) {
@@ -294,4 +334,36 @@ export const WORK_MAILBOX_COLUMNS2 = {
       },
     },
   },
+
+  /*royalProceesDate: {
+    title: 'Fecha Real Trámite',
+    sort: false,
+  },*/
+  /*clasifDict: {
+    title: 'Clasf. Dictámen',
+    sort: false,
+  },
+  registerUser: {
+    title: 'Usr. Registro',
+    sort: false,
+  },
+  issueSijNumber: {
+    title: 'No. Asunto SIJ',
+    sort: false,
+    editable: false,
+  },*/
+};
+
+export const array_column_table = (objColumnsTable: any) => {
+  let response = [];
+  for (const key in objColumnsTable) {
+    if (Object.prototype.hasOwnProperty.call(objColumnsTable, key)) {
+      const element = objColumnsTable[key];
+      if (element) {
+        element['key'] = key;
+        response.push(element);
+      }
+    }
+  }
+  return response;
 };

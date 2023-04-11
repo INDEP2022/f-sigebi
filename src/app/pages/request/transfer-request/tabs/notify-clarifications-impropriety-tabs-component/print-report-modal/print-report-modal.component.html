@@ -15,7 +15,9 @@
         <div class="d-flex">
           <h5 class="mr-auto p-2">{{ btnSubTitle }}</h5>
           <div class="p-2">
-            <button class="btn btn-success btn-sm" (click)="signReport()">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="signReport()">
               <i class="bx bx-edit-alt"></i>{{ btnTitle }}
             </button>
           </div>
@@ -82,6 +84,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
                   (edit)="uploadData($event.data)"
+                  (userRowSelect)="rowsSelected($event)"
                   [source]="signatories">
                 </ng2-smart-table>
               </div>

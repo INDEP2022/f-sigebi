@@ -9,7 +9,10 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE_LETTERS,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -20,7 +23,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class DocumentFormComponent extends BasePage implements OnInit {
   documentForm: FormGroup = new FormGroup({});
   wcontent: ModelForm<IWContent>;
-  typesDocuments = new DefaultSelect();
+  typesDocuments: any = []; //= new DefaultSelect();
   transferents = new DefaultSelect();
   states = new DefaultSelect();
   parameter: any;
@@ -67,7 +70,10 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       xidExpediente: [null],
       xidBien: [null],
       //numberGestion: [5296016],
-      xidSIAB: [null],
+      xidSIAB: [
+        null,
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+      ],
       xresponsable: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -81,7 +87,10 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       xestado: [null],
-      xnoOficio: [null],
+      xnoOficio: [
+        null,
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
+      ],
       xidTransferente: [null],
       //numberProgramming: [5397],
       xremitente: [
@@ -183,7 +192,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   getDocType(params: ListParams) {
     this.wcontentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
       },
     });
   }
@@ -244,7 +253,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'success',
             'Documento Guardado',
-            'El documento guardo correctamente'
+            'El documento guardó correctamente'
           );
 
           this.close();
@@ -264,7 +273,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'success',
             'Imagen Guardada',
-            'La imagen se guardo correctamente'
+            'La imagen se guardó correctamente'
           );
 
           this.close();

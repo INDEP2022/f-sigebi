@@ -75,7 +75,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
           fileEvent.file
         )
         .subscribe({
-          next: () => {
+          next: data => {
             this.close();
             this.onLoadToast('success', 'Imagen guardada correctamente', '');
           },

@@ -31,6 +31,7 @@ import { MaxLengthDirective } from './directives/maxlength.directive';
 import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
+import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
 
 @NgModule({
@@ -56,6 +57,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     MaxLengthDirective,
     NumbersFilterDirective,
     AutoSizeDirective,
+    UppercaseDirective,
   ],
   imports: [
     CommonModule,
@@ -99,6 +101,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     MaxLengthDirective,
     NumbersFilterDirective,
     AutoSizeDirective,
+    UppercaseDirective,
   ],
 })
 export class SharedModule {

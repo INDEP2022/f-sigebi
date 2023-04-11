@@ -20,7 +20,6 @@
       </div>
     </div>
   </div>
-
   <div body class="init-page">
     <div class="row mb-5" *ngIf="loadingPostCapture">
       <div class="d-flex justify-content-center">
@@ -32,10 +31,13 @@
         </div>
       </div>
     </div>
+    <form-loader *ngIf="formLoading"></form-loader>
     <form
       [formGroup]="documentsReceptionForm"
       (submit)="(false)"
-      class="form-material">
+      class="form-material"
+      *ngIf="!formLoading"
+      @OnShow>
       <div class="row">
         <div class="col-md-7">
           <div class="d-flex">
@@ -426,7 +428,8 @@
                 rows="5"
                 formControlName="observations"
                 class="form-control"
-                [readonly]="pgrInterface"></textarea>
+                [readonly]="pgrInterface"
+                uppercase></textarea>
             </form-field>
           </div>
         </div>
@@ -574,6 +577,7 @@
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
+                [showTooltip]="true"
                 termMaxLength="80">
               </ngx-select>
             </form-field>
@@ -726,7 +730,7 @@
       </div>
       <hr />
     </form>
-    <div class="row pt-5 mb-4">
+    <div class="row pt-5 mb-4" *ngIf="!formLoading">
       <form [formGroup]="flyerCopyRecipientForm" class="form-material col-md-6">
         <form-field class="" [control]="flyerCopyRecipientForm.get('copyuser')">
           <ngx-select
@@ -756,7 +760,7 @@
         </form-field>
       </form>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="!formLoading">
       <div class="d-flex justify-content-center">
         <div
           class="m-3"

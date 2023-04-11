@@ -52,15 +52,11 @@ export class DocumentsTypeSharedComponent extends BasePage implements OnInit {
                 this.documents = new DefaultSelect(resp.data, resp.count);
               },
               error: err => {
-                let error = '';
-                if (err.status === 0) {
-                  error = 'Revise su conexión de Internet.';
-                } else {
-                  error = err.error.message;
-                }
-                this.onLoadToast('error', error, '');
+                this.documents = new DefaultSelect();
               },
             });
+        } else {
+          this.getDocuments({ page: 1, text: '' });
         }
       },
     });
@@ -72,20 +68,20 @@ export class DocumentsTypeSharedComponent extends BasePage implements OnInit {
     this.filterParams
       .getValue()
       .addFilter('description', params.text, SearchFilter.ILIKE);
+
     this.documentServ
-      .getAllWidthFilters(this.filterParams.getValue().getParams())
+      .getAllWidthFilters(
+        this.filterParams
+          .getValue()
+          .getParams()
+          .concat('&sortBy=description:ASC')
+      )
       .subscribe({
         next: resp => {
           this.documents = new DefaultSelect(resp.data, resp.count);
         },
         error: err => {
-          let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.error.message;
-          }
-          this.onLoadToast('error', error, '');
+          this.documents = new DefaultSelect();
         },
       });
   }

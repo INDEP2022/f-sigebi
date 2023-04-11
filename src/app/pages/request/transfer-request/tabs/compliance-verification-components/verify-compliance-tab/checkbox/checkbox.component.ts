@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 
 @Component({
   selector: 'app-checkbox',
@@ -10,22 +18,23 @@ export class CheckboxComponent implements OnInit {
   @Input() value: string | number;
   @Input() rowData: any = '';
   @Output() input: EventEmitter<any> = new EventEmitter();
-
   inputText: String = '';
+  isreadOnly: boolean = false;
 
+  private requestHelperService = inject(RequestHelperService);
   constructor() {}
 
   ngOnInit(): void {
-    //console.log(this.value);
+    this.requestHelperService.currentReadOnly.subscribe({
+      next: resp => {
+        this.isreadOnly = resp;
+      },
+    });
   }
 
   checked(event: any) {
-    console.log(event);
+    //console.log(event);
     let text = event.target.value;
     this.input.emit(this.rowData);
   }
-  /* onKeyUp(event: any) {
-    let text = event.target.value;
-    this.input.emit({ data: this.rowData, text: text });
-  } */
 }

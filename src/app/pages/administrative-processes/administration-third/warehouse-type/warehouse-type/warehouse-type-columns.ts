@@ -48,7 +48,7 @@ export const QUALIFIERS_COLUMNS = {
     // width: '10%',
     sort: false,
   },
-  description: {
+  descClassif: {
     title: 'Descripción',
     // width: '20%',
     sort: false,
@@ -58,7 +58,7 @@ export const QUALIFIERS_COLUMNS = {
     // width: '10%',
     sort: false,
   },
-  descriptionCost: {
+  descCost: {
     title: 'Proceso/Servicio/Tipo Servicio/Turno/Costo Variable',
     // width: '20%',
     sort: false,

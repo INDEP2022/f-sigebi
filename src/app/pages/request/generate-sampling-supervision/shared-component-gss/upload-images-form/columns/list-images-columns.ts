@@ -2,7 +2,7 @@ import { VerImagenInputComponent } from '../../ver-imagen-input/ver-imagen-input
 
 export const LIST_IMAGES_COLUMNS = {
   NoManagement: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -17,7 +17,7 @@ export const LIST_IMAGES_COLUMNS = {
     sort: false,
   },
   titleDocument: {
-    title: 'Titulo Documento',
+    title: 'Título Documento',
     type: 'string',
     sort: false,
   },

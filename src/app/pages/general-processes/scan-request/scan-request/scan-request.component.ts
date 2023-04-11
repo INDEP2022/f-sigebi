@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   SearchFilter,
@@ -11,7 +13,10 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import {
+  IReport,
+  SiabService,
+} from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -39,10 +44,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private notificationServ: NotificationService,
     private documentServ: DocumentsService,
-    private token: AuthService,
+    private jasperService: SiabService,
     private modalService: BsModalService,
     private datePipe: DatePipe,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -71,6 +77,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } = this.formNotification.value;
 
     this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = 1;
 
     if (typeof receiptDate == 'object' && receiptDate) {
       const convertDate = this.datePipe.transform(receiptDate, 'yyyy-MM-dd');
@@ -146,6 +153,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
+          console.log(err);
           this.loading = false;
           this.form.reset();
           this.onLoadToast('error', err.error.message, '');
@@ -214,10 +222,19 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.get('id').disable();
         },
         error: err => {
-          this.loading = false;
+          if (err.status === 500) {
+            this.onLoadToast(
+              'warning',
+              'Error del Servidor',
+              'No se pudo obtener todos los datos relacionados'
+            );
+          }
+
           if (err.status === 400) {
             this.countDoc = 0;
           }
+
+          this.loading = false;
         },
       });
   }
@@ -348,12 +365,31 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
-      //en espera del reporte TODO:
-      const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERGENSOLICDIGIT.pdf?PARAMFORM=NO&PN_FOLIO=${this.idFolio}`;
-
-      window.open(
-        'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf'
-      );
+      this.onLoadToast('success', 'Generando reporte...', '');
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', { PN_FOLIO: this.idFolio })
+          .pipe(
+            tap(response => {
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
     } else {
       this.onLoadToast(
         'error',
@@ -361,6 +397,29 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         ''
       );
     }
+  }
+
+  readFile(file: IReport) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.data);
+    reader.onload = _event => {
+      this.openPrevPdf(reader.result as string);
+    };
+  }
+
+  openPrevPdf(pdfurl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   callScan() {

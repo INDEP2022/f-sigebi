@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { catchError, tap, throwError } from 'rxjs';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { catchError, switchMap, tap, throwError } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -26,7 +30,11 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
     private usersService: UsersService,
     private modalRef: BsModalRef,
     private tmpManagementProcedureService: TmpManagementProcedureService,
-    private jwtHelper: JwtHelperService
+    private jwtHelper: JwtHelperService,
+    private procedureManagementService: ProcedureManagementService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -101,17 +109,58 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       userTurn,
       response,
     };
-    this.turnPaperWork(body).subscribe();
+    this.turnPaperWork(body).subscribe(() => {
+      this.downloadReport(userTurn).subscribe({
+        next: res => console.log(res),
+        error: error => console.log(error),
+      });
+    });
+  }
+
+  downloadReport(user: string) {
+    return this.getPaperwork().pipe(
+      switchMap(paperwork => {
+        const params = {
+          PFOLIO: paperwork.folio,
+          PTURNADOA: user,
+        };
+        return this.siabService.fetchReport('RFOL_DOCTOSRECIB_SATSAE', params);
+      }),
+      tap(response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      })
+    );
+  }
+
+  getPaperwork() {
+    return this.procedureManagementService.getById(
+      this.paperwork.processNumber
+    );
   }
 
   turnPaperWork(body: {}) {
     return this.tmpManagementProcedureService.folioReception(body).pipe(
       catchError(error => {
-        this.alert('error', 'Error', 'Ocurrio un error al turnar el trámite');
+        this.alert('error', 'Error', 'Ocurrió un error al turnar el trámite');
         return throwError(() => error);
       }),
       tap(() => {
         this.onLoadToast('success', 'El trámite se turno correctamente', '');
+        this.modalRef.content.callback(true);
+        this.close();
       })
     );
   }

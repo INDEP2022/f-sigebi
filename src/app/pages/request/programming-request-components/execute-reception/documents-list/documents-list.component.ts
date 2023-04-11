@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -12,7 +14,10 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
@@ -33,7 +38,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   documentForm: FormGroup = new FormGroup({});
-  typeDocuments = new DefaultSelect();
+  typeDocuments: any = []; // = new DefaultSelect();
   tranferences = new DefaultSelect();
   regDelegations = new DefaultSelect();
   states = new DefaultSelect();
@@ -52,7 +57,8 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     private wcontetService: WContentService,
     private regDelegationService: RegionalDelegationService,
     private delegationStateService: DelegationStateService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings.actions.delete = true;
@@ -96,14 +102,23 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       xidTransferente: [null],
       xtipoTransferencia: [null, [Validators.pattern(STRING_PATTERN)]],
       xidExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
-      xidSolicitud: [null],
-      xidBien: [null],
-      xnoOficio: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidSolicitud: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(13)],
+      ],
+      xidBien: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(13)],
+      ],
+      xnoOficio: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
 
-      xidSIAB: [null],
+      xidSIAB: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
     });
   }
 
@@ -188,7 +203,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   //añadir documentos
   uploadFiles() {
-    this.openModal(DocumentFormComponent, this.typeDoc, this.parameter);
+    this.openModal(DocumentFormComponent, this.typeDoc, '', this.parameter);
   }
 
   getTypeDocument(id: string) {
@@ -214,7 +229,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     params['filter.ddescription'] = `$ilike:${params.text}`;
     this.wcontetService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typeDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typeDocuments = resp.data; //new DefaultSelect(resp.data, resp.length);
       },
     });
   }
@@ -226,14 +241,50 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   //ver detalle del documento
   showDocument(event: any) {
     const data = event.data;
-    this.openModal(DocumentShowComponent, this.typeDoc, data);
+    const typeDoc = this.typeDoc;
+    const docName = event.data.dDocName;
+
+    // let config: ModalOptions = {
+    //       initialState: {
+
+    //         typeDoc,
+    //         docName,
+    //         callback: (next: boolean) => {},
+    //       },
+    //       class: 'modal-lg modal-dialog-centered',
+    //       ignoreBackdropClick: true,
+    //     };
+    //     this.bsChildModalRef = this.modalService.show(DocumentShowComponent, config );
+    this.openModal(DocumentShowComponent, typeDoc, docName, data);
   }
 
   //ver documento
   viewDocument(event: any) {
     const docName = event.data.dDocName;
+    let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
+
+    console.log('documento nombre', docName);
+
+    this.wcontetService.obtainFile(docName).subscribe(data => {
+      let blob = this.dataURItoBlob(data);
+      let file = new Blob([blob], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.openPrevPdf(fileURL);
+    });
+
+    /*let config: ModalOptions = {
+      initialState: {
+        linkDoc1,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDocumentsComponent, config);
+
     this.wcontetService.obtainFile(docName).subscribe({
       next: resp => {
+        console.log('respuesta al traer archivos: ', resp);
         let linkSource = '';
         let downloadLink = null;
         let fileName = '';
@@ -251,7 +302,33 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         downloadLink.download = fileName;
         downloadLink.click();
       },
-    });
+    });*/
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   getRegionalDelegatioin(params: ListParams) {
@@ -282,11 +359,17 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   confirm() {}
 
-  openModal(component: any, typedoc?: string, parameters?: any) {
+  openModal(
+    component: any,
+    typedoc?: string,
+    docName?: string,
+    parameters?: any
+  ) {
     let config: ModalOptions = {
       initialState: {
         parameter: parameters,
         typeDoc: typedoc,
+        docName: docName,
         callback: (next: boolean) => {
           //if(next) this.getExample();
         },

@@ -10,14 +10,19 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -34,24 +39,27 @@ export class ClassifyAssetsTabComponent
   @Input() requestObject: any;
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
-  @Input() goodObject: IFormGroup<any> = null;
+  @Input() goodObject: ModelForm<IGood>; //: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
+  @Input() goodSelect: any;
+
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
   private listAdvancedFractions: any = [];
 
   public selectSection: any;
-  public selectChapter = new DefaultSelect<any>();
-  public selectLevel1 = new DefaultSelect<any>();
-  public selectLevel2 = new DefaultSelect<any>();
-  public selectLevel3 = new DefaultSelect<any>();
-  public selectLevel4 = new DefaultSelect<any>();
+  public selectChapter: any = []; // = new DefaultSelect<any>();
+  public selectLevel1: any = []; // = new DefaultSelect<any>();
+  public selectLevel2: any = []; // = new DefaultSelect<any>();
+  public selectLevel3: any = []; // = new DefaultSelect<any>();
+  public selectLevel4: any = []; // = new DefaultSelect<any>();
 
   detailArray: any = {};
 
   good: any = null;
+  formLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -73,21 +81,33 @@ export class ClassifyAssetsTabComponent
       this.getSection(new ListParams());
     }
     this.getReactiveFormActions();
+    this.processView();
+    this.loadingForm();
+  }
+
+  //Obtenemos el tipo de proceso//
+  processView() {
+    this.route.data.forEach((item: any) => {
+      this.process = item.process;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.typeDoc == '') {
+    /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
-      }
-    }
-
+      } */
     //bienes selecionados
-    this.good = changes['goodObject'].currentValue;
+
+    this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
+      //this.formLoading = true;
       if (this.goodObject != null) {
-        this.getSection(new ListParams(), this.good.ligieSection);
+        this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
+        this.classiGoodsForm.controls['quantity'].setValue(
+          Number(this.good.quantity)
+        );
       }
     }
   }
@@ -104,18 +124,34 @@ export class ClassifyAssetsTabComponent
       ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       requestId: [requestId],
-      goodTypeId: [null],
-      color: [null],
-      goodDescription: [null],
-      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      duplicity: ['N'],
+      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      quantity: [
+        1,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(13),
+        ],
+      ],
+      duplicity: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
       capacity: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       volume: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       fileeNumber: [
         null,
@@ -123,23 +159,31 @@ export class ClassifyAssetsTabComponent
       ],
       useType: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
-      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(40)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(40)],
+      ],
       origin: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
@@ -148,19 +192,49 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
-      brand: [null, [Validators.required, Validators.maxLength(350)]],
-      subBrand: [null, [Validators.required, Validators.maxLength(300)]],
-      armor: [null],
-      model: [null, [Validators.required, Validators.maxLength(300)]],
-      doorsNumber: [null],
-      axesNumber: [
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      brand: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      model: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE_LETTERS),
+          Validators.maxLength(15),
+        ],
+      ],
+      doorsNumber: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       engineNumber: [
@@ -168,27 +242,29 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //numero motor
       tuition: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       serie: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(40),
         ],
       ],
-      chassis: [null],
-      cabin: [null],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
       fitCircular: [
         'N',
         [
@@ -205,37 +281,37 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null],
+      addressId: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       operationalState: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       manufacturingYear: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
         ],
       ],
       enginesNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ], // numero de motores
       flag: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       openwork: [
@@ -243,16 +319,19 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
-      sleeve: [null],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       length: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(40),
         ],
       ],
       shipName: [
@@ -260,7 +339,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
+          Validators.maxLength(70),
         ],
       ],
       publicRegistry: [
@@ -268,16 +347,19 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //registro public
-      ships: [null],
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       dgacRegistry: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //registro direccion gral de aereonautica civil
       airplaneType: [
@@ -285,7 +367,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       caratage: [
@@ -309,7 +391,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       fractionId: [null],
@@ -318,7 +400,18 @@ export class ClassifyAssetsTabComponent
     if (this.goodObject != null) {
       this.getSection(new ListParams(), this.good.ligieSection);
       this.classiGoodsForm.patchValue(this.good);
+      this.classiGoodsForm.controls['quantity'].setValue(
+        Number(this.good.quantity)
+      );
     }
+  }
+
+  loadingForm() {
+    this.requestHelperService.currentFormLoading.subscribe((data: any) => {
+      if (data === true) {
+        this.formLoading = true;
+      }
+    });
   }
 
   setFractions(listReverse: any) {
@@ -374,7 +467,8 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
-        this.selectChapter = new DefaultSelect(data.data, data.count);
+        //this.selectChapter = new DefaultSelect(data.data, data.count);
+        this.selectChapter = data.data;
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -387,7 +481,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -403,8 +499,8 @@ export class ClassifyAssetsTabComponent
     delete params.take;
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
-      next: data => {
-        this.selectLevel1 = new DefaultSelect(data.data, data.count);
+      next: (data: any) => {
+        this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -417,7 +513,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -430,7 +528,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
-        this.selectLevel2 = new DefaultSelect(data.data, data.count);
+        this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -443,7 +541,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -456,7 +556,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
-        this.selectLevel3 = new DefaultSelect(data.data, data.count);
+        this.selectLevel3 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -469,7 +569,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -497,6 +599,7 @@ export class ClassifyAssetsTabComponent
       },
       error: error => {
         this.loading = false;
+        this.formLoading = false;
       },
     });
   }
@@ -556,18 +659,7 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    const info = this.classiGoodsForm.getRawValue();
-    if (info.stateConservation == 'BUENO' || info.physicalStatus == 'BUENO')
-      this.classiGoodsForm.get('stateConservation').setValue(1);
-    this.classiGoodsForm.get('physicalStatus').setValue(1);
-
-    if (info.stateConservation == 'MALO' || info.physicalStatus == 'MALO')
-      this.classiGoodsForm.get('stateConservation').setValue(2);
-    this.classiGoodsForm.get('physicalStatus').setValue(2);
-    this.classiGoodsForm.get('destiny').setValue(1);
-
     const goods = this.classiGoodsForm.getRawValue();
-
     if (goods.addressId === null) {
       this.message(
         'error',
@@ -581,58 +673,63 @@ export class ClassifyAssetsTabComponent
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
     }
+
+    if (goods.fractionId.id) {
+      goods.fractionId = Number(goods.fractionId.id);
+    }
+
     let goodAction: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      goodAction = this.goodService.create(goods);
+      this.createGood(goods);
     } else {
-      goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId.id);
-      goodAction = this.goodService.update(goods);
+      this.updateGood(goods);
     }
+  }
 
-    goodAction.subscribe({
-      next: (data: any) => {
-        if (data) {
-          if (data.id) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
+  createGood(good: any) {
+    this.goodService.create(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `¡El registro se guardó exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            this.refreshTable(true);
+        this.refreshTable(true);
 
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          }
-        } else {
-          if (data.statusCode === 200) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se guardo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
-
-            this.refreshTable(true);
-
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          } else {
-            this.message(
-              'error',
-              'Error',
-              `El registro no sepudo guardar!. ${data.message}`
-            );
-          }
-        }
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
       },
-      error: (error: any) => {},
+      error: error => {},
+    });
+  }
+
+  updateGood(good: any) {
+    good.requestId = good.requestId.id;
+    if (good.addressId.id) {
+      good.addressId = Number(good.addressId.id);
+    }
+    good.quantity = Number(good.quantity);
+    this.goodService.update(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `El registro se actualizo exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
+
+        this.refreshTable(true);
+
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
+      },
+      error: error => {},
     });
   }
 
@@ -656,14 +753,14 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
         if (dataChapter != null) {
-          let fractionCode = this.selectChapter.data.filter(
-            x => x.id === dataChapter
+          let fractionCode = this.selectChapter.filter(
+            (x: any) => x.id === dataChapter
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataChapter, fractionCode, 'Capítulo');
 
           const relativeTypeId = this.getRelevantTypeId(
-            this.selectChapter.data,
+            this.selectChapter,
             dataChapter
           );
           this.setRelevantTypeId(relativeTypeId);
@@ -683,13 +780,13 @@ export class ClassifyAssetsTabComponent
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
           let fractionCode =
-            this.selectLevel1.data.filter(x => x.id === dataLevel1)[0]
+            this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
           const relativeTypeId = this.getRelevantTypeId(
-            this.selectLevel1.data,
+            this.selectLevel1,
             dataLevel1
           );
           this.setRelevantTypeId(relativeTypeId);
@@ -707,13 +804,13 @@ export class ClassifyAssetsTabComponent
       (dataLevel2: any) => {
         //this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         if (dataLevel2 != null) {
-          let fractionCode = this.selectLevel2.data.filter(
-            x => x.id === dataLevel2
+          let fractionCode = this.selectLevel2.filter(
+            (x: any) => x.id === dataLevel2
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
 
           const relativeTypeId = this.getRelevantTypeId(
-            this.selectLevel2.data,
+            this.selectLevel2,
             dataLevel2
           );
           this.setRelevantTypeId(relativeTypeId);
@@ -731,14 +828,14 @@ export class ClassifyAssetsTabComponent
       (dataLevel3: any) => {
         //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
-          let fractionCode = this.selectLevel3.data.filter(
-            x => x.id === dataLevel3
+          let fractionCode = this.selectLevel3.filter(
+            (x: any) => x.id === dataLevel3
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel3, fractionCode, 'Nivel 3');
 
           const relevantTypeId = this.getRelevantTypeId(
-            this.selectLevel3.data,
+            this.selectLevel3,
             dataLevel3
           );
           this.setRelevantTypeId(relevantTypeId);
@@ -756,13 +853,13 @@ export class ClassifyAssetsTabComponent
       (dataLevel4: any) => {
         if (dataLevel4 !== null) {
           const relevantTypeId = this.getRelevantTypeId(
-            this.selectLevel4.data,
+            this.selectLevel4,
             dataLevel4
           );
           this.setRelevantTypeId(relevantTypeId);
 
-          let fractionCode = this.selectLevel4.data.filter(
-            x => x.id === dataLevel4
+          let fractionCode = this.selectLevel4.filter(
+            (x: any) => x.id === dataLevel4
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel4, fractionCode, 'Nivel 4');
@@ -771,8 +868,10 @@ export class ClassifyAssetsTabComponent
     );
   }
 
-  getRelevantTypeId(arrayData: any, id: number): number {
-    return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+  getRelevantTypeId(arrayData: any, id: number): any {
+    if (arrayData) {
+      return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+    }
   }
 
   //inserta en el formulario el id del tipo de bien
@@ -823,12 +922,19 @@ export class ClassifyAssetsTabComponent
             this.goodsQueryService
               .getLigieUnitDescription(data.ligieUnit)
               .subscribe((data: any) => {
-                this.classiGoodsForm.controls['unitMeasure'].setValue(
-                  data.description
-                );
                 this.classiGoodsForm.controls['ligieUnit'].setValue(
                   data.description
                 );
+
+                if (
+                  this.classiGoodsForm.controls['unitMeasure'].value === null
+                ) {
+                  const ligieUnit =
+                    this.classiGoodsForm.controls['ligieUnit'].value;
+                  this.classiGoodsForm.controls['unitMeasure'].setValue(
+                    ligieUnit
+                  );
+                }
               });
           });
       }

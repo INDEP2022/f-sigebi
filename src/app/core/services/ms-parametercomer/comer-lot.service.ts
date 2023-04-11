@@ -4,10 +4,7 @@ import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endp
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import {
-  IComerLotEvent,
-  IEvent,
-} from '../../models/ms-parametercomer/parameter';
+import { IComerLotsEG, IEvent } from '../../models/ms-parametercomer/parameter';
 
 @Injectable({
   providedIn: 'root',
@@ -17,14 +14,15 @@ export class ComerLotService extends HttpService {
   private readonly fiterByEvent: string = EventEndpoints.FilterEvent;
   private readonly evento: string = EventEndpoints.ComerE;
   private readonly fiterByGood: string = EventEndpoints.FilterGood;
+  private readonly fiterByLot: string = EventEndpoints.FilterLot;
 
   constructor() {
     super();
     this.microservice = EventEndpoints.BasePath;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IComerLotEvent>> {
-    return this.get<IListResponse<IComerLotEvent>>(this.endpoint, params);
+  getAll(params?: ListParams): Observable<IListResponse<IComerLotsEG>> {
+    return this.get<IListResponse<IComerLotsEG>>(this.endpoint, params);
   }
 
   getById(id: string | number) {
@@ -33,6 +31,10 @@ export class ComerLotService extends HttpService {
   }
   findGood(search: any) {
     const route = `${this.endpoint}${this.fiterByGood}${search}`;
+    return this.get(route);
+  }
+  findGLot(search: any) {
+    const route = `${this.endpoint}${this.fiterByLot}${search}`;
     return this.get(route);
   }
   findEvent(search: any) {

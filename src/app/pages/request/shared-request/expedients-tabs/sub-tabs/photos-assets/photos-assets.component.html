@@ -45,15 +45,15 @@
               </form-field>
             </div>
             <div class="col-md-5">
-              <form-field [control]="filterForm.get('warehouse')">
+              <form-field [control]="filterForm.get('typeGood')">
                 <ngx-select
                   [form]="filterForm"
-                  control="warehouse"
-                  [data]="warehouses"
-                  value="idWarehouse"
+                  control="typeGood"
+                  [data]="typeGoods"
+                  value="description"
                   bindLabel="description"
-                  label="Almac&eacute;n"
-                  (fetchItems)="getWarehouseSelect($event)">
+                  label="Tipo de bien"
+                  (fetchItems)="getTypeRelevant($event)">
                 </ngx-select>
               </form-field>
             </div>
@@ -88,7 +88,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <app-columns-select [(settings)]="settings"></app-columns-select>
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="paragraphs"
             (delete)="uploadFiles($event.data)"

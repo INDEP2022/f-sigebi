@@ -7,7 +7,11 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -22,9 +26,14 @@
             [control]="fileForm.get('pass')"
             label="Contrase&ntilde;a">
             <input
-              type="password"
+              [type]="hide ? 'password' : 'text'"
               class="form-control"
               formControlName="pass" />
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="hide = !hide">
+              <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
+            </button>
           </form-field>
         </div>
         <!-- *ngIf="!isRFCHided" -->
@@ -42,8 +51,9 @@
             label="Certificado">
             <input
               type="file"
-              class="form-control"
               accept=".cer"
+              class="form-control"
+              #FileInput
               formControlName="certificate"
               (change)="chargeCertifications($event)" />
           </form-field>
@@ -54,13 +64,12 @@
             (change)="chargeCertifications($event.target)" /> -->
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="fileForm.get('keycertificate')"
-            label="Key Certificado">
+          <form-field [control]="fileForm.get('keycertificate')" label="Key">
             <input
               type="file"
-              class="form-control"
               accept=".key"
+              class="form-control"
+              #FileInput
               formControlName="keycertificate"
               (change)="chargeKeyCertifications($event)" />
           </form-field>
@@ -76,7 +85,7 @@
           class="btn btn-primary btn-sm active"
           [disabled]="fileForm.invalid"
           (click)="confirm()">
-          Aceptar
+          Guardar
         </button>
         <!--<confirm-button
           [disabled]="fileForm.invalid"

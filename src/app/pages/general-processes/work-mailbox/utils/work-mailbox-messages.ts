@@ -6,3 +6,8 @@ export const TURN_PAPERWORK_UNAVAILABLE =
   'No tiene permisos turnar a otro usuario';
 export const CONFIRM_CANCEL =
   '¿Estas seguro de cancelar el trámite seleccionado?';
+
+export const CONFIRM_FINISH =
+  '¿Estas seguro de fianlizar el trámite seleccionado?';
+
+export const CONFIRM_SAVE = '¿Estas seguro de enviar el trámite seleccionado?';

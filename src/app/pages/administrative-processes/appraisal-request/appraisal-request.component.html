@@ -246,8 +246,7 @@
       </div>
       <div footer>
         <div class="row margin-input">
-          <div class="col-md-8"></div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="row margin-input">
               <div class="col-md-1 mb-4">
                 <button (click)="add()" class="btn btn-secondary btn-sm active">
@@ -255,30 +254,8 @@
                 </button>
               </div>
             </div>
-            <div class="row margin-input">
-              <div class="col-md-6">
-                <form-field [control]="form.get('elements')" label="Elementos">
-                  <input
-                    type="number"
-                    class="form-control"
-                    formControlName="elements"
-                    min="1"
-                    pattern="^[0-9]+" />
-                </form-field>
-              </div>
-            </div>
-            <div class="row margin-input">
-              <div class="col-md-6">
-                <form-field [control]="form.get('registers')" label="Registros">
-                  <input
-                    type="number"
-                    class="form-control"
-                    formControlName="registers"
-                    min="1"
-                    pattern="^[0-9]+" />
-                </form-field>
-              </div>
-            </div>
+          </div>
+          <div class="col-md-4">
             <div class="row margin-input">
               <div class="col-md-1">
                 <confirm-button

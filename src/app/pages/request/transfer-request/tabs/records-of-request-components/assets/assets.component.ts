@@ -265,15 +265,21 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   uploadFile(file: File, request: string, user: string) {
+    debugger;
     this.procedureManagementService
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          if (resp.statusCode === 200) {
-            this.message('success', 'Archivos cargados', `${resp.message}`);
-          } else {
-            this.message('error', 'Error al guardar', `${resp.message}`);
-          }
+          this.message(
+            'success',
+            'Archivos cargados',
+            `Se importaron los archivos`
+          );
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.message('error', 'Error al guardar', `${error.error.message}`);
+          console.log(error);
         },
       });
   }
@@ -290,13 +296,17 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   selectRows(event: any) {
-    console.log(event);
     this.listgoodObjects = event.selected;
     if (this.listgoodObjects.length <= 1) {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
         this.btnCreate = 'Cerrar Bien';
+        const load = true;
+        this.loadLoading(load);
+        setTimeout(() => {
+          this.loadLoading(false);
+        }, 400);
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
@@ -309,6 +319,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
+  loadLoading(loading: boolean) {
+    this.requestHelperService.loadingForm(loading);
+  }
   openSelectAddressModal() {
     if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
@@ -394,6 +407,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
+        if (element.requestId.id) {
+          element.requestId = Number(element.requestId.id);
+        }
         this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -409,10 +425,10 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'success',
                 'Actualizado',
-                `Se guardo correctamente el bien del domicilio!`
+                `¡Se guardó correctamente el bien del domicilio!`
               );
               this.isSaveDomicilie = false;
-              resolve('Se guardo correctamente el bien del domicilio!');
+              resolve('¡Se guardó correctamente el bien del domicilio!');
             }
           },
         });
@@ -432,19 +448,19 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -461,8 +477,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           next: resp => {
             this.message(
               'success',
-              'Fraccion guardada',
-              `Se guardo la fraccion exitosamente`
+              'Fracción guardada',
+              `Se guardó la fracción exitosamente`
             );
             this.refreshTable();
           },
@@ -479,7 +495,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        text: '¿Esta seguro de querer eliminar el bien seleccionado?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',
@@ -496,8 +512,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   deleteGood() {
-    for (let i = 0; i < this.listGoodsFractions.length; i++) {
-      const element = this.listGoodsFractions[i];
+    for (let i = 0; i < this.listgoodObjects.length; i++) {
+      const element = this.listgoodObjects[i];
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
