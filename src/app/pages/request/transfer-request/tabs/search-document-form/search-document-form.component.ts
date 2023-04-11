@@ -9,7 +9,12 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE,
+  NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
@@ -68,7 +73,10 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
 
   initForm() {
     this.searchForm = this.fb.group({
-      texto: [null, [Validators.pattern(STRING_PATTERN)]],
+      texto: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
       xTipoDocumento: [null],
       dDocTitle: [
         null,
@@ -76,7 +84,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       ],
       xIdSIAB: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(30)],
       ],
       xcargoRemitente: [
         null,
@@ -84,7 +92,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       ],
       dDocAuthor: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       xtipoTransferencia: [
         null,
@@ -92,30 +100,42 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
       ],
       xresponsable: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       dDocName: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       xDelegacionRegional: [null],
       xcontribuyente: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      xidExpediente: [null],
+      xidExpediente: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       xestado: [null],
       xnoOficio: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(30)],
       ],
-      xidSolicitud: [null],
+      xidSolicitud: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       xidTransferente: [null],
-      xComments: [null],
-      xidBien: [null],
+      xComments: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
+      xidBien: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       xremitente: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
     });
   }

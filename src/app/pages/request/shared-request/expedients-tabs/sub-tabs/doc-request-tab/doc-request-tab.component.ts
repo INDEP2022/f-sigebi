@@ -15,6 +15,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -180,9 +181,7 @@ export class DocRequestTabComponent
           this.loading = false;
         });
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -389,23 +388,21 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
-    let config: ModalOptions = {
-      initialState: {
-        idRequest,
-        typeDoc,
-        callback: (next: boolean) => {
-          if (next == true) {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.getData();
-          }
-        },
+    config.initialState = {
+      idRequest,
+      typeDoc,
+      callback: (data: boolean) => {
+        if (data) {
+          this.onLoadToast('success', 'Documento Guardado correctamente', '');
+          this.getData();
+        }
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(NewDocumentComponent, config);
+
+    const newDocument = this.modalService.show(NewDocumentComponent, config);
   }
 
   private openModalInformation(data: any, typeInfo: string) {

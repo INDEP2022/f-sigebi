@@ -92,6 +92,8 @@ export class RegistrationOfRequestsComponent
 
   requestList: IRequest;
 
+  formLoading: boolean = true;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -290,19 +292,23 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
-        /*  if ((this.typeDocument = 'proceso-aprovacion')) {
+        /* verifica si existe un dictamen en la solicitud */
+        if (this.typeDocument === 'proceso-aprovacion') {
           await this.getDictamen(data.id);
-        } */
+        }
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
+        this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
       },
       error: error => {
+        this.formLoading = false;
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -720,6 +726,14 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
+    if (this.haveDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'Error',
+        'Es requerido tener dictamen previamente generado'
+      );
+      return;
+    }
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
@@ -876,8 +890,15 @@ export class RegistrationOfRequestsComponent
       this.wcontentService.getDocumentos(body).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
+            this.haveDictamen = true;
+          } else {
             this.haveDictamen = false;
           }
+          resolve(true);
+        },
+        error: error => {
+          this.haveDictamen = false;
+          resolve(true);
         },
       });
     });

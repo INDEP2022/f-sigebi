@@ -9,7 +9,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
@@ -55,7 +57,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectEntity = new DefaultSelect<any>();
   selectStation = new DefaultSelect<IStation>();
 
-  selectAuthority = new DefaultSelect<any>();
+  selectAuthority = new DefaultSelect<IAuthority>();
   selectTransfe: any; //= new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectIssue = new DefaultSelect<any>();
@@ -79,7 +81,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
-    public location: Location
+    public location: Location,
+    private router: Router
   ) {
     super();
   }
@@ -185,72 +188,53 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params.limit = 30;
-    this.stationService
-      .getAll(params)
-      // .subscribe((data: IListResponse<any>) => {
-      //   this.selectStation = new DefaultSelect(data.data, data.count);
-      // });
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.nameAndId = `${data.id}- ${data.stationName}`;
-            return data;
-          });
-          this.selectStation = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.selectStation = new DefaultSelect();
-        },
-      });
+    this.stationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id}- ${data.stationName}`;
+          return data;
+        });
+        this.selectStation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectStation = new DefaultSelect();
+      },
+    });
   }
 
-  getAuthority(params: ListParams) {
+  getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
-    params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
-    this.authorityService
-      .getAll(params)
-      // .subscribe((data: IListResponse<IAuthority>) => {
-      //   this.selectAuthority = new DefaultSelect(data.data, data.count);
-      // });
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
-            return data;
-          });
-          this.selectAuthority = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.selectAuthority = new DefaultSelect();
-        },
-      });
+    // params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
+          return data;
+        });
+        this.selectAuthority = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectAuthority = new DefaultSelect();
+      },
+    });
   }
 
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    this.transferentService
-      .getAll(params)
-      // .subscribe((data: IListResponse<ITransferente>) => {
-      //   data.data.map(tra => {
-      //     tra.nameAndId = `${tra.id}- ${tra.name}`
-      //     return tra;
-      //   })
-      //   this.transferents$ = new DefaultSelect(data.data, data.count);
-      // });
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.nameAndId = `${data.id} - ${data.nameTransferent}`;
-            return data;
-          });
-          this.transferents$ = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.transferents$ = new DefaultSelect();
-        },
-      });
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
   }
 
   getState(event: any): void {}
@@ -367,6 +351,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         'Información',
         `Seleccione un usuario para poder turnar la solicitud!`
       );
+
       return;
     }
 
@@ -397,6 +382,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
 
@@ -473,64 +459,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       });
     });
   }
-
-  /* createTask(request: any) {
-    return new Promise((resolve, reject) => {
-      let body: any = {};
-
-      const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = this.nickName;
-      body['assigneesDisplayname'] = this.userName;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(request.id);
-      body['title'] =
-        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      body['programmingId'] = 0;
-      body['requestId'] = request.id;
-      body['expedientId'] = 0;
-      body['urlNb'] = 'pages/request/transfer-request/registration-request';
-      this.taskService.createTask(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal('error', 'Error', 'Error al crear la tarea');
-          reject(error.error.message);
-        },
-      });
-    });
-  }*/
-
-  /*createOrderService(request: any, from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = request.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
-          reject(error.error.message);
-        },
-      });
-    });
-  }*/
 
   getTaskByTaskNumer(taskNumber: number) {
     return new Promise((resolve, reject) => {
