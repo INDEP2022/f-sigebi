@@ -30,7 +30,7 @@ export class SiabService {
     this.authService.setReportFlag(true);
     return this.http
       .get(
-        `${this.urlBase}j_spring_security_check?j_username=sigebiadmon&j_password=87654321`
+        `${this.urlBase}j_spring_security_check?j_username=${this.username}&j_password=${this.password}`
       )
       .pipe(
         catchError(error => {

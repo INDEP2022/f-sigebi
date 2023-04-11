@@ -12,8 +12,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ExchangeTypesDetailComponent implements OnInit {
   form: FormGroup;
   currencies: any;
+  eje: any;
   public monedas = new DefaultSelect();
   @Output() refresh = new EventEmitter<true>();
+  @Output() onSelect = new EventEmitter<any>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -28,6 +30,12 @@ export class ExchangeTypesDetailComponent implements OnInit {
     this.form = this.fb.group({
       currency: ['', [Validators.required]],
     });
+  }
+
+  confirm() {
+    this.onSelect.emit(this.form.value);
+    // console.log(this.form.value);
+    this.modalRef.hide();
   }
 
   close() {

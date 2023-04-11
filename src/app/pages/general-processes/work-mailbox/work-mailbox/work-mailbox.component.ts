@@ -23,7 +23,11 @@ import { DocumentsReceptionDataService } from 'src/app/core/services/document-re
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE,
+  STRING_PATTERN,
+  VALID_VALUE_REGEXP,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
 import compareDesc from 'date-fns/compareDesc';
@@ -67,6 +71,7 @@ import {
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
 import {
+  array_column_table,
   WORK_ANTECEDENTES_COLUMNS,
   WORK_BIENES_COLUMNS,
   WORK_MAILBOX_COLUMNS2,
@@ -160,6 +165,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   areas$ = new DefaultSelect<IManagementArea>();
 
   resetDataFilter: boolean = false;
+  fields_WORK_MAILBOX_COLUMNS2 = array_column_table(WORK_MAILBOX_COLUMNS2);
 
   get user() {
     this.dataTable.count;
@@ -235,12 +241,102 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     };
   }
 
+  /**
+   * Obtener el nodo donde se encuentra el nombre del nodo que se pasa como parametro
+   * @param filterField Nombre de la clase a buscar
+   * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
+   * @returns
+   */
+  getCellNode(filterField: string, nodeName: string) {
+    let field = document.getElementsByClassName(filterField);
+    let cell: ChildNode;
+    for (let index = 0; index < field.length; index++) {
+      const element = field[index];
+      if (element) {
+        element.childNodes.forEach((node: any) => {
+          if (node['className'].toLocaleLowerCase().includes(nodeName)) {
+            cell = node;
+          }
+        });
+      }
+    }
+    return cell;
+  }
+
+  /**
+   * Eliminar nodos de mensajes anteriores
+   * @param cell Elemento donde se va a eliminar el nodo
+   */
+  removeChilds(cell: ChildNode) {
+    let removeChilds: ChildNode[] = [];
+    cell.childNodes.forEach((nodeChild: any) => {
+      if (
+        nodeChild['className']
+          .toLocaleLowerCase()
+          .includes('validator-field-table')
+      ) {
+        removeChilds.push(nodeChild);
+      }
+    });
+    removeChilds.forEach(removeChild => {
+      // cell.removeChild(removeChild);
+    });
+  }
+
+  /**
+   * Crea el mensaje de validación en el elemento que se pasa como parametro @cell
+   * @param cell Elemento donde se va a crear el nodo
+   * @param valueField Respuesta del validador de campo
+   */
+  createChildNode(cell: ChildNode, valueField: any) {
+    const node = document.createElement('p');
+    node.classList.add('validator-field-table');
+    node.classList.add('fs-4');
+    node.classList.add('text-danger');
+    node.innerHTML = `${
+      valueField.errorRegExp ? '*' + valueField.errorRegExpMessage : ''
+    }${
+      valueField.errorMaxLength
+        ? '<br>*' + valueField.errorMaxLengthMessage
+        : ''
+    }`;
+    // cell.appendChild(node);
+  }
+
+  /**
+   * Validar si se requiere agregar el mensaje en el campos
+   * @param valueField Respuesta del validador de campo
+   * @param filterField Nombre de la clase a buscar
+   * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
+   */
+  validChildNode(valueField: any, filterField: string, nodeName: string) {
+    if (valueField.errorRegExp || valueField.errorMaxLength) {
+      let cell = this.getCellNode(filterField, nodeName);
+      if (cell) {
+        this.removeChilds(cell);
+        this.createChildNode(cell, valueField);
+      }
+    }
+  }
+  /**
+   * Remover los mensajes de validación en caso que los campos esten vacios en los filtros
+   * @param filterField Nombre de la clase a buscar
+   * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
+   */
+  removePreviewsMessages(filterField: string, nodeName: string) {
+    let cell = this.getCellNode(filterField, nodeName);
+    if (cell) {
+      this.removeChilds(cell);
+    }
+  }
+
   ngOnInit(): void {
     this.resetDataFilter = false;
     this.dataTable
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
+        console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -248,23 +344,197 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            // this.removePreviewsMessages(filter.field + '-validation', 'title'); // Remover validaciones previas
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'processNumber':
+                // NO TRAMITE
                 searchFilter = SearchFilter.EQ;
+                let valueProcessNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  40
+                );
+                // this.validChildNode(
+                //   valueProcessNumber,
+                //   filter.field + '-validation',
+                //   'title'
+                // ); // Validar el camnpo y crear mensajes necesarios
+                filter.search = valueProcessNumber.validValue;
                 break;
               case 'processStatus':
+                // ESTATUS
                 searchFilter = SearchFilter.EQ;
-                filter.search = filter.search.toUpperCase();
+                if (filter.search) {
+                  let valueProcessStatus = VALID_VALUE_REGEXP(
+                    filter.search,
+                    STRING_PATTERN,
+                    10
+                  );
+                  filter.search = valueProcessStatus.validValue.toUpperCase();
+                }
                 break;
               case 'flierNumber':
+                // NO VOLANTE
                 searchFilter = SearchFilter.EQ;
+                let valueFlier = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  40
+                );
+                filter.search = valueFlier.validValue;
                 break;
               case 'issueType':
+                // TIPO DE ASUNTO
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'count':
+                // DIGITALIZADO
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'officeNumber':
+                // OFICIO
+                let valueOfficeNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  500
+                );
+                filter.search = valueOfficeNumber.validValue;
+                break;
+              case 'proceedingsNumber':
+                // EXPEDIENTE
+                let valueProceedingsNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueProceedingsNumber.validValue;
+                break;
+              case 'issue':
+                // ASUNTO
+                let valueIssue = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  500
+                );
+                filter.search = valueIssue.validValue;
+                break;
+              case 'processSituation':
+                // SITUACION TRAMITE
+                let valueProcessSituation = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueProcessSituation.validValue;
+                break;
+              case 'turnadoiUser':
+                // USUARIO TURNADO
+                let valueTurnadoiUser = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueTurnadoiUser.validValue;
+                break;
+              case 'dailyConsecutiveNumber':
+                // CONSECUTIVO DIARIO
+                let valueDailyConsecutiveNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueDailyConsecutiveNumber.validValue;
+                break;
+              case 'descentfed':
+                // DESCRIPCION ENTIDAD FEDERATIVA
+                let valueDescentfed = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  100
+                );
+                filter.search = valueDescentfed.validValue;
+                break;
+              case 'businessDays':
+                // DIAS HABILES
+                let valueBusinessDays = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueBusinessDays.validValue;
+                break;
+              case 'naturalDays':
+                // DIAS NATURALES HABILES
+                let valueNaturalDays = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueNaturalDays.validValue;
+                break;
+              case 'observation':
+                // OBSERVACIONES
+                let valueObservation = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  200
+                );
+                filter.search = valueObservation.validValue;
+                break;
+              case 'observationAdd':
+                // OBSERVACIONES ADD
+                let valueObservationAdd = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  200
+                );
+                filter.search = valueObservationAdd.validValue;
+                break;
+              case 'priority':
+                // PRIORIDAD
+                let valuePriority = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  10
+                );
+                filter.search = valuePriority.validValue;
+                break;
+              case 'sheets':
+                // DOCUMENTOS
+                let valueSheets = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueSheets.validValue;
+                break;
+              case 'areaATurn':
+                // AREA TURNAR
+                let valueAreaATurn = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueAreaATurn.validValue;
+                break;
+              case 'userATurn':
+                // USUARIO A TURNAR
+                let valueUserATurn = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueUserATurn.validValue;
+                break;
+              case 'folioRep':
+                // FOLIO REP.
+                let valueFolioRep = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  10
+                );
+                filter.search = valueFolioRep.validValue;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
