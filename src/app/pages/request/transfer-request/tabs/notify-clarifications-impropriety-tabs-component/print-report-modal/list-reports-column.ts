@@ -9,12 +9,22 @@ export const LIST_REPORTS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  statusRegistration: {
-    title: 'Estatus Registro',
-    type: 'string',
+  validationocsp: {
+    title: 'Estatus registro',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'true')
+        return `<span><i class="fa fa-check text-success"></i> Datos completos</span>`;
+      if (value != 'true')
+        return `<span><i class="fa fa-times text-danger"></i> Datos incompletos</span>`;
+
+      return value;
+    },
   },
-  /*button: {
+
+  /*
+  button: {
     title: '',
     type: 'custom',
     class: 'custom-field',

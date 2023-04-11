@@ -47,7 +47,8 @@
                 (fetchItems)="getDocType($event)"
                 [data]="selectDocType"
                 label="Tipo de Documento"
-                value="docType">
+                bindLabel="ddescription"
+                value="ddescription">
               </ngx-select>
             </div>
           </div>
@@ -59,14 +60,16 @@
               typeDoc === 'request-assets'
             ">
             <div class="col-md-4">
-              <ngx-select
-                [form]="docRequestForm"
-                control="regDelega"
-                (fetchItems)="getRegDelegation($event)"
-                [data]="selectRegDelegation"
-                label="Delegaci&oacute;n Regional"
-                value="regDelega">
-              </ngx-select>
+              <form-field [control]="docRequestForm.get('regDelega')">
+                <ngx-select
+                  [form]="docRequestForm"
+                  control="regDelega"
+                  [data]="selectRegDelegation"
+                  value="id"
+                  bindLabel="description"
+                  label="Selecciona una delegaci&oacute;n regional"
+                  (fetchItems)="getRegDelegation($event)"></ngx-select>
+              </form-field>
             </div>
             <div class="col-md-4">
               <ngx-select
@@ -200,6 +203,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  [readOnly]="true"
                   formControlName="noRequest" />
               </form-field>
             </div>
@@ -249,6 +253,11 @@
               (click)="openNewDocument()">
               Nuevo
             </button>
+            <!--<button
+              class="btn btn-info btn-sm active ml-2"
+              (click)="updateData()">
+              Actualizar
+            </button> -->
           </div>
         </div>
       </div>

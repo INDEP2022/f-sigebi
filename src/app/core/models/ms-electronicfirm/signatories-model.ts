@@ -3,8 +3,8 @@ export interface ISignatories {
   learnedId?: string;
   name?: string;
   post?: string;
-  certificate?: string | Buffer;
-  keycertificate?: string | Buffer;
+  certificate?: File;
+  keycertificate?: File;
   pass?: string;
   userCreation?: string;
   creationDate?: string | Date;

@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-params.model';
+import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EventSelectionComponent } from '../components/event-selection/event-selection.component';
+import Swal from 'sweetalert2';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
 
 @Component({
@@ -15,7 +17,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
   adding: boolean = false;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paramColumns: any[] = [];
+  lotparams: IRequestLotParam[] = [];
   filterRow: any;
   addOption: any;
   addRowElement: any;
@@ -52,36 +54,30 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     },
   };
 
-  constructor() {
+  constructor(private lotparamsService: LotParamsService) {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
     this.paramSettings.actions.delete = true;
-    this.paramSettings.columns = {
-      ...this.paramSettings.columns,
-      event: {
-        title: 'Evento',
-        sort: false,
-        type: 'html',
-        width: '25%',
-        editor: {
-          type: 'custom',
-          component: EventSelectionComponent,
-        },
-      },
-    };
   }
 
   ngOnInit(): void {
     this.hideFilters();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSearch());
+      .subscribe(() => this.getLotParams());
   }
 
-  getSearch() {
+  getLotParams() {
+    const params = this.params.getValue();
     this.loading = true;
-    console.log(this.params.getValue());
-    this.loading = false;
+    this.lotparamsService.getAll(params).subscribe({
+      next: response => {
+        this.loading = false;
+        this.lotparams = response.data;
+        this.totalItems = response.count;
+      },
+      error: () => (this.loading = false),
+    });
   }
 
   hideFilters() {
@@ -124,32 +120,85 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     );
   }
 
-  addEntry(event: any) {
+  async addEntry(event: any) {
     let { newData, confirm } = event;
-    if (!newData.event || newData.batch == '' || newData.warranty == '') {
+
+    if (
+      !newData.idEvent ||
+      newData.idLot == '' ||
+      newData.specialGuarantee == ''
+    ) {
       this.alertTable();
       return;
     }
-    newData.event = newData.event.id;
+    const requestBody = {
+      idLot: '',
+      idEvent: event.newData.idEvent,
+      publicLot: event.newData.publicLot,
+      specialGuarantee: event.newData.specialGuarantee,
+      nbOrigin: '',
+    };
+
     // Llamar servicio para agregar registro
-    confirm.resolve(newData);
-    this.adding = false;
-    this.totalItems += 1;
+    this.lotparamsService.createLotParameter(requestBody).subscribe({
+      next: resp => {
+        this.msgModal(
+          'Guardado con exito '.concat(`<strong>${requestBody.idLot}</strong>`),
+          'Parametro Guardado',
+          'success'
+        );
+        confirm.resolve(newData);
+        this.adding = false;
+        this.totalItems += 1;
+      },
+      error: err => {
+        console.log('Hubo un error: ', err);
+        this.msgModal(
+          'Error: '.concat(`<strong>${err.error.message}</strong>`),
+          'Error al guardar',
+          'error'
+        );
+      },
+    });
   }
 
   editEntry(event: any) {
     let { newData, confirm } = event;
-    if (!newData.event || newData.batch == '' || newData.warranty == '') {
+    if (
+      !newData.idEvent ||
+      newData.idLot == '' ||
+      newData.specialGuarantee == ''
+    ) {
       this.alertTable();
       return;
     }
-    newData.event = newData.event.id;
+
+    const requestBody = {
+      idLot: event.newData.idLot,
+      idEvent: event.newData.idEvent,
+      publicLot: event.newData.publicLot,
+      specialGuarantee: event.newData.specialGuarantee,
+      nbOrigin: '',
+    };
     // Llamar servicio para eliminar
+    this.lotparamsService.update(event.newData.idLot, requestBody).subscribe({
+      next: resp => {
+        this.msgModal(
+          'Actualizaci&oacute;n exitosa '.concat(
+            `<strong>${requestBody.idLot}</strong>`
+          ),
+          'Par&aacute;metro guardado',
+          'success'
+        );
+      },
+    });
     confirm.resolve(newData);
   }
 
   deleteEntry(event: any) {
     let { confirm } = event;
+    const idLot = event.data.idLot;
+
     this.alertQuestion(
       'question',
       'Eliminar',
@@ -158,9 +207,31 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         // Llamar servicio para eliminar
+        this.lotparamsService.remove(idLot).subscribe({
+          next: resp => {
+            this.msgModal(
+              'Se elimino el parametro '.concat(`<strong>${idLot}</strong>`),
+              'Eliminaci&oacute;n exitosa',
+              'success'
+            );
+          },
+        });
+
         confirm.resolve(event.newData);
         this.totalItems -= 1;
       }
     });
+  }
+
+  msgModal(message: string, title: string, typeMsg: any) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: typeMsg,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {});
   }
 }

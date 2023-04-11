@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
-import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -28,7 +27,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
   filterForm: ModelForm<any>;
-  warehouses = new DefaultSelect<IWarehouse>();
+  typeGoods = new DefaultSelect<IWarehouse>();
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -45,7 +44,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
     private typeRelevantService: TypeRelevantService,
-    private warehouseService: WarehouseService,
     private requestservice: RequestService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
@@ -67,10 +65,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-eye text-primary"></i>',
+        editButtonContent: '<i class="fa fa-eye text-primary" ></i> Ver',
       },
       delete: {
-        deleteButtonContent: '<i class="fa fa-image text-info"></i>',
+        deleteButtonContent: '<i class="fa fa-image text-info"></i> Subir',
       },
 
       selectMode: '',
@@ -78,8 +76,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     };
     this.getInfoRequest();
     this.initFilterForm();
-    this.getGoodsRequest();
-    this.getWarehouseSelect(new ListParams());
+    this.getTypeRelevant(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsRequest());
   }
 
   getInfoRequest() {
@@ -93,9 +93,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   getGoodsRequest() {
     if (this.idRequest) {
       this.loading = true;
-      this.paramsGoods.getValue()['filter.requestId'] = this.idRequest;
-      this.goodService.getAll(this.paramsGoods.getValue()).subscribe({
+      this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
+          console.log('img', data);
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeId'] = goodType;
@@ -110,7 +111,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction.description;
+            item['fractionId'] = fraction?.description;
           });
 
           Promise.all(filterGoodType).then(x => {
@@ -123,6 +124,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
           this.loading = false;
         },
       });
+    } else {
+      this.loading = false;
     }
   }
 
@@ -146,28 +149,21 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      warehouse: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
-  getWarehouseSelect(params: ListParams) {
-    if (params.text) {
-      alert('busca');
-    } else {
-      this.warehouseService.getAll(params).subscribe({
-        next: response => {
-          this.warehouses = new DefaultSelect(response.data, response.count);
-        },
-      });
-    }
+  getTypeRelevant(params: ListParams) {
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.typeGoods = new DefaultSelect(data.data, data.count);
+      },
+    });
   }
 
   filter() {
     const goodNumber = this.filterForm.get('management').value;
-    const warehouse = this.filterForm.get('warehouse').value;
+    const typeGood = this.filterForm.get('typeGood').value;
     if (goodNumber) {
       const filter = this.paragraphs.filter(good => {
         return good.id == goodNumber;
@@ -180,9 +176,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       }
     }
 
-    if (warehouse) {
+    if (typeGood) {
       const filter = this.paragraphs.filter(good => {
-        return good.storeId == warehouse;
+        return good.goodTypeId == typeGood;
       });
 
       if (filter.length > 0) {
@@ -193,9 +189,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       }
     }
 
-    if (warehouse && goodNumber) {
+    if (typeGood && goodNumber) {
       const filter = this.paragraphs.filter(good => {
-        return good.storeId == warehouse && good.id == goodNumber;
+        return good.goodTypeId == typeGood && good.id == goodNumber;
       });
 
       if (filter.length > 0) {

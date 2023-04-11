@@ -125,7 +125,7 @@ export class RegistrationHelper extends BasePage {
     } else if (lisDocument && lisDocument < 1) {
       this.message(
         'error',
-        'Error sin expediente',
+        'Error sin archivos',
         'Se debe asociar un archivo a la solicitud'
       );
       validoOk = false;
@@ -208,7 +208,6 @@ export class RegistrationHelper extends BasePage {
     }
 
     let goods: any = null;
-    //debugger;
     if (validoOk === true) {
       goods = await this.getGoodQuantity(Number(request.id));
       if (goods.count < 1) {

@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -20,7 +26,10 @@ import { AffairService } from '../../../../../../core/services/catalogs/affair.s
   templateUrl: './request-record-tab.component.html',
   styles: [],
 })
-export class RequestRecordTabComponent extends BasePage implements OnInit {
+export class RequestRecordTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() requestForm: ModelForm<IRequest>;
   bsReceptionValue = new Date();
   bsPaperValue: any;
@@ -33,6 +42,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   priority: boolean = false;
   priorityString: string = 'N';
   transferenceNumber: number = 0;
+  formLoading: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -43,42 +53,48 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   ) {
     super();
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
     //this.prepareForm();
-    this.requestForm.controls['affair'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['affair'].value != null) {
-        this.getAffair(this.requestForm.controls['affair'].value);
-      }
 
-      if (this.requestForm.controls['urgentPriority'].value) {
-        //establece el campo urgente
-        this.priorityString = this.requestForm.controls['urgentPriority'].value;
+    if (this.requestForm.controls['paperDate'].value != null) {
+      const paperDate = this.requestForm.controls['paperDate'].value;
+      this.bsPaperValue = new Date(paperDate);
+    }
 
-        this.priority =
-          this.requestForm.controls['urgentPriority'].value === 'Y'
-            ? true
-            : false;
-        //this.requestForm.controls['urgentPriority'].setValue(this.priority);
-      }
+    //establecer el asunto
+    if (this.requestForm.controls['affair'].value != null) {
+      this.getAffair(this.requestForm.controls['affair'].value);
+    }
 
-      //establece el campo fecha de oficio
-      if (this.requestForm.controls['paperDate'].value != null) {
-        let date = new Date(this.requestForm.controls['paperDate'].value);
-        this.bsPaperValue = date;
-        //this.requestForm.controls['paperDate'].setValue(date.toISOString());
-      }
+    //establece el campo fecha de oficio
+    if (this.requestForm.controls['urgentPriority'].value) {
+      //establece el campo urgente
+      this.priorityString = this.requestForm.controls['urgentPriority'].value;
 
-      //estable el campo para preguntar en la vista si es del tipo 1 o 3
-      if (this.requestForm.controls['transferenceId'].value != null) {
-        this.transferenceNumber = Number(
-          this.requestForm.controls['transferenceId'].value
-        );
-      }
-    });
+      this.priority =
+        this.requestForm.controls['urgentPriority'].value === 'Y'
+          ? true
+          : false;
+      //this.requestForm.controls['urgentPriority'].setValue(this.priority);
+    }
+
+    //estable el campo para preguntar en la vista si es del tipo 1 o 3
+    if (this.requestForm.controls['transferenceId'].value != null) {
+      this.transferenceNumber = Number(
+        this.requestForm.controls['transferenceId'].value
+      );
+    }
 
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
     this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
@@ -154,8 +170,8 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      transferenceFile: [null],
-      previousInquiry: [null],
+      transferenceFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -176,6 +192,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
     this.requestForm.updateValueAndValidity();
@@ -250,6 +267,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
 
   async confirm() {
     this.loading = true;
+    this.formLoading = true;
     const request = this.requestForm.getRawValue() as IRequest;
 
     const requestResult = await this.updateRequest(request);
@@ -257,10 +275,10 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       this.message(
         'success',
         'Guardado',
-        'Se guardo la solicitud correctamente'
+        'Se guardó la solicitud correctamente'
       );
     } else {
-      this.message('error', 'Error', 'No se guardo la solicitud!');
+      this.message('error', 'Error', '¡No se guardó la solicitud!');
     }
   }
 
@@ -273,16 +291,18 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
           }
           if (resp.statusCode != null) {
             resolve(false);
+            this.message('error', 'Error', `¡No se guardó la solicitud!.`);
           }
-
+          this.formLoading = false;
           this.loading = false;
         },
         error: error => {
           this.loading = false;
+          this.formLoading = false;
           this.message(
             'error',
             'Error',
-            `No se guardo la solicitud!. ${error.error.message}`
+            `¡No se guardó la solicitud!. ${error.error.message}`
           );
           console.log(error);
           reject(false);

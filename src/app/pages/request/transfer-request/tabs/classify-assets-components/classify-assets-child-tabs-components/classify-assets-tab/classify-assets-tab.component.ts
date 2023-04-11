@@ -10,14 +10,19 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
+import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -34,7 +39,7 @@ export class ClassifyAssetsTabComponent
   @Input() requestObject: any;
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
-  @Input() goodObject: IFormGroup<any> = null;
+  @Input() goodObject: ModelForm<IGood>; //: IFormGroup<any> = null;
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
   @Input() goodSelect: any;
@@ -46,14 +51,15 @@ export class ClassifyAssetsTabComponent
 
   public selectSection: any;
   public selectChapter: any = []; // = new DefaultSelect<any>();
-  public selectLevel1: any = []; // = new DefaultSelect<any>();
-  public selectLevel2: any = []; // = new DefaultSelect<any>();
+  public selectLevel1: any = []; //= new DefaultSelect<any>();
+  public selectLevel2: any = []; //= new DefaultSelect<any>();
   public selectLevel3: any = []; // = new DefaultSelect<any>();
   public selectLevel4: any = []; // = new DefaultSelect<any>();
 
   detailArray: any = {};
 
   good: any = null;
+  formLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -76,6 +82,7 @@ export class ClassifyAssetsTabComponent
     }
     this.getReactiveFormActions();
     this.processView();
+    this.loadingForm();
   }
 
   //Obtenemos el tipo de proceso//
@@ -86,19 +93,21 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('td', this.typeDoc);
-
     /*console.log('df', this.assetsId);
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
       } */
-
     //bienes selecionados
+
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
+      //this.formLoading = true;
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
+        this.classiGoodsForm.controls['quantity'].setValue(
+          Number(this.good.quantity)
+        );
       }
     }
   }
@@ -108,12 +117,12 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm = this.fb.group({
       id: [null],
       goodId: [null],
-      ligieSection: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
       requestId: [requestId],
       goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       color: [
@@ -124,18 +133,25 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      quantity: [
+        1,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(13),
+        ],
+      ],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
       capacity: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       volume: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       fileeNumber: [
         null,
@@ -143,25 +159,31 @@ export class ClassifyAssetsTabComponent
       ],
       useType: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
-      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(40)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(40)],
+      ],
       origin: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       appraisal: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
-      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
@@ -172,15 +194,15 @@ export class ClassifyAssetsTabComponent
       ],
       unitMeasure: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ], // preguntar Unidad Medida Transferente
-      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       brand: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       subBrand: [
@@ -188,28 +210,31 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       armor: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       model: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(NUM_POSITIVE_LETTERS),
+          Validators.maxLength(15),
         ],
       ],
-      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      doorsNumber: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       axesNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       engineNumber: [
@@ -217,28 +242,28 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //numero motor
       tuition: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       serie: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       chassis: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       cabin: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       fitCircular: [
         'N',
@@ -256,37 +281,37 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(1),
         ],
       ],
-      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      addressId: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       operationalState: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       manufacturingYear: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
         ],
       ],
       enginesNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ], // numero de motores
       flag: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
         ],
       ],
       openwork: [
@@ -294,19 +319,19 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       sleeve: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       length: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       shipName: [
@@ -322,19 +347,19 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //registro public
       ships: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       dgacRegistry: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ], //registro direccion gral de aereonautica civil
       airplaneType: [
@@ -342,7 +367,7 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       caratage: [
@@ -366,16 +391,27 @@ export class ClassifyAssetsTabComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
-      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      fractionId: [null],
     });
 
     if (this.goodObject != null) {
       this.getSection(new ListParams(), this.good.ligieSection);
       this.classiGoodsForm.patchValue(this.good);
+      this.classiGoodsForm.controls['quantity'].setValue(
+        Number(this.good.quantity)
+      );
     }
+  }
+
+  loadingForm() {
+    this.requestHelperService.currentFormLoading.subscribe((data: any) => {
+      if (data === true) {
+        this.formLoading = true;
+      }
+    });
   }
 
   setFractions(listReverse: any) {
@@ -445,7 +481,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -462,6 +500,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
@@ -475,7 +514,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -488,6 +529,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
+        console.log(data);
         this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
@@ -501,7 +543,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -527,7 +571,9 @@ export class ClassifyAssetsTabComponent
           );
         }
       },
-      error: error => {},
+      error: error => {
+        this.formLoading = false;
+      },
     });
   }
 
@@ -555,6 +601,7 @@ export class ClassifyAssetsTabComponent
       },
       error: error => {
         this.loading = false;
+        this.formLoading = false;
       },
     });
   }
@@ -637,54 +684,54 @@ export class ClassifyAssetsTabComponent
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      goodAction = this.goodService.create(goods);
+      this.createGood(goods);
     } else {
-      goods.requestId = Number(goods.requestId.id);
-      goods.addressId = Number(goods.addressId.id);
-      goodAction = this.goodService.update(goods);
+      this.updateGood(goods);
     }
+  }
 
-    goodAction.subscribe({
-      next: (data: any) => {
-        if (data) {
-          if (data.id) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
+  createGood(good: any) {
+    this.goodService.create(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `¡El registro se guardó exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            this.refreshTable(true);
+        this.refreshTable(true);
 
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          }
-        } else {
-          if (data.statusCode === 200) {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se guardo exitosamente!`
-            );
-            this.classiGoodsForm.controls['id'].setValue(data.id);
-
-            this.refreshTable(true);
-
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-          } else {
-            this.message(
-              'error',
-              'Error',
-              `El registro no sepudo guardar!. ${data.message}`
-            );
-          }
-        }
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
       },
-      error: (error: any) => {},
+      error: error => {},
+    });
+  }
+
+  updateGood(good: any) {
+    good.requestId = good.requestId.id;
+    if (good.addressId.id) {
+      good.addressId = Number(good.addressId.id);
+    }
+    good.quantity = Number(good.quantity);
+    this.goodService.update(good).subscribe({
+      next: data => {
+        this.message(
+          'success',
+          'Guardado',
+          `El registro se actualizo exitosamente!`
+        );
+        this.classiGoodsForm.controls['id'].setValue(data.id);
+
+        this.refreshTable(true);
+
+        setTimeout(() => {
+          this.refreshTable(false);
+        }, 5000);
+      },
+      error: error => {},
     });
   }
 
@@ -823,8 +870,10 @@ export class ClassifyAssetsTabComponent
     );
   }
 
-  getRelevantTypeId(arrayData: any, id: number): number {
-    return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+  getRelevantTypeId(arrayData: any, id: number): any {
+    if (arrayData) {
+      return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
+    }
   }
 
   //inserta en el formulario el id del tipo de bien
@@ -875,12 +924,19 @@ export class ClassifyAssetsTabComponent
             this.goodsQueryService
               .getLigieUnitDescription(data.ligieUnit)
               .subscribe((data: any) => {
-                this.classiGoodsForm.controls['unitMeasure'].setValue(
-                  data.description
-                );
                 this.classiGoodsForm.controls['ligieUnit'].setValue(
                   data.description
                 );
+
+                if (
+                  this.classiGoodsForm.controls['unitMeasure'].value === null
+                ) {
+                  const ligieUnit =
+                    this.classiGoodsForm.controls['ligieUnit'].value;
+                  this.classiGoodsForm.controls['unitMeasure'].setValue(
+                    ligieUnit
+                  );
+                }
               });
           });
       }

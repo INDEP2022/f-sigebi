@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -114,6 +115,15 @@ import {
       }
     `,
   ],
+  animations: [
+    trigger('OnShow', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class DocumentsReceptionRegisterComponent
   extends BasePage
@@ -157,6 +167,7 @@ export class DocumentsReceptionRegisterComponent
   procedureStatusCode: string = '';
   pgrGoodsProcessed: boolean = true;
   loadingPostCapture: boolean = false;
+  formLoading: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -465,6 +476,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   setInitialConditions() {
+    this.formLoading = true;
     if (this.globals.pSatTipoExp != null) {
       const param = new FilterParams();
       param.addFilter('expSat', this.globals.pSatTipoExp);
@@ -493,11 +505,12 @@ export class DocumentsReceptionRegisterComponent
           .subscribe({
             next: data => {
               console.log(data);
+              const procedure = data;
               if (data.flierNumber == null) {
                 this.useProcedureData(data);
               } else {
                 const param = new FilterParams();
-                param.addFilter('wheeelNumber', data.flierNumber);
+                param.addFilter('wheelNumber', data.flierNumber);
                 this.notificationService
                   .getAllFilter(param.getParams())
                   .subscribe({
@@ -511,12 +524,14 @@ export class DocumentsReceptionRegisterComponent
                         'Volante no encontrado',
                         'No se encontró la información del volante registrado en el trámite'
                       );
-                      this.useProcedureData(data);
+                      this.useProcedureData(procedure);
                     },
                   });
               }
             },
-            error: () => {},
+            error: () => {
+              this.formLoading = false;
+            },
           });
       } else {
         this.initialCondition = 'T';
@@ -525,13 +540,17 @@ export class DocumentsReceptionRegisterComponent
         param.addFilter('wheelNumber', this.pageParams.pNoVolante);
         this.notificationService.getAllFilter(param.getParams()).subscribe({
           next: data => {
-            this.formControls.wheelType.setValue(data.data[0].wheelType);
-            const { wheelType } = data.data[0];
-            if (['A', 'P'].includes(wheelType)) {
-              this.initialCondition = 'A';
-            } else if (['AT', 'T'].includes(wheelType)) {
-              this.initialCondition = wheelType;
-            }
+            this.fillForm(data.data[0]);
+            // this.formControls.wheelType.setValue(data.data[0].wheelType);
+            // const { wheelType } = data.data[0];
+            // if (['A', 'P'].includes(wheelType)) {
+            //   this.initialCondition = 'A';
+            // } else if (['AT', 'T'].includes(wheelType)) {
+            //   this.initialCondition = wheelType;
+            // }
+          },
+          error: () => {
+            this.formLoading = false;
           },
         });
       }
@@ -627,6 +646,8 @@ export class DocumentsReceptionRegisterComponent
         affairSij,
         delegation
       );
+    } else {
+      this.formLoading = false;
     }
   }
 
@@ -671,6 +692,7 @@ export class DocumentsReceptionRegisterComponent
         next: data =>
           this.formControls.affairKey.setValue(data.data[0].id.toString()),
       });
+      this.formLoading = false;
     }
     if (typeManagement == 2) {
       this.satInterface = true;
@@ -753,6 +775,7 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
       this.destinationAreaChange();
+      this.formLoading = true;
     }
     if (typeManagement == 3) {
       this.formControls.wheelType.setValue('P');
@@ -851,6 +874,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.circumstantialRecord.disable();
       this.formControls.protectionKey.disable();
       this.formControls.touchPenaltyKey.disable();
+      this.formLoading = false;
     }
   }
 
@@ -1208,6 +1232,7 @@ export class DocumentsReceptionRegisterComponent
     this.documentsReceptionForm.reset();
     this.pgrGoodsProcessed = true;
     this.populatingForm = true;
+    this.formLoading = true;
     console.log(notif);
     const filterParams = new FilterParams();
     const values = {
@@ -1233,6 +1258,13 @@ export class DocumentsReceptionRegisterComponent
     };
     this.documentsReceptionForm.patchValue({ ...values });
     this.blockErrors(true);
+    if (notif.expedientNumber == null) {
+      this.onLoadToast(
+        'warning',
+        'Expediente no disponible',
+        'Este volante no tiene asociado un expediente.'
+      );
+    }
     if (notif.dailyEviction == 0) {
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
@@ -1439,6 +1471,11 @@ export class DocumentsReceptionRegisterComponent
           },
           error: err => {
             console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos de Área no encontrados',
+              'No se encontraron todos los datos del area correspondiente.'
+            );
           },
         });
       }
@@ -1454,6 +1491,9 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             console.log(data.data[0].id);
             console.log(data);
+            setTimeout(() => {
+              this.formLoading = false;
+            }, 500);
             this.procedureId = data.data[0].id;
             const { status, areaToTurn, userToTurn, typeManagement } =
               data.data[0];
@@ -1553,6 +1593,7 @@ export class DocumentsReceptionRegisterComponent
               'Datos no encontrados',
               'No se encontraron los datos del trámite asociado al volante.'
             );
+            this.formLoading = false;
           },
         });
     }
@@ -1693,47 +1734,24 @@ export class DocumentsReceptionRegisterComponent
   }
 
   viewDocuments() {
-    this.getDocumentsByFlyer(this.wheelNumber.value);
-    // const params = new FilterParams();
-    // params.addFilter('flyerNumber', this.wheelNumber.value);
+    // this.getDocumentsByFlyer(this.wheelNumber.value);
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.wheelNumber.value);
     // params.addFilter('scanStatus', 'ESCANEADO');
-    // this.documentsService.getAllFilter(params.getParams()).subscribe({
-    //   next: data => {
-    //     console.log(data);
-    //     const documents = data.data;
-    //     if (data.count == 1) {
-    //       if (documents[0].associateUniversalFolio) {
-    //         this.onLoadToast(
-    //           'info',
-    //           'Enlace no disponible',
-    //           'El enlace al documento no se encuentra disponible'
-    //         );
-    //       } else {
-    //         this.onLoadToast(
-    //           'info',
-    //           'No disponible',
-    //           'No tiene documentos digitalizados.'
-    //         );
-    //       }
-    //     } else if (data.count > 1) {
-    //       this.openModalDocuments();
-    //     } else {
-    //       this.onLoadToast(
-    //         'info',
-    //         'No disponible',
-    //         'No tiene documentos digitalizados.'
-    //       );
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.onLoadToast(
-    //       'info',
-    //       'No disponible',
-    //       'No se encontraron documentos asociados.'
-    //     );
-    //   },
-    // });
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDocumentsByFlyer(this.wheelNumber.value);
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'info',
+          'No disponible',
+          'El volante no tiene documentos relacionados.'
+        );
+      },
+    });
   }
 
   openModalDocuments() {
@@ -1882,8 +1900,9 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    }
     let type: string;
     if (['A', 'P'].includes(this.wheelType.value)) type = 'A';
     if (['AT', 'T'].includes(this.wheelType.value)) type = 'T';
@@ -2085,8 +2104,9 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('name', lparams.text, SearchFilter.LIKE);
+    }
     this.hideError();
     this.docRegisterService.getDefendants(params.getParams()).subscribe({
       next: data => {
@@ -2102,8 +2122,9 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    }
     this.hideError();
     this.docRegisterService.getCities(params.getParams()).subscribe({
       next: data => {

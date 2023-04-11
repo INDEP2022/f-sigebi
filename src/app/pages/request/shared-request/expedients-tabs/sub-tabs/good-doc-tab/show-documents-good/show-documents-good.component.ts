@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -34,7 +33,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   selectTransfe = new DefaultSelect<any>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: LocalDataSource = new LocalDataSource();
+  paragraphs: any[] = [];
   idGood: number;
   idRequest: number = 0;
   totalItems: number = 0;
@@ -67,9 +66,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDocuemntByGood());
+    this.getDocType(new ListParams());
   }
 
   prepareForm(): void {
@@ -85,7 +82,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       noOfice: [null],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: 157, disabled: true }],
+      noRequest: [null],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
 
       /* Solicitud Transferencia */
@@ -115,9 +112,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       Promise.all(typeDoc).then(info => {
-        this.paragraphs.load(info);
-        this.totalItems = this.paragraphs.count();
-        this.loading = false;
+        if (info.length == 0) {
+          this.onLoadToast(
+            'warning',
+            'No se encontraron documentos al bien',
+            ''
+          );
+          this.loading = false;
+        } else {
+          this.paragraphs = info;
+          this.totalItems = this.paragraphs.length;
+          this.loading = false;
+        }
       });
     });
   }
@@ -178,7 +184,11 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     this.modalService.show(SeeInformationComponent, config);
   }
 
-  getDocType(event: any) {}
+  getDocType(params: ListParams) {
+    this.wContentService.getDocumentTypes(params).subscribe(data => {
+      this.selectDocType = new DefaultSelect(data.data, data.count);
+    });
+  }
 
   getRegDelegation(event: any) {}
 
@@ -186,7 +196,166 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
   getTransfe(event: any) {}
 
-  search(): void {}
+  search(): void {
+    const typeDoc = this.docRequestForm.get('docType').value;
+    const docTitle = this.docRequestForm.get('docTitle').value;
+    const contributor = this.docRequestForm.get('contributor').value;
+    const author = this.docRequestForm.get('author').value;
+    const sender = this.docRequestForm.get('sender').value;
+    const noOfice = this.docRequestForm.get('noOfice').value;
+    const senderCharge = this.docRequestForm.get('senderCharge').value;
+    const comment = this.docRequestForm.get('comment').value;
+
+    if (
+      !typeDoc &&
+      !docTitle &&
+      !contributor &&
+      !author &&
+      !sender &&
+      !noOfice &&
+      !senderCharge &&
+      !comment
+    ) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getDocuemntByGood());
+    }
+    if (typeDoc) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xtipoDocumento == typeDoc) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (docTitle) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.ddocTitle == docTitle) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (contributor) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xcontribuyente == contributor) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (author) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.ddocTitle == author) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (sender) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xremitente == sender) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (noOfice) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xnoOficio == noOfice) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (senderCharge) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xcargoRemitente == senderCharge) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+
+    if (comment) {
+      this.loading = true;
+      const filter = this.paragraphs.filter(item => {
+        if (item.xcomments == comment) return item;
+      });
+
+      if (filter.length == 0) {
+        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.loading = false;
+      } else {
+        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.paragraphs = filter;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      }
+    }
+  }
 
   openDoc(docName: string): void {
     this.wContentService.obtainFile(docName).subscribe(data => {
@@ -235,12 +404,39 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       idGood,
       callback: (next: boolean) => {
         if (next) {
-          this.paragraphs = new LocalDataSource();
-          this.getDocuemntByGood();
+          this.onLoadToast('success', 'Documento Guardado correctamente', '');
         }
       },
     };
     this.modalService.show(NewDocumentComponent, config);
+  }
+
+  updateDocuments() {
+    this.loading = true;
+    const filter: Object = {
+      xidBien: this.idGood,
+      xidSolicitud: this.idRequest,
+    };
+
+    this.wContentService.getDocumentos(filter).subscribe(data => {
+      this.loading = true;
+      const info = data.data.filter((doc: any) => {
+        if (doc.dDocType == 'Document') return doc;
+      });
+
+      const typeDoc = info.map(async (items: any) => {
+        const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
+        items.xtipoDocumento = filter[0].ddescription;
+        return items;
+      });
+
+      Promise.all(typeDoc).then(info => {
+        console.log('actualizado', info);
+        this.paragraphs = info;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      });
+    });
   }
 
   close() {
@@ -249,5 +445,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.getDocuemntByGood();
   }
 }

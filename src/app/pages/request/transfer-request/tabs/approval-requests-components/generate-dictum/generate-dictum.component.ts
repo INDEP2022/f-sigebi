@@ -15,9 +15,10 @@ import { PrintReportModalComponent } from '../../notify-clarifications-improprie
 export class GenerateDictumComponent extends BasePage implements OnInit {
   idDoc: any; //ID de solicitud, viene desde el componente principal
   idTypeDoc: any;
+  requestData: IRequest;
   response: IRequest;
 
-  title: string = 'Generar Dictamen';
+  title: string = 'Reporte Dictamen Procedencia';
   edit: boolean = false;
 
   pdfurl: string = '';
@@ -35,15 +36,13 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Data del formulario: ', this.response);
-
     this.initForm();
   }
 
   initForm(): void {
     this.dictumForm = this.fb.group({
       id: [null],
-      idRecord: [null],
+      /*recordId: [null],
       applicationDate: [null],
       receptionDate: [null],
       nameOfOwner: [null],
@@ -51,12 +50,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       phoneOfOwner: [null],
       emailOfOwner: [null],
       transferenceId: [null],
-      transferent: [null],
       stationId: [null],
-      emisora: [null],
       authorityId: [null],
       regionalDelegationId: [null],
-      regionalDelegation: [null],
       sender: [null],
       observations: [null],
       targetUser: [null],
@@ -82,7 +78,6 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       affair: [null],
       satDeterminant: [null],
       satDirectory: [null],
-      authority: [null],
       satZoneCoordinator: [null],
       userCreated: [null],
       creationDate: [null],
@@ -105,19 +100,17 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       stateRequestId: [null],
       searchSiab: [null],
       priorityDate: [null],
-      ofRejectionsNumber: [null],
+      rejectionNumber: [null],
       rulingDocumentId: [null],
-      nameRecipientRuling: [
-        null,
-        [Validators.required, Validators.maxLength(100)],
-      ],
+      reportSheet: [null],*/
+      nameRecipientRuling: [null, [Validators.maxLength(100)]],
       postRecipientRuling: [null, [Validators.maxLength(100)]],
       paragraphOneRuling: [null, [Validators.maxLength(4000)]],
       paragraphTwoRuling: [null, [Validators.maxLength(4000)]],
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
       ccpRuling: [null, [Validators.maxLength(200)]],
-      rulingCreatorName: [null],
+      /*rulingCreatorName: [null],
       rulingSheetNumber: [null],
       registrationCoordinatorSae: [null],
       emailNotification: [null],
@@ -125,7 +118,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       instanceBpel: [null],
       verificationDateCump: [null],
       recordTmpId: [null],
-      coordregsae_ktl: [null],
+      coordregsae_ktl: [null],*/
     });
     if (this.response != null) {
       this.dictumForm.patchValue(this.response);
@@ -146,12 +139,15 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   update() {
     const idDoc = this.idDoc;
     this.requestService.update(idDoc, this.dictumForm.value).subscribe({
-      next: data => (this.handleSuccess(), this.signDictum()),
+      next: data => {
+        this.handleSuccess(), (this.requestData = data), this.signDictum();
+      },
       error: error => (this.loading = false),
     });
   }
 
   signDictum(): void {
+    const requestInfo = this.requestData;
     const idDoc = this.idDoc;
     const typeAnnex = 'approval-request';
     const idTypeDoc = this.idTypeDoc;
@@ -161,6 +157,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         idDoc,
         idTypeDoc,
         typeAnnex,
+        requestInfo,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
@@ -195,7 +192,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Generado' : 'Generado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

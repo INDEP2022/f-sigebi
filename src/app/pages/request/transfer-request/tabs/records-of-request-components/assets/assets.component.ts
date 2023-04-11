@@ -258,6 +258,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
+    this.loader.load = true;
     console.log(event.target.files[0]);
     const file = event.target.files[0];
     const user = this.authService.decodeToken().preferred_username;
@@ -265,15 +266,22 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   uploadFile(file: File, request: string, user: string) {
+    debugger;
     this.procedureManagementService
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          if (resp.statusCode === 200) {
-            this.message('success', 'Archivos cargados', `${resp.message}`);
-          } else {
-            this.message('error', 'Error al guardar', `${resp.message}`);
-          }
+          this.message(
+            'success',
+            'Archivos cargados',
+            `Se importaron los archivos`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.message('error', 'Error al guardar', `${error.error.message}`);
+          console.log(error);
         },
       });
   }
@@ -290,13 +298,17 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   selectRows(event: any) {
-    console.log(event);
     this.listgoodObjects = event.selected;
     if (this.listgoodObjects.length <= 1) {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
         this.btnCreate = 'Cerrar Bien';
+        const load = true;
+        this.loadLoading(load);
+        setTimeout(() => {
+          this.loadLoading(false);
+        }, 400);
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
@@ -309,6 +321,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
+  loadLoading(loading: boolean) {
+    this.requestHelperService.loadingForm(loading);
+  }
   openSelectAddressModal() {
     if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
@@ -394,6 +409,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
+        if (element.requestId.id) {
+          element.requestId = Number(element.requestId.id);
+        }
         this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -409,10 +427,10 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'success',
                 'Actualizado',
-                `Se guardo correctamente el bien del domicilio!`
+                `¡Se guardó correctamente el bien del domicilio!`
               );
               this.isSaveDomicilie = false;
-              resolve('Se guardo correctamente el bien del domicilio!');
+              resolve('¡Se guardó correctamente el bien del domicilio!');
             }
           },
         });
@@ -432,19 +450,19 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -461,8 +479,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           next: resp => {
             this.message(
               'success',
-              'Fraccion guardada',
-              `Se guardo la fraccion exitosamente`
+              'Fracción guardada',
+              `Se guardó la fracción exitosamente`
             );
             this.refreshTable();
           },
@@ -479,7 +497,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        text: '¿Esta seguro de querer eliminar el bien seleccionado?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',
@@ -487,7 +505,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         confirmButtonText: 'Aceptar',
       }).then(result => {
         if (result.isConfirmed) {
-          this.deleteGood();
+          this.deleteMethod();
         }
       });
     } else {
@@ -495,24 +513,46 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
-  deleteGood() {
-    for (let i = 0; i < this.listGoodsFractions.length; i++) {
-      const element = this.listGoodsFractions[i];
+  deleteMethod() {
+    this.loader.load = true;
+    this.listgoodObjects.map(async (item, i) => {
+      let index = i + 1;
+      const deleteResult = await this.deleteGood(item);
+
+      if (deleteResult === true) {
+        if (this.listgoodObjects.length === index) {
+          this.message(
+            'success',
+            'Bienes Eliminados',
+            `Los bienes se eliminaron correctamente`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        }
+      }
+    });
+  }
+
+  deleteGood(element: any) {
+    return new Promise((resolve, reject) => {
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
           if (resp.statusCode === 200) {
-            this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
-            this.closeCreateGoodWIndows();
+            resolve(true);
           } else {
+            this.loader.load = false;
+            reject(false);
             this.message('error', 'Eliminar', `${resp.message[0]}`);
           }
         },
         error: error => {
+          this.loader.load = false;
+          this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
           console.log(error);
         },
       });
-    }
+    });
   }
 
   refreshTable() {

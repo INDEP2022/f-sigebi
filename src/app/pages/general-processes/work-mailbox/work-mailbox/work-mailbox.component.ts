@@ -8,6 +8,7 @@ import {
   debounceTime,
   map,
   of,
+  switchMap,
   takeUntil,
   tap,
   throwError,
@@ -22,9 +23,14 @@ import { DocumentsReceptionDataService } from 'src/app/core/services/document-re
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE,
+  STRING_PATTERN,
+  VALID_VALUE_REGEXP,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
+import compareDesc from 'date-fns/compareDesc';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { WorkMailboxService } from '../work-mailbox.service';
@@ -60,19 +66,27 @@ import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   CONFIRM_CANCEL,
   CONFIRM_FINISH,
+  CONFIRM_SAVE,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
 import {
+  array_column_table,
   WORK_ANTECEDENTES_COLUMNS,
   WORK_BIENES_COLUMNS,
   WORK_MAILBOX_COLUMNS2,
 } from './work-mailbox-columns';
 
+import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -85,6 +99,11 @@ import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperw
         padding-bottom: -15px !important;
         margin-top: -15px !important;
         margin-bottom: -15px !important;
+      }
+
+      .drop-scroll {
+        height: 220px;
+        overflow-y: auto;
       }
     `,
   ],
@@ -108,6 +127,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  areasParams = new BehaviorSubject(new FilterParams());
   columnFilters: any = [];
 
   form: FormGroup = this.fb.group({
@@ -146,7 +166,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   users$ = new DefaultSelect<ISegUsers>();
   areas$ = new DefaultSelect<IManagementArea>();
 
+  resetDataFilter: boolean = false;
+  fields_WORK_MAILBOX_COLUMNS2 = array_column_table(WORK_MAILBOX_COLUMNS2);
+
   get user() {
+    this.dataTable.count;
     return this.filterForm.controls['user'];
   }
   get managementAreaF() {
@@ -171,6 +195,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     return this.filterForm.controls['endDate'];
   }
 
+  type: 'SAT' | 'PGR' = null;
+  showScan: boolean = false;
+  showPGRDocs: boolean = false;
+  showValDoc: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private workService: WorkMailboxService,
@@ -189,10 +218,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private goodsParamerterService: GoodParametersService,
-    private notificationsService: NotificationService
+    private notificationsService: NotificationService,
+    private interfaceFgrService: InterfacefgrService,
+    private tmpManagementProcedureService: TmpManagementProcedureService,
+    private datePipe: DatePipe,
+    private siabService: SiabService
   ) {
     super();
-    this.settings.actions = true;
+    this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
     this.settings.columns = WORK_MAILBOX_COLUMNS2;
     this.settings = {
       ...this.settings,
@@ -201,9 +234,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         ...this.settings.actions,
         delete: false,
         add: false,
-        edit: true,
-        columnTitle: 'Acciones',
-        position: 'right',
+        edit: false, // SE CAMBIO PARA NO PERMITIR EDITAR
+        // columnTitle: 'Acciones',
+        // position: 'right',
       },
       edit: {
         ...this.settings.edit,
@@ -216,35 +249,300 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     };
   }
 
+  /**
+   * Obtener el nodo donde se encuentra el nombre del nodo que se pasa como parametro
+   * @param filterField Nombre de la clase a buscar
+   * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
+   * @returns
+   */
+  getCellNode(filterField: string, nodeName: string) {
+    let field = document.getElementsByClassName(filterField);
+    let cell: ChildNode;
+    for (let index = 0; index < field.length; index++) {
+      const element = field[index];
+      if (element) {
+        element.childNodes.forEach((node: any) => {
+          if (node['className'].toLocaleLowerCase().includes(nodeName)) {
+            cell = node;
+          }
+        });
+      }
+    }
+    return cell;
+  }
+
+  /**
+   * Eliminar nodos de mensajes anteriores
+   * @param cell Elemento donde se va a eliminar el nodo
+   */
+  removeChilds(cell: ChildNode) {
+    let removeChilds: ChildNode[] = [];
+    cell.childNodes.forEach((nodeChild: any) => {
+      if (
+        nodeChild['className']
+          .toLocaleLowerCase()
+          .includes('validator-field-table')
+      ) {
+        removeChilds.push(nodeChild);
+      }
+    });
+    removeChilds.forEach(removeChild => {
+      // cell.removeChild(removeChild);
+    });
+  }
+
+  /**
+   * Crea el mensaje de validación en el elemento que se pasa como parametro @cell
+   * @param cell Elemento donde se va a crear el nodo
+   * @param valueField Respuesta del validador de campo
+   */
+  createChildNode(cell: ChildNode, valueField: any) {
+    const node = document.createElement('p');
+    node.classList.add('validator-field-table');
+    node.classList.add('fs-4');
+    node.classList.add('text-danger');
+    node.innerHTML = `${
+      valueField.errorRegExp ? '*' + valueField.errorRegExpMessage : ''
+    }${
+      valueField.errorMaxLength
+        ? '<br>*' + valueField.errorMaxLengthMessage
+        : ''
+    }`;
+    // cell.appendChild(node);
+  }
+
+  /**
+   * Validar si se requiere agregar el mensaje en el campos
+   * @param valueField Respuesta del validador de campo
+   * @param filterField Nombre de la clase a buscar
+   * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
+   */
+  validChildNode(valueField: any, filterField: string, nodeName: string) {
+    if (valueField.errorRegExp || valueField.errorMaxLength) {
+      let cell = this.getCellNode(filterField, nodeName);
+      if (cell) {
+        this.removeChilds(cell);
+        this.createChildNode(cell, valueField);
+      }
+    }
+  }
+  /**
+   * Remover los mensajes de validación en caso que los campos esten vacios en los filtros
+   * @param filterField Nombre de la clase a buscar
+   * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
+   */
+  removePreviewsMessages(filterField: string, nodeName: string) {
+    let cell = this.getCellNode(filterField, nodeName);
+    if (cell) {
+      this.removeChilds(cell);
+    }
+  }
+
   ngOnInit(): void {
+    this.resetDataFilter = false;
     this.dataTable
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
+        // console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
+            // console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            // this.removePreviewsMessages(filter.field + '-validation', 'title'); // Remover validaciones previas
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'processNumber':
+                // NO TRAMITE
                 searchFilter = SearchFilter.EQ;
+                let valueProcessNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  40
+                );
+                // this.validChildNode(
+                //   valueProcessNumber,
+                //   filter.field + '-validation',
+                //   'title'
+                // ); // Validar el camnpo y crear mensajes necesarios
+                filter.search = valueProcessNumber.validValue;
                 break;
               case 'processStatus':
+                // ESTATUS
                 searchFilter = SearchFilter.EQ;
-                filter.search = filter.search.toUpperCase();
+                if (filter.search) {
+                  let valueProcessStatus = VALID_VALUE_REGEXP(
+                    filter.search,
+                    STRING_PATTERN,
+                    10
+                  );
+                  filter.search = valueProcessStatus.validValue.toUpperCase();
+                }
                 break;
               case 'flierNumber':
+                // NO VOLANTE
                 searchFilter = SearchFilter.EQ;
+                let valueFlier = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  40
+                );
+                filter.search = valueFlier.validValue;
                 break;
               case 'issueType':
+                // TIPO DE ASUNTO
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'count':
+                // DIGITALIZADO
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'officeNumber':
+                // OFICIO
+                let valueOfficeNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  500
+                );
+                filter.search = valueOfficeNumber.validValue;
+                break;
+              case 'proceedingsNumber':
+                // EXPEDIENTE
+                let valueProceedingsNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueProceedingsNumber.validValue;
+                break;
+              case 'issue':
+                // ASUNTO
+                let valueIssue = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  500
+                );
+                filter.search = valueIssue.validValue;
+                break;
+              case 'processSituation':
+                // SITUACION TRAMITE
+                let valueProcessSituation = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueProcessSituation.validValue;
+                break;
+              case 'turnadoiUser':
+                // USUARIO TURNADO
+                let valueTurnadoiUser = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueTurnadoiUser.validValue.toUpperCase();
+                break;
+              case 'dailyConsecutiveNumber':
+                // CONSECUTIVO DIARIO
+                let valueDailyConsecutiveNumber = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  11
+                );
+                filter.search = valueDailyConsecutiveNumber.validValue;
+                break;
+              case 'descentfed':
+                // DESCRIPCION ENTIDAD FEDERATIVA
+                let valueDescentfed = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  100
+                );
+                filter.search = valueDescentfed.validValue;
+                break;
+              case 'businessDays':
+                // DIAS HABILES
+                let valueBusinessDays = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueBusinessDays.validValue;
+                break;
+              case 'naturalDays':
+                // DIAS NATURALES HABILES
+                let valueNaturalDays = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueNaturalDays.validValue;
+                break;
+              case 'observation':
+                // OBSERVACIONES
+                let valueObservation = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  200
+                );
+                filter.search = valueObservation.validValue;
+                break;
+              case 'observationAdd':
+                // OBSERVACIONES ADD
+                let valueObservationAdd = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  200
+                );
+                filter.search = valueObservationAdd.validValue;
+                break;
+              case 'priority':
+                // PRIORIDAD
+                let valuePriority = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  10
+                );
+                filter.search = valuePriority.validValue;
+                break;
+              case 'sheets':
+                // DOCUMENTOS
+                let valueSheets = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  5
+                );
+                filter.search = valueSheets.validValue;
+                break;
+              case 'areaATurn':
+                // AREA TURNAR
+                let valueAreaATurn = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueAreaATurn.validValue;
+                break;
+              case 'userATurn':
+                // USUARIO A TURNAR
+                let valueUserATurn = VALID_VALUE_REGEXP(
+                  filter.search,
+                  STRING_PATTERN,
+                  30
+                );
+                filter.search = valueUserATurn.validValue.toUpperCase();
+                break;
+              case 'folioRep':
+                // FOLIO REP.
+                let valueFolioRep = VALID_VALUE_REGEXP(
+                  filter.search,
+                  NUM_POSITIVE,
+                  10
+                );
+                filter.search = valueFolioRep.validValue;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -261,7 +559,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          console.log(this.columnFilters);
+          console.log(this.columnFilters, this.resetDataFilter);
+          if (this.resetDataFilter) {
+            this.resetDataFilter = false;
+            this.columnFilters = [];
+          }
           if (this.predeterminedF.value) {
             this.getUser();
           } else {
@@ -328,7 +630,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         });
         this.filterForm.controls['user'].setValue(data.data[0]);
         let $params = new ListParams();
-        this.getGroupWork($params);
+        this.getGroupWork($params, true);
       },
       error: () => {
         //this.users$ = new DefaultSelect();
@@ -356,17 +658,52 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } = this.filterForm.value;
 
     let field = `filter.processEntryDate`;
+    console.log(
+      this.filterForm.get('startDate').invalid,
+      this.filterForm.get('endDate').invalid,
+      this.filterForm.get('startDate').valid,
+      this.filterForm.get('endDate').valid
+    );
 
     /*DATEFILTER*/
-    if (startDate !== null && endDate !== null) {
-      const startTemp = `${startDate.getFullYear()}-0${
-        startDate.getUTCMonth() + 1
-      }-0${startDate.getDate()}`;
-      const endTemp = `${endDate.getFullYear()}-0${
-        endDate.getUTCMonth() + 1
-      }-0${endDate.getDate()}`;
-
-      this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
+    if (
+      this.filterForm.get('startDate').invalid ||
+      this.filterForm.get('endDate').invalid
+    ) {
+      this.onLoadToast(
+        'warning',
+        'Fechas incorrectas',
+        'Ingrese Fechas correctas para realizar la búsqueda.'
+      );
+      return;
+    } else if (
+      this.filterForm.get('startDate').valid &&
+      this.filterForm.get('endDate').valid &&
+      startDate &&
+      endDate
+    ) {
+      let validDate = null;
+      validDate = compareDesc(startDate, endDate);
+      console.log(validDate);
+      if (validDate >= 0) {
+        const startTemp = `${startDate.getFullYear()}-0${
+          startDate.getUTCMonth() + 1
+        }-0${startDate.getDate()}`;
+        const endTemp = `${endDate.getFullYear()}-0${
+          endDate.getUTCMonth() + 1
+        }-0${endDate.getDate()}`;
+        this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
+      } else {
+        let mensaje = '';
+        if (validDate == -1) {
+          mensaje =
+            'La Fecha "Desde" debe ser menor o igual a la Fecha "Hasta".';
+        } else {
+          mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
+        }
+        this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+        return;
+      }
     } else {
       delete this.columnFilters[field];
     }
@@ -374,6 +711,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     console.log(priority);
     field = `filter.processStatus`;
+    let filter = `$eq`;
     if (managementArea !== null) {
       switch (priority) {
         case 'toDo':
@@ -389,13 +727,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           processStatus = `${managementArea.id}D`;
           break;
         default:
-          processStatus = null;
+          processStatus = `${managementArea.id}`;
+          filter = `$ilike`;
           break;
       }
       if (processStatus !== null) {
         //this.filterParams.getValue().addFilter('processStatus',processStatus,SearchFilter.EQ);
 
-        this.columnFilters[field] = `$eq:${processStatus}`;
+        this.columnFilters[field] = `${filter}:${processStatus}`;
       } else {
         delete this.columnFilters[field];
       }
@@ -556,6 +895,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
       this.columnFilters[field] = `$eq:${userId.toUpperCase()}`;
+      if (this.managementAreaF.value !== null) {
+        let managementArea = this.managementAreaF.value;
+        this.columnFilters[
+          'filter.processStatus'
+        ] = `$ilike:${managementArea.id}`;
+      }
       //this.columnFilters[field] = `${userId.toUpperCase()}`;
       //this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
@@ -591,8 +936,22 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
   }
 
+  insertIntoTmp(body: any) {
+    console.log(body);
+    return this.tmpManagementProcedureService.create(body);
+  }
+
+  deleteFromTmp(id: string | number) {
+    console.log(id);
+    return this.tmpManagementProcedureService.remove(id);
+  }
+
   selectEvent(e: any) {
+    this.showPGRDocs, this.showScan, (this.showValDoc = false);
     console.log(e);
+    console.log(e.data);
+
+    const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
     if (e.selected.length > 0) {
       this.selectedRow = e.data;
@@ -610,6 +969,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               ...this.selectedRow,
               typeManagement: resp?.typeManagement || null,
             };
+            this.determinateDocuments();
             //GET  MAX(FEC_TURNADO)
             this.workService
               .getProcedureManagementHistorical(processNumber)
@@ -828,84 +1188,143 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       });
   }
 
-  getAreas() {
-    this.procedureManagementService.getManagamentArea({ limit: 20 }).subscribe({
-      next: (resp: any) => {
-        this.areas$ = resp.data;
-      },
-      error: error => (this.loading = false),
+  areaChange(area: IManagementArea) {
+    const user = this.user.value;
+    const _area = this.managementAreaF.value;
+    if (user && _area) {
+      this.setDefaultValuesByArea(_area, user);
+    }
+  }
+
+  setDefaultValuesByArea(area: IManagementArea, user: any) {
+    console.log({ area, user });
+    const params = new FilterParams();
+    params.addFilter('managementArea', area.id);
+    params.addFilter('user', user.id);
+    this.getAllManagementGroupAreas(params).subscribe(response => {
+      const group = response.data[0];
+      if (group) {
+        this.groupNumber = group.groupNumber;
+        this.managementArea = group.managementArea;
+        this.predetermined = group.predetermined;
+        this.send = group.send;
+        this.turnar = group.turnar;
+        this.watch = group.watch;
+      }
     });
   }
 
-  getGroupWork($params: ListParams) {
-    const token = this.authService.decodeToken();
-    let userId = token.preferred_username;
+  getAreas(params: FilterParams) {
+    return this.procedureManagementService
+      .getManagamentArea(params.getParams())
+      .pipe(
+        tap(resp => {
+          this.areas$ = new DefaultSelect(resp.data, resp.count);
+          if (resp.data.length > 0)
+            this.filterForm.controls['managementArea'].setValue(resp.data[0]);
+        })
+      );
+  }
+
+  getAllManagementGroupAreas(params: FilterParams) {
+    return this.procedureManagementService.getManagamentGroupWork(
+      params.getParams()
+    );
+  }
+
+  getGroupWork($params: ListParams, reset?: boolean) {
+    if (reset) {
+      $params.page = 1;
+    }
+    const _params = new FilterParams();
     const params = new FilterParams();
+    _params.limit = 100;
     params.page = $params.page;
     params.limit = $params.limit;
-    let predetermined = this.predeterminedF.value;
+    params.search = $params.text;
 
-    predetermined
-      ? (params.addFilter('predetermined', 'S'),
-        params.addFilter('user', userId.toUpperCase()))
-      : params.removeAllFilters();
+    const user = this.user.value;
+    if (user) {
+      _params.addFilter('user', user.id);
+      this.getAllManagementGroupAreas(_params)
+        .pipe(
+          map(response => response.data.map(group => group.managementArea)),
+          switchMap(areas => {
+            if (areas.length > 0) {
+              params.addFilter('id', areas.join(','), SearchFilter.IN);
+            }
+            return this.getAreas(params);
+          })
+        )
+        .subscribe({
+          next: () => {},
+          error: error => {
+            this.areas$ = new DefaultSelect();
+            this.filterForm.controls['managementArea'].setValue(null);
+          },
+        });
+    } else {
+      this.getAreas(params).subscribe();
+    }
 
-    this.procedureManagementService
-      .getManagamentGroupWork(params.getParams())
-      .subscribe({
-        next: (respGW: any) => {
-          if (respGW.data) {
-            let groups = respGW.data;
-            this.procedureManagementService
-              .getManagamentArea({ limit: 20 })
-              .subscribe({
-                next: (resp: any) => {
-                  /*VALIDAR AREAS POR GRUPO*/
-                  let assignedArea = resp.data.filter((area: any) => {
-                    return groups.some((g: any) => {
-                      return area.id === g.managementArea;
-                    });
-                  });
+    // const token = this.authService.decodeToken();
+    // let userId = token.preferred_username;
+    // const params = new FilterParams();
+    // params.page = $params.page;
+    // params.limit = $params.limit;
+    // let predetermined = this.predeterminedF.value;
 
-                  /*this.areas$.map((area:any)=>{
-                  let filter = groups.findIndex((group:any) =>
-                    group.managementArea === area.id)
+    // predetermined
+    //   ? (params.addFilter('predetermined', 'S'),
+    //     params.addFilter('user', userId.toUpperCase()))
+    //   : params.removeAllFilters();
 
-                  console.log(filter)
-                  if(filter != -1){
-                    return area
-                  }
-                });*/
-                  let data = resp.data.map((area: any) => {
-                    area.description = `${area.id} - ${area.description}`;
-                    return area;
-                  });
+    // this.procedureManagementService
+    //   .getManagamentGroupWork(params.getParams())
+    //   .subscribe({
+    //     next: (respGW: any) => {
+    //       if (respGW.data) {
+    //         let groups = respGW.data;
+    //         this.procedureManagementService
+    //           .getManagamentArea({ limit: 20 })
+    //           .subscribe({
+    //             next: (resp: any) => {
+    //               /*VALIDAR AREAS POR GRUPO*/
+    //               let assignedArea = resp.data.filter((area: any) => {
+    //                 return groups.some((g: any) => {
+    //                   return area.id === g.managementArea;
+    //                 });
+    //               });
+    //               let data = resp.data.map((area: any) => {
+    //                 area.description = `${area.id} - ${area.description}`;
+    //                 return area;
+    //               });
 
-                  this.areas$ = new DefaultSelect(data, resp.count);
+    //               this.areas$ = new DefaultSelect(data, resp.count);
 
-                  //let managementArea=this.areas$.filter(ar=>ar.managementArea===groups.)
-                  console.log(assignedArea);
-                  predetermined
-                    ? this.filterForm.controls['managementArea'].setValue(
-                        assignedArea[0]
-                      )
-                    : this.filterForm.controls['managementArea'].setValue({});
+    //               //let managementArea=this.areas$.filter(ar=>ar.managementArea===groups.)
+    //               console.log(assignedArea);
+    //               predetermined
+    //                 ? this.filterForm.controls['managementArea'].setValue(
+    //                     assignedArea[0]
+    //                   )
+    //                 : this.filterForm.controls['managementArea'].setValue({});
 
-                  this.groupNumber = resp.data[0].groupNumber;
-                  this.managementArea = resp.data[0].managementArea;
-                  this.predetermined = resp.data[0].predetermined;
-                  this.send = resp.data[0].send;
-                  this.turnar = resp.data[0].turnar;
-                  this.watch = resp.data[0].watch;
-                  console.log(this.areas$);
-                  this.getData();
-                },
-                error: error => (this.loading = false),
-              });
-          }
-        },
-        error: error => (this.loading = false),
-      });
+    //               this.groupNumber = resp.data[0].groupNumber;
+    //               this.managementArea = resp.data[0].managementArea;
+    //               this.predetermined = resp.data[0].predetermined;
+    //               this.send = resp.data[0].send;
+    //               this.turnar = resp.data[0].turnar;
+    //               this.watch = resp.data[0].watch;
+    //               console.log(this.areas$);
+    //               this.getData();
+    //             },
+    //             error: error => (this.loading = false),
+    //           });
+    //       }
+    //     },
+    //     error: error => (this.loading = false),
+    //   });
   }
 
   viewFlyerHistory() {
@@ -1017,11 +1436,53 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 
+  determinateDocuments() {
+    const typeManagement = this.selectedRow.typeManagement;
+    if (typeManagement == 3) {
+      this.type = 'PGR';
+      this.pgrDocs().subscribe();
+    } else if (typeManagement == 2) {
+      this.type = 'SAT';
+    } else {
+      this.showScan = true;
+      this.showPGRDocs, (this.showValDoc = false);
+    }
+  }
+
+  pgrDocs() {
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrOffice', officeNumber);
+    return this.interfaceFgrService
+      .getPgrTransferFiltered(params.getParams())
+      .pipe(
+        catchError(error => {
+          if (error.status < 500) {
+            this.showScan = true;
+          }
+          return throwError(() => error);
+        }),
+        tap(response => {
+          if (response.count > 0) {
+            this.showPGRDocs = true;
+          } else {
+            this.showScan = true;
+          }
+        })
+      );
+  }
+
   turnPaperwork() {
     if (!this.selectedRow) {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+    const tmp = {
+      id: this.selectedRow.processNumber,
+      InvoiceRep: this.selectedRow.folioRep,
+      usrturned: this.selectedRow.turnadoiUser,
+    };
+    this.insertIntoTmp(tmp).subscribe();
     // TODO: descomentar cuando los permisos esten habilitados
     // if(!this.turnar) {
     //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
@@ -1031,8 +1492,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (user: any) => {
-          this.turnToUser(user);
+        callback: (refresh: boolean) => {
+          this.afterTurn(refresh);
         },
         paperwork: this.selectedRow,
       },
@@ -1040,8 +1501,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(TurnPaperworkComponent, config);
   }
 
-  turnToUser(user: any) {
-    console.log(user);
+  afterTurn(refresh: boolean) {
+    this.deleteFromTmp(this.selectedRow.processNumber).subscribe();
+    if (refresh) {
+      this.getData();
+    }
   }
 
   async onCancelPaperwork() {
@@ -1060,6 +1524,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
+  async onSavePaperwork() {
+    if (!this.selectedRow) {
+      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      return;
+    }
+    const result = await this.alertQuestion(
+      'question',
+      'Advertencia',
+      CONFIRM_SAVE
+    );
+
+    if (result.isConfirmed) {
+      if (!this.managementAreaF && !this.user) {
+        return this.onLoadToast(
+          'error',
+          'Error',
+          'No se ha asignado el usuario o el area en el trámite, favor de agregarla'
+        );
+      }
+      this.savePaperwork().subscribe();
+    }
+  }
+
   async onFinishPaperwork() {
     if (!this.selectedRow) {
       this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
@@ -1074,6 +1561,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (result.isConfirmed) {
       this.finishPaperwork().subscribe();
     }
+  }
+
+  savePaperwork() {
+    const { processNumber } = this.selectedRow;
+    const body = {
+      status: this.managementAreaF.value.id + 'I',
+      userTurned: this.user.value.id,
+      situation: 1,
+    };
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al cancelar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.getData();
+      })
+    );
   }
 
   cancelPaperwork() {
@@ -1120,6 +1630,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.getData();
       })
     );
+  }
+
+  viewDoc() {
+    const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
+    console.log(this.selectedRow);
+    if (!flierNumber && !proceedingsNumber) {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, sólo se visualizaran los documentos'
+      );
+    }
+
+    let config = {
+      class: 'modal-lg modal-dialog-centered',
+      initialState: {
+        pgrOffice: officeNumber,
+      },
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PgrFilesComponent, config);
   }
 
   validDoc() {
@@ -1375,43 +1906,70 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(MailboxModalTableComponent, config);
   }
 
+  userChange(user: any) {
+    const params = new ListParams();
+    this.areas$ = new DefaultSelect([], 0, true);
+    this.getGroupWork(params, true);
+    const _user = this.user.value;
+    const _area = this.managementAreaF.value;
+    if (_user && _area) {
+      this.setDefaultValuesByArea(_area, _user);
+    }
+  }
+
   getUsers($params: ListParams) {
     console.log($params);
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
+    const area = this.managementAreaF.value;
+    /*if (area) {
+      const _params = new FilterParams();
+      _params.page = params.page;
+      //_params.addFilter('id', area.managementArea);
+      //_params.addFilter('user', params.search, SearchFilter.ILIKE);
+     
+      this.getAllManagementGroupAreas(_params)
+        .pipe(
+          map(response => response.data.map(group => group.user)),
+          switchMap(users => {
+            const __params = new FilterParams();
+            __params.addFilter('id', users.join(','), SearchFilter.IN);
+            return this.getAllUsers(__params);
+          })
+        )
+        .subscribe();
+       this.getAllUsers(_params).subscribe();
+    } else {
+      this.getAllUsers(params).subscribe();
+    }*/
+
     params.addFilter('name', $params.text, SearchFilter.LIKE);
-    //params.addFilter('assigned', 'S');
-    /*if (lparams?.text.length > 0)
+    this.getAllUsers(params).subscribe();
+  }
 
-    if (this.delDestinyNumber.value != null)
-      params.addFilter('delegationNumber', this.delDestinyNumber.value);
-    if (this.subDelDestinyNumber.value != null)
-      params.addFilter('subdelegationNumber', this.subDelDestinyNumber.value);*/
-    this.usersService.getAllSegUsers(params.getParams()).subscribe({
-      next: data => {
-        data.data.map(user => {
-          user.userAndName = `${user.id}- ${user.name}`;
-          return user;
-        });
-
-        this.users$ = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.users$ = new DefaultSelect();
-      },
-    });
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 
   resetFilters(): void {
+    this.dataTable.reset();
     this.filterForm.reset();
     this.filterForm = this.fb.group({
       managementArea: [null],
       user: [null],
-      verTramiteG: [false],
-      actualizarBuzon: [true],
-      pendientes: [false],
-      predetermined: [true],
+      verTramiteG: [null],
+      actualizarBuzon: [null],
+      pendientes: [null],
+      predetermined: [null],
       priority: [null],
       processStatus: [null],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -1422,7 +1980,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     console.log(this.filterForm.value);
     let field = `filter.processEntryDate`;
     delete this.columnFilters[field];
-    this.getUser();
+    this.resetDataFilter = true;
+    // this.getUser();
+    // this.getData();
+    // this.dataTable.refresh();
+    this.buildFilters();
   }
 
   notAvailable(): void {
@@ -1450,6 +2012,42 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           break;
         case 'viewIndicatorsHistory':
           this.viewIndicatorsHistory();
+          break;
+        case 'replicate':
+          this.replicate();
+          break;
+        case 'turnPaperwork':
+          this.turnPaperwork();
+          break;
+        case 'viewPictures':
+          this.viewPictures();
+          break;
+        case 'acptionBienes':
+          this.acptionBienes();
+          break;
+        case 'onFinishPaperwork':
+          this.onFinishPaperwork();
+          break;
+        case 'onCancelPaperwork':
+          this.onCancelPaperwork();
+          break;
+        case 'onSavePaperwork':
+          this.onSavePaperwork();
+          break;
+        case 'validDoc':
+          this.validDoc();
+          break;
+        case 'viewDoc':
+          this.viewDoc();
+          break;
+        case 'scanDocuments':
+          this.scanDocuments();
+          break;
+        case 'getSolicitud':
+          this.getSolicitud();
+          break;
+        case 'getNotificationsReport':
+          this.getNotificationsReport();
           break;
         default:
           this.alertQuestion(
@@ -1492,6 +2090,61 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       fromDateCtrl.addValidators(maxDate(min));
     }
     fromDateCtrl.updateValueAndValidity();
+  }
+
+  getNotificationsReport(): void {
+    if (!this.selectedRow?.folioRep) {
+      const params = {
+        P_DEF_WHERE: 'WHERE ', //||:T_WHERE);
+      };
+      const report = 'RGESTBUZONTRAMITE';
+      this.onLoadToast(
+        'info',
+        'RGESTBUZONTRAMITE No disponible',
+        'Reporte no disponible en este momento'
+      );
+      console.log(report);
+    } else {
+      if (this.selectedRow?.processStatus === 'OPI') {
+        const params = {
+          PFOLIO: this.selectedRow?.folioRep,
+          PTURNADOA: this.selectedRow?.turnadoiUser,
+        };
+        this.siabService
+          .fetchReport('RFOL_DOCTOSRECIB_SATSAE', params)
+          .subscribe({
+            next: response => {
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                }, //pasar datos por aca
+                class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+                ignoreBackdropClick: true, //ignora el click fuera del modal
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+            },
+            error: error => {
+              this.onLoadToast(
+                'error',
+                'No disponible',
+                'Reporte no disponible'
+              );
+            },
+          });
+      } else {
+        this.alertQuestion(
+          'info',
+          'No permitido',
+          'El reporte para los trámites con estatus diferente a "OPI", no está disponible'
+        );
+      }
+    }
   }
 
   onSaveConfirm(event: any) {

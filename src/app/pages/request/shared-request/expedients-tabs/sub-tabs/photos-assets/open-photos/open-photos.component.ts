@@ -52,7 +52,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
   getImagesGood() {
     const idReq: Object = {
-      xidSolicitud: this.information.requestId,
       xidBien: this.information.id,
     };
 
@@ -60,6 +59,21 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
+      this.paragraphs.load(_data);
+      this.totalItems = this.paragraphs.count();
+    });
+  }
+
+  updateInfoPhotos() {
+    const idReq: Object = {
+      xidBien: this.information.id,
+    };
+
+    this.wContentService.getDocumentos(idReq).subscribe(data => {
+      const _data = data.data.filter((img: any) => {
+        if (img.dDocType == 'DigitalMedia') return img;
+      });
+      console.log(_data);
       this.paragraphs.load(_data);
       this.totalItems = this.paragraphs.count();
     });

@@ -2,12 +2,12 @@ import { SeePhotoComponent } from '../actions/see-photo/see-photo.component';
 
 export const PHOTOS_TABLE_COLUMNS = {
   dDocName: {
-    title: 'No. Fotografia',
+    title: 'No. Fotografía',
     type: 'string',
     sort: false,
   },
   ddocTitle: {
-    title: 'Titulo del Documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
@@ -22,7 +22,7 @@ export const PHOTOS_TABLE_COLUMNS = {
     sort: false,
   },
   xidBien: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

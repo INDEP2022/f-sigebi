@@ -165,59 +165,50 @@
       <hr class="row" />
 
       <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-8">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="acta2" />
-              </form-field>
-            </div>
-          </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('acta2')" label="Acta 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="acta2"
+              [readOnly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('fecElab')"
+            label="Fecha Elaboraci&oacute;n">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fecElab"
+              [maxDate]="maxDatefecElab" />
+          </form-field>
+        </div>
+        <div *ngIf="form.get('fecElab').value != null" class="col-md-2">
+          <form-field
+            [control]="form.get('fecRecepFisica')"
+            label="Fec. Recep. F&iacute;sica">
+            <input
+              bsDatepicker
+              [readOnly]="true"
+              class="form-control"
+              formControlName="fecRecepFisica" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('fecCaptura')" label="Fecha Captura">
+            <input
+              bsDatepicker
+              class="form-control"
+              [readOnly]="true"
+              formControlName="fecCaptura" />
+          </form-field>
         </div>
       </div>
 
       <hr class="row" />
 
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('fecElab')"
-                label="Fecha Elaboraci&oacute;n">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fecElab" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('fecRecepFisica')"
-                label="Fecha Recepci&oacute;n F&iacute;sica">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fecRecepFisica" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('fecCaptura')"
-                label="Fecha  Captura">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fecCaptura" />
-              </form-field>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <form-field

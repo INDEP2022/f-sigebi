@@ -15,6 +15,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -87,8 +88,11 @@ export class RegistrationOfRequestsComponent
   stationName: string = '';
   delegationName: string = '';
   authorityName: string = '';
+  haveDictamen: boolean = false;
 
   requestList: IRequest;
+
+  formLoading: boolean = true;
 
   constructor(
     public fb: FormBuilder,
@@ -110,7 +114,8 @@ export class RegistrationOfRequestsComponent
     private registrationHelper: RegistrationHelper,
     private taskService: TaskService,
     private authService: AuthService,
-    private orderService: OrderServiceService
+    private orderService: OrderServiceService,
+    private wcontentService: WContentService
   ) {
     super();
   }
@@ -259,6 +264,14 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      typeOfTransfer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      domainExtinction: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
     this.registRequestForm.get('receptionDate').disable();
     this.registRequestForm.updateValueAndValidity();
@@ -279,16 +292,23 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
+        /* verifica si existe un dictamen en la solicitud */
+        if (this.typeDocument === 'proceso-aprovacion') {
+          await this.getDictamen(data.id);
+        }
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
-
         this.registRequestForm.patchValue(data);
+        this.requestData = data as IRequest;
+        this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
       },
       error: error => {
+        this.formLoading = false;
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -473,11 +493,21 @@ export class RegistrationOfRequestsComponent
   }
 
   finish() {
-    this.requestData.requestStatus = 'FINALIZADA';
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Asegurse de guardar toda la información antes de Finalizar la solicitud!',
+      'Esta seguro de finalizar la solicitud actual?',
+      'Confirmación',
+      undefined,
+      typeCommit
+    );
+  }
+
+  returnar() {
+    const typeCommit = 'returnar';
+    this.msgSaveModal(
+      'Finalizar Solicitud',
+      'Esta seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -500,6 +530,8 @@ export class RegistrationOfRequestsComponent
   }
 
   async finishMethod() {
+    const request = this.requestData;
+    request.requestStatus = 'FINALIZADA';
     const updateReq = await this.updateRequest(this.requestData);
     if (updateReq) {
       const oldTask: any = await this.getOldTask();
@@ -525,6 +557,10 @@ export class RegistrationOfRequestsComponent
         }
       }
     }
+  }
+
+  returnarMethod() {
+    this.openModal(SelectTypeUserComponent, this.requestData, 'returnado');
   }
 
   confirm() {
@@ -577,22 +613,9 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
-      /* const taskResult = await this.createTask(oldTask, title, url);
-      if (taskResult === true) {
-        const from = 'VERIFICAR_CUMPLIMIENTO';
-        const to = 'CLASIFICAR_BIEN';
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
-      } */
     }
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
@@ -617,20 +640,9 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
-      /* const taskResult = await this.createTask(oldTask, title, url);
-      if (taskResult === true) {
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
-      } */
     }
   }
   /* Fin Metodo para guardar clasificacion de bienes */
@@ -655,20 +667,9 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
-      /* const taskResult = await this.createTask(oldTask, title, url);
-      if (taskResult === true) {
-        const orderServResult = await this.createOrderService(from, to);
-        if (orderServResult) {
-          this.msgGuardado(
-            'success',
-            'Turnado Exitoso',
-            `Se guardo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
-      } */
     }
   }
   /* Fin metodo destino documental */
@@ -714,15 +715,29 @@ export class RegistrationOfRequestsComponent
   }
 
   /** Proceso de aprobacion */
-  async approveRequest() {
-    /**Verificar datos */
-    /**Actualizar tarea para aprobacion */
-    console.log(this.requestData);
+  approveRequest() {
+    this.msgSaveModal(
+      'Aprobar',
+      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      this.typeDocument
+    );
+  }
 
+  async approveRequestMethod() {
+    if (this.haveDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'Error',
+        'Es requerido tener dictamen previamente generado'
+      );
+      return;
+    }
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/process-approval';
+      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+      const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
       const taskResult = await this.createTaskOrderService(
@@ -737,28 +752,51 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
-    /*  this.requestService
-      .update(this.requestData.id, this.requestData)
-      .subscribe({
-        next: resp => {
-          if (resp.statusCode !== null) {
-            this.message('error', 'Error', 'Ocurrio un error al guardar');
-          }
-          if (resp.id !== null) {
-            this.message(
-              'success',
-              'Solicitud Guardada',
-              'Se guardo la solicitud correctamente'
-            );
-          }
-        },
-      }); */
   }
   /** fin de proceso */
+
+  /* Inicio de rechazar aprovacion */
+  refuseRequest() {
+    this.msgSaveModal(
+      'Rechazar',
+      'Deseas rechazar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      'refuse'
+    );
+  }
+
+  async refuseMethod() {
+    console.log(this.requestData);
+
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/verify-compliance';
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'VERIFICAR_CUMPLIMIENTO';
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskResult === true) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+    }
+  }
+  /* Fin rechazo de aprovacion */
 
   updateRequest(request: any) {
     return new Promise((resolve, reject) => {
@@ -774,6 +812,7 @@ export class RegistrationOfRequestsComponent
       });
     });
   }
+
   createTaskOrderService(
     request: any,
     title: string,
@@ -843,6 +882,28 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  getDictamen(id: number) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      body['xTipoDocumento'] = 50;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: resp => {
+          if (resp.data.length > 0) {
+            this.haveDictamen = true;
+          } else {
+            this.haveDictamen = false;
+          }
+          resolve(true);
+        },
+        error: error => {
+          this.haveDictamen = false;
+          resolve(true);
+        },
+      });
+    });
+  }
+
   msgSaveModal(
     btnTitle: string,
     message: string,
@@ -864,6 +925,9 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'finish') {
           this.finishMethod();
         }
+        if (typeCommit === 'returnar') {
+          this.returnarMethod();
+        }
         if (typeCommit === 'captura-solicitud') {
           this.confirmMethod();
         }
@@ -879,7 +943,11 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'proceso-aprovacion') {
-          this.approveRequest();
+          this.approveRequestMethod();
+        }
+
+        if (typeCommit === 'refuse') {
+          this.refuseMethod();
         }
       }
     });

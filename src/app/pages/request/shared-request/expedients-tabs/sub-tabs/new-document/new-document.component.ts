@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -52,7 +52,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     private transferentService: TransferenteService,
     private wContentService: WContentService,
     private programmingService: ProgrammingRequestService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -128,7 +129,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getInfoRequest() {
     this.requestService.getById(this.idRequest).subscribe(data => {
-      console.log('tipo documento', data);
       this.idTransferent = data.transferenceId;
       this.regionalDelId = data.regionalDelegationId;
       this.stateId = data.keyStateOfRepublic;
@@ -167,7 +167,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typeDocumentSelect(item: ITypeDocument) {
-    console.log(item.ddocType);
     this.typeDocument = item.ddocType;
   }
 
@@ -176,8 +175,10 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.loading = true;
     if (this.typeDoc == 'good') {
+      this.loading = true;
+      this.loader.load = true;
+
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,
@@ -234,6 +235,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
+
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -244,18 +246,19 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.loading = false;
             this.modalRef.content.callback(true);
+            this.loading = false;
+            this.loader.load = false;
             this.modalRef.hide();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
     }
 
     if (this.typeDoc == 'doc-request') {
+      this.loading = true;
+      this.loader.load = true;
+
       const formData = {
         dDocAuthor: this.userLogName,
         dInDate: new Date(),
@@ -264,7 +267,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xnombreProceso: 'Clasificar Bien',
         xidSolicitud: this.idRequest,
-        xnivelRegistroNSBDB: 'solicitud',
+        xnivelRegistroNSBDB: 'Solicitud',
         xidTransferente: this.idTransferent,
         xdelegacionRegional: this.regionalDelId,
         xestado: this.stateId,
@@ -310,6 +313,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
       const extension = '.pdf';
       const docName = `DOC_${this.date}${extension}`;
+
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -318,10 +322,14 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           this.selectedFile,
           extension
         )
-        .subscribe(data => {
-          this.loading = false;
-          this.modalRef.content.callback(true);
-          this.close();
+        .subscribe({
+          next: resp => {
+            this.loading = false;
+            this.loader.load = false;
+            this.modalRef.content.callback(true);
+            this.close();
+          },
+          error: error => {},
         });
     }
 
@@ -391,15 +399,12 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            console.log('documento', resp);
             this.onLoadToast('success', 'Documento Guardado correctamente', '');
             this.loading = false;
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
     }
   }

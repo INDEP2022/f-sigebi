@@ -46,6 +46,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   getGoodsRequest() {
     if (this.idRequest) {
       this.loading = true;
+      console.log(this.params.getValue());
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodService.getAll(this.params.getValue()).subscribe({
@@ -64,7 +65,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction.description;
+            item['fractionId'] = fraction?.description;
           });
 
           Promise.all(filterGoodType).then(x => {
@@ -74,6 +75,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
+          console.log(error);
           this.loading = false;
         },
       });
@@ -113,7 +115,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
           idGood,
           idRequest,
           parameter: '',
-          type: 'good',
+          type: 'request-assets',
           callback: (next: boolean) => {
             //if(next) this.getExample();
           },

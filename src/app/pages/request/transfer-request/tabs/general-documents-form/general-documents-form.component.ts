@@ -27,7 +27,12 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
@@ -117,13 +122,13 @@ export class GeneralDocumentsFormComponent
 
   initSearchForm() {
     this.searchForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       authorityId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      recordId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      recordId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       indicatedTaxpayer: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
@@ -158,7 +163,7 @@ export class GeneralDocumentsFormComponent
       stationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(100)],
       ],
     });
   }
@@ -401,7 +406,7 @@ export class GeneralDocumentsFormComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        /*this.requestService.update(this.requestId, request).subscribe({
+        this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
               this.onLoadToast(
@@ -412,10 +417,21 @@ export class GeneralDocumentsFormComponent
             }
 
             if (resp.id != null) {
-              this.updateStateRequestTab();
+              Swal.fire({
+                title: 'Solicitud asociada al expediente: ' + this.requestId,
+                showDenyButton: false,
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+                denyButtonText: `Don't save`,
+                confirmButtonColor: '#9D2449',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  this.updateStateRequestTab();
+                }
+              });
             }
           },
-        });*/
+        });
       }
     });
   }

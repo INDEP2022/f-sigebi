@@ -41,7 +41,12 @@ import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE,
+  NUM_POSITIVE_LETTERS,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -146,6 +151,8 @@ export class DetailAssetsTabComponentComponent
   menajeSelected: any;
   isSaveMenaje: boolean = false;
   disableDuplicity: boolean = false; //para verificar cumplimientos = false
+  isGoodInfReadOnly: boolean = false;
+  isGoodTypeReadOnly: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -162,25 +169,24 @@ export class DetailAssetsTabComponentComponent
 
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
-      console.log('data', this.goodData);
       this.relevantTypeService
-        .getById(this.goodData.fractionId.relevantTypeId)
-        .subscribe(data => {
-          this.relevantTypeName = data.description;
+        .getById(this.goodData.fractionId?.relevantTypeId)
+        .subscribe({
+          next: data => {
+            this.relevantTypeName = data.description;
+          },
+          error: error => {},
         });
 
-      if (this.process == 'classify-assets') {
-        if (this.detailAssets.controls['subBrand'].value) {
-          //console.log(this.detailAssets.controls['brand'].value);
-          const brand = this.detailAssets.controls['brand'].value;
-          this.getSubBrand(new ListParams(), brand);
-        }
+      if (this.detailAssets.controls['subBrand'].value) {
+        const brand = this.detailAssets.controls['brand'].value;
+        this.getSubBrand(new ListParams(), brand);
       }
+      this.isGoodTypeReadOnly = true;
     }
 
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -190,7 +196,8 @@ export class DetailAssetsTabComponentComponent
       this.typeDoc === 'verify-compliance' ||
       this.typeDoc === 'assets' ||
       this.typeDoc === 'approval-process' ||
-      this.typeDoc === 'classify-assets'
+      this.typeDoc === 'classify-assets' ||
+      this.typeDoc === 'clarification'
     ) {
       if (address?.id) {
         this.getGoodDomicilie(address?.id);
@@ -204,8 +211,19 @@ export class DetailAssetsTabComponentComponent
         }
       }
 
+      if (this.typeDoc === 'clarification') {
+        this.isGoodInfReadOnly = true;
+        this.disableDuplicity = true;
+        this.isGoodTypeReadOnly = true;
+      }
+
+      if (this.typeDoc === 'approval-process') {
+        this.isGoodInfReadOnly = true;
+        this.isGoodTypeReadOnly = true;
+        this.disableDuplicity = true;
+      }
+
       if (this.detailAssets.controls['subBrand'].value) {
-        //console.log(this.detailAssets.controls['brand'].value);
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
       }
@@ -217,6 +235,7 @@ export class DetailAssetsTabComponentComponent
 
         this.getGoodDomicilie(this.addressId);
       }
+
       //verifica si la vista es verificacion de cumplimiento
       if (this.typeDoc === 'verify-compliance') {
         this.detailAssets.disable();
@@ -224,11 +243,8 @@ export class DetailAssetsTabComponentComponent
         if (this.goodDomicilieForm !== undefined) {
           this.goodDomicilieForm.disable();
         }
-      }
-
-      if (this.detailAssets.controls['subBrand'].value) {
-        const subBrand = this.detailAssets.controls['subBrand'].value;
-        this.getSubBrand(new ListParams(), subBrand);
+        this.isGoodInfReadOnly = true;
+        this.isGoodTypeReadOnly = true;
       }
     }
 
@@ -237,6 +253,11 @@ export class DetailAssetsTabComponentComponent
       const data = this.detailAssets.controls['goodTypeId'].value;
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
+    }
+
+    if (this.detailAssets.controls['subBrand'].value) {
+      const brand = this.detailAssets.controls['brand'].value;
+      this.getSubBrand(new ListParams(), brand);
     }
   }
 
@@ -285,60 +306,57 @@ export class DetailAssetsTabComponentComponent
       ],
       wayref2Key: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayref3Key: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       municipalityKey: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       localityKey: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(100))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      code: [
-        '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(6))],
-      ],
+      code: ['', [Validators.pattern(STRING_PATTERN), Validators.maxLength(6)]],
       latitude: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       length: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayName: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       wayOrigin: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       exteriorNumber: [
         '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       interiorNumber: [
         '',
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(30))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       wayDestiny: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       wayref1Key: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       wayChaining: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
       description: [
         '',
@@ -352,25 +370,15 @@ export class DetailAssetsTabComponentComponent
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
-      description: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
-      status: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      propertyType: [null, [Validators.required, Validators.maxLength(30)]],
-      surfaceMts: [
-        0,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      description: [null],
+      propertyType: [null, [Validators.required, Validators.maxLength(40)]],
+      surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       consSurfaceMts: [
         0,
         [
           Validators.required,
-          Validators.maxLength(30),
-          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(40),
+          Validators.pattern(NUM_POSITIVE),
         ],
       ],
       publicDeed: [
@@ -378,7 +386,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       pubRegProperty: [
@@ -391,64 +399,64 @@ export class DetailAssetsTabComponentComponent
       ],
       appraisalValue: [
         0,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(40),
+        ],
       ],
-      appraisalDate: [null],
+      appraisalDate: [null, [Validators.required]],
       certLibLien: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(50),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
       guardCustody: [
         null,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       vigilanceRequired: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       vigilanceLevel: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       mtsOfiWarehouse: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       bedrooms: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       bathroom: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       kitchen: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       diningRoom: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       livingRoom: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       study: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
       ],
       espPark: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
       ],
       userCreation: [
         null,
@@ -466,50 +474,50 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
-      certLibLienDate: [null],
-      pffDate: [null],
+      certLibLienDate: [null, [Validators.required]],
+      pffDate: [null, [Validators.required]],
       gravFavorThird: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
       ],
       attachment: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       embFavorThird: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
       ],
       coOwnership: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       ownershipPercentage: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       decreeExproProc: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       decreeExproSupe: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       declareRemediation: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       heritage: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       assurance: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       propTitleFolio: [
         null,
@@ -521,35 +529,47 @@ export class DetailAssetsTabComponentComponent
       ],
       vouchersWater: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       debts: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       physicalPossession: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       closed: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       familyHeritage: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       problemDesc: [
         null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(40),
         ],
       ],
       photosAttached: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      echoForecast: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      echoForecastPercentage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      status: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
     });
   }
@@ -577,7 +597,16 @@ export class DetailAssetsTabComponentComponent
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
-        this.detailAssets.controls['transferentDestiny'].setValue('1');
+
+        if (this.detailAssets.controls['transferentDestiny'].value === null) {
+          this.detailAssets.controls['transferentDestiny'].setValue('1');
+        } else {
+          const destinyTransf =
+            this.detailAssets.controls['transferentDestiny'].value;
+          this.detailAssets.controls['transferentDestiny'].setValue(
+            destinyTransf
+          );
+        }
       },
     });
   }
@@ -612,6 +641,7 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
+    params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
@@ -659,6 +689,7 @@ export class DetailAssetsTabComponentComponent
     params['filter.description'] = `$ilike:${params.text}`;
     this.goodsInvService.getCatUnitMeasureView(params).subscribe({
       next: resp => {
+        //console.log('medida transferente', resp.data);
         this.selectTansferUnitMeasure = new DefaultSelect(
           resp.data,
           resp.count
@@ -813,6 +844,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    //debugger;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
         this.goodTypeName = data.description;
@@ -896,6 +928,7 @@ export class DetailAssetsTabComponentComponent
 
   async save() {
     const domicilie = this.domicileForm.getRawValue();
+
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
@@ -930,19 +963,19 @@ export class DetailAssetsTabComponentComponent
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.id != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -967,14 +1000,16 @@ export class DetailAssetsTabComponentComponent
           }
 
           if (data.id != null) {
-            this.message(
-              'success',
-              'Actualizado',
-              `Se actualizo el domicilio del bien!`
-            );
             this.domicileForm.controls['id'].setValue(data.id);
             resolve('Se actualizo el registro del domicilio del bien');
           }
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
+          );
         },
       });
     });
@@ -1006,20 +1041,17 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `No se guardo el registro del bien inmueble!\n. ${data.message}`
+              `¡No se guardó el registro del bien inmueble!\n. ${data.message}`
             );
-            reject('El registro del bien del inmueble no se guardo!');
+            reject('¡El registro del bien del inmueble no se guardó!');
           }
-
-          if (data.id != null) {
-            this.message(
-              'success',
-              'Guardado',
-              `Se guardo correctamente el bien inmueble!`
-            );
-
-            resolve('Se guardo correctamente el bien inmueble!');
-          }
+        },
+        error: error => {
+          this.message(
+            'success',
+            'Guardado',
+            `¡Se guardó correctamente el bien inmueble!`
+          );
         },
       });
     });
@@ -1189,19 +1221,5 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
-    setTimeout(() => {
-      this.domicileForm.patchValue(domicilie);
-      console.log(this.domicileForm.getRawValue());
-    }, 3000);
-
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );
-    this.stateOfRepId = domicilie.statusKey;
-    this.getMunicipaly(new ListParams(), domicilie.municipalityKey);
-
-    this.domicileForm.controls['municipalityKey'].setValue(
-      domicilie.municipalityKey
-    );
   }
 }

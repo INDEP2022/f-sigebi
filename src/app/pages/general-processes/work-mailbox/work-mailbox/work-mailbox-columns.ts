@@ -45,7 +45,7 @@ export const WORK_BIENES_COLUMNS = {
     sort: false,
   },
   parentGoodMenajeNumber: {
-    title: 'No. bienes menaje',
+    title: 'No. Bien Padre Menaje',
     sort: false,
   },
   goodStatus: {
@@ -56,7 +56,7 @@ export const WORK_BIENES_COLUMNS = {
 
 export const WORK_ANTECEDENTES_COLUMNS = {
   proceedingsNum: {
-    title: 'No. Antecedente',
+    title: 'No. Expediente',
     sort: false,
   },
   flierNum: {
@@ -64,19 +64,19 @@ export const WORK_ANTECEDENTES_COLUMNS = {
     sort: false,
   },
   attended: {
-    title: 'Aatendió',
-    sort: false,
-  },
-  registryUsr: {
-    title: 'USR registro',
+    title: 'Atendió',
     sort: false,
   },
   type: {
+    title: 'Dictamen o Des.',
+    sort: false,
+  },
+  registryUsr: {
     title: 'Tipo',
     sort: false,
   },
   armedTradeKey: {
-    title: 'Clave oficio',
+    title: 'Clave Dic. u Oficio',
     sort: false,
   },
 };
@@ -87,8 +87,18 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     editable: false,
   },
-  issueSijNumber: {
-    title: 'No. Asunto SIJ',
+  officeNumber: {
+    title: 'No. Oficio',
+    sort: false,
+    editable: false,
+  },
+  flierNumber: {
+    title: 'No. Volante',
+    sort: false,
+    editable: false,
+  },
+  proceedingsNumber: {
+    title: 'No. Expediente',
     sort: false,
     editable: false,
   },
@@ -156,16 +166,6 @@ export const WORK_MAILBOX_COLUMNS2 = {
     filter: false,
     editable: false,
   },
-  flierNumber: {
-    title: 'No. Volante',
-    sort: false,
-    editable: false,
-  },
-  proceedingsNumber: {
-    title: 'No. Expediente',
-    sort: false,
-    editable: false,
-  },
   issue: {
     title: 'Asunto',
     sort: false,
@@ -219,11 +219,6 @@ export const WORK_MAILBOX_COLUMNS2 = {
       },
     },
   },
-  officeNumber: {
-    title: 'No. Oficio',
-    sort: false,
-    editable: false,
-  },
   descentfed: {
     title: 'Desc.Entidad Fed.',
     sort: false,
@@ -235,7 +230,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     editable: false,
   },
   naturalDays: {
-    title: 'Dias Hab. Nat',
+    title: 'Días Hab. Nat',
     sort: false,
     editable: false,
   },
@@ -269,7 +264,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     editable: false,
   },
   sheets: {
-    title: 'Hojas',
+    title: 'Documentos',
     sort: false,
     editable: false,
   },
@@ -306,20 +301,8 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     editable: false,
   },
-  /*royalProceesDate: {
-    title: 'Fecha Real Trámite',
-    sort: false,
-  },*/
-  /*clasifDict: {
-    title: 'Clasf. Dictámen',
-    sort: false,
-  },
-  registerUser: {
-    title: 'Usr. Registro',
-    sort: false,
-  }*/
   count: {
-    title: 'Escaneado',
+    title: 'Digitalizado',
     sort: false,
     editable: false,
     valuePrepareFunction: (value: any) => {
@@ -351,4 +334,36 @@ export const WORK_MAILBOX_COLUMNS2 = {
       },
     },
   },
+
+  /*royalProceesDate: {
+    title: 'Fecha Real Trámite',
+    sort: false,
+  },*/
+  /*clasifDict: {
+    title: 'Clasf. Dictámen',
+    sort: false,
+  },
+  registerUser: {
+    title: 'Usr. Registro',
+    sort: false,
+  },
+  issueSijNumber: {
+    title: 'No. Asunto SIJ',
+    sort: false,
+    editable: false,
+  },*/
+};
+
+export const array_column_table = (objColumnsTable: any) => {
+  let response = [];
+  for (const key in objColumnsTable) {
+    if (Object.prototype.hasOwnProperty.call(objColumnsTable, key)) {
+      const element = objColumnsTable[key];
+      if (element) {
+        element['key'] = key;
+        response.push(element);
+      }
+    }
+  }
+  return response;
 };

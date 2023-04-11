@@ -11,6 +11,7 @@
             label="Párrafo uno">
             <textarea
               class="form-control"
+              maxlength="4000"
               formControlName="paragraphOneRuling"
               cols="10"
               rows="5"></textarea>
@@ -24,6 +25,7 @@
             label="Párrafo dos">
             <textarea
               class="form-control"
+              maxlength="4000"
               formControlName="paragraphTwoRuling"
               cols="10"
               rows="5"></textarea>
@@ -37,6 +39,7 @@
             label="C.c.p Dictamen">
             <textarea
               class="form-control"
+              maxlength="200"
               formControlName="ccpRuling"
               cols="10"
               rows="3"></textarea>
@@ -50,6 +53,7 @@
             label="Destinatario">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="nameRecipientRuling" />
           </form-field>
@@ -60,6 +64,7 @@
             label="Cargo Destinatario Dictamen">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="postRecipientRuling" />
           </form-field>
@@ -74,7 +79,7 @@
           type="button"
           class="btn btn-primary btn-sm active"
           [disabled]="!dictumForm.valid"
-          (click)="signDictum()">
+          (click)="update()">
           Firmar dictámen</button
         ><!-- [disabled]="requestForm.invalid" -->
       </div>

@@ -15,12 +15,15 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -55,11 +58,12 @@ export class DocRequestTabComponent
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
-  selectRegDelegation = new DefaultSelect<any>();
+  selectRegDelegation = new DefaultSelect<IDelegation>();
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
@@ -70,7 +74,8 @@ export class DocRequestTabComponent
     private modalRef: BsModalRef,
     private activatedRoute: ActivatedRoute,
     private wContentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private regDelService: RegionalDelegationService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -81,6 +86,7 @@ export class DocRequestTabComponent
   ngOnInit(): void {
     this.prepareForm();
     this.setTypeColumn();
+    this.getRegDelegation(new ListParams());
     this.getDocType(new ListParams());
     this.typeDoc = this.type ? this.type : this.typeDoc;
     if (this.typeDoc === 'doc-request') {
@@ -100,10 +106,6 @@ export class DocRequestTabComponent
           });
       },
     };
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -120,10 +122,7 @@ export class DocRequestTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       docType: [null],
-      docTitle: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      docTitle: [null, []],
       typeTrasf: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -140,20 +139,19 @@ export class DocRequestTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      noOfice: [null],
+      noOfice: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       senderCharge: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       comment: [
         null,
-        [Validators.pattern(STRING_PATTERN)],
-        Validators.maxLength(30),
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      noRequest: [
-        { value: this.idRequest, disabled: true },
-        [Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRequest: [null],
       responsible: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -162,26 +160,66 @@ export class DocRequestTabComponent
       state: [null],
       tranfe: [null],
     });
+
+    this.docRequestForm.get('noRequest').setValue(this.idRequest);
   }
 
   getData() {
     this.loading = true;
-    this.wContentService.findDocumentBySolicitud(this.idRequest).subscribe({
-      next: async (data: any) => {
-        const info = data.data.map(async (items: any) => {
+    this.docRequestForm.get('noRequest').setValue(this.idRequest);
+    const idSolicitud: Object = {
+      xidSolicitud: this.idRequest,
+    };
+    this.wContentService.getDocumentos(idSolicitud).subscribe({
+      next: data => {
+        const filterDoc = data.data.filter((items: any) => {
+          if (items.dDocType == 'Document') {
+            return items;
+          }
+        });
+        const info = filterDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0].ddescription;
+          items.xtipoDocumento = filter[0]?.ddescription;
+          return items;
         });
 
         Promise.all(info).then(x => {
-          this.paragraphs.load(data.data);
+          console.log('data', x);
+          this.paragraphs.load(x);
           this.totalItems = this.paragraphs.count();
           this.loading = false;
         });
       },
-      error: error => {
-        console.log(error);
+      error: error => {},
+    });
+  }
+
+  updateData() {
+    this.loading = true;
+    const idSolicitud: Object = {
+      xidSolicitud: this.idRequest,
+    };
+    this.wContentService.getDocumentos(idSolicitud).subscribe({
+      next: data => {
+        const filterDoc = data.data.filter((items: any) => {
+          if (items.dDocType == 'Document') {
+            return items;
+          }
+        });
+        const info = filterDoc.map(async (items: any) => {
+          const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
+          items.xtipoDocumento = filter[0].ddescription;
+          return items;
+        });
+
+        Promise.all(info).then(x => {
+          console.log('actualizado', x);
+          this.paragraphs.load(x);
+          this.totalItems = this.paragraphs.count();
+          this.loading = false;
+        });
       },
+      error: error => {},
     });
   }
 
@@ -217,17 +255,30 @@ export class DocRequestTabComponent
   }
 
   search(): void {
-    const tipoRelevante = this.docRequestForm.get('docType').value;
+    const typeDocument = this.docRequestForm.get('docType').value;
     const titleDocument = this.docRequestForm.get('docTitle').value;
     const contribuyente = this.docRequestForm.get('contributor').value;
     const author = this.docRequestForm.get('author').value;
     const remitente = this.docRequestForm.get('sender').value;
     const senderCharge = this.docRequestForm.get('senderCharge').value;
-
-    if (tipoRelevante) {
+    const noRequest = this.docRequestForm.get('noRequest').value;
+    if (
+      noRequest &&
+      !typeDocument &&
+      !titleDocument &&
+      !contribuyente &&
+      !author &&
+      !remitente &&
+      !senderCharge
+    ) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    }
+    if (typeDocument) {
       this.paragraphs.getElements().then(data => {
         const filter = data.filter((items: any) => {
-          if (items.xtipoDocumento == tipoRelevante) return items;
+          if (items.xtipoDocumento == typeDocument) return items;
         });
 
         if (filter.length > 0) {
@@ -242,7 +293,6 @@ export class DocRequestTabComponent
         }
       });
     }
-
     if (contribuyente) {
       this.paragraphs.getElements().then(data => {
         const filter = data.filter((items: any) => {
@@ -388,22 +438,20 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
-    let config: ModalOptions = {
-      initialState: {
-        idrequest,
-        typeDoc,
-        callback: (next: boolean) => {
-          if (next == true) {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
-            this.getData();
-          }
-        },
+    config.initialState = {
+      idRequest,
+      typeDoc,
+      callback: (data: boolean) => {
+        if (data) {
+          this.onLoadToast('success', 'Documento Guardado correctamente', '');
+          //this.getData();
+        }
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
+
     this.modalService.show(NewDocumentComponent, config);
   }
 
@@ -422,7 +470,14 @@ export class DocRequestTabComponent
     this.modalService.show(SeeInformationComponent, config);
   }
 
-  getRegDelegation(event: any) {}
+  getRegDelegation(event: any) {
+    this.regDelService.getAll(this.paramsRegDel.getValue()).subscribe({
+      next: data => {
+        this.selectRegDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {},
+    });
+  }
 
   getState(event: any) {}
 

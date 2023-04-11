@@ -1,11 +1,8 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Observable, ReplaySubject } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IExternalFirm } from 'src/app/core/models/ms-externalfirm/external-firm';
@@ -23,14 +20,16 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   signatories: ISignatories;
   password: IExternalFirm;
   data: any = {};
-  fileForm: FormGroup = new FormGroup({});
+  fileForm: ModelForm<ISignatories>;
   passForm: ModelForm<any>;
   hide = true;
-  certiToUpload: File | null = null;
-  keyCertiToUpload: File | null = null;
+  certiFile: File | null = null;
+  keyCertiFile: File | null = null;
   typeReport: string = null;
   isRFCHided: boolean = true;
   edit: boolean = false;
+  base64Cer: string;
+  base64Key: string;
 
   constructor(
     private modalRef: BsModalRef,
@@ -49,39 +48,42 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
   initForm() {
     this.fileForm = this.fb.group({
-      learnedType: null,
-      learnedId: null,
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      post: [null, [Validators.pattern(STRING_PATTERN)]],
-      certificate: null,
-      keycertificate: null,
-      pass: [null, []],
-      userCreation: null,
-      creationDate: null,
-      userModification: null,
-      modificationDate: null,
-      version: null,
-      signature: null,
-      mistakemsg: ['dummy'], // Forzoso mistakemsg
-      boardSignatory: ['dummy'], // Forzoso
-      columnSignatory: ['dummy'], // Forzoso
-      recordId: ['dummy'], // Forzoso
-      certificatebase64: null,
-      identifierSystem: null,
-      identifierSignatory: null,
-      validationocsp: null,
+      learnedType: [null],
+      learnedId: [null],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      post: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      certificate: [null, [Validators.required]],
+      keycertificate: [null, [Validators.required]],
+      pass: [null, [Validators.required]],
       rfcUser: [
         null,
-        [Validators.pattern(RFCCURP_PATTERN), Validators.maxLength(13)],
+        [
+          Validators.required,
+          Validators.pattern(RFCCURP_PATTERN),
+          Validators.maxLength(13),
+        ],
       ],
-      signatoryId: null,
-      IDNumber: ['dummy'], // Forzoso
-      ID: ['dummy'], // Forzoso
-      nbOrigin: ['dummy'], // Forzoso
+      signatoryId: [null],
     });
     if (this.signatories != null) {
       this.edit = true;
-      this.fileForm.patchValue(this.signatories);
+      //this.fileForm.controls['name'].setValue(this.signatories.name);
+      //this.fileForm.controls['post'].setValue(this.signatories.post);
+      this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
     }
 
     this.passForm = this.fb.group({
@@ -105,83 +107,37 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   }
 
   chargeCertifications(event: any) {
-    this.certiToUpload = event.target.files[0];
-    console.log(this.certiToUpload);
+    let certiToUpload = event.target.files[0];
+    this.certiFile = certiToUpload;
+
+    //Convierte archivo seleccionado a base 64 y lo guarda
+    this.convertFile(event.target.files[0]).subscribe(base64 => {
+      this.base64Key = base64;
+      console.log('certificado64: ', this.base64Key);
+    });
   }
 
   chargeKeyCertifications(event: any) {
-    this.keyCertiToUpload = event.target.files[0];
-    console.log(this.keyCertiToUpload);
+    let keyCertiToUpload = event.target.files[0];
+    this.keyCertiFile = keyCertiToUpload;
+    //Convierte archivo seleccionado a base 64 y lo guarda
+    this.convertFile(event.target.files[0]).subscribe(base64 => {
+      this.base64Cer = base64;
+      console.log('Key64: ', this.base64Cer);
+    });
+  }
+
+  //Convierte archivo a base64
+  convertFile(file: File): Observable<string> {
+    const result = new ReplaySubject<string>(1);
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = event => result.next(btoa(event.target.result.toString()));
+    return result;
   }
 
   close() {
     this.modalRef.hide();
-  }
-
-  encriptar() {
-    const url = 'http://wssiab.sae.gob.mx/WsFirmaElectronicades/wsFirma.asmx';
-    const xmlData = `<Envelope xmlns="http://www.w3.org/2003/05/soap-envelope">
-    <Body>
-        <encriptar xmlns="http://tempuri.org/">
-            <CadenaEncriptar>SASH970531CU6</CadenaEncriptar>
-        </encriptar>
-    </Body>
-</Envelope>`;
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'text/xml',
-      'Access-Control-Allow-Origin': '*',
-    });
-
-    this.http.post(url, xmlData, { headers }).subscribe(
-      data => {
-        console.log(data);
-      },
-      (err: HttpErrorResponse) => {
-        if (err.error instanceof Error) {
-          console.log('Client-side error occured.');
-        } else {
-          console.log('Server-side error occured.');
-        }
-      }
-    );
-
-    /*
-    const xmlData = `<Envelope xmlns="http://www.w3.org/2003/05/soap-envelope">
-    <Body>
-        <encriptar xmlns="http://tempuri.org/">
-            <CadenaEncriptar>SASH970531CU6</CadenaEncriptar>
-        </encriptar>
-    </Body>
-</Envelope>`
-
-      axios({
-        method: 'post',
-        url: 'http://wssiab.sae.gob.mx/WsFirmaElectronicades/wsFirma.asmx',
-        data: xmlData,
-        headers: {
-          'Content-Type': 'text/xml',
-          'Cache-Control': 'no-cache',
-          // 'Postman-Token': '<calculated when request is sent>',
-          // 'Content-Length': '<calculated when request is sent>',
-          // 'Host': '<calculated when request is sent>',
-          // 'User-Agent': 'PostmanRuntime/7.31.3',
-          'Accept': '*',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Connection': 'keep-alive',
-          'Access-Control-Allow-Origin': 'http://test.indep.gob.mx:4200',
-          'SOAPAction' : 'http://tempuri.org/encriptar'
-          
-        }
-      })
-      .then((response) => {
-        console.log("OK",response.data);
-      })
-      .catch((error) => {
-        console.error("BAD",error);
-      }); 
-      
-      */
   }
 
   confirm() {
@@ -190,13 +146,13 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     if (pass.length <= 10) {
       console.log(
         'pass: ' + pass + ' Longitud de pass es correcto, proceder a encriptar'
-      );
+      ); //Quitar
 
       this.externalFirmService.encrypt(this.passForm.value).subscribe(
         response => {
           if (response !== null) {
             this.password = response;
-            console.log('Pass encriptada', this.password.encriptarResult);
+            console.log('Pass encriptada', this.password.encriptarResult); //Quitar
             this.fileForm.controls['pass'].setValue(
               this.password.encriptarResult
             );
@@ -218,17 +174,27 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.close();
   }
 
-  create() {
-    this.signatoriesService.create(this.fileForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
   update() {
-    const idSingnatorie = this.signatories.signatoryId;
+    const formData = new FormData();
+    formData.append('learnedType', this.signatories.learnedType);
+    formData.append('signatoryId', String(this.signatories.signatoryId));
+    formData.append('certificate', this.certiFile);
+    formData.append('keycertificate', this.keyCertiFile);
+    formData.append('learnedId', this.signatories.learnedId);
+    formData.append('name', this.signatories.name);
+    formData.append('pass', this.fileForm.controls['pass'].value);
+    /*formData.append(
+       'pass',
+       this.password.encriptarResult || this.fileForm.controls['pass'].value
+     );*/
+    formData.append('post', this.fileForm.controls['post'].value);
+    formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
+    formData.append('validationocsp', 'true');
+    //formData.append('certificatebase64', this.base64Cer);
+    console.log('FormData que se envia para guardar firmante', formData);
+
     this.signatoriesService
-      .update(idSingnatorie, this.fileForm.value)
+      .update(this.signatories.signatoryId, formData)
       .subscribe(
         data => this.handleSuccess(),
         error => this.alert('info', 'No se pudo actualizar', error.data)
