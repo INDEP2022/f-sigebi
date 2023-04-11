@@ -1,15 +1,17 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ReportService } from 'src/app/core/services/reports/reports.service';
-//BasePage
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 export interface IReport {
   data: File;
 }
@@ -34,7 +36,13 @@ export class ReportComponent extends BasePage implements OnInit {
     dateInputFormat: 'MMMM YYYY',
   };
 
-  constructor(private fb: FormBuilder, private reportService: ReportService) {
+  constructor(
+    private fb: FormBuilder,
+    private reportService: ReportService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
+  ) {
     super();
   }
 
@@ -56,31 +64,13 @@ export class ReportComponent extends BasePage implements OnInit {
   confirm(): void {
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
-      PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
+      PN_SUBDEL: Number(this.reportForm.controls['subdelegation'].value),
       PF_MES: this.reportForm.controls['PF_MES'].value,
       PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
     };
 
     //this.showSearch = true;
     console.log(params);
-    const start = new Date(this.reportForm.get('PF_MES').value);
-    const end = new Date(this.reportForm.get('PF_ANIO').value);
-
-    const startTemp = `${start.getFullYear()}-0${
-      start.getUTCMonth() + 1
-    }-0${start.getDate()}`;
-    const endTemp = `${end.getFullYear()}-0${
-      end.getUTCMonth() + 1
-    }-0${end.getDate()}`;
-
-    if (end < start) {
-      this.onLoadToast(
-        'warning',
-        'advertencia',
-        'Fecha final no puede ser menor a fecha de inicio'
-      );
-      return;
-    }
 
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
@@ -100,23 +90,6 @@ export class ReportComponent extends BasePage implements OnInit {
     this.reportForm.reset();
   }
 
-  pdfSrc!: Uint8Array;
-  api = '';
-
-  preview(file: IReport) {
-    try {
-      this.reportService.download(file).subscribe(response => {
-        if (response !== null) {
-          let blob = new Blob([response], { type: 'application/pdf' });
-          const fileURL = URL.createObjectURL(blob);
-          window.open(fileURL);
-        }
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   Generar() {
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
@@ -124,44 +97,26 @@ export class ReportComponent extends BasePage implements OnInit {
       PF_MES: this.reportForm.controls['PF_MES'].value,
       PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
     };
-    const start = new Date(this.reportForm.get('PF_MES').value);
-    const end = new Date(this.reportForm.get('PF_ANIO').value);
 
-    const startTemp = `${start.getFullYear()}-0${
-      start.getUTCMonth() + 1
-    }-0${start.getDate()}`;
-    const endTemp = `${end.getFullYear()}-0${
-      end.getUTCMonth() + 1
-    }-0${end.getDate()}`;
-
-    if (endTemp < startTemp) {
-      this.onLoadToast(
-        'warning',
-        'advertencia',
-        'Fecha final no puede ser menor a fecha de inicio'
-      );
-    }
-    this.reportService
-      .getRecepcion(
-        params.PN_DELEG,
-        params.PN_SUBDEL,
-        params.PF_MES,
-        params.PF_ANIO
-      )
-      .subscribe({
-        next: (resp: any) => {
-          if (resp.file.base64 !== '') {
-            this.preview(resp.file.base64);
-          } else {
-            this.onLoadToast(
-              'warning',
-              'advertencia',
-              'Sin datos para los rangos de fechas suministrados'
-            );
-          }
-
-          return;
-        },
+    this.siabService
+      .fetchReport('RGEROFPRECEPDOCUM', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
       });
   }
 }
