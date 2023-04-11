@@ -25,6 +25,8 @@ interface Data {
   error: string;
 }
 
+export const InterceptorSkipHeader = 'X-Skip-Interceptor';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -59,8 +61,12 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
         'Error de Conexión!',
         'Se perdío la conexión de red. Intentar nuevamente!'
       );
-      return throwError(new HttpErrorResponse(error));
+      return throwError(() => new HttpErrorResponse(error));
     } else {
+      if (req.headers.has(InterceptorSkipHeader)) {
+        const headers = req.headers.delete(InterceptorSkipHeader);
+        return next.handle(req.clone({ headers }));
+      }
       // else return the normal request
       return next.handle(req).pipe(
         map(response => {

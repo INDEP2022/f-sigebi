@@ -5,7 +5,7 @@ import {
   ProcedureManagementEndPoints,
 } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IManagamentProcessPgr,
@@ -65,7 +65,7 @@ export class ProcedureManagementService extends HttpService {
   }
 
   getManagamentArea(
-    params?: ListParams
+    params?: _Params
   ): Observable<IListResponse<IManagementArea>> {
     return this.get<IListResponse<IManagementArea>>(
       ProcedureManagementEndPoints.ManagamentArea,
