@@ -1360,11 +1360,18 @@ export class DocumentsReceptionRegisterComponent
     }
     if (notif.stationNumber != null) {
       this.hideError();
-      this.docRegisterService.getStation(notif.stationNumber).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
+      filterParams.removeAllFilters();
+      filterParams.addFilter('id', notif.stationNumber);
+      filterParams.addFilter('idTransferent', notif.endTransferNumber);
+      this.docRegisterService.getStations(filterParams.getParams()).subscribe({
+        next: data => {
+          this.formControls.stationNumber.setValue(data.data[0]);
+          this.getStations({ page: 1, limit: 10 });
+        },
       });
     }
     if (notif.autorityNumber != null) {
+      filterParams.removeAllFilters();
       filterParams.addFilter('idAuthority', notif.autorityNumber);
       filterParams.addFilter('idStation', notif.stationNumber);
       filterParams.addFilter('idTransferer', notif.endTransferNumber);
@@ -1375,6 +1382,7 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -2003,7 +2011,7 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
     if (this.endTransferNumber.value != null)
       params.addFilter('idTransferent', this.endTransferNumber.value.id);
@@ -2025,7 +2033,7 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
     if (this.endTransferNumber.value != null)
       params.addFilter('idTransferer', this.endTransferNumber.value.id);
@@ -2087,7 +2095,7 @@ export class DocumentsReceptionRegisterComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
     this.hideError();
     this.docRegisterService.getCourtsUnrelated(params.getParams()).subscribe({
       next: data => {
@@ -2331,9 +2339,14 @@ export class DocumentsReceptionRegisterComponent
     }
     if (key.stationNum != null) {
       this.hideError();
-      this.docRegisterService.getStation(key.stationNum).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
-        error: () => {},
+      const params = new FilterParams();
+      params.addFilter('id', key.stationNum);
+      params.addFilter('idTransferent', key.transfereeNum);
+      this.docRegisterService.getStations(params.getParams()).subscribe({
+        next: data => {
+          this.formControls.stationNumber.setValue(data.data[0]);
+          this.getStations({ page: 1, limit: 10 });
+        },
       });
     }
     if (key.authorityNum != null) {
@@ -2348,6 +2361,7 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -3462,6 +3476,17 @@ export class DocumentsReceptionRegisterComponent
     //   return false;
     // }
     this.loading = true;
+    this.formControls.consecutiveNumber.setValue(0);
+    this.notificationService
+      .getDailyConsecutive(this.userDelegation, this.userSubdelegation)
+      .subscribe({
+        next: data => {
+          this.formControls.consecutiveNumber.setValue(data.consecutivedaily);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
     this.prepareFormData();
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
@@ -3796,6 +3821,7 @@ export class DocumentsReceptionRegisterComponent
       delegationNumber: this.userDelegation,
       subDelegationNumber: this.userSubdelegation,
       expedientNumber: this.formControls.expedientNumber.value,
+      consecutiveNumber: this.formControls.consecutiveNumber.value,
     };
     console.log(this.formControls.wheelNumber.value);
     console.log(notificationData);

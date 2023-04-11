@@ -106,10 +106,6 @@ export class DocRequestTabComponent
           });
       },
     };
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -155,7 +151,7 @@ export class DocRequestTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      noRequest: [{ value: this.idRequest, disabled: true }],
+      noRequest: [null],
       responsible: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -164,19 +160,61 @@ export class DocRequestTabComponent
       state: [null],
       tranfe: [null],
     });
+
+    this.docRequestForm.get('noRequest').setValue(this.idRequest);
   }
 
   getData() {
     this.loading = true;
-    this.wContentService.findDocumentBySolicitud(this.idRequest).subscribe({
-      next: async (data: any) => {
-        const info = data.data.map(async (items: any) => {
+    this.docRequestForm.get('noRequest').setValue(this.idRequest);
+    const idSolicitud: Object = {
+      xidSolicitud: this.idRequest,
+    };
+    this.wContentService.getDocumentos(idSolicitud).subscribe({
+      next: data => {
+        const filterDoc = data.data.filter((items: any) => {
+          if (items.dDocType == 'Document') {
+            return items;
+          }
+        });
+        const info = filterDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0].ddescription;
+          items.xtipoDocumento = filter[0]?.ddescription;
+          return items;
         });
 
         Promise.all(info).then(x => {
-          this.paragraphs.load(data.data);
+          console.log('data', x);
+          this.paragraphs.load(x);
+          this.totalItems = this.paragraphs.count();
+          this.loading = false;
+        });
+      },
+      error: error => {},
+    });
+  }
+
+  updateData() {
+    this.loading = true;
+    const idSolicitud: Object = {
+      xidSolicitud: this.idRequest,
+    };
+    this.wContentService.getDocumentos(idSolicitud).subscribe({
+      next: data => {
+        const filterDoc = data.data.filter((items: any) => {
+          if (items.dDocType == 'Document') {
+            return items;
+          }
+        });
+        const info = filterDoc.map(async (items: any) => {
+          const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
+          items.xtipoDocumento = filter[0].ddescription;
+          return items;
+        });
+
+        Promise.all(info).then(x => {
+          console.log('actualizado', x);
+          this.paragraphs.load(x);
           this.totalItems = this.paragraphs.count();
           this.loading = false;
         });
@@ -217,17 +255,30 @@ export class DocRequestTabComponent
   }
 
   search(): void {
-    const tipoRelevante = this.docRequestForm.get('docType').value;
+    const typeDocument = this.docRequestForm.get('docType').value;
     const titleDocument = this.docRequestForm.get('docTitle').value;
     const contribuyente = this.docRequestForm.get('contributor').value;
     const author = this.docRequestForm.get('author').value;
     const remitente = this.docRequestForm.get('sender').value;
     const senderCharge = this.docRequestForm.get('senderCharge').value;
-
-    if (tipoRelevante) {
+    const noRequest = this.docRequestForm.get('noRequest').value;
+    if (
+      noRequest &&
+      !typeDocument &&
+      !titleDocument &&
+      !contribuyente &&
+      !author &&
+      !remitente &&
+      !senderCharge
+    ) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    }
+    if (typeDocument) {
       this.paragraphs.getElements().then(data => {
         const filter = data.filter((items: any) => {
-          if (items.xtipoDocumento == tipoRelevante) return items;
+          if (items.xtipoDocumento == typeDocument) return items;
         });
 
         if (filter.length > 0) {
@@ -242,7 +293,6 @@ export class DocRequestTabComponent
         }
       });
     }
-
     if (contribuyente) {
       this.paragraphs.getElements().then(data => {
         const filter = data.filter((items: any) => {
@@ -397,12 +447,12 @@ export class DocRequestTabComponent
       callback: (data: boolean) => {
         if (data) {
           this.onLoadToast('success', 'Documento Guardado correctamente', '');
-          this.getData();
+          //this.getData();
         }
       },
     };
 
-    const newDocument = this.modalService.show(NewDocumentComponent, config);
+    this.modalService.show(NewDocumentComponent, config);
   }
 
   private openModalInformation(data: any, typeInfo: string) {

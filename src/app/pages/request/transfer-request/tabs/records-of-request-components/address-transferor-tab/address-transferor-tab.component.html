@@ -11,7 +11,7 @@
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
-      <div>
+      <div *ngIf="isNewAddress === true">
         <button class="btn btn-primary btn-sm active" (click)="copyAddress()">
           <i class="bx bx-copy-alt"></i> Copiar domicilio existente
         </button>

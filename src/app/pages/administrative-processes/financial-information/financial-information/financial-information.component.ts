@@ -21,7 +21,7 @@ import {
 })
 export class FinancialInformationComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  data1: IGood[] = [];
+  goodList: IGood[] = [];
   good: IGood;
   id: number = 0;
   finantialList: IFinancialInformationT[] = [];
@@ -91,9 +91,11 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
-        this.data1.push(this.good);
-        // this.data1 = response;
-        console.log(this.data1);
+        this.goodList.push(this.good);
+        this.goodList.map(function (data) {
+          return { value: data, title: data };
+        });
+        console.log(this.goodList);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
@@ -135,8 +137,8 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.form.reset();
-    this.form.value.goodId = '';
-    this.data1 = [];
+    this.form.value.goodId = 0;
+    this.goodList = [];
     this.finantialList = [];
   }
 }
