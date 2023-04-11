@@ -182,13 +182,15 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
-    formData.append(
-      'pass',
-      this.password.encriptarResult || this.fileForm.controls['pass'].value
-    );
+    formData.append('pass', this.fileForm.controls['pass'].value);
+    /*formData.append(
+       'pass',
+       this.password.encriptarResult || this.fileForm.controls['pass'].value
+     );*/
     formData.append('post', this.fileForm.controls['post'].value);
     formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
-    formData.append('certificatebase64', this.base64Cer);
+    formData.append('validationocsp', 'true');
+    //formData.append('certificatebase64', this.base64Cer);
     console.log('FormData que se envia para guardar firmante', formData);
 
     this.signatoriesService
