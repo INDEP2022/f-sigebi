@@ -51,8 +51,8 @@ export class ClassifyAssetsTabComponent
 
   public selectSection: any;
   public selectChapter: any = []; // = new DefaultSelect<any>();
-  public selectLevel1: any = []; // = new DefaultSelect<any>();
-  public selectLevel2: any = []; // = new DefaultSelect<any>();
+  public selectLevel1 = new DefaultSelect<any>();
+  public selectLevel2 = new DefaultSelect<any>();
   public selectLevel3: any = []; // = new DefaultSelect<any>();
   public selectLevel4: any = []; // = new DefaultSelect<any>();
 
@@ -117,12 +117,12 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm = this.fb.group({
       id: [null],
       goodId: [null],
-      ligieSection: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
       requestId: [requestId],
       goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       color: [
@@ -500,7 +500,8 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: (data: any) => {
-        this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
+        console.log(data);
+        this.selectLevel1 = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -528,7 +529,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
-        this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
+        this.selectLevel2 = new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -780,13 +781,13 @@ export class ClassifyAssetsTabComponent
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
           let fractionCode =
-            this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
+            this.selectLevel1.data.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
           const relativeTypeId = this.getRelevantTypeId(
-            this.selectLevel1,
+            this.selectLevel1.data,
             dataLevel1
           );
           this.setRelevantTypeId(relativeTypeId);
@@ -804,13 +805,13 @@ export class ClassifyAssetsTabComponent
       (dataLevel2: any) => {
         //this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         if (dataLevel2 != null) {
-          let fractionCode = this.selectLevel2.filter(
+          let fractionCode = this.selectLevel2.data.filter(
             (x: any) => x.id === dataLevel2
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
 
           const relativeTypeId = this.getRelevantTypeId(
-            this.selectLevel2,
+            this.selectLevel2.data,
             dataLevel2
           );
           this.setRelevantTypeId(relativeTypeId);
