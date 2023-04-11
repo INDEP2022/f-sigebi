@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestEventRelated } from 'src/app/core/models/requests/request-event-related.model';
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
@@ -104,6 +105,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private comerEventosService: ComerEventosService,
     private eventRelatedService: EventRelatedService
   ) {
     super();
@@ -126,6 +128,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getEvents({ page: 1, text: '' });
     this.getRelatedEvents({ page: 1, text: '' });
     this.eventForm = this.fb.group({
       event: [null],
@@ -134,6 +137,55 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSearch());
+  }
+
+  getEvents(params: ListParams) {
+    console.log('params: ', params);
+
+    if (params.text == '') {
+      this.eventItems = new DefaultSelect(this.eventsData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.eventsData.filter((i: any) => i.id == id)];
+      this.eventItems = new DefaultSelect(item[0], 1);
+    }
+
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = params.page;
+
+    if (this.eventForm.value.txtSearch) {
+      this.filterParams
+        .getValue()
+        .addFilter('title', this.eventForm.value.txtSearch, SearchFilter.ILIKE);
+    }
+
+    this.comerEventosService.getAllEvents().subscribe({
+      next: response => {
+        console.log('Response DEL SERVICIO: ', response.data);
+        let arrEvents: any[] = [];
+        if (response.data) {
+          response.data.forEach((item: any) => {
+            // console.log("item: ", item);
+
+            let event: any = {
+              id: item.id,
+              process: item.processKey,
+              status: item.statusVtaId,
+              type: item.tpsolavalId,
+              direction: item.addres,
+            };
+            // console.log('event: ', event);
+            arrEvents.push(event);
+          });
+        }
+
+        this.loading = false;
+        this.eventsData = arrEvents; //response.data;
+        this.eventItems = new DefaultSelect(arrEvents, response.count);
+        this.totalItems = response.count;
+      },
+      error: () => (this.loading = false),
+    });
   }
 
   getRelatedEvents(params: ListParams) {
@@ -192,6 +244,8 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   getSearch() {
+    console.log('Lanzando la busqueda...');
+
     this.loading = true;
     console.log(this.params.getValue());
     this.loading = false;
