@@ -52,6 +52,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   goodTypes = new DefaultSelect();
   cities = new DefaultSelect();
   senders = new DefaultSelect();
+  ClasifSubTypeGoods = new DefaultSelect();
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
   pantalla = (option: boolean) =>
@@ -115,11 +116,34 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private serviceRelatedDocumentsService: RelatedDocumentsService
   ) {
     super();
+    RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
+      ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
+      onComponentInitFunction: this.onClickSelect,
+    };
+    RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente = {
+      ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
+      onComponentInitFunction: this.onClickImprocedente,
+    };
     this.settings = {
       ...this.settings,
       actions: false,
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
     };
+  }
+
+  onClickSelect(event: any) {
+    event.toggle.subscribe((data: any) => {
+      console.log(data);
+      data.row.seleccion = data.toggle;
+    });
+  }
+
+  onClickImprocedente(event: any) {
+    console.log(event);
+    event.toggle.subscribe((data: any) => {
+      console.log(data);
+      data.row.improcedente = data.toggle;
+    });
   }
 
   ngOnInit(): void {
@@ -565,7 +589,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
                 status: element.status,
                 desEstatus: '',
                 seleccion: false,
-                improcedencia: false,
+                improcedente: false,
               });
             }
           }
@@ -621,13 +645,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
           console.log(res);
           if (res.data[0].managementJob == '1') {
             this.dataGood[count].seleccion = true;
-            this.dataGood[count].improcedencia = false;
+            this.dataGood[count].improcedente = false;
           } else if (res.data[0].managementJob == '2') {
             this.dataGood[count].seleccion = false;
-            this.dataGood[count].improcedencia = true;
+            this.dataGood[count].improcedente = true;
           } else {
             this.dataGood[count].seleccion = false;
-            this.dataGood[count].improcedencia = false;
+            this.dataGood[count].improcedente = false;
           }
           count++;
           if (total > count) {
@@ -639,7 +663,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         error: err => {
           console.log(err);
           this.dataGood[count].seleccion = false;
-          this.dataGood[count].improcedencia = false;
+          this.dataGood[count].improcedente = false;
           count++;
           if (total > count) {
             this.reviewGoodData(this.dataGood[count], count, total);
@@ -703,7 +727,34 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
    * Data Selects
    */
 
-  // INCIDENCIA 702 --- CARGAR SUBTIPOS
+  // INCIDENCIA 726 ---   ### CARGAR SUBTIPOS
+  /**
+   * Obtener el listado de Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo
+   * @param params Parametos de busqueda de tipo @ListParams
+   * @returns
+   */
+  getClasifSubTypeGoods(params: ListParams) {
+    console.log(params);
+    // params.take = 20;
+    // params['order'] = 'DESC';
+    // console.log(params);
+    // let subscription = this.flyerService.getCityBySearch(params).subscribe({
+    //   next: data => {
+    //     this.ClasifSubTypeGoods = new DefaultSelect(
+    //       data.data.map(i => {
+    //         i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
+    //         return i;
+    //       }),
+    //       data.count
+    //     );
+    //     subscription.unsubscribe();
+    //   },
+    //   error: error => {
+    //     this.onLoadToast('error', 'Error', error.error.message);
+    //     subscription.unsubscribe();
+    //   },
+    // });
+  }
 
   /**
    * INCIDENCIA 581 --- CORRECTO

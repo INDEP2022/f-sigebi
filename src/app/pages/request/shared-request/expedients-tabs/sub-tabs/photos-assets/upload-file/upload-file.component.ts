@@ -79,6 +79,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             this.close();
             this.onLoadToast('success', 'Imagen guardada correctamente', '');
           },
+          error: error => {},
         });
     });
   }

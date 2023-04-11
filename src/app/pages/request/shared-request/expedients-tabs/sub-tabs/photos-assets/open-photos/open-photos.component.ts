@@ -64,6 +64,21 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     });
   }
 
+  updateInfoPhotos() {
+    const idReq: Object = {
+      xidBien: this.information.id,
+    };
+
+    this.wContentService.getDocumentos(idReq).subscribe(data => {
+      const _data = data.data.filter((img: any) => {
+        if (img.dDocType == 'DigitalMedia') return img;
+      });
+      console.log(_data);
+      this.paragraphs.load(_data);
+      this.totalItems = this.paragraphs.count();
+    });
+  }
+
   getImage(docName: string) {
     this.wContentService.getObtainFile(docName).subscribe(data => {
       const type = this.detectMimeType(data);

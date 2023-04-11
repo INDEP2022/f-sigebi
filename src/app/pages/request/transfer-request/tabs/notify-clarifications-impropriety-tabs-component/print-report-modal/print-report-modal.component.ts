@@ -51,6 +51,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sizeMessage: boolean = false;
   pdfTemp: File;
 
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -92,7 +95,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
-    console.log('Información de usuario', token);
 
     //Verifica si ya existe ese usuario en la lista de firmantes
     this.signatoriesService
@@ -119,6 +121,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     let token = this.authService.decodeToken();
     const formData: Object = {
       name: token.name,
+      post: token.cargonivel1,
       learnedType: this.idTypeDoc,
       learnedId: this.idDoc,
     };
@@ -195,7 +198,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         signatories,
         typeReport: this.typeReport,
         callback: (next: boolean) => {
-          //if (next){ this.getData();}
+          if (next) {
+            this.getSignatories();
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -296,6 +301,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       next: data => {},
       error: error => (this.loading = false),
     });
+  }
+
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 
   sendSign() {
@@ -410,13 +420,18 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       tipoDocumento: this.nameTypeDoc,
     };
     console.log(formData);
+
     this.gelectronicFirmService
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
         error: error => (
           console.log('Eror', error),
-          this.onLoadToast('error', 'Error', error.error.error)
+          this.onLoadToast(
+            'error',
+            'Error al generar firma electrónica',
+            'Consultar al administrador para más detalles'
+          )
         ),
       });
   }

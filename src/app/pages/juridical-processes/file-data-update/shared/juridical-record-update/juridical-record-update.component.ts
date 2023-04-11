@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
   Component,
   EventEmitter,
@@ -92,6 +93,15 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
       }
     `,
   ],
+  animations: [
+    trigger('OnShow', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class JuridicalRecordUpdateComponent
   extends BasePage
@@ -120,6 +130,7 @@ export class JuridicalRecordUpdateComponent
   userDelegation: number;
   dictumPermission: boolean = true;
   initialDate: string;
+  formLoading: boolean = false;
   maxDate: Date = new Date();
   identifiers = new DefaultSelect<IIdentifier>();
   subjects = new DefaultSelect<IAffair>();
@@ -445,6 +456,7 @@ export class JuridicalRecordUpdateComponent
   fillForm(notif: INotification) {
     this.fileDataUpdateForm.reset();
     const filterParams = new FilterParams();
+    this.formLoading = true;
     const values = {
       wheelType: notif.wheelType,
       externalRemitter: notif.externalRemitter,
@@ -513,10 +525,15 @@ export class JuridicalRecordUpdateComponent
       this.docRegisterService.getCourt(notif.courtNumber).subscribe({
         next: data => this.formControls.courtNumber.setValue(data),
       });
-    if (notif.stationNumber != null)
-      this.docRegisterService.getStation(notif.stationNumber).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
-      });
+    if (notif.stationNumber != null) filterParams.removeAllFilters();
+    filterParams.addFilter('id', notif.stationNumber);
+    filterParams.addFilter('idTransferent', notif.endTransferNumber);
+    this.docRegisterService.getStations(filterParams.getParams()).subscribe({
+      next: data => {
+        this.formControls.stationNumber.setValue(data.data[0]);
+        this.getStations({ page: 1, limit: 10 });
+      },
+    });
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
       this.docRegisterService
@@ -525,6 +542,7 @@ export class JuridicalRecordUpdateComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -594,10 +612,14 @@ export class JuridicalRecordUpdateComponent
       next: data => {
         if (data.count > 0) {
           this.procedureId = data.data[0].id;
+          this.formLoading = false;
+        } else {
+          this.formLoading = false;
         }
       },
       error: err => {
         console.log(err);
+        this.formLoading = false;
       },
     });
     if (notif.delDestinyNumber != null) {
@@ -795,11 +817,17 @@ export class JuridicalRecordUpdateComponent
         },
         error: () => {},
       });
-    if (key.stationNum != null)
-      this.docRegisterService.getStation(key.stationNum).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
-        error: () => {},
+    if (key.stationNum != null) {
+      const params = new FilterParams();
+      params.addFilter('id', key.stationNum);
+      params.addFilter('idTransferent', key.transfereeNum);
+      this.docRegisterService.getStations(params.getParams()).subscribe({
+        next: data => {
+          this.formControls.stationNumber.setValue(data.data[0]);
+          this.getStations({ page: 1, limit: 10 });
+        },
       });
+    }
     if (key.authorityNum != null) {
       const param = new FilterParams();
       param.addFilter('idAuthority', key.authorityNum);
@@ -809,6 +837,7 @@ export class JuridicalRecordUpdateComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -1344,7 +1373,7 @@ export class JuridicalRecordUpdateComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
     if (this.formControls.endTransferNumber.value != null)
       params.addFilter(
@@ -1368,7 +1397,7 @@ export class JuridicalRecordUpdateComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
     if (this.formControls.endTransferNumber.value != null)
       params.addFilter(
@@ -1443,7 +1472,7 @@ export class JuridicalRecordUpdateComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
     this.hideError();
     this.docRegisterService.getCourtsUnrelated(params.getParams()).subscribe({
       next: data => {

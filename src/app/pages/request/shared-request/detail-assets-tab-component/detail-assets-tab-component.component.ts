@@ -567,6 +567,10 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      status: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
     });
   }
 
@@ -840,6 +844,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    //debugger;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
         this.goodTypeName = data.description;

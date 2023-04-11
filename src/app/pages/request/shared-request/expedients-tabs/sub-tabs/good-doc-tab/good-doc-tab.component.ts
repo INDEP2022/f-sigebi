@@ -65,7 +65,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction.description;
+            item['fractionId'] = fraction?.description;
           });
 
           Promise.all(filterGoodType).then(x => {

@@ -325,18 +325,25 @@
                 >Enviar</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showValDoc">
               <a class="dropdown-item" (click)="workFunction('validDoc')"
                 >Validar documentación</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showPGRDocs">
+              <a class="dropdown-item" (click)="workFunction('viewDoc')"
+                >Ver documentación</a
+              >
+            </li>
+            <li role="menuitem" *ngIf="showScan">
               <a class="dropdown-item" (click)="workFunction('scanDocuments')"
                 >Escaneo</a
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
+              <a
+                class="dropdown-item"
+                (click)="workFunction('getNotificationsReport')"
                 >Reporte de notificaciones</a
               >
             </li>

@@ -16,6 +16,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IGoodAddress } from 'src/app/core/models/good/good-address';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -123,10 +124,7 @@ export class AddressTransferorTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      municipalityKey: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      municipalityKey: [null],
       localityKey: [null],
       code: [
         null,
@@ -364,10 +362,36 @@ export class AddressTransferorTabComponent
     };
     config.initialState = {
       idDelegation,
-      callback: (data: any) => {},
+      callback: (data: any) => {
+        if (data) {
+          this.setInformation(data);
+        }
+        console.log('domicilio seleccionado', data);
+      },
     };
 
     const searchUser = this.modalService.show(CopyAddressComponent, config);
+  }
+
+  setInformation(data: IGoodAddress) {
+    this.domicileForm.get('warehouseAlias').setValue(data?.warehouseAliasName);
+    this.domicileForm.get('statusKey').setValue(data?.statusKey);
+    this.domicileForm.get('municipalityKey').setValue(data?.municipalityKey);
+    this.domicileForm.get('localityKey').setValue(Number(data?.localityKey));
+    this.domicileForm.get('code').setValue(data?.code);
+    this.domicileForm.get('latitude').setValue(data?.latitude);
+    this.domicileForm.get('length').setValue(data?.latitude);
+    this.domicileForm.get('wayName').setValue(data?.wayName);
+    this.domicileForm.get('wayOrigin').setValue(data?.wayOrigin);
+    this.domicileForm.get('wayref1Key').setValue(data?.wayref1Key);
+    this.domicileForm.get('wayref2Key').setValue(data?.wayref2Key);
+    this.domicileForm.get('wayref3Key').setValue(data?.wayref3Key);
+    this.domicileForm.get('exteriorNumber').setValue(data?.exteriorNumber);
+    this.domicileForm.get('interiorNumber').setValue(data?.interiorNumber);
+    this.domicileForm.get('wayDestiny').setValue(data?.wayDestiny);
+    this.domicileForm.get('description').setValue(data?.description);
+
+    console.log(this.domicileForm.value);
   }
 
   close() {
