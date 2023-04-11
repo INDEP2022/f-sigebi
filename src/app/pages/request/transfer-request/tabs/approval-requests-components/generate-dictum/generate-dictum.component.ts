@@ -18,7 +18,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   requestData: IRequest;
   response: IRequest;
 
-  title: string = 'Generar reporte dictamen procedencia';
+  title: string = 'Reporte Dictamen Procedencia';
   edit: boolean = false;
 
   pdfurl: string = '';
@@ -192,7 +192,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Generado' : 'Generado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
