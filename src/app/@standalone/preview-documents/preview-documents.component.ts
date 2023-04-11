@@ -79,7 +79,6 @@ export class PreviewDocumentsComponent implements OnInit {
     @Optional() @Inject('config') public moduleConfig: ImageViewerConfig,
     public modalRef: BsModalRef
   ) {}
-
   ngOnInit() {
     const merged = this.mergeConfig(DEFAULT_CONFIG, this.moduleConfig);
     this.config = this.mergeConfig(merged, this.config);

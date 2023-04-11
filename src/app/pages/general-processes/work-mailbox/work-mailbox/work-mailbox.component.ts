@@ -79,10 +79,12 @@ import {
 
 import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
@@ -193,6 +195,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     return this.filterForm.controls['endDate'];
   }
 
+  type: 'SAT' | 'PGR' = null;
+  showScan: boolean = false;
+  showPGRDocs: boolean = false;
+  showValDoc: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private workService: WorkMailboxService,
@@ -212,12 +219,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private goodsParamerterService: GoodParametersService,
     private notificationsService: NotificationService,
+    private interfaceFgrService: InterfacefgrService,
     private tmpManagementProcedureService: TmpManagementProcedureService,
     private datePipe: DatePipe,
     private siabService: SiabService
   ) {
     super();
-    this.settings.actions = true;
+    this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
     this.settings.columns = WORK_MAILBOX_COLUMNS2;
     this.settings = {
       ...this.settings,
@@ -226,9 +234,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         ...this.settings.actions,
         delete: false,
         add: false,
-        edit: true,
-        columnTitle: 'Acciones',
-        position: 'right',
+        edit: false, // SE CAMBIO PARA NO PERMITIR EDITAR
+        // columnTitle: 'Acciones',
+        // position: 'right',
       },
       edit: {
         ...this.settings.edit,
@@ -336,11 +344,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
-        console.log(change);
+        // console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
+            // console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -435,7 +443,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   STRING_PATTERN,
                   30
                 );
-                filter.search = valueTurnadoiUser.validValue;
+                filter.search = valueTurnadoiUser.validValue.toUpperCase();
                 break;
               case 'dailyConsecutiveNumber':
                 // CONSECUTIVO DIARIO
@@ -525,7 +533,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   STRING_PATTERN,
                   30
                 );
-                filter.search = valueUserATurn.validValue;
+                filter.search = valueUserATurn.validValue.toUpperCase();
                 break;
               case 'folioRep':
                 // FOLIO REP.
@@ -939,6 +947,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   selectEvent(e: any) {
+    this.showPGRDocs, this.showScan, (this.showValDoc = false);
+    console.log(e);
     console.log(e.data);
 
     const { processNumber, folioRep, turnadoiUser } = e.data;
@@ -959,6 +969,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               ...this.selectedRow,
               typeManagement: resp?.typeManagement || null,
             };
+            this.determinateDocuments();
             //GET  MAX(FEC_TURNADO)
             this.workService
               .getProcedureManagementHistorical(processNumber)
@@ -1425,6 +1436,42 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 
+  determinateDocuments() {
+    const typeManagement = this.selectedRow.typeManagement;
+    if (typeManagement == 3) {
+      this.type = 'PGR';
+      this.pgrDocs().subscribe();
+    } else if (typeManagement == 2) {
+      this.type = 'SAT';
+    } else {
+      this.showScan = true;
+      this.showPGRDocs, (this.showValDoc = false);
+    }
+  }
+
+  pgrDocs() {
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrOffice', officeNumber);
+    return this.interfaceFgrService
+      .getPgrTransferFiltered(params.getParams())
+      .pipe(
+        catchError(error => {
+          if (error.status < 500) {
+            this.showScan = true;
+          }
+          return throwError(() => error);
+        }),
+        tap(response => {
+          if (response.count > 0) {
+            this.showPGRDocs = true;
+          } else {
+            this.showScan = true;
+          }
+        })
+      );
+  }
+
   turnPaperwork() {
     if (!this.selectedRow) {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
@@ -1489,7 +1536,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
 
     if (result.isConfirmed) {
-      if (!this.selectedRow.userATurn && !this.selectedRow.areaATurn) {
+      if (!this.managementAreaF && !this.user) {
         return this.onLoadToast(
           'error',
           'Error',
@@ -1583,6 +1630,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.getData();
       })
     );
+  }
+
+  viewDoc() {
+    const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
+    console.log(this.selectedRow);
+    if (!flierNumber && !proceedingsNumber) {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, sólo se visualizaran los documentos'
+      );
+    }
+
+    let config = {
+      class: 'modal-lg modal-dialog-centered',
+      initialState: {
+        pgrOffice: officeNumber,
+      },
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PgrFilesComponent, config);
   }
 
   validDoc() {
@@ -1968,6 +2036,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           break;
         case 'validDoc':
           this.validDoc();
+          break;
+        case 'viewDoc':
+          this.viewDoc();
           break;
         case 'scanDocuments':
           this.scanDocuments();
