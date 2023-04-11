@@ -1,4 +1,9 @@
-<form [formGroup]="fileDataUpdateForm" class="container-fluid form-material">
+<form-loader *ngIf="formLoading"></form-loader>
+<form
+  [formGroup]="fileDataUpdateForm"
+  class="container-fluid form-material"
+  *ngIf="!formLoading"
+  @OnShow>
   <div class="row">
     <div class="col-md-5">
       <div class="row">
