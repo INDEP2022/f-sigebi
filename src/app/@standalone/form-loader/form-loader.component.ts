@@ -23,6 +23,7 @@ import { Component, OnInit } from '@angular/core';
       }
       .loader-msg {
         margin-top: 12rem;
+        padding-top: 4rem !important;
       }
     `,
   ],

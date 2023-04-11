@@ -460,64 +460,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  /* createTask(request: any) {
-    return new Promise((resolve, reject) => {
-      let body: any = {};
-
-      const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = this.nickName;
-      body['assigneesDisplayname'] = this.userName;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(request.id);
-      body['title'] =
-        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      body['programmingId'] = 0;
-      body['requestId'] = request.id;
-      body['expedientId'] = 0;
-      body['urlNb'] = 'pages/request/transfer-request/registration-request';
-      this.taskService.createTask(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal('error', 'Error', 'Error al crear la tarea');
-          reject(error.error.message);
-        },
-      });
-    });
-  }*/
-
-  /*createOrderService(request: any, from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = request.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
-          reject(error.error.message);
-        },
-      });
-    });
-  }*/
-
   getTaskByTaskNumer(taskNumber: number) {
     return new Promise((resolve, reject) => {
       let params = new ListParams();

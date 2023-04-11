@@ -25,8 +25,10 @@
       </div>
     </div>
   </div>
-
-  <div>
+  <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+    <form-loader *ngIf="formLoading"></form-loader>
+  </div>
+  <div *ngIf="!formLoading">
     <div class="row pt-4">
       <div class="col-md-6">
         <div
@@ -191,6 +193,7 @@
         </div>
       </div>
     </div>
+
     <div class="row pt-4" *ngIf="typeDoc === 'assets'">
       <hr style="color: black" />
       <app-detail-assets-tab-component

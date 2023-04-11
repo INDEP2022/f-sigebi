@@ -56,9 +56,15 @@ export class RequestDetailTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.requestForm.valueChanges.subscribe((val: any) => {
-      console.log('request detail tab ', this.requestForm.getRawValue());
-    });
+    if (this.requestForm.controls['originInfo'].value) {
+      const originId = Number(this.requestForm.controls['originInfo'].value);
+      this.getOriginInfo(new ListParams(), originId);
+    }
+
+    if (this.requestForm.controls['affair'].value) {
+      const affair = Number(this.requestForm.controls['affair'].value);
+      this.getAffair(affair);
+    }
   }
 
   prepareForm(): void {
