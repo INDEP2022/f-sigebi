@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -76,8 +76,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     };
     this.getInfoRequest();
     this.initFilterForm();
-    this.getGoodsRequest();
     this.getTypeRelevant(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsRequest());
   }
 
   getInfoRequest() {
@@ -91,9 +93,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   getGoodsRequest() {
     if (this.idRequest) {
       this.loading = true;
-      this.paramsGoods.getValue()['filter.requestId'] = this.idRequest;
-      this.goodService.getAll(this.paramsGoods.getValue()).subscribe({
+      this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
+          console.log('img', data);
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeId'] = goodType;
@@ -108,7 +111,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction.description;
+            item['fractionId'] = fraction?.description;
           });
 
           Promise.all(filterGoodType).then(x => {
@@ -121,6 +124,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
           this.loading = false;
         },
       });
+    } else {
+      this.loading = false;
     }
   }
 
