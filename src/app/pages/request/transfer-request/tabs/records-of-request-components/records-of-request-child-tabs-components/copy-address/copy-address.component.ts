@@ -26,6 +26,7 @@ export class CopyAddressComponent extends BasePage implements OnInit {
   selectAdrress: IGoodAddress[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsTown = new BehaviorSubject<ListParams>(new ListParams());
+  paramsMun = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private modalRef: BsModalRef,
     private goodService: GoodService,
@@ -55,7 +56,6 @@ export class CopyAddressComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.code'] = '$not:$null';
     this.goodService.getGoodsDomicilies(this.params.getValue()).subscribe({
       next: async (data: any) => {
-        console.log('cc', data.data);
         const info = data.data.map(async (item: any) => {
           this.idState = item.statusKey;
           this.idMunicipality = item.municipalityKey;
@@ -64,16 +64,19 @@ export class CopyAddressComponent extends BasePage implements OnInit {
             item?.municipalityKey,
             item?.statusKey
           );
+
           const locality = await this.getLocality(
             item?.municipalityKey,
             item?.statusKey,
             item?.localityKey
           );
-          const cp = await this.getzipCode(
+
+          /*const cp = await this.getzipCode(
             item?.municipalityKey,
             item?.statusKey,
             item?.localityKey
-          );
+          ); */
+
           item['warehouseAliasName'] = item.warehouseAlias?.id;
           item['stateName'] = stateName;
           item['municipalityName'] = municipality;
@@ -103,16 +106,18 @@ export class CopyAddressComponent extends BasePage implements OnInit {
 
   getMunicipality(idMun: number, idState: number) {
     return new Promise((resolve, reject) => {
-      const data = {
-        idMunicipality: idMun,
-        stateKey: idState,
-      };
-      this.municipalityService.postById(data).subscribe({
-        next: data => {
-          resolve(data?.nameMunicipality);
-        },
-        error: error => {},
-      });
+      this.paramsMun.getValue()['filter.stateKey'] = idState;
+      this.paramsMun.getValue()['filter.municipalityKey'] = idMun;
+      this.goodInvService
+        .getAllMunipalitiesByFilter(this.paramsMun.getValue())
+        .subscribe({
+          next: data => {
+            data.data.map((item: any) => {
+              resolve(item?.municipality);
+            });
+          },
+          error: error => {},
+        });
     });
   }
 
