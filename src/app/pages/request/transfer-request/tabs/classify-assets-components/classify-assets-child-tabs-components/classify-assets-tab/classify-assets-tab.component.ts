@@ -51,8 +51,8 @@ export class ClassifyAssetsTabComponent
 
   public selectSection: any;
   public selectChapter: any = []; // = new DefaultSelect<any>();
-  public selectLevel1: any = []; // = new DefaultSelect<any>();
-  public selectLevel2: any = []; // = new DefaultSelect<any>();
+  public selectLevel1: any = []; //= new DefaultSelect<any>();
+  public selectLevel2: any = []; //= new DefaultSelect<any>();
   public selectLevel3: any = []; // = new DefaultSelect<any>();
   public selectLevel4: any = []; // = new DefaultSelect<any>();
 
@@ -117,12 +117,12 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm = this.fb.group({
       id: [null],
       goodId: [null],
-      ligieSection: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieSection: [null],
+      ligieChapter: [null],
+      ligieLevel1: [null],
+      ligieLevel2: [null],
+      ligieLevel3: [null],
+      ligieLevel4: [null],
       requestId: [requestId],
       goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       color: [
@@ -500,6 +500,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {

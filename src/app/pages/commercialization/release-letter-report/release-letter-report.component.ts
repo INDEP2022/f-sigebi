@@ -164,23 +164,23 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.cleanForm();
   }
 
-  Generar() {
-    this.reportService.getReportDiario(this.form.value).subscribe({
-      next: (resp: any) => {
-        if (resp.file.base64 !== '') {
-          this.preview(resp.file.base64);
-        } else {
-          this.onLoadToast(
-            'warning',
-            'advertencia',
-            'Sin datos para los rangos de fechas suministrados'
-          );
-        }
+  // Generar() {
+  //   this.reportService.getReportDiario(this.form.value).subscribe({
+  //     next: (resp: any) => {
+  //       if (resp.file.base64 !== '') {
+  //         this.preview(url, params);
+  //       } else {
+  //         this.onLoadToast(
+  //           'warning',
+  //           'advertencia',
+  //           'Sin datos para los rangos de fechas suministrados'
+  //         );
+  //       }
 
-        return;
-      },
-    });
-  }
+  //       return;
+  //     },
+  //   });
+  // }
   getGood(search: any) {
     this.loading = true;
     this.comerLotService.findGLot(search).subscribe({
@@ -227,9 +227,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   cleanForm(): void {
     this.form.reset();
   }
-  preview(file: IReport) {
+  preview(url: string, params: ListParams) {
     try {
-      this.reportService.download(file).subscribe(response => {
+      this.reportService.download(url, params).subscribe(response => {
         if (response !== null) {
           let blob = new Blob([response], { type: 'application/pdf' });
           const fileURL = URL.createObjectURL(blob);

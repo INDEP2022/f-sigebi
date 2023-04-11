@@ -325,18 +325,25 @@
                 >Enviar</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showValDoc">
               <a class="dropdown-item" (click)="workFunction('validDoc')"
                 >Validar documentación</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showPGRDocs">
+              <a class="dropdown-item" (click)="workFunction('viewDoc')"
+                >Ver documentación</a
+              >
+            </li>
+            <li role="menuitem" *ngIf="showScan">
               <a class="dropdown-item" (click)="workFunction('scanDocuments')"
                 >Escaneo</a
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
+              <a
+                class="dropdown-item"
+                (click)="workFunction('getNotificationsReport')"
                 >Reporte de notificaciones</a
               >
             </li>
@@ -348,6 +355,16 @@
       </div>
     </div>
     <div class="row pt-4 mb-3 mt-3">
+      <!-- <div class="col-md-12">
+        Validación de Filtros:
+        <ng-container *ngFor="let field of fields_WORK_MAILBOX_COLUMNS2">
+          <div class="{{ field.key }}-validation">
+            <div class="title-validation">
+              <strong>{{ field.title }}</strong>
+            </div>
+          </div>
+        </ng-container>
+      </div> -->
       <div class="col-md-12 table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table

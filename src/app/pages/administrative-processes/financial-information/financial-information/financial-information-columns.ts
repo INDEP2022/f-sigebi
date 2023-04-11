@@ -1,7 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const FINANCIAL_INFORMATION_COLUMNS1 = {
-  idGoodNumber: {
+  goodId: {
     title: 'Bien',
     type: 'number',
     sort: false,
@@ -30,7 +30,7 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
   idGoodNumber: {
     title: 'Bien',
-    type: 'number',
+    type: 'text',
     sort: true,
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.idGoodNumber.goodId;
@@ -38,7 +38,7 @@ export const FINANCIAL_INFORMATION_COLUMNS2 = {
   },
   description: {
     title: 'Descripción',
-    type: 'string',
+    type: 'text',
     sort: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.idGoodNumber.description;

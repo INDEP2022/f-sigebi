@@ -258,6 +258,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
+    this.loader.load = true;
     console.log(event.target.files[0]);
     const file = event.target.files[0];
     const user = this.authService.decodeToken().preferred_username;
@@ -270,7 +271,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          this.message('success', 'Archivos cargados', `${resp.message}`);
+          this.message(
+            'success',
+            'Archivos cargados',
+            `Se importaron los archivos`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
         },
         error: error => {
           this.message('error', 'Error al guardar', `${error.error.message}`);
@@ -498,7 +505,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         confirmButtonText: 'Aceptar',
       }).then(result => {
         if (result.isConfirmed) {
-          this.deleteGood();
+          this.deleteMethod();
         }
       });
     } else {
@@ -506,24 +513,46 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
-  deleteGood() {
-    for (let i = 0; i < this.listgoodObjects.length; i++) {
-      const element = this.listgoodObjects[i];
+  deleteMethod() {
+    this.loader.load = true;
+    this.listgoodObjects.map(async (item, i) => {
+      let index = i + 1;
+      const deleteResult = await this.deleteGood(item);
+
+      if (deleteResult === true) {
+        if (this.listgoodObjects.length === index) {
+          this.message(
+            'success',
+            'Bienes Eliminados',
+            `Los bienes se eliminaron correctamente`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        }
+      }
+    });
+  }
+
+  deleteGood(element: any) {
+    return new Promise((resolve, reject) => {
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
           if (resp.statusCode === 200) {
-            this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
-            this.closeCreateGoodWIndows();
+            resolve(true);
           } else {
+            this.loader.load = false;
+            reject(false);
             this.message('error', 'Eliminar', `${resp.message[0]}`);
           }
         },
         error: error => {
+          this.loader.load = false;
+          this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
           console.log(error);
         },
       });
-    }
+    });
   }
 
   refreshTable() {

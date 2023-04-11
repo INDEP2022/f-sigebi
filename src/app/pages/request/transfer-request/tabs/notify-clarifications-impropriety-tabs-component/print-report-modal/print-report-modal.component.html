@@ -54,7 +54,13 @@
       <div class="row">
         <div class="d-flex">
           <h5 class="mr-auto p-2">Lista de Firmas Electr&oacute;nicas</h5>
-          <div class="p-2">
+          <div
+            class="p-2"
+            *ngIf="
+              selectedRow?.post != null &&
+              selectedRow?.rfcUser != null &&
+              selectedRow?.validationocsp != null
+            ">
             <button class="btn btn-primary btn-sm active" (click)="sendSign()">
               <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
             </button>
@@ -85,7 +91,8 @@
                   [settings]="settings"
                   (edit)="uploadData($event.data)"
                   (userRowSelect)="rowsSelected($event)"
-                  [source]="signatories">
+                  [source]="signatories"
+                  (rowSelect)="selectRow($event.data)">
                 </ng2-smart-table>
               </div>
               <app-pagination [params]="params" [totalItems]="totalItems">
