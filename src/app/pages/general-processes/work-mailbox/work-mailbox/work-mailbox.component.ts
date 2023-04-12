@@ -1488,6 +1488,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+
     const tmp = {
       id: this.selectedRow.processNumber,
       InvoiceRep: this.selectedRow.folioRep,
@@ -1806,16 +1807,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         'Aviso',
         'El Oficio tiene No. Volante relacionado, se generaran los documentos.'
       );
+      this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
+        next: () => {
+          let config = {
+            class: 'modal-lg modal-dialog-centered',
+            initialState: {
+              pgrOffice: officeNumber,
+            },
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PgrFilesComponent, config);
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al copiar los documentos'
+          );
+        },
+      });
       // copy img
       // view pgr docs
-      let config = {
-        class: 'modal-lg modal-dialog-centered',
-        initialState: {
-          pgrOffice: officeNumber,
-        },
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(PgrFilesComponent, config);
     } else if (action == 'C') {
       // view pgr docs
       let config = {
