@@ -135,7 +135,7 @@ export class RequestDetailTabComponent
   reactiveFormCalls() {
     this.requestForm.valueChanges.subscribe((val: any) => {
       var v = this.requestForm.getRawValue();
-      console.log(v);
+
       if (this.requestForm.controls['urgentPriority'].value) {
         this.priority =
           this.requestForm.controls['urgentPriority'].value === '0'
