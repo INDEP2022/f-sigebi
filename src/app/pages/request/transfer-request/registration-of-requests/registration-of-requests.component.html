@@ -225,7 +225,8 @@
                 <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
                 <app-address-transferor-tab
                   *ngIf="requestRegistration || approvalProcess"
-                  [requestObject]="requestData"></app-address-transferor-tab>
+                  [requestObject]="requestData"
+                  [process]="process"></app-address-transferor-tab>
                 <!-- fin -->
                 <!-- cumplimiento de verificacion y clasificacion de bienes -->
                 <app-expedients-tabs

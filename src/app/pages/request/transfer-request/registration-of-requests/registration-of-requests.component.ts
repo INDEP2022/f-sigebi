@@ -22,6 +22,7 @@ import {
   NUMBERS_PATTERN,
   PHONE_PATTERN,
   POSITVE_NUMBERS_PATTERN,
+  SPECIAL_STRING_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -194,7 +195,7 @@ export class RegistrationOfRequestsComponent
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(SPECIAL_STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
