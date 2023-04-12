@@ -21,6 +21,8 @@ import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  SPECIAL_STRING_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -193,7 +195,7 @@ export class RegistrationOfRequestsComponent
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(SPECIAL_STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
@@ -262,7 +264,7 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(15)],
       ],
       typeOfTransfer: [
         null,
@@ -726,7 +728,8 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    if (this.haveDictamen === false) {
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
       this.onLoadToast(
         'info',
         'Error',
@@ -891,14 +894,15 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = true;
+            resolve(true);
           } else {
             this.haveDictamen = false;
+            resolve(false);
           }
-          resolve(true);
         },
         error: error => {
           this.haveDictamen = false;
-          resolve(true);
+          resolve(false);
         },
       });
     });

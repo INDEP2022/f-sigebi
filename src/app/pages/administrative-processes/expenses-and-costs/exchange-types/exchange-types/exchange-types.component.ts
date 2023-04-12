@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Ityperate } from 'src/app/core/models/ms-type-rate/typerate.model';
 import { TyperateService } from 'src/app/core/services/ms-typerate/typerate.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ExchangeTypesDetailComponent } from '../exchange-types-detail/exchange-types-detail.component';
@@ -76,5 +78,16 @@ export class ExchangeTypesComponent extends BasePage implements OnInit {
       },
       error => (this.loading = false)
     );
+  }
+
+  openForm(typerate?: Ityperate) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      typerate,
+      callback: (next: boolean) => {
+        if (next) this.getTyperate();
+      },
+    };
+    this.modalService.show(ExchangeTypesDetailComponent, modalConfig);
   }
 }
