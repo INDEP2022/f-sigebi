@@ -21,6 +21,7 @@ import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -262,7 +263,7 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(15)],
       ],
       typeOfTransfer: [
         null,
