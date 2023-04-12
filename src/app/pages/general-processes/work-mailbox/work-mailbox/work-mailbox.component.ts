@@ -1488,6 +1488,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+
     const tmp = {
       id: this.selectedRow.processNumber,
       InvoiceRep: this.selectedRow.folioRep,
