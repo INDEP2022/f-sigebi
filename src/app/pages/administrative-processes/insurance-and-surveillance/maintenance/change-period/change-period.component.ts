@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -22,6 +22,7 @@ export class ChangePeriodComponent {
   // public delegations = new DefaultSelect();
   public procesess = new DefaultSelect();
   isLoading = false;
+  @Output() eventChangePeriod = new EventEmitter();
 
   constructor() {}
 
@@ -42,8 +43,13 @@ export class ChangePeriodComponent {
   //   });
   // }
 
-  deleteInServer() {
-    console.log(this.form.value);
+  getFormChangePeriod() {
+    return this.form;
+  }
+
+  changePeriod() {
+    // console.log(this.form.value);
+    this.eventChangePeriod.emit(this.form.value);
   }
 
   public getDelegations(event: any) {

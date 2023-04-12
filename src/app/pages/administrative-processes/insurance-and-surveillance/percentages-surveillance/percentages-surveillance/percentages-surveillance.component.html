@@ -59,9 +59,10 @@
         formControlName="delegationNumber"
         prefixSearch="$ilike"
         paramSearch="filter.description"
+        [initOption]="editDialogData?.delegation"
         [isLoadInOnInit]="false">
         <ng-template let-item>
-          {{ item.description }}
+          {{ item.delegationNumber + '-' + item.description }}
         </ng-template>
       </ng-custom-select>
     </form-field>

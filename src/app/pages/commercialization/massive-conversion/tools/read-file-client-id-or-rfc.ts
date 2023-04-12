@@ -27,6 +27,7 @@ export function readFileClientIdOrRfc(
     console.log({ res });
     try {
       const dataExcel = excelService.getData(res.result);
+      console.log({ dataExcel });
       if (dataExcel.length == 0) {
         showToast({
           text: 'El archivo no contiene datos',
@@ -43,6 +44,7 @@ export function readFileClientIdOrRfc(
       console.log({ dataExcel });
       alert('TODO: insertar en la temporal por que tiene que se masivamente');
     } catch (error) {
+      console.error(error);
       showToast({
         text: 'Error al leer el archivo',
         icon: 'error',
@@ -56,18 +58,18 @@ function isValidHeaderExcelOrCvs(
   type: 'rfc' | 'client_id'
 ): boolean {
   const header = [
-    'paletaid',
-    'lote',
-    'monto_in',
-    'no_cheque_in',
-    'exp_cheque',
-    'fecvigencia_in',
+    'PALETAID',
+    'LOTE',
+    'MONTO_IN',
+    'NO_CHEQUE_IN',
+    'EXP_CHEQUE_IN',
+    'FECVIGENCIA_IN',
   ];
   if (type === 'rfc') {
-    header.push('rfc');
-    header.push('evento');
+    header.push('RFC');
+    header.push('EVENTO');
   } else if (type === 'client_id') {
-    header.push('cliente_id');
+    header.push('CLIENTEID');
   }
   return header.every((item: any) => {
     if (!data[0].hasOwnProperty(item)) {

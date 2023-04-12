@@ -50,4 +50,28 @@ export class SurvillanceService extends HttpService {
       params
     );
   }
+
+  postDeletePeriod(data: any) {
+    return this.post(this.route.DeletePeriod, data);
+  }
+
+  postRecordRandom(data: any) {
+    return this.post(this.route.RecordRandom, data);
+  }
+
+  postValidPeriod(data: any) {
+    return this.post(this.route.ValidPeriod, data);
+  }
+
+  postPeriods(data: any) {
+    return this.post(this.route.Periods, data);
+  }
+
+  postChangePeriod(data: any) {
+    return this.post(this.route.ChangePeriod, data);
+  }
+
+  postChangeGoodAle(data: any) {
+    return this.post(this.route.ChangeGoodAle, data);
+  }
 }

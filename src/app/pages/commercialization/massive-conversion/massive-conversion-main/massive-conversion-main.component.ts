@@ -366,7 +366,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   selectEvent(event: any) {
-    console.log(event);
     this.selectedEvent = event;
   }
 

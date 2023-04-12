@@ -1,10 +1,5 @@
-import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -28,26 +23,15 @@ export class DeletePeriodComponent {
   ];
 
   isLoading = false;
+  @Output() eventDelete = new EventEmitter();
 
-  constructor(private fb: FormBuilder) {}
+  constructor() {}
 
-  deleteInServer() {
-    console.log(this.form.value);
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+  onClickDeletePeriod() {
+    this.eventDelete.emit(this.form.value);
   }
 
-  // public getDelegations(event: any) {
-  //   // this.bankService.getAll(params).subscribe(data => {
-  //   //   this.banks = new DefaultSelect(data.data, data.count);
-  //   // });
-  // }
-
-  // public getProcesess(event: any) {
-  //   // this.bankService.getAll(params).subscribe(data => {
-  //   //   this.banks = new DefaultSelect(data.data, data.count);
-  //   // });
-  // }
+  getFormDeletePeriod() {
+    return this.form;
+  }
 }

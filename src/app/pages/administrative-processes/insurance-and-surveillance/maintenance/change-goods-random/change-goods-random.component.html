@@ -1,5 +1,8 @@
 <div body>
-  <form [formGroup]="form" class="form-material">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onClickChangeGoodRandom()"
+    class="form-material">
     <div class="row mt-4">
       <div class="col-md-4">
         <form-field [control]="form.get('year')" label="Año">
@@ -22,16 +25,6 @@
         </form-field>
       </div>
       <div class="col-md-4">
-        <!-- <form-field [control]="form.get('delegation')">
-            <ngx-select
-              [form]="form"
-              [data]="delegations"
-              bindLabel="name"
-              label="Delegación"
-              value="id"
-              (fetchItems)="getDelegations($event)"
-              control="delegation"></ngx-select>
-          </form-field> -->
         <form-field
           [control]="form.get('delegation')"
           label="Delegación"
@@ -70,15 +63,7 @@
         </form-field>
       </div>
       <div class="col-md-4">
-        <!-- <form-field [control]="form.get('noBien')" label="No. bien">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="noBien"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field> -->
-        <app-goods-shared goodField="noBien" [form]="form" label="Bien">
+        <app-goods-shared goodField="goodNumber" [form]="form" label="Bien">
         </app-goods-shared>
       </div>
       <div class="col-md-4">

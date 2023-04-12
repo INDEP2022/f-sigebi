@@ -80,8 +80,13 @@ export class PercentagesSurveillanceComponent
   }
 
   onEditConfirm(event: { data: IVigProcessPercentages }): void {
-    console.log(event);
-    this.editDialogData = event.data;
+    this.editDialogData = {
+      ...event.data,
+      delegation: {
+        ...event.data?.delegation,
+        delegationNumber: event.data?.delegation?.id,
+      },
+    };
     const { cveProcess, delegationNumber, delegationType, percentage } =
       event.data;
     this.form.patchValue({

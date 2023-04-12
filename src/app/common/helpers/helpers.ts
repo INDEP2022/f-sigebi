@@ -103,3 +103,7 @@ export function readFile(
     reader[functionType](file);
   });
 }
+
+export function getUser() {
+  return localStorage.getItem('username');
+}

@@ -3,7 +3,6 @@ export const PERCENTAGE_COLUMNS = {
     title: 'Proceso',
     type: 'number',
     sort: false,
-
     valuePrepareFunction: (_cell: any, row: any) => {
       const process = row.cveProcess;
       if (process == 1) {
@@ -13,10 +12,13 @@ export const PERCENTAGE_COLUMNS = {
       }
     },
   },
-  delegationNumber: {
+  delegation: {
     title: 'Delegación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return `${row.delegationNumber} ${'-  ' + row?.delegation?.description}`;
+    },
   },
   delegationType: {
     title: 'Tipo',
