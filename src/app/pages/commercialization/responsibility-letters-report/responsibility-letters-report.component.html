@@ -6,24 +6,6 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!-- <div class="col-md-4">
-          <form-field [control]="form.get('evento')" label="Evento">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="evento"
-              placeholder="Evento" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('lote')" label="Lote">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="lote"
-              placeholder="Lote" />
-          </form-field>
-        </div> -->
         <div class="col-md-4">
           <ngx-select
             [form]="form"
@@ -43,6 +25,7 @@
             [showTooltip]="true"
             [data]="selectLot"
             bindLabel="description"
+            (change)="getGood($event)"
             [searchable]="true"
             label="Lote"
             value="lotId"></ngx-select>
@@ -81,13 +64,15 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('delegacion')" label="Delegacion">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegacion"
-              placeholder="Delegacion" />
-          </form-field>
+          <ngx-select
+            [form]="form"
+            control="evento"
+            (fetchItems)="getDelegation($event)"
+            [showTooltip]="true"
+            [data]="selectedDelegation"
+            bindLabel="description"
+            label="Delegación"
+            value="id"></ngx-select>
         </div>
         <!-- <div class="col-md-4">
           <form-field [control]="form.get('rfc')" label="RFC">
@@ -98,13 +83,18 @@
 
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('estado')" label="Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="estado"
-              placeholder="Estado" />
-          </form-field>
+          <!-- <form-field [control]="form.get('estado')" label="Estado">
+            <input type="text" class="form-control" formControlName="estado" placeholder="Estado" />
+          </form-field> -->
+          <ngx-select
+            [form]="form"
+            control="estado"
+            (fetchItems)="getEntidad($event)"
+            [showTooltip]="true"
+            [data]="entidad"
+            bindLabel="description"
+            label="Estado"
+            value="id"></ngx-select>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('cp')" label="CP">
@@ -130,10 +120,6 @@
         <label for="">Bienes</label>
       </div>
       <div class="row pt-2 scroll-table">
-        <!-- <ng2-smart-table
-              class="col-md-12"
-              [settings]="settings1"
-              [source]="data"></ng2-smart-table> -->
         <ng2-smart-table
           [settings]="settings1"
           [source]="goodList"></ng2-smart-table>
@@ -171,7 +157,7 @@
           text="Imprimir"
           [disabled]="!valid"
           [loading]="loading"
-          (confirm)="confirm()">
+          (confirm)="Generar()">
         </confirm-button>
       </div>
       <div class="m-3">
