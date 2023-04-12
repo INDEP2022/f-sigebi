@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -92,6 +93,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     SharedRequestModule,
     PdfViewerModule,
     FormLoaderComponent,
+    HttpClientModule,
   ],
   exports: [VerifyComplianceTabComponent],
 })

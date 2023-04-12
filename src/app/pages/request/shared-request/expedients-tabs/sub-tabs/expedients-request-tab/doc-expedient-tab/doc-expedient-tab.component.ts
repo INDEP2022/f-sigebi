@@ -60,6 +60,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   delegationId: number = 0;
   stateId: string = '';
+  formLoading: boolean = false;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -160,7 +161,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
         const info = filterTypeDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0].ddescription;
+          items.xtipoDocumento = filter[0]?.ddescription;
           return items;
         });
 
@@ -518,7 +519,13 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         idExpedient,
         typeDoc,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) {
+            this.formLoading = true;
+            setTimeout(() => {
+              this.getData();
+              this.formLoading = false;
+            }, 7000);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',

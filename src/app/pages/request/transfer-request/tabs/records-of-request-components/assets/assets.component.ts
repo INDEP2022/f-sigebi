@@ -103,7 +103,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    console.log('process', this.process);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -259,7 +258,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   onFileChange(event: any, type?: string) {
     this.loader.load = true;
-    console.log(event.target.files[0]);
     const file = event.target.files[0];
     const user = this.authService.decodeToken().preferred_username;
     this.uploadFile(file, this.requestObject.id, user);
@@ -442,7 +440,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
-        console.log(element);
 
         this.menageService.create(element).subscribe({
           next: data => {
@@ -633,7 +630,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     //this.listGoodsFractions = this.listgoodObjects;
     this.listGoodsFractions = [];
-    console.log('antes', this.listGoodsFractions);
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -652,8 +648,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
       this.listGoodsFractions.push(good);
     }
-
-    console.log(this.listGoodsFractions);
   }
 
   getNoClasifyGood(value: string) {

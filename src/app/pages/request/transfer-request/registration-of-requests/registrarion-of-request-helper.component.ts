@@ -570,7 +570,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Estado Operativo en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.tuition === null) {
+            } /* else if (good.tuition === null) {
               //Matricula
               tipoRelAeronave = true;
               this.message(
@@ -579,7 +579,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.model === null) {
+            } */ else if (good.model === null) {
               //Modelo
               tipoRelAeronave = true;
               this.message(

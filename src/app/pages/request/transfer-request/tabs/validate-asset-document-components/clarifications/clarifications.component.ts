@@ -562,7 +562,7 @@ export class ClarificationsComponent
   }
 
   newClarification() {
-    if (this.assetsSelected.length === 0) {
+    if (this.rowSelected.length === 0) {
       this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
     } else {
       this.openForm();

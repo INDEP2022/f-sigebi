@@ -64,7 +64,7 @@
         <div class="d-flex justify-content-end">
           <div class="p-2">
             <button class="btn btn-primary btn-sm active" (click)="filter()">
-              Filtrar
+              Buscar
             </button>
           </div>
           <div class="p-2">
@@ -78,12 +78,11 @@
   </app-card>
 
   <div id="list">
-    <!--    <div class="row pt-4">-->
-    <!--      <div class="p-2">-->
-    <!--        <app-columns-select [(settings)]="settings"></app-columns-select>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <div class="row pt-4">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+
+    <div class="row pt-4" *ngIf="!formLoading">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <app-columns-select [(settings)]="settings"></app-columns-select>

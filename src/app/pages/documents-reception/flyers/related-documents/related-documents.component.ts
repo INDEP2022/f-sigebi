@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -55,6 +56,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   ClasifSubTypeGoods = new DefaultSelect();
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
+  dataGoodTable: LocalDataSource = new LocalDataSource();
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -278,6 +280,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noOficio: [null],
       subtipo: [null],
       goodTypes: [null],
+      improcedente: [false],
       // indPDoctos: [null],
       noBienes: [null],
       // bienes: [null],
@@ -520,33 +523,33 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   async getDocumentsJobManagement() {
-    if (this.oficioGestion.managementNumber) {
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
-      await this.flyerService
-        .getDocumentOficioGestion(params.getParams())
-        .subscribe({
-          next: res => {
-            console.log(res);
-            if (res.count != 0) {
-              this.variables.d = 'S';
-            }
-            this.getGoods();
-          },
-          error: err => {
-            this.getGoods();
-            console.log(err);
-          },
-        });
-    } else {
-      this.alertInfo(
-        'warning',
-        'No existe el Número de Gestión: ' +
-          this.oficioGestion.managementNumber,
-        ''
-      );
-    }
+    // if (this.oficioGestion.managementNumber) {
+    //   const params = new FilterParams();
+    //   params.removeAllFilters();
+    //   params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+    //   await this.flyerService
+    //     .getGoodsJobManagement(params.getParams())
+    //     .subscribe({
+    //       next: res => {
+    //         console.log(res);
+    //         if (res.count != 0) {
+    //           this.variables.d = 'S';
+    //         }
+    //         this.getGoods();
+    //       },
+    //       error: err => {
+    //         this.getGoods();
+    //         console.log(err);
+    //       },
+    //     });
+    // } else {
+    //   this.alertInfo(
+    //     'warning',
+    //     'No existe el Número de Gestión: ' +
+    //       this.oficioGestion.managementNumber,
+    //     ''
+    //   );
+    // }
   }
 
   // INCIDENCIAS 675 Y 681 --- INTEGRADO
@@ -590,6 +593,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
                 desEstatus: '',
                 seleccion: false,
                 improcedente: false,
+                disponible: true,
               });
             }
           }
@@ -619,15 +623,57 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         console.log(res);
         console.log('params, ', this.dataGood);
         this.dataGood[count].desEstatus = res.data[0].description;
-        this.validStatusGood(this.dataGood[count], count, total);
+        this.getAvailableGood(this.dataGood[count], count, total);
       },
       error: err => {
         console.log(err);
         console.log('params, ', this.dataGood);
         this.dataGood[count].desEstatus = 'Error al cargar la descripción.';
-        this.validStatusGood(this.dataGood[count], count, total);
+        this.getAvailableGood(this.dataGood[count], count, total);
       },
     });
+  }
+
+  changeImprocedente(event: any) {
+    this.dataGood.forEach(element => {
+      if (element.disponible) {
+        element.improcedente = event.checked;
+        element.seleccion = false;
+      }
+    });
+    this.dataGoodTable.load(this.dataGood);
+    this.dataGoodTable.refresh();
+  }
+
+  async getAvailableGood(
+    dataGoodRes: IDataGoodsTable,
+    count: number,
+    total: number
+  ) {
+    if (this.oficioGestion) {
+      await this.flyerService
+        .getGoodsJobManagementByIds({
+          goodNumber: dataGoodRes.goodId,
+          managementNumber: this.oficioGestion.managementNumber,
+        })
+        .subscribe({
+          next: res => {
+            console.log(res);
+            if (res.count > 0) {
+              this.dataGood[count].disponible = false;
+            }
+            this.validStatusGood(this.dataGood[count], count, total);
+          },
+          error: err => {
+            console.log(err);
+            this.dataGood[count].disponible = true;
+            this.validStatusGood(this.dataGood[count], count, total);
+          },
+        });
+    } else {
+      this.dataGood[count].disponible = true;
+      this.validStatusGood(this.dataGood[count], count, total);
+    }
   }
 
   async validStatusGood(
@@ -657,6 +703,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
           if (total > count) {
             this.reviewGoodData(this.dataGood[count], count, total);
           } else if (total == count) {
+            this.dataGoodTable.load(this.dataGood);
+            this.dataGoodTable.refresh();
             this.loadingGoods = false;
           }
         },
@@ -668,6 +716,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
           if (total > count) {
             this.reviewGoodData(this.dataGood[count], count, total);
           } else if (total == count) {
+            this.dataGoodTable.load(this.dataGood);
+            this.dataGoodTable.refresh();
             this.loadingGoods = false;
           }
         },
@@ -733,27 +783,17 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
-  getClasifSubTypeGoods(params: ListParams) {
-    console.log(params);
-    // params.take = 20;
-    // params['order'] = 'DESC';
-    // console.log(params);
-    // let subscription = this.flyerService.getCityBySearch(params).subscribe({
-    //   next: data => {
-    //     this.ClasifSubTypeGoods = new DefaultSelect(
-    //       data.data.map(i => {
-    //         i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
-    //         return i;
-    //       }),
-    //       data.count
-    //     );
-    //     subscription.unsubscribe();
-    //   },
-    //   error: error => {
-    //     this.onLoadToast('error', 'Error', error.error.message);
-    //     subscription.unsubscribe();
-    //   },
-    // });
+  async getClasifSubTypeGoods(params: ListParams) {
+    await this.flyerService
+      .getClasifSubTypeGoods(this.notificationData.expedientNumber)
+      .subscribe({
+        next: res => {
+          console.log(res);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
   }
 
   /**
@@ -780,6 +820,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
           subscription.unsubscribe();
         },
         error: err => {
+          this.justificacion = new DefaultSelect();
           console.log(err);
           this.onLoadToast(
             'error',
@@ -793,34 +834,36 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   /**
    * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
-   * @param params Parametos de busqueda de tipo @ListParams
+   * @param paramsData Parametos de busqueda de tipo @ListParams
    * @returns
    */
-  getCityByDetail(params: ListParams) {
-    console.log(params);
-    params.take = 20;
-    params['order'] = 'DESC';
-    console.log(params);
-    let subscription = this.flyerService.getCityBySearch(params).subscribe({
-      next: data => {
-        this.cities = new DefaultSelect(
-          data.data.map(i => {
-            i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
-            return i;
-          }),
-          data.count
-        );
-        subscription.unsubscribe();
-      },
-      error: error => {
-        this.onLoadToast('error', 'Error', error.error.message);
-        subscription.unsubscribe();
-      },
-    });
+  getCityByDetail(paramsData: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('nameCity', paramsData['search'], SearchFilter.LIKE);
+    let subscription = this.flyerService
+      .getCityBySearch(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          this.cities = new DefaultSelect(
+            data.data.map(i => {
+              i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
+              return i;
+            }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.cities = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
+        },
+      });
   }
 
   /**
-   * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
+   * Obtener el listado de Remitente
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
@@ -841,6 +884,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         subscription.unsubscribe();
       },
       error: error => {
+        this.senders = new DefaultSelect();
         this.onLoadToast('error', 'Error', error.error.message);
         subscription.unsubscribe();
       },

@@ -61,7 +61,10 @@
         </button>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="refuseRequest()">
           <i class="bx bx-minus"></i> Rechazar
         </button>
       </div>
@@ -222,7 +225,8 @@
                 <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
                 <app-address-transferor-tab
                   *ngIf="requestRegistration || approvalProcess"
-                  [requestObject]="requestData"></app-address-transferor-tab>
+                  [requestObject]="requestData"
+                  [process]="process"></app-address-transferor-tab>
                 <!-- fin -->
                 <!-- cumplimiento de verificacion y clasificacion de bienes -->
                 <app-expedients-tabs
