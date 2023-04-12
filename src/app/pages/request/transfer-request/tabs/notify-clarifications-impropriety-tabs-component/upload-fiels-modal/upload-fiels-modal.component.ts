@@ -31,6 +31,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
   base64Cer: string;
   base64Key: string;
+  encrypResult: string;
 
   constructor(
     private modalRef: BsModalRef,
@@ -142,9 +143,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  public resultado = '200313hf';
-
-  confirm(parametro?: any) {
+  confirm() {
     let pass = this.fileForm.controls['pass'].value;
 
     if (pass.length <= 10) {
@@ -152,9 +151,9 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         'pass: ' + pass + ' Longitud de pass es correcto, proceder a encriptar'
       ); //Quitar
 
-      this.encrypService.encryp(parametro).subscribe(data => {
-        this.resultado = data;
-        console.log(this.resultado); // Hacer algo con el resultado
+      this.encrypService.encryp(pass).subscribe(data => {
+        this.encrypResult = data;
+        console.log(this.encrypResult); // Hacer algo con el resultado
       });
     } else {
       this.update();
@@ -172,7 +171,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
     //formData.append('pass',this.fileForm.controls['pass'].value);
-    formData.append('pass', this.password.encriptarResult);
+    formData.append('pass', this.encrypResult);
     formData.append('post', this.fileForm.controls['post'].value);
     formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
     formData.append('validationocsp', 'true');
