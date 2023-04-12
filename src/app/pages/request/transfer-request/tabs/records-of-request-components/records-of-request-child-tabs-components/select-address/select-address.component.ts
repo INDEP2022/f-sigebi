@@ -69,7 +69,11 @@ export class SelectAddressComponent extends BasePage implements OnInit {
       this.goodDomiciliesService.getAll(params).subscribe({
         next: resp => {
           const result = resp.data.map(async (item: any) => {
-            item['warehouseAlias'] = item.warehouseAlias.id;
+            if (item.warehouseAlias) {
+              item['warehouseAlias'] = item.warehouseAlias.id;
+            } else {
+              item['warehouseAlias'] = '';
+            }
             var stateOfRepublic = await this.getStateOfRepublic(item);
             item['stateOfRepublicName'] = stateOfRepublic;
 
