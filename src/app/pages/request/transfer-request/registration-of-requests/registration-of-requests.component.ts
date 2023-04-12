@@ -21,6 +21,8 @@ import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  SPECIAL_STRING_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -130,8 +132,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
-    this.dinamyCallFrom();
-    console.log('ID tipo de documento', this.idTypeDoc);
+    //this.dinamyCallFrom();
   }
 
   //Obtenemos el tipo de proceso//
@@ -193,7 +194,7 @@ export class RegistrationOfRequestsComponent
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(SPECIAL_STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
@@ -262,7 +263,7 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(15)],
       ],
       typeOfTransfer: [
         null,
@@ -726,7 +727,8 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    if (this.haveDictamen === false) {
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
       this.onLoadToast(
         'info',
         'Error',
@@ -771,8 +773,6 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    console.log(this.requestData);
-
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
@@ -847,7 +847,6 @@ export class RegistrationOfRequestsComponent
 
       body['orderservice'] = orderservice;
 
-      console.log(body);
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
@@ -891,14 +890,15 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = true;
+            resolve(true);
           } else {
             this.haveDictamen = false;
+            resolve(false);
           }
-          resolve(true);
         },
         error: error => {
           this.haveDictamen = false;
-          resolve(true);
+          resolve(false);
         },
       });
     });
@@ -972,12 +972,12 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  dinamyCallFrom() {
+  /* dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
     });
   }
-
+ */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,

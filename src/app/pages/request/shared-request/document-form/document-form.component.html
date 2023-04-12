@@ -38,19 +38,36 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label">Tipo de documento</label>
+            <label class="float-label"
+              >Tipo de documento <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
         <div class="col-md-6">
+          <!-- documentos tipo solicitud -->
           <form-field
             [control]="documentForm.get('document')"
-            label="Documento">
+            label="Documento"
+            *ngIf="typeDoc !== 'doc-bien'">
             <input
               type="file"
               class="form-control"
               formControlName="document"
               (change)="uploadFile($event)" />
           </form-field>
+          <!-- documentos typo bien -->
+          <form-field
+            [control]="documentForm.get('document')"
+            label="Documento"
+            *ngIf="typeDoc === 'doc-bien'">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="document"
+              (change)="uploadFile($event)"
+              accept="image/*" />
+          </form-field>
+          <p style="color: blue">Seleccione un archivo no mayor a 10 Mb.</p>
         </div>
       </div>
 
