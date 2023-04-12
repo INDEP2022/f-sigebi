@@ -50,7 +50,7 @@ import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-p
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
 
-import { addDays, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { MailboxModalTableComponent } from '../components/mailbox-modal-table/mailbox-modal-table.component';
 import { FLYER_HISTORY_COLUMNS } from '../utils/flyer-history-columns';
@@ -82,7 +82,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
+import { ImageMediaService } from 'src/app/core/services/catalogs/image-media.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -222,7 +224,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private interfaceFgrService: InterfacefgrService,
     private tmpManagementProcedureService: TmpManagementProcedureService,
     private datePipe: DatePipe,
-    private siabService: SiabService
+    private siabService: SiabService,
+    private documentsTypesService: DocumentsTypeService,
+    private imageMediaService: ImageMediaService
   ) {
     super();
     this.settings.actions = true;
@@ -1641,16 +1645,181 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         'Aviso',
         'El Oficio no tiene volante relacionado, sólo se visualizaran los documentos'
       );
+      let config = {
+        class: 'modal-lg modal-dialog-centered',
+        initialState: {
+          pgrOffice: officeNumber,
+        },
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PgrFilesComponent, config);
+      return;
     }
 
-    let config = {
-      class: 'modal-lg modal-dialog-centered',
-      initialState: {
-        pgrOffice: officeNumber,
-      },
-      ignoreBackdropClick: true,
+    if (flierNumber && proceedingsNumber) {
+      this.getPgrDocuments();
+    }
+  }
+
+  getPgrDocuments() {
+    const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
+    const __params = new FilterParams();
+    __params.addFilter('flyerNumber', flierNumber);
+    const _params = `${__params.getParams()}&sortBy=id:DESC`;
+    this.documentsService
+      .getAllFilter(_params)
+      .pipe(
+        switchMap(response => this.getPgrTransferDocuments(response.data[0]))
+      )
+      .subscribe({
+        next: response => {
+          const { id, scanStatus } = response?.data[0];
+          const action =
+            scanStatus == 'ESCANEADO'
+              ? 'C'
+              : scanStatus == 'SOLICITADO'
+              ? 'S'
+              : 'I';
+          this.determinatePgr(id, action);
+        },
+        error: error => {
+          if (error.status < 500) {
+            this.determinatePgr(null, 'I');
+          } else {
+            this.onLoadToast('error', 'Error', 'Ocurrio un error inesperado');
+          }
+        },
+      });
+  }
+
+  getPgrTransferDocuments(document: IDocuments) {
+    const description = 'DOCUMENTACION ENVIADA POR TRANSFERENCIA ELECTRONICA.';
+    const _params = new FilterParams();
+    _params.addFilter('descriptionDocument', description, SearchFilter.ILIKE);
+    _params.addFilter('id', document.id);
+    _params.addFilter('flyerNumber', document.flyerNumber);
+    return this.documentsService.getAllFilter(_params.getParams());
+  }
+
+  determinatePgr(folio: string | number | null, action: string) {
+    console.log(folio);
+    if (!folio) {
+      const { flierNumber, proceedingsNumber } = this.selectedRow;
+      this.getPgrFolio(flierNumber, proceedingsNumber, action);
+    } else if (action == 'C' || action == 'I' || action == 'S') {
+      this.exportPgrDocs(folio, action);
+    } else {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Ocurrio un error al obtener el Folio Universal'
+      );
+    }
+  }
+
+  getPgrFolio(
+    flyer: string | number,
+    expedient: string | number,
+    action: string
+  ) {
+    this.getCveTypeDocument()
+      .pipe(
+        switchMap(cveDocumentType =>
+          this.getImageMedia().pipe(
+            map(media => {
+              return { cveDocumentType, media };
+            })
+          )
+        )
+      )
+      .subscribe({
+        next: value =>
+          this.createDocument(
+            value.media,
+            value.cveDocumentType,
+            expedient,
+            flyer,
+            action
+          ),
+        error: error =>
+          this.createDocument(null, null, expedient, flyer, action),
+      });
+  }
+
+  createDocument(
+    media: string | number,
+    cveDocument: string,
+    expedient: string | number,
+    flyer: string | number,
+    action: string
+  ) {
+    const today = new Date();
+    const decodedToken = this.authService.decodeToken();
+    const documentToInsert: any = {
+      numberProceedings: expedient,
+      keySeparator: 60,
+      keyTypeDocument: cveDocument,
+      natureDocument: 'ORIGINAL',
+      descriptionDocument:
+        'DOCUMENTACION ENVIADA POR TRANSFERENCIA ELECTRONICA.',
+      significantDate: format(today, 'MM/yyyy'),
+      scanStatus: 'ESCANEADO',
+      userRequestsScan: decodedToken.preferred_username,
+      scanRequestDate: format(today, 'yyyy-MM-dd'),
+      flyerNumber: flyer,
+      mediumId: media,
+      sheets: 1,
     };
-    this.modalService.show(PgrFilesComponent, config);
+    this.documentsService.create(documentToInsert).subscribe(document => {
+      this.exportPgrDocs(document.id, action);
+    });
+  }
+
+  getCveTypeDocument() {
+    const params = new FilterParams();
+    params.addFilter('description', 'REMITE DOCUMENTACION');
+    return this.documentsTypesService
+      .getAllWidthFilters(params.getParams())
+      .pipe(map(response => response.data[0].id));
+  }
+
+  getImageMedia() {
+    const params = new FilterParams();
+    params.addFilter('status', 'A');
+    return this.imageMediaService
+      .getAllFilter(params.getParams())
+      .pipe(map(response => response.data[0].id));
+  }
+
+  exportPgrDocs(folio: string | number, action: string) {
+    const { officeNumber } = this.selectedRow;
+    if (action == 'I' || action == 'S') {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio tiene No. Volante relacionado, se generaran los documentos.'
+      );
+      // copy img
+      // view pgr docs
+      let config = {
+        class: 'modal-lg modal-dialog-centered',
+        initialState: {
+          pgrOffice: officeNumber,
+        },
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PgrFilesComponent, config);
+    } else if (action == 'C') {
+      // view pgr docs
+      let config = {
+        class: 'modal-lg modal-dialog-centered',
+        initialState: {
+          pgrOffice: officeNumber,
+        },
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PgrFilesComponent, config);
+    }
   }
 
   validDoc() {
@@ -1676,14 +1845,34 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
       return;
     }
-    const title = RELATED_FOLIO_TITLE;
-    const modalRef = this.openDocumentsModal(
-      this.selectedRow?.flierNumber,
-      title
-    );
-    modalRef.content.selected
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(document => this.goToScanDocuments(document));
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.selectedRow?.flierNumber);
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: () => {
+        const title = RELATED_FOLIO_TITLE;
+        const modalRef = this.openDocumentsModal(
+          this.selectedRow?.flierNumber,
+          title
+        );
+        modalRef.content.selected
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(document => this.goToScanDocuments(document));
+      },
+      error: async error => {
+        if (error.status < 500) {
+          const result = await this.alertQuestion(
+            'warning',
+            'Advertencia',
+            'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
+          );
+          if (result.isConfirmed) {
+            this.router.navigateByUrl(
+              `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+            );
+          }
+        }
+      },
+    });
   }
 
   goToScanDocuments(document: IDocuments) {
