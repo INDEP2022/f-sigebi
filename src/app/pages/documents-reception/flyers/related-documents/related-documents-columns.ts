@@ -70,4 +70,5 @@ export interface IDataGoodsTable {
   desEstatus: string;
   seleccion: boolean;
   improcedente: boolean;
+  disponible: boolean;
 }
