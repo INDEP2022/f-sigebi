@@ -25,6 +25,13 @@ export class MunicipalityService implements ICrudMethods<IMunicipality> {
     return this.municipalityRepository.create(this.route, model);
   }
 
+  postById(model: Object): Observable<IMunicipality> {
+    return this.municipalityRepository.create(
+      'catalog/municipality-sera/id',
+      model
+    );
+  }
+
   update(id: string | number, model: IMunicipality): Observable<Object> {
     return this.municipalityRepository.update(this.route, id, model);
   }
