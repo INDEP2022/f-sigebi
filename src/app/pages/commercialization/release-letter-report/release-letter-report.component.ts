@@ -1,10 +1,15 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IComerLotsEG } from 'src/app/core/models/ms-parametercomer/parameter';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -27,7 +32,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   selectEvent = new DefaultSelect<IComerLotsEG>();
   selectLot = new DefaultSelect<IComerLotsEG>();
   idLot: number = 0;
+  idGood: number = null;
   valid: boolean = false;
+  start: string;
+  carta: string;
+  desType: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   settings1 = {
     ...TABLE_SETTINGS,
@@ -63,7 +72,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
-    private comerLotService: ComerLotService
+    private comerLotService: ComerLotService,
+    private datePipe: DatePipe,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -76,8 +89,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      evento: [null, [Validators.required]],
-      lote: [null, [Validators.required]],
+      evento: [null],
+      lote: [null],
       oficio: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
@@ -110,16 +123,16 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       ],
       ccp1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       ccp2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      fechaCarta: [null],
       puestoFirma: [null],
       puestoCcp1: [null],
       puestoCcp2: [null],
-      fechaCarta: [null],
     });
   }
 
   confirm(): void {
     console.log(this.form.value);
-    this.valid = true;
+
     let params = {
       DESTYPE: this.form.controls['evento'].value,
       ID_LOTE: this.form.controls['lote'].value,
@@ -139,13 +152,6 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       PUESTOCCP2: this.form.controls['puestoCcp2'].value,
       FECHA_CARTA: this.form.controls['fechaCarta'].value,
     };
-    // console.log(this.reportForm.value);
-
-    // let params = { ...this.form.value };
-
-    // for (const key in params) {
-    //   if (params[key] === null) delete params[key];
-    // }
 
     console.log(params);
     // open the window
@@ -164,26 +170,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.cleanForm();
   }
 
-  Generar() {
-    this.reportService.getReportDiario(this.form.value).subscribe({
-      next: (resp: any) => {
-        if (resp.file.base64 !== '') {
-          this.preview(resp.file.base64);
-        } else {
-          this.onLoadToast(
-            'warning',
-            'advertencia',
-            'Sin datos para los rangos de fechas suministrados'
-          );
-        }
-
-        return;
-      },
-    });
-  }
   getGood(search: any) {
     this.loading = true;
-    this.comerLotService.findGLot(search).subscribe({
+    this.comerLotService.findGood(search).subscribe({
       next: data => {
         this.goodList = data.data;
         this.loading = false;
@@ -197,11 +186,12 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLotService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
+          this.idGood = data.event.id;
           data.description = `${data.event.id}- ${data.event.statusvtaId}`;
-          this.getGood(data.goodNumber);
           return data;
         });
         this.selectEvent = new DefaultSelect(data.data, data.count);
+        this.getGood(this.idGood);
       },
       error: () => {
         this.selectEvent = new DefaultSelect();
@@ -223,13 +213,72 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       },
     });
   }
+  userRowSelect(event: any) {
+    this.desType = event.data.description;
+    this.idEvent = event.data.event.idEvent;
+    this.valid = true;
+    console.log(event);
+  }
+
+  Generar() {
+    const start = this.form.get('fechaFactura').value;
+    const carta = this.form.get('fechaCarta').value;
+    this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
+    this.carta = this.datePipe.transform(carta, 'dd/MM/yyyy');
+    let params = {
+      DESTYPE: this.form.controls['evento'].value,
+      ID_LOTE: this.form.controls['lote'].value,
+      OFICIO_CARTALIB: this.form.controls['oficio'].value,
+      DIRIGIDO_A: this.form.controls['diridoA'].value,
+      PUESTO: this.form.controls['puesto'].value,
+      PARRAFO1: this.form.controls['parrafo1'].value,
+      ADJUDICATARIO: this.form.controls['adjudicatorio'].value,
+      NO_FACTURA: this.form.controls['factura'].value,
+      FECHA_FACTURA: this.start,
+      PARRAFO2: this.form.controls['parrafo2'].value,
+      FIRMANTE: this.form.controls['firmante'].value,
+      PUESTOFIRMA: this.form.controls['puestoFirma'].value,
+      CCP1: this.form.controls['ccp1'].value,
+      CCP2: this.form.controls['ccp1'].value,
+      PUESTOCCP1: this.form.controls['puestoCcp1'].value,
+      PUESTOCCP2: this.form.controls['puestoCcp2'].value,
+      FECHA_CARTA: this.carta,
+    };
+
+    this.siabService
+      .fetchReport('FCOMERCARTALIB', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {
+                if (data) {
+                  data.map((item: any) => {
+                    return item;
+                  });
+                }
+              },
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
 
   cleanForm(): void {
     this.form.reset();
   }
-  preview(file: IReport) {
+  preview(url: string, params: ListParams) {
     try {
-      this.reportService.download(file).subscribe(response => {
+      this.reportService.download(url, params).subscribe(response => {
         if (response !== null) {
           let blob = new Blob([response], { type: 'application/pdf' });
           const fileURL = URL.createObjectURL(blob);

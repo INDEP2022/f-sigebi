@@ -1,3 +1,5 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   goodId: {
     title: 'No. Bien',
@@ -30,13 +32,17 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     sort: false,
   },
   seleccion: {
-    title: '',
-    type: 'string',
+    title: 'Selección',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction: (event: any) => {},
     sort: false,
   },
-  improcedencia: {
-    title: 'Improcedencia',
-    type: 'string',
+  improcedente: {
+    title: 'Improcedente',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction: (event: any) => {},
     sort: false,
   },
 };
@@ -63,5 +69,5 @@ export interface IDataGoodsTable {
   status: string;
   desEstatus: string;
   seleccion: boolean;
-  improcedencia: boolean;
+  improcedente: boolean;
 }

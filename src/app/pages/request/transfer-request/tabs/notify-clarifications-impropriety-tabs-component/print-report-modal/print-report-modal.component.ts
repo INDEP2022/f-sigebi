@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
@@ -51,6 +53,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sizeMessage: boolean = false;
   pdfTemp: File;
 
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -58,7 +63,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     private gelectronicFirmService: GelectronicFirmService,
     private authService: AuthService,
     private wContentService: WContentService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -92,7 +98,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
-    console.log('Información de usuario', token);
 
     //Verifica si ya existe ese usuario en la lista de firmantes
     this.signatoriesService
@@ -119,6 +124,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     let token = this.authService.decodeToken();
     const formData: Object = {
       name: token.name,
+      post: token.cargonivel1,
       learnedType: this.idTypeDoc,
       learnedId: this.idDoc,
     };
@@ -179,13 +185,19 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       let blob = new Blob([u8.buffer], {
         type: 'application/pdf',
       });
-      const blobUrl = window.URL.createObjectURL(blob);
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = blobUrl;
-      document.body.appendChild(iframe);
-      iframe.contentWindow.print();
-      console.log('Descargar PDF', blob);
+      const url = URL.createObjectURL(blob);
+      let config = {
+        initialState: {
+          documento: {
+            urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+            type: 'pdf',
+          },
+          callback: (response: any) => {},
+        }, //pasar datos por aca
+        class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+        ignoreBackdropClick: true, //ignora el click fuera del modal
+      };
+      this.modalService.show(PreviewDocumentsComponent, config);
     });
   }
 
@@ -195,7 +207,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         signatories,
         typeReport: this.typeReport,
         callback: (next: boolean) => {
-          //if (next){ this.getData();}
+          if (next) {
+            this.getSignatories();
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -296,6 +310,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       next: data => {},
       error: error => (this.loading = false),
     });
+  }
+
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 
   sendSign() {
@@ -410,13 +429,18 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       tipoDocumento: this.nameTypeDoc,
     };
     console.log(formData);
+
     this.gelectronicFirmService
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
         error: error => (
           console.log('Eror', error),
-          this.onLoadToast('error', 'Error', error.error.error)
+          this.onLoadToast(
+            'error',
+            'Error al generar firma electrónica',
+            'Consultar al administrador para más detalles'
+          )
         ),
       });
   }

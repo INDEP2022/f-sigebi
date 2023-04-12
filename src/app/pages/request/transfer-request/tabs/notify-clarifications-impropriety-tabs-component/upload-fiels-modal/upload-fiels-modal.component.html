@@ -16,7 +16,11 @@
         </div>
         <div class="col-md-6">
           <form-field [control]="fileForm.get('post')" label="Cargo">
-            <input type="text" class="form-control" formControlName="post" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="post"
+              readonly />
           </form-field>
         </div>
       </div>

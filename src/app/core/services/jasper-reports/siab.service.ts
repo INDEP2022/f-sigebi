@@ -76,4 +76,21 @@ export class SiabService {
       })
     );
   }
+
+  //Temporal para los reportes que aún estan en construcción
+  private _getReportBlank(reportName: string) {
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    this.authService.setReportFlag(true);
+    const route = `${this.url}/${reportName}${SiabReportEndpoints.EXTENSION}`;
+    return this.http.get<any>(`${route}`, {
+      headers,
+      responseType: 'arraybuffer' as 'json',
+    });
+  }
+
+  fetchReportBlank(reportName: string) {
+    return this.signIn().pipe(
+      switchMap(() => this._getReportBlank(reportName))
+    );
+  }
 }

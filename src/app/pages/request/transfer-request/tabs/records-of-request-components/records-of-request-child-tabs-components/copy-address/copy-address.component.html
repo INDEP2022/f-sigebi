@@ -8,7 +8,8 @@
         id="tableGoods"
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
-        [source]="addresses">
+        [source]="addresses"
+        (userRowSelect)="addressSelect($event.data)">
       </ng2-smart-table>
     </div>
     <app-pagination
@@ -17,14 +18,14 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <!-- <div class="m-3">
+      <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary active btn-sm"
           (click)="confirm()">
-          Aceptar
+          Copiar domicilio
         </button>
-      </div> -->
+      </div>
       <div class="m-3">
         <button class="btn btn-danger btn-sm active" (click)="close()">
           Cancelar

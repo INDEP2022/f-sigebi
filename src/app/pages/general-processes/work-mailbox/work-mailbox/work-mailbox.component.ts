@@ -229,7 +229,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private imageMediaService: ImageMediaService
   ) {
     super();
-    this.settings.actions = true;
+    this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
     this.settings.columns = WORK_MAILBOX_COLUMNS2;
     this.settings = {
       ...this.settings,
@@ -238,9 +238,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         ...this.settings.actions,
         delete: false,
         add: false,
-        edit: true,
-        columnTitle: 'Acciones',
-        position: 'right',
+        edit: false, // SE CAMBIO PARA NO PERMITIR EDITAR
+        // columnTitle: 'Acciones',
+        // position: 'right',
       },
       edit: {
         ...this.settings.edit,
@@ -348,11 +348,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
-        console.log(change);
+        // console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
+            // console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -447,7 +447,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   STRING_PATTERN,
                   30
                 );
-                filter.search = valueTurnadoiUser.validValue;
+                filter.search = valueTurnadoiUser.validValue.toUpperCase();
                 break;
               case 'dailyConsecutiveNumber':
                 // CONSECUTIVO DIARIO
@@ -537,7 +537,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   STRING_PATTERN,
                   30
                 );
-                filter.search = valueUserATurn.validValue;
+                filter.search = valueUserATurn.validValue.toUpperCase();
                 break;
               case 'folioRep':
                 // FOLIO REP.
@@ -1540,7 +1540,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
 
     if (result.isConfirmed) {
-      if (!this.selectedRow.userATurn && !this.selectedRow.areaATurn) {
+      if (!this.managementAreaF && !this.user) {
         return this.onLoadToast(
           'error',
           'Error',
@@ -2210,9 +2210,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           break;
         case 'viewPictures':
           this.viewPictures();
-          break;
-        case 'acptionBienes':
-          this.acptionBienes();
           break;
         case 'onFinishPaperwork':
           this.onFinishPaperwork();

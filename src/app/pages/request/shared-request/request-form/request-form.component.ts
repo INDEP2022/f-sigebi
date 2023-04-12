@@ -205,7 +205,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
-    // params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
     this.authorityService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
