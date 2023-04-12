@@ -54,11 +54,11 @@ export class RequestRecordTabComponent
     super();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    this.requestForm.valueChanges.subscribe({
+    /*  this.requestForm.valueChanges.subscribe({
       next: resp => {
         console.log(resp);
       },
-    });
+    }); */
   }
 
   ngOnInit(): void {
