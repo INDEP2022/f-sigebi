@@ -23,4 +23,5 @@ export interface IAffair {
   editionUser?: string;
   modificationDate?: Date;
   nameAndId?: string;
+  nbOrigen?: 'SAMI' | 'SIAB';
 }
