@@ -148,7 +148,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      .fetchReport('RGEROFPRECEPDOCUM', params)
+      .fetchReport('FGEROFPRESUMENDIAA', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
