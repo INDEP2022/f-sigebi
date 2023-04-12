@@ -44,8 +44,6 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.onlyOrigin);
-
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
