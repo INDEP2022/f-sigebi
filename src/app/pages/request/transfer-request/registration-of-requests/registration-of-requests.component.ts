@@ -727,7 +727,8 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    if (this.haveDictamen === false) {
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
       this.onLoadToast(
         'info',
         'Error',
@@ -892,14 +893,15 @@ export class RegistrationOfRequestsComponent
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = true;
+            resolve(true);
           } else {
             this.haveDictamen = false;
+            resolve(false);
           }
-          resolve(true);
         },
         error: error => {
           this.haveDictamen = false;
-          resolve(true);
+          resolve(false);
         },
       });
     });
