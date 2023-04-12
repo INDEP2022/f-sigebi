@@ -16,8 +16,9 @@ export class EncrypService {
     </Body>
 </Envelope>`;
     const headers = {
-      'Access-Control-Allow-Origin': 'http://sigebi.indep.gob.mx:4200/',
+      'Access-Control-Allow-Origin': '*',
       'Content-Type': 'text/xml;charset=UTF-8',
+      'Accept-Encoding': 'gzip, deflate, br',
       Accept: '*/*',
     };
     return this.http.post(this.url, soapMessage, {
