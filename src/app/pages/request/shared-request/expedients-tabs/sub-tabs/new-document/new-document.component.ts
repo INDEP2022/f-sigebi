@@ -246,7 +246,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
             this.modalRef.content.callback(true);
             this.loading = false;
             this.loader.load = false;
@@ -327,6 +326,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             this.loading = false;
             this.loader.load = false;
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
             this.modalRef.content.callback(true);
             this.close();
           },

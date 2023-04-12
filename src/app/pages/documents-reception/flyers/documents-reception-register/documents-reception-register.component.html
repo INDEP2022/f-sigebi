@@ -542,7 +542,7 @@
                 control="autorityNumber"
                 label="Autoridad"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface || stationLoading || transferorLoading"
+                [readonly]="stationLoading || transferorLoading"
                 termMaxLength="400"
                 [showTooltip]="true">
               </ngx-select>

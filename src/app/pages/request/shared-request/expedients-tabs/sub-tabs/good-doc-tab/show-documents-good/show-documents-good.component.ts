@@ -37,7 +37,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   idGood: number;
   idRequest: number = 0;
   totalItems: number = 0;
-
+  formLoading: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -67,9 +67,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getDocType(new ListParams());
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDocuemntByGood());
   }
 
   prepareForm(): void {
@@ -85,7 +82,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       noOfice: [null],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: 157, disabled: true }],
+      noRequest: [null],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
 
       /* Solicitud Transferencia */
@@ -115,9 +112,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       Promise.all(typeDoc).then(info => {
-        this.paragraphs = info;
-        this.totalItems = this.paragraphs.length;
-        this.loading = false;
+        if (info.length == 0) {
+          this.onLoadToast(
+            'warning',
+            'No se encontraron documentos al bien',
+            ''
+          );
+          this.loading = false;
+        } else {
+          this.paragraphs = info;
+          this.totalItems = this.paragraphs.length;
+          this.loading = false;
+        }
       });
     });
   }
@@ -200,6 +206,20 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     const senderCharge = this.docRequestForm.get('senderCharge').value;
     const comment = this.docRequestForm.get('comment').value;
 
+    if (
+      !typeDoc &&
+      !docTitle &&
+      !contributor &&
+      !author &&
+      !sender &&
+      !noOfice &&
+      !senderCharge &&
+      !comment
+    ) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getDocuemntByGood());
+    }
     if (typeDoc) {
       this.loading = true;
       const filter = this.paragraphs.filter(item => {
@@ -384,12 +404,43 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       idGood,
       callback: (next: boolean) => {
         if (next) {
-          this.paragraphs = [];
-          this.getDocuemntByGood();
+          this.formLoading = true;
+          setTimeout(() => {
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.getDocuemntByGood();
+            this.formLoading = false;
+          }, 8000);
         }
       },
     };
     this.modalService.show(NewDocumentComponent, config);
+  }
+
+  updateDocuments() {
+    this.loading = true;
+    const filter: Object = {
+      xidBien: this.idGood,
+      xidSolicitud: this.idRequest,
+    };
+
+    this.wContentService.getDocumentos(filter).subscribe(data => {
+      this.loading = true;
+      const info = data.data.filter((doc: any) => {
+        if (doc.dDocType == 'Document') return doc;
+      });
+
+      const typeDoc = info.map(async (items: any) => {
+        const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
+        items.xtipoDocumento = filter[0].ddescription;
+        return items;
+      });
+
+      Promise.all(typeDoc).then(info => {
+        this.paragraphs = info;
+        this.totalItems = this.paragraphs.length;
+        this.loading = false;
+      });
+    });
   }
 
   close() {

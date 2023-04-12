@@ -7,6 +7,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { QuillModule } from 'ngx-quill';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FileUploadModule } from 'src/app/utils/file-upload/file-upload.module';
 import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
@@ -191,6 +192,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     QuillModule.forRoot(),
     FileUploadModule,
     PdfViewerModule,
+    FormLoaderComponent,
   ],
   exports: [
     RequestFormComponent,
