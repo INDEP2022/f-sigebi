@@ -679,7 +679,7 @@ export class DocumentsReceptionRegisterComponent
               this.formControls.externalOfficeDate.setValue(officeExternalDate);
               this.formControls.observations.setValue(description);
               this.formControls.affairKey.setValue(affairKey);
-              this.affairService.getById(affairKey).subscribe({
+              this.affairService.getByIdAndOrigin(affairKey, 'SIAB').subscribe({
                 next: data =>
                   this.formControls.affair.setValue(data.description),
               });
@@ -922,7 +922,7 @@ export class DocumentsReceptionRegisterComponent
           if (this.formControls.affairKey.value == null) {
             this.formControls.affairKey.setValue(affairKey);
             this.hideError();
-            this.affairService.getById(affairKey).subscribe({
+            this.affairService.getByIdAndOrigin(affairKey, 'SIAB').subscribe({
               next: data => this.formControls.affair.setValue(data.description),
               error: () => {},
             });
@@ -982,7 +982,7 @@ export class DocumentsReceptionRegisterComponent
           if (this.formControls.affairKey.value == null) {
             this.formControls.affairKey.setValue(affairKey);
             this.hideError();
-            this.affairService.getById(affairKey).subscribe({
+            this.affairService.getByIdAndOrigin(affairKey, 'SIAB').subscribe({
               next: data => this.formControls.affair.setValue(data.description),
               error: () => {},
             });
@@ -1317,7 +1317,7 @@ export class DocumentsReceptionRegisterComponent
     if (notif.affairKey != null) {
       this.formControls.affairKey.setValue(notif.affairKey);
       this.hideError();
-      this.affairService.getById(notif.affairKey).subscribe({
+      this.affairService.getByIdAndOrigin(notif.affairKey, 'SIAB').subscribe({
         next: data => {
           this.formControls.affair.setValue(data.description);
           let goodRelation: string = 'N';
