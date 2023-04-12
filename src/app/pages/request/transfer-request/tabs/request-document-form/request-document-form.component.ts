@@ -200,7 +200,6 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        console.log(error);
       },
     });
   }

@@ -103,7 +103,6 @@ export class GoodService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-    console.log(route);
 
     return this.post<IListResponse<IGood>>(route, body);
   }
@@ -124,7 +123,6 @@ export class GoodService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.vaultNumber=$eq:${id}`;
-    console.log(route);
     return this.get<IListResponse<IGood>>(route, params);
   }
 

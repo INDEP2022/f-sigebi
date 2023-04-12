@@ -105,9 +105,7 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
     this.router.navigate(['pages/request/list']);
   }
 
-  requestRegistered(request: any) {
-    console.log(request);
-  }
+  requestRegistered(request: any) {}
 
   turnRequest() {
     this.alertQuestion(

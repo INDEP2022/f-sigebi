@@ -55,9 +55,7 @@ export class RequestRecordTabComponent
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.requestForm.valueChanges.subscribe({
-      next: resp => {
-        console.log(resp);
-      },
+      next: resp => {},
     });
   }
 
@@ -231,7 +229,6 @@ export class RequestRecordTabComponent
       },
       error: error => {
         this.affairName = '';
-        console.log(error.error.massage);
       },
     });
   }
@@ -306,7 +303,6 @@ export class RequestRecordTabComponent
             'Error',
             `¡No se guardó la solicitud!. ${error.error.message}`
           );
-          console.log(error);
           reject(false);
         },
       });
