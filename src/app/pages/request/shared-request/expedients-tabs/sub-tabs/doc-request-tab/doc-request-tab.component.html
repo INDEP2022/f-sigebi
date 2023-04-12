@@ -48,7 +48,7 @@
                 [data]="selectDocType"
                 label="Tipo de Documento"
                 bindLabel="ddescription"
-                value="docType">
+                value="ddescription">
               </ngx-select>
             </div>
           </div>
@@ -203,6 +203,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  [readOnly]="true"
                   formControlName="noRequest" />
               </form-field>
             </div>
@@ -252,6 +253,11 @@
               (click)="openNewDocument()">
               Nuevo
             </button>
+            <!--<button
+              class="btn btn-info btn-sm active ml-2"
+              (click)="updateData()">
+              Actualizar
+            </button> -->
           </div>
         </div>
       </div>

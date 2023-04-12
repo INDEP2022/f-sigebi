@@ -2022,9 +2022,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'viewPictures':
           this.viewPictures();
           break;
-        case 'acptionBienes':
-          this.acptionBienes();
-          break;
         case 'onFinishPaperwork':
           this.onFinishPaperwork();
           break;

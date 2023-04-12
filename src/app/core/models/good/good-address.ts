@@ -10,7 +10,9 @@ export interface IGoodAddress {
   length: string;
   localityKey: number;
   municipalityKey: number;
+  warehouseAliasName: string;
   regionalDelegationId: IRegionalDelegation;
+  municipalityName: string;
   settlementKey: string;
   statusKey: number;
   version: number;
