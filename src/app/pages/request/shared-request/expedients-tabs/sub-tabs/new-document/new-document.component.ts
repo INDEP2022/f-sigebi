@@ -326,6 +326,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             this.loading = false;
             this.loader.load = false;
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
             this.modalRef.content.callback(true);
             this.close();
           },
