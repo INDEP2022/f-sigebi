@@ -393,8 +393,6 @@ export class AddressTransferorTabComponent
     this.domicileForm.get('interiorNumber').setValue(data?.interiorNumber);
     this.domicileForm.get('wayDestiny').setValue(data?.wayDestiny);
     this.domicileForm.get('description').setValue(data?.description);
-
-    console.log(this.domicileForm.value);
   }
 
   close() {

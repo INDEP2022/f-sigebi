@@ -500,7 +500,6 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
@@ -529,7 +528,6 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
         this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {

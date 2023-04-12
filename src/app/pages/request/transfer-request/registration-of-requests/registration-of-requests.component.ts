@@ -132,8 +132,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
-    this.dinamyCallFrom();
-    console.log('ID tipo de documento', this.idTypeDoc);
+    //this.dinamyCallFrom();
   }
 
   //Obtenemos el tipo de proceso//
@@ -774,8 +773,6 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    console.log(this.requestData);
-
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
@@ -850,7 +847,6 @@ export class RegistrationOfRequestsComponent
 
       body['orderservice'] = orderservice;
 
-      console.log(body);
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
@@ -976,12 +972,12 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  dinamyCallFrom() {
+  /* dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
     });
   }
-
+ */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,
