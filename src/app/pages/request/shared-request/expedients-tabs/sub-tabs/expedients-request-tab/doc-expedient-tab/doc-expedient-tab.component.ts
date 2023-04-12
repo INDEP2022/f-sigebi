@@ -24,7 +24,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DOC_REQUEST_TAB_COLUMNS } from '../../doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from '../../doc-request-tab/see-information/see-information.component';
@@ -60,6 +60,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   delegationId: number = 0;
   stateId: string = '';
+  formLoading: boolean = false;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -126,7 +127,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      noRequest: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noRequest: [null],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
 
       /* Solicitud Transferencia */
@@ -155,16 +156,18 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     this.wContentService.getDocumentos(body).subscribe({
       next: async (data: any) => {
         const filterTypeDoc = data.data.filter((items: any) => {
-          return items.xtipoDocumento;
+          if (items.dDocType == 'Document') return items;
         });
 
         const info = filterTypeDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
           items.xtipoDocumento = filter[0].ddescription;
+          return items;
         });
 
         Promise.all(info).then(x => {
-          this.paragraphs = data.data;
+          console.log('filterTypeDoc', x);
+          this.paragraphs = x;
           this.totalItems = this.paragraphs.length;
         });
       },
@@ -209,13 +212,38 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     const transf = this.docRequestForm.get('tranfe').value;
     const titleDoc = this.docRequestForm.get('docTitle').value;
     const sender = this.docRequestForm.get('sender').value;
-    const author = this.docRequestForm.get('dDocAuthor').value;
+    const author = this.docRequestForm.get('author').value;
     const contributor = this.docRequestForm.get('contributor').value;
     const noOfice = this.docRequestForm.get('noOfice').value;
     const senderCharge = this.docRequestForm.get('senderCharge').value;
     const comment = this.docRequestForm.get('comment').value;
     const responsible = this.docRequestForm.get('responsible').value;
+    const noRequest = this.docRequestForm.get('noRequest').value;
 
+    if (!noRequest) {
+      this.onLoadToast(
+        'warning',
+        'Debes asociar un expediente a la solicitud',
+        ''
+      );
+    }
+    if (
+      noRequest &&
+      !typeDoc &&
+      !delegation &&
+      !state &&
+      !transf &&
+      !titleDoc &&
+      !sender &&
+      !author &&
+      !contributor &&
+      !noOfice &&
+      !senderCharge &&
+      !comment &&
+      !responsible
+    ) {
+      this.getRequestData();
+    }
     //filtrando por el tipo de documento//
     if (typeDoc) {
       this.loading = true;
@@ -491,7 +519,13 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         idExpedient,
         typeDoc,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) {
+            this.formLoading = true;
+            setTimeout(() => {
+              this.getData();
+              this.formLoading = false;
+            }, 7000);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
