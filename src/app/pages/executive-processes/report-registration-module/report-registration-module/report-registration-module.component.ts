@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -22,6 +22,7 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 //Services
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 export interface IReport {
   data: File;
 }
@@ -60,7 +61,8 @@ export class ReportRegistrationModuleComponent
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private serviceDeleg: DelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private siabService: SiabService
   ) {
     super();
     this.today = new Date();
@@ -152,50 +154,33 @@ export class ReportRegistrationModuleComponent
   }
 
   confirm(): void {
-    this.loading = true;
-    console.log(this.form.value);
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-
-    const downloadLink = document.createElement('a');
-    //console.log(linkSource);
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
-
-    // console.log(this.flyersForm.value);
-    let params = { ...this.form.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
-    //let newWin = window.open(pdfurl, 'test.pdf');
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
-  }
-
-  readFile(file: IReport) {
-    const reader = new FileReader();
-    reader.readAsDataURL(file.data);
-    reader.onload = _event => {
-      // this.retrieveURL = reader.result;
-      this.openPrevPdf(reader.result as string);
-    };
-  }
-
-  openPrevPdf(pdfurl: string) {
-    console.log(pdfurl);
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
+    this.siabService.fetchReportBlank('blank').subscribe({
+      next: response => {
+        console.log('información del blob', response);
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (response: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+    });
   }
 }

@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
@@ -61,7 +63,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     private gelectronicFirmService: GelectronicFirmService,
     private authService: AuthService,
     private wContentService: WContentService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -182,13 +185,19 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       let blob = new Blob([u8.buffer], {
         type: 'application/pdf',
       });
-      const blobUrl = window.URL.createObjectURL(blob);
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = blobUrl;
-      document.body.appendChild(iframe);
-      iframe.contentWindow.print();
-      console.log('Descargar PDF', blob);
+      const url = URL.createObjectURL(blob);
+      let config = {
+        initialState: {
+          documento: {
+            urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+            type: 'pdf',
+          },
+          callback: (response: any) => {},
+        }, //pasar datos por aca
+        class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+        ignoreBackdropClick: true, //ignora el click fuera del modal
+      };
+      this.modalService.show(PreviewDocumentsComponent, config);
     });
   }
 
@@ -425,14 +434,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
-        error: error => (
-          console.log('Eror', error),
-          this.onLoadToast(
-            'error',
-            'Error al generar firma electrónica',
-            'Consultar al administrador para más detalles'
-          )
-        ),
+        // error: error => (
+        //   console.log('Eror', error),
+        //   this.onLoadToast(
+        //     'error',
+        //     'Error al generar firma electrónica',
+        //     'Consultar al administrador para más detalles'
+        //   )
+        // ),
       });
   }
 
