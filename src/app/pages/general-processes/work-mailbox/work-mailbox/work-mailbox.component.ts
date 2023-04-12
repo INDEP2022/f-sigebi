@@ -1233,6 +1233,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getGroupWork($params: ListParams, reset?: boolean) {
+    console.log($params);
     if (reset) {
       $params.page = 1;
     }
@@ -1264,6 +1265,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           },
         });
     } else {
+      params.addFilter('description', $params.text, SearchFilter.LIKE);
       this.getAreas(params).subscribe();
     }
 
