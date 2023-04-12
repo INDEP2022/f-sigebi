@@ -68,6 +68,7 @@ export class DocRequestTabComponent
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
   totalItems: number = 0;
+  formLoading: boolean = false;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -184,36 +185,6 @@ export class DocRequestTabComponent
         });
 
         Promise.all(info).then(x => {
-          console.log('data', x);
-          this.paragraphs.load(x);
-          this.totalItems = this.paragraphs.count();
-          this.loading = false;
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  updateData() {
-    this.loading = true;
-    const idSolicitud: Object = {
-      xidSolicitud: this.idRequest,
-    };
-    this.wContentService.getDocumentos(idSolicitud).subscribe({
-      next: data => {
-        const filterDoc = data.data.filter((items: any) => {
-          if (items.dDocType == 'Document') {
-            return items;
-          }
-        });
-        const info = filterDoc.map(async (items: any) => {
-          const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0].ddescription;
-          return items;
-        });
-
-        Promise.all(info).then(x => {
-          console.log('actualizado', x);
           this.paragraphs.load(x);
           this.totalItems = this.paragraphs.count();
           this.loading = false;
@@ -446,8 +417,11 @@ export class DocRequestTabComponent
       typeDoc,
       callback: (data: boolean) => {
         if (data) {
-          this.onLoadToast('success', 'Documento Guardado correctamente', '');
-          //this.getData();
+          this.formLoading = true;
+          setTimeout(() => {
+            this.getData();
+            this.formLoading = false;
+          }, 7000);
         }
       },
     };

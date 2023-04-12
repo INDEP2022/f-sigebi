@@ -6,16 +6,6 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!-- <div class="col-md-4">
-          <form-field [control]="form.get('evento')" label="Evento">
-            <input type="number" class="form-control" formControlName="evento" placeholder="Evento" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('lote')" label="Lote">
-            <input type="number" class="form-control" formControlName="lote" placeholder="Lote" />
-          </form-field>
-        </div> -->
         <div class="col-md-4">
           <ngx-select
             [form]="form"
@@ -25,7 +15,7 @@
             [data]="selectEvent"
             bindLabel="description"
             label="Evento"
-            value="id"></ngx-select>
+            value="event.id"></ngx-select>
         </div>
         <div class="col-md-4">
           <ngx-select
@@ -80,8 +70,6 @@
         </div>
       </div>
 
-      <div class="row mt-5"></div>
-
       <div class="row">
         <div class="col-md-4">
           <form-field
@@ -100,7 +88,14 @@
       <div class="row">
         <label for="">Bienes</label>
       </div>
-
+      <div
+        *ngIf="goodList"
+        class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+        <span>
+          SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA PARA PROCEDER A LA
+          IMPRESIÓN&#46;</span
+        >
+      </div>
       <div class="row pt-2 scroll-table">
         <!-- <ng2-smart-table
           class="col-md-12"
@@ -108,6 +103,7 @@
           [source]="data"></ng2-smart-table> -->
         <ng2-smart-table
           [settings]="settings2"
+          (userRowSelect)="userRowSelect($event)"
           [source]="goodList"></ng2-smart-table>
       </div>
       <app-pagination
@@ -174,6 +170,15 @@
               placeholder="CCP2" />
           </form-field>
         </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('fechaCarta')" label="Fecha Carta">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaCarta"
+              placeholder="Fecha Carta" />
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
@@ -182,9 +187,8 @@
       <div class="m-3">
         <confirm-button
           text="Imprimir"
-          [loading]="loading"
-          [disabled]="!valid"
-          (confirm)="confirm()"></confirm-button>
+          [disabled]="form.invalid"
+          (confirm)="Generar()"></confirm-button>
       </div>
       <div class="m-3">
         <button
