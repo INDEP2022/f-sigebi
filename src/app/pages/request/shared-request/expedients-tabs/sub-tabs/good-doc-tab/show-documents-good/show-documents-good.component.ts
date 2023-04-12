@@ -37,7 +37,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   idGood: number;
   idRequest: number = 0;
   totalItems: number = 0;
-
+  formLoading: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -404,7 +404,12 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       idGood,
       callback: (next: boolean) => {
         if (next) {
-          this.onLoadToast('success', 'Documento Guardado correctamente', '');
+          this.formLoading = true;
+          setTimeout(() => {
+            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.getDocuemntByGood();
+            this.formLoading = false;
+          }, 8000);
         }
       },
     };
@@ -431,7 +436,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       Promise.all(typeDoc).then(info => {
-        console.log('actualizado', info);
         this.paragraphs = info;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
