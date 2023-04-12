@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -159,6 +159,7 @@ export class DocumentsReceptionRegisterComponent
   procedureBlocked: boolean = false;
   changeFlyerOption: boolean = false;
   transferorLoading: boolean = false;
+  cityLoading: boolean = false;
   stationLoading: boolean = false;
   populatingForm: boolean = false;
   procedureId: number;
@@ -236,7 +237,8 @@ export class DocumentsReceptionRegisterComponent
     private store: Store<AppState>,
     private globalVarsService: GlobalVarsService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private fileUpdComService: FileUpdateCommunicationService
+    private fileUpdComService: FileUpdateCommunicationService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
     if (this.docDataService.flyersRegistrationParams != null)
@@ -1198,6 +1200,17 @@ export class DocumentsReceptionRegisterComponent
     }
   }
 
+  entFedChange(value: TvalTable1Data) {
+    if (
+      this.formControls.entFedKey.value != null &&
+      this.formControls.entFedKey.value != undefined
+    ) {
+      this.formControls.cityNumber.setValue(null);
+      this.hideError();
+      this.getCities({ page: 1, text: '' });
+    }
+  }
+
   changeJudgement(judgement: string) {
     if (judgement != '' && judgement != null) {
       this.formControls.protectionKey.setValue(judgement);
@@ -2144,16 +2157,24 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
+    this.cityLoading = true;
     if (lparams?.text.length > 0) {
       params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    }
+    if (this.formControls.entFedKey.value != null) {
+      params.addFilter('state', this.formControls.entFedKey.value?.otKey);
     }
     this.hideError();
     this.docRegisterService.getCities(params.getParams()).subscribe({
       next: data => {
         this.cities = new DefaultSelect(data.data, data.count);
+        this.cityLoading = false;
+        this.changeDetectorRef.detectChanges();
       },
       error: () => {
         this.cities = new DefaultSelect();
+        this.cityLoading = false;
+        this.changeDetectorRef.detectChanges();
       },
     });
   }

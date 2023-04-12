@@ -110,6 +110,14 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       response,
     };
     this.turnPaperWork(body).subscribe(() => {
+      if (this.paperwork?.processStatus != 'OPI') {
+        this.alertQuestion(
+          'info',
+          'Aviso',
+          'El usuario se turno correctamente. El reporte para los trámites con estatus diferente a "OPI", no está disponible'
+        );
+        return;
+      }
       this.downloadReport(userTurn).subscribe({
         next: res => console.log(res),
         error: error => console.log(error),

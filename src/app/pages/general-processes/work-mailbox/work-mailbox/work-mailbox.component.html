@@ -79,12 +79,13 @@
                       control="user"
                       label="Usuario"
                       [searchOnInit]="true"
+                      [showTooltip]="true"
                       termMaxLength="30"
                       [labelTemplate]="userLabel"
                       [optionTemplate]="userOption">
                     </ngx-select>
 
-                    <ng-template #userLabel let-item="item"
+                    <ng-template [showTooltip]="true" #userLabel let-item="item"
                       >{{ item.id }} - {{ item.name }}</ng-template
                     >
                     <ng-template #userOption let-item="item"
@@ -102,6 +103,7 @@
                       bindLabel="description"
                       control="managementArea"
                       [searchOnInit]="true"
+                      [showTooltip]="true"
                       termMaxLength="30"
                       label="Buz&oacute;n de &Aacute;rea"
                       [labelTemplate]="areaLabel"

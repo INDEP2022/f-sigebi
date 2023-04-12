@@ -373,7 +373,14 @@ export class DetailAssetsTabComponentComponent
     this.goodDomicilieForm = this.fb.group({
       id: [null],
       description: [null],
-      propertyType: [null, [Validators.required, Validators.maxLength(40)]],
+      propertyType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
       surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       consSurfaceMts: [
         0,

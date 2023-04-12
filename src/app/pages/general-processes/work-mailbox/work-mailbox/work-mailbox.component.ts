@@ -1202,6 +1202,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   setDefaultValuesByArea(area: IManagementArea, user: any) {
     console.log({ area, user });
+    //this.filterForm.controls['managementArea'].setValue(area);
     const params = new FilterParams();
     params.addFilter('managementArea', area.id);
     params.addFilter('user', user.id);
@@ -1222,10 +1223,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     return this.procedureManagementService
       .getManagamentArea(params.getParams())
       .pipe(
+        catchError(error => {
+          this.areas$ = new DefaultSelect([], 0, true);
+          return throwError(() => error);
+        }),
         tap(resp => {
+          console.log(resp);
           this.areas$ = new DefaultSelect(resp.data, resp.count);
-          if (resp.data.length > 0)
-            this.filterForm.controls['managementArea'].setValue(resp.data[0]);
+          //if (resp.data.length > 0)
+          //this.filterForm.controls['managementArea'].setValue(resp.data[0]);
         })
       );
   }
@@ -1245,7 +1251,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     _params.limit = 100;
     params.page = $params.page;
     params.limit = $params.limit;
-    params.search = $params.text;
+    params.addFilter('description', $params.text, SearchFilter.LIKE);
+    //params.search = $params.text;
 
     const user = this.user.value;
     if (user) {
@@ -1481,6 +1488,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+
     const tmp = {
       id: this.selectedRow.processNumber,
       InvoiceRep: this.selectedRow.folioRep,
@@ -1799,16 +1807,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         'Aviso',
         'El Oficio tiene No. Volante relacionado, se generaran los documentos.'
       );
+      this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
+        next: () => {
+          let config = {
+            class: 'modal-lg modal-dialog-centered',
+            initialState: {
+              pgrOffice: officeNumber,
+            },
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PgrFilesComponent, config);
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al copiar los documentos'
+          );
+        },
+      });
       // copy img
       // view pgr docs
-      let config = {
-        class: 'modal-lg modal-dialog-centered',
-        initialState: {
-          pgrOffice: officeNumber,
-        },
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(PgrFilesComponent, config);
     } else if (action == 'C') {
       // view pgr docs
       let config = {

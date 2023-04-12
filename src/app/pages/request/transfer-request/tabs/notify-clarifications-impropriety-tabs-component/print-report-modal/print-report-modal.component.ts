@@ -434,14 +434,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
-        error: error => (
-          console.log('Eror', error),
-          this.onLoadToast(
-            'error',
-            'Error al generar firma electrónica',
-            'Consultar al administrador para más detalles'
-          )
-        ),
+        // error: error => (
+        //   console.log('Eror', error),
+        //   this.onLoadToast(
+        //     'error',
+        //     'Error al generar firma electrónica',
+        //     'Consultar al administrador para más detalles'
+        //   )
+        // ),
       });
   }
 

@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -10,7 +9,6 @@ import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/sign
 import { ExternalFirmService } from 'src/app/core/services/ms-externalfirm/externalfirm.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { EncrypService } from './encryp.service';
 
 @Component({
   selector: 'app-upload-fiels-modal',
@@ -36,10 +34,9 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private http: HttpClient,
+    //private http: HttpClient,
     private signatoriesService: SignatoriesService,
-    private externalFirmService: ExternalFirmService,
-    private encrypService: EncrypService
+    private externalFirmService: ExternalFirmService //private encrypService: EncrypService
   ) {
     super();
   }
@@ -149,12 +146,30 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     if (pass.length <= 10) {
       console.log(
         'pass: ' + pass + ' Longitud de pass es correcto, proceder a encriptar'
-      ); //Quitar
+      );
+      const obj: Object = {
+        cadena: pass,
+      };
 
-      this.encrypService.encryp(pass).subscribe(data => {
-        this.encrypResult = data;
-        console.log(this.encrypResult); // Hacer algo con el resultado
-      });
+      this.externalFirmService.encrypt(obj).subscribe(
+        response => {
+          if (response !== null) {
+            this.password = response;
+            console.log('Pass encriptada', this.password.encriptarResult); //Quitar
+            this.fileForm.controls['pass'].setValue(
+              this.password.encriptarResult
+            );
+            console.log('Carga de archivos', this.fileForm.value);
+            this.update();
+          } else {
+            //TODO: CHECK MESSAGE
+            this.alert('info', 'No se pudo encriptar', null);
+          }
+
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
     } else {
       this.update();
     }
@@ -170,8 +185,11 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
-    //formData.append('pass',this.fileForm.controls['pass'].value);
-    formData.append('pass', this.encrypResult);
+    formData.append(
+      'pass',
+      this.password.encriptarResult || this.fileForm.controls['pass'].value
+    );
+    //formData.append('pass', this.encrypResult);
     formData.append('post', this.fileForm.controls['post'].value);
     formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
     formData.append('validationocsp', 'true');

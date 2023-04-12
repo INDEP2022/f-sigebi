@@ -132,7 +132,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
-    this.dinamyCallFrom();
+    //this.dinamyCallFrom();
   }
 
   //Obtenemos el tipo de proceso//
@@ -970,12 +970,12 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  dinamyCallFrom() {
+  /* dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
     });
   }
-
+ */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,

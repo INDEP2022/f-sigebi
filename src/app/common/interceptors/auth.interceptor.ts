@@ -27,7 +27,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
   );
-
+  private timeOut: number = 10;
   constructor(
     private router: Router,
     private readonly authService: AuthService
@@ -60,6 +60,13 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       this.authService.existToken() &&
       !this.authService.isTokenExpired()
     ) {
+      const timeNow = new Date(
+        this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
+      ).getMinutes();
+
+      if (timeNow <= this.timeOut) {
+        this.refreshToken(newReq, next).subscribe();
+      }
       //Set Bearer Token
       newReq = request.clone({
         headers: request.headers.set(
@@ -67,10 +74,6 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
           'Bearer ' + this.authService.accessToken()
         ),
       });
-    }
-
-    if (this.authService.existToken() && this.authService.isTokenExpired()) {
-      this.refreshToken(newReq, next).subscribe();
     }
 
     // Response
