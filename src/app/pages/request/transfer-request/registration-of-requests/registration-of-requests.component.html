@@ -61,7 +61,10 @@
         </button>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="refuseRequest()">
           <i class="bx bx-minus"></i> Rechazar
         </button>
       </div>

@@ -42,14 +42,28 @@
           </div>
         </div>
         <div class="col-md-6">
+          <!-- documentos tipo solicitud -->
           <form-field
             [control]="documentForm.get('document')"
-            label="Documento">
+            label="Documento"
+            *ngIf="typeDoc !== 'doc-bien'">
             <input
               type="file"
               class="form-control"
               formControlName="document"
               (change)="uploadFile($event)" />
+          </form-field>
+          <!-- documentos typo bien -->
+          <form-field
+            [control]="documentForm.get('document')"
+            label="Documento"
+            *ngIf="typeDoc === 'doc-bien'">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="document"
+              (change)="uploadFile($event)"
+              accept="image/*" />
           </form-field>
         </div>
       </div>
