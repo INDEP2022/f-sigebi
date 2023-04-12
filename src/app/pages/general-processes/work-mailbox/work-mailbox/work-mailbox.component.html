@@ -85,7 +85,7 @@
                       [optionTemplate]="userOption">
                     </ngx-select>
 
-                    <ng-template #userLabel let-item="item"
+                    <ng-template [showTooltip]="true" #userLabel let-item="item"
                       >{{ item.id }} - {{ item.name }}</ng-template
                     >
                     <ng-template #userOption let-item="item"
