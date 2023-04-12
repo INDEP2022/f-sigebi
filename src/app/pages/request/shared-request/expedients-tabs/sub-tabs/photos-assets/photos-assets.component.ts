@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -37,6 +38,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   idGood: number = 0;
   idWarehouse: number = 0;
   columns = LIST_ASSETS_COLUMNS;
+  formLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -164,6 +166,11 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   filter() {
     const goodNumber = this.filterForm.get('management').value;
     const typeGood = this.filterForm.get('typeGood').value;
+
+    if (!goodNumber && !typeGood) {
+      this.getGoodsRequest();
+    }
+
     if (goodNumber) {
       const filter = this.paragraphs.filter(good => {
         return good.id == goodNumber;
@@ -209,7 +216,29 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   uploadFiles(data: any) {
-    this.openModal(UploadFileComponent, data);
+    let loadingPhotos = 0;
+    console.log('photos update', loadingPhotos);
+    const idRequest = this.idRequest;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      data,
+      idRequest,
+      callBack: (next: boolean) => {
+        if (next) {
+          this.formLoading = true;
+          console.log('photos', loadingPhotos);
+          loadingPhotos = loadingPhotos + 1;
+          setTimeout(() => {
+            this.getGoodsRequest();
+            this.formLoading = false;
+          }, 7000);
+          if (loadingPhotos == 1) {
+            this.onLoadToast('success', 'Imagen cargada correctamente', '');
+          }
+        }
+      },
+    };
+    this.modalService.show(UploadFileComponent, config);
   }
 
   openPhotos(data: any) {
