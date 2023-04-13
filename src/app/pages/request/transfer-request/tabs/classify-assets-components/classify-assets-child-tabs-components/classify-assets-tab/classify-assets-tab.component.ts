@@ -592,7 +592,7 @@ export class ClassifyAssetsTabComponent
           setTimeout(() => {
             this.loading = false;
             this.formLoading = false;
-          }, 400);
+          }, 300);
         }
       },
       error: error => {
