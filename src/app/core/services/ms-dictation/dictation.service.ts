@@ -50,4 +50,12 @@ export class DictationService extends HttpService {
   remove(body: { id: string | number; typeDict: string }) {
     return this.delete(this.route.Dictation, body);
   }
+  postValidationGoodAvailable(model: Object) {
+    const route = `${DictationEndpoints.ValidationGoodAvailable}`;
+    return this.post(route, model);
+  }
+  getParamsOfTypeGood(model: Object) {
+    const route = `${DictationEndpoints.getParamsOfTypeGood}`;
+    return this.post(route, model);
+  }
 }

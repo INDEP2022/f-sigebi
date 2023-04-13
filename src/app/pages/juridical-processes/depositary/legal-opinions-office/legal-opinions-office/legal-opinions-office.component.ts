@@ -133,9 +133,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       file: [null, [Validators.required]],
       numberOfficeDic: [null, [Validators.required]],
-      typeOffice: [null, [Validators.required]],
+      typeOffice: [null],
       passwordArmedOffice: [null, [Validators.required]],
       authorizedDic: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      issuingUser: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -153,14 +157,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      introductoryParagraph: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      finalParagraph: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      introductoryParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
+      finalParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
       numberNotary: [null, [Validators.required]],
       ccp_person: [null, [Validators.required]],
       ccp_addressee: [
@@ -172,14 +170,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       ccp_person_I: [null, [Validators.required]],
-      ccp_addressee_I: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      ccp_TiPerson_I: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      ccp_addressee_I: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp_TiPerson_I: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }
