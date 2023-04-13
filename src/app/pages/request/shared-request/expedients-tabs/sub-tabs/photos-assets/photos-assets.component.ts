@@ -208,7 +208,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   uploadFiles(data: any) {
     let loadingPhotos = 0;
-    console.log('photos update', loadingPhotos);
     const idRequest = this.idRequest;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
@@ -217,7 +216,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       callBack: (next: boolean) => {
         if (next) {
           this.formLoading = true;
-          console.log('photos', loadingPhotos);
           loadingPhotos = loadingPhotos + 1;
           setTimeout(() => {
             this.getGoodsRequest();

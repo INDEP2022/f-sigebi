@@ -36,9 +36,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     //private http: HttpClient,
     private signatoriesService: SignatoriesService,
-    private externalFirmService: ExternalFirmService
-  ) //private encrypService: EncrypService
-  {
+    private externalFirmService: ExternalFirmService //private encrypService: EncrypService
+  ) {
     super();
   }
 

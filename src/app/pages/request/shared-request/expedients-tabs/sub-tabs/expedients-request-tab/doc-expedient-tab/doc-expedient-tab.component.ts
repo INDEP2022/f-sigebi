@@ -166,7 +166,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         });
 
         Promise.all(info).then(x => {
-          console.log('filterTypeDoc', x);
           this.paragraphs = x;
           this.totalItems = this.paragraphs.length;
         });
@@ -511,7 +510,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     const idRequest = this.idRequest;
     let typeDoc = 'doc-expedient';
     const idExpedient = this.idExpedient;
-    //console.log(this.typeDoc);
 
     let config: ModalOptions = {
       initialState: {
@@ -586,7 +584,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   getTransfe(params: ListParams) {
     this.transferentService.getByIdState(this.stateId).subscribe({
       next: data => {
-        console.log('d', data);
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       },
       error: error => {},

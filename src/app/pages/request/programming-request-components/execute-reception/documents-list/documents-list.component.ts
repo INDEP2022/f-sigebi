@@ -74,7 +74,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('lista documentos');
     this.prepareForm();
     this.request = this.parameter as IRequest;
     this.getTypeDocumentSelect(new ListParams());
@@ -171,7 +170,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log(error);
         this.loading = false;
       },
     });
@@ -195,7 +193,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log(error);
         this.loading = false;
       },
     });
@@ -262,8 +259,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   viewDocument(event: any) {
     const docName = event.data.dDocName;
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
-
-    console.log('documento nombre', docName);
 
     this.wcontetService.obtainFile(docName).subscribe(data => {
       let blob = this.dataURItoBlob(data);

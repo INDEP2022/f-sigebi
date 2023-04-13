@@ -160,6 +160,7 @@ export abstract class ScheduledMaintenance extends BasePage {
       claveActa: [null],
     });
     this.setForm();
+    console.log(this.form.value);
   }
 
   private fillParams() {
@@ -175,11 +176,12 @@ export abstract class ScheduledMaintenance extends BasePage {
       return false;
     }
     this.filterParams = new FilterParams();
-    if (tipoEvento) {
+    if (tipoEvento && tipoEvento !== 'TODOS') {
+      console.log(tipoEvento);
       this.filterParams.addFilter('typeProceedings', tipoEvento);
     }
 
-    if (statusEvento) {
+    if (statusEvento && statusEvento !== 'TODOS') {
       this.filterParams.addFilter('statusProceedings', statusEvento);
     }
     if (fechaInicio) {

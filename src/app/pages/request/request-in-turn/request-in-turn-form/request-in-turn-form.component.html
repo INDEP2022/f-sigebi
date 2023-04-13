@@ -76,7 +76,7 @@
               (fetchItems)="($event)"
               [data]="selectStation"
               label="Emisora"
-              bindLabel="stationName"
+              bindLabel="nameAndId"
               value="id"></ngx-select>
           </div>
           <div class="col-md-4">
@@ -107,7 +107,7 @@
               control="authority"
               (fetchItems)="getAuthority($event)"
               [data]="selectAuthority"
-              bindLabel="authorityName"
+              bindLabel="nameAndId"
               label="Autoridad"
               value="idAuthority"></ngx-select>
           </div>
@@ -152,7 +152,7 @@
             </form-field>
           </div>
         </div>
-        <div class="row mb-3">
+        <div class="row pt-4">
           <div class="col-md-4">
             <ngx-select
               [form]="searchForm"
@@ -175,13 +175,13 @@
           </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row pt-4">
           <div class="col-md-4">
             <ngx-select
               [form]="searchForm"
               [data]="selectTransfer"
               control="transfer"
-              bindLabel="nameTransferent"
+              bindLabel="nameAndId"
               (fetchItems)="getTransferente($event)"
               label="Transferente"
               value="id"></ngx-select>
@@ -198,7 +198,7 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row pt-4">
           <div class="d-flex justify-content-end">
             <div class="p-2">
               <button

@@ -1,33 +1,45 @@
+import { DatePipe } from '@angular/common';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const INDICATORS_GOOD_COLUMNS1 = {
-  description: {
-    title: 'Descripción',
+  idGoodNumber: {
+    title: 'Nombre',
     type: 'text',
     sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
   },
-  quantity: {
+  value: {
     title: 'Valor',
-    type: 'text',
+    type: 'number',
     sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.quantity;
+    // },
   },
 };
 
 export const INDICATORS_COLUMNS2 = {
   idGoodNumber: {
-    title: 'Bien',
-    type: 'number',
+    title: 'Nombre',
+    type: 'text',
     sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
   },
-  description: {
+  idIndicatorDate: {
     title: 'Descripción',
     type: 'text',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idGoodNumber.description;
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
     },
   },
-  value: {
+  registryNumber: {
     title: '',
     sort: true,
     type: 'custom',

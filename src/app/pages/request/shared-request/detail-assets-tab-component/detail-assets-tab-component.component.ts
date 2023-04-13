@@ -74,6 +74,9 @@ export class DetailAssetsTabComponentComponent
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number | string = null;
+  combineMunicipalityId = true;
+  localityKey: number | string = null;
+  combineLocalityId = true;
   relevantTypeName: string;
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
@@ -415,10 +418,7 @@ export class DetailAssetsTabComponentComponent
         ],
       ],
       appraisalDate: [null, [Validators.required]],
-      certLibLien: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
+      certLibLien: [null, [Validators.pattern(STRING_PATTERN)]],
       guardCustody: [
         null,
         [
@@ -441,27 +441,27 @@ export class DetailAssetsTabComponentComponent
       ],
       bedrooms: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       bathroom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       kitchen: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       diningRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       livingRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       study: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       espPark: [
         null,
@@ -486,7 +486,7 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      certLibLienDate: [null, [Validators.required]],
+      certLibLienDate: [null],
       pffDate: [null, [Validators.required]],
       gravFavorThird: [
         null,
@@ -633,7 +633,45 @@ export class DetailAssetsTabComponentComponent
     }*/
     this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+        if (this.municipalityId !== 0) {
+          if (this.combineMunicipalityId) {
+            const newParams = {
+              ...params,
+              'filter.municipalityKey': `$eq:${this.municipalityId}`,
+            };
+            this.goodsInvService
+              .getAllMunipalitiesByFilter(newParams)
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  this.selectMunicipe = new DefaultSelect(
+                    response.data
+                      ? response.data[0]
+                        ? [
+                            response.data[0],
+                            ...resp.data.filter(
+                              (item: any) =>
+                                item.municipalityKey !== this.municipalityId
+                            ),
+                          ]
+                        : resp.data
+                      : resp.data,
+                    resp.count
+                  );
+                  this.combineMunicipalityId = false;
+                },
+                error: err => {
+                  this.selectMunicipe = new DefaultSelect(resp.data);
+                },
+              });
+          } else {
+            this.selectMunicipe = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.municipalityKey !== this.municipalityId
+              )
+            );
+          }
+        }
       },
       error: error => {},
     });
@@ -654,8 +692,43 @@ export class DetailAssetsTabComponentComponent
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
-      next: data => {
-        this.selectLocality = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        if (this.localityKey !== 0) {
+          if (this.combineLocalityId) {
+            const newParams = {
+              ...params,
+              'filter.townshipKey': `$eq:${this.localityKey}`,
+            };
+            this.goodsInvService.getAllTownshipByFilter(newParams).subscribe({
+              next: response => {
+                console.log(response);
+                this.selectLocality = new DefaultSelect(
+                  response.data
+                    ? response.data[0]
+                      ? [
+                          response.data[0],
+                          ...resp.data.filter(
+                            (item: any) => item.townshipKey !== this.localityKey
+                          ),
+                        ]
+                      : resp.data
+                    : resp.data,
+                  resp.count
+                );
+                this.combineLocalityId = false;
+              },
+              error: err => {
+                this.selectLocality = new DefaultSelect(resp.data);
+              },
+            });
+          } else {
+            this.selectLocality = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.townshipKey !== this.localityKey
+              )
+            );
+          }
+        }
       },
       error: error => {},
     });
@@ -1217,7 +1290,7 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.stateOfRepId = domicilie.statusKey;
     this.municipalityId = domicilie.municipalityKey;
-
+    this.localityKey = domicilie.localityKey;
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     this.getMunicipaly(new ListParams(), this.municipalityId);
 
