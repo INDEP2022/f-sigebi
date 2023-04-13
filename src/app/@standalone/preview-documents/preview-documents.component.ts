@@ -82,6 +82,7 @@ export class PreviewDocumentsComponent implements OnInit {
     private r2: Renderer2
   ) {}
   ngOnInit() {
+    console.log(this.documento.type);
     const merged = this.mergeConfig(DEFAULT_CONFIG, this.moduleConfig);
     this.config = this.mergeConfig(merged, this.config);
     this.triggerConfigBinding();
