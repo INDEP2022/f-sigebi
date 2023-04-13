@@ -24,7 +24,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 
 @Component({
@@ -578,7 +577,7 @@ export class ClassifyAssetsTabComponent
     params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: (data: any) => {
-        this.selectLevel4 = new DefaultSelect(data.data, data.count);
+        this.selectLevel4 = data.data; //new DefaultSelect(data.data, data.count);
 
         if (this.advSearch === true) {
           this.listAdvancedFractions.push(data.data[0].id);
@@ -589,6 +588,11 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['ligieLevel4'].setValue(
             this.good.ligieLevel4
           );
+
+          setTimeout(() => {
+            this.loading = false;
+            this.formLoading = false;
+          }, 400);
         }
       },
       error: error => {
@@ -824,16 +828,19 @@ export class ClassifyAssetsTabComponent
         if (dataLevel3 != null) {
           let fractionCode = this.selectLevel3.filter(
             (x: any) => x.id === dataLevel3
-          )[0].fractionCode;
-          this.getUnidMeasure(fractionCode);
-          this.setFractionId(dataLevel3, fractionCode, 'Nivel 3');
+          )[0];
 
-          const relevantTypeId = this.getRelevantTypeId(
-            this.selectLevel3,
-            dataLevel3
-          );
-          this.setRelevantTypeId(relevantTypeId);
-          //this.getRelevantTypeId(this.selectLevel3.data, dataLevel3);
+          if (fractionCode) {
+            this.getUnidMeasure(fractionCode.fractionCode);
+            this.setFractionId(dataLevel3, fractionCode, 'Nivel 3');
+
+            const relevantTypeId = this.getRelevantTypeId(
+              this.selectLevel3,
+              dataLevel3
+            );
+            this.setRelevantTypeId(relevantTypeId);
+            //this.getRelevantTypeId(this.selectLevel3.data, dataLevel3);
+          }
 
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
@@ -878,18 +885,10 @@ export class ClassifyAssetsTabComponent
   //registra el fraction id en el formulario
   setFractionId(fractionId: number, fractionCode: string, campo: string) {
     if (fractionCode !== null) {
-      if (fractionCode.length >= 8) {
-        this.classiGoodsForm.controls['fractionId'].setValue(
-          Number(fractionId)
-        );
-      }
-    } /* else {
-      this.message(
-        'info',
-        'Fraccion Nula',
-        `La fracción del campo ${campo} no tiene un codigo`
-      );
-    } */
+      //if (fractionCode.length >= 8) {
+      this.classiGoodsForm.controls['fractionId'].setValue(Number(fractionId));
+      //}
+    }
   }
 
   //obtenien la unidad de medida
@@ -897,10 +896,9 @@ export class ClassifyAssetsTabComponent
     if (value) {
       if (value.length === 8) {
         const fractionCode = { fraction: value };
-        this.goodsQueryService
-          .getUnitLigie(fractionCode)
-          .subscribe((data: any) => {
-            //guarda el no_clasify_good
+        this.goodsQueryService.getUnitLigie(fractionCode).subscribe({
+          next: (data: any) => {
+            //guarda el no_clasify_good numero clasificacion del bien
             if (data.clasifGoodNumber !== null) {
               this.classiGoodsForm.controls['goodClassNumber'].setValue(
                 data.clasifGoodNumber
@@ -930,8 +928,15 @@ export class ClassifyAssetsTabComponent
                   );
                 }
               });
-          });
-      }
+          },
+          error: error => {
+            console.log(error.error.message);
+          },
+        });
+      } /*  else {
+        this.classiGoodsForm.controls['goodClassNumber'].setValue(0);
+        this.classiGoodsForm.controls['ligieUnit'].setValue('');
+      } */
     }
   }
 
