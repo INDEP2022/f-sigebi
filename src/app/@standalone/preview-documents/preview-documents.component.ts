@@ -5,6 +5,7 @@ import {
   Inject,
   OnInit,
   Optional,
+  Renderer2,
 } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ImageViewerConfig } from './image-viewer.config';
@@ -77,7 +78,8 @@ export class PreviewDocumentsComponent implements OnInit {
   private rotate: boolean = true;
   constructor(
     @Optional() @Inject('config') public moduleConfig: ImageViewerConfig,
-    public modalRef: BsModalRef
+    public modalRef: BsModalRef,
+    private r2: Renderer2
   ) {}
   ngOnInit() {
     const merged = this.mergeConfig(DEFAULT_CONFIG, this.moduleConfig);
