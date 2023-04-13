@@ -19,7 +19,7 @@ const READ_PERMISSION = 'read';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
-  timeOut: number = 58;
+  timeOut: number = 10;
   private isRefreshing = false;
 
   constructor(
@@ -59,7 +59,6 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
       const timeNow = new Date(
         this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
       ).getMinutes();
-      console.log(timeNow);
 
       if (timeNow <= this.timeOut && timeNow > 0) {
         const token = this.authService.accessRefreshToken();
