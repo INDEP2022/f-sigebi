@@ -32,18 +32,19 @@ export const WORK_MAILBOX_COLUMNS = {
 };
 
 export const WORK_BIENES_COLUMNS = {
-  goodNumber: {
-    title: 'No. Bienes',
+  id: {
+    title: 'No. Bien',
     sort: false,
   },
   quantity: {
     title: 'Cantidad',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
+  //TODO:VALIDATE ENTITY
   parentGoodMenajeNumber: {
     title: 'No. Bien Padre Menaje',
     sort: false,

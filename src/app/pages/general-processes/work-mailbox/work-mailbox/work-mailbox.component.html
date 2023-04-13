@@ -79,17 +79,20 @@
                       control="user"
                       label="Usuario"
                       [searchOnInit]="true"
+                      [showTooltip]="true"
                       termMaxLength="30"
                       [labelTemplate]="userLabel"
                       [optionTemplate]="userOption">
                     </ngx-select>
 
-                    <ng-template #userLabel let-item="item"
-                      >{{ item.id }} - {{ item.name }}</ng-template
-                    >
-                    <ng-template #userOption let-item="item"
-                      >{{ item.id }} - {{ item.name }}</ng-template
-                    >
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id }} - {{ item.name }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.name">
+                        {{ item.id }} - {{ item.name }}
+                      </div>
+                    </ng-template>
                   </form-field>
                   <form-field
                     class="mb-3 mt-3"
@@ -102,6 +105,7 @@
                       bindLabel="description"
                       control="managementArea"
                       [searchOnInit]="true"
+                      [showTooltip]="true"
                       termMaxLength="30"
                       label="Buz&oacute;n de &Aacute;rea"
                       [labelTemplate]="areaLabel"
@@ -111,9 +115,11 @@
                     <ng-template #areaLabel let-item="item"
                       >{{ item.id }} - {{ item.description }}</ng-template
                     >
-                    <ng-template #areaOption let-item="item"
-                      >{{ item.id }} - {{ item.description }}</ng-template
-                    >
+                    <ng-template #areaOption let-item="item">
+                      <div [title]="item.id + '-' + item.description">
+                        {{ item.id }} - {{ item.description }}
+                      </div>
+                    </ng-template>
                   </form-field>
                 </div>
                 <div class="col-12 col-md-12 col-lg-12 col-xl-7">
@@ -272,7 +278,7 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
+              <a class="dropdown-item" (click)="workFunction('getIdentifier')"
                 >Volante</a
               >
             </li>

@@ -270,7 +270,7 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div class="table-responsive">
+      <div class="table-responsive" style="height: 50rem">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
@@ -288,13 +288,6 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          [disabled]="!documentForm.valid"
-          [loading]="loading"
-          [btnSmall]="true"
-          (confirm)="confirm()"></confirm-button>
-      </div>
       <div class="m-3">
         <button
           type="button"

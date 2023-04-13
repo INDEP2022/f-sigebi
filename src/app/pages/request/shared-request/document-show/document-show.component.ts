@@ -95,8 +95,6 @@ export class DocumentShowComponent extends BasePage implements OnInit {
   }
 
   openDocument(event: any) {
-    console.log('documento nombre', this.docName);
-
     this.wcontentService.obtainFile(this.docName).subscribe(data => {
       let blob = this.dataURItoBlob(data);
       let file = new Blob([blob], { type: 'application/pdf' });

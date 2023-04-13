@@ -92,8 +92,8 @@ export class JuridicalFileUpdateService extends HttpService {
     );
   }
 
-  getAffair(id: string | number) {
-    return this.affairService.getById(id).pipe(
+  getAffair(id: string | number, origin: 'SIAB' = 'SIAB') {
+    return this.affairService.getByIdAndOrigin(id, origin).pipe(
       map(data => {
         return {
           ...data,
