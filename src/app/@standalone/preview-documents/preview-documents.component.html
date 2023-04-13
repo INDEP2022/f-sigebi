@@ -4,9 +4,17 @@
   [style.backgroundColor]="config.containerBackgroundColor"
   (wheel)="scrollZoom($event)"
   (dragover)="onDragOver($event)">
+  <object
+    *ngIf="documento.type != 'img'"
+    [data]="documento.urlDoc"
+    [ngStyle]="style"
+    (dragstart)="onDragStart($event)"
+    (load)="onLoad()"
+    style="min-height: 500px !important; width: 100%">
+    <p>Document not found...</p>
+  </object>
   <img
     *ngIf="documento.type == 'img'"
-    id="miobjeto"
     [src]="documento.urlDoc"
     [ngStyle]="style"
     alt="Document not found..."
