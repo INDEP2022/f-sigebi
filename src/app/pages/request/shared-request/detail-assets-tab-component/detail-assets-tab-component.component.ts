@@ -74,6 +74,7 @@ export class DetailAssetsTabComponentComponent
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number | string = null;
+  localityKey: number | string = null;
   relevantTypeName: string;
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
@@ -630,7 +631,34 @@ export class DetailAssetsTabComponentComponent
     }*/
     this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+        if (this.municipalityId !== 0) {
+          const newParams = {
+            ...params,
+            'filter.municipalityKey': `$eq:${this.municipalityId}`,
+          };
+          this.goodsInvService.getAllMunipalitiesByFilter(newParams).subscribe({
+            next: response => {
+              console.log(response);
+              this.selectMunicipe = new DefaultSelect(
+                response.data
+                  ? response.data[0]
+                    ? [
+                        response.data[0],
+                        ...resp.data.filter(
+                          (item: any) =>
+                            item.municipalityKey !== this.municipalityId
+                        ),
+                      ]
+                    : resp.data
+                  : resp.data,
+                resp.count
+              );
+            },
+            error: err => {
+              this.selectMunicipe = new DefaultSelect(resp.data);
+            },
+          });
+        }
       },
       error: error => {},
     });
@@ -651,8 +679,34 @@ export class DetailAssetsTabComponentComponent
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
-      next: data => {
-        this.selectLocality = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        if (this.localityKey !== 0) {
+          const newParams = {
+            ...params,
+            'filter.townshipKey': `$eq:${this.localityKey}`,
+          };
+          this.goodsInvService.getAllTownshipByFilter(newParams).subscribe({
+            next: response => {
+              console.log(response);
+              this.selectLocality = new DefaultSelect(
+                response.data
+                  ? response.data[0]
+                    ? [
+                        response.data[0],
+                        ...resp.data.filter(
+                          (item: any) => item.townshipKey !== this.localityKey
+                        ),
+                      ]
+                    : resp.data
+                  : resp.data,
+                resp.count
+              );
+            },
+            error: err => {
+              this.selectLocality = new DefaultSelect(resp.data);
+            },
+          });
+        }
       },
       error: error => {},
     });
@@ -1214,7 +1268,7 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.stateOfRepId = domicilie.statusKey;
     this.municipalityId = domicilie.municipalityKey;
-
+    this.localityKey = domicilie.localityKey;
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     this.getMunicipaly(new ListParams(), this.municipalityId);
 
