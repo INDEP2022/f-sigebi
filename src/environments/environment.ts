@@ -15,7 +15,7 @@ export const environment = {
 
   API_REPORTS_BASE: window.env.API_REPORTS_BASE,
   API_REPORTS: window.env.API_REPORTS,
-  API_REPORTS_USR: window.env.API_REPORTS,
+  API_REPORTS_USR: window.env.API_REPORTS_USR,
   API_REPORTS_PSW: window.env.API_REPORTS_PSW,
 
   api_external_token: window.env.api_external_token,
