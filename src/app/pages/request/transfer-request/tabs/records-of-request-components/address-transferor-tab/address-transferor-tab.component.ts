@@ -51,8 +51,10 @@ export class AddressTransferorTabComponent
   //addressForm: ModelForm<any>;
   domicileForm: ModelForm<any>;
   municipalityId: number = 0;
+  combineMunicipalityId = true;
   keyStateOfRepublic: number = 0;
   localityId: number = 0;
+  combineLocalityId = true;
   public event: EventEmitter<any> = new EventEmitter();
 
   selectState = new DefaultSelect<any>();
@@ -101,10 +103,8 @@ export class AddressTransferorTabComponent
       this.domicileForm.disable();
     }
     this.formReactiveCalls();
-
     if (this.requestObject != undefined) {
       this.getDomicileTransferent(this.requestObject.id);
-
       this.getStateOfRepublic(
         new ListParams(),
         this.requestObject.keyStateOfRepublic
@@ -193,7 +193,7 @@ export class AddressTransferorTabComponent
         this.regDelegationId
       );
       this.domicileForm.controls['warehouseAlias'].setValue('');
-      this.getStateOfRepublic(new ListParams());
+      // this.getStateOfRepublic(new ListParams());
     }
   }
 
@@ -206,6 +206,7 @@ export class AddressTransferorTabComponent
             this.keyStateOfRepublic = Number(data.id);
             this.selectState = new DefaultSelect([data], 1);
             this.domicileForm.controls['statusKey'].setValue(keyState);
+            console.log(this.domicileForm.value);
           },
           error: error => {},
         });
@@ -226,11 +227,50 @@ export class AddressTransferorTabComponent
   getMunicipaly(params: ListParams, stateKey?: number) {
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     params['filter.nameMunicipality'] = `$ilike:${params.text}`;
-    params.limit = 30;
-
+    // params.limit = 9;
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+        console.log(this.municipalityId);
+        if (this.municipalityId !== 0) {
+          if (this.combineMunicipalityId) {
+            const newParams = {
+              ...params,
+              'filter.municipalityKey': `$eq:${this.municipalityId}`,
+            };
+            this.goodsinvService
+              .getAllMunipalitiesByFilter(newParams)
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  this.selectMunicipe = new DefaultSelect(
+                    response.data
+                      ? response.data[0]
+                        ? [
+                            response.data[0],
+                            ...resp.data.filter(
+                              (item: any) =>
+                                item.municipalityKey !== this.municipalityId
+                            ),
+                          ]
+                        : resp.data
+                      : resp.data,
+                    resp.count
+                  );
+                  this.combineMunicipalityId = false;
+                },
+                error: err => {
+                  this.selectMunicipe = new DefaultSelect(resp.data);
+                },
+              });
+          } else {
+            this.selectMunicipe = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.municipalityKey !== this.municipalityId
+              )
+            );
+          }
+        }
+        //
         if (this.isAddress === true) {
           this.domicileForm.controls['municipalityKey'].setValue(
             this.municipalityId
@@ -238,6 +278,23 @@ export class AddressTransferorTabComponent
         }
       },
     });
+    console.log(this.municipalityId);
+    // const newParams = { ...params, 'filter.municipalityKey': `$eq:${this.municipalityId}` }
+    // this.goodsinvService.getAllMunipalitiesByFilter(newParams).subscribe({
+    //   next: response => {
+    //     console.log(response);
+    //     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
+    //       next: resp => {
+    //         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+    //         if (this.isAddress === true) {
+    //           this.domicileForm.controls['municipalityKey'].setValue(
+    //             this.municipalityId
+    //           );
+    //         }
+    //       },
+    //     });
+    //   }
+    // })
   }
 
   //obtener la colonia
@@ -246,12 +303,47 @@ export class AddressTransferorTabComponent
     params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
-    params.limit = 100;
+    // params.limit = 100;
 
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
-        this.selectLocality = new DefaultSelect(resp.data, resp.count);
-
+        console.log(this.localityId);
+        if (this.localityId !== 0) {
+          if (this.combineLocalityId) {
+            const newParams = {
+              ...params,
+              'filter.townshipKey': `$eq:${this.localityId}`,
+            };
+            this.goodsinvService.getAllTownshipByFilter(newParams).subscribe({
+              next: response => {
+                console.log(response);
+                this.selectLocality = new DefaultSelect(
+                  response.data
+                    ? response.data[0]
+                      ? [
+                          response.data[0],
+                          ...resp.data.filter(
+                            (item: any) => item.townshipKey !== this.localityId
+                          ),
+                        ]
+                      : resp.data
+                    : resp.data,
+                  resp.count
+                );
+                this.combineLocalityId = false;
+              },
+              error: err => {
+                this.selectLocality = new DefaultSelect(resp.data);
+              },
+            });
+          } else {
+            this.selectLocality = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.townshipKey !== this.localityId
+              )
+            );
+          }
+        }
         if (this.isAddress === true) {
           this.domicileForm.controls['localityKey'].setValue(
             Number(this.localityId)
@@ -338,6 +430,7 @@ export class AddressTransferorTabComponent
   formReactiveCalls() {
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(
       (data: any) => {
+        console.log('changed');
         this.keyStateOfRepublic = Number(data);
         this.getMunicipaly(new ListParams(), data);
       }

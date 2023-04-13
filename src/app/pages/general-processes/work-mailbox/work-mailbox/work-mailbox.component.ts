@@ -1554,14 +1554,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
 
     if (result.isConfirmed) {
-      if (!this.managementAreaF && !this.user) {
-        return this.onLoadToast(
-          'error',
-          'Error',
-          'No se ha asignado el usuario o el area en el trámite, favor de agregarla'
-        );
+      if (this.managementAreaF.value && this.user.value) {
+        this.savePaperwork('1').subscribe();
+      } else {
+        this.savePaperwork('2').subscribe();
       }
-      this.savePaperwork().subscribe();
     }
   }
 
@@ -1581,13 +1578,23 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  savePaperwork() {
-    const { processNumber } = this.selectedRow;
-    const body = {
-      status: this.managementAreaF.value.id + 'I',
-      userTurned: this.user.value.id,
-      situation: 1,
-    };
+  savePaperwork(option: string) {
+    const { processNumber, processStatus, userATurn } = this.selectedRow;
+    let body;
+    if (option === '1') {
+      body = {
+        status: this.managementAreaF.value.id + 'I',
+        userTurned: this.user.value.id,
+        situation: 1,
+      };
+    } else {
+      body = {
+        status: processStatus.slice(0, 2) + 'I',
+        userTurned: userATurn,
+        situation: 1,
+      };
+    }
+
     return this.procedureManagementService.update(processNumber, body).pipe(
       catchError(error => {
         this.onLoadToast(
