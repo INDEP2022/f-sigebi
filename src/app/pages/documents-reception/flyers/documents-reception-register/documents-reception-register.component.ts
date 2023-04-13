@@ -169,6 +169,7 @@ export class DocumentsReceptionRegisterComponent
   pgrGoodsProcessed: boolean = true;
   loadingPostCapture: boolean = false;
   formLoading: boolean = false;
+  captureAfterSave: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -365,6 +366,21 @@ export class DocumentsReceptionRegisterComponent
       this.documentsReceptionForm.patchValue(
         this.docDataService.documentsReceptionRegisterForm
       );
+    } else if (this.formControls.wheelNumber.value != null) {
+      console.log('Forma restablecida automaticamente');
+      this.formControls.wheelType.setValue(
+        this.docDataService.documentsReceptionRegisterForm.wheelType
+      );
+      const param = new FilterParams();
+      param.addFilter('flierNumber', this.formControls.wheelNumber.value);
+      this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
+        next: data => {
+          this.checkPgrGoods(
+            data.data[0].id,
+            this.formControls.wheelNumber.value
+          );
+        },
+      });
     }
     console.log(this.docDataService.documentsReceptionRegisterForm);
   }
@@ -435,21 +451,31 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
-  checkPgrGoods() {
+  checkPgrGoods(processId?: number, flyerId?: number) {
     console.log('Check Pgr Goods');
     console.log(this.pageParams.pNoTramite);
     console.log(this.globals.noVolante);
     const params = new FilterParams();
     // params.addFilter('id', this.pageParams.pNoTramite);
     this.hideError();
-    console.log(params.getParams());
-    this.procedureManageService.getById(this.pageParams.pNoTramite).subscribe({
+    let process: number, flyer: number;
+    if (processId) {
+      process = processId;
+    } else {
+      process = this.pageParams.pNoTramite;
+    }
+    if (flyerId) {
+      flyer = flyerId;
+    } else {
+      flyer = this.globals.noVolante;
+    }
+    this.procedureManageService.getById(process).subscribe({
       next: data => {
         console.log(data);
         const { status, typeManagement } = data;
         if (!['', null, undefined].includes(status) && status.includes('OP')) {
           params.removeAllFilters();
-          params.addFilter('flyerNumber', this.globals.noVolante);
+          params.addFilter('flyerNumber', flyer);
           this.docRegisterService.getGoods(params.getParams()).subscribe({
             next: data => {
               console.log(data);
@@ -1208,6 +1234,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.cityNumber.setValue(null);
       this.hideError();
       this.getCities({ page: 1, text: '' });
+      this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -2177,6 +2204,7 @@ export class DocumentsReceptionRegisterComponent
         this.changeDetectorRef.detectChanges();
       },
     });
+    this.changeDetectorRef.detectChanges();
   }
 
   getManagementAreas(lparams: ListParams) {
@@ -3131,13 +3159,14 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.externalOfficeDate.disable();
             this.loading = false;
             this.blockErrors(false);
-            this.alert(
-              'success',
-              'Volante actualizado',
-              `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
-            );
-            if (this.formControls.goodRelation.value == 'S') {
-              //this.sendToGoodsCapture();
+            if (this.captureAfterSave) {
+              this.sendToGoodsCapture();
+            } else {
+              this.alert(
+                'success',
+                'Volante actualizado',
+                `Se actualizó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
+              );
             }
           },
           error: err => {
@@ -3495,6 +3524,7 @@ export class DocumentsReceptionRegisterComponent
       this.goodsCaptureCheck();
       console.log('Next capture');
     } else {
+      this.captureAfterSave = true;
       this.save();
       console.log('Next save');
     }
