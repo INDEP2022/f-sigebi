@@ -75,6 +75,8 @@ export class SelectListFilteredModalComponent
       actions: false,
       columns: { ...this.columnsType },
     };
+    // console.log(this.settings);
+
     this.addFilters();
     if (this.dataObservableFn) {
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
