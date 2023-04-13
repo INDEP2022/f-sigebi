@@ -90,6 +90,7 @@ import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
+import { ObservationsComponent } from '../components/observations/observations.component';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -585,14 +586,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         // })
       });
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      console.log('se ejecutó');
-      if (this.predeterminedF.value) {
-        this.getUser();
-      } else {
-        this.getData();
-      }
-    });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => {
+        console.log('se ejecutó');
+        if (this.predeterminedF.value) {
+          this.getUser();
+        } else {
+          this.getData();
+        }
+      })
+      .unsubscribe();
 
     //this.getAreas();
     //this.getGroupWork();
@@ -1624,7 +1628,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.onLoadToast('success', 'El trámite se canceló correctamente', '');
         this.getData();
       })
     );
@@ -2266,6 +2270,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'getIdentifier':
           this.getIdentifier();
           break;
+        case 'updateObservations':
+          this.updateObservations();
+          break;
         default:
           this.alertQuestion(
             'info',
@@ -2456,6 +2463,25 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
       },
     });
+  }
+
+  openModal(context?: Partial<ObservationsComponent>) {
+    const modalRef = this.modalService.show(ObservationsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.onLoadToast('success', 'Elemento Actualizado', '');
+        this.getData();
+      }
+    });
+  }
+
+  updateObservations() {
+    const process = this.selectedRow;
+    this.openModal({ process });
   }
 
   onSaveConfirm(event: any) {
