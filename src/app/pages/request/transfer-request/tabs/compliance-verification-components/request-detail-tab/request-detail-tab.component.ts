@@ -7,10 +7,14 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { PHONE_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -25,15 +29,22 @@ export class RequestDetailTabComponent
   @Input() typeDoc = '';
   //datos pasados del padre
   @Input() requestForm: ModelForm<any>;
+  @Input() process: string = '';
   public receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
   priority: any = null;
   idRequest: number = 0;
   infoRequest: IRequest;
+  affairName: string = '';
+  ofiginName: string = '';
+  selectOriginInfo = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private affairService: AffairService,
+    private genericsService: GenericService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -44,7 +55,17 @@ export class RequestDetailTabComponent
     this.showDataProg();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.requestForm.controls['originInfo'].value) {
+      const originId = Number(this.requestForm.controls['originInfo'].value);
+      this.getOriginInfo(new ListParams(), originId);
+    }
+
+    if (this.requestForm.controls['affair'].value) {
+      const affair = Number(this.requestForm.controls['affair'].value);
+      this.getAffair(affair);
+    }
+  }
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
@@ -55,7 +76,10 @@ export class RequestDetailTabComponent
       typeExpedient: [null],
       nameSender: [null],
       senderCharge: [null],
-      phoneSender: [null],
+      phoneSender: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+      ],
       emailSender: [null],
       publicMinister: [null],
       tribunal: [null],
@@ -73,7 +97,6 @@ export class RequestDetailTabComponent
 
   showDataProg() {
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
-      console.log(data);
       this.infoRequest = data;
     });
   }
@@ -82,7 +105,30 @@ export class RequestDetailTabComponent
 
   confirm() {
     this.loading = true;
-    console.log(this.receptionForm.value);
+  }
+
+  getAffair(id: number) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.affairService.getAll(params).subscribe({
+      next: ({ data }) => {
+        this.affairName = data[0].description;
+      },
+      error: error => {
+        this.affairName = '';
+      },
+    });
+  }
+
+  getOriginInfo(params: ListParams, id: number) {
+    params['filter.name'] = '$eq:Procedencia';
+    params['filter.keyId'] = `$eq:${id}`;
+    params.limit = 20;
+    this.genericsService.getAll(params).subscribe({
+      next: resp => {
+        this.ofiginName = resp.data[0].description;
+      },
+    });
   }
 
   reactiveFormCalls() {
@@ -93,6 +139,16 @@ export class RequestDetailTabComponent
           this.requestForm.controls['urgentPriority'].value === '0'
             ? false
             : true;
+      }
+
+      if (this.requestForm.controls['affair'].value) {
+        const affair = Number(this.requestForm.controls['affair'].value);
+        this.getAffair(affair);
+      }
+
+      if (this.requestForm.controls['originInfo'].value) {
+        const originId = Number(this.requestForm.controls['originInfo'].value);
+        this.getOriginInfo(new ListParams(), originId);
       }
     });
   }

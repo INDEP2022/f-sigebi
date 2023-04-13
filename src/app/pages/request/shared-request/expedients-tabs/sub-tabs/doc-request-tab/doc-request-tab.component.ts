@@ -11,12 +11,16 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -53,22 +57,26 @@ export class DocRequestTabComponent
   selectDocType = new DefaultSelect<any>();
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+  paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
+  paragraphs: LocalDataSource = new LocalDataSource();
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
-  selectRegDelegation = new DefaultSelect<any>();
+  selectRegDelegation = new DefaultSelect<IDelegation>();
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
-
+  totalItems: number = 0;
+  formLoading: boolean = false;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
     private modalRef: BsModalRef,
     private activatedRoute: ActivatedRoute,
     private wContentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private regDelService: RegionalDelegationService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -77,14 +85,14 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
-    console.log(this.typeDoc);
-    this.typeDoc = this.type ? this.type : this.typeDoc;
-    if (this.typeDoc === 'doc-request') {
-      //hacer visible la vista principal y no el ng-template
-      this.container.createEmbeddedView(this.template);
-    }
     this.prepareForm();
     this.setTypeColumn();
+    this.getRegDelegation(new ListParams());
+    this.getDocType(new ListParams());
+    this.typeDoc = this.type ? this.type : this.typeDoc;
+    if (this.typeDoc === 'doc-request') {
+      this.container.createEmbeddedView(this.template);
+    }
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -99,10 +107,6 @@ export class DocRequestTabComponent
           });
       },
     };
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -114,41 +118,251 @@ export class DocRequestTabComponent
   prepareForm(): void {
     this.docRequestForm = this.fb.group({
       id: [null],
-      text: [null, [Validators.pattern(STRING_PATTERN)]],
+      text: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       docType: [null],
-      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      noOfice: [null],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      comment: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [{ value: 157, disabled: true }],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
-
-      /* Solicitud Transferencia */
+      docTitle: [null, []],
+      typeTrasf: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      noOfice: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      comment: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      noRequest: [null],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       regDelega: [null],
       state: [null],
       tranfe: [null],
     });
+
+    this.docRequestForm.get('noRequest').setValue(this.idRequest);
   }
 
   getData() {
-    const body = {
+    this.loading = true;
+    this.docRequestForm.get('noRequest').setValue(this.idRequest);
+    const idSolicitud: Object = {
       xidSolicitud: this.idRequest,
     };
-    this.wContentService.getDocumentos(body).subscribe(data => {
-      this.paragraphs = data.data;
+    this.wContentService.getDocumentos(idSolicitud).subscribe({
+      next: data => {
+        const filterDoc = data.data.filter((items: any) => {
+          if (items.dDocType == 'Document') {
+            return items;
+          }
+        });
+        const info = filterDoc.map(async (items: any) => {
+          const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
+          items.xtipoDocumento = filter[0]?.ddescription;
+          return items;
+        });
+
+        Promise.all(info).then(x => {
+          this.paragraphs.load(x);
+          this.totalItems = this.paragraphs.count();
+          this.loading = false;
+        });
+      },
+      error: error => {},
     });
   }
 
-  getDocType(event: any) {}
+  filterGoodDoc(typeDocument: any[]) {
+    return new Promise((resolve, reject) => {
+      const types = typeDocument.map((id: any) => {
+        const data = {
+          id: id,
+        };
 
-  search(): void {}
+        return data;
+      });
+
+      this.wContentService
+        .getDocumentTypes(this.paramsTypeDoc.getValue())
+        .subscribe(data => {
+          const filter = data.data.filter(type => {
+            const index = types.findIndex(
+              (_type: any) => _type.id == type.ddocType
+            );
+            return index < 0 ? false : true;
+          });
+
+          resolve(filter);
+        });
+    });
+  }
+
+  getDocType(params: ListParams) {
+    this.wContentService.getDocumentTypes(params).subscribe(data => {
+      this.selectDocType = new DefaultSelect(data.data, data.count);
+    });
+  }
+
+  search(): void {
+    const typeDocument = this.docRequestForm.get('docType').value;
+    const titleDocument = this.docRequestForm.get('docTitle').value;
+    const contribuyente = this.docRequestForm.get('contributor').value;
+    const author = this.docRequestForm.get('author').value;
+    const remitente = this.docRequestForm.get('sender').value;
+    const senderCharge = this.docRequestForm.get('senderCharge').value;
+    const noRequest = this.docRequestForm.get('noRequest').value;
+    if (
+      noRequest &&
+      !typeDocument &&
+      !titleDocument &&
+      !contribuyente &&
+      !author &&
+      !remitente &&
+      !senderCharge
+    ) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    }
+    if (typeDocument) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xtipoDocumento == typeDocument) return items;
+        });
+
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+    if (contribuyente) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xcontribuyente == contribuyente) return items;
+        });
+
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (titleDocument) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.ddocTitle == titleDocument) return items;
+        });
+
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (author) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.dDocAuthor == author) return items;
+        });
+
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (remitente) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xremitente == remitente) return items;
+        });
+
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+
+    if (senderCharge) {
+      this.paragraphs.getElements().then(data => {
+        const filter = data.filter((items: any) => {
+          if (items.xcargoRemitente == senderCharge) return items;
+        });
+
+        if (filter.length > 0) {
+          this.onLoadToast(
+            'success',
+            'Documentos encontrados correctamente',
+            ''
+          );
+          this.paragraphs.load(filter);
+        } else {
+          this.onLoadToast('warning', 'Documentos no encontrados', '');
+        }
+      });
+    }
+  }
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.getData();
   }
 
   openDetail(data: any): void {
@@ -195,21 +409,23 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
-    let typeDoc = this.typeDoc;
-    //console.log(this.typeDoc);
-
-    let config: ModalOptions = {
-      initialState: {
-        idrequest,
-        typeDoc: typeDoc,
-        callback: (next: boolean) => {
-          if (next) this.getData();
-        },
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    const idRequest = this.idRequest;
+    let typeDoc = 'doc-request';
+    config.initialState = {
+      idRequest,
+      typeDoc,
+      callback: (data: boolean) => {
+        if (data) {
+          this.formLoading = true;
+          setTimeout(() => {
+            this.getData();
+            this.formLoading = false;
+          }, 7000);
+        }
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
+
     this.modalService.show(NewDocumentComponent, config);
   }
 
@@ -228,7 +444,14 @@ export class DocRequestTabComponent
     this.modalService.show(SeeInformationComponent, config);
   }
 
-  getRegDelegation(event: any) {}
+  getRegDelegation(event: any) {
+    this.regDelService.getAll(this.paramsRegDel.getValue()).subscribe({
+      next: data => {
+        this.selectRegDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {},
+    });
+  }
 
   getState(event: any) {}
 

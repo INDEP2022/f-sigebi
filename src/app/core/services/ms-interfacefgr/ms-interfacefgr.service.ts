@@ -4,7 +4,12 @@ import { InterfacefgrEndPoints } from 'src/app/common/constants/endpoints/ms-int
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPgrTransfer } from '../../models/ms-interfacefgr/ms-interfacefgr.interface';
+import {
+  IFaValAtributo1,
+  IOTClaveByAsunto,
+  IOTClaveByAsuntoResponse,
+  IPgrTransfer,
+} from '../../models/ms-interfacefgr/ms-interfacefgr.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -31,23 +36,27 @@ export class InterfacefgrService extends HttpService {
     );
   }
 
+  /**
+   * Ya no va a funcionar
+   * @deprecated
+   */
   getById(id: string | number): Observable<IPgrTransfer> {
     const route = `${InterfacefgrEndPoints.PgrTransfer}/${id}`;
     return this.get(route);
   }
 
   create(body: IPgrTransfer) {
-    return this.post(InterfacefgrEndPoints.PgrTransfer, body);
+    return this.post(InterfacefgrEndPoints.PgrTransferFiltered, body);
   }
 
-  update(id: string | number, body: IPgrTransfer) {
-    const route = `${InterfacefgrEndPoints.PgrTransfer}/${id}`;
+  update(body: IPgrTransfer) {
+    const route = `${InterfacefgrEndPoints.PgrTransferFiltered}`;
     return this.put(route, body);
   }
 
-  remove(id: string | number) {
-    const route = `${InterfacefgrEndPoints.PgrTransfer}/${id}`;
-    return this.delete(route);
+  remove(body: Partial<IPgrTransfer>) {
+    const route = `${InterfacefgrEndPoints.PgrTransferFiltered}`;
+    return this.delete(route, body);
   }
 
   getCountAffair(office: string): Observable<{ count: number }> {
@@ -62,5 +71,19 @@ export class InterfacefgrService extends HttpService {
 
   getCityByAsuntoSat(body: { pgrOffice: string }) {
     return this.post(InterfacefgrEndPoints.cityByAsuntoSat, body);
+  }
+
+  getFaValAtributo1(body: IFaValAtributo1) {
+    return this.post<IListResponse<IFaValAtributo1>>(
+      InterfacefgrEndPoints.PgrFaValAtrib1,
+      body
+    );
+  }
+
+  getOTClaveEntityFederativeByAvePrevia(body: IOTClaveByAsunto) {
+    return this.post<IOTClaveByAsuntoResponse>(
+      InterfacefgrEndPoints.OTkeyByAsunto,
+      body
+    );
   }
 }

@@ -1,54 +1,68 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">INFORMACION FINANCIERA</h5>
   </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row mt-4">
-        <div class="col-md-6">
+      <div class="row">
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('noBien')" label="No Bien">
             <input type="text" class="form-control" formControlName="noBien" />
           </form-field>
+        </div> -->
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-12 col-md-5">
+            <search-bar-simple
+              (eventEmit)="loadFinancial($event)"
+              [label]="''"
+              [placeholder]="'N&uacute;mero de Bien'">
+            </search-bar-simple>
+          </div>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('date')" label="Fecha información">
-            <input class="form-control" formControlName="date" bsDatepicker />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('dictaminatedBy')"
-            label="Dictaminado por">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dictaminatedBy" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            type=""
-            text
-            [control]="form.get('avaluo')"
-            label="Avaluo realizado por">
-            <input class="form-control" formControlName="avaluo" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('observations')"
-            label="Dictaminado por">
-            <textarea
-              rows="2"
-              type="text"
-              class="form-control"
-              formControlName="observations"></textarea>
-          </form-field>
+        <br /><br /><br /><br />
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('date')" label="Fecha información">
+              <input
+                class="form-control"
+                formControlName="date"
+                bsDatepicker
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('dictaminatedBy')"
+              label="Dictaminado por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dictaminatedBy"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              type=""
+              text
+              [control]="form.get('avaluo')"
+              label="Avaluo realizado por">
+              <input class="form-control" formControlName="avaluo" readonly />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('observations')"
+              label="observaciones">
+              <textarea
+                rows="2"
+                type="text"
+                class="form-control"
+                formControlName="observations"
+                readonly></textarea>
+            </form-field>
+          </div>
         </div>
       </div>
 
@@ -57,34 +71,36 @@
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings1" [source]="data1">
+                </ng2-smart-table> -->
                 <ng2-smart-table
+                  class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings1"
-                  [source]="data1">
-                </ng2-smart-table>
+                  [source]="finantialList"></ng2-smart-table>
               </div>
             </div>
-            <app-pagination
-              [params]="params1"
-              [totalItems]="totalItems1"></app-pagination>
           </div>
         </div>
-        <!-- <div class="col-md-6">
+        <div class="col-md-6">
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data2">
+                </ng2-smart-table> -->
                 <ng2-smart-table
+                  class="col-md-12"
                   [attr.class]="'table-bordered'"
-                  [settings]="settings"
-                  [source]="data2">
-                </ng2-smart-table>
+                  [settings]="settings2"
+                  [source]="finantialList"
+                  (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
               </div>
             </div>
             <app-pagination
               [params]="params2"
               [totalItems]="totalItems2"></app-pagination>
           </div>
-        </div> -->
+        </div>
       </div>
     </form>
     <!-- <div class="row mt-4 float-right">
@@ -97,5 +113,21 @@
         </button>
       </div>
     </div> -->
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <!-- <div class="m-3">
+        <confirm-button text="Actualizar" [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
+        </confirm-button>
+      </div> -->
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

@@ -25,6 +25,8 @@ interface Data {
   error: string;
 }
 
+export const InterceptorSkipHeader = 'X-Skip-Interceptor';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -37,21 +39,47 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     super();
   }
 
+  get blockAllErrors() {
+    return this.showHideErrorInterceptorService.blockAllErrors;
+  }
+
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(
-      map(response => {
-        this.getValue();
-        return this.handleSuccess(response);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
-        this.resetValue();
-        return throwError(() => error);
-      })
-    );
+    if (!window.navigator.onLine) {
+      // if there is no internet, throw a HttpErrorResponse error.
+      const error = {
+        status: 0,
+        error: {
+          description: 'Error de Conexión!',
+        },
+        statusText: 'Se perdío la conexión de red. Intentar nuevament!',
+      };
+      this.alert(
+        'warning',
+        'Error de Conexión!',
+        'Se perdío la conexión de red. Intentar nuevamente!'
+      );
+      return throwError(() => new HttpErrorResponse(error));
+    } else {
+      if (req.headers.has(InterceptorSkipHeader)) {
+        const headers = req.headers.delete(InterceptorSkipHeader);
+        return next.handle(req.clone({ headers }));
+      }
+      // else return the normal request
+      return next.handle(req).pipe(
+        map(response => {
+          this.getValue();
+          return this.handleSuccess(response);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.handleError(error);
+          this.resetValue();
+          return throwError(() => error);
+        })
+      );
+    }
   }
 
   getValue() {
@@ -70,24 +98,28 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     } else if (Array.isArray(error?.error?.message) === false) {
       message = error?.error?.message;
     } else {
-      message = 'Unknown error';
+      message = 'Error del servidor';
     }
-    if (status === 0) {
-      this.onLoadToast('error', 'Error', 'Unable to connect to server');
+    if (status === 0 && this.showError && !this.blockAllErrors) {
+      message = 'Inténtelo nuevamente';
+      this.onLoadToast('error', 'Conexión no disponible', message);
       return;
     }
-    if (status === 400 && this.showError) {
-      this.onLoadToast('warning', 'advertencia', message);
+    if (status === 400 && this.showError && !this.blockAllErrors) {
+      //this.onLoadToast('warning', 'advertencia', message);
+      //console.log(status, this.showError, message);
       return;
     }
-    if (status === 500) {
-      this.onLoadToast('warning', 'advertencia', message);
+    if (status === 500 && this.showError && !this.blockAllErrors) {
+      message = 'Error del Servidor';
+      //this.onLoadToast('warning', 'Advertencia', message);
       return;
     }
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
-      this.onLoadToast('error', 'Unauthorized', 'Error' + status);
+      message = 'La sesión expiró';
+      this.onLoadToast('error', 'No autorizado', message);
       this.router.navigate(['/auth/login']);
       return;
     }
@@ -96,7 +128,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.onLoadToast(
         'error',
         'Error' + status,
-        'No tienes permisos para realizar esta acción'
+        'No tiene permisos para realizar esta acción'
       );
       return;
     }

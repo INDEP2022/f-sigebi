@@ -1,69 +1,72 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Generar Dictamen</h5>
+    <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body class="body">
     <form [formGroup]="dictumForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field
-            [control]="dictumForm.get('paragraph1Dictum')"
-            label="Parrafo1 Dictamen">
+            [control]="dictumForm.get('paragraphOneRuling')"
+            label="Párrafo uno">
             <textarea
               class="form-control"
-              formControlName="paragraph1Dictum"
+              maxlength="4000"
+              formControlName="paragraphOneRuling"
+              cols="10"
+              rows="5"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="dictumForm.get('paragraphTwoRuling')"
+            label="Párrafo dos">
+            <textarea
+              class="form-control"
+              maxlength="4000"
+              formControlName="paragraphTwoRuling"
+              cols="10"
+              rows="5"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="dictumForm.get('ccpRuling')"
+            label="C.c.p Dictamen">
+            <textarea
+              class="form-control"
+              maxlength="200"
+              formControlName="ccpRuling"
               cols="10"
               rows="3"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
-            [control]="dictumForm.get('paragraph2Dictum')"
-            label="Parrafo2 Dictamen">
-            <textarea
-              class="form-control"
-              formControlName="paragraph2Dictum"
-              cols="10"
-              rows="3"></textarea>
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <form-field
-            [control]="dictumForm.get('ccpDictum')"
-            label="CcpDictamen">
-            <textarea
-              class="form-control"
-              formControlName="ccpDictum"
-              cols="10"
-              rows="2"></textarea>
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <form-field
-            [control]="dictumForm.get('nameRecipientDictum')"
-            label="Nombre Destinatario Dictamen">
+            [control]="dictumForm.get('nameRecipientRuling')"
+            label="Destinatario">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
-              formControlName="nameRecipientDictum" />
+              formControlName="nameRecipientRuling" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
-            [control]="dictumForm.get('chargeRecipientDictum')"
+            [control]="dictumForm.get('postRecipientRuling')"
             label="Cargo Destinatario Dictamen">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
-              formControlName="chargeRecipientDictum" />
+              formControlName="postRecipientRuling" />
           </form-field>
         </div>
       </div>
@@ -75,8 +78,9 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="signDictum()">
-          Seleccionar</button
+          [disabled]="!dictumForm.valid"
+          (click)="update()">
+          Firmar dictámen</button
         ><!-- [disabled]="requestForm.invalid" -->
       </div>
       <div class="m-3">

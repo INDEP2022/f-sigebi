@@ -6,7 +6,7 @@ import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  RFCCURP_PATTERN,
+  CURP_PATTERN,
   STRING_PATTERN,
 } from '../../../../../../core/shared/patterns';
 
@@ -30,15 +30,29 @@ export class IDocReceptionndicatedFormComponent
     super();
   }
 
+  get curp() {
+    return this.indicatedForm.controls['curp'];
+  }
+
   ngOnInit(): void {
     this.prepareForm();
   }
 
   prepareForm() {
     this.indicatedForm = this.fb.group({
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1000),
+        ],
+      ],
       noRegistration: [null],
-      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      curp: [
+        null,
+        [Validators.pattern(CURP_PATTERN), Validators.maxLength(18)],
+      ],
       consecutive: [null],
     });
   }
@@ -49,6 +63,7 @@ export class IDocReceptionndicatedFormComponent
 
   create() {
     this.loading = true;
+    this.curp.setValue(this.curp.value.toLocaleUpperCase());
     this.indicatedService.create(this.indicatedForm.value).subscribe({
       next: data => this.handleSuccess(data),
       error: error => (this.loading = false),

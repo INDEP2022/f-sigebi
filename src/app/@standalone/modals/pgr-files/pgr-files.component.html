@@ -1,0 +1,70 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div><h5 class="modal-title">Documentos</h5></div>
+    <div class="buttons">
+      <button (click)="close()" type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <small class="text-secondary"
+          >Da doble click sobre un documento para verlo</small
+        >
+        <!-- <span class="text-secondary" *ngIf="!documentSelected"
+          >Ningún Documento Seleccionado</span
+        >
+        <span class="font-weight-bold text-secondary">{{
+          documentSelected?.description ?? ''
+        }}</span> -->
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-3" *ngFor="let file of files">
+        <div
+          class="card col-md-12 file-body"
+          #documentContents
+          (dblclick)="viewDocument(file.id)"
+          placement="bottom">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12 d-flex justify-content-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="80"
+                  height="80"
+                  fill="currentColor"
+                  class="bi bi-file-earmark-text text-secondary"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" />
+                  <path
+                    d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer px-0">
+            <div class="row">
+              <div class="col-md-12 desc">
+                <span class="text-secondary"
+                  ><small>{{ file.pgrDescriptionImage }}</small></span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <app-pagination
+        [filterParams]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+
+  <div></div>
+</app-modal>

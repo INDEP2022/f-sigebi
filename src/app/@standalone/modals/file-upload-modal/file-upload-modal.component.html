@@ -1,0 +1,24 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <h5 class="modal-title">Carga de archivos</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <file-upload
+          (onUploadFiles)="testFiles($event)"
+          [accept]="accept"></file-upload>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="row m-3">
+      <div class="col-md-12 text-right">
+        <button class="btn btn-danger active btn-sm" (click)="close()">
+          Cerrrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

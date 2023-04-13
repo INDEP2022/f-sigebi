@@ -5,67 +5,315 @@
     </div>
   </div>
   <div body>
-    <form
-      [formGroup]="consultTasksForm"
-      class="form-material"
-      (ngSubmit)="getTasks()">
-      <div class="row margin-input">
-        <div class="col-md-3">
-          <form-field
-            [control]="consultTasksForm.get('unlinked')"
-            label="Acciones">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="txtSearch"
-              placeholder="Tarea a buscar" />
-          </form-field>
+    <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="false">
+        <div accordion-heading class="d-flex justify-content-between">
+          <div>
+            <h5>
+              <i class="fa fa-filter" aria-hidden="true"></i>
+              Mostrar Filtros
+            </h5>
+          </div>
+          <div></div>
         </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="consultTasksForm.get('unlinked1')"
-            label="Estatus">
-            <select class="form-control" formControlName="unlinked1">
-              <option [value]="0">Todos</option>
-              <option [value]="1">Asignado</option>
-              <option [value]="2">Completado</option>
-              <option [value]="3">Suspendido</option>
-              <option [value]="4">Expirado</option>
-              <option [value]="5">Error</option>
-              <option [value]="6">Alertado</option>
-              <option [value]="7">Informaci&oacute;n requerido</option>
-            </select>
-          </form-field>
-        </div>
-      </div>
-    </form>
-    <div class="row margin-input">
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          (click)="getTasks()"
-          (keydown.enter)="onKeydown($event)">
-          Buscar
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-success active"
-          (click)="exportToExcel()">
-          Exportar a Excel
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-secondary active"
-          (click)="cleanFilter()">
-          Limpiar Filtro
-        </button>
-      </div>
-    </div>
+
+        <form
+          [formGroup]="consultTasksForm"
+          class="form-material"
+          (ngSubmit)="getTasks()">
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtTituloTarea')"
+                label="T&iacute;tulo tarea">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="txtTituloTarea"
+                  placeholder="T&iacute;tulo de la tarea"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoProgramacionEntrega')"
+                label="No. programaci&oacute;n entrega">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoProgramacionEntrega"
+                  placeholder="No. programaci&oacute;n entrega"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNombreActividad')"
+                label="Nombre de la actividad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="txtNombreActividad"
+                  placeholder="Nombre de la actividad"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoOrdenServicio')"
+                label="No. Orden de Servicio">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoOrdenServicio"
+                  placeholder="No Orden de Servicio"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtAsignado')"
+                label="Asignado">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="txtAsignado"
+                  placeholder="Asignado"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoOrdenPago')"
+                label="No. Orden de Pago">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoOrdenPago"
+                  placeholder="No Orden de Pago"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtAprobador')"
+                label="Aprobador">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="txtAprobador"
+                  placeholder="Aprobador"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoOrdenIngreso')"
+                label="No. Orden de Ingreso">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoOrdenIngreso"
+                  placeholder="No. Orden de Ingreso"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNombreAplicacion')"
+                label="Nombre de la aplicaci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="txtNombreAplicacion"
+                  placeholder="Nombre de la aplicacion"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoMuestreo')"
+                label="No. Muestreo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoMuestreo"
+                  placeholder="No. de Muestreo"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-3">
+              <form-field
+                [control]="consultTasksForm.get('txtFecAsigDesde')"
+                label="Fecha de asignacion desde: "
+                style="padding-left: 10px">
+                <input
+                  class="form-control"
+                  formControlName="txtFecAsigDesde"
+                  bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'YYYY-MM-DD',
+                    displayOneMonthRange: true
+                  }"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="consultTasksForm.get('txtFecAsigHasta')"
+                label="Hasta: "
+                style="padding-left: 10px">
+                <input
+                  class="form-control"
+                  formControlName="txtFecAsigHasta"
+                  bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'YYYY-MM-DD',
+                    displayOneMonthRange: true
+                  }"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoMuestreoOrden')"
+                label="No. de Muestreo de Orden">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoMuestreoOrden"
+                  placeholder="No. de Muestreo de Orden"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-3">
+              <form-field
+                [control]="consultTasksForm.get('txtFechaFinDesde')"
+                label="Fecha de Finalizacion desde:"
+                style="padding-left: 10px">
+                <input
+                  class="form-control"
+                  formControlName="txtFechaFinDesde"
+                  bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'YYYY-MM-DD',
+                    displayOneMonthRange: true
+                  }"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="consultTasksForm.get('txtFechaFinHasta')"
+                label="Hasta:"
+                style="padding-left: 10px">
+                <input
+                  class="form-control"
+                  formControlName="txtFechaFinHasta"
+                  bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'YYYY-MM-DD',
+                    displayOneMonthRange: true
+                  }"
+                  (keydown.enter)="onKeydown($event)" />
+                <!-- [minDate]="fechaInicio.value" -->
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoDelegacionRegional')"
+                label="No. de Delegación Regional">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoDelegacionRegional"
+                  placeholder="No. de Delegación Regional"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoSolicitud')"
+                label="No. Solicitud">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoSolicitud"
+                  placeholder="No. de Solicitud"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoTransferente')"
+                label="No. Transferente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoTransferente"
+                  placeholder="No. Transferente"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-5">
+              <form-field
+                [control]="consultTasksForm.get('txtNoProgramacion')"
+                label="No. de Programaci&oacute;n">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="txtNoProgramacion"
+                  placeholder="No. de Programaci&oacute;n"
+                  (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary active"
+                (click)="getTasks()"
+                (keydown.enter)="onKeydown($event)">
+                Buscar
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-success active"
+                (click)="exportToExcel()">
+                Exportar a Excel
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-secondary active"
+                (click)="cleanFilter()">
+                Limpiar Filtro
+              </button>
+            </div>
+          </div>
+        </form>
+      </accordion-group>
+    </accordion>
 
     <div class="row pt-4">
       <div class="col-md-12">
@@ -73,7 +321,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="tasks">
+            [source]="tasks"
+            (rowSelect)="openTask($event.data)">
           </ng2-smart-table>
         </div>
       </div>

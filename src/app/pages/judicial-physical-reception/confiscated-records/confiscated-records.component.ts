@@ -10,6 +10,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { GoodGetData } from 'src/app/core/models/ms-good/good';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -33,8 +34,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
-    rowClassFunction: (row: { data: { status: any } }) =>
-      row.data.status ? 'available' : 'not-available',
+    rowClassFunction: (row: { data: { avalaible: any } }) =>
+      row.data.avalaible ? 'available' : 'not-available',
     actions: false,
     columns: {
       goodId: {
@@ -66,6 +67,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         title: 'Acta',
         type: 'string',
         sort: false,
+      },
+      avalaible: {
+        title: 'Disponible',
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -113,7 +117,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   data2 = EXAMPLE_DATA2;
   dataGoods = new LocalDataSource();
   dataGoodApraiser = new LocalDataSource();
-  selectData: any[];
+  selectData: any;
   goodData: any[] = [];
   form: FormGroup;
   records: string[];
@@ -124,6 +128,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
+  statusProceeding = 'ABIERTA';
 
   constructor(
     private fb: FormBuilder,
@@ -315,33 +320,79 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         text: '?expedient=',
       })
       .subscribe({
-        next: (res: any) => {
+        next: async (res: any) => {
           const dataTry = res.data.filter((item: any) => {
             item.status != 'ADM';
           });
-          console.log(res);
-          console.log(dataTry);
-
           if (res.data.length > 0) {
             this.form.get('ident').setValue('ADM');
             this.dataGoods.load(res.data);
+            console.log(res.data);
+
+            const newData = await Promise.all(
+              res.data.map(async (e: any) => {
+                const model: GoodGetData = {
+                  goodNumber: e.id,
+                  subDelegationNumber: e.subDelegationNumber,
+                  clasifGoodNumber: e.goodClassNumber,
+                  expedientNumber: parseInt(this.form.get('expediente').value),
+                  delegationNumber: e.delegationNumber,
+                  dateElaboration: '2023-04-11T00:00:00.000Z',
+                  identificator: e.identifier,
+                  processExt: e.extDomProcess,
+                  statusGood: e.status,
+                  screenKey: 'FACTREFACTAENTREC',
+                };
+
+                let disponible = true;
+
+                const res = await this.serviceGood.getData(model).toPromise();
+
+                if (res['available'] === 'N') {
+                  disponible = false;
+                } else {
+                  disponible = true;
+                }
+
+                return { ...e, avalaible: disponible };
+              })
+            );
+            console.log(newData);
+            this.dataGoods.load(newData);
+
             this.serviceExpedient
               .getById(this.form.get('expediente').value)
               .subscribe(res => {
-                let model: TransferProceeding = {
-                  numFile: res.transferNumber as number,
-                  typeProceedings: res.expedientType,
-                };
-                if (res.expedientType === 'T') {
-                  this.records = ['RT'];
+                console.log(res.expedientType);
+                if (
+                  res.expedientType != 'A' &&
+                  res.expedientType != 'N/A' &&
+                  res.expedientType != 'T'
+                ) {
+                  this.alert(
+                    'error',
+                    'Numero de expediente invalido',
+                    'El número de expediente ingresado tiene un tipo de expediente no valido'
+                  );
                 } else {
-                  this.records = ['A', 'NA', 'D', 'NS'];
-                }
+                  let model: TransferProceeding = {
+                    numFile: res.transferNumber as number,
+                    typeProceedings: res.expedientType,
+                  };
+                  if (res.expedientType === 'T') {
+                    this.records = ['RT'];
+                  } else {
+                    this.records = ['A', 'NA', 'D', 'NS'];
+                  }
 
-                this.serviceProcVal.getTransfer(model).subscribe(res => {
-                  this.transferSelect = new DefaultSelect(res.data, res.count);
-                });
-                this.enableElement('acta');
+                  this.serviceProcVal.getTransfer(model).subscribe(res => {
+                    this.transferSelect = new DefaultSelect(
+                      res.data,
+                      res.count
+                    );
+                  });
+                  this.enableElement('acta');
+                }
               });
           } else {
             this.alert(
@@ -387,7 +438,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    this.form.get('fecCaptura').setValue(new Date());
+    if (this.form.get('folio').value.length > 15) {
+      this.alert(
+        'error',
+        'Número de folio incorrecto',
+        'El número de folio no puede ser mayor de 15 dígitos'
+      );
+    } else {
+      this.form.get('fecCaptura').setValue(new Date());
+    }
   }
 
   //"Acta 2"
@@ -457,13 +516,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   selectRow(e: any) {
     const { data } = e;
+    console.log(data);
     this.selectData = data;
   }
 
   pushData() {
-    this.goodData.push(this.selectData);
-    this.dataGoodApraiser.load(this.goodData);
-    console.log(this.dataGoodApraiser);
+    if (this.selectData.avalaible) {
+      this.goodData.push(this.selectData);
+      this.dataGoodApraiser.load(this.goodData);
+      console.log(this.dataGoodApraiser);
+    } else {
+      this.alert(
+        'warning',
+        'El bien esta no disponible',
+        'El bien seleccionado tiene un estatus de no disponible, puede que se encuentre fuera de la fecha de recepción'
+      );
+    }
   }
 }
 

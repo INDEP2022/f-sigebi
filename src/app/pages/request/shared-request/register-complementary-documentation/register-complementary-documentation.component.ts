@@ -50,6 +50,7 @@ export class RegisterComplementaryDocumentationComponent implements OnInit {
         null,
         Validators.required,
         Validators.pattern(PHONE_PATTERN),
+        Validators.maxLength(13),
       ],
       senderEmail: [
         null,

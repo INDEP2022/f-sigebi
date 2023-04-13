@@ -5,16 +5,14 @@
   <div body>
     <form class="form-material">
       <div class="row pt-4">
-        <div class="col-md-6">
-          <label for="file">Fotograf&iacute;as a Subir</label>
-          <file-upload
-            (onUploadFiles)="loadImage($event)"
-            [accept]="'image/*'"></file-upload>
+        <label for="file">Fotograf&iacute;as a Subir</label>
+        <file-upload
+          (onUploadFiles)="loadImage($event)"
+          [accept]="'image/*'"></file-upload>
 
-          <span id="size" *ngIf="sizeMessage"
-            >Seleccione un archivo no mayor a 100 MB&#46;</span
-          >
-        </div>
+        <span id="size" *ngIf="sizeMessage"
+          >Seleccione un archivo no mayor a 100 MB&#46;</span
+        >
       </div>
     </form>
   </div>

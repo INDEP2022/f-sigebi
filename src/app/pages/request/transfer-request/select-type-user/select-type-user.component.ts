@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -7,12 +8,19 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
+import Swal from 'sweetalert2';
+import {
+  RETURN_USER_SELECTED_COLUMNS,
+  TURN_SELECTED_COLUMNS,
+} from './request-in-turn-selected-columns';
 
 @Component({
   selector: 'app-select-tipe-user',
@@ -21,7 +29,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
-  data: any; // parameters desde el padre
+  data: any; // solicitud pasada por el modal
   typeAnnex: string;
 
   paragraphs: any[] = [];
@@ -36,6 +44,10 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private transferentService = inject(TransferenteService);
   private requestService = inject(RequestService);
   private wcontentService = inject(WContentService);
+  private taskService = inject(TaskService);
+  private authService = inject(AuthService);
+  private orderService = inject(OrderServiceService);
+  private router = inject(Router);
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -43,21 +55,35 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
+    let column: any = null;
+    if (this.typeAnnex === 'commit-request') {
+      column = TURN_SELECTED_COLUMNS;
+    } else if (this.typeAnnex === 'returnado') {
+      column = RETURN_USER_SELECTED_COLUMNS;
+    }
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
-      columns: TURN_SELECTED_COLUMNS,
+      columns: column,
     };
     this.initForm();
 
-    this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
-      this.getUsers();
-      this.TLPMessage();
-    });
+    //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
+    if (this.typeAnnex === 'commit-request') {
+      this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.getUsers();
+        this.TLPMessage();
+      });
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getUsers();
-    });
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getUsers();
+      });
+      //TRAE USUARIOS PARA RE TURNAR LA SOLICIUTD
+    } else if (this.typeAnnex === 'returnado') {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getReturnUsers();
+      });
+    }
   }
 
   initForm() {
@@ -116,24 +142,49 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     }
   }
 
+  getReturnUsers() {
+    /*this.params.value.addFilter(
+      'rol',
+      'SolicitudProgramacion.DelegadosRegionales'
+    );
+    this.params.value.addFilter('employeetype', 'DR');*/
+    const filter = this.params.getValue().getParams();
+    this.userProcessService.getAllUsersWithRol(filter).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+        this.params.value.removeAllFilters();
+      },
+      error: error => {
+        this.loading = false;
+        this.params.value.removeAllFilters();
+      },
+    });
+  }
+
   async turnRequest() {
     if (this.user) {
-      this.data.targetUserType = this.userForm.controls['typeUser'].value;
-      this.data.targetUserType = this.user.id;
-
+      this.loader.load = true;
+      const requestUpdate: any = {};
+      requestUpdate.id = this.data.id;
+      requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
+      requestUpdate.targetUser = this.user.id;
       //Todo: enviar la solicitud
-      //const isUpdated = await this.saveRequest(this.data as IRequest);
-      if (true === true) {
+      const requestResult = await this.saveRequest(requestUpdate);
+      if (requestResult === true) {
         //TODO: generar o recuperar el reporte
         const report = await this.generateReport(
           'SolicitudTransferencia',
           this.data.id,
           ''
         );
+
         if (report) {
           let form: any = {};
           form['ddocTitle'] = `Solicitud_${this.data.id}`;
-          form['xidExpediente'] = `Solicitud_${this.data.recordId}`;
+          form['xidExpediente'] = this.data.recordId;
           form['ddocType'] = 'Document';
           form['xNombreProceso'] = 'Captura Solicitud';
           form['dSecurityGroup'] = 'Public';
@@ -151,12 +202,45 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             form['transferenceId'] = this.data.transferenceId;
           }
 
-          //TODO: Guardarlo en el content
           const file: any = report;
+          //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);
           if (addToContent) {
             const docName = addToContent;
-            //TODO: Generar una nueva tarea en task  table
+            console.log(docName);
+            const title =
+              'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
+              this.data.id;
+            const url = 'pages/request/transfer-request/verify-compliance';
+            const from = 'REGISTRO_SOLICITUD';
+            const to = 'VERIFICAR_CUMPLIMIENTO';
+            /* crea una nueva tarea */
+            const taskResponse = await this.createTaskOrderService(
+              this.data,
+              title,
+              url,
+              from,
+              to
+            );
+            if (taskResponse) {
+              /* actualizar status del bien */
+              // const orderServResult = await this.createOrderService(from, to);
+
+              // if (orderServResult) {
+              this.loader.load = false;
+              Swal.fire({
+                title: 'Solicitud Turnada',
+                text: 'La solicitud se turno correctamente',
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#9D2449',
+                cancelButtonColor: '#B38E5D',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                this.closeAll();
+              });
+              //}
+            }
           }
         }
       }
@@ -166,6 +250,32 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         'Seleccione un usuario',
         'Es requerido seleccionar un usuario'
       );
+    }
+  }
+
+  async ReturnRequest() {
+    this.loader.load = true;
+    this.data.observations =
+      'Solicitud Returnada por la Delegacion Regional ' +
+      this.user.delegationreg;
+    this.data.targetUserType = 'DR';
+    this.data.requestStatus = 'Captura';
+    this.data.targetUser = this.user.id;
+
+    const requestResult = await this.saveRequest(this.data);
+    if (requestResult === true) {
+      this.loader.load = false;
+      Swal.fire({
+        title: 'Solicitud Returnada',
+        text: 'La solicitud se returno correctamente',
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        this.closeAll();
+      });
     }
   }
 
@@ -185,6 +295,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
+          this.loader.load = false;
           this.message(
             'error',
             'Error al guardar',
@@ -210,13 +321,65 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             if (resp.dDocName) {
               resolve(resp.dDocName);
             } else {
+              this.loader.load = false;
+              this.message('error', 'Error', 'Error al subir al content');
               resolve(null);
             }
           },
           error: error => {
+            this.loader.load = false;
+            this.message('error', 'Error', 'Error al subir al content');
             reject('error al guardar al content');
           },
         });
+    });
+  }
+
+  createTaskOrderService(
+    request: any,
+    title: string,
+    url: string,
+    from: string,
+    to: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      body['type'] = 'SOLICITUD TRANSFERENCIA';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.user.username;
+      task['assigneesDisplayname'] = this.user.firstName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] = title;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = url;
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.loader.load = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
     });
   }
 
@@ -233,16 +396,24 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             }
           },
           error: error => {
-            reject('');
+            this.loader.load = false;
+            this.message(
+              'error',
+              'Error al guardar',
+              'No se pudo bajar el documento'
+            );
+            reject('false');
           },
         });
     });
   }
 
   close() {
-    console.log('entro');
-
     this.modalRef.hide();
+  }
+  closeAll() {
+    this.modalRef.hide();
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 
   message(header: any, title: string, body: string) {

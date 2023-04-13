@@ -10,19 +10,28 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IGoodAddress } from 'src/app/core/models/good/good-address';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
+import {
+  NUMBERS_PATTERN,
+  NUMBERS_POINT_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from '../../../../../../core/services/authentication/auth.service';
 import { GoodDomiciliesService } from '../../../../../../core/services/good/good-domicilies.service';
 import { BasePage } from '../../../../../../core/shared/base-page';
+import { CopyAddressComponent } from '../records-of-request-child-tabs-components/copy-address/copy-address.component';
 
 @Component({
   selector: 'app-address-transferor-tab',
@@ -34,6 +43,7 @@ export class AddressTransferorTabComponent
   implements OnInit, OnChanges
 {
   @Input() requestObject: any;
+  @Input() process: string = '';
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -42,6 +52,7 @@ export class AddressTransferorTabComponent
   domicileForm: ModelForm<any>;
   municipalityId: number = 0;
   keyStateOfRepublic: number = 0;
+  localityId: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
 
   selectState = new DefaultSelect<any>();
@@ -53,8 +64,8 @@ export class AddressTransferorTabComponent
   requestId: string = '';
   isNewAddress: boolean = false;
   isreadOnly: boolean = true;
-
   stateKey: string = '';
+  isAddress: boolean = false;
 
   stateOfRepublicService = inject(StateOfRepublicService);
   municipalySeraService = inject(MunicipalityService);
@@ -63,56 +74,115 @@ export class AddressTransferorTabComponent
   goodDomicileService = inject(GoodDomiciliesService);
   authService = inject(AuthService);
   route = inject(ActivatedRoute);
+  goodsinvService = inject(GoodsInvService);
 
-  constructor(private fb: FormBuilder, private modelRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modelRef: BsModalRef,
+    private modalService: BsModalService
+  ) {
     super();
+    if (this.isNewAddress === false) {
+      this.initForm();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject != undefined) {
-      this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
-      this.domicileForm.controls['regionalDelegationId'].setValue(
+      //this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
+      /*this.domicileForm.controls['regionalDelegationId'].setValue(
         this.requestObject.regionalDelegationId
-      );
+      );*/
       this.getStateOfRepublic(
         new ListParams(),
         this.requestObject.keyStateOfRepublic
       );
+      this.getDomicileTransferent(this.requestObject.id);
     }
   }
 
   ngOnInit(): void {
+    this.initForm();
     if (this.isNewAddress != true) {
       this.container.createEmbeddedView(this.template);
     }
-    this.initForm();
     this.formReactiveCalls();
-    console.log('address');
+    if (this.process === 'process-approval') {
+      this.domicileForm.disable();
+    }
   }
 
   initForm() {
     this.domicileForm = this.fb.group({
-      warehouseAlias: ['DOMICILIO TRANSFERENTE'],
-      wayref2Key: [null],
-      wayref3Key: [null],
-      statusKey: [null],
+      warehouseAlias: [
+        'DOMICILIO TRANSFERENTE',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
+      wayref2Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayref3Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      statusKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       municipalityKey: [null],
       localityKey: [null],
-      code: [null],
-      latitude: [null],
-      length: [null], //por cambiar
-      wayName: [null],
-      wayOrigin: [null],
-      exteriorNumber: [null],
-      interiorNumber: [null],
-      wayDestiny: [null],
-      wayref1Key: [null],
-      wayChaining: [null],
-      description: [null],
+      code: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(6)],
+      ],
+      latitude: [
+        null,
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
+      ], //por cambiar
+      wayName: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      wayOrigin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      exteriorNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+      ],
+      interiorNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+      ],
+      wayDestiny: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      wayref1Key: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      wayChaining: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       regionalDelegationId: [null],
       requestId: [null],
-      creationDate: [null],
-      userCreation: [null],
+      creationDate: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      userCreation: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
 
     if (this.isNewAddress === true) {
@@ -137,9 +207,7 @@ export class AddressTransferorTabComponent
             this.selectState = new DefaultSelect([data], 1);
             this.domicileForm.controls['statusKey'].setValue(keyState);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
     } else {
@@ -148,9 +216,7 @@ export class AddressTransferorTabComponent
           next: data => {
             this.selectState = new DefaultSelect(data.data, data.count);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
     }
@@ -160,27 +226,30 @@ export class AddressTransferorTabComponent
   getMunicipaly(params: ListParams, stateKey?: number) {
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     params['filter.nameMunicipality'] = `$ilike:${params.text}`;
-    this.municipalySeraService.getAll(params).subscribe({
-      next: data => {
-        this.selectMunicipe = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
+
+    this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
+      next: resp => {
+        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
       },
     });
   }
 
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
-    params.limit = 20;
-    params['filter.municipalityId'] = `$eq:${municipalityId}`;
-    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
-    this.localityService.getAll(params).subscribe({
-      next: data => {
-        this.selectLocality = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
+    //params.limit = 20;
+    params['sortBy'] = 'township:ASC';
+    params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
+    params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
+    params['filter.township'] = `$ilike:${params.text}`;
+    this.goodsinvService.getAllTownshipByFilter(params).subscribe({
+      next: resp => {
+        this.selectLocality = new DefaultSelect(resp.data, resp.count);
+
+        if (this.isAddress === true) {
+          this.domicileForm.controls['localityKey'].setValue(
+            Number(this.localityId)
+          );
+        }
       },
     });
   }
@@ -188,15 +257,29 @@ export class AddressTransferorTabComponent
   //obtener el codigo zip
   getCP(params: ListParams, localityId?: number, municipalityId?: number) {
     params.limit = 20;
-    params['filter.keySettlement'] = `$eq:${localityId}`; //localidad
-    params['filter.keyTownship'] = `$eq:${municipalityId}`; //municipio
-    params['filter.keyState'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
-    this.goodsQueryService.getZipCode(params).subscribe({
-      next: data => {
-        this.selectCP = new DefaultSelect(data.data, data.count);
+    params['filter.townshipKey'] = `$eq:${this.localityId}`; //localidad
+    params['filter.municipalityKey'] = `$eq:${this.municipalityId}`; //municipio
+    params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
+    this.goodsinvService.getAllCodePostalByFilter(params).subscribe({
+      next: resp => {
+        this.selectCP = new DefaultSelect(resp.data, resp.count);
       },
-      error: error => {
-        console.log(error);
+    });
+  }
+
+  getDomicileTransferent(id: number) {
+    const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.warehouseAlias'] = `$eq:DOMICILIO TRANSFERENTE`;
+    this.goodDomicileService.getAll(params).subscribe({
+      next: (resp: any) => {
+        this.isAddress = true;
+        this.domicileForm.patchValue(resp.data[0]);
+        this.domicileForm.controls['warehouseAlias'].setValue(
+          resp.data[0].warehouseAlias['id']
+        );
+        this.getLocality(new ListParams(), resp.data[0].municipalityKey);
+        this.localityId = resp.data[0].localityKey;
       },
     });
   }
@@ -210,6 +293,10 @@ export class AddressTransferorTabComponent
     this.domicileForm.controls['userCreation'].setValue(username);
 
     const domicile = this.domicileForm.getRawValue();
+    if (this.isNewAddress === false) {
+      domicile.requestId = this.requestObject.id;
+      domicile.regionalDelegationId = this.requestObject.regionalDelegationId;
+    }
 
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {
@@ -217,7 +304,7 @@ export class AddressTransferorTabComponent
           this.message(
             'success',
             'Guadado',
-            'El domicio se guardo correctamente'
+            'El domicio se guardó correctamente'
           );
 
           if (this.isNewAddress === true) {
@@ -234,7 +321,7 @@ export class AddressTransferorTabComponent
         }
       },
       error => {
-        console.log(error);
+        this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
     );
@@ -251,14 +338,55 @@ export class AddressTransferorTabComponent
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
         this.municipalityId = data;
-        this.getLocality(new ListParams(), data);
+
+        if (this.isAddress === false) {
+          this.getLocality(new ListParams(), data);
+        }
       }
     );
     this.domicileForm.controls['localityKey'].valueChanges.subscribe(
       (data: any) => {
-        this.getCP(new ListParams(), data, this.municipalityId);
+        this.localityId = data;
+        this.getCP(new ListParams());
       }
     );
+  }
+
+  copyAddress() {
+    let idDelegation = this.domicileForm.get('regionalDelegationId').value;
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modalSizeXL modal-dialog-centered',
+    };
+    config.initialState = {
+      idDelegation,
+      callback: (data: any) => {
+        if (data) {
+          this.setInformation(data);
+        }
+      },
+    };
+
+    const searchUser = this.modalService.show(CopyAddressComponent, config);
+  }
+
+  setInformation(data: IGoodAddress) {
+    this.domicileForm.get('warehouseAlias').setValue(data?.warehouseAliasName);
+    this.domicileForm.get('statusKey').setValue(data?.statusKey);
+    this.domicileForm.get('municipalityKey').setValue(data?.municipalityKey);
+    this.domicileForm.get('localityKey').setValue(Number(data?.localityKey));
+    this.domicileForm.get('code').setValue(data?.code);
+    this.domicileForm.get('latitude').setValue(data?.latitude);
+    this.domicileForm.get('length').setValue(data?.latitude);
+    this.domicileForm.get('wayName').setValue(data?.wayName);
+    this.domicileForm.get('wayOrigin').setValue(data?.wayOrigin);
+    this.domicileForm.get('wayref1Key').setValue(data?.wayref1Key);
+    this.domicileForm.get('wayref2Key').setValue(data?.wayref2Key);
+    this.domicileForm.get('wayref3Key').setValue(data?.wayref3Key);
+    this.domicileForm.get('exteriorNumber').setValue(data?.exteriorNumber);
+    this.domicileForm.get('interiorNumber').setValue(data?.interiorNumber);
+    this.domicileForm.get('wayDestiny').setValue(data?.wayDestiny);
+    this.domicileForm.get('description').setValue(data?.description);
   }
 
   close() {

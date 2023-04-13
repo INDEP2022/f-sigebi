@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -10,20 +16,23 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import Swal from 'sweetalert2';
+import { AdvancedSearchComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
 import { ExcelFormat } from './AssetExcelFormat';
 
-var defaultData = [
+const defaultData = [
   {
     id: 0,
     noManagement: '',
@@ -43,8 +52,9 @@ var defaultData = [
   templateUrl: './assets.component.html',
   styleUrls: ['./assets.component.scss'],
 })
-export class AssetsComponent extends BasePage implements OnInit {
+export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
+  @Input() process: string = '';
   goodObject: any; //bienes
   listgoodObjects: any[] = [];
   totalItems: number = 0;
@@ -53,13 +63,19 @@ export class AssetsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
-  btnCreate: string = 'Crear Nuevo';
+  btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
   data: ExcelFormat[] = [];
   menajeSelected: any;
   isSaveDomicilie: boolean = false;
   isSaveMenaje: boolean = false;
+  isSaveFraction: boolean = false;
   //typeDoc: string = '';
+  private idFractions: any = [];
+  private listGoodsFractions: any = [];
+  private fractionProperties: any = {};
+  typeRecord: string = '';
+  transferente: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -71,9 +87,18 @@ export class AssetsComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private menageService: MenageService,
     private procedureManagementService: ProcedureManagementService,
-    private authService: AuthService
+    private authService: AuthService,
+    private fractionService: FractionService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.requestObject) {
+      this.typeRecord = this.requestObject.typeRecord;
+      this.transferente = this.requestObject.transfer;
+    }
   }
 
   ngOnInit(): void {
@@ -85,7 +110,6 @@ export class AssetsComponent extends BasePage implements OnInit {
     };
     //this.settings.actions.delete = true;
     // this.settings.actions.position = 'left';
-
     //oye los camibios de detail-assets-tab para refrescar la tabla
     this.refreshTable();
     this.paginatedData();
@@ -109,7 +133,6 @@ export class AssetsComponent extends BasePage implements OnInit {
             //obtener tipo bien
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeName'] = goodType;
-
             //obtener el estado fisico
             const physicalStatus = await this.getPhysicalStatus(
               item.physicalStatus
@@ -145,6 +168,7 @@ export class AssetsComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+        this.paragraphs = [];
       },
     });
   }
@@ -232,22 +256,28 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: any, type?: string) {
-    console.log(event.target.files[0]);
+    this.loader.load = true;
     const file = event.target.files[0];
     const user = this.authService.decodeToken().preferred_username;
     this.uploadFile(file, this.requestObject.id, user);
   }
 
   uploadFile(file: File, request: string, user: string) {
+    debugger;
     this.procedureManagementService
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          if (resp.statusCode === 200) {
-            this.message('success', 'Archivos cargados', `${resp.message}`);
-          } else {
-            this.message('error', 'Error al guardar', `${resp.message}`);
-          }
+          this.message(
+            'success',
+            'Archivos cargados',
+            `Se importaron los archivos`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.message('error', 'Error al guardar', `${error.error.message}`);
         },
       });
   }
@@ -255,34 +285,41 @@ export class AssetsComponent extends BasePage implements OnInit {
   newAsset(): void {
     if (this.createNewAsset === false) {
       this.createNewAsset = true;
-      this.btnCreate = 'Cerrar Nuevo';
+      this.btnCreate = 'Cerrar Bien';
       window.scroll(0, 600);
     } else {
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
   selectRows(event: any) {
-    console.log(event);
     this.listgoodObjects = event.selected;
     if (this.listgoodObjects.length <= 1) {
       if (event.isSelected === true) {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
-        this.btnCreate = 'Cerrar Nuevo';
+        this.btnCreate = 'Cerrar Bien';
+        const load = true;
+        this.loadLoading(load);
+        setTimeout(() => {
+          this.loadLoading(false);
+        }, 400);
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
-        this.btnCreate = 'Crear Nuevo';
+        this.btnCreate = 'Nuevo Bien';
       }
     } else {
       this.goodObject = this.listgoodObjects;
       this.createNewAsset = false;
-      this.btnCreate = 'Crear Nuevo';
+      this.btnCreate = 'Nuevo Bien';
     }
   }
 
+  loadLoading(loading: boolean) {
+    this.requestHelperService.loadingForm(loading);
+  }
   openSelectAddressModal() {
     if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
@@ -349,6 +386,9 @@ export class AssetsComponent extends BasePage implements OnInit {
       if (this.isSaveMenaje === true) {
         await this.saveMenaje();
       }
+      if (this.isSaveFraction === true) {
+        await this.saveFractions();
+      }
       this.closeCreateGoodWIndows();
     } else {
       this.message('error', 'Error', `Seleccione al menos un bien`);
@@ -365,6 +405,9 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
+        if (element.requestId.id) {
+          element.requestId = Number(element.requestId.id);
+        }
         this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -380,10 +423,10 @@ export class AssetsComponent extends BasePage implements OnInit {
               this.message(
                 'success',
                 'Actualizado',
-                `Se guardo correctamente el bien del domicilio!`
+                `¡Se guardó correctamente el bien del domicilio!`
               );
               this.isSaveDomicilie = false;
-              resolve('Se guardo correctamente el bien del domicilio!');
+              resolve('¡Se guardó correctamente el bien del domicilio!');
             }
           },
         });
@@ -395,7 +438,6 @@ export class AssetsComponent extends BasePage implements OnInit {
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
-        console.log(element);
 
         this.menageService.create(element).subscribe({
           next: data => {
@@ -403,19 +445,19 @@ export class AssetsComponent extends BasePage implements OnInit {
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -423,11 +465,32 @@ export class AssetsComponent extends BasePage implements OnInit {
     });
   }
 
+  saveFractions() {
+    return new Promise((resolve, reject) => {
+      for (let i = 0; i < this.listGoodsFractions.length; i++) {
+        const element = this.listGoodsFractions[i];
+
+        this.goodService.update(element).subscribe({
+          next: resp => {
+            this.message(
+              'success',
+              'Fracción guardada',
+              `Se guardó la fracción exitosamente`
+            );
+            this.refreshTable();
+          },
+          error: error => {},
+        });
+      }
+      this.isSaveFraction = false;
+    });
+  }
+
   delete() {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        text: '¿Esta seguro de querer eliminar el bien seleccionado?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',
@@ -435,7 +498,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         confirmButtonText: 'Aceptar',
       }).then(result => {
         if (result.isConfirmed) {
-          this.deleteGood();
+          this.deleteMethod();
         }
       });
     } else {
@@ -443,24 +506,45 @@ export class AssetsComponent extends BasePage implements OnInit {
     }
   }
 
-  deleteGood() {
-    for (let i = 0; i < this.listgoodObjects.length; i++) {
-      const element = this.listgoodObjects[i];
+  deleteMethod() {
+    this.loader.load = true;
+    this.listgoodObjects.map(async (item, i) => {
+      let index = i + 1;
+      const deleteResult = await this.deleteGood(item);
+
+      if (deleteResult === true) {
+        if (this.listgoodObjects.length === index) {
+          this.message(
+            'success',
+            'Bienes Eliminados',
+            `Los bienes se eliminaron correctamente`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        }
+      }
+    });
+  }
+
+  deleteGood(element: any) {
+    return new Promise((resolve, reject) => {
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
           if (resp.statusCode === 200) {
-            this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
-            this.closeCreateGoodWIndows();
+            resolve(true);
           } else {
+            this.loader.load = false;
+            reject(false);
             this.message('error', 'Eliminar', `${resp.message[0]}`);
           }
         },
         error: error => {
-          console.log(error);
+          this.loader.load = false;
+          this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
         },
       });
-    }
+    });
   }
 
   refreshTable() {
@@ -478,11 +562,319 @@ export class AssetsComponent extends BasePage implements OnInit {
   closeCreateGoodWIndows() {
     this.goodObject = null;
     this.createNewAsset = false;
-    this.btnCreate = 'Crear Nuevo';
+    this.btnCreate = 'Nuevo Bien';
     this.paginatedData();
   }
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  /* Clasificacion Masiva */
+  masiveClasification() {
+    if (this.listgoodObjects.length === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
+
+    let config: ModalOptions = {
+      initialState: {
+        parameter: '',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modalSizeXL modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalServise.show(AdvancedSearchComponent, config);
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      this.idFractions = [];
+      this.isSaveFraction = true;
+
+      if (this.listgoodObjects.length === 1) {
+        // verifica el nivel actual de la fraccion
+        this.matchLevelFraction(res);
+      } else {
+        // asignar el id de fraccion a los biene
+        this.listGoodsFractions = [];
+        this.listgoodObjects.map((item: any) => {
+          let good: any = {};
+          good.id = Number(item.id);
+          good.addressId = Number(item.addressId.id);
+          good.requestId = Number(item.requestId.id);
+          good.fractionId = Number(res.id);
+
+          this.listGoodsFractions.push(good);
+        });
+      }
+    });
+  }
+
+  setFractions(listReverse: any) {
+    const fractions = [
+      'ligieSection',
+      'ligieChapter',
+      'ligieLevel1',
+      'ligieLevel2',
+      'ligieLevel3',
+      'ligieLevel4',
+    ];
+
+    //this.listGoodsFractions = this.listgoodObjects;
+    this.listGoodsFractions = [];
+    for (let j = 0; j < this.listgoodObjects.length; j++) {
+      const item = this.listgoodObjects[j];
+      let good: any = {};
+      good.id = Number(item.id);
+      good.addressId = Number(item.addressId.id);
+      good.requestId = Number(item.requestId.id);
+      good.goodClassNumber = Number(this.fractionProperties['goodClassNumber']);
+      good.unitMeasure = this.fractionProperties['unitMeasure'];
+      good.ligieUnit = this.fractionProperties['ligieUnit'];
+      good.fractionId = Number(this.fractionProperties['fractionId']);
+
+      for (let i = 0; i < listReverse.length; i++) {
+        const fractionsId = listReverse[i];
+        good[fractions[i]] = Number(fractionsId);
+      }
+
+      this.listGoodsFractions.push(good);
+    }
+  }
+
+  getNoClasifyGood(value: string) {
+    return new Promise((resolve, reject) => {
+      if (value) {
+        if (value.length >= 8) {
+          const fractionCode = { fraction: value };
+          this.goodsQueryService
+            .getUnitLigie(fractionCode)
+            .subscribe((data: any) => {
+              //guarda el no_clasify_good
+              if (data.clasifGoodNumber !== null) {
+                /* this.listGoodsFractions['goodClassNumber'] =
+                  data.clasifGoodNumber; */
+                resolve(data);
+              } else {
+                resolve(true);
+                this.message(
+                  'info',
+                  'clasificación de bien nula',
+                  'el bien seleccionado no tiene numero de clasificación de bien'
+                );
+              }
+            });
+        }
+      }
+    });
+  }
+
+  getUnit(data: any) {
+    //data.ligieUnit
+    return new Promise((resolve, reject) => {
+      this.goodsQueryService
+        .getLigieUnitDescription(data.ligieUnit)
+        .subscribe((data: any) => {
+          this.fractionProperties['unitMeasure'] = data.description;
+          this.fractionProperties['ligieUnit'] = data.description;
+          resolve(true);
+        });
+    });
+  }
+
+  matchLevelFraction(res: any) {
+    switch (Number(res.level)) {
+      case 5:
+        this.getLevel4(new ListParams(), res.id);
+        break;
+      case 4:
+        this.getLevel3(new ListParams(), res.id);
+        break;
+      case 3:
+        this.getLevel2(new ListParams(), res.id);
+        break;
+      case 2:
+        this.getLevel1(new ListParams(), res.id);
+        break;
+      case 1:
+        this.getChapter(new ListParams(), res.id);
+        break;
+      case 0:
+        this.getSection(new ListParams(), res.id);
+        break;
+      default:
+        break;
+    }
+  }
+
+  getSection(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        const listReverse = this.idFractions.reverse();
+        //estable los id para ser visualizados
+        this.setFractions(listReverse);
+      },
+    });
+  }
+
+  getChapter(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getSection(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {},
+    });
+  }
+
+  getLevel1(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    delete params.text;
+    delete params.inicio;
+    delete params.pageSize;
+    delete params.take;
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getChapter(new ListParams(), fraction.parentId);
+      },
+      error: error => {},
+    });
+  }
+
+  getLevel2(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getLevel1(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {},
+    });
+  }
+
+  getLevel3(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async data => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getLevel2(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {},
+    });
+  }
+
+  getLevel4(params: ListParams, id?: number) {
+    params['filter.id'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService.getAll(params).subscribe({
+      next: async (data: any) => {
+        const fraction: any = data.data[0];
+        this.idFractions.push(fraction.id);
+        const fractionCode = fraction.fractionCode.toString();
+        if (
+          fractionCode.length === 8 &&
+          this.fractionProperties['goodClassNumber'] === undefined
+        ) {
+          const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
+          this.fractionProperties['goodClassNumber'] =
+            fractionDesc.clasifGoodNumber;
+          this.fractionProperties['fractionId'] = fraction.id;
+          if (fraction.typeRelevant) {
+            this.fractionProperties['goodTypeId'] = fraction.id;
+          }
+          await this.getUnit(fractionDesc);
+        }
+        this.getLevel3(new ListParams(), data.data[0].parentId);
+      },
+      error: error => {},
+    });
   }
 }

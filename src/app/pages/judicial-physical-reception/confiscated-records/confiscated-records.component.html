@@ -30,7 +30,7 @@
                 (click)="getGoodsByExpedient()">
                 Buscar
               </button>
-
+              <span class="ml-3">{{ statusProceeding }}</span>
               <!-- <form-field
                 [control]="form.get('averPrev')"
                 label="Averiguaci&oacute;n Previa">
@@ -38,20 +38,6 @@
                   type="number"
                   class="form-control"
                   formControlName="averPrev" />
-              </form-field> -->
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-9">
-              <!--  <form-field
-                [control]="form.get('causaPenal')"
-                label="Causa Penal">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="causaPenal" />
               </form-field> -->
             </div>
           </div>
@@ -99,7 +85,7 @@
                   type="text"
                   class="form-control disabled"
                   formControlName="ident"
-                  (ngModelChange)="fillActTwo()" />
+                  (change)="fillActTwo()" />
               </form-field>
             </div>
 
@@ -113,11 +99,6 @@
                   bindLabel="delegation"
                   [data]="recibeSelect"
                   [form]="form"></ngx-select>
-                <!--   <input
-                  type="text"
-                  class="form-control"
-                  formControlName="recibe"
-                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
@@ -145,7 +126,7 @@
                   type="text"
                   class="form-control"
                   formControlName="folio"
-                  (ngModelChange)="fillActTwo()" />
+                  (change)="fillActTwo()" />
               </form-field>
             </div>
             <div class="col">
@@ -237,7 +218,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="folioEscaneo" />
+                  formControlName="folioEscaneo"
+                  maxlength="15" />
               </form-field>
             </div>
 

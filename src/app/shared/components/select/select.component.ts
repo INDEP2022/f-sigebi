@@ -91,6 +91,10 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data']?.currentValue?.reset == true) {
+      this.buffer = [];
+      this.page = 1;
+    }
     if (changes['data']?.currentValue.length === 0) {
       this.buffer = [];
     } else if (changes['data'] && this.concat) {

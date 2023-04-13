@@ -13,7 +13,7 @@ import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedie
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
@@ -107,11 +107,19 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       reserveDateInai: [null], //fecha reserva
       sheetsInai: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.required,
+          Validators.maxLength(10),
+        ],
       ], //foja
       filesInai: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.required,
+          Validators.maxLength(10),
+        ],
       ],
       fullCoding: [null], // codificacion
       reservePeriodInai: [null], //periodo de reserva
@@ -130,14 +138,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'error',
         '',
-        'Se requerier tener una delegacion regional'
+        'Se requiere tener una Delegación Regional'
       );
     } else if (!request.transferenceId) {
-      this.onLoadToast('error', '', 'Se requerier tener una transferente');
+      this.onLoadToast('error', '', 'Se requiere tener una transferente');
     }
     Swal.fire({
-      title: 'Generar Caratula',
-      text: 'Esta seguro de querer generar una caratula?',
+      title: 'Generar Carátula',
+      text: '¿Esta seguro de querer generar una carátula?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -153,7 +161,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   generateCaratula() {
     let request = this.parameter.getRawValue();
     let expedient = this.associateFileForm.getRawValue();
-
+    this.loader.load = true;
     //guardar expediente
     this.expedientSamiService.create(expedient).subscribe({
       next: resp => {
@@ -211,7 +219,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                               const docName = `Reporte_${94}${this.getDocNameDate()}`;
                               const body = {
                                 ddocTitle:
-                                  'Caratula del Expediente ' +
+                                  'Carátula del Expediente ' +
                                   solicitud.recordId,
                                 ddocAuthor: '',
                                 ddocType: '',
@@ -269,16 +277,36 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                       dateCreation: this.setDate(new Date()),
                                       docName: reporteName,
                                     };
+                                    this.loader.load = false;
                                     this.openModal(
                                       OpenDescriptionComponent,
                                       parameters
                                     );
                                     this.close();
                                   },
+                                  error: error => {
+                                    this.loader.load = false;
+                                    console.log(error.error.message);
+
+                                    this.onLoadToast(
+                                      'error',
+                                      'Error',
+                                      'Error guardar la carátula al contenedor:'
+                                    );
+                                  },
                                 });
+                            },
+                            error: error => {
+                              this.loader.load = false;
+                              this.onLoadToast(
+                                'error',
+                                'Error',
+                                'Error al generar la carátula'
+                              );
                             },
                           });
                       } else {
+                        this.loader.load = false;
                         console.log('error');
                         this.onLoadToast(
                           'error',
@@ -288,8 +316,24 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                         );
                       }
                     },
+                    error: error => {
+                      this.loader.load = false;
+                      this.onLoadToast(
+                        'error',
+                        'Error',
+                        'Error al actualizar la solicitud'
+                      );
+                    },
                   });
               }
+            },
+            error: error => {
+              this.loader.load = false;
+              this.onLoadToast(
+                'error',
+                'Error',
+                'Error al insertar la documentacion'
+              );
             },
           });
         }
@@ -309,15 +353,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     var downloadURL = window.URL.createObjectURL(blob);
     // open the window
     var newWin = window.open(downloadURL, `${docName}.pdf`);
-
-    /*const base64 = resp;
-      const linkSource = 'data:application/pdf;base64,' + base64;
-      const downloadLink = document.createElement('a');
-      const fileName = `${docName}.pdf`;
-      downloadLink.href = linkSource;
-      downloadLink.download = fileName;
-      downloadLink.click();*/
-    //cierra la ventana de mensaje y oculta el tab
   }
 
   setDate(date: Date) {
@@ -333,23 +368,23 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       newDate =
         oldDate.getFullYear() +
         '' +
-        this.setMonths(oldDate.getMonth() + 1) +
+        this.setMonthsAndDay(oldDate.getMonth() + 1) +
         '' +
-        oldDate.getDate();
+        this.setMonthsAndDay(oldDate.getDate());
     } else {
       const oldDate = date;
       newDate =
         oldDate.getFullYear() +
         '' +
-        this.setMonths(oldDate.getMonth() + 1) +
+        this.setMonthsAndDay(oldDate.getMonth() + 1) +
         '' +
-        oldDate.getDate();
+        this.setMonthsAndDay(oldDate.getDate());
     }
 
     return newDate.toString();
   }
 
-  setMonths(month: number) {
+  setMonthsAndDay(month: number) {
     let result = month.toString();
     if (month === 1) {
       result = '01';

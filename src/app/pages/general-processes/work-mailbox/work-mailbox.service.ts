@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 
@@ -8,12 +9,17 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
   providedIn: 'root',
 })
 export class WorkMailboxService {
-  constructor(private htpp: HttpClient) {}
+  constructor(private htpp: HttpClient, private authService: AuthService) {}
 
   //TODO: MOVE TO SERVICES FOLDER
-  getView(params?: ListParams) {
+  getView(params?: ListParams): Observable<any> {
     const url = `${environment.API_URL}proceduremanagement/api/v1/views/management-process`;
     return this.htpp.get(url, { params });
+  }
+
+  getStatus() {
+    const url = `${environment.API_URL}proceduremanagement/api/v1/management-area`;
+    return this.htpp.get(url);
   }
 
   getViewBienes(_params?: any): Observable<any> {

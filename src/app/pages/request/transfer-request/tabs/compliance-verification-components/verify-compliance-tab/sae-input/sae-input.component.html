@@ -3,4 +3,6 @@
   name="sae"
   cols="27"
   id="sae"
-  (keyup)="onKeyUp($event)"></textarea>
+  [(ngModel)]="value"
+  (keyup)="onKeyUp($event)"
+  [readOnly]="isreadOnly"></textarea>

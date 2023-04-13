@@ -1,16 +1,24 @@
+import { IAuthority } from '../catalogs/authority.model';
+import { IRegionalDelegation } from '../catalogs/regional-delegation.model';
+import { IStation } from '../catalogs/station.model';
+import { ITransferente } from '../catalogs/transferente.model';
+
 export interface IRequest {
   id?: number;
-  idRecord?: number;
+  recordId?: number;
   applicationDate?: string;
   receptionDate?: string;
   nameOfOwner?: string;
   holderCharge?: string;
   phoneOfOwner?: string;
   emailOfOwner?: string;
-  transferenceId?: number;
-  stationId?: number;
-  authorityId?: number;
-  regionalDelegationId?: number;
+  transferenceId?: number | string;
+  transferent?: ITransferente;
+  stationId?: number | string;
+  emisora?: IStation;
+  authorityId?: number | string;
+  regionalDelegationId?: number | string;
+  regionalDelegation?: IRegionalDelegation;
   sender?: string;
   observations?: string;
   targetUser?: string;
@@ -36,6 +44,7 @@ export interface IRequest {
   affair?: number;
   satDeterminant?: string;
   satDirectory?: string;
+  authority?: IAuthority;
   satZoneCoordinator?: string;
   userCreated?: string;
   creationDate?: string;

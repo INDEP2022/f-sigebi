@@ -41,7 +41,6 @@ export class CantsComponent implements OnInit {
     params.limit = 100;
     this.indicatorService.getAll(params).subscribe({
       next: response => {
-        // debugger;
         this.proceedingIndicators = response.data.filter(
           indicator => indicator.description === 'ENTREGA FISICA'
         );

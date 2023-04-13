@@ -58,4 +58,10 @@ export class GoodSssubtypeService
     const route = 'good-sssubtype/search-by-type';
     return this.post<IListResponse<IGoodSssubtype>>(route, body, params);
   }
+
+  getClasification(
+    id: string | number
+  ): Observable<IListResponse<IGoodSssubtype>> {
+    return this.goodSssubtypeRepository.getClassif(id);
+  }
 }

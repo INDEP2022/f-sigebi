@@ -7,46 +7,58 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="fileForm.get('position')" label="Cargo">
             <input
               type="text"
               class="form-control"
-              formControlName="position" />
+              formControlName="name"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('post')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="post"
+              readonly />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="fileForm.get('password')"
+            [control]="fileForm.get('pass')"
             label="Contrase&ntilde;a">
             <input
-              type="password"
+              [type]="hide ? 'password' : 'text'"
               class="form-control"
-              formControlName="password" />
+              formControlName="pass" />
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="hide = !hide">
+              <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
+            </button>
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4" *ngIf="!isRFCHided">
+        <!-- *ngIf="!isRFCHided" -->
         <div class="col-md-6">
-          <form-field [control]="fileForm.get('rfc')" label="RFC">
-            <input type="password" class="form-control" formControlName="rfc" />
+          <form-field [control]="fileForm.get('rfcUser')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfcUser" />
           </form-field>
         </div>
       </div>
+
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="fileForm.get('certificationFile')"
+            [control]="fileForm.get('certificate')"
             label="Certificado">
             <input
               type="file"
+              accept=".cer"
               class="form-control"
-              formControlName="certificationFile"
+              #FileInput
+              formControlName="certificate"
               (change)="chargeCertifications($event)" />
           </form-field>
           <!-- <input
@@ -55,20 +67,19 @@
             placeholder="Seleccione un certificado"
             (change)="chargeCertifications($event.target)" /> -->
         </div>
-      </div>
-      <div class="row pt-4">
         <div class="col-md-6">
-          <form-field
-            [control]="fileForm.get('keyCertificationFile')"
-            label="Key Certificado">
+          <form-field [control]="fileForm.get('keycertificate')" label="Key">
             <input
               type="file"
+              accept=".key"
               class="form-control"
-              formControlName="keyCertificationFile"
+              #FileInput
+              formControlName="keycertificate"
               (change)="chargeKeyCertifications($event)" />
           </form-field>
         </div>
       </div>
+      <div class="row pt-4"></div>
     </form>
   </div>
   <div footer>

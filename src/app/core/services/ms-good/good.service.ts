@@ -11,9 +11,11 @@ import {
   IDescriptionByNoGoodResponse,
   IFromGoodsAndExpedientsBody,
   IFromGoodsAndExpedientsResponse,
+  IGoodSearchGoodByClasification,
+  IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
-import { IGood } from '../../models/ms-good/good';
+import { GoodGetData, IGood } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -85,6 +87,10 @@ export class GoodService extends HttpService {
     );
   }
 
+  getData(goodData: GoodGetData): Observable<IListResponse<IGood>> {
+    return this.post(GoodEndpoints.GoodGetDat, goodData);
+  }
+
   getAllFilter(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
@@ -115,6 +121,7 @@ export class GoodService extends HttpService {
   create(good: IGood) {
     return this.post(GoodEndpoints.Good, good);
   }
+
   //
   update(good: IGood) {
     const route = `${GoodEndpoints.Good}`;
@@ -170,7 +177,6 @@ export class GoodService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-    console.log(route);
 
     return this.post<IListResponse<IGood>>(route, body);
   }
@@ -191,7 +197,6 @@ export class GoodService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.vaultNumber=$eq:${id}`;
-    console.log(route);
     return this.get<IListResponse<IGood>>(route, params);
   }
 
@@ -241,6 +246,18 @@ export class GoodService extends HttpService {
   getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
     return this.post<IListResponse<IFromGoodsAndExpedientsResponse>>(
       GoodEndpoints.DiStatusGood,
+      body
+    );
+  }
+  getSearchGoodByFile(body: IGoodSearchGoodByFile) {
+    return this.post<IListResponse<IGood>>(
+      GoodEndpoints.SearchGoodByFile,
+      body
+    );
+  }
+  getSearchGoodByClasif(body: IGoodSearchGoodByClasification) {
+    return this.post<IListResponse<IGood>>(
+      GoodEndpoints.SearchGoodByClasif,
       body
     );
   }

@@ -620,6 +620,19 @@ const routes: Routes = [
             .FinancialInformationModule,
         data: { title: 'Información financiera', screen: 'FACTADBINFORFINAN' },
       },
+      {
+        path: 'change-of-good-classification',
+        loadChildren: async () =>
+          (
+            await import(
+              './change-of-good-classification/change-of-good-classification.module'
+            )
+          ).ChangeOfStatusModule,
+        data: {
+          title: 'Cambio de Clasificación del Bien',
+          screen: 'FCAMNOCLASIFBIEN',
+        },
+      },
     ],
   },
 ];

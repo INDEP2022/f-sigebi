@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
@@ -18,6 +21,7 @@ import { ClarificationListTabComponent } from './tabs/classify-assets-components
 import { ClassifyAssetsTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/classify-assets-tab/classify-assets-tab.component';
 import { ClassificationAssetsTabComponent } from './tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
+import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
@@ -30,6 +34,7 @@ import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-
 import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
 import { AssetsComponent } from './tabs/records-of-request-components/assets/assets.component';
+import { CopyAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/copy-address/copy-address.component';
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 import { RequestRecordTabComponent } from './tabs/records-of-request-components/request-record-tab/request-record-tab.component';
@@ -75,6 +80,8 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     AssociateFieldComponent,
     SelectTypeUserComponent,
     OpenDescriptionComponent,
+    CheckboxComponent,
+    CopyAddressComponent,
   ],
   imports: [
     CommonModule,
@@ -84,6 +91,9 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     TabsModule.forRoot(),
     NgScrollbarModule,
     SharedRequestModule,
+    PdfViewerModule,
+    FormLoaderComponent,
+    HttpClientModule,
   ],
   exports: [VerifyComplianceTabComponent],
 })

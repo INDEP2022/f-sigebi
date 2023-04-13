@@ -1,6 +1,6 @@
 export const GOOD_DOCUMENTES_COLUMNS = {
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -9,7 +9,7 @@ export const GOOD_DOCUMENTES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodTypeId: {
+  goodTypeName: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
@@ -19,17 +19,16 @@ export const GOOD_DOCUMENTES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  quantity: {
-    title: 'Cantidad',
-    type: 'string',
-    sort: false,
-  },
-
   goodDescription: {
     title: 'Descripción del Bien Transferente',
     type: 'string',
     sort: false,
     width: '200px',
+  },
+  quantity: {
+    title: 'Cantidad',
+    type: 'string',
+    sort: false,
   },
   destiny: {
     title: 'Destino Ligie',

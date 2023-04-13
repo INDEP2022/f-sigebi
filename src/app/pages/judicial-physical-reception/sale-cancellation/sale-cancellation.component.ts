@@ -1,8 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format, subDays } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { BasePage } from 'src/app/core/shared/base-page';
+import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -12,7 +27,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './sale-cancellation.component.html',
   styleUrls: ['cancellation-sale.component.scss'],
 })
-export class SaleCancellationComponent implements OnInit {
+export class SaleCancellationComponent extends BasePage implements OnInit {
   itemsSelect = new DefaultSelect();
   settings1 = {
     ...TABLE_SETTINGS,
@@ -26,7 +41,7 @@ export class SaleCancellationComponent implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
         type: 'string',
         sort: false,
@@ -36,17 +51,17 @@ export class SaleCancellationComponent implements OnInit {
         type: 'string',
         sort: false,
       },
-      proceso: {
+      extDomProcess: {
         title: 'Proceso',
         type: 'string',
         sort: false,
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
         type: 'number',
         sort: false,
       },
-      unidad: {
+      unit: {
         title: 'Unidad',
         type: 'string',
         sort: false,
@@ -105,12 +120,31 @@ export class SaleCancellationComponent implements OnInit {
   };
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
+  dataGoods = new LocalDataSource();
+  transferSelect = new DefaultSelect();
   form: FormGroup;
-  records: string[] = ['A', 'NA', 'D', 'NS'];
-  constructor(private fb: FormBuilder) {}
+  records: string[] = ['A', 'RT'];
+  recibeSelect = new DefaultSelect();
+  maxDatefecElab = subDays(new Date(), 1);
+
+  constructor(
+    private fb: FormBuilder,
+    private serviceGood: GoodService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceExpedient: ExpedientService,
+    private serviceRNomencla: ParametersService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.form.get('year').setValue(format(new Date(), 'yyyy'));
+    this.form.get('mes').setValue(format(new Date(), 'MM'));
+
+    this.form.get('fecElab').valueChanges.subscribe(res => {
+      this.form.get('fecRecepFisica').setValue(res);
+    });
   }
 
   prepareForm() {
@@ -123,12 +157,12 @@ export class SaleCancellationComponent implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       ident: [null, [Validators.required]],
-      recibe: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      folio: [
+      entrego: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      recibe: [null, [Validators.required]],
+      folio: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       year: [null, [Validators.required]],
       mes: [null, [Validators.required]],
       status: [null, [Validators.required]],
@@ -176,6 +210,134 @@ export class SaleCancellationComponent implements OnInit {
       noAlmacen: [null, [Validators.required]],
       noBoveda: [null, [Validators.required]],
     });
+  }
+
+  //Validate Proceeding
+  changeAct() {
+    this.fillActTwo();
+  }
+
+  verifyTransferenteAndAct() {
+    if (this.form.get('acta').value != null) {
+      let actaValue = this.form.get('acta').value;
+      this.form
+        .get('transfer')
+        .setValidators([transferenteAndAct(actaValue), Validators.required]);
+      this.fillActTwo();
+    }
+  }
+
+  getGoodsByExpedient() {
+    this.serviceGood
+      .getByExpedient(this.form.get('expediente').value, {
+        text: '?expedient=',
+      })
+      .subscribe({
+        next: (res: any) => {
+          if (res.data.length > 0) {
+            this.dataGoods.load(res.data); //Pintar los vienes en la tabla
+            this.form.get('ident').setValue('DEV'); //Asignar el valor DEV a ident
+            this.form.get('entrego').setValue('PART');
+            this.serviceExpedient //Busqueda de los datos del expediente, según su número
+              .getById(this.form.get('expediente').value)
+              .subscribe(
+                res => {
+                  let model: TransferProceeding = {
+                    //Llenar los datos del expediente para buscar el transfer
+                    numFile: res.transferNumber as number,
+                    typeProceedings: res.expedientType,
+                  };
+
+                  this.serviceProcVal.getTransfer(model).subscribe(
+                    res => {
+                      console.log(res);
+                      this.transferSelect = new DefaultSelect(
+                        res.data,
+                        res.count
+                      );
+                    },
+                    err => {
+                      console.log(err);
+                    }
+                  );
+                },
+                err => {}
+              );
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+      });
+  }
+
+  //Catalogs
+  getRecibe(params: ListParams) {
+    console.log(params);
+    const paramsF = new FilterParams();
+    paramsF.addFilter('delegation', params.text, SearchFilter.ILIKE);
+    this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+      res => {
+        this.recibeSelect = new DefaultSelect(res.data, res.count);
+      },
+      err => console.log(err)
+    );
+  }
+
+  //Functions
+  zeroAdd(number: number, lengthS: number) {
+    if (number != null) {
+      const stringNum = number.toString();
+      let newString = '';
+      if (stringNum.length < lengthS) {
+        lengthS = lengthS - stringNum.length;
+        for (let i = 0; i < lengthS; i++) {
+          newString = newString + '0';
+        }
+        newString = newString + stringNum;
+        return newString;
+      } else {
+        return stringNum;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  //Fill Act 2
+  fillActTwo() {
+    console.log(this.form.get('entrego').value);
+    const nameAct =
+      (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
+      '/' +
+      (this.form.get('transfer').value != null
+        ? this.form.get('transfer').value.transferentkey
+        : '') +
+      '/' +
+      (this.form.get('ident').value != null
+        ? this.form.get('ident').value
+        : '') +
+      '/' +
+      (this.form.get('entrego').value != null
+        ? this.form.get('entrego').value
+        : '') +
+      '/' +
+      (this.form.get('recibe').value != null
+        ? this.form.get('recibe').value.delegation
+        : '') +
+      '/' +
+      (this.form.get('folio').value != null
+        ? this.zeroAdd(this.form.get('folio').value, 5)
+        : '') +
+      '/' +
+      (this.form.get('year').value != null
+        ? this.form.get('year').value.toString().substr(2, 2)
+        : '') +
+      '/' +
+      (this.form.get('mes').value != null
+        ? this.zeroAdd(this.form.get('mes').value, 2)
+        : '');
+    this.form.get('acta2').setValue(nameAct);
   }
 }
 

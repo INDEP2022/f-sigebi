@@ -174,7 +174,6 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   }
 
   private fillParams(form: IProceedingInfo) {
-    // debugger;
     if (!form) return false;
     this.service.formValue = form;
     this.filterParams = new FilterParams();

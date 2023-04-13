@@ -174,4 +174,10 @@ export class GoodsQueryService extends HttpService {
     });
     return httpParams;
   }
+  getAtribuXClasif(_params: _Params) {
+    return this.get<IListResponse<IAttribClassifGoods>>(
+      GoodsQueryEndpoints.AtributesClassificationGood,
+      _params
+    );
+  }
 }

@@ -46,9 +46,32 @@
               [form]="flyersForm"></app-departments-shared>
           </div>
         </div>
-
-        <div class="col-md-3" *ngIf="includeArea.value">
-          <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
+        <div class="col-md-4" *ngIf="includeArea.value">
+          <div class="row pt-3">
+            <ngx-select
+              [form]="flyersForm"
+              control="delegdestino"
+              (fetchItems)="getDelegation($event)"
+              [showTooltip]="true"
+              [data]="selectedDelegation"
+              bindLabel="description"
+              label="Delegación destino"
+              value="id"
+              (change)="onDelegationsChange($event)"></ngx-select>
+          </div>
+          <div class="row pt-3">
+            <ngx-select
+              [form]="flyersForm"
+              control="subddestino"
+              (fetchItems)="getSubDelegations($event)"
+              [showTooltip]="true"
+              [data]="selectedSubDelegation"
+              bindLabel="description"
+              [searchable]="false"
+              (change)="onSubDelegationsChange($event)"
+              label="Subdelegación destino"
+              value="id"></ngx-select>
+          </div>
         </div>
       </div>
     </form>
@@ -60,7 +83,7 @@
           text="Imprimir"
           [disabled]="flyersForm.invalid"
           [loading]="loading"
-          (confirm)="confirm()">
+          (confirm)="Generar()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -34,6 +34,11 @@ export class DocumentsService extends HttpService {
     return this.get<IDocuments>(route);
   }
 
+  getByFolio(folio: string | number) {
+    const route = `${DocumentsEndpoints.Documents}/folio/${folio}`;
+    return this.get<IDocuments>(route);
+  }
+
   create(documents: IDocuments) {
     return this.post<IDocuments>(DocumentsEndpoints.Documents, documents);
   }
@@ -66,5 +71,10 @@ export class DocumentsService extends HttpService {
   getByGood(id: string | number) {
     const route = `${DocumentsEndpoints.Documents}/good/${id}`;
     return this.get<IListResponse<IDocuments>>(route);
+  }
+
+  updateByFolio(body: { folioLNU: string | number; folioLST: string }) {
+    const route = `${DocumentsEndpoints.Documents}/update-by-folio`;
+    return this.put(route, body);
   }
 }

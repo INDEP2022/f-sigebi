@@ -114,16 +114,16 @@ export interface IGood {
   uniqueKey?: string;
   fileeNumber?: string;
   goodDescription?: string;
-  physicalStatus?: number;
+  physicalStatus?: number | string;
   unitMeasure?: string;
   ligieUnit?: string;
   quantityy?: number;
-  destiny?: string;
+  destiny?: number | string;
   appraisal?: string;
   notesTransferringEntity?: string;
   fractionId?: number;
   federalEntity?: string;
-  stateConservation?: number;
+  stateConservation?: number | string;
   armor?: string;
   brand?: string;
   subBrand?: string;
@@ -357,6 +357,19 @@ export interface Estatus {
   fecVilidityFin?: any;
   observationShortStatus?: any;
   destiny: string;
+}
+
+export interface GoodGetData {
+  goodNumber: number;
+  subDelegationNumber: number;
+  clasifGoodNumber: number;
+  expedientNumber: number;
+  delegationNumber: number;
+  dateElaboration: string | Date;
+  identificator: string;
+  processExt: string;
+  statusGood: string;
+  screenKey: string;
 }
 
 // TODO: Checar si la interfaz es la del modelo:

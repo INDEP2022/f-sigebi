@@ -1,3 +1,4 @@
+import { IFraction } from '../catalogs/fraction.model';
 import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 
@@ -18,12 +19,19 @@ export interface IGood {
   status: string;
   classificationGood?: any;
   remarksOrien?: any;
+  physicalStatus?: boolean;
+  destinyName?: string;
+  goodId?: number;
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
+  fileeNumber: string;
+  appraisal: string;
   appraiserOpinion?: any;
   goodTypeId: number;
   originSignals?: any;
+  goodDescription?: string;
+  saeDestiny?: string;
   worthApraisal: string;
   Nodrawer?: any;
   NoVault?: any;
@@ -42,9 +50,16 @@ export interface IGood {
   placeNotification?: any;
   fecResdiscardRecRev?: any;
   fecResissueRecRev?: any;
+  goodTypeName: String;
+  transferentDestiny?: string;
   fecResAgreementRecRev?: any;
   fecResAudienceRecRev?: any;
+  programmationStatus?: string;
+  notesTransferringEntity?: string;
+  saeMeasureUnit?: string;
+  compliesNorm?: string;
   observationRecRev?: any;
+  duplicatedGood?: any;
   reasonAbandonment?: any;
   resolution?: any;
   fecUnaffordability?: any;
@@ -52,18 +67,22 @@ export interface IGood {
   usrApprovedUtilization?: any;
   fecApprovedUtilization?: any;
   observationUtilization?: any;
+  storeNumber?: any;
   fecSoliChangeNumerary?: any;
   userSolicChangeNumerary?: any;
   reasonChangeNumerary?: any;
   requestChangeNumerary?: any;
   fecAuthorizesChangeNumerary?: any;
+  uniqueKey?: any;
   userAuthorizesChangeNumera?: any;
   AuthorizesChangeNumerary?: any;
   fecRatifiesChangeNumerary?: any;
+  physicstateName?: string;
   userRatifiesChange?: any;
   fecNotificationRecRev?: any;
   reasonRecRev?: any;
   agreementInitial?: any;
+  requestFolio?: any;
   observation: string;
   NoProceedings: string;
   NoexpAssociated: string;
@@ -85,12 +104,14 @@ export interface IGood {
   NoRegister: string;
   fecAgreementAseg: string;
   state: string;
+  origin: string;
   typOpinion?: any;
   fecPresentation?: any;
   fecSubsanaRecRev?: any;
   statusReception?: any;
   userPromoterDecoDevo?: any;
   fecProgramerXDecoDevo?: any;
+  ligieUnit: string;
   noGoogDadBias?: any;
   declarationAbnSera?: any;
   identifier: string;
@@ -119,6 +140,7 @@ export interface IGood {
   fecEntry?: any;
   idUbication?: any;
   clvUnique?: any;
+  stateConservationName: String;
   noProceedings?: any;
   descriptionGood?: any;
   statePhysical?: any;
@@ -132,6 +154,7 @@ export interface IGood {
   entityFederative?: any;
   stateConservation?: any;
   armor?: any;
+  useType?: string;
   brand?: any;
   subbrand?: any;
   model?: any;
@@ -347,6 +370,8 @@ export interface IGood {
   no_etiqueta: ILabelOKey;
   estatus: Estatus;
   no_expediente: NoExpediente;
+  goodClassNumber?: number;
+  fractionId?: IFraction;
 }
 
 // TODO: Checar a que interfaz pertenece
@@ -444,7 +469,7 @@ export interface IDomicilies {
   versionid?: number | null;
   requestIdid?: number | null;
   warehouseAlias?: string;
-  regionalDelegationIdid?: number | null;
+  regionalDelegationId?: number | null;
 }
 
 //Bien inmueble
@@ -598,4 +623,14 @@ export interface IFromGoodsAndExpedientsResponse {
   fec_acuerdo_aseg: Date;
   averiguacion_previa: string;
   causa_penal: string;
+}
+
+export interface IGoodSearchGoodByFile {
+  screenKey: string;
+  fileNumber: number;
+}
+
+export interface IGoodSearchGoodByClasification {
+  screenKey: string;
+  clasifGoodNumber: number;
 }

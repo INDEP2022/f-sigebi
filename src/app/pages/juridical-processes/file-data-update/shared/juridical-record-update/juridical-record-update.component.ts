@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
   Component,
   EventEmitter,
@@ -12,12 +13,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { DocumentsViewerByFolioComponent } from '../../../../../@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
   baseMenu,
   routesJuridicalProcesses,
 } from '../../../../../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MODAL_CONFIG } from '../../../../../common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -50,11 +53,16 @@ import {
 import { IManagementArea } from '../../../../../core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AuthService } from '../../../../../core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from '../../../../../core/services/document-reception/doc-reception-register.service';
+import { DocumentsService } from '../../../../../core/services/ms-documents/documents.service';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
 import { IGlobalVars } from '../../../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../../../shared/global-vars/services/global-vars.service';
 import { DOCUMENTS_RECEPTION_SELECT_DOCUMENTS_COLUMNS } from '../../../../documents-reception/flyers/documents-reception-register/interfaces/columns';
+import { MailboxModalTableComponent } from '../../../../general-processes/work-mailbox/components/mailbox-modal-table/mailbox-modal-table.component';
+import { RELATED_FOLIO_TITLE } from '../../../../general-processes/work-mailbox/utils/modal-titles';
+import { RELATED_FOLIO_COLUMNS } from '../../../../general-processes/work-mailbox/utils/related-folio-columns';
+import { AbandonmentsDeclarationTradesService } from '../../../abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { FlyerCopiesModalComponent } from '../../flyer-copies-modal/flyer-copies-modal.component';
 import {
   IJuridicalFileDataUpdateForm,
@@ -79,7 +87,20 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
         font-weight: 600 !important;
         color: #74788d !important;
       }
+
+      .form-material {
+        margin-bottom: 0.7rem !important;
+      }
     `,
+  ],
+  animations: [
+    trigger('OnShow', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    ]),
   ],
 })
 export class JuridicalRecordUpdateComponent
@@ -109,6 +130,7 @@ export class JuridicalRecordUpdateComponent
   userDelegation: number;
   dictumPermission: boolean = true;
   initialDate: string;
+  formLoading: boolean = false;
   maxDate: Date = new Date();
   identifiers = new DefaultSelect<IIdentifier>();
   subjects = new DefaultSelect<IAffair>();
@@ -131,7 +153,7 @@ export class JuridicalRecordUpdateComponent
   globals: IGlobalVars;
   items: DefaultSelect<any>;
   @Input() selectedNotification: INotification;
-  @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT';
+  @Input() layout: 'FILE-UPDATE' | 'ABANDONMENT' = 'FILE-UPDATE';
   @Input() searchMode: boolean = false;
   @Input() confirmSearch: boolean = false;
   @Output() onSearch = new EventEmitter<
@@ -154,8 +176,10 @@ export class JuridicalRecordUpdateComponent
     private fileUpdateService: JuridicalFileUpdateService,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private authService: AuthService
+    private showHideService: showHideErrorInterceptorService,
+    private authService: AuthService,
+    private documentsService: DocumentsService,
+    private abandonmentsService: AbandonmentsDeclarationTradesService
   ) {
     super();
     const id = this.activiveRoute.snapshot.paramMap.get('id');
@@ -204,8 +228,7 @@ export class JuridicalRecordUpdateComponent
   }
 
   ngOnInit(): void {
-    this.showHideErrorInterceptorService.showHideError(false);
-    // this.formControls.receiptDate.setValue(this.initialDate);
+    this.blockErrors(true);
     this.checkParams();
     this.fileDataUpdateForm.disable();
   }
@@ -261,7 +284,16 @@ export class JuridicalRecordUpdateComponent
       this.pageParams.dictamen != null &&
       this.pageParams.dictamen != undefined
     ) {
-      if (this.fileUpdateService.juridicalFileDataUpdateForm != null) {
+      if (
+        this.layout == 'FILE-UPDATE' &&
+        this.fileUpdateService.juridicalFileDataUpdateForm != null
+      ) {
+        this.deactivateSearch();
+      }
+      if (
+        this.layout == 'ABANDONMENT' &&
+        this.abandonmentsService.abandonmentsFlyerForm != null
+      ) {
         this.deactivateSearch();
       }
       this.checkDictum();
@@ -357,6 +389,13 @@ export class JuridicalRecordUpdateComponent
     });
   }
 
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
+  }
+
   getScreenPermissions() {
     const params = new FilterParams();
     params.addFilter('typeNumber', 'RESARCIMIENTO');
@@ -417,6 +456,7 @@ export class JuridicalRecordUpdateComponent
   fillForm(notif: INotification) {
     this.fileDataUpdateForm.reset();
     const filterParams = new FilterParams();
+    this.formLoading = true;
     const values = {
       wheelType: notif.wheelType,
       externalRemitter: notif.externalRemitter,
@@ -440,11 +480,18 @@ export class JuridicalRecordUpdateComponent
       entryProcedureDate: notif.entryProcedureDate,
     };
     this.fileDataUpdateForm.patchValue({ ...values });
+    if (notif.expedientNumber == null) {
+      this.onLoadToast(
+        'warning',
+        'Expediente no disponible',
+        'Este volante no tiene asociado un expediente.'
+      );
+    }
     this.formControls.receiptDate.setValue(
-      format(new Date(notif.receiptDate), 'd/MM/yyyy')
+      format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
     );
     this.formControls.externalOfficeDate.setValue(
-      format(new Date(notif.externalOfficeDate), 'd/MM/yyyy')
+      format(this.parseDateNoOffset(notif.externalOfficeDate), 'dd/MM/yyyy')
     );
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
@@ -478,10 +525,15 @@ export class JuridicalRecordUpdateComponent
       this.docRegisterService.getCourt(notif.courtNumber).subscribe({
         next: data => this.formControls.courtNumber.setValue(data),
       });
-    if (notif.stationNumber != null)
-      this.docRegisterService.getStation(notif.stationNumber).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
-      });
+    if (notif.stationNumber != null) filterParams.removeAllFilters();
+    filterParams.addFilter('id', notif.stationNumber);
+    filterParams.addFilter('idTransferent', notif.endTransferNumber);
+    this.docRegisterService.getStations(filterParams.getParams()).subscribe({
+      next: data => {
+        this.formControls.stationNumber.setValue(data.data[0]);
+        this.getStations({ page: 1, limit: 10 });
+      },
+    });
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
       this.docRegisterService
@@ -490,6 +542,7 @@ export class JuridicalRecordUpdateComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -559,9 +612,15 @@ export class JuridicalRecordUpdateComponent
       next: data => {
         if (data.count > 0) {
           this.procedureId = data.data[0].id;
+          this.formLoading = false;
+        } else {
+          this.formLoading = false;
         }
       },
-      error: () => {},
+      error: err => {
+        console.log(err);
+        this.formLoading = false;
+      },
     });
     if (notif.delDestinyNumber != null) {
       this.formControls.delDestinyNumber.setValue(notif.delDestinyNumber);
@@ -603,10 +662,12 @@ export class JuridicalRecordUpdateComponent
             filterParams.removeAllFilters();
             filterParams.addFilter('id', notif.departamentDestinyNumber);
             filterParams.addFilter('numDelegation', notif.delDestinyNumber);
-            filterParams.addFilter(
-              'numSubDelegation',
-              notif.subDelDestinyNumber
-            );
+            if (notif.subDelDestinyNumber) {
+              filterParams.addFilter(
+                'numSubDelegation',
+                notif.subDelDestinyNumber
+              );
+            }
             filterParams.addFilter('phaseEdo', data.stagecreated);
             this.docRegisterService
               .getDepartamentsFiltered(filterParams.getParams())
@@ -616,7 +677,14 @@ export class JuridicalRecordUpdateComponent
                 )
               );
           },
-          error: () => {},
+          error: err => {
+            console.log(err);
+            this.onLoadToast(
+              'warning',
+              'Datos de Área no encontrados',
+              'No se encontraron todos los datos del area correspondiente.'
+            );
+          },
         });
       }
     }
@@ -644,6 +712,7 @@ export class JuridicalRecordUpdateComponent
     if (this.formControls.wheelNumber.value != null) {
       this.canViewDocuments = true;
     }
+    console.log(this.canViewDocuments);
     // TODO: Deshabilitar dictamen si no es nulo y no cumple condiciones SAT
     // if (this.formControls.dictumKey != null) {
     // } else {
@@ -666,9 +735,16 @@ export class JuridicalRecordUpdateComponent
     this.fileDataUpdateForm.enable();
     this.prevDictumKey = this.formControls.dictumKey.value;
     this.prevInitialCondition = this.initialCondition;
-    this.fileUpdateService.juridicalFileDataUpdateForm =
-      this.fileDataUpdateForm.value;
-    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
+    if (this.layout == 'FILE-UPDATE')
+      this.fileUpdateService.juridicalFileDataUpdateForm =
+        this.fileDataUpdateForm.value;
+    if (this.layout == 'ABANDONMENT')
+      this.abandonmentsService.abandonmentsFlyerForm =
+        this.fileDataUpdateForm.value;
+    console.log(
+      this.fileUpdateService.juridicalFileDataUpdateForm,
+      this.abandonmentsService.abandonmentsFlyerForm
+    );
     this.fileDataUpdateForm.reset();
     this.fileDataUpdateForm.enable();
   }
@@ -677,10 +753,20 @@ export class JuridicalRecordUpdateComponent
     console.log(this.searchMode);
     console.log(this.confirmSearch);
     this.fileDataUpdateForm.enable();
-    console.log(this.fileUpdateService.juridicalFileDataUpdateForm);
-    this.fileDataUpdateForm.patchValue(
-      this.fileUpdateService.juridicalFileDataUpdateForm
+    console.log(
+      this.fileUpdateService.juridicalFileDataUpdateForm,
+      this.abandonmentsService.abandonmentsFlyerForm
     );
+    if (this.layout == 'FILE-UPDATE') {
+      this.fileDataUpdateForm.patchValue(
+        this.fileUpdateService.juridicalFileDataUpdateForm
+      );
+    }
+    if (this.layout == 'ABANDONMENT') {
+      this.fileDataUpdateForm.patchValue(
+        this.abandonmentsService.abandonmentsFlyerForm
+      );
+    }
     if (this.prevInitialCondition !== '') {
       this.initialCondition = this.prevInitialCondition;
     } else {
@@ -731,11 +817,17 @@ export class JuridicalRecordUpdateComponent
         },
         error: () => {},
       });
-    if (key.stationNum != null)
-      this.docRegisterService.getStation(key.stationNum).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
-        error: () => {},
+    if (key.stationNum != null) {
+      const params = new FilterParams();
+      params.addFilter('id', key.stationNum);
+      params.addFilter('idTransferent', key.transfereeNum);
+      this.docRegisterService.getStations(params.getParams()).subscribe({
+        next: data => {
+          this.formControls.stationNumber.setValue(data.data[0]);
+          this.getStations({ page: 1, limit: 10 });
+        },
       });
+    }
     if (key.authorityNum != null) {
       const param = new FilterParams();
       param.addFilter('idAuthority', key.authorityNum);
@@ -745,6 +837,7 @@ export class JuridicalRecordUpdateComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -913,7 +1006,7 @@ export class JuridicalRecordUpdateComponent
       doc: catalog.doc,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management'
+      '/pages/documents-reception/flyers-registration/related-document-management/1'
     );
   }
 
@@ -990,7 +1083,9 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
     };
-    this.router.navigateByUrl('/pages/juridical/file-data-update/shift-change');
+    this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
+      queryParams: { origin: this.layout },
+    });
   }
 
   sendToRelatedDocumentsManagement() {
@@ -1012,7 +1107,7 @@ export class JuridicalRecordUpdateComponent
       pNoTramite: procedure,
     };
     this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management'
+      '/pages/documents-reception/flyers-registration/related-document-management/2'
     );
   }
 
@@ -1022,53 +1117,74 @@ export class JuridicalRecordUpdateComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    // modalRef.content.onSave.subscribe(data => {
-    //   if (data) console.log(data);
-    // });
   }
 
   viewDocuments() {
-    // TODO: ajustar busqueda de documentos
+    // this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
     const params = new FilterParams();
     params.addFilter('flyerNumber', this.formControls.wheelNumber.value);
-    params.addFilter('scanStatus', 'ESCANEADO');
+    // params.addFilter('scanStatus', 'ESCANEADO');
     this.fileUpdateService.getDocuments(params.getParams()).subscribe({
       next: data => {
         console.log(data);
-        const documents = data.data;
-        if (data.count == 1) {
-          if (documents[0].associateUniversalFolio) {
-            this.onLoadToast(
-              'info',
-              'Enlace no disponible',
-              'El enlace al documento no se encuentra disponible'
-            );
-          } else {
-            this.onLoadToast(
-              'info',
-              'No disponible',
-              'No tiene documentos digitalizados.'
-            );
-          }
-        } else if (data.count > 1) {
-          this.openModalDocuments();
-        } else {
-          this.onLoadToast(
-            'info',
-            'No disponible',
-            'No tiene documentos digitalizados.'
-          );
-        }
+        this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
       },
       error: err => {
         console.log(err);
         this.onLoadToast(
           'info',
           'No disponible',
-          'No se encontraron documentos asociados.'
+          'El volante no tiene documentos relacionados.'
         );
       },
     });
+  }
+
+  openDocumentsModal(flyerNum: string | number, title: string) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        showConfirmButton: true,
+      },
+    };
+    return this.modalService.show(
+      MailboxModalTableComponent<IDocuments>,
+      config
+    );
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = RELATED_FOLIO_TITLE;
+    const modalRef = this.openDocumentsModal(flyerNum, title);
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 
   changeWheelType(type: string) {
@@ -1200,7 +1316,13 @@ export class JuridicalRecordUpdateComponent
   }
 
   getCities(lparams: ListParams) {
-    this.docRegisterService.getCities(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    this.hideError();
+    this.docRegisterService.getCities(params.getParams()).subscribe({
       next: data => {
         this.cities = new DefaultSelect(data.data, data.count);
       },
@@ -1251,7 +1373,7 @@ export class JuridicalRecordUpdateComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
     if (this.formControls.endTransferNumber.value != null)
       params.addFilter(
@@ -1275,7 +1397,7 @@ export class JuridicalRecordUpdateComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
     if (this.formControls.endTransferNumber.value != null)
       params.addFilter(
@@ -1346,8 +1468,15 @@ export class JuridicalRecordUpdateComponent
   }
 
   getCourts(lparams: ListParams) {
-    this.docRegisterService.getCourts(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    this.hideError();
+    this.docRegisterService.getCourtsUnrelated(params.getParams()).subscribe({
       next: data => {
+        console.log(data);
         this.courts = new DefaultSelect(data.data, data.count);
       },
       error: () => {
@@ -1357,7 +1486,13 @@ export class JuridicalRecordUpdateComponent
   }
 
   getDefendants(lparams: ListParams) {
-    this.docRegisterService.getDefendants(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+    this.hideError();
+    this.docRegisterService.getDefendants(params.getParams()).subscribe({
       next: data => {
         this.defendants = new DefaultSelect(data.data, data.count);
       },

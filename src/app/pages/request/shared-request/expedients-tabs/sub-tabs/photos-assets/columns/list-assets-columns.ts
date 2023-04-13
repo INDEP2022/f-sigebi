@@ -1,8 +1,6 @@
-import { PhotosActionComponent } from '../actions/see-action/photos-action.component';
-
 export const LIST_ASSETS_COLUMNS = {
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -51,15 +49,6 @@ export const LIST_ASSETS_COLUMNS = {
   fractionId: {
     title: 'Fracción',
     type: 'string',
-    sort: false,
-  },
-  actions: {
-    title: 'Acciones',
-    type: 'custom',
-    class: 'custom-field',
-    filter: false,
-    renderComponent: PhotosActionComponent,
-    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
 };

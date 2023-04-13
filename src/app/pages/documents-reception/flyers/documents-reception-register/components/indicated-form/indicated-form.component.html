@@ -8,14 +8,22 @@
       <div class="row">
         <div class="col-md-12">
           <form-field [control]="indicatedForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              [max-length]="1000" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
           <form-field [control]="indicatedForm.get('curp')" label="Curp">
-            <input type="text" class="form-control" formControlName="curp" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              [max-length]="18" />
           </form-field>
         </div>
       </div>

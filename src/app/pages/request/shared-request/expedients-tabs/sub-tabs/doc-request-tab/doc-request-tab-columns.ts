@@ -1,7 +1,7 @@
 import { BtnRequestComponent } from '../btn-request/btn-request.component';
 
 export const DOC_REQUEST_TAB_COLUMNS = {
-  dDocId: {
+  dDocName: {
     title: 'No. Documento',
     type: 'string',
     sort: false,
@@ -13,7 +13,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
   },
 
   ddocTitle: {
-    title: 'Titulo del Documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },

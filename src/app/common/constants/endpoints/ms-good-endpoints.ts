@@ -1,5 +1,6 @@
 export enum GoodEndpoints {
   Good = `good`,
+  GoodGetDat = `good/getData`,
   Domicilies = `domicilies`,
   SearchByExpedient = `good/expedient/search`,
   GoodAndDesc = `good/getGoodAndDesc`,
@@ -14,4 +15,7 @@ export enum GoodEndpoints {
   GoodValidSeq = 'good/validSeq',
   GoodValidFlag = 'good/validGoodFlag',
   GoodValidSat = 'good/validSat',
+  SearchGoodByFile = 'good/searchGoodByFile',
+  SearchGoodByClasif = 'good/searchGoodByClasif',
+  GoodsExtensionFields = 'goods-extension-fields',
 }
