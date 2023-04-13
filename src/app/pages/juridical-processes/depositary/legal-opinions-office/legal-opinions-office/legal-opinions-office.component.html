@@ -43,55 +43,22 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field
-            [control]="form.get('authorizedDic')"
-            label="Autoriza Dic">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="authorizedDic" />
-          </form-field>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-user-shared
+            [form]="form"
+            [userField]="'issuingUser'"
+            [label]="'Autoriza Dictamen'"></app-user-shared>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-        </div>
-        <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('addressee')" label="Destinatario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="addressee" />
-          </form-field>
-        </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="form.get('nameAddressee')"
-            label="Nombre Destinatario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameAddressee" />
-          </form-field>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-user-shared
+            [form]="form"
+            [userField]="'addressee'"
+            [label]="'Destinatario'"></app-user-shared>
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
-          </form-field>
-        </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="form.get('descriptionCity')"
-            label="Descripci&oacute;n Ciudad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="descriptionCity" />
-          </form-field>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-cities-shared [form]="form"></app-cities-shared>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
           Estatus oficio &#91;Aqui va el estatus&#93;

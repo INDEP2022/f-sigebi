@@ -60,6 +60,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   delegationId: number = 0;
   stateId: string = '';
+  formLoading: boolean = false;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -160,12 +161,11 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
         const info = filterTypeDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0].ddescription;
+          items.xtipoDocumento = filter[0]?.ddescription;
           return items;
         });
 
         Promise.all(info).then(x => {
-          console.log('filterTypeDoc', x);
           this.paragraphs = x;
           this.totalItems = this.paragraphs.length;
         });
@@ -510,7 +510,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     const idRequest = this.idRequest;
     let typeDoc = 'doc-expedient';
     const idExpedient = this.idExpedient;
-    //console.log(this.typeDoc);
 
     let config: ModalOptions = {
       initialState: {
@@ -518,7 +517,13 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         idExpedient,
         typeDoc,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) {
+            this.formLoading = true;
+            setTimeout(() => {
+              this.getData();
+              this.formLoading = false;
+            }, 7000);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -579,7 +584,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   getTransfe(params: ListParams) {
     this.transferentService.getByIdState(this.stateId).subscribe({
       next: data => {
-        console.log('d', data);
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       },
       error: error => {},

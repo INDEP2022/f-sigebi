@@ -134,6 +134,7 @@ export class ClassificationAssetsTabComponent
     this.goodService.getAll(filter).subscribe({
       next: resp => {
         var result = resp.data.map(async (item: any) => {
+          item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
 
@@ -251,7 +252,6 @@ export class ClassificationAssetsTabComponent
   }
 
   selectGood(event: any) {
-    console.log(event);
     this.formLoading = true;
     this.detailArray.reset();
     this.goodSelect = event.selected;

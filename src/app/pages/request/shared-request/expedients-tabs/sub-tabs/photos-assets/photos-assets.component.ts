@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -37,6 +38,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   idGood: number = 0;
   idWarehouse: number = 0;
   columns = LIST_ASSETS_COLUMNS;
+  formLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -77,9 +79,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     this.getInfoRequest();
     this.initFilterForm();
     this.getTypeRelevant(new ListParams());
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsRequest());
   }
 
   getInfoRequest() {
@@ -92,11 +91,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   getGoodsRequest() {
     if (this.idRequest) {
-      this.loading = true;
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          console.log('img', data);
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeId'] = goodType;
@@ -117,15 +114,11 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
           Promise.all(filterGoodType).then(x => {
             this.paragraphs = data.data;
             this.totalItems = data.count;
-            this.loading = false;
           });
         },
-        error: error => {
-          this.loading = false;
-        },
+        error: error => {},
       });
     } else {
-      this.loading = false;
     }
   }
 
@@ -164,6 +157,11 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   filter() {
     const goodNumber = this.filterForm.get('management').value;
     const typeGood = this.filterForm.get('typeGood').value;
+
+    if (!goodNumber && !typeGood) {
+      this.getGoodsRequest();
+    }
+
     if (goodNumber) {
       const filter = this.paragraphs.filter(good => {
         return good.id == goodNumber;
@@ -209,7 +207,27 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   uploadFiles(data: any) {
-    this.openModal(UploadFileComponent, data);
+    let loadingPhotos = 0;
+    const idRequest = this.idRequest;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      data,
+      idRequest,
+      callBack: (next: boolean) => {
+        if (next) {
+          this.formLoading = true;
+          loadingPhotos = loadingPhotos + 1;
+          setTimeout(() => {
+            this.getGoodsRequest();
+            this.formLoading = false;
+          }, 7000);
+          if (loadingPhotos == 1) {
+            this.onLoadToast('success', 'Imagen cargada correctamente', '');
+          }
+        }
+      },
+    };
+    this.modalService.show(UploadFileComponent, config);
   }
 
   openPhotos(data: any) {

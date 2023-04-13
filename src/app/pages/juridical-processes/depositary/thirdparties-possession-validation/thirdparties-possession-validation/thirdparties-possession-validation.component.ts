@@ -1,14 +1,27 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject, debounceTime } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import {
+  GOODS_COLUMNS,
+  NOTIFICATIONS_COLUMNS,
+} from './thirdparties-possession-validation-columns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 
 /** ROUTING MODULE */
 
@@ -23,7 +36,10 @@ export class ThirdpartiesPossessionValidationComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  dataTableNotifications: INotification[] = [];
   // Table settings
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+
   tableSettingsNotificaciones = {
     actions: {
       columnTitle: '',
@@ -34,34 +50,8 @@ export class ThirdpartiesPossessionValidationComponent
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
-    columns: {
-      noVolante: { title: 'No. Volante' },
-      fecCaptura: { title: 'Fec. Captura' },
-      cveOficioExterno: { title: 'Cve. Oficio Externo' },
-      fecOficioExterno: { title: 'Fec. Oficio Externo' },
-      remitenteExterno: { title: 'Remitente externo' },
-      cveAmparo: { title: 'Cve. Amparo' },
-      cveTocaPenal: { title: 'Cve. Toca Penal' },
-      actaCircunstanciada: { title: 'Acta Circunstanciada' },
-      averiguacionPrevia: { title: 'Averiguación Previa' },
-      causaPenal: { title: 'Causa Penal' },
-    },
+    columns: NOTIFICATIONS_COLUMNS,
   };
-  // Data table
-  dataTableNotificaciones = [
-    {
-      noVolante: 'DATA',
-      fecCaptura: 'DATA',
-      cveOficioExterno: 'DATA',
-      fecOficioExterno: 'DATA',
-      remitenteExterno: 'DATA',
-      cveAmparo: 'DATA',
-      cveTocaPenal: 'DATA',
-      actaCircunstanciada: 'DATA',
-      averiguacionPrevia: 'DATA',
-      causaPenal: 'DATA',
-    },
-  ];
 
   // Table settings
   tableSettingsBienes = {
@@ -74,20 +64,10 @@ export class ThirdpartiesPossessionValidationComponent
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
-    columns: {
-      noBien: { title: 'No. Bien' },
-      estatus: { title: 'Estatus' },
-      descripcion: { title: 'Descripción' },
-    },
+    columns: GOODS_COLUMNS,
   };
   // Data table
-  dataTableBienes = [
-    {
-      noBien: 'DATA',
-      estatus: 'DATA',
-      descripcion: 'DATA',
-    },
-  ];
+  dataTableBienes: IGood[] = [];
 
   // Table settings
   tableSettingsBienesOficio = {
@@ -114,19 +94,31 @@ export class ThirdpartiesPossessionValidationComponent
       descripcion: 'DATA',
     },
   ];
-
+  expedientNumber: number = 0;
   public form: FormGroup;
   public formCcpOficio: FormGroup;
   public noExpediente: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private notificationService: NotificationService,
+    private goodService: GoodService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+
+    this.noExpediente
+      .get('noExpediente')
+      .valueChanges.pipe(debounceTime(500))
+      .subscribe(x => {
+        if (x) this.getNotifications(new ListParams(), x);
+      });
   }
+
   private prepareForm() {
     this.form = this.fb.group({
       noVolante: '',
@@ -144,6 +136,55 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
+  getNotifications(params: ListParams, numberExpedient?: number) {
+    if (!numberExpedient) {
+      this.dataTableNotifications = [];
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (numberExpedient) {
+      data.addFilter('expedientNumber', numberExpedient);
+    }
+
+    this.notificationService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
+        this.dataTableNotifications = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+    if (numberExpedient) this.getGoods(new ListParams(), numberExpedient);
+  }
+
+  getGoods(params: ListParams, numberExpedient?: number) {
+    if (!numberExpedient) {
+      this.dataTableBienes = [];
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (numberExpedient) {
+      data.addFilter('fileNumber', numberExpedient);
+    }
+
+    this.goodService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
+        this.dataTableBienes = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
   mostrarInfo(form: any): any {
     console.log(form.value);
   }
@@ -156,7 +197,7 @@ export class ThirdpartiesPossessionValidationComponent
     console.log('Send form log');
   }
   btnInsertarTextoPredefinido() {
-    console.log('btnInsertarTextoPredefinido');
+    this.form.get('texto').setValue('Texto predifinido');
   }
   btnReemplazarMarcadores() {
     console.log('btnReemplazarMarcadores');

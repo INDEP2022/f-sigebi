@@ -5,7 +5,9 @@ import {
   IGoodSearchGoodByClasification,
   IGoodSearchGoodByFile,
 } from 'src/app/core/models/good/good.model';
+import { IGoodJobManagementByIds } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsExtensionFieldsService } from 'src/app/core/services/ms-good/goods-extension-fields.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
@@ -31,7 +33,8 @@ export class FlyersService {
     private msClarificationsService: ClarificationsService,
     private msGoodService: GoodService,
     private msStatusGoodService: StatusGoodService,
-    private msGoodsExtensionFieldsService: GoodsExtensionFieldsService
+    private msGoodsExtensionFieldsService: GoodsExtensionFieldsService,
+    private msDictationXGoodService: DictationXGoodService
   ) {}
 
   /**
@@ -115,7 +118,7 @@ export class FlyersService {
     return this.msMJobManagementService.getAllFiltered(params);
   }
 
-  getDocumentOficioGestion(params: _Params) {
+  getGoodsJobManagement(params: _Params) {
     return this.msGoodsJobManagementService.getAllFiltered(params);
   }
 
@@ -150,5 +153,15 @@ export class FlyersService {
   }
   getGoodExtensionsFields(params: string) {
     return this.msGoodsExtensionFieldsService.getAllFilter(params);
+  }
+
+  getGoodsJobManagementByIds(body: IGoodJobManagementByIds) {
+    return this.msGoodsJobManagementService.findByIds(body);
+  }
+
+  getClasifSubTypeGoods(fileNumber: number) {
+    return this.msDictationXGoodService.getDictationXGoodByFileNummber(
+      fileNumber
+    );
   }
 }
