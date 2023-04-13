@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import { MaintenanceRecordsService } from '../../../services/maintenance-records.service';
 import { IProceedingInfo } from '../../proceeding-info/models/proceeding-info';
 import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-button';
 
@@ -27,10 +28,10 @@ import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-
 export class JustificationComponent extends AlertButton implements OnInit {
   form: FormGroup;
   loading = false;
-  @Input() formValue: IProceedingInfo;
   constructor(
     private fb: FormBuilder,
-    private service: ProceedingsDeliveryReceptionService
+    private service: MaintenanceRecordsService,
+    private proceedingService: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.form = this.fb.group({
@@ -42,8 +43,24 @@ export class JustificationComponent extends AlertButton implements OnInit {
 
   ngOnInit(): void {}
 
+  get formValue() {
+    return this.service.formValue;
+  }
+
+  get statusActa() {
+    return this.formValue ? this.formValue.statusActa : '';
+  }
+
+  get id() {
+    return this.formValue ? this.formValue.id : '';
+  }
+
+  get noExpediente() {
+    return this.formValue ? this.formValue.numFile : '';
+  }
+
   saveData() {
-    this.service
+    this.proceedingService
       .update2(
         this.parseToIProceedingDeliveryReception(
           this.formValue,
@@ -52,14 +69,37 @@ export class JustificationComponent extends AlertButton implements OnInit {
       )
       .subscribe({
         next: response => {
-          this.onLoadToast(
-            'success',
-            this.formValue.id + '',
-            'Registro actualizado correctamente.'
-          );
+          this.proceedingService
+            .paMaintenance(
+              '',
+              this.form.get('usuario').value,
+              'No. Expediente: ' +
+                this.noExpediente +
+                '.- ' +
+                this.form.get('justification').value
+            )
+            .subscribe({
+              next: response => {
+                this.onLoadToast(
+                  'success',
+                  this.id + '',
+                  'Registro actualizado correctamente y correo enviado.'
+                );
+              },
+              error: () => {
+                this.onLoadToast(
+                  'success',
+                  this.id + '',
+                  'Registro actualizado correctamente.'
+                );
+              },
+              complete: () => {
+                this.service.updateAct.emit('');
+              },
+            });
         },
         error: err => {
-          this.onLoadToast('error', this.formValue.id + '', err.error.message);
+          this.onLoadToast('error', this.id + '', err.error.message);
         },
       });
   }

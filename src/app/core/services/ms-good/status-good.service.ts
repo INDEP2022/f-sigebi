@@ -3,7 +3,10 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import { IStatusGood } from '../../models/ms-good/status-good';
 import { ILabelByClasif } from '../../models/ms-good/tags-by-good.model';
 
@@ -30,5 +33,9 @@ export class StatusGoodService extends HttpService {
   getLabelsByClasif(clasifNum: string | number) {
     const route = `status-good/getAllTags/${clasifNum}`;
     return this.get<IListResponse<ILabelByClasif>>(route);
+  }
+
+  getById(id: string) {
+    return this.get<IResponse<IStatusGood>>('status-good/' + id);
   }
 }

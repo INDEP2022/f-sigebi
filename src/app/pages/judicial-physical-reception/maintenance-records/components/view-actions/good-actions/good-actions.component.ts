@@ -16,6 +16,8 @@ import {
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
+import { firstFormatDate } from 'src/app/shared/utils/date';
+import { MaintenanceRecordsService } from './../../../services/maintenance-records.service';
 
 @Component({
   selector: 'app-good-actions',
@@ -37,10 +39,10 @@ import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled
 export class GoodActionsComponent extends AlertButton implements OnInit {
   @Input() statusActaValue: string;
   @Input() nroActa: string;
-  @Input() data: IDetailProceedingsDeliveryReception[];
   @Input() rowsSelected: IDetailProceedingsDeliveryReception[] = [];
   @Output() updateTable = new EventEmitter();
-  // @Output() addGoodEvent = new EventEmitter<IDetailProceedingsDeliveryReception>()
+  @Output() addGoodEvent =
+    new EventEmitter<IDetailProceedingsDeliveryReception>();
   form: FormGroup;
   loading = false;
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
@@ -55,7 +57,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   settings = { ...TABLE_SETTINGS };
   constructor(
     private fb: FormBuilder,
-    private service: ProceedingsDetailDeliveryReceptionService,
+    private service: MaintenanceRecordsService,
+    private detailService: ProceedingsDetailDeliveryReceptionService,
     private goodTrackerService: GoodTrackerService,
     private modalService: BsModalService,
     private goodService: GoodService,
@@ -71,6 +74,10 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
 
   ngOnInit(): void {
     // this.paramsControl.addFilter('status', 'status', SearchFilter.LIKE);
+  }
+
+  get data() {
+    return this.service.data;
   }
 
   get goodsList() {
@@ -100,40 +107,61 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     //   packageNumber: null,
     //   exchangeValue: null,
     // });
+    this.addGoodEvent.emit({
+      numberProceedings: +this.nroActa,
+      numberGood: this.form.get('goodId').value,
+      amount: this.selectedGood.quantity,
+      received: 'S',
+      approvedDateXAdmon: firstFormatDate(new Date()),
+      approvedXAdmon: 'S',
+      approvedUserXAdmon: localStorage.getItem('username'),
+      dateIndicatesUserApproval: firstFormatDate(new Date()),
+      numberRegister: null,
+      reviewIndft: null,
+      correctIndft: null,
+      idftUser: null,
+      idftDate: null,
+      numDelegationIndft: null,
+      yearIndft: null,
+      monthIndft: null,
+      idftDateHc: null,
+      packageNumber: null,
+      exchangeValue: null,
+    });
     // this.totalItems++;
-    this.service
-      .create({
-        numberProceedings: +this.nroActa,
-        numberGood: this.form.get('goodId').value,
-        amount: this.selectedGood.quantity,
-        received: 'S',
-        approvedDateXAdmon: new Date(),
-        approvedXAdmon: 'S',
-        approvedUserXAdmon: localStorage.getItem('username'),
-        dateIndicatesUserApproval: new Date(),
-        numberRegister: null,
-        reviewIndft: null,
-        correctIndft: null,
-        idftUser: null,
-        idftDate: null,
-        numDelegationIndft: null,
-        yearIndft: null,
-        monthIndft: null,
-        idftDateHc: null,
-        packageNumber: null,
-        exchangeValue: null,
-      })
-      .subscribe({
-        next: response => {
-          this.onLoadToast(
-            'success',
-            this.form.get('goodId').value,
-            'Agregado exitosamente'
-          );
-          this.updateTable.emit();
-        },
-        error: err => {},
-      });
+    // this.service
+    //   .create({
+    //     numberProceedings: +this.nroActa,
+    //     numberGood: this.form.get('goodId').value,
+    //     amount: this.selectedGood.quantity,
+    //     received: 'S',
+    //     approvedDateXAdmon: new Date(),
+    //     approvedXAdmon: 'S',
+    //     approvedUserXAdmon: localStorage.getItem('username'),
+    //     dateIndicatesUserApproval: new Date(),
+    //     numberRegister: null,
+    //     reviewIndft: null,
+    //     correctIndft: null,
+    //     idftUser: null,
+    //     idftDate: null,
+    //     numDelegationIndft: null,
+    //     yearIndft: null,
+    //     monthIndft: null,
+    //     idftDateHc: null,
+    //     packageNumber: null,
+    //     exchangeValue: null,
+    //   })
+    //   .subscribe({
+    //     next: response => {
+    //       this.onLoadToast(
+    //         'success',
+    //         this.form.get('goodId').value,
+    //         'Agregado exitosamente'
+    //       );
+    //       this.updateTable.emit();
+    //     },
+    //     error: err => {},
+    //   });
   }
 
   openModals() {
@@ -251,7 +279,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   updateGoods() {
-    this.service
+    this.detailService
       .updateMasive(
         this.selectedsForUpdate.map(item => {
           return {

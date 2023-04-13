@@ -4,11 +4,15 @@
       <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
       <div class="col-md-6 buttons">
         <div class="col-md-6">
-          <app-clean-filters-shared [form]="form"></app-clean-filters-shared>
+          <app-clean-filters-shared
+            [form]="form"
+            (cleanFiltersEvent)="
+              deleteProceedings()
+            "></app-clean-filters-shared>
         </div>
         <div class="col-md-6">
           <button
-            [class]="loading ? 'disabled' : ''"
+            [class]="disabled ? 'disabled' : ''"
             class="btn btn-sm btn-danger"
             (click)="filter()">
             <i class="bx bx-search float-icon"></i> Filtrar
@@ -33,12 +37,15 @@
               type="number"
               class="form-control"
               formControlName="numFile"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('statusActa')" label="Estatus Acta">
-            <select class="form-control" formControlName="statusActa">
+            <select
+              class="form-control"
+              formControlName="statusActa"
+              [class]="disabled ? 'disabled' : ''">
               <option value="ABIERTA">Abierta</option>
               <option value="CERRADA">Cerrada</option>
               <option value="Todos">Todos</option>
@@ -64,7 +71,7 @@
               type="text"
               class="form-control"
               formControlName="receiptKey"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -73,7 +80,8 @@
           <app-proceeding-types-shared
             [form]="form"
             formField="tipoActa"
-            label="Tipo Acta"></app-proceeding-types-shared>
+            label="Tipo Acta"
+            [readonly]="disabled"></app-proceeding-types-shared>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('labelActa')" label="Etiqueta">
@@ -81,7 +89,7 @@
               type="text"
               class="form-control"
               formControlName="labelActa"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -91,7 +99,7 @@
             rows="3"
             class="form-control"
             formControlName="address"
-            [readonly]="loading"></textarea>
+            [readonly]="disabled"></textarea>
         </form-field>
       </div>
       <div class="row" style="margin-bottom: 1.25rem">
@@ -100,19 +108,19 @@
             rows="3"
             class="form-control"
             formControlName="observations"
-            [readonly]="loading"></textarea>
+            [readonly]="disabled"></textarea>
         </form-field>
       </div>
       <div class="row">
         <app-recibe-form
           [form]="form"
-          [disabled]="loading"
+          [disabled]="disabled"
           label="Recibe"
           formField="numDelegation1"
           formFieldName="numDelegation1Description"></app-recibe-form>
         <app-recibe-form
           [form]="form"
-          [disabled]="loading"
+          [disabled]="disabled"
           label="Administra"
           formField="numDelegation2"
           formFieldName="numDelegation2Description"></app-recibe-form>
@@ -146,7 +154,7 @@
               bsDatepicker
               class="form-control"
               formControlName="elaborationDate"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -155,7 +163,7 @@
               bsDatepicker
               class="form-control"
               formControlName="closeDate"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -168,7 +176,7 @@
               bsDatepicker
               class="form-control"
               formControlName="datePhysicalReception"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -179,7 +187,7 @@
               bsDatepicker
               class="form-control"
               formControlName="maxDate"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -192,7 +200,7 @@
               bsDatepicker
               class="form-control"
               formControlName="dateElaborationReceipt"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -203,7 +211,7 @@
               bsDatepicker
               class="form-control"
               formControlName="dateCaptureHc"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -216,7 +224,7 @@
               bsDatepicker
               class="form-control"
               formControlName="dateDeliveryGood"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -227,7 +235,7 @@
               bsDatepicker
               class="form-control"
               formControlName="dateCloseHc"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -238,7 +246,7 @@
               bsDatepicker
               class="form-control"
               formControlName="captureDate"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -249,7 +257,7 @@
               bsDatepicker
               class="form-control"
               formControlName="dateMaxHc"
-              [readonly]="loading" />
+              [readonly]="disabled" />
           </form-field>
         </div>
       </div>
@@ -259,7 +267,7 @@
             type="text"
             class="form-control"
             formControlName="witness1"
-            [readonly]="loading" />
+            [readonly]="disabled" />
         </form-field>
       </div>
       <div class="row mb-4">
@@ -268,7 +276,7 @@
             type="text"
             class="form-control"
             formControlName="witness2"
-            [readonly]="loading" />
+            [readonly]="disabled" />
         </form-field>
       </div>
       <div class="row">
@@ -279,12 +287,12 @@
             type="text"
             class="form-control"
             formControlName="comptrollerWitness"
-            [readonly]="loading" />
+            [readonly]="disabled" />
         </form-field>
       </div>
     </div>
     <hr
       style="width: calc(100% - 30px); margin-left: auto; margin-right: auto" />
-    <app-justification [formValue]="form.value"></app-justification>
+    <app-justification></app-justification>
   </div>
 </form>

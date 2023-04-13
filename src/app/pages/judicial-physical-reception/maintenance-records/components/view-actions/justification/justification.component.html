@@ -17,9 +17,7 @@
         <app-elaborate-users-shared
           [form]="form"
           label="Solicita"
-          [disabled]="
-            formValue.statusActa !== 'ABIERTA'
-          "></app-elaborate-users-shared>
+          [disabled]="statusActa !== 'ABIERTA'"></app-elaborate-users-shared>
       </div>
     </div>
     <div class="row col-lg-6 mb-4">
@@ -31,7 +29,7 @@
             rows="2"
             class="form-control"
             formControlName="justification"
-            [readOnly]="formValue.statusActa !== 'ABIERTA'"></textarea>
+            [readOnly]="statusActa !== 'ABIERTA'"></textarea>
         </form-field>
       </div>
       <div

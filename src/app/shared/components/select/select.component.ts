@@ -136,7 +136,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
   onSearch() {
     this.input$
       .pipe(
-        debounceTime(200),
+        debounceTime(1000),
         distinctUntilChanged(),
         switchMap((text: string) => {
           if (text === null) {
