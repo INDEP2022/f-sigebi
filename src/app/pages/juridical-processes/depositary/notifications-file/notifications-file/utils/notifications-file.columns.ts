@@ -1,40 +1,48 @@
+import { format } from 'date-fns';
+
 export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
-  noVolante: {
+  wheelNumber: {
     title: 'No. Volante',
     type: 'number',
     sort: false,
   },
-  fechaCaptura: {
+  captureDate: {
     title: 'Fecha de Captura',
     type: 'string',
+    valuePrepareFunction: (captureDate: Date) => {
+      return captureDate ? format(new Date(captureDate), 'dd/MM/yyyy') : '';
+    },
     sort: false,
   },
-  fechaRecepcion: {
+  receiptDate: {
     title: 'Fecha de Recepción',
     type: 'string',
+    valuePrepareFunction: (captureDate: Date) => {
+      return captureDate ? format(new Date(captureDate), 'dd/MM/yyyy') : '';
+    },
     sort: false,
   },
-  noOficio: {
+  officeNumber: {
     title: 'No. Oficio',
     type: 'number',
     sort: false,
   },
-  asunto: {
+  affairDescription: {
     title: 'Asunto',
     type: 'string',
     sort: false,
   },
-  observaciones: {
+  observations: {
     title: 'Observaciones',
     type: 'string',
     sort: false,
   },
-  cveAmparo: {
+  protectionKey: {
     title: 'Cve. Amparo',
     type: 'string',
     sort: false,
   },
-  areaDestino: {
+  departmentDescription: {
     title: 'Área Destino',
     type: 'string',
     sort: false,
