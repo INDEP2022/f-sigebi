@@ -109,7 +109,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
         'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/27_Pdf_File_Type_Adobe_logo_logos-512.png';
     }
     return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `data:${mimeType};base64,${base64}`
+      `data:${mimeType};base64, ${base64}`
     );
   }
 

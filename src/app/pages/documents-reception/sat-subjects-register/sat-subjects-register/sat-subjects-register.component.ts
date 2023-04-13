@@ -416,6 +416,12 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getCoordinador(params: ListParams) {
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.satSubjectsRegisterService
       .getCoordinadorBySearch(params)
       .subscribe({
