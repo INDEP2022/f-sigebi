@@ -124,9 +124,8 @@ export class RegistrationOfInterestModalComponent
   searchUser() {
     this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
       next: data => {
-        console.log(data.data);
         data.data.map(data => {
-          data.name = ` ${data.name}`;
+          data.name = `${data.id}- ${data.name}`;
           return data;
         });
         this.selectUser = new DefaultSelect(data.data, data.count);
