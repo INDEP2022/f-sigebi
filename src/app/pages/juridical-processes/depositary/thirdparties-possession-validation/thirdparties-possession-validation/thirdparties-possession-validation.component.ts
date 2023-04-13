@@ -27,6 +27,9 @@ import { NotificationService } from 'src/app/core/services/ms-notification/notif
 
 /** COMPONENTS IMPORTS */
 
+const predifinedText =
+  'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: <B> <C> Con fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. El cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. No omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. Finalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. Quedo a sus órdenes para cualquier comentario.';
+
 @Component({
   selector: 'app-thirdparties-possession-validation',
   templateUrl: './thirdparties-possession-validation.component.html',
@@ -39,6 +42,8 @@ export class ThirdpartiesPossessionValidationComponent
   dataTableNotifications: INotification[] = [];
   // Table settings
   params = new BehaviorSubject<FilterParams>(new FilterParams());
+  selectedRows: IGood = {};
+  wheelNotifications: any[] = [];
 
   tableSettingsNotificaciones = {
     actions: {
@@ -61,6 +66,7 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
+    selectMode: 'multi',
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
@@ -80,20 +86,11 @@ export class ThirdpartiesPossessionValidationComponent
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
-    columns: {
-      noBien: { title: 'No. Bien' },
-      estatus: { title: 'Estatus' },
-      descripcion: { title: 'Descripción' },
-    },
+    columns: GOODS_COLUMNS,
   };
   // Data table
-  dataTableBienesOficio = [
-    {
-      noBien: 'DATA',
-      estatus: 'DATA',
-      descripcion: 'DATA',
-    },
-  ];
+  dataTableBienesOficio: IGood[] = [];
+
   expedientNumber: number = 0;
   public form: FormGroup;
   public formCcpOficio: FormGroup;
@@ -117,14 +114,21 @@ export class ThirdpartiesPossessionValidationComponent
       .subscribe(x => {
         if (x) this.getNotifications(new ListParams(), x);
       });
+
+    this.form
+      .get('wheelNumber')
+      .valueChanges.pipe(debounceTime(500))
+      .subscribe(x => {
+        if (x) this.getNotifications(new ListParams(), x);
+      });
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      noVolante: '',
-      claveOficio: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      destinatario: ['', [Validators.pattern(STRING_PATTERN)]], // Detalle destinatario
-      texto: ['', [Validators.pattern(STRING_PATTERN)]],
+      wheelNumber: '',
+      officeExternalKey: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      addressee: ['', [Validators.pattern(STRING_PATTERN)]], // Detalle destinatario
+      texto: '',
     });
     this.noExpediente = this.fb.group({
       noExpediente: '',
@@ -136,7 +140,32 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
+  getNotificationByWheel(params: ListParams, wheelNumber?: number) {
+    if (!wheelNumber) {
+      this.wheelNotifications = [];
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (wheelNumber) {
+      data.addFilter('wheelNumber', wheelNumber);
+    }
+
+    this.notificationService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
+        this.wheelNotifications = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
   getNotifications(params: ListParams, numberExpedient?: number) {
+    this.expedientNumber = numberExpedient;
     if (!numberExpedient) {
       this.dataTableNotifications = [];
     }
@@ -178,12 +207,42 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableBienes = data.data;
+        this.dataTableBienesOficio = data.data;
       },
       error: err => {
         this.loading = false;
       },
     });
   }
+
+  rowSelected(rows: any) {
+    this.selectedRows = rows.data;
+  }
+
+  addGoodOffice() {
+    const request: IGood = {
+      ...this.selectedRows,
+      delegationNumber: null,
+      subDelegationNumber: null,
+    };
+
+    this.goodService.create(request).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  handleSuccess() {
+    this.getNotifications(new ListParams(), this.expedientNumber);
+    this.onLoadToast(
+      'success',
+      'Excelente',
+      'Se ha agregado el bien correctamente'
+    );
+    this.loading = false;
+  }
+
+  deleteGoodOffice() {}
 
   mostrarInfo(form: any): any {
     console.log(form.value);
@@ -196,12 +255,19 @@ export class ThirdpartiesPossessionValidationComponent
   sendForm() {
     console.log('Send form log');
   }
+
   btnInsertarTextoPredefinido() {
-    this.form.get('texto').setValue('Texto predifinido');
+    this.form.get('texto').setValue(predifinedText);
   }
+
   btnReemplazarMarcadores() {
-    console.log('btnReemplazarMarcadores');
+    let replaceText = predifinedText.replaceAll('<A>', 'LST_AMPARO');
+    replaceText = replaceText.replaceAll('<B>', 'BIEN DESCRIPCIÓN');
+    replaceText = replaceText.replaceAll('<C>', 'T_BIENES');
+
+    this.form.get('texto').setValue(replaceText);
   }
+
   btnImprimir() {
     console.log('btnImprimir');
   }
