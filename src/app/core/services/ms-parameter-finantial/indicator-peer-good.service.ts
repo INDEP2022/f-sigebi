@@ -33,4 +33,8 @@ export class IndicatorPeerGoodService extends HttpService {
     const route = `${this.endpoint}${this.find}${search}`;
     return this.get(route);
   }
+  create(indicator: IFinancialIndicatorsW) {
+    const route = `${this.endpoint}`;
+    return this.post(route, indicator);
+  }
 }
