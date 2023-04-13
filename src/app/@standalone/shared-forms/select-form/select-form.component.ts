@@ -16,7 +16,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './select-form.component.html',
-  styles: [],
+  styles: [``],
 })
 export class SelectFormComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
@@ -86,7 +86,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
     if (this.params.text.trim().toLowerCase() === '') {
       this.data = new DefaultSelect(
         this.haveTodos
-          ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...this.list]
+          ? [{ [this.value]: 'null', [this.bindLabel]: 'Todos' }, ...this.list]
           : this.list
       );
     } else {

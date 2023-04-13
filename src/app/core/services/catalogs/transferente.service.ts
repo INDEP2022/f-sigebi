@@ -22,7 +22,9 @@ export class TransferenteService extends HttpService {
     this.microservice = 'catalog';
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<ITransferente>> {
+  getAll(
+    params?: ListParams | string
+  ): Observable<IListResponse<ITransferente>> {
     return this.transferenteRepository.getAllPaginated(this.endpoint, params);
   }
 
