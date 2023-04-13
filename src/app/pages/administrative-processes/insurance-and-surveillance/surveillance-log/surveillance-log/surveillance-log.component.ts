@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -11,11 +17,15 @@ import { SURVEILLANCE_LOG_COLUMNS } from './surveillance-log-columns';
   templateUrl: './surveillance-log.component.html',
   styles: [],
 })
-export class SurveillanceLogComponent extends BasePage implements OnInit {
+export class SurveillanceLogComponent
+  extends BasePage
+  implements OnInit, AfterViewInit
+{
   surveillance: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   sources = new LocalDataSource();
+  @ViewChild('dateRequest') dateRequest: TemplateRef<any>;
 
   constructor(private survillanceServise: SurvillanceService) {
     super();
@@ -27,6 +37,11 @@ export class SurveillanceLogComponent extends BasePage implements OnInit {
     this.params.subscribe(res => {
       this.getSurveillanceBinnacles(res);
     });
+  }
+
+  ngAfterViewInit(): void {
+    (this.settings.columns as any).requestDate.filter.component =
+      this.dateRequest;
   }
 
   getSurveillanceBinnacles(listParams: ListParams): void {

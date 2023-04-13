@@ -1,4 +1,4 @@
-export const SURVEILLANCE_LOG_COLUMNS = {
+export const SURVEILLANCE_LOG_COLUMNS: any = {
   binnacleId: {
     title: 'Id',
     type: 'number',
@@ -6,7 +6,6 @@ export const SURVEILLANCE_LOG_COLUMNS = {
   },
   requestDate: {
     title: 'Fecha Solicitud',
-    type: 'string',
     sort: false,
   },
   attentionDate: {
@@ -43,5 +42,8 @@ export const SURVEILLANCE_LOG_COLUMNS = {
     title: 'Delegación',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return `${row.delegationNumber} - ${row.delegation.description}`;
+    },
   },
 };

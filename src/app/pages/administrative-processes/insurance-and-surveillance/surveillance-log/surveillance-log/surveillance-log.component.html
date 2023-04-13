@@ -12,6 +12,7 @@
               [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="sources">
+              <!-- <ng2-smart-table-subheader></ng2-smart-table-subheader> -->
             </ng2-smart-table>
           </div>
         </div>
@@ -22,3 +23,9 @@
     </div>
   </div>
 </app-card>
+
+<ng-template #dateRequest>
+  <div>
+    <input bsDatepicker type="text" />
+  </div>
+</ng-template>
