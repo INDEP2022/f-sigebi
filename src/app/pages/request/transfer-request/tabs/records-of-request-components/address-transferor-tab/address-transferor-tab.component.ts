@@ -51,8 +51,10 @@ export class AddressTransferorTabComponent
   //addressForm: ModelForm<any>;
   domicileForm: ModelForm<any>;
   municipalityId: number = 0;
+  combineMunicipalityId = true;
   keyStateOfRepublic: number = 0;
   localityId: number = 0;
+  combineLocalityId = true;
   public event: EventEmitter<any> = new EventEmitter();
 
   selectState = new DefaultSelect<any>();
@@ -230,32 +232,43 @@ export class AddressTransferorTabComponent
       next: resp => {
         console.log(this.municipalityId);
         if (this.municipalityId !== 0) {
-          const newParams = {
-            ...params,
-            'filter.municipalityKey': `$eq:${this.municipalityId}`,
-          };
-          this.goodsinvService.getAllMunipalitiesByFilter(newParams).subscribe({
-            next: response => {
-              console.log(response);
-              this.selectMunicipe = new DefaultSelect(
-                response.data
-                  ? response.data[0]
-                    ? [
-                        response.data[0],
-                        ...resp.data.filter(
-                          (item: any) =>
-                            item.municipalityKey !== this.municipalityId
-                        ),
-                      ]
-                    : resp.data
-                  : resp.data,
-                resp.count
-              );
-            },
-            error: err => {
-              this.selectMunicipe = new DefaultSelect(resp.data);
-            },
-          });
+          if (this.combineMunicipalityId) {
+            const newParams = {
+              ...params,
+              'filter.municipalityKey': `$eq:${this.municipalityId}`,
+            };
+            this.goodsinvService
+              .getAllMunipalitiesByFilter(newParams)
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  this.selectMunicipe = new DefaultSelect(
+                    response.data
+                      ? response.data[0]
+                        ? [
+                            response.data[0],
+                            ...resp.data.filter(
+                              (item: any) =>
+                                item.municipalityKey !== this.municipalityId
+                            ),
+                          ]
+                        : resp.data
+                      : resp.data,
+                    resp.count
+                  );
+                  this.combineMunicipalityId = false;
+                },
+                error: err => {
+                  this.selectMunicipe = new DefaultSelect(resp.data);
+                },
+              });
+          } else {
+            this.selectMunicipe = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.municipalityKey !== this.municipalityId
+              )
+            );
+          }
         }
         //
         if (this.isAddress === true) {
@@ -296,31 +309,40 @@ export class AddressTransferorTabComponent
       next: resp => {
         console.log(this.localityId);
         if (this.localityId !== 0) {
-          const newParams = {
-            ...params,
-            'filter.townshipKey': `$eq:${this.localityId}`,
-          };
-          this.goodsinvService.getAllTownshipByFilter(newParams).subscribe({
-            next: response => {
-              console.log(response);
-              this.selectLocality = new DefaultSelect(
-                response.data
-                  ? response.data[0]
-                    ? [
-                        response.data[0],
-                        ...resp.data.filter(
-                          (item: any) => item.townshipKey !== this.localityId
-                        ),
-                      ]
-                    : resp.data
-                  : resp.data,
-                resp.count
-              );
-            },
-            error: err => {
-              this.selectLocality = new DefaultSelect(resp.data);
-            },
-          });
+          if (this.combineLocalityId) {
+            const newParams = {
+              ...params,
+              'filter.townshipKey': `$eq:${this.localityId}`,
+            };
+            this.goodsinvService.getAllTownshipByFilter(newParams).subscribe({
+              next: response => {
+                console.log(response);
+                this.selectLocality = new DefaultSelect(
+                  response.data
+                    ? response.data[0]
+                      ? [
+                          response.data[0],
+                          ...resp.data.filter(
+                            (item: any) => item.townshipKey !== this.localityId
+                          ),
+                        ]
+                      : resp.data
+                    : resp.data,
+                  resp.count
+                );
+                this.combineLocalityId = false;
+              },
+              error: err => {
+                this.selectLocality = new DefaultSelect(resp.data);
+              },
+            });
+          } else {
+            this.selectLocality = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.townshipKey !== this.localityId
+              )
+            );
+          }
         }
         if (this.isAddress === true) {
           this.domicileForm.controls['localityKey'].setValue(
