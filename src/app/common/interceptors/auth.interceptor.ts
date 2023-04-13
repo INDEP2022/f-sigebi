@@ -28,7 +28,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
   );
-  private timeOut: number = 58;
+  private timeOut: number = 10;
   constructor(
     private router: Router,
     private readonly authService: AuthService
