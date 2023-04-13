@@ -59,6 +59,7 @@
               type="text"
               class="form-control"
               formControlName="requestId"
+              [readOnly]="true"
               min="0" />
           </form-field>
         </div>
@@ -89,9 +90,6 @@
   <div>
     <div class="row pt-4">
       <div class="d-flex">
-        <div class="col-md-5 form-material mr-auto p-2">
-          <search-bar [params]="params"></search-bar>
-        </div>
         <div class="pt-2">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>

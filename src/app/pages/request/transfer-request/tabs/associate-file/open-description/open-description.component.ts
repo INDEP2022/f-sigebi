@@ -17,9 +17,7 @@ export class OpenDescriptionComponent implements OnInit {
     private requestHelperService: RequestHelperService
   ) {}
 
-  ngOnInit(): void {
-    console.log(this.parameter);
-  }
+  ngOnInit(): void {}
 
   download() {
     this.wcontentService.obtainFile(this.parameter.docName).subscribe({
