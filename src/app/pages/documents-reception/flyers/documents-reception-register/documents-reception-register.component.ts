@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -159,10 +159,11 @@ export class DocumentsReceptionRegisterComponent
   procedureBlocked: boolean = false;
   changeFlyerOption: boolean = false;
   transferorLoading: boolean = false;
+  cityLoading: boolean = false;
   stationLoading: boolean = false;
   populatingForm: boolean = false;
   procedureId: number;
-  reprocessFlag: boolean = true;
+  reprocessFlag: boolean = false;
   showTransference: boolean = false;
   procedureStatusCode: string = '';
   pgrGoodsProcessed: boolean = true;
@@ -236,7 +237,8 @@ export class DocumentsReceptionRegisterComponent
     private store: Store<AppState>,
     private globalVarsService: GlobalVarsService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private fileUpdComService: FileUpdateCommunicationService
+    private fileUpdComService: FileUpdateCommunicationService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
     if (this.docDataService.flyersRegistrationParams != null)
@@ -330,6 +332,7 @@ export class DocumentsReceptionRegisterComponent
           this.pageParams.pNoVolante !== undefined)
       ) {
         this.setInitialConditions();
+        this.checkPgrGoods();
       } else if (!this.docDataService.flyerEditMode) {
         //if (Object.keys(this.pageParams).length > 0) {}
         this.documentsReceptionForm.reset();
@@ -607,6 +610,7 @@ export class DocumentsReceptionRegisterComponent
         default:
           break;
       }
+      this.formControls.officeExternalKey.setValue(officeNumber);
       this.hideError();
       this.docRegisterService
         .getDynamicTables(1, { inicio: 1, text: descentfed })
@@ -617,6 +621,7 @@ export class DocumentsReceptionRegisterComponent
     }
     if ([1, 2].includes(typeManagement)) {
       this.formControls.goodRelation.setValue('S');
+      this.checkPgrGoods();
       this.alert(
         'info',
         'Tipo de Trámite',
@@ -647,6 +652,7 @@ export class DocumentsReceptionRegisterComponent
         delegation
       );
     } else {
+      this.checkPgrGoods();
       this.formLoading = false;
     }
   }
@@ -675,7 +681,7 @@ export class DocumentsReceptionRegisterComponent
               this.formControls.externalOfficeDate.setValue(officeExternalDate);
               this.formControls.observations.setValue(description);
               this.formControls.affairKey.setValue(affairKey);
-              this.affairService.getById(affairKey).subscribe({
+              this.affairService.getByIdAndOrigin(affairKey, 'SIAB').subscribe({
                 next: data =>
                   this.formControls.affair.setValue(data.description),
               });
@@ -918,7 +924,7 @@ export class DocumentsReceptionRegisterComponent
           if (this.formControls.affairKey.value == null) {
             this.formControls.affairKey.setValue(affairKey);
             this.hideError();
-            this.affairService.getById(affairKey).subscribe({
+            this.affairService.getByIdAndOrigin(affairKey, 'SIAB').subscribe({
               next: data => this.formControls.affair.setValue(data.description),
               error: () => {},
             });
@@ -978,7 +984,7 @@ export class DocumentsReceptionRegisterComponent
           if (this.formControls.affairKey.value == null) {
             this.formControls.affairKey.setValue(affairKey);
             this.hideError();
-            this.affairService.getById(affairKey).subscribe({
+            this.affairService.getByIdAndOrigin(affairKey, 'SIAB').subscribe({
               next: data => this.formControls.affair.setValue(data.description),
               error: () => {},
             });
@@ -1086,6 +1092,12 @@ export class DocumentsReceptionRegisterComponent
       this.taxpayerLabel = TaxpayerLabel.Taxpayer;
       this.formControls.crimeKey.clearValidators();
       this.formControls.crimeKey.updateValueAndValidity();
+      this.docRegisterService.getIdentifier('TRANS').subscribe({
+        next: data => {
+          this.formControls.identifier.setValue(data);
+        },
+      });
+      //
     } else {
       if (!this.formControls.crimeKey.hasValidator(Validators.required))
         this.formControls.crimeKey.addValidators(Validators.required);
@@ -1185,6 +1197,17 @@ export class DocumentsReceptionRegisterComponent
         });
       this.getFederalEntities({ page: 1, text: '' });
       this.getCourts({ page: 1, text: '', limit: 10 });
+    }
+  }
+
+  entFedChange(value: TvalTable1Data) {
+    if (
+      this.formControls.entFedKey.value != null &&
+      this.formControls.entFedKey.value != undefined
+    ) {
+      this.formControls.cityNumber.setValue(null);
+      this.hideError();
+      this.getCities({ page: 1, text: '' });
     }
   }
 
@@ -1307,7 +1330,7 @@ export class DocumentsReceptionRegisterComponent
     if (notif.affairKey != null) {
       this.formControls.affairKey.setValue(notif.affairKey);
       this.hideError();
-      this.affairService.getById(notif.affairKey).subscribe({
+      this.affairService.getByIdAndOrigin(notif.affairKey, 'SIAB').subscribe({
         next: data => {
           this.formControls.affair.setValue(data.description);
           let goodRelation: string = 'N';
@@ -1360,11 +1383,18 @@ export class DocumentsReceptionRegisterComponent
     }
     if (notif.stationNumber != null) {
       this.hideError();
-      this.docRegisterService.getStation(notif.stationNumber).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
+      filterParams.removeAllFilters();
+      filterParams.addFilter('id', notif.stationNumber);
+      filterParams.addFilter('idTransferent', notif.endTransferNumber);
+      this.docRegisterService.getStations(filterParams.getParams()).subscribe({
+        next: data => {
+          this.formControls.stationNumber.setValue(data.data[0]);
+          this.getStations({ page: 1, limit: 10 });
+        },
       });
     }
     if (notif.autorityNumber != null) {
+      filterParams.removeAllFilters();
       filterParams.addFilter('idAuthority', notif.autorityNumber);
       filterParams.addFilter('idStation', notif.stationNumber);
       filterParams.addFilter('idTransferer', notif.endTransferNumber);
@@ -1375,6 +1405,7 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -1480,9 +1511,11 @@ export class DocumentsReceptionRegisterComponent
         });
       }
     }
-    if (notif.wheelNumber != null && notif.expedientNumber != null) {
+    if (notif.wheelNumber != null) {
       filterParams.removeAllFilters();
-      filterParams.addFilter('expedient', notif.expedientNumber);
+      if (notif.expedientNumber != null) {
+        filterParams.addFilter('expedient', notif.expedientNumber);
+      }
       filterParams.addFilter('flierNumber', notif.wheelNumber);
       this.hideError();
       this.procedureManageService
@@ -1596,6 +1629,8 @@ export class DocumentsReceptionRegisterComponent
             this.formLoading = false;
           },
         });
+    } else {
+      this.formLoading = false;
     }
     if (notif.institutionNumber != null) {
       const institution = notif.institutionNumber as IInstitutionNumber;
@@ -2003,7 +2038,7 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
     if (this.endTransferNumber.value != null)
       params.addFilter('idTransferent', this.endTransferNumber.value.id);
@@ -2025,7 +2060,7 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0)
+    if (lparams?.text?.length > 0)
       params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
     if (this.endTransferNumber.value != null)
       params.addFilter('idTransferer', this.endTransferNumber.value.id);
@@ -2087,7 +2122,7 @@ export class DocumentsReceptionRegisterComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter('name', lparams.text, SearchFilter.LIKE);
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
     this.hideError();
     this.docRegisterService.getCourtsUnrelated(params.getParams()).subscribe({
       next: data => {
@@ -2122,16 +2157,24 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
+    this.cityLoading = true;
     if (lparams?.text.length > 0) {
       params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    }
+    if (this.formControls.entFedKey.value != null) {
+      params.addFilter('state', this.formControls.entFedKey.value?.otKey);
     }
     this.hideError();
     this.docRegisterService.getCities(params.getParams()).subscribe({
       next: data => {
         this.cities = new DefaultSelect(data.data, data.count);
+        this.cityLoading = false;
+        this.changeDetectorRef.detectChanges();
       },
       error: () => {
         this.cities = new DefaultSelect();
+        this.cityLoading = false;
+        this.changeDetectorRef.detectChanges();
       },
     });
   }
@@ -2331,9 +2374,14 @@ export class DocumentsReceptionRegisterComponent
     }
     if (key.stationNum != null) {
       this.hideError();
-      this.docRegisterService.getStation(key.stationNum).subscribe({
-        next: data => this.formControls.stationNumber.setValue(data),
-        error: () => {},
+      const params = new FilterParams();
+      params.addFilter('id', key.stationNum);
+      params.addFilter('idTransferent', key.transfereeNum);
+      this.docRegisterService.getStations(params.getParams()).subscribe({
+        next: data => {
+          this.formControls.stationNumber.setValue(data.data[0]);
+          this.getStations({ page: 1, limit: 10 });
+        },
       });
     }
     if (key.authorityNum != null) {
@@ -2348,6 +2396,7 @@ export class DocumentsReceptionRegisterComponent
           next: data => {
             if (data.count > 0) {
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -2490,6 +2539,7 @@ export class DocumentsReceptionRegisterComponent
     console.log(
       requiredErrors,
       otherErrors,
+      this.reprocessFlag,
       this.documentsReceptionForm.invalid,
       this.documentsReceptionForm.value
     );
@@ -2547,7 +2597,10 @@ export class DocumentsReceptionRegisterComponent
 
   async save(): Promise<boolean | void> {
     if (!this.checkFormErrors()) {
+      console.log('Form invalid');
       return false;
+    } else {
+      console.log('Form valid');
     }
     // const courtFlag = await this.checkCourt();
     // if (!courtFlag) {
@@ -3031,8 +3084,8 @@ export class DocumentsReceptionRegisterComponent
         receiptDate: this.formData.receiptDate,
         priority: this.formData.priority,
         wheelNumber: this.formControls.wheelNumber.value,
-        consecutiveNumber: this.formData.consecutiveNumber,
-        expedientNumber: this.formData.expedientNumber,
+        consecutiveNumber: this.formControls.consecutiveNumber.value,
+        expedientNumber: this.formControls.expedientNumber.value,
         addressGeneral: this.formData.addressGeneral,
         circumstantialRecord: this.formData.circumstantialRecord,
         preliminaryInquiry: this.formData.preliminaryInquiry,
@@ -3137,8 +3190,8 @@ export class DocumentsReceptionRegisterComponent
       receiptDate: this.formData.receiptDate,
       priority: this.formData.priority,
       wheelNumber: this.formControls.wheelNumber.value,
-      consecutiveNumber: this.formData.consecutiveNumber,
-      expedientNumber: this.formData.expedientNumber,
+      consecutiveNumber: this.formControls.consecutiveNumber.value,
+      expedientNumber: this.formControls.expedientNumber.value,
       addressGeneral: this.formData.addressGeneral,
       circumstantialRecord: this.formData.circumstantialRecord,
       preliminaryInquiry: this.formData.preliminaryInquiry,
@@ -3462,6 +3515,17 @@ export class DocumentsReceptionRegisterComponent
     //   return false;
     // }
     this.loading = true;
+    this.formControls.consecutiveNumber.setValue(0);
+    this.notificationService
+      .getDailyConsecutive(this.userDelegation, this.userSubdelegation)
+      .subscribe({
+        next: data => {
+          this.formControls.consecutiveNumber.setValue(data.consecutivedaily);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
     this.prepareFormData();
     this.docDataService.documentsReceptionRegisterForm =
       this.documentsReceptionForm.value;
@@ -3796,6 +3860,7 @@ export class DocumentsReceptionRegisterComponent
       delegationNumber: this.userDelegation,
       subDelegationNumber: this.userSubdelegation,
       expedientNumber: this.formControls.expedientNumber.value,
+      consecutiveNumber: this.formControls.consecutiveNumber.value,
     };
     console.log(this.formControls.wheelNumber.value);
     console.log(notificationData);

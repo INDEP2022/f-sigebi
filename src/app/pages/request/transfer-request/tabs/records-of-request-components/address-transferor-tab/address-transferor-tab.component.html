@@ -6,15 +6,17 @@
           Domicilio de la transferencia
         </h5>
       </div>
-      <div *ngIf="isNewAddress === false">
-        <button class="btn btn-primary btn-sm active" (click)="saveAddres()">
-          <i class="bx bx-save"></i> Guardar
-        </button>
-      </div>
-      <div *ngIf="isNewAddress === true">
-        <button class="btn btn-primary btn-sm active" (click)="copyAddress()">
-          <i class="bx bx-copy-alt"></i> Copiar domicilio existente
-        </button>
+      <div *ngIf="process != 'process-approval'">
+        <div *ngIf="isNewAddress === false">
+          <button class="btn btn-primary btn-sm active" (click)="saveAddres()">
+            <i class="bx bx-save"></i> Guardar
+          </button>
+        </div>
+        <div *ngIf="isNewAddress === true">
+          <button class="btn btn-primary btn-sm active" (click)="copyAddress()">
+            <i class="bx bx-copy-alt"></i> Copiar domicilio existente
+          </button>
+        </div>
       </div>
     </div>
   </div>

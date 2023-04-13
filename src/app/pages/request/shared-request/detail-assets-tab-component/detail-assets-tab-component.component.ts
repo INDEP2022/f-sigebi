@@ -169,14 +169,16 @@ export class DetailAssetsTabComponentComponent
 
     if (this.process == 'classify-assets') {
       this.goodData = this.detailAssets.value;
-      this.relevantTypeService
-        .getById(this.goodData.fractionId?.relevantTypeId)
-        .subscribe({
-          next: data => {
-            this.relevantTypeName = data.description;
-          },
-          error: error => {},
-        });
+      if (this.goodData.fractionId) {
+        this.relevantTypeService
+          .getById(this.goodData.fractionId?.relevantTypeId)
+          .subscribe({
+            next: data => {
+              this.relevantTypeName = data.description;
+            },
+            error: error => {},
+          });
+      }
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
@@ -371,7 +373,14 @@ export class DetailAssetsTabComponentComponent
     this.goodDomicilieForm = this.fb.group({
       id: [null],
       description: [null],
-      propertyType: [null, [Validators.required, Validators.maxLength(40)]],
+      propertyType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
       surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       consSurfaceMts: [
         0,

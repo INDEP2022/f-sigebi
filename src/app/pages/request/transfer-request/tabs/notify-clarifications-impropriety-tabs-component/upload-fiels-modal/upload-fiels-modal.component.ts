@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -30,13 +29,14 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
   base64Cer: string;
   base64Key: string;
+  encrypResult: string;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private http: HttpClient,
+    //private http: HttpClient,
     private signatoriesService: SignatoriesService,
-    private externalFirmService: ExternalFirmService
+    private externalFirmService: ExternalFirmService //private encrypService: EncrypService
   ) {
     super();
   }
@@ -146,9 +146,12 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     if (pass.length <= 10) {
       console.log(
         'pass: ' + pass + ' Longitud de pass es correcto, proceder a encriptar'
-      ); //Quitar
+      );
+      const obj: Object = {
+        cadena: pass,
+      };
 
-      this.externalFirmService.encrypt(this.passForm.value).subscribe(
+      this.externalFirmService.encrypt(obj).subscribe(
         response => {
           if (response !== null) {
             this.password = response;
@@ -182,15 +185,17 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
     formData.append('name', this.signatories.name);
-    formData.append('pass', this.fileForm.controls['pass'].value);
-    /*formData.append(
-       'pass',
-       this.password.encriptarResult || this.fileForm.controls['pass'].value
-     );*/
+    formData.append(
+      'pass',
+      this.password.encriptarResult || this.fileForm.controls['pass'].value
+    );
+    //formData.append('pass', this.encrypResult);
     formData.append('post', this.fileForm.controls['post'].value);
     formData.append('rfcUser', this.fileForm.controls['rfcUser'].value);
     formData.append('validationocsp', 'true');
-    //formData.append('certificatebase64', this.base64Cer);
+    formData.append('identifierSystem', '1');
+    formData.append('identifierSignatory', '1');
+    //formData.append('certificatebase64', this.base64Cer); La conversión ya lo hace el endpoint
     console.log('FormData que se envia para guardar firmante', formData);
 
     this.signatoriesService
