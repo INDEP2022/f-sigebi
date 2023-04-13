@@ -78,7 +78,6 @@ export class GoodsClassificationComponent
   }
 
   editRowTable(event: any) {
-    console.log(event);
     if (event.data.process == 'RegistroSolicitudes') {
       // en el caso de que el proceso seleccionado sea Solicitud de DEVOLUCION
       this.idNoRequest = event.data.noRequest;
@@ -89,7 +88,5 @@ export class GoodsClassificationComponent
   btnRegresarLista() {
     this.mostrarListado = true;
   }
-  dataRegistration(data: any) {
-    console.log(data);
-  }
+  dataRegistration(data: any) {}
 }

@@ -25,6 +25,7 @@ import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents
 })
 export class GoodDocTabComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   idRequest: number = 0;
@@ -66,12 +67,12 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
       this.loading = true;
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
-
+      this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
+            item['goodTypeName'] = goodType;
             item['requestId'] = this.idRequest;
 
             if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
@@ -93,7 +94,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
-          console.log(error);
           this.loading = false;
         },
       });
@@ -107,42 +107,58 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   ) {
     if (this.idRequest) {
       this.loading = true;
-      if (paramGood) this.params.getValue()['filter.goodId'] = paramGood;
+      if (paramGood) {
+        this.paramsSearch.getValue()['filter.goodId'] = paramGood;
+      } else {
+        this.getData();
+      }
+      if (paramGoodType) {
+        this.paramsSearch.getValue()['filter.goodTypeId'] = paramGoodType;
+      } else {
+        this.getData();
+      }
 
-      this.params.getValue()['search'] = this.params.getValue().text;
-      this.params.getValue()['filter.requestId'] = this.idRequest;
-
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: async (data: any) => {
-          const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
-            item['requestId'] = this.idRequest;
-
-            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-
-            const fraction = item['fractionId'];
-            item['fractionId'] = fraction?.description;
-          });
-
-          Promise.all(filterGoodType).then(x => {
-            this.paragraphs.load(data.data);
-            this.totalItems = data.count;
-            this.loading = false;
-          });
-        },
-        error: error => {
-          console.log(error);
-          this.loading = false;
-        },
-      });
+      if (goodDescription) {
+        this.paramsSearch.getValue()['filter.goodDescription'] =
+          goodDescription;
+      } else {
+        this.getData();
+      }
     }
+  }
+
+  getData() {
+    this.paramsSearch.getValue()['filter.requestId'] = this.idRequest;
+    this.searchForm.get('requestId').setValue(this.idRequest);
+    this.goodService.getAll(this.paramsSearch.getValue()).subscribe({
+      next: async (data: any) => {
+        const filterGoodType = data.data.map(async (item: any) => {
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeName'] = goodType;
+          item['requestId'] = this.idRequest;
+
+          if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+          if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
+          if (item['stateConservation'] == 1)
+            item['stateConservation'] = 'BUENO';
+          if (item['stateConservation'] == 2)
+            item['stateConservation'] = 'MALO';
+          if (item['destiny'] == 1) item['destiny'] = 'VENTA';
+
+          const fraction = item['fractionId'];
+          item['fractionId'] = fraction?.description;
+        });
+
+        Promise.all(filterGoodType).then(x => {
+          this.paragraphs.load(data.data);
+          this.totalItems = data.count;
+          this.loading = false;
+        });
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 
   getGoodType(goodTypeId: number) {
@@ -174,25 +190,29 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
 
   clean() {
     this.searchForm.reset();
+    this.paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsRequest());
   }
 
   search() {
     const good = this.searchForm.get('goodId').value;
     const goodTypeId = this.searchForm.get('goodTypeId').value;
     const requestId = this.searchForm.get('requestId').value;
-    const goodDescription = this.searchForm.get('requestId').value;
+    const goodDescription = this.searchForm.get('goodDescription').value;
 
-    if (!good && !goodTypeId && !requestId && !goodDescription) {
+    if (!good && !goodTypeId && requestId && !goodDescription) {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoodsRequest());
+    } else {
+      this.paramsSearch
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() =>
+          this.getGoodsSearchRequest(good, goodTypeId, goodDescription)
+        );
     }
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() =>
-        this.getGoodsSearchRequest(good, goodTypeId, goodDescription)
-      );
   }
 
   showDocuments(): void {

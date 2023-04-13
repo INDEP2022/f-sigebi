@@ -68,7 +68,7 @@ export class MailboxModalTableComponent<T = any>
           this.onLoadToast(
             'error',
             'Error',
-            'Ocurrio un error al obtener los datos'
+            'Ocurrió un error al obtener los datos'
           );
         }
         return throwError(() => error);

@@ -77,7 +77,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
   onCitiesChange(subdelegation: any) {
     //this.resetFields([this.City]);
     this.cities = new DefaultSelect();
-
+    /* this.form.updateValueAndValidity(); */
     if (subdelegation) {
       const { noDelegation, noSubDelegation, state } = subdelegation;
       let infoForms = {

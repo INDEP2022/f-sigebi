@@ -22,7 +22,6 @@ export class ViewDocumentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.src = this.linkDoc1;
-    console.log('lnk de reporte a consultar', this.linkDoc1);
   }
 
   close(): void {

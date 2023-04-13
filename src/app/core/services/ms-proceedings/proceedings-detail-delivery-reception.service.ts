@@ -137,6 +137,8 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
                 'string'
               ),
               status: item.good.status,
+              warehouse: item.good.storeNumber,
+              vault: item.good.vaultNumber,
             };
           }),
         };

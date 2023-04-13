@@ -56,4 +56,8 @@ export class FileBrowserService extends HttpService {
   findPgrFile(params: _Params) {
     return this.get<IPgrFile>('file-browser/getOneRecoverFile', params);
   }
+
+  moveFile(invoiceNumber: string | number, jobNumber: string | number) {
+    return this.post('file-browser/moveFile', { invoiceNumber, jobNumber });
+  }
 }

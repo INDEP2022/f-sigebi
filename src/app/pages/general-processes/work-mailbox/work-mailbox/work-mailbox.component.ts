@@ -44,6 +44,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
@@ -226,7 +227,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private siabService: SiabService,
     private documentsTypesService: DocumentsTypeService,
-    private imageMediaService: ImageMediaService
+    private imageMediaService: ImageMediaService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
     this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
@@ -1488,6 +1490,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+
     const tmp = {
       id: this.selectedRow.processNumber,
       InvoiceRep: this.selectedRow.folioRep,
@@ -1806,16 +1809,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         'Aviso',
         'El Oficio tiene No. Volante relacionado, se generaran los documentos.'
       );
+      this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
+        next: () => {
+          let config = {
+            class: 'modal-lg modal-dialog-centered',
+            initialState: {
+              pgrOffice: officeNumber,
+            },
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PgrFilesComponent, config);
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al copiar los documentos'
+          );
+        },
+      });
       // copy img
       // view pgr docs
-      let config = {
-        class: 'modal-lg modal-dialog-centered',
-        initialState: {
-          pgrOffice: officeNumber,
-        },
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(PgrFilesComponent, config);
     } else if (action == 'C') {
       // view pgr docs
       let config = {
@@ -2061,7 +2075,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const columns = WORK_BIENES_COLUMNS;
     const title = BIENES_TITLE;
     const params = new FilterParams();
-    params.addFilter('file', this.selectedRow.proceedingsNumber);
+    params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
@@ -2242,6 +2256,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'getNotificationsReport':
           this.getNotificationsReport();
           break;
+        case 'getIdentifier':
+          this.getIdentifier();
+          break;
         default:
           this.alertQuestion(
             'info',
@@ -2338,6 +2355,100 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         );
       }
     }
+  }
+
+  getIdentifier(): void {
+    this.loading = true;
+    //Get NextVal SEQ_RASTREADOR
+    console.log(this.selectedRow.flierNumber);
+    if (this.selectedRow?.flierNumber) {
+      const flierNumber = this.selectedRow?.flierNumber;
+      this.goodTrackerService.getIdentifier().subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          if (resp.nextval) {
+            const tmpTracker = {
+              identificator: resp.nextval,
+              goodNumber: flierNumber,
+            };
+            this.goodTrackerService.createTmpTracker(tmpTracker).subscribe({
+              next: (resp: any) => {
+                console.log('insert tmp_rastreador');
+                this.loading = false;
+                this.getFlyersReport(tmpTracker.identificator);
+              },
+              error: error => {
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Ocurrió un error',
+                  'No se pudo guardar la información del identificador, solo se visualizará el primer volante'
+                );
+                this.getFlyersReport(null, flierNumber);
+              },
+            });
+          }
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error',
+            'No se pudo generar un identificador, solo se visualizará el primer volante'
+          );
+          this.getFlyersReport(null, flierNumber);
+        },
+      });
+    } else {
+      this.loading = false;
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, el reporte no puede generarse'
+      );
+    }
+  }
+
+  getFlyersReport(identificator?: number, flierNumber?: number): void {
+    this.loading = true;
+    let params = {};
+
+    if (identificator !== null) {
+      params = {
+        PN_VOLANTEINI: 0,
+        PN_VOLANTEFIN: 0,
+        P_IDENTIFICADOR: identificator,
+      };
+    } else if (flierNumber) {
+      params = {
+        PN_VOLANTEINI: flierNumber.toString(),
+        PN_VOLANTEFIN: flierNumber.toString(),
+      };
+    }
+
+    this.siabService.fetchReport('RCONCOGVOLANTESRE', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
   }
 
   onSaveConfirm(event: any) {
