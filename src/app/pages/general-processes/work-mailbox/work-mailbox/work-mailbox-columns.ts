@@ -243,21 +243,19 @@ export const WORK_MAILBOX_COLUMNS2 = {
   },
   observation: {
     title: 'Observaciones',
+    type: 'custom',
     sort: false,
     editable: false,
     renderComponent: SeeMoreComponent,
-    valuePrepareFunction: (value: string) => {
-      value !== null ? (value = value) : (value = '');
-    },
+    valuePrepareFunction: (value: string) => value ?? '',
   },
   observationAdd: {
     title: 'Observaciones Add.',
+    type: 'custom',
     sort: false,
     editable: false,
     renderComponent: SeeMoreComponent,
-    valuePrepareFunction: (value: string) => {
-      value !== null ? (value = value) : (value = '');
-    },
+    valuePrepareFunction: (value: string) => value ?? '',
   },
   priority: {
     title: 'Prioridad',

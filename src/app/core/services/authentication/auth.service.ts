@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { map, Observable } from 'rxjs';
+import { BYPASS_JW_TOKEN } from 'src/app/common/interceptors/auth.interceptor';
 import { environment } from 'src/environments/environment';
 import { AuthModel } from '../../models/authentication/auth.model';
 import { RolesInfoModel } from '../../models/authentication/roles-info.model';
@@ -44,7 +45,10 @@ export class AuthService {
       'Content-Type',
       'application/x-www-form-urlencoded'
     );
-    return this.http.post(this.tokenUrl, params, { headers });
+    return this.http.post<AuthModel>(this.tokenUrl, params, {
+      headers,
+      context: new HttpContext().set(BYPASS_JW_TOKEN, true),
+    });
   }
 
   existToken() {
