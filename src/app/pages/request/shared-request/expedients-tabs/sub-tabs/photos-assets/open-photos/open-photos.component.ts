@@ -73,7 +73,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
-      console.log(_data);
+
       this.paragraphs.load(_data);
       this.totalItems = this.paragraphs.count();
     });

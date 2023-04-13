@@ -207,9 +207,7 @@ export class AddressTransferorTabComponent
             this.selectState = new DefaultSelect([data], 1);
             this.domicileForm.controls['statusKey'].setValue(keyState);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
     } else {
@@ -218,9 +216,7 @@ export class AddressTransferorTabComponent
           next: data => {
             this.selectState = new DefaultSelect(data.data, data.count);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
     }
@@ -325,7 +321,6 @@ export class AddressTransferorTabComponent
         }
       },
       error => {
-        console.log(error);
         this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
@@ -369,7 +364,6 @@ export class AddressTransferorTabComponent
         if (data) {
           this.setInformation(data);
         }
-        console.log('domicilio seleccionado', data);
       },
     };
 
