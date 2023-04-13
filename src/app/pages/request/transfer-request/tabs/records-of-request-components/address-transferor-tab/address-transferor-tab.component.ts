@@ -89,15 +89,6 @@ export class AddressTransferorTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject != undefined) {
-      //this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
-      /*this.domicileForm.controls['regionalDelegationId'].setValue(
-        this.requestObject.regionalDelegationId
-      );*/
-      this.getStateOfRepublic(
-        new ListParams(),
-        this.requestObject.keyStateOfRepublic
-      );
-      this.getDomicileTransferent(this.requestObject.id);
     }
   }
 
@@ -106,9 +97,18 @@ export class AddressTransferorTabComponent
     if (this.isNewAddress != true) {
       this.container.createEmbeddedView(this.template);
     }
-    this.formReactiveCalls();
     if (this.process === 'process-approval') {
       this.domicileForm.disable();
+    }
+    this.formReactiveCalls();
+
+    if (this.requestObject != undefined) {
+      this.getDomicileTransferent(this.requestObject.id);
+
+      this.getStateOfRepublic(
+        new ListParams(),
+        this.requestObject.keyStateOfRepublic
+      );
     }
   }
 
@@ -230,21 +230,28 @@ export class AddressTransferorTabComponent
   getMunicipaly(params: ListParams, stateKey?: number) {
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     params['filter.nameMunicipality'] = `$ilike:${params.text}`;
+    params.limit = 30;
 
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+        if (this.isAddress === true) {
+          this.domicileForm.controls['municipalityKey'].setValue(
+            this.municipalityId
+          );
+        }
       },
     });
   }
 
   //obtener la colonia
   getLocality(params: ListParams, municipalityId?: number) {
-    //params.limit = 20;
     params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
+    params.limit = 100;
+
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
         this.selectLocality = new DefaultSelect(resp.data, resp.count);
@@ -282,6 +289,7 @@ export class AddressTransferorTabComponent
         this.domicileForm.controls['warehouseAlias'].setValue(
           resp.data[0].warehouseAlias['id']
         );
+        this.municipalityId = resp.data[0].municipalityKey;
         this.getLocality(new ListParams(), resp.data[0].municipalityKey);
         this.localityId = resp.data[0].localityKey;
       },
