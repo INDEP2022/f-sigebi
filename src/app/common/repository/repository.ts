@@ -22,6 +22,7 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
@@ -269,5 +270,10 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}`, formData);
+  }
+  getClassif(classif: string | number): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
+    );
   }
 }
