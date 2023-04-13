@@ -482,6 +482,9 @@ export class DocumentsReceptionRegisterComponent
               if (data.count > 0) {
                 if ([3, '3'].includes(typeManagement)) {
                   this.pgrGoodsProcessed = true;
+                }
+                if ([2, '2'].includes(typeManagement)) {
+                  this.pgrGoodsProcessed = true;
                 } else {
                   this.pgrGoodsProcessed = false;
                 }
@@ -1618,6 +1621,9 @@ export class DocumentsReceptionRegisterComponent
                       console.log(data);
                       if (data.count > 0) {
                         if ([3, '3'].includes(typeManagement)) {
+                          this.pgrGoodsProcessed = true;
+                          console.log(typeManagement);
+                        } else if ([2, '2'].includes(typeManagement)) {
                           this.pgrGoodsProcessed = true;
                           console.log(typeManagement);
                         } else {
