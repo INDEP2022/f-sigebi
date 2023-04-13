@@ -44,7 +44,12 @@ export const DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS = {
     sort: false,
   },
   clv: {
-    title: 'Relación Bienes.',
+    title: 'Relación Bienes',
+    type: 'string',
+    sort: false,
+  },
+  nbOrigen: {
+    title: 'Aplicación',
     type: 'string',
     sort: false,
   },

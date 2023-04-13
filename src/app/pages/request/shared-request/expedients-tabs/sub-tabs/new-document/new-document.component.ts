@@ -80,9 +80,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   initForm(): void {
     this.newDocForm = this.fb.group({
       id: [null],
-      docType: [null],
-      docFile: [null],
-      docTit: [null, [Validators.pattern(STRING_PATTERN)]],
+      docType: [null, [Validators.required]],
+      docFile: [null, [Validators.required]],
+      docTit: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       noOfi: [null],
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -170,8 +170,21 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.typeDocument = item.ddocType;
   }
 
-  selectFile(event: any) {
+  selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
+    if (this.selectedFile?.size > 10000000) {
+      this.onLoadToast(
+        'warning',
+        'Se debe cargar un documentos menor a 10MB',
+        ''
+      );
+      this.newDocForm.get('docFile').reset;
+    }
+    const extension = this.selectedFile?.name.split('.').pop();
+    if (extension != 'pdf') {
+      this.onLoadToast('warning', 'Se debe cargar un documentos PDF', '');
+      this.newDocForm.get('docFile').setValue(null);
+    }
   }
 
   confirm() {

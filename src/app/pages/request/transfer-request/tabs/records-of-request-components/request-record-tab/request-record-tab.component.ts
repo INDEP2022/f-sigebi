@@ -55,9 +55,7 @@ export class RequestRecordTabComponent
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.requestForm.valueChanges.subscribe({
-      next: resp => {
-        console.log(resp);
-      },
+      next: resp => {},
     });
   }
 
@@ -223,13 +221,14 @@ export class RequestRecordTabComponent
   }
 
   getAffair(id: number) {
-    this.affairService.getById(id).subscribe({
-      next: data => {
-        this.affairName = data.description;
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.affairService.getAll(params).subscribe({
+      next: ({ data }) => {
+        this.affairName = data[0].description;
       },
       error: error => {
         this.affairName = '';
-        console.log(error.error.massage);
       },
     });
   }
@@ -304,7 +303,6 @@ export class RequestRecordTabComponent
             'Error',
             `¡No se guardó la solicitud!. ${error.error.message}`
           );
-          console.log(error);
           reject(false);
         },
       });

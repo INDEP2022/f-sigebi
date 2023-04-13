@@ -108,13 +108,14 @@ export class RequestDetailTabComponent
   }
 
   getAffair(id: number) {
-    this.affairService.getById(id).subscribe({
-      next: data => {
-        this.affairName = data.description;
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.affairService.getAll(params).subscribe({
+      next: ({ data }) => {
+        this.affairName = data[0].description;
       },
       error: error => {
         this.affairName = '';
-        console.log(error.error.massage);
       },
     });
   }
@@ -133,7 +134,6 @@ export class RequestDetailTabComponent
   reactiveFormCalls() {
     this.requestForm.valueChanges.subscribe((val: any) => {
       var v = this.requestForm.getRawValue();
-      console.log(v);
       if (this.requestForm.controls['urgentPriority'].value) {
         this.priority =
           this.requestForm.controls['urgentPriority'].value === '0'

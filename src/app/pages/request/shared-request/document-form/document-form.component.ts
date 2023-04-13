@@ -46,7 +46,6 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.parameter, this.typeDoc);
     this.prepareForm();
     this.getDocType(new ListParams());
     this.setRegionalDelegacion();
@@ -198,10 +197,27 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   uploadFile(event: any) {
+    if (event.target.files[0].size > 10485760) {
+      this.onLoadToast(
+        'error',
+        'Carga Archivo',
+        'Seleccione un archivo no mayor a 10 Mb.'
+      );
+      this.documentForm.controls['document'].setValue(null);
+      return;
+    }
     this.file = event.target.files[0];
   }
 
   confirm() {
+    if (!this.file) {
+      this.onLoadToast(
+        'error',
+        'Carga Archivo',
+        'Es requerido cargar un documento'
+      );
+      return;
+    }
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -258,9 +274,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
 
           this.close();
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
   }
 
