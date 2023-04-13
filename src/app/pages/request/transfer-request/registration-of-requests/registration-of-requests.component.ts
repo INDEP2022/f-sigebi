@@ -846,13 +846,11 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
-          console.log(error.error.message);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },

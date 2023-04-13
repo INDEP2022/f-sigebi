@@ -96,7 +96,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      // console.log(this.requestObject);
       this.typeRecord = this.requestObject.typeRecord;
       this.transferente = this.requestObject.transfer;
     }
@@ -279,7 +278,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         },
         error: error => {
           this.message('error', 'Error al guardar', `${error.error.message}`);
-          console.log(error);
         },
       });
   }
@@ -481,9 +479,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             );
             this.refreshTable();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
       this.isSaveFraction = false;
@@ -546,7 +542,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         error: error => {
           this.loader.load = false;
           this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
-          console.log(error);
         },
       });
     });
@@ -596,7 +591,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
-      //console.log(res);
       this.isSaveFraction = true;
 
       if (this.listgoodObjects.length === 1) {
@@ -767,9 +761,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getSection(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Capitulo: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -800,9 +792,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getChapter(new ListParams(), fraction.parentId);
       },
-      error: error => {
-        console.log('Nivel 1: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -830,9 +820,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel1(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Nivel 2: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -859,9 +847,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel2(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Nivel 3: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -888,9 +874,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel3(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Nivel 4: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 }

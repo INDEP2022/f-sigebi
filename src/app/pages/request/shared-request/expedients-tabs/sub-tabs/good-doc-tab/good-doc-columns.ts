@@ -9,7 +9,7 @@ export const GOOD_DOCUMENTES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodTypeId: {
+  goodTypeName: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
