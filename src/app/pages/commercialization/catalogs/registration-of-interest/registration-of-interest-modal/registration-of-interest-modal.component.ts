@@ -1,17 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Injectable,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { SearchUserFormComponent } from 'src/app/pages/request/programming-request-components/schedule-reception/search-user-form/search-user-form.component';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RegistrationOfInterestComponent } from '../registration-of-interest.component';
 
+@Injectable({
+  providedIn: 'root',
+})
 @Component({
   selector: 'app-registration-of-interest-modal',
   templateUrl: './registration-of-interest-modal.component.html',
@@ -30,6 +41,7 @@ export class RegistrationOfInterestModalComponent
   nameUser: string = '';
   id: number = 0;
   tiie: ITiieV1;
+  selectUser = new DefaultSelect<IUser>();
   tiiesList: ITiieV1[] = [];
   @Input() registration: RegistrationOfInterestComponent;
   @Output() onConfirm = new EventEmitter<any>();
@@ -39,7 +51,8 @@ export class RegistrationOfInterestModalComponent
     private fb: FormBuilder,
     private parameterTiieService: ParameterTiieService,
     private programmingRequestService: ProgrammingRequestService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private usersService: UsersService
   ) {
     super();
   }
@@ -89,23 +102,39 @@ export class RegistrationOfInterestModalComponent
   }
   getUserSelect(user: ListParams) {}
 
+  // searchUser() {
+  //   let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+  //   this.loading = false;
+  //   config.initialState = {
+  //     callback: (data: any) => {
+  //       if (data) {
+  //         data.map((item: any) => {
+  //           console.log(item);
+  //           this.providerForm
+  //             .get('user')
+  //             .setValue(item.firstName + ' ' + item.lastName);
+  //         });
+  //       }
+  //     },
+  //   };
+
+  //   const searchUser = this.modalService.show(SearchUserFormComponent, config);
+  // }
+
   searchUser() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
-    config.initialState = {
-      callback: (data: any) => {
-        if (data) {
-          data.map((item: any) => {
-            console.log(item);
-            this.providerForm
-              .get('user')
-              .setValue(item.firstName + ' ' + item.lastName);
-          });
-        }
+    this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
+      next: data => {
+        console.log(data.data);
+        data.data.map(data => {
+          data.name = ` ${data.name}`;
+          return data;
+        });
+        this.selectUser = new DefaultSelect(data.data, data.count);
       },
-    };
-
-    const searchUser = this.modalService.show(SearchUserFormComponent, config);
+      error: () => {
+        this.selectUser = new DefaultSelect();
+      },
+    });
   }
 
   create() {
