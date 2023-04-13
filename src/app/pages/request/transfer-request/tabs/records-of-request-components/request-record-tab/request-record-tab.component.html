@@ -235,11 +235,13 @@
           <form-field
             [control]="requestForm.get('transferEntNotes')"
             label="Notas Entidad Transferente">
-            <input
-              type="text"
-              maxlength="1500"
+            <textarea
               class="form-control"
-              formControlName="transferEntNotes" />
+              maxlength="1500"
+              id="transferEntNotes"
+              rows="5"
+              formControlName="transferEntNotes">
+            </textarea>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -250,6 +252,7 @@
               class="form-control"
               maxlength="1500"
               id="observations"
+              rows="5"
               formControlName="observations">
             </textarea>
           </form-field>

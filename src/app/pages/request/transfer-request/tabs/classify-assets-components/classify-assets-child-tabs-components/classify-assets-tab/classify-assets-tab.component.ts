@@ -129,10 +129,7 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
-      goodDescription: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-      ],
+      goodDescription: [null, [Validators.maxLength(4000)]],
       quantity: [
         1,
         [
@@ -188,10 +185,7 @@ export class ClassifyAssetsTabComponent
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
       ], //cumple norma
-      notesTransferringEntity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
-      ],
+      notesTransferringEntity: [null, [Validators.maxLength(1500)]],
       unitMeasure: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],

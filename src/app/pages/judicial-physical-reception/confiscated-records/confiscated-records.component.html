@@ -307,12 +307,14 @@
           <div class="row">
             <div class="col-md-12">
               <button
-                type="button"
-                [disabled]="!form.valid"
-                class="my-1 mx-2 btn btn-info active btn-sm"
-                (click)="openProceeding()">
-                Abrir Carta
-              </button>
+              type="button"
+              [class]="btnCSSAct"
+              [disabled]="!form.valid"
+              class="btn btn-sm active mr-2 ml-2"
+              (click)="toggleActaBtn()"
+              size="small">
+              {{ labelActa }}
+            </button>
               <a
                 [routerLink]="['partialization']"
                 class="my-1 mx-2 btn btn-warning active btn-sm"

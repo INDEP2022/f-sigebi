@@ -415,10 +415,7 @@ export class DetailAssetsTabComponentComponent
         ],
       ],
       appraisalDate: [null, [Validators.required]],
-      certLibLien: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
+      certLibLien: [null, [Validators.pattern(STRING_PATTERN)]],
       guardCustody: [
         null,
         [
@@ -441,27 +438,27 @@ export class DetailAssetsTabComponentComponent
       ],
       bedrooms: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       bathroom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       kitchen: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       diningRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       livingRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       study: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       espPark: [
         null,
@@ -486,7 +483,7 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      certLibLienDate: [null, [Validators.required]],
+      certLibLienDate: [null],
       pffDate: [null, [Validators.required]],
       gravFavorThird: [
         null,
