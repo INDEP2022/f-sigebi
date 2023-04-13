@@ -128,7 +128,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
-  statusProceeding = 'ABIERTA';
+  statusProceeding = '';
   labelActa = 'Abrir acta';
   btnCSSAct = 'btn-info';
 
@@ -211,9 +211,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   //Function butons
-  pgrAct(){
-    if(this.statusProceeding === 'CERRADO'){
-      
+  pgrAct() {
+    if (this.statusProceeding === 'CERRADO') {
     }
   }
 
@@ -245,6 +244,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.statusProceeding = 'ABIERTA';
       this.labelActa = 'Cerrar acta';
       this.btnCSSAct = 'btn-primary';
+      this.form.get('fecCaptura').setValue(new Date());
     } else {
       this.statusProceeding = 'CERRADO';
       this.labelActa = 'Abrir acta';

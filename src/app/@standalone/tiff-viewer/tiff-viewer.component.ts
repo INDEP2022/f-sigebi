@@ -43,7 +43,9 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.isDocument);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['filename']) {
@@ -84,11 +86,11 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     this.imgSrc = ext.toLowerCase().includes('tif')
       ? this.getUrlTiff(base64)
       : this.getUrlDocument(base64);
-    this.imgSrc = this.getUrlTiff(base64);
     this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
   }
 
   getUrlTiff(base64: string) {
+    this.isDocument = false;
     const buffer = Buffer.from(base64, 'base64');
     const tiff = new Tiff({ buffer });
     const canvas: HTMLCanvasElement = tiff.toCanvas();
@@ -107,7 +109,10 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
       this.isDocument = true;
       this.imgDocument =
         'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/27_Pdf_File_Type_Adobe_logo_logos-512.png';
+    } else {
+      this.isDocument = false;
     }
+    console.log(this.isDocument);
     return this.sanitizer.bypassSecurityTrustResourceUrl(
       `data:${mimeType};base64, ${base64}`
     );
