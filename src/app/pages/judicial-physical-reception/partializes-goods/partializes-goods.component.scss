@@ -1,6 +1,35 @@
 .scroll-table {
-  height: 250px;
+  height: 350px;
   overflow-y: auto;
+}
+
+.scroll-tree {
+  height: 323px;
+  overflow: auto;
+}
+
+.tree-loading {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-image: url('../../../../assets/images/loader-button.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: '';
+  height: 323px;
+}
+
+.tree-description {
+  margin-top: 10px;
+  height: 137px;
+  overflow: auto;
+  border: 1px solid #b3b3b3;
+  padding: 15px;
 }
 
 .scroll-table::-webkit-scrollbar {

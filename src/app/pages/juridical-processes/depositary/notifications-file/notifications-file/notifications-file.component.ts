@@ -1,8 +1,14 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
+import { NOTIFICATIONS_FILE_LOAD_COLUMNS } from './notifications-file.columns';
+import { NotificationsFileService } from './services/notifications-file.service';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -29,17 +35,7 @@ export class NotificationsFileComponent
     },
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
-
-    columns: {
-      noVolante: { title: 'No. Volante' },
-      fechaCaptura: { title: 'Fecha de Captura' },
-      fechaRecepcion: { title: 'Fecha de Recepción' },
-      noOficio: { title: 'No. Oficio' },
-      asunto: { title: 'Asunto' },
-      observaciones: { title: 'Observaciones' },
-      cveAmparo: { title: 'Cve. Amparo' },
-      areaDestino: { title: 'Ärea Destino' },
-    },
+    columns: {},
   };
   // Data table
   dataTable = [
@@ -55,9 +51,17 @@ export class NotificationsFileComponent
     },
   ];
   public form: FormGroup;
+  fileNumber: number = null;
 
-  constructor(private fb?: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private notificationsFileService: NotificationsFileService
+  ) {
     super();
+    this.tableSettings = {
+      ...this.tableSettings,
+      columns: NOTIFICATIONS_FILE_LOAD_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
@@ -67,12 +71,57 @@ export class NotificationsFileComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noExpediente: '',
-      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
-      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]],
+      noExpediente: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
+      causaPenal: [
+        [{ value: '', disabled: true }],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      averiguacionPrevia: [
+        [{ value: '', disabled: true }],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
     });
   }
-  btnGenerarReporte() {
-    console.log('GenerarReporte');
+
+  btnGetNotificationsByExpedient() {
+    console.log('GetNotificationsByExpedient');
+    if (this.form.get('noExpediente').valid) {
+      this.fileNumber = this.form.get('noExpediente').value; // Setear expediente del input
+      this.getDataExpedientByFileNumber();
+    } else {
+      this.alertInfo(
+        'warning',
+        'Número de Expediente Incorrecto',
+        'Es necesario ingresar un número de Expediente para consultar.'
+      );
+    }
+  }
+  async getDataExpedientByFileNumber() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('expedientNumber', this.fileNumber);
+    await this.notificationsFileService
+      .getNotificationByFileNumber(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log(res);
+          this.form.get('noExpediente');
+        },
+        error: err => {
+          console.log(err);
+          this.alertQuestion(
+            'warning',
+            'Número de Expediente',
+            'El número de expediente "' + this.fileNumber + '" NO existe.'
+          );
+        },
+      });
   }
 }

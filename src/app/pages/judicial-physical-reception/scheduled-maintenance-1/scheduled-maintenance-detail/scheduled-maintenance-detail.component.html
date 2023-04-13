@@ -10,14 +10,20 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mr-0">
         <div class="col-md-2">
-          <app-select-form
+          <form-field [control]="form.get('statusActa')" label="Status Acta">
+            <select class="form-control" formControlName="statusActa">
+              <option value="ABIERTA">Abierto</option>
+              <option value="CERRADA">Cerrado</option>
+            </select>
+          </form-field>
+          <!-- <app-select-form
             [form]="form"
             formField="statusActa"
             label="Status Acta"
             [haveTodos]="false"
             [clearable]="false"
             [list]="statusList"
-            [(params)]="paramsStatus"></app-select-form>
+            [(params)]="paramsStatus"></app-select-form> -->
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('acta')" label="No&#46; Acta">
@@ -64,8 +70,9 @@
         </div>
         <div class="col-sm-4">
           <app-goodtracker-button
-            [statusActaValue]="statusActaValue"
-            [data]="data"></app-goodtracker-button>
+            [disabled]="statusActaValue === 'CERRADA'"
+            [data]="data"
+            [origin]="origin"></app-goodtracker-button>
         </div>
 
         <div class="col-sm-4">
@@ -113,6 +120,25 @@
           "></app-update-dates-goods>
       </div>
     </div>
+    <div *ngIf="dataForAdd && dataForAdd.length > 0">
+      <h5>Bienes agregados</h5>
+      <div class="row pt-4 table-container">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              class="col-md-12"
+              [settings]="settingsGoodsForAdd"
+              [source]="dataForAdd"
+              (userRowSelect)="
+                selectedsNews = $event.selected
+              "></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="paramsForAdd"
+        [totalItems]="dataForAdd.length"></app-pagination>
+    </div>
 
     <app-table-goods
       [settingsTable]="settingsGoods"
@@ -125,6 +151,9 @@
       (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
 
     <hr class="row" />
-    <app-cants [id]="actaId" [typeProceeding]="typeProceeding"></app-cants>
+    <app-cants
+      [id]="actaId"
+      [typeProceeding]="typeProceeding"
+      [updateData]="data"></app-cants>
   </div>
 </app-card>

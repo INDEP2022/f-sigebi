@@ -18,35 +18,36 @@
   position: absolute;
   right: 15px;
 }
+
 .img-container button:not(:disabled) {
   cursor: pointer;
 }
 
-.img-container > button:nth-of-type(1):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(1):not(#ngx-fs-btn) {
   bottom: 15px;
 }
 
-.img-container > button:nth-of-type(2):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(2):not(#ngx-fs-btn) {
   bottom: 65px;
 }
 
-.img-container > button:nth-of-type(3):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(3):not(#ngx-fs-btn) {
   bottom: 115px;
 }
 
-.img-container > button:nth-of-type(4):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(4):not(#ngx-fs-btn) {
   bottom: 165px;
 }
 
-.img-container > button:nth-of-type(5):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(5):not(#ngx-fs-btn) {
   bottom: 215px;
 }
 
-.img-container > button:nth-of-type(6):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(6):not(#ngx-fs-btn) {
   bottom: 265px;
 }
 
-.img-container > button:nth-of-type(7):not(#ngx-fs-btn) {
+.img-container>button:nth-of-type(7):not(#ngx-fs-btn) {
   bottom: 315px;
 }
 
@@ -76,7 +77,7 @@ button.default:disabled {
   opacity: 0.25;
 }
 
-.nav-button-container > button {
+.nav-button-container>button {
   position: relative;
   right: 0;
   margin: 0 10px;
@@ -126,15 +127,20 @@ button.default:disabled {
   from {
     -webkit-transform: rotate(0deg);
   }
+
   to {
     -webkit-transform: rotate(359deg);
   }
 }
+
 @-webkit-keyframes rotation {
   from {
     -webkit-transform: rotate(0deg);
   }
+
   to {
     -webkit-transform: rotate(359deg);
   }
-}/*# sourceMappingURL=preview-documents.component.css.map */
+}
+
+/*# sourceMappingURL=preview-documents.component.css.map */

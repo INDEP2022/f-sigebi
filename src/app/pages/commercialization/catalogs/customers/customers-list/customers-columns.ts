@@ -43,9 +43,9 @@ export const CUSTOMERS_COLUMNS = {
   sellerId: {
     title: 'Clave vendedor',
     sort: false,
-    // valuePrepareFunction: (value: any) => {
-    //   return value.id;
-    // },
+    valuePrepareFunction: (value: any) => {
+      return value ? value.id : value;
+    },
   },
   phone: {
     title: 'Teléfono',
