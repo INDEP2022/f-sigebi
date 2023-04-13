@@ -268,9 +268,10 @@
             [control]="associateFileForm.get('sheetsInai')"
             label="Fojas">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="sheetsInai" />
+              formControlName="sheetsInai"
+              min="0" />
           </form-field>
         </div>
 
@@ -290,9 +291,10 @@
             [control]="associateFileForm.get('filesInai')"
             label="Legajos">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="filesInai" />
+              formControlName="filesInai"
+              min="0" />
           </form-field>
         </div>
 

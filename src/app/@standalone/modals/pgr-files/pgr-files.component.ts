@@ -95,7 +95,7 @@ export class PgrFilesComponent extends BasePage implements OnInit {
     let mimeType;
     mimeType = getMimeTypeFromBase64(base64, '');
     return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `data:${mimeType};base64,${base64}`
+      `data:${mimeType};base64, ${base64}`
     );
   }
 
