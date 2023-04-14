@@ -1,17 +1,30 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IGoodsByProceeding } from 'src/app/core/models/ms-indicator-goods/ms-indicator-goods-interface';
+import { GOOD_TRACKER_ORIGINS } from 'src/app/pages/general-processes/goods-tracker/utils/constants/origins';
+import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { SweetAlertResult } from 'sweetalert2';
-import { AlertButton } from '../../../models/alert-button';
 
 @Component({
   selector: 'app-goodtracker-button',
+  standalone: true,
+  imports: [CommonModule, SharedModule],
   templateUrl: './goodtracker-button.component.html',
-  styles: [],
+  styles: [
+    `
+      button {
+        @media screen and (max-width: 576px) {
+          width: 100%;
+        }
+      }
+    `,
+  ],
 })
 export class GoodtrackerButtonComponent extends AlertButton implements OnInit {
-  @Input() statusActaValue: string;
-  @Input() data: IGoodsByProceeding[];
+  @Input() disabled: boolean;
+  @Input() data: any[];
+  @Input() origin: GOOD_TRACKER_ORIGINS;
   constructor(private router: Router) {
     super();
   }
@@ -40,8 +53,10 @@ export class GoodtrackerButtonComponent extends AlertButton implements OnInit {
 
   private redirectGoodTracker(question: SweetAlertResult) {
     if (question.isConfirmed) {
-      localStorage.setItem('goodsToAddScheduledMaintenanceDetail', '');
-      this.router.navigate(['pages/general-processes/goods-tracker']);
+      // localStorage.setItem('goodsToAddScheduledMaintenanceDetail', '');
+      this.router.navigate(['pages/general-processes/goods-tracker'], {
+        queryParams: { origin: this.origin },
+      });
     }
   }
 }

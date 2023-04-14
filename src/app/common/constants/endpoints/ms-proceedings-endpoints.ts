@@ -8,4 +8,8 @@ export enum ProceedingsEndpoints {
   ProceedingsValidations = 'proceedings-validations',
   ProceedingsDeliveryReception = 'proceedings-delivery-reception',
   MaximunClosingTime = 'maximun-closing-time',
+  UpdateVaultByProceedingNumber = 'updateSafe',
+  UpdateVaultByKeyProceeding = 'updateSafeByAct',
+  UpdateWarehouseByProceedingNumber = 'updateWarehouse',
+  UpdateWarehouseByKeyProceeding = 'updateWarehouseByAct',
 }

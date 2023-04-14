@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IDynamicStatusXScreen,
   IStatus,
   IStatusXScreen,
 } from '../../models/ms-screen-status/status.model';
@@ -23,7 +24,7 @@ export class ScreenStatusService extends HttpService {
       filters
     );
   }
-  getStatusXScreen(filters: { screen: string; status: string }) {
+  getStatusXScreen(filters: IDynamicStatusXScreen) {
     return this.post<IListResponse<IStatusXScreen>>(
       `${this.endpoint.StatusXScreen}`,
       filters

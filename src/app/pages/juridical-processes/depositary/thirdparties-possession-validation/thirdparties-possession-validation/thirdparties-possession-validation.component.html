@@ -43,7 +43,8 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="tableSettingsBienes"
-          [source]="dataTableBienes">
+          [source]="dataTableBienes"
+          (userRowSelect)="rowSelected($event)">
         </ng2-smart-table>
         <br />
         <span class="badge m-2 badge-pill bg-primary"
@@ -55,14 +56,20 @@
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
       <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-        <button class="btn btn-secondary btn-sm active m-3 p-3" type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-left-arrow-circle bx-md"></i>
-        </button>
-        <br />
-        <button class="btn btn-secondary btn-sm active m-3 p-3" type="button">
+        <button
+          (click)="addGoodOffice()"
+          class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+          type="button">
           <!-- Mover uno -->
           <i class="bx bxs-right-arrow-circle bx-md"></i>
+        </button>
+        <br />
+        <button
+          (click)="deleteGoodOffice()"
+          class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+          type="button">
+          <!-- Mover uno -->
+          <i class="bx bxs-left-arrow-circle bx-md"></i>
         </button>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
@@ -83,20 +90,22 @@
           <h6>Datos del Volante</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
-            <input class="form-control" formControlName="noVolante" />
+          <form-field
+            [control]="form.get('wheelNumber')"
+            label="No&#46; Volante">
+            <input class="form-control" formControlName="wheelNumber" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('claveOficio')"
+            [control]="form.get('officeExternalKey')"
             label="Cve&#46; Oficio">
-            <input class="form-control" formControlName="claveOficio" />
+            <input class="form-control" formControlName="officeExternalKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field [control]="form.get('destinatario')" label="Destinatario">
-            <input class="form-control" formControlName="destinatario" />
+          <form-field [control]="form.get('addressee')" label="Destinatario">
+            <input class="form-control" formControlName="addressee" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -132,6 +141,7 @@
         <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
           <form-field [control]="form.get('texto')" label="Texto">
             <textarea
+              maxlength="4000"
               rows="6"
               class="form-control"
               formControlName="texto"></textarea>

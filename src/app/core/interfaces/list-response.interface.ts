@@ -6,3 +6,12 @@ export interface IListResponse<T = any> {
   message: T[];
   statusCode: number;
 }
+
+export interface IResponse<T = any> {
+  [x: string]: any;
+  lenght(arg0: string, lenght: any): unknown;
+  data?: T;
+  count?: number;
+  message: string[];
+  statusCode: number;
+}

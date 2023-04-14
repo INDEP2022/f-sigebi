@@ -298,12 +298,13 @@
             class="col-md-8">
             <ngx-select
               value="id"
-              bindLabel="clarifications"
+              bindLabel="clasifGood"
               [form]="managementForm"
               control="goodTypes"
               [data]="goodTypes"
               [showTooltip]="true"
-              label="Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo">
+              label="Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo"
+              (fetchItems)="getClasifSubTypeGoods($event)">
             </ngx-select>
           </form-field>
           <form-check

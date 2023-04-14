@@ -68,6 +68,14 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
             component: DatePickerComponent,
           },
         },
+        warehouse: {
+          title: 'Almacén',
+          sort: false,
+        },
+        vault: {
+          title: 'Boveda',
+          sort: false,
+        },
         approvedXAdmon: {
           title: 'Apr.',
           sort: false,
@@ -116,7 +124,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   updateRow(row: any) {
-    console.log(row);
+    // console.log(row);
     delete row.good;
     delete row.description;
     delete row.status;

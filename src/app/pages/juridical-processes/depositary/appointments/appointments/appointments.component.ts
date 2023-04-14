@@ -43,10 +43,14 @@ export class AppointmentsComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   public form: FormGroup;
   public checked = false;
-  globalVars = {
+  globalVars: any = {
     noExiste: 0,
     depositaria: '',
     no_dep: '',
+    folescaneo: '',
+    procgenimg: null,
+    folsoldigt: null,
+    folescaneo2: null,
   };
   public good: IGood;
   noBien: number = null;
