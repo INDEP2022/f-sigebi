@@ -303,7 +303,7 @@ export class ClassifyAssetsTabComponent
         null,
         [
           Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.pattern(STRING_PATTERN),
           Validators.maxLength(5),
         ],
       ],
