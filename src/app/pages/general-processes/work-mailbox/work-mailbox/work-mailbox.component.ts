@@ -1598,7 +1598,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   savePaperwork(option: string) {
-    const { processNumber, processStatus, userATurn } = this.selectedRow;
+    const { processNumber, areaATurn, userATurn } = this.selectedRow;
     let body;
     if (option === '1') {
       body = {
@@ -1608,7 +1608,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       };
     } else {
       body = {
-        status: processStatus.slice(0, 2) + 'I',
+        status: areaATurn + 'I',
         userTurned: userATurn,
         situation: 1,
       };
@@ -1624,7 +1624,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.onLoadToast('success', 'El trámite se envío correctamente', '');
         this.getData();
       })
     );
@@ -2310,9 +2310,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getSolicitud() {
-    this.router.navigateByUrl(
-      `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
-    );
+    if (this.selectedRow.flierNumber) {
+      this.router.navigateByUrl(
+        `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+      );
+    } else {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, no puede generarse una solicitud de digitalización'
+      );
+    }
   }
 
   fromDateChange(date: Date) {

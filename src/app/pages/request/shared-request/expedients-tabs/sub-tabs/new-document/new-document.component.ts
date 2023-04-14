@@ -42,6 +42,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   stateId: number = 0;
   userLogName: string = '';
   date: string = '';
+  typesDocuments: any = [];
   typeDocument: number = 0;
   constructor(
     public fb: FormBuilder,
@@ -141,11 +142,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
-    this.wContentService
-      .getDocumentTypes(this.paramsDocTypes.getValue())
-      .subscribe(data => {
-        this.selectTypeDoc = new DefaultSelect(data.data, data.count);
-      });
+    this.wContentService.getDocumentTypes(params).subscribe({
+      next: (resp: any) => {
+        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+      },
+    });
   }
 
   getRegionalDelegation(id: number) {
@@ -247,7 +248,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = `DOC_${this.date}${extension}`;
+      const docName = this.newDocForm.get('docTit').value;
 
       this.wContentService
         .addDocumentToContent(
@@ -325,7 +326,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = `DOC_${this.date}${extension}`;
+      const docName = this.newDocForm.get('docTit').value;
 
       this.wContentService
         .addDocumentToContent(
@@ -402,7 +403,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = `DOC_${this.date}${extension}`;
+      const docName = this.newDocForm.get('docTit').value;
       this.wContentService
         .addDocumentToContent(
           docName,

@@ -17,6 +17,7 @@ export interface IRequest {
   stationId?: number | string;
   emisora?: IStation;
   authorityId?: number | string;
+  state?: any;
   regionalDelegationId?: number | string;
   regionalDelegation?: IRegionalDelegation;
   sender?: string;
