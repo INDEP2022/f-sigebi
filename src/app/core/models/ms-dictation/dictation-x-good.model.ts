@@ -3,4 +3,5 @@ export interface IDictationXGoodByFileNumber {
   subtypeDesc: string;
   ssubtypeDesc: string;
   sssubtypeDesc: string;
+  clasifGood: string;
 }
