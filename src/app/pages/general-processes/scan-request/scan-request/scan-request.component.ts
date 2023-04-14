@@ -13,6 +13,8 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import {
   IReport,
   SiabService,
@@ -39,6 +41,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   idFolio: number;
   docs: IListResponse<IDocuments>;
   notify: IListResponse<INotification>;
+  delegation: number;
+  subDelegation: number;
+  departament: number;
 
   constructor(
     private fb: FormBuilder,
@@ -48,9 +53,24 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private receptionService: DocReceptionRegisterService
   ) {
     super();
+    const params = new FilterParams();
+    const token = this.authService.decodeToken();
+    params.addFilter('user', token.preferred_username);
+    this.receptionService.getUsersSegAreas(params.getParams()).subscribe({
+      next: response => {
+        if (response.data.length > 0) {
+          this.subDelegation = response.data[0].subdelegationNumber;
+          this.delegation = response.data[0].delegationNumber;
+          this.departament = response.data[0].departamentNumber;
+        }
+      },
+      error: () => {},
+    });
   }
 
   ngOnInit(): void {
@@ -155,7 +175,6 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
-          console.log(err);
           this.loading = false;
           this.form.reset();
           this.onLoadToast('error', err.error.message, '');
@@ -245,8 +264,20 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     const valid = await this.validations();
     if (valid) {
       const { expedientNumber, wheelNumber } = this.formNotification.value;
+
+      const token = this.authService.decodeToken();
+      let userId = token.preferred_username;
+
       this.form.get('numberProceedings').patchValue(expedientNumber);
       this.form.get('flyerNumber').patchValue(wheelNumber);
+      this.form.get('userRequestsScan').patchValue(userId.toUpperCase());
+      this.form.get('scanRequestDate').patchValue(new Date());
+      this.form.get('numberDelegationRequested').patchValue(this.delegation);
+      this.form
+        .get('numberSubdelegationRequests')
+        .patchValue(this.subDelegation);
+      this.form.get('numberDepartmentRequest').patchValue(this.departament);
+
       this.documentServ.create(this.form.value).subscribe({
         next: resp => {
           this.onLoadToast(
@@ -327,6 +358,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       keySeparator: [null],
       flyerNumber: [null, Validators.required],
       numberProceedings: [null, Validators.required],
+      scanRequestDate: [null],
+      userRequestsScan: [null],
+      numberDelegationRequested: [null],
+      numberSubdelegationRequests: [null],
+      numberDepartmentRequest: [null],
     });
   }
 
