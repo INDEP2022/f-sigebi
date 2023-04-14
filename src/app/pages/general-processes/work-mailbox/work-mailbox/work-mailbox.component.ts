@@ -88,6 +88,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
+import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { ObservationsComponent } from '../components/observations/observations.component';
@@ -229,7 +230,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private documentsTypesService: DocumentsTypeService,
     private imageMediaService: ImageMediaService,
-    private goodTrackerService: GoodTrackerService
+    private goodTrackerService: GoodTrackerService,
+    private satTransferService: SatTransferService
   ) {
     super();
     this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
@@ -1456,6 +1458,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.type = 'PGR';
       this.pgrDocs().subscribe();
     } else if (typeManagement == 2) {
+      console.log('sat', typeManagement);
       this.type = 'SAT';
       this.satDocs();
     } else {
@@ -1465,6 +1468,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   satDocs() {
+    const { officeNumber } = this.selectedRow;
     // http://sigebimsqa.indep.gob.mx/interfacesat/api/v1/sat-transferencia/get-count-registers
     /**
      * {
@@ -1473,6 +1477,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       }
      */
     this.type = 'SAT';
+    let valid: number = 0;
+    this.satTransferService
+      .getCountRegisters({ officeNumber, valid })
+      .subscribe(res => {
+        console.log(res);
+      });
   }
 
   pgrDocs() {
@@ -1588,7 +1598,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   savePaperwork(option: string) {
-    const { processNumber, processStatus, userATurn } = this.selectedRow;
+    const { processNumber, areaATurn, userATurn } = this.selectedRow;
     let body;
     if (option === '1') {
       body = {
@@ -1598,7 +1608,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       };
     } else {
       body = {
-        status: processStatus.slice(0, 2) + 'I',
+        status: areaATurn + 'I',
         userTurned: userATurn,
         situation: 1,
       };
@@ -1614,7 +1624,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.onLoadToast('success', 'El trámite se envío correctamente', '');
         this.getData();
       })
     );
@@ -2300,9 +2310,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getSolicitud() {
-    this.router.navigateByUrl(
-      `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
-    );
+    if (this.selectedRow.flierNumber) {
+      this.router.navigateByUrl(
+        `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+      );
+    } else {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, no puede generarse una solicitud de digitalización'
+      );
+    }
   }
 
   fromDateChange(date: Date) {

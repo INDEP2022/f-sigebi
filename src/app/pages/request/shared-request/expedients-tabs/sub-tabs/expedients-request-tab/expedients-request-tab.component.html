@@ -37,7 +37,9 @@
         <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
       </tab>
       <tab heading="Bienes de la Solicitud" (selectTab)="requestSelected(4)">
-        <app-good-doc-tab [typeDoc]="typeDoc"></app-good-doc-tab>
+        <app-good-doc-tab
+          [typeDoc]="typeDoc"
+          [screen]="screen"></app-good-doc-tab>
       </tab>
     </tabset>
   </div>
