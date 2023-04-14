@@ -186,12 +186,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLotService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
-          this.idGood = data.event.id;
           data.description = `${data.event.id}- ${data.event.statusvtaId}`;
           return data;
         });
         this.selectEvent = new DefaultSelect(data.data, data.count);
-        this.getGood(this.idGood);
+        // this.getGood(this.idGood);
       },
       error: () => {
         this.selectEvent = new DefaultSelect();
@@ -203,6 +202,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLotService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
+          this.idGood = data.goodNumber;
+          this.valid = true;
           data.description = `${data.lotId}- ${data.description}`;
           return data;
         });

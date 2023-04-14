@@ -5,7 +5,7 @@
   (wheel)="scrollZoom($event)"
   (dragover)="onDragOver($event)">
   <object
-    *ngIf="documento.type == 'pdf' || documento.type == 'aplication/pdf'"
+    *ngIf="documento.type != 'img'"
     [data]="documento.urlDoc"
     [ngStyle]="style"
     (dragstart)="onDragStart($event)"

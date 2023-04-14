@@ -38,6 +38,14 @@
       </div>
 
       <div class="row mt-4">
+        <div
+          *ngIf="table"
+          class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+          <span>
+            SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA IZQUIEDA PARA
+            COPIAR&#46;</span
+          >
+        </div>
         <div class="col-md-6">
           <div class="row pt-4">
             <div class="col-md-12">
@@ -48,7 +56,7 @@
                   class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings1"
-                  [source]="goodList"
+                  [source]="indicatorsTotal"
                   (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
               </div>
             </div>

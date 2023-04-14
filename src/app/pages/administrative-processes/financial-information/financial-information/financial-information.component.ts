@@ -30,6 +30,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   settings1;
   settings2;
   data2: any[] = [];
+  ids: string;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   date: string;
@@ -137,8 +138,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.form.reset();
-    this.form.value.goodId = 0;
-    this.goodList = [];
+    this.ids = '';
     this.finantialList = [];
   }
 }

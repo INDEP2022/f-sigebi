@@ -187,11 +187,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
-    params.limit = 30;
+    delete params.limit;
+    delete params.page;
+    delete params['search'];
+    delete params.text;
     this.stationService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
-          data.nameAndId = `${data.id}- ${data.stationName}`;
+          data.nameAndId = `${data.id} - ${data.stationName}`;
           return data;
         });
         this.selectStation = new DefaultSelect(data.data, data.count);
@@ -206,10 +209,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    delete params.limit;
+    delete params.page;
+    delete params['search'];
+    delete params.text;
     this.authorityService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
-          data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
+          data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
         });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
@@ -223,6 +230,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    delete params.limit;
+    delete params.page;
+    delete params['search'];
+    delete params.text;
     this.transferentService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {

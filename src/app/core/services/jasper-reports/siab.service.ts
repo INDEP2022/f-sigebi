@@ -47,11 +47,21 @@ export class SiabService {
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
     this.authService.setReportFlag(true);
     const route = `${this.url}${SiabReportEndpoints.SIAB}/${reportName}${SiabReportEndpoints.EXTENSION}`;
-    return this.http.get<any>(`${route}`, {
-      params,
-      headers,
-      responseType: 'arraybuffer' as 'json',
-    });
+    return this.http
+      .get<any>(`${route}`, {
+        params,
+        headers,
+        responseType: 'arraybuffer' as 'json',
+      })
+      .pipe(
+        catchError(error => {
+          this.authService.setReportFlag(false);
+          return of(null);
+        }),
+        tap(() => {
+          this.authService.setReportFlag(false);
+        })
+      );
   }
 
   fetchReport(reportName: string, params?: any) {

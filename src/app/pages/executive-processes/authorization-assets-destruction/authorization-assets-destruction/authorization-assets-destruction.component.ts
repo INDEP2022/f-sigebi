@@ -7,9 +7,9 @@ import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 //XLSX
 import { DatePipe } from '@angular/common';
@@ -20,6 +20,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import * as XLSX from 'xlsx';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 
 @Component({
@@ -34,11 +35,13 @@ export class AuthorizationAssetsDestructionComponent
   form: FormGroup = new FormGroup({});
   show = false;
   ExcelData: any;
+  table: boolean = false;
+  idExpedient: string | number = null;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  expedient: IExpedient;
   data: LocalDataSource = new LocalDataSource();
-
+  selectExpedient = new DefaultSelect<IExpedient>();
   rowSelected: boolean = false;
   selectedRow: any = null;
 
@@ -81,9 +84,9 @@ export class AuthorizationAssetsDestructionComponent
         null,
         [
           Validators.required,
-          Validators.maxLength(10),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
+          // Validators.maxLength(10),
+          // Validators.minLength(1),
+          // Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
       preliminaryInquiry: [null, Validators.pattern(STRING_PATTERN)],
@@ -98,16 +101,34 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
+  getExpedients() {
+    // params['filter.indicatedName'] = `$ilike:${params.text}`;
+    // params['filter.id'] = `$eq:${this.idExpedient}`;
+    this.expedientService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.indicatedName = `${data.id}- ${data.indicatedName}`;
+          return data;
+        });
+        this.selectExpedient = new DefaultSelect(data.data, data.count);
+        this.getExpedientById();
+      },
+      error: () => {
+        this.selectExpedient = new DefaultSelect();
+      },
+    });
+  }
+
   getExpedientById(): void {
-    let _id = this.form.controls['idExpedient'].value;
+    let _id = this.idExpedient;
     this.loading = true;
     this.expedientService.getById(_id).subscribe(
       response => {
-        //TODO: Validate Response
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getGoodsByExpedient(response.id);
+          this.getGoodsByExpedient(this.idExpedient);
+          console.log(response);
         } else {
           //TODO: CHECK MESSAGE
           this.alert('info', 'No se encontraron registros', '');
@@ -124,6 +145,7 @@ export class AuthorizationAssetsDestructionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods(id));
   }
+
   getGoods(id: string | number): void {
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe({
       next: response => {

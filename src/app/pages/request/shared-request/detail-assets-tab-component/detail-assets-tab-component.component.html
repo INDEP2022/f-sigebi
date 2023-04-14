@@ -263,7 +263,8 @@
                 <textarea
                   class="form-control"
                   formControlName="notesTransferringEntity"
-                  [readOnly]="isGoodInfReadOnly"></textarea>
+                  [readOnly]="isGoodInfReadOnly"
+                  rows="4"></textarea>
               </form-field>
             </div>
           </div>
@@ -2500,7 +2501,7 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('pffDate')"
-              label="Fecha de Paso al Fiscal"
+              label="Fecha de Paso al Fisco"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2513,7 +2514,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('pffDate')"
-              label="Fecha de Paso al Fiscal"
+              label="Fecha de Paso al Fisco"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -2651,24 +2652,24 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="goodDomicilieForm.get('ownershipPercentage')"
+              [control]="goodDomicilieForm.get('decreeExproProc')"
               label="DecretoExproProc"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                formControlName="ownershipPercentage"
+                formControlName="decreeExproProc"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
-              [control]="goodDomicilieForm.get('ownershipPercentage')"
+              [control]="goodDomicilieForm.get('decreeExproProc')"
               label="DecretoExproProc"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="ownershipPercentage" />
+                formControlName="decreeExproProc" />
             </form-field>
           </div>
         </div>
@@ -2865,21 +2866,34 @@
               [control]="goodDomicilieForm.get('measuresAdjacent')"
               label="Medidas de Colindancia"
               *ngIf="process != 'classify-assets'">
-              <input
+              <textarea
+                rows="2"
+                formControlName="measuresAdjacent"
+                class="form-control"
+                [readonly]="isGoodTypeReadOnly">
+              </textarea>
+
+              <!-- <input
                 type="text"
                 class="form-control"
                 formControlName="measuresAdjacent"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly" /> -->
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('measuresAdjacent')"
               label="Medidas de Colindancia"
               *ngIf="process == 'classify-assets'">
-              <input
+              <textarea
+                rows="2"
+                formControlName="measuresAdjacent"
+                class="form-control"
+                readonly>
+              </textarea>
+              <!-- <input
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="measuresAdjacent" />
+                formControlName="measuresAdjacent" /> -->
             </form-field>
           </div>
           <div class="col-md-4">
@@ -2977,7 +2991,7 @@
           <div class="col-md-4">
             <form-field
               [control]="goodDomicilieForm.get('forProblems')"
-              label="Problematicas"
+              label="Problem&aacute;ticas"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2987,7 +3001,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('forProblems')"
-              label="Problematicas"
+              label="Problem&aacute;ticas"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"

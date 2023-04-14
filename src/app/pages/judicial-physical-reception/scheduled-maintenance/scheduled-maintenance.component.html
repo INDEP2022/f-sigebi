@@ -11,12 +11,15 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <app-select-form
-            [form]="form"
-            formField="tipoEvento"
-            label="Tipo de Evento"
-            [list]="tiposEvento"
-            [(params)]="paramsTypes"></app-select-form>
+          <form-field [control]="form.get('tipoEvento')" label="Tipo de Evento">
+            <select class="form-control" formControlName="tipoEvento">
+              <option value="TODOS">TODOS</option>
+              <option value="EVENTREC">RECEPCIÓN FÍSICA</option>
+            </select>
+          </form-field>
+
+          <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
+            [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
@@ -36,12 +39,18 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <app-select-form
-            [form]="form"
-            formField="statusEvento"
-            label="Estatus Evento"
-            [list]="statusList"
-            [(params)]="paramsStatus"></app-select-form>
+          <form-field
+            [control]="form.get('statusEvento')"
+            label="Estatus Evento">
+            <select class="form-control" formControlName="statusEvento">
+              <option value="TODOS">Todos</option>
+              <option value="ABIERTA">Abierto</option>
+              <option value="CERRADO">Cerrado</option>
+            </select>
+          </form-field>
+
+          <!-- <app-select-form [form]="form" formField="statusEvento" label="Estatus Evento" [list]="statusList2"
+            [(params)]="paramsStatus" [haveTodos]="false"></app-select-form> -->
         </div>
       </div>
       <div class="row mb-3">
@@ -53,14 +62,14 @@
             [form]="form"></app-elaborate-users-shared>
         </div>
       </div>
-      <!-- <div class="row">
+      <div class="row">
         <form-field [control]="form.get('claveActa')" label="Clave Acta">
           <input class="form-control" formControlName="claveActa" />
         </form-field>
-      </div> -->
-      <app-key-proceedings-form
+      </div>
+      <!-- <app-key-proceedings-form
         [form]="form"
-        statusActaValue="ABIERTA"></app-key-proceedings-form>
+        statusActaValue="ABIERTA"></app-key-proceedings-form> -->
 
       <div class="action-buttons">
         <div class="col-md-6" [class]="loading ? 'disabled' : ''">
@@ -87,11 +96,11 @@
           </div>
         </div>
       </div>
-      <div class="row pt-4 table-container">
-        <div class="col-md-12 table-responsive">
+      <div class="row pt-4">
+        <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
-              class="col-md-12"
+              class="table-responsive"
               [settings]="settings1"
               [source]="data"></ng2-smart-table>
           </div>
