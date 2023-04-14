@@ -25,6 +25,8 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     private statusService: StatusGoodService
   ) {
     super();
+    // this.paramsGoods['filters.goodCategory'] ='$not:$null';
+    this.paramsGoods.addFilter2('filters.goodCategory=$not:$null');
   }
 
   ngOnInit(): void {
