@@ -1575,7 +1575,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   savePaperwork(option: string) {
-    const { processNumber, processStatus, userATurn } = this.selectedRow;
+    const { processNumber, areaATurn, userATurn } = this.selectedRow;
     let body;
     if (option === '1') {
       body = {
@@ -1585,7 +1585,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       };
     } else {
       body = {
-        status: processStatus.slice(0, 2) + 'I',
+        status: areaATurn + 'I',
         userTurned: userATurn,
         situation: 1,
       };
@@ -1601,7 +1601,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.onLoadToast('success', 'El trámite se envío correctamente', '');
         this.getData();
       })
     );
