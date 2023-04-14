@@ -56,11 +56,13 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.createForm();
     const param = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
-    if (param) {
+    if (param && param != 'null') {
       this.filterParams
         .getValue()
         .addFilter('wheelNumber', param, SearchFilter.EQ);
       this.getNotfications();
+    } else if (param === 'null') {
+      this.onLoadToast('error', `Parámetro no_volante no es válido`, '');
     }
   }
 
@@ -296,7 +298,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.onLoadToast('error', 'Ya ha sido solicitado ese doumento', '');
+      this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
       return false;
     }
 
