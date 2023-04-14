@@ -10,10 +10,9 @@
     [ngStyle]="style"
     (dragstart)="onDragStart($event)"
     (load)="onLoad()"
-    style="min-height: 500px !important; width: 100%"></object>
-  <p *ngIf="documento.type == 'pdf' || documento.type == 'aplication/pdf'">
-    Document not found...
-  </p>
+    style="min-height: 500px !important; width: 100%">
+    <p>Document not found...</p>
+  </object>
   <img
     *ngIf="documento.type == 'img'"
     [src]="documento.urlDoc"
