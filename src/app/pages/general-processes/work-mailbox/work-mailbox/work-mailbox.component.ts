@@ -1457,10 +1457,22 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.pgrDocs().subscribe();
     } else if (typeManagement == 2) {
       this.type = 'SAT';
+      this.satDocs();
     } else {
       this.showScan = true;
       this.showPGRDocs, (this.showValDoc = false);
     }
+  }
+
+  satDocs() {
+    // http://sigebimsqa.indep.gob.mx/interfacesat/api/v1/sat-transferencia/get-count-registers
+    /**
+     * {
+        "officeNumber": 12,
+        "valid": 1
+      }
+     */
+    this.type = 'SAT';
   }
 
   pgrDocs() {
@@ -1815,7 +1827,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alert(
         'info',
         'Aviso',
-        'El Oficio tiene No. Volante relacionado, se generaran los documentos.'
+        'El Oficio tiene No. Volante relacionado, se generarán los documentos.'
       );
       this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
         next: () => {
