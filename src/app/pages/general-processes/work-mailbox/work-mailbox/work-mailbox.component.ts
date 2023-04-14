@@ -586,17 +586,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         // })
       });
 
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => {
-        console.log('se ejecutó');
-        if (this.predeterminedF.value) {
-          this.getUser();
-        } else {
-          this.getData();
-        }
-      })
-      .unsubscribe();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log('se ejecutó');
+      if (this.predeterminedF.value) {
+        this.getUser();
+      } else {
+        this.getData();
+      }
+    });
 
     //this.getAreas();
     //this.getGroupWork();
