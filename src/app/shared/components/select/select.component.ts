@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -17,6 +18,7 @@ import {
   of,
   Subject,
   switchMap,
+  takeUntil,
 } from 'rxjs';
 import { SELECT_SIZE } from 'src/app/common/constants/select-size';
 import {
@@ -33,7 +35,7 @@ type Attr = { [key: string]: string };
   templateUrl: './select.component.html',
   styles: [],
 })
-export class SelectComponent<T> implements OnInit, AfterViewInit {
+export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() control: string = '';
   @Input() value: string = '';
@@ -67,6 +69,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
   inputAttrs: Attr = {
     maxLength: '',
   };
+  title: string = '';
+  $unSubscribe = new Subject<void>();
   private concat: boolean = false;
   private readonly selectSize: number = SELECT_SIZE;
   constructor() {}
@@ -78,6 +82,20 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
     }
     this.onSearch();
     this.checkMaxAttribute();
+    if (this.showTooltip) {
+      this.updateTitle();
+      this.form
+        .get(this.control)
+        .valueChanges.pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            if (data != null) {
+              this.updateTitle();
+            }
+          },
+          error: () => {},
+        });
+    }
   }
 
   ngAfterViewInit() {
@@ -159,6 +177,13 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
   }
   onChange(event: any) {
     this.change.emit(event);
+    if (this.showTooltip && event) {
+      if (event[this.bindLabel]) {
+        this.title = event[this.bindLabel];
+      } else if (event[this.value]) {
+        this.title = event[this.value];
+      }
+    }
   }
 
   getLabel(item: any) {
@@ -174,5 +199,22 @@ export class SelectComponent<T> implements OnInit, AfterViewInit {
     if (this.termMaxLength != null) {
       this.inputAttrs['maxLength'] = this.termMaxLength;
     }
+  }
+
+  updateTitle() {
+    if (
+      typeof this.form.get(this.control).value == 'object' &&
+      this.form.get(this.control).value != null
+    ) {
+      if (this.form.get(this.control).value[this.bindLabel])
+        this.title = this.form.get(this.control).value[this.bindLabel];
+    } else {
+      this.title = this.form.get(this.control).value;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.$unSubscribe.next();
+    this.$unSubscribe.complete();
   }
 }
