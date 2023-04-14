@@ -692,8 +692,6 @@ export class DetailAssetsTabComponentComponent
     // debugger;
     if (municipalityId === null || stateKey === null) {
       console.log(this.domicileForm.value);
-      this.selectLocality = new DefaultSelect([]);
-      this.domicileForm.get('localityKey').setValue(null);
       return;
     }
     params['sortBy'] = 'township:ASC';
@@ -749,8 +747,6 @@ export class DetailAssetsTabComponentComponent
       this.municipalityId === null ||
       this.stateOfRepId === null
     ) {
-      this.selectCP = new DefaultSelect([]);
-      this.domicileForm.get('code').setValue(null);
       return;
     }
     params['filter.townshipKey'] = `$eq:${this.localityKey}`; //localidad
@@ -1265,6 +1261,8 @@ export class DetailAssetsTabComponentComponent
           this.combineMunicipalityId = true;
         }
         this.municipalityId = data;
+        this.selectLocality = new DefaultSelect([]);
+        this.domicileForm.get('localityKey').setValue(null);
         this.getLocality(new ListParams(), data, this.stateOfRepId);
         // if (data) {
         //   /*var stateKey =
@@ -1283,6 +1281,8 @@ export class DetailAssetsTabComponentComponent
           this.combineLocalityId = true;
         }
         this.localityKey = data;
+        this.selectCP = new DefaultSelect([]);
+        this.domicileForm.get('code').setValue(null);
         this.getCP(new ListParams());
         if (data) {
           /*  this.getCP(
