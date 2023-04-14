@@ -56,6 +56,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
 
+  msjCheck: boolean = false;
+  formLoading: boolean = true;
+
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -331,15 +334,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   nextStep() {
-    const idDoc = this.idDoc;
-    console.log('ID solicidutd', idDoc);
-    //verificar que el estado de registro este como "Correcto" y siguiente paso
-    this.listSigns = false;
-    this.printReport = true;
-    this.isAttachDoc = true;
-    this.title = 'Imprimir Reporte';
-    this.btnTitle = 'Adjuntar Documento';
-    this.btnSubTitle = 'Imprimir Reporte';
+    if (this.msjCheck == true) {
+      this.listSigns = false;
+      this.printReport = true;
+      this.isAttachDoc = true;
+      this.title = 'Imprimir Reporte';
+      this.btnTitle = 'Adjuntar Documento';
+      this.btnSubTitle = 'Imprimir Reporte';
+    }
 
     //Agregar información del firmante al reporte
     /*this.requestService.update(idDoc, this.dictumForm.value).subscribe({
@@ -435,40 +437,44 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
         error: error => {
-          this.onLoadToast(
-            'error',
-            'Error al generar firma electrónica',
-            error.error
-          ),
+          if (error.status == 200) {
+            this.msjCheck = true;
+            console.log('correcto'),
+              this.alert('success', 'Firmado correctamente', '');
+          } else {
+            this.alert(
+              'info',
+              'Error al generar firma electrónic',
+              error.error + '. Verificar datos del firmante'
+            );
             this.updateStatusSigned();
+          }
         },
       });
   }
 
   updateStatusSigned() {
-    console.log('Info del firmante', this.valuesSign);
-    console.log('Info del id', this.valuesSign.ID);
-    // const idFirmante = this.signatories[0].ID;
-    // const formData = new FormData();
-    // formData.append('learnedType', this.signatories[0].learnedType);
-    // formData.append('signatoryId', String(this.signatories[0].signatoryId));
-    // //formData.append('certificate', this.signatories[0].certificate);
-    // //formData.append('keycertificate', this.signatories[0].keycertificate);
-    // formData.append('learnedId', this.signatories[0].learnedId);
-    // formData.append('name', this.signatories[0].name);
-    // formData.append(
-    //   'pass', this.signatories[0].pass
-    // );
-    // //formData.append('pass', this.encrypResult);
-    // formData.append('post', this.signatories[0].post);
-    // formData.append('rfcUser', this.signatories[0].rfcUser);
-    // formData.append('validationocsp', 'false');
-    // formData.append('identifierSystem', '1');
-    // formData.append('identifierSignatory', '1');
-    // this.signatoriesService.update(idFirmante, formData).subscribe({
-    //   next: data => {console.log("data", data), this.getSignatories()},
-    //   error: error => {this.alert('info', 'No se pudo actualizar', error.data)},
-    // })
+    const formData = new FormData();
+    formData.append('learnedType', this.valuesSign.learnedType);
+    formData.append('signatoryId', String(this.valuesSign.signatoryId));
+    formData.append('learnedId', this.valuesSign.learnedId);
+    formData.append('name', this.valuesSign.name);
+    formData.append('pass', this.valuesSign.pass);
+    formData.append('post', this.valuesSign.post);
+    formData.append('rfcUser', this.valuesSign.rfcUser);
+    formData.append('validationocsp', 'false');
+    formData.append('identifierSystem', '1');
+    formData.append('identifierSignatory', '1');
+    this.signatoriesService
+      .update(this.valuesSign.signatoryId, formData)
+      .subscribe({
+        next: data => {
+          console.log('data', data), this.getSignatories();
+        },
+        error: error => {
+          this.alert('info', 'No se pudo actualizar', error.data);
+        },
+      });
   }
 
   openMessage2(message: string): void {
