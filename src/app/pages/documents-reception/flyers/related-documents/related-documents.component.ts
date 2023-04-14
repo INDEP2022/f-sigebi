@@ -783,15 +783,36 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
-  async getClasifSubTypeGoods(params: ListParams) {
+  async getClasifSubTypeGoods(paramss: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('clasifGood', paramss['search'], SearchFilter.LIKE);
     await this.flyerService
       .getClasifSubTypeGoods(this.notificationData.expedientNumber)
       .subscribe({
         next: res => {
-          console.log(res);
+          this.goodTypes = new DefaultSelect(
+            res.data.map(i => {
+              i.clasifGood =
+                i.clasifGoodNumber +
+                ' -- ' +
+                i.subtypeDesc +
+                ' -- ' +
+                i.ssubtypeDesc +
+                ' -- ' +
+                i.sssubtypeDesc;
+              return i;
+            })
+          );
         },
         error: err => {
           console.log(err);
+          this.goodTypes = new DefaultSelect();
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al consultar los subtipos'
+          );
         },
       });
   }
