@@ -59,8 +59,13 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
-      this.paragraphs.load(_data);
-      this.totalItems = this.paragraphs.count();
+
+      if (_data.length > 0) {
+        this.paragraphs.load(_data);
+        this.totalItems = this.paragraphs.count();
+      } else {
+        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+      }
     });
   }
 
@@ -74,8 +79,12 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         if (img.dDocType == 'DigitalMedia') return img;
       });
 
-      this.paragraphs.load(_data);
-      this.totalItems = this.paragraphs.count();
+      if (_data.length > 0) {
+        this.paragraphs.load(_data);
+        this.totalItems = this.paragraphs.count();
+      } else {
+        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+      }
     });
   }
 

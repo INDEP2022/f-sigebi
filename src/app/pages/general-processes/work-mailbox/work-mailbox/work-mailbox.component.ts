@@ -90,6 +90,7 @@ import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
+import { ObservationsComponent } from '../components/observations/observations.component';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -1456,10 +1457,22 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.pgrDocs().subscribe();
     } else if (typeManagement == 2) {
       this.type = 'SAT';
+      this.satDocs();
     } else {
       this.showScan = true;
       this.showPGRDocs, (this.showValDoc = false);
     }
+  }
+
+  satDocs() {
+    // http://sigebimsqa.indep.gob.mx/interfacesat/api/v1/sat-transferencia/get-count-registers
+    /**
+     * {
+        "officeNumber": 12,
+        "valid": 1
+      }
+     */
+    this.type = 'SAT';
   }
 
   pgrDocs() {
@@ -1624,7 +1637,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.onLoadToast('success', 'El trámite se canceló correctamente', '');
         this.getData();
       })
     );
@@ -1814,7 +1827,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alert(
         'info',
         'Aviso',
-        'El Oficio tiene No. Volante relacionado, se generaran los documentos.'
+        'El Oficio tiene No. Volante relacionado, se generarán los documentos.'
       );
       this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
         next: () => {
@@ -2266,6 +2279,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'getIdentifier':
           this.getIdentifier();
           break;
+        case 'updateObservations':
+          this.updateObservations();
+          break;
         default:
           this.alertQuestion(
             'info',
@@ -2456,6 +2472,25 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
       },
     });
+  }
+
+  openModal(context?: Partial<ObservationsComponent>) {
+    const modalRef = this.modalService.show(ObservationsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.onLoadToast('success', 'Elemento Actualizado', '');
+        this.getData();
+      }
+    });
+  }
+
+  updateObservations() {
+    const process = this.selectedRow;
+    this.openModal({ process });
   }
 
   onSaveConfirm(event: any) {

@@ -128,7 +128,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   recibeSelect = new DefaultSelect();
   showFecReception = false;
   minDateFecElab = addDays(new Date(), 1);
-  statusProceeding = 'ABIERTA';
+  statusProceeding = '';
+  labelActa = 'Abrir acta';
+  btnCSSAct = 'btn-info';
 
   constructor(
     private fb: FormBuilder,
@@ -208,6 +210,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     });
   }
 
+  //Function butons
+  pgrAct() {
+    if (this.statusProceeding === 'CERRADO') {
+    }
+  }
+
   //Enable and disabled buttons
 
   toggleByLength(idBtn: string, data: string) {
@@ -229,6 +237,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   enableElement(elmt: string) {
     const element = document.getElementById(elmt);
     this.render.removeClass(element, 'disabled');
+  }
+
+  toggleActaBtn() {
+    if (this.labelActa == 'Abrir acta') {
+      this.statusProceeding = 'ABIERTA';
+      this.labelActa = 'Cerrar acta';
+      this.btnCSSAct = 'btn-primary';
+      this.form.get('fecCaptura').setValue(new Date());
+    } else {
+      this.statusProceeding = 'CERRADO';
+      this.labelActa = 'Abrir acta';
+      this.btnCSSAct = 'btn-info';
+    }
   }
 
   //Conditional functions
@@ -312,7 +333,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
-  //
+  //Bienes y disponibilidad de bienes
 
   getGoodsByExpedient() {
     this.serviceGood

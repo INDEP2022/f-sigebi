@@ -68,7 +68,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       ],
       certificate: [null, [Validators.required]],
       keycertificate: [null, [Validators.required]],
-      pass: [null, [Validators.required]],
+      pass: [null, [Validators.required, Validators.maxLength(10)]],
       rfcUser: [
         null,
         [
@@ -78,12 +78,14 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         ],
       ],
       signatoryId: [null],
+      signature: [null],
     });
     if (this.signatories != null) {
       this.edit = true;
-      //this.fileForm.controls['name'].setValue(this.signatories.name);
-      //this.fileForm.controls['post'].setValue(this.signatories.post);
-      this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
+      this.fileForm.controls['name'].setValue(this.signatories.name);
+      this.fileForm.controls['post'].setValue(this.signatories.post);
+      this.fileForm.controls['signature'].setValue(this.signatories.signature);
+      //this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
     }
 
     this.passForm = this.fb.group({

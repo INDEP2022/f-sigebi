@@ -16,7 +16,7 @@ export class DictationXGoodService extends HttpService {
 
   getDictationXGoodByFileNummber(fileNumber: number) {
     return this.get<IListResponse<IDictationXGoodByFileNumber>>(
-      this.route.DictationXGood + '/' + fileNumber
+      this.route.DictationXGood + '/getByFileNumber/' + fileNumber
     );
   }
 }

@@ -67,7 +67,7 @@ export class RequestInTurnFormComponent implements OnInit {
   ngOnInit(): void {
     this.initialForm();
     this.deleRegionalId = Number(this.authService.decodeToken().department);
-
+    this.getTransferente(new ListParams());
     this.getRegionalDelegationId(new ListParams());
     this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
@@ -121,7 +121,6 @@ export class RequestInTurnFormComponent implements OnInit {
       (data: any) => {
         if (data) {
           this.stateId = data;
-          this.getTransferente(new ListParams());
         }
       }
     );
@@ -153,7 +152,15 @@ export class RequestInTurnFormComponent implements OnInit {
   getTransferente(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    delete params.limit;
+    delete params.page;
+    delete params['search'];
+    delete params.text;
     this.transferenteSevice.getAll(params).subscribe((data: any) => {
+      data.data.map((data: any) => {
+        data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+        return data;
+      });
       this.selectTransfer = new DefaultSelect(data.data, data.count);
     });
   }
@@ -174,9 +181,17 @@ export class RequestInTurnFormComponent implements OnInit {
   getStation(params?: ListParams) {
     params['filter.stationName'] = `$ilike:${params.text}`;
     params['filter.idTransferent'] = `$eq:${this.transferenceId}`;
+    delete params.limit;
+    delete params.page;
+    delete params['search'];
+    delete params.text;
     this.stationService
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
+        data.data.map((data: any) => {
+          data.nameAndId = `${data.id} - ${data.stationName}`;
+          return data;
+        });
         this.selectStation = new DefaultSelect(data.data, data.count);
       });
   }
@@ -185,9 +200,18 @@ export class RequestInTurnFormComponent implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.stationId}`;
     params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
+    delete params.limit;
+    delete params.page;
+    delete params['search'];
+    delete params.text;
+    this.stationService;
     this.authorityService
       .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
+        data.data.map((data: any) => {
+          data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
+          return data;
+        });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });
   }

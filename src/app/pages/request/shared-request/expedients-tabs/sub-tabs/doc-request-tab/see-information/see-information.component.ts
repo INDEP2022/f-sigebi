@@ -47,11 +47,12 @@ export class SeeInformationComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegation() {
-    this.regDelService
-      .getById(this.data.xdelegacionRegional)
-      .subscribe(info => {
-        this.nameRegDelegation = info.description;
-      });
+    this.regDelService.getById(this.data.xdelegacionRegional).subscribe({
+      next: info => {
+        this.nameRegDelegation = info?.description;
+      },
+      error: error => {},
+    });
   }
 
   getTransferent() {

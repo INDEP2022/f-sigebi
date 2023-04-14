@@ -44,6 +44,7 @@ export interface ITrackedGood {
   warehosueState?: any;
   warehouseCityNumber?: any;
   warehouseCity?: any;
+  unit?: any;
   val1?: any;
   val2?: any;
   val3?: any;

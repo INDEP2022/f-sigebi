@@ -1,4 +1,5 @@
 import {
+  HttpContextToken,
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
@@ -46,6 +47,12 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // Clone the request object
     let newReq = request.clone();
+
+    //ignore interceptor when is refresh token
+    if (request.context.get(BYPASS_JW_TOKEN) === true) {
+      return next.handle(request);
+    }
+
     if (this.authService.useReportToken) {
       //Set Bearer Token
       const authHeaders: HttpHeaders = new HttpHeaders({
@@ -64,9 +71,10 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
         this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
       ).getMinutes();
 
-      if (timeNow <= this.timeOut) {
+      if (timeNow <= this.timeOut && timeNow > 0) {
         this.refreshToken(newReq, next).subscribe();
       }
+
       //Set Bearer Token
       newReq = request.clone({
         headers: request.headers.set(
@@ -75,7 +83,6 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
         ),
       });
     }
-
     // Response
     return next.handle(newReq).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -166,3 +173,5 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     });
   }
 }
+
+export const BYPASS_JW_TOKEN = new HttpContextToken(() => false);

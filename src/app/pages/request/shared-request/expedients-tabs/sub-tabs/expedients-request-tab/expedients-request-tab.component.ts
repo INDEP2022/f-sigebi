@@ -66,9 +66,11 @@ export class ExpedientsRequestTabComponent
             items.regionalDelegationId = items.regionalDelegation.description;
             items.transferenceId = items.transferent.name;
             items.stationId = items.emisora.stationName;
+            items.state = items.state.descCondition;
             return items;
           });
           this.paragraphs = filterInfo;
+          console.log(data);
           this.totalItems = data.count;
         },
         error: error => {},

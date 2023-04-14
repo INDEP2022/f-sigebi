@@ -62,7 +62,68 @@ export const settingKeysProceedings = {
   hideSubHeader: true,
   columns: columnsKeysProceddings,
 };
+export const columnsGoods = {
+  no_bien: {
+    title: 'Bien',
+    type: 'number',
+    sort: false,
+    editable: false,
+  },
+  estatus: {
+    title: 'Est',
+    type: 'string',
+    sort: false,
+    editable: false,
+  },
+  fec_aprobacion_x_admon: {
+    title: 'Inicio',
+    sort: false,
+    editor: {
+      type: 'custom',
+      component: DatePickerComponent,
+    },
+  },
+  fec_indica_usuario_aprobacion: {
+    title: 'Fin',
+    sort: false,
+    editor: {
+      type: 'custom',
+      component: DatePickerComponent,
+    },
+  },
+  tipo_bien: {
+    title: 'Tipo Bien',
+    type: 'string',
+    sort: false,
+    editable: false,
+  },
+  descripcion: {
+    title: 'Descripción del bien',
+    // type: 'custom',
+    sort: false,
+    editable: false,
+    // renderComponent: TextAreaRenderComponent,
+  },
+  no_expediente: {
+    title: 'Expediente',
+    type: 'number',
+    sort: false,
+    editable: false,
+  },
+  cantidad: {
+    title: 'Cantidad',
+    type: 'number',
+    sort: false,
+    editable: false,
+  },
 
+  destino: {
+    title: 'Indi Dest',
+    type: 'string',
+    sort: false,
+    editable: false,
+  },
+};
 export const settingsGoods = {
   pager: {
     display: false,
@@ -93,74 +154,7 @@ export const settingsGoods = {
     deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
     confirmDelete: true,
   },
-  columns: {
-    ciudad_transferente: {
-      title: 'Localidad Ent. Transferente.',
-      type: 'string',
-      sort: false,
-      editable: false,
-    },
-    no_bien: {
-      title: 'Bien',
-      type: 'number',
-      sort: false,
-      editable: false,
-    },
-    estatus: {
-      title: 'Est',
-      type: 'string',
-      sort: false,
-      editable: false,
-    },
-    fec_aprobacion_x_admon: {
-      title: 'Inicio',
-      sort: false,
-      editor: {
-        type: 'custom',
-        component: DatePickerComponent,
-      },
-    },
-    fec_indica_usuario_aprobacion: {
-      title: 'Fin',
-      sort: false,
-      editor: {
-        type: 'custom',
-        component: DatePickerComponent,
-      },
-    },
-    tipo_bien: {
-      title: 'Tipo Bien',
-      type: 'string',
-      sort: false,
-      editable: false,
-    },
-    descripcion: {
-      title: 'Descripción del bien',
-      // type: 'custom',
-      sort: false,
-      editable: false,
-      // renderComponent: TextAreaRenderComponent,
-    },
-    no_expediente: {
-      title: 'Expediente',
-      type: 'number',
-      sort: false,
-      editable: false,
-    },
-    cantidad: {
-      title: 'Cantidad',
-      type: 'number',
-      sort: false,
-      editable: false,
-    },
-
-    destino: {
-      title: 'Indi Dest',
-      type: 'string',
-      sort: false,
-      editable: false,
-    },
-  },
+  columns: {},
 };
 
 // export const dataDummy: IGoodsByProceeding[] = [
