@@ -160,6 +160,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   generateCaratula() {
     let request = this.parameter.getRawValue();
+    console.log('nueva caratula ', request);
     let expedient = this.associateFileForm.getRawValue();
     this.loader.load = true;
     //guardar expediente
@@ -233,13 +234,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 dOutDate: '',
                                 dRevLabel: '',
                                 xIdcProfile: '',
-                                xDelegacionRegional:
+                                xdelegacionRegional:
                                   solicitud.regionalDelegationId,
                                 xidTransferente: solicitud.transferenceId ?? '',
                                 xidBien: '',
                                 xidExpediente: solicitud.recordId,
                                 xidSolicitud: solicitud.id,
-                                xNombreProceso: 'Captura Solicitud',
+                                //xNombreProceso: 'Captura Solicitud',
+                                xnombreProceso: 'Captura Solicitud',
                                 xestado: solicitud.stationId ?? '',
                                 xnoOficio: solicitud.paperNumber ?? '',
                                 xremitente: solicitud.nameOfOwner ?? '',
@@ -249,6 +251,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 xcontribuyente:
                                   solicitud.contribuyente_indiciado ?? '',
                               };
+                              debugger;
                               const form = JSON.stringify(body);
                               //se guarda el file y el documento
                               this.wcontetService
