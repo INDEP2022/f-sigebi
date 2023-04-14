@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { DatePipe } from '@angular/common';
 
 export const FLYER_HISTORY_COLUMNS = {
   consecutive: {
@@ -20,7 +20,7 @@ export const FLYER_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return format(new Date(value), 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
     },
   },
   observations: {
