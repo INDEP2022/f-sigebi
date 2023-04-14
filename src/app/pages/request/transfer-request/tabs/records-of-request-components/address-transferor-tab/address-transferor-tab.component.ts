@@ -232,7 +232,6 @@ export class AddressTransferorTabComponent
     // params.limit = 9;
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        console.log(this.municipalityId);
         if (this.municipalityId !== 0 && this.municipalityId !== null) {
           if (this.combineMunicipalityId) {
             const newParams = {
@@ -368,7 +367,6 @@ export class AddressTransferorTabComponent
             };
             this.goodsinvService.getAllCodePostalByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 const newData = resp.data.filter(
                   (item: any) => item.postalCode + '' !== this.code + ''
                 );
@@ -466,7 +464,6 @@ export class AddressTransferorTabComponent
   formReactiveCalls() {
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(
       (data: any) => {
-        console.log('changed');
         this.keyStateOfRepublic = Number(data);
         this.getMunicipaly(new ListParams(), data);
       }
