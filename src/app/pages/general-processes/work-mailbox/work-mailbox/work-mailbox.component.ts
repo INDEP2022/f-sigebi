@@ -2300,9 +2300,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getSolicitud() {
-    this.router.navigateByUrl(
-      `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
-    );
+    if (this.selectedRow.flierNumber) {
+      this.router.navigateByUrl(
+        `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+      );
+    } else {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, no puede generarse una solicitud de digitalización'
+      );
+    }
   }
 
   fromDateChange(date: Date) {
