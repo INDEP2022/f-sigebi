@@ -34,6 +34,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
   isDocument: boolean = false;
   loadingGif = LOADING_GIF;
   error: boolean = false;
+  documentLength: number = 0;
   private mimeType: string = null;
   constructor(
     private fileBrowserService: FileBrowserService,
@@ -80,6 +81,8 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     if (!base64) {
       return;
     }
+    const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
+    this.documentLength = bytesSize / 1000;
     const ext =
       this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
     // TODO: Checar cuando vengan pdf, img etc
@@ -120,6 +123,13 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
 
   openDocumentsViewer() {
     if (this.loading || this.error) {
+      return;
+    }
+    if (this.documentLength > 1500) {
+      window.open(
+        (this.imgSrc as any).changingThisBreaksApplicationSecurity,
+        '_blank'
+      );
       return;
     }
     let config: ModalOptions = {
