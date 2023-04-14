@@ -29,7 +29,7 @@ export class ExpedientsRequestTabComponent
   totalItems: number = 0;
   paragraphs: any[] = [];
   requestId: number = 0;
-
+  screen: 'expedient-tab';
   constructor(
     private activatedRoute: ActivatedRoute,
     private requestService: RequestService
@@ -70,7 +70,6 @@ export class ExpedientsRequestTabComponent
             return items;
           });
           this.paragraphs = filterInfo;
-          console.log(data);
           this.totalItems = data.count;
         },
         error: error => {},

@@ -227,6 +227,11 @@ export class AddressTransferorTabComponent
 
   //obtener los municipios
   getMunicipaly(params: ListParams, stateKey?: number) {
+    if (this.keyStateOfRepublic === null) {
+      // console.log(this.domicileForm.value);
+      return;
+    }
+    // debugger;
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     params['filter.nameMunicipality'] = `$ilike:${params.text}`;
     // params.limit = 9;
@@ -286,8 +291,7 @@ export class AddressTransferorTabComponent
     // debugger;
     if (this.municipalityId === null || this.keyStateOfRepublic === null) {
       // console.log(this.domicileForm.value);
-      this.selectLocality = new DefaultSelect([]);
-      this.domicileForm.get('localityKey').setValue(null);
+
       return;
     }
     params['sortBy'] = 'township:ASC';
@@ -350,8 +354,6 @@ export class AddressTransferorTabComponent
       this.municipalityId === null ||
       this.keyStateOfRepublic === null
     ) {
-      this.selectCP = new DefaultSelect([]);
-      this.domicileForm.get('code').setValue(null);
       return;
     }
     params['filter.townshipKey'] = `$eq:${this.localityId}`; //localidad
@@ -465,6 +467,8 @@ export class AddressTransferorTabComponent
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(
       (data: any) => {
         this.keyStateOfRepublic = Number(data);
+        this.selectMunicipe = new DefaultSelect([]);
+        this.domicileForm.get('municipalityKey').setValue(null);
         this.getMunicipaly(new ListParams(), data);
       }
     );
@@ -477,6 +481,8 @@ export class AddressTransferorTabComponent
           this.combineMunicipalityId = true;
         }
         this.municipalityId = data;
+        this.selectLocality = new DefaultSelect([]);
+        this.domicileForm.get('localityKey').setValue(null);
         // if (this.isAddress === false) {
         this.getLocality(new ListParams(), data);
         // }
@@ -488,6 +494,8 @@ export class AddressTransferorTabComponent
           this.combineLocalityId = true;
         }
         this.localityId = data;
+        this.selectCP = new DefaultSelect([]);
+        this.domicileForm.get('code').setValue(null);
         // console.log(this.localityId);
         this.getCP(new ListParams());
       }
