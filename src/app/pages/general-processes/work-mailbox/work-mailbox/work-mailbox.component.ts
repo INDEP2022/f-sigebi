@@ -2183,8 +2183,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.getAllUsers(params).subscribe();
     }*/
-
-    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    params.search = $params.text;
+    //params.addFilter('name', $params.text, SearchFilter.LIKE);
     this.getAllUsers(params).subscribe();
   }
 
