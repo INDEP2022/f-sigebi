@@ -56,6 +56,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
 
+  msjCheck: boolean = false;
+  formLoading: boolean = true;
+
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -331,15 +334,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   nextStep() {
-    const idDoc = this.idDoc;
-    console.log('ID solicidutd', idDoc);
-    //verificar que el estado de registro este como "Correcto" y siguiente paso
-    this.listSigns = false;
-    this.printReport = true;
-    this.isAttachDoc = true;
-    this.title = 'Imprimir Reporte';
-    this.btnTitle = 'Adjuntar Documento';
-    this.btnSubTitle = 'Imprimir Reporte';
+    if (this.msjCheck == true) {
+      this.listSigns = false;
+      this.printReport = true;
+      this.isAttachDoc = true;
+      this.title = 'Imprimir Reporte';
+      this.btnTitle = 'Adjuntar Documento';
+      this.btnSubTitle = 'Imprimir Reporte';
+    }
 
     //Agregar información del firmante al reporte
     /*this.requestService.update(idDoc, this.dictumForm.value).subscribe({
@@ -434,14 +436,44 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(id, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
-        // error: error => (
-        //   console.log('Eror', error),
-        //   this.onLoadToast(
-        //     'error',
-        //     'Error al generar firma electrónica',
-        //     'Consultar al administrador para más detalles'
-        //   )
-        // ),
+        error: error => {
+          if (error.status == 200) {
+            this.msjCheck = true;
+            console.log('correcto'),
+              this.alert('success', 'Firmado correctamente', '');
+          } else {
+            this.alert(
+              'info',
+              'Error al generar firma electrónic',
+              error.error + '. Verificar datos del firmante'
+            );
+            this.updateStatusSigned();
+          }
+        },
+      });
+  }
+
+  updateStatusSigned() {
+    const formData = new FormData();
+    formData.append('learnedType', this.valuesSign.learnedType);
+    formData.append('signatoryId', String(this.valuesSign.signatoryId));
+    formData.append('learnedId', this.valuesSign.learnedId);
+    formData.append('name', this.valuesSign.name);
+    formData.append('pass', this.valuesSign.pass);
+    formData.append('post', this.valuesSign.post);
+    formData.append('rfcUser', this.valuesSign.rfcUser);
+    formData.append('validationocsp', 'false');
+    formData.append('identifierSystem', '1');
+    formData.append('identifierSignatory', '1');
+    this.signatoriesService
+      .update(this.valuesSign.signatoryId, formData)
+      .subscribe({
+        next: data => {
+          console.log('data', data), this.getSignatories();
+        },
+        error: error => {
+          this.alert('info', 'No se pudo actualizar', error.data);
+        },
       });
   }
 
