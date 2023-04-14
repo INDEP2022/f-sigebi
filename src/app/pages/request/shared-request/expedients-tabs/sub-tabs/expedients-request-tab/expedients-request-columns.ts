@@ -23,12 +23,11 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
     sort: false,
   },
 
-  requestStatus: {
-    title: 'Estatus',
+  state: {
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
-
   transferenceId: {
     title: 'Transferente',
     type: 'string',
@@ -47,9 +46,33 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
     sort: false,
   },
 
+  paperNumber: {
+    title: 'No. oficio',
+    type: 'string',
+    sort: false,
+  },
+
+  receiptRoute: {
+    title: 'Via de recepción',
+    type: 'string',
+    sort: false,
+  },
+
   typeOfTransfer: {
     title: 'Tipo Transferencia',
     type: 'string',
     sort: false,
   },
+
+  /*receiptRoute: {
+    title: 'Via de recepción',
+    type: 'string',
+    sort: false,
+  }, */
+
+  /*requestStatus: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },*/
 };

@@ -11,14 +11,16 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('idExpedient')" label="No expediente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idExpedient"
-              minlength="1"
-              maxlength="10" />
-          </form-field>
+          <ngx-select
+            [form]="form"
+            control="idExpedient"
+            (fetchItems)="getExpedients()"
+            [showTooltip]="true"
+            [data]="selectExpedient"
+            change="getExpedientById()"
+            bindLabel="indicatedName"
+            label="Expediente"
+            value="id"></ngx-select>
         </div>
         <div class="col-md-2">
           <form-field
