@@ -368,7 +368,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'Generando reporte...', '');
       const msg = setTimeout(() => {
         this.jasperService
-          .fetchReport('RGERGENSOLICDIGIT', { PN_FOLIO: this.idFolio })
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.idFolio })
           .pipe(
             tap(response => {
               const blob = new Blob([response], { type: 'application/pdf' });
