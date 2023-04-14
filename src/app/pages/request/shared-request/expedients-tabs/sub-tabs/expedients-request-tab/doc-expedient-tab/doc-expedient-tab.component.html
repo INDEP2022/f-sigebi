@@ -41,7 +41,7 @@
               </form-field>
             </div>
             <div class="col-md-6">
-              <ngx-select
+              <!--<ngx-select
                 [form]="docRequestForm"
                 control="docType"
                 (fetchItems)="getDocType($event)"
@@ -49,7 +49,28 @@
                 label="Tipo de Documento"
                 bindLabel="ddescription"
                 value="ddescription">
-              </ngx-select>
+              </ngx-select> -->
+              <div
+                [formGroup]="docRequestForm"
+                class="form-group form-secondary form-static-label">
+                <ng-select
+                  class="form-control"
+                  formControlName="docType"
+                  [clearable]="false"
+                  [items]="typesDocuments"
+                  [virtualScroll]="true"
+                  [loading]="loading"
+                  bindLabel="ddescription"
+                  bindValue="ddescription">
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    <div [title]="item.ddescription">
+                      {{ item.ddescription }}
+                    </div>
+                  </ng-template>
+                </ng-select>
+                <span class="form-bar"></span>
+                <label class="float-label">Tipo de documento</label>
+              </div>
             </div>
           </div>
 

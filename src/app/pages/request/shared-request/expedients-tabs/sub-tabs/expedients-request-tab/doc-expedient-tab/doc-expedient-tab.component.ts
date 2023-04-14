@@ -62,6 +62,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   stateId: string = '';
   formLoading: boolean = false;
   allDocumentExpedient: any[] = [];
+  typesDocuments: any = [];
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -156,33 +157,36 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    this.loading = true;
-    const body = {
-      xidSolicitud: this.idRequest,
-      xidExpediente: this.idExpedient,
-    };
+    if (this.idRequest && this.idExpedient) {
+      this.loading = true;
+      const body = {
+        xidSolicitud: this.idRequest,
+        xidExpediente: this.idExpedient,
+      };
 
-    this.wContentService.getDocumentos(body).subscribe({
-      next: async (data: any) => {
-        const filterTypeDoc = data.data.filter((items: any) => {
-          if (items.dDocType == 'Document') return items;
-        });
+      this.wContentService.getDocumentos(body).subscribe({
+        next: async (data: any) => {
+          const filterTypeDoc = data.data.filter((items: any) => {
+            if (items.dDocType == 'Document') return items;
+          });
 
-        const info = filterTypeDoc.map(async (items: any) => {
-          const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0]?.ddescription;
-          return items;
-        });
+          const info = filterTypeDoc.map(async (items: any) => {
+            const filter: any = await this.filterGoodDoc([
+              items.xtipoDocumento,
+            ]);
+            items.xtipoDocumento = filter[0]?.ddescription;
+            return items;
+          });
 
-        Promise.all(info).then(x => {
-          console.log('doc exp', x);
-          this.paragraphs = x;
-          this.allDocumentExpedient = this.paragraphs;
-          this.totalItems = this.paragraphs.length;
-          this.loading = false;
-        });
-      },
-    });
+          Promise.all(info).then(x => {
+            this.paragraphs = x;
+            this.allDocumentExpedient = this.paragraphs;
+            this.totalItems = this.paragraphs.length;
+            this.loading = false;
+          });
+        },
+      });
+    }
   }
 
   filterGoodDoc(typeDocument: any[]) {
@@ -211,8 +215,10 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   getDocType(params: ListParams) {
-    this.wContentService.getDocumentTypes(params).subscribe(data => {
-      this.selectDocType = new DefaultSelect(data.data, data.count);
+    this.wContentService.getDocumentTypes(params).subscribe({
+      next: (resp: any) => {
+        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+      },
     });
   }
 
