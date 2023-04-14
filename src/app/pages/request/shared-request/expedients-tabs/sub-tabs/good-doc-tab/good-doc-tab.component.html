@@ -1,5 +1,5 @@
 <div class="pt-2">
-  <h5 class="title">
+  <h5 class="title" *ngIf="screen == 'doc-goods'">
     <p>
       <a
         class="text-color"
@@ -20,7 +20,7 @@
       >
     </p>
   </h5>
-  <div *ngIf="showSearchForm">
+  <div *ngIf="showSearchForm && screen == 'doc-goods'">
     <form [formGroup]="searchForm" class="form-material">
       <div class="row pt-3">
         <div class="col-md-6">
@@ -28,8 +28,9 @@
             [control]="searchForm.get('goodId')"
             label="N&uacute;mero de gesti&oacute;n">
             <input
-              type="number"
+              type="string"
               class="form-control"
+              maxlength="30"
               formControlName="goodId"
               min="0" />
           </form-field>
@@ -71,6 +72,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="goodDescription" />
           </form-field>
         </div>
