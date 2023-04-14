@@ -15,6 +15,10 @@ const routes: Routes = [
     path: '',
     component: NotificationsFileComponent,
   },
+  {
+    path: ':id',
+    component: NotificationsFileComponent,
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
