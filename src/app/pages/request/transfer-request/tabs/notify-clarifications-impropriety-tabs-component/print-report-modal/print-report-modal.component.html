@@ -59,7 +59,7 @@
             *ngIf="
               selectedRow?.post != null &&
               selectedRow?.rfcUser != null &&
-              selectedRow?.validationocsp != null
+              selectedRow?.validationocsp == 'true'
             ">
             <button class="btn btn-primary btn-sm active" (click)="sendSign()">
               <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
@@ -72,7 +72,7 @@
               <i class="bx bx-left-arrow-alt"></i> Anterior Paso
             </button>
           </div>
-          <div class="p-2">
+          <div class="p-2" *ngIf="msjCheck == true">
             <button
               class="btn btn-secondary btn-sm active"
               (click)="nextStep()">
@@ -99,6 +99,10 @@
               </app-pagination>
             </div>
           </div>
+          <span
+            >Seleccione un firmante con datos completos para firmar el
+            reporte</span
+          >
         </div>
       </div>
     </div>

@@ -264,6 +264,13 @@ export class DetailAssetsTabComponentComponent
       const brand = this.detailAssets.controls['brand'].value;
       this.getSubBrand(new ListParams(), brand);
     }
+
+    if (this.detailAssets.controls['destiny'].value) {
+      var destiny = this.detailAssets.controls['destiny'].value;
+      if (destiny) {
+        this.getDestiny(destiny);
+      }
+    }
   }
 
   goodType(goodTypeId: number) {
@@ -620,6 +627,16 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
+  getDestiny(id: number | string) {
+    let params = new ListParams();
+    params['filter.name'] = '$eq:Destino';
+    params['filter.keyId'] = `$eq:${id}`;
+    this.genericService.getAll(params).subscribe({
+      next: ({ data }: any) => {
+        this.destinyLigie = data[0].description;
+      },
+    });
+  }
   getTansferUnitMeasure(event: any) {}
 
   getDestintSae(event: any) {}
@@ -643,7 +660,6 @@ export class DetailAssetsTabComponentComponent
               .getAllMunipalitiesByFilter(newParams)
               .subscribe({
                 next: response => {
-                  console.log(response);
                   const newData = resp.data.filter(
                     (item: any) =>
                       item.municipalityKey + '' !== this.municipalityId + ''
@@ -707,7 +723,6 @@ export class DetailAssetsTabComponentComponent
             };
             this.goodsInvService.getAllTownshipByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 const newData = resp.data.filter(
                   (item: any) => item.townshipKey + '' !== this.localityKey + ''
                 );
@@ -762,7 +777,6 @@ export class DetailAssetsTabComponentComponent
             };
             this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 const newData = resp.data.filter(
                   (item: any) => item.postalCode + '' !== this.code + ''
                 );
@@ -1233,7 +1247,7 @@ export class DetailAssetsTabComponentComponent
       }
     });
 
-    this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
+    /*this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
           let value = this.selectDestinyTransfer.data.filter(
@@ -1243,7 +1257,7 @@ export class DetailAssetsTabComponentComponent
           this.detailAssets.controls['destiny'].setValue(data);
         }
       }
-    );
+    );*/
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {

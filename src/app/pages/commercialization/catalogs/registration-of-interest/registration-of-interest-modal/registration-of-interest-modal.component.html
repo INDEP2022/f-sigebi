@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="providerForm">
       <div class="row">
-        <div class="form-group">
+        <!-- <div class="form-group">
           <div class="col-sm-4 p-0">
             <form-field
               [control]="providerForm.get('user')"
@@ -24,8 +24,20 @@
               Buscar usuario
             </button>
           </div>
+        </div> -->
+        <div class="col-md-4">
+          <!-- <form-field [control]="providerForm.get('user')" label="Selecciona usuario&#58;">
+            <input type="number" class="form-control" formControlName="tiieDays" /> </form-field>-->
+          <ngx-select
+            [form]="providerForm"
+            control="user"
+            (fetchItems)="searchUser()"
+            [showTooltip]="true"
+            [data]="selectUser"
+            bindLabel="name"
+            label="User"
+            value="id"></ngx-select>
         </div>
-
         <div class="col-md-4">
           <form-field
             [control]="providerForm.get('tiieDays')"

@@ -30,7 +30,9 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   idRequest: number = 0;
   @Input() typeDoc = '';
+  @Input() screen = 'doc-goods';
   goodSelect: IGood[] = [];
+  allGooods: IGood[] = [];
   showSearchForm: boolean = false;
   searchForm: FormGroup = new FormGroup({});
   goodTypes = new DefaultSelect();
@@ -52,14 +54,23 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getGoodTypeSelect(new ListParams());
     this.initForm();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsRequest());
   }
 
   initForm() {
     this.searchForm = this.fb.group({
-      goodId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      goodId: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       goodTypeId: [null],
       requestId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
-      goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
   }
   getGoodsRequest() {
@@ -84,10 +95,11 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction?.description;
+            item['fractionId'] = fraction?.code + ' ' + fraction?.description;
           });
 
           Promise.all(filterGoodType).then(x => {
+            this.allGooods = data.data;
             this.paragraphs.load(data.data);
             this.totalItems = data.count;
             this.loading = false;
@@ -230,7 +242,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
           idGood,
           idRequest,
           parameter: '',
-          type: 'request-assets',
+          typeDoc: 'request-assets',
           callback: (next: boolean) => {
             //if(next) this.getExample();
           },
