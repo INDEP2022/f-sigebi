@@ -753,15 +753,22 @@ export class ClassifyAssetsTabComponent
         if (dataChapter != null) {
           let fractionCode = this.selectChapter.filter(
             (x: any) => x.id === dataChapter
-          )[0].fractionCode;
-          this.getUnidMeasure(fractionCode);
-          this.setFractionId(dataChapter, fractionCode, 'Capítulo');
+          )[0];
 
-          const relativeTypeId = this.getRelevantTypeId(
-            this.selectChapter,
-            dataChapter
-          );
-          this.setRelevantTypeId(relativeTypeId);
+          if (fractionCode) {
+            this.getUnidMeasure(fractionCode.fractionCode);
+            this.setFractionId(
+              dataChapter,
+              fractionCode.fractionCode,
+              'Capítulo'
+            );
+
+            const relativeTypeId = this.getRelevantTypeId(
+              this.selectChapter,
+              dataChapter
+            );
+            this.setRelevantTypeId(relativeTypeId);
+          }
 
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
@@ -780,6 +787,7 @@ export class ClassifyAssetsTabComponent
           let fractionCode =
             this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
+
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
@@ -788,6 +796,8 @@ export class ClassifyAssetsTabComponent
             dataLevel1
           );
           this.setRelevantTypeId(relativeTypeId);
+          //no se puse el this.getNorma(fraction);
+
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
             /* this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
@@ -802,17 +812,21 @@ export class ClassifyAssetsTabComponent
       (dataLevel2: any) => {
         //this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         if (dataLevel2 != null) {
-          let fractionCode = this.selectLevel2.filter(
+          let fraction = this.selectLevel2.filter(
             (x: any) => x.id === dataLevel2
-          )[0].fractionCode;
-          this.getUnidMeasure(fractionCode);
+          )[0];
 
-          const relativeTypeId = this.getRelevantTypeId(
-            this.selectLevel2,
-            dataLevel2
-          );
-          this.setRelevantTypeId(relativeTypeId);
-          this.setFractionId(dataLevel2, fractionCode, 'Nivel 2');
+          if (fraction) {
+            this.getUnidMeasure(fraction.fractionCode);
+
+            const relativeTypeId = this.getRelevantTypeId(
+              this.selectLevel2,
+              dataLevel2
+            );
+            this.setRelevantTypeId(relativeTypeId);
+            this.setFractionId(dataLevel2, fraction.fractionCode, 'Nivel 2');
+            //this.getNorma(fraction);
+          }
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
@@ -826,20 +840,21 @@ export class ClassifyAssetsTabComponent
       (dataLevel3: any) => {
         //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
-          let fractionCode = this.selectLevel3.filter(
+          console.log('fraccion lvl3', dataLevel3);
+          let fraction = this.selectLevel3.filter(
             (x: any) => x.id === dataLevel3
           )[0];
 
-          if (fractionCode) {
-            this.getUnidMeasure(fractionCode.fractionCode);
-            this.setFractionId(dataLevel3, fractionCode, 'Nivel 3');
+          if (fraction) {
+            this.getUnidMeasure(fraction.fractionCode);
+            this.setFractionId(dataLevel3, fraction.fractionCode, 'Nivel 3');
 
             const relevantTypeId = this.getRelevantTypeId(
               this.selectLevel3,
               dataLevel3
             );
             this.setRelevantTypeId(relevantTypeId);
-            //this.getRelevantTypeId(this.selectLevel3.data, dataLevel3);
+            this.getNorma(fraction);
           }
 
           if (this.advSearch === false) {
@@ -853,17 +868,22 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel4'].valueChanges.subscribe(
       (dataLevel4: any) => {
         if (dataLevel4 !== null) {
+          console.log('fraccion lvl4', dataLevel4);
           const relevantTypeId = this.getRelevantTypeId(
             this.selectLevel4,
             dataLevel4
           );
           this.setRelevantTypeId(relevantTypeId);
 
-          let fractionCode = this.selectLevel4.filter(
+          let fraction = this.selectLevel4.filter(
             (x: any) => x.id === dataLevel4
-          )[0].fractionCode;
-          this.getUnidMeasure(fractionCode);
-          this.setFractionId(dataLevel4, fractionCode, 'Nivel 4');
+          )[0];
+
+          if (fraction) {
+            this.getUnidMeasure(fraction.fractionCode);
+            this.setFractionId(dataLevel4, fraction.fractionCode, 'Nivel 4');
+            this.getNorma(fraction);
+          }
         }
       }
     );
@@ -888,6 +908,18 @@ export class ClassifyAssetsTabComponent
       //if (fractionCode.length >= 8) {
       this.classiGoodsForm.controls['fractionId'].setValue(Number(fractionId));
       //}
+    }
+  }
+
+  /* obtener destino ligie */
+  getNorma(fraction: any) {
+    // el el codigo o el codigo de fracion es = 8 verifica la norma
+    if (fraction.fractionCode.length === 8) {
+      if (fraction.normId != null) {
+        this.classiGoodsForm.controls['destiny'].setValue(fraction.normId);
+      } else {
+        this.classiGoodsForm.controls['destiny'].setValue(null);
+      }
     }
   }
 
