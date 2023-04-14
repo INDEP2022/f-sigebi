@@ -24,6 +24,7 @@
       <input
         type="number"
         [formControlName]="'val' + feature.columnNumber"
+        min="0"
         class="form-control"
         [placeholder]="feature.dsAttribute"
         *ngSwitchCase="'N'" />
@@ -31,6 +32,7 @@
         type="number"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
+        min="0"
         [placeholder]="feature.dsAttribute"
         *ngSwitchCase="'F'" />
       <input
