@@ -67,7 +67,6 @@ export class MaintenanceComponent implements OnInit {
     const periodNumber = this.deletePeriodComponent
       .getFormDeletePeriod()
       .get('period').value;
-    console.log({ periodNumber, periodNumberBool: Boolean(periodNumber) });
     const textNotPass =
       'Debe seleccionar un periodo en el bloque de eliminación de periodo';
     const textPrecaution = `¿Esta seguro de eliminar la carga del periodo ${periodNumber}`;
@@ -75,29 +74,10 @@ export class MaintenanceComponent implements OnInit {
       Boolean(periodNumber),
       textNotPass,
       textPrecaution
-    ).then(res => {
+    ).then(() => {
       const params = this.getParamsForDeletedPeriod();
       this.saveInServerDeletePeriod(params);
     });
-    //   if (!periodNumber) {
-    //   showToast({
-    //     icon: 'warning',
-    //     text: `Debe seleccionar un periodo en el bloque de eliminación de periodo`,
-    //   });
-    //   return;
-    // }
-    // showQuestion({
-    //   icon: 'warning',
-    //   text: `¿Esta seguro de eliminar la carga del periodo `,
-    // }).then(result => {
-    //   if (!result.isConfirmed) {
-    //     return;
-    //   }
-    //   if (this.validateAllForms()) {
-    //     const params = this.getParamsForDeletedPeriod();
-    //     this.saveInServerDeletePeriod(params);
-    //   }
-    // });
   }
 
   saveInServerDeletePeriod(params: any) {
@@ -228,6 +208,23 @@ export class MaintenanceComponent implements OnInit {
       pIdCopy,
       pIdBody,
     } = this.getParams();
+    return {
+      pYearOrigin,
+      pPeriodOrigin,
+      pProcessOrigin,
+      pDelegateOrigin,
+      pYearDestination,
+      pPeriodDestination,
+      pProcessDestination,
+      pDelegateDestination,
+      pUsrAuthorize,
+      pSoliciDate,
+      pMtvoRequest,
+      pIdSend,
+      pIdFor,
+      pIdCopy,
+      pIdBody,
+    };
   }
 
   getParamsForChangeGoodsRandom() {
@@ -296,7 +293,6 @@ export class MaintenanceComponent implements OnInit {
     textQuestion?: string
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      console.log({ pass });
       if (!pass) {
         showToast({
           icon: 'warning',

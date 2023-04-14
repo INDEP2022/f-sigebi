@@ -954,14 +954,8 @@ BEGIN
              END IF;
              :BLK_BIEN_GEN_MASIV.NO_BIEN_H         := VN_BIEN_NEW;             
              :BLK_BIEN_GEN_MASIV.DI_ESTATUS_BIEN_H := REG.ESTATUS_NUEVO_BIEN;
----             
+--- 
             LIP_COMMIT_SILENCIOSO;
-            
-            /*IF :BLK_BIE_NUM_MASIV.IDENTIFICADOR <> 'TRANS' THEN
-               LIP_MENSAJE('Proceso Terminado, para el Bien: '||:BLK_BIE_NUM_MASIV.no_bien||' - No. de Bien Generado: '||VN_BIEN_NEW||' '||CONCIL,'A');                     
-            ELSE
-               LIP_MENSAJE('Proceso Terminado, para el Bien: '||:BLK_BIE_NUM_MASIV.no_bien||' no se generó numerario por ser un bien Transferente','A');
-            END IF;*/
         END IF;
     END LOOP;
 --exit_form;

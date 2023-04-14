@@ -4,7 +4,11 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { showQuestion } from 'src/app/common/helpers/helpers';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IVigProcessPercentages } from 'src/app/core/models/ms-survillance/survillance';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -46,6 +50,8 @@ export class PercentagesSurveillanceComponent
     delegationType: new FormControl('', [Validators.required]),
   });
 
+  filters = new FilterParams();
+
   constructor(
     private survillanceService: SurvillanceService,
     private dialogService: BsModalService
@@ -54,7 +60,7 @@ export class PercentagesSurveillanceComponent
 
     this.settings.columns = PERCENTAGE_COLUMNS;
 
-    this.settings.hideSubHeader = true;
+    this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
     this.settings.actions.delete = true;
   }
@@ -63,30 +69,55 @@ export class PercentagesSurveillanceComponent
     this.params.subscribe(res => {
       this.getPercentages(res);
     });
+
+    this.sources.onChanged().subscribe(res => {
+      console.log(res);
+      if (res.action === 'filter') {
+        this.generateFilterDynamically(res.filter.filters);
+        this.getPercentages(this.params.getValue());
+      }
+    });
+  }
+
+  generateFilterDynamically(
+    data: { field: string; search: string; filter: any }[]
+  ): void {
+    const filters: { [key: string]: SearchFilter } = {
+      cveProcess: SearchFilter.EQ,
+      delegationNumber: SearchFilter.EQ,
+      delegationType: SearchFilter.EQ,
+      percentage: SearchFilter.EQ,
+    };
+
+    const params = new FilterParams();
+    data.forEach(item => {
+      if (filters.hasOwnProperty(item.field) && item.search) {
+        params.addFilter(item.field, item.search, filters[item.field]);
+      }
+    });
+    this.filters = params;
   }
 
   getPercentages(listParams: ListParams): void {
     this.loading = true;
-    this.survillanceService.getVigProcessPercentages(listParams).subscribe({
-      next: response => {
-        this.sources.load(response.data);
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+    this.filters.limit = listParams.limit || 10;
+    this.filters.page = listParams.page || 1;
+    this.survillanceService
+      .getVigProcessPercentages(this.filters.getParams())
+      .subscribe({
+        next: response => {
+          this.sources.load(response.data);
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
 
   onEditConfirm(event: { data: IVigProcessPercentages }): void {
-    this.editDialogData = {
-      ...event.data,
-      delegation: {
-        ...event.data?.delegation,
-        delegationNumber: event.data?.delegation?.id,
-      },
-    };
+    this.editDialogData = event.data;
     const { cveProcess, delegationNumber, delegationType, percentage } =
       event.data;
     this.form.patchValue({

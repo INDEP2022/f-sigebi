@@ -42,6 +42,10 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
     title: 'Delegación',
     type: 'number',
     sort: false,
+    filter: {
+      type: 'text',
+      config: {},
+    },
     valuePrepareFunction: (cell: any, row: any) => {
       return `${row.delegationNumber} - ${row.delegation.description}`;
     },

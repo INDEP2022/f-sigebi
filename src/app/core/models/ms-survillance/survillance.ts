@@ -4,6 +4,7 @@ export interface IVigProcessPercentages {
   delegationType: string;
   percentage: string;
   delegation: any;
+  delegationView: any;
 }
 
 export interface IVigBinnacle {

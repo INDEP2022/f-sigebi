@@ -14,7 +14,10 @@
             (eventChangePeriod)="onClickChangePeriod()"></app-change-period>
         </tab>
         <tab heading="Cambiar bienes de numero aleatorio" id="tab2">
-          <app-change-goods-random></app-change-goods-random>
+          <app-change-goods-random
+            (eventChangeGoodsRandom)="
+              onClickChangeGoodsRandom()
+            "></app-change-goods-random>
         </tab>
         <tab heading="Información de correo" id="tab2">
           <app-email-information></app-email-information>
