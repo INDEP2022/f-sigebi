@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 //Components
 import { AddPenaltiesComponent } from '../add-penalties/add-penalties.component';
@@ -20,9 +21,11 @@ export class CustomersPenaltiesComponent
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private clientPenalty: ClientPenaltyService
   ) {
     super();
+    this.service = this.clientPenalty;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,

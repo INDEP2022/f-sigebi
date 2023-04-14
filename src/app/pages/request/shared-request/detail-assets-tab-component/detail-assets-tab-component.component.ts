@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   inject,
@@ -10,7 +9,6 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
@@ -74,6 +72,11 @@ export class DetailAssetsTabComponentComponent
   request: IRequest;
   stateOfRepId: number = null;
   municipalityId: number | string = null;
+  combineMunicipalityId = true;
+  localityKey: number | string = null;
+  combineLocalityId = true;
+  code: string = '0';
+  combineCode = true;
   relevantTypeName: string;
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien inmueble
   domicileForm: ModelForm<IDomicilies>; //domicilio del bien
@@ -415,10 +418,7 @@ export class DetailAssetsTabComponentComponent
         ],
       ],
       appraisalDate: [null, [Validators.required]],
-      certLibLien: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
+      certLibLien: [null, [Validators.pattern(STRING_PATTERN)]],
       guardCustody: [
         null,
         [
@@ -441,27 +441,27 @@ export class DetailAssetsTabComponentComponent
       ],
       bedrooms: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       bathroom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       kitchen: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       diningRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       livingRoom: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       study: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       espPark: [
         null,
@@ -486,7 +486,7 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      certLibLienDate: [null, [Validators.required]],
+      certLibLienDate: [null],
       pffDate: [null, [Validators.required]],
       gravFavorThird: [
         null,
@@ -633,7 +633,46 @@ export class DetailAssetsTabComponentComponent
     }*/
     this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+        if (this.municipalityId !== 0 && this.municipalityId !== null) {
+          if (this.combineMunicipalityId) {
+            const newParams = {
+              ...params,
+              'filter.municipalityKey': `$eq:${this.municipalityId}`,
+            };
+            this.goodsInvService
+              .getAllMunipalitiesByFilter(newParams)
+              .subscribe({
+                next: response => {
+                  console.log(response);
+                  const newData = resp.data.filter(
+                    (item: any) =>
+                      item.municipalityKey + '' !== this.municipalityId + ''
+                  );
+                  if (response.data && response.data[0]) {
+                    newData.unshift(response.data[0]);
+                  }
+                  this.selectMunicipe = new DefaultSelect(newData, resp.count);
+                  this.combineMunicipalityId = false;
+                },
+                error: err => {
+                  this.selectMunicipe = new DefaultSelect(
+                    resp.data,
+                    resp.count
+                  );
+                },
+              });
+          } else {
+            this.selectMunicipe = new DefaultSelect(
+              resp.data.filter(
+                (item: any) =>
+                  item.municipalityKey + '' !== this.municipalityId + ''
+              ),
+              resp.count
+            );
+          }
+        } else {
+          this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+        }
       },
       error: error => {},
     });
@@ -650,49 +689,146 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
+    // debugger;
+    if (municipalityId === null || stateKey === null) {
+      console.log(this.domicileForm.value);
+      this.selectLocality = new DefaultSelect([]);
+      this.domicileForm.get('localityKey').setValue(null);
+      return;
+    }
     params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
     this.goodsInvService.getAllTownshipByFilter(params).subscribe({
-      next: data => {
-        this.selectLocality = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        if (this.localityKey !== 0 && this.localityKey !== null) {
+          if (this.combineLocalityId) {
+            const newParams = {
+              ...params,
+              'filter.townshipKey': `$eq:${this.localityKey}`,
+            };
+            this.goodsInvService.getAllTownshipByFilter(newParams).subscribe({
+              next: response => {
+                console.log(response);
+                const newData = resp.data.filter(
+                  (item: any) => item.townshipKey + '' !== this.localityKey + ''
+                );
+                if (response.data && response.data[0]) {
+                  newData.unshift(response.data[0]);
+                }
+                this.selectLocality = new DefaultSelect(newData, resp.count);
+                this.combineLocalityId = false;
+              },
+              error: err => {
+                this.selectLocality = new DefaultSelect(resp.data);
+              },
+            });
+          } else {
+            this.selectLocality = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.townshipKey !== this.localityKey
+              )
+            );
+          }
+        } else {
+          this.selectLocality = new DefaultSelect(resp.data);
+        }
       },
       error: error => {},
     });
   }
 
-  getCP(
-    params: ListParams,
-    keyTownship?: number,
-    keyState?: number,
-    keySettlement?: number
-  ): any {
-    params.limit = 20;
-    params['filter.keyState'] = `$eq:${keyState}`;
+  getCP(params: ListParams, localityId?: number, municipalityId?: number) {
+    // params.limit = 20;
     delete params.text;
     delete params.take;
     delete params.inicio;
     delete params.pageSize;
-
-    const par = new FilterParams();
-
-    this.goodsQueryService
-      .getZipCode(params)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          let resp: any = '';
-          if (error?.error?.message !== 'No se encontrarón registros') {
-            resp = error;
+    if (
+      this.localityKey === null ||
+      this.municipalityId === null ||
+      this.stateOfRepId === null
+    ) {
+      this.selectCP = new DefaultSelect([]);
+      this.domicileForm.get('code').setValue(null);
+      return;
+    }
+    params['filter.townshipKey'] = `$eq:${this.localityKey}`; //localidad
+    params['filter.municipalityKey'] = `$eq:${this.municipalityId}`; //municipio
+    params['filter.stateKey'] = `$eq:${this.stateOfRepId}`; //estado de la republica
+    this.goodsInvService.getAllCodePostalByFilter(params).subscribe({
+      next: resp => {
+        if (this.code !== '0' && this.code !== null) {
+          if (this.combineCode) {
+            const newParams = {
+              ...params,
+              'filter.postalCode': `$eq:${this.code}`,
+            };
+            this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
+              next: response => {
+                console.log(response);
+                const newData = resp.data.filter(
+                  (item: any) => item.postalCode + '' !== this.code + ''
+                );
+                if (response.data && response.data[0]) {
+                  newData.unshift(response.data[0]);
+                }
+                this.selectCP = new DefaultSelect(newData, resp.count);
+                this.combineCode = false;
+              },
+              error: err => {
+                this.selectCP = new DefaultSelect(resp.data, resp.count);
+              },
+            });
+          } else {
+            this.selectCP = new DefaultSelect(
+              resp.data.filter(
+                (item: any) => item.postalCode + '' !== this.code + ''
+              )
+            );
           }
-          return resp;
-        })
-      )
-      .subscribe({
-        next: (data: any) => {
-          this.selectCP = new DefaultSelect(data.data, data.count);
-        },
-      });
+        } else {
+          this.selectCP = new DefaultSelect(resp.data, resp.count);
+        }
+      },
+      error: err => {
+        this.selectCP = new DefaultSelect([], 0);
+      },
+    });
   }
+
+  // getCP(
+  //   params: ListParams,
+  //   keyTownship?: number,
+  //   keyState?: number,
+  //   keySettlement?: number
+  // ): any {
+  //   params.limit = 20;
+  //   params['filter.keyState'] = `$eq:${keyState}`;
+  //   delete params.text;
+  //   delete params.take;
+  //   delete params.inicio;
+  //   delete params.pageSize;
+
+  //   // const par = new FilterParams();
+
+  //   this.goodsQueryService
+  //     .getZipCode(params)
+  //     .pipe(
+  //       catchError((error: HttpErrorResponse) => {
+  //         let resp: any = '';
+  //         if (error?.error?.message !== 'No se encontrarón registros') {
+  //           resp = error;
+  //         }
+  //         return resp;
+  //       })
+  //     )
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         this.selectCP = new DefaultSelect(data.data, data.count);
+  //       },
+  //     });
+  // }
 
   getTransferentUnit(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
@@ -1124,19 +1260,30 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
-        if (data) {
-          /*var stateKey =
-            this.request !== undefined
-              ? this.request.keyStateOfRepublic
-              : this.domicileForm.controls['statusKey'].value;
-
-          this.municipalityId = data;
-          this.getLocality(new ListParams(), data, stateKey);*/
+        // debugger;
+        if (data === null) {
+          this.combineMunicipalityId = true;
         }
+        this.municipalityId = data;
+        this.getLocality(new ListParams(), data, this.stateOfRepId);
+        // if (data) {
+        //   /*var stateKey =
+        //     this.request !== undefined
+        //       ? this.request.keyStateOfRepublic
+        //       : this.domicileForm.controls['statusKey'].value;
+
+        //   this.municipalityId = data;
+        //   this.getLocality(new ListParams(), data, stateKey);*/
+        // }
       }
     );
     this.domicileForm.controls['localityKey'].valueChanges.subscribe(
       (data: any) => {
+        if (data === null) {
+          this.combineLocalityId = true;
+        }
+        this.localityKey = data;
+        this.getCP(new ListParams());
         if (data) {
           /*  this.getCP(
             new ListParams(),
@@ -1217,7 +1364,7 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['addressId'].setValue(Number(domicilie.id));
     this.stateOfRepId = domicilie.statusKey;
     this.municipalityId = domicilie.municipalityKey;
-
+    this.localityKey = domicilie.localityKey;
     this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
     this.getMunicipaly(new ListParams(), this.municipalityId);
 

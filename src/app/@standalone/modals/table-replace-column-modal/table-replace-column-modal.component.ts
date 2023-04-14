@@ -58,7 +58,7 @@ export class TableReplaceColumnModalComponent
   }
 
   ngOnInit(): void {
-    console.log(this.tableData, [...this.tableData].slice(0, 1));
+    // console.log(this.tableData, [...this.tableData].slice(0, 1));
     this.settings = {
       ...this.settings,
       selectedRowIndex: -1,
