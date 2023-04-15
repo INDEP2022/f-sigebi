@@ -1269,6 +1269,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             if (areas.length > 0) {
               params.addFilter('id', areas.join(','), SearchFilter.IN);
             }
+            this.getData();
             return this.getAreas(params);
           })
         )
@@ -1280,6 +1281,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           },
         });
     } else {
+      this.getData();
       this.getAreas(params).subscribe();
     }
 
@@ -2183,8 +2185,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.getAllUsers(params).subscribe();
     }*/
-
-    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    params.search = $params.text;
+    //params.addFilter('name', $params.text, SearchFilter.LIKE);
     this.getAllUsers(params).subscribe();
   }
 
