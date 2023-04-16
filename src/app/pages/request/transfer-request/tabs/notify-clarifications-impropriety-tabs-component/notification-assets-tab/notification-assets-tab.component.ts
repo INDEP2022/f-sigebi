@@ -303,8 +303,12 @@ export class NotificationAssetsTabComponent
   }
 
   acceptClariImpro() {
-    console.log(this.notifyAssetsSelected.length);
-    if (this.notifyAssetsSelected.length < 1) {
+    console.log(
+      'id tipo aclaración seleccionado',
+      this.selectedRow.clarifiNewsRejectId.clarificationId
+    );
+
+    if (this.selectedRow.clarifiNewsRejectId.clarificationId < 1) {
       this.message('Error', 'Seleccione almenos un registro!');
       return;
     }
@@ -329,8 +333,10 @@ export class NotificationAssetsTabComponent
   }
 
   openModal(): void {
+    const idAclara = this.selectedRow.clarifiNewsRejectId.clarificationId;
     let config: ModalOptions = {
       initialState: {
+        idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         callback: (next: boolean) => {
