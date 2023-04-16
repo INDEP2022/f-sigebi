@@ -230,6 +230,21 @@
         </div>
       </div>
 
+      <!-- <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('fileLeagueDate')" label="Fecha de archivo de liga">
+            <input type="text" class="form-control" #dp="bsDatepicker" (bsValueChange)="changeLigEvent($event)"
+              bsDatepicker [bsValue]="bsligDate" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('verificationDateCump')" label="Fecha de verificación">
+            <input type="text" class="form-control" #dp="bsDatepicker" (bsValueChange)="changeVerEvent($event)"
+              bsDatepicker [bsValue]="bsverifiyDate" />
+          </form-field>
+        </div>
+      </div> -->
+
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
@@ -260,7 +275,9 @@
       </div>
       <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
       <div class="row pt-4">
-        <div class="col-md-4" *ngIf="transferenceNumber === 1">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
           <form-field
             [control]="requestForm.get('previousInquiry')"
             label="Averiguacion Previa">
@@ -270,7 +287,9 @@
               formControlName="previousInquiry" />
           </form-field>
         </div>
-        <div class="col-md-4" *ngIf="transferenceNumber === 1">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
           <form-field
             [control]="requestForm.get('circumstantialRecord')"
             label="Acta Circunstancial">
@@ -283,7 +302,7 @@
       </div>
       <div
         class="row pt-4"
-        *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('tocaPenal')"
@@ -296,7 +315,7 @@
         </div>
         <div
           class="col-md-4"
-          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
           <form-field
             [control]="requestForm.get('lawsuit')"
             label="Causa Penal">
@@ -307,7 +326,7 @@
       <div class="row pt-4">
         <div
           class="col-md-4"
-          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
           <form-field
             [control]="requestForm.get('domainExtinction')"
             label="Extinci&oacute;n Dominio">
@@ -318,8 +337,11 @@
           </form-field>
         </div>
       </div>
+
       <!-- FIN TRANSFERENTES 1 Y 3 -->
-      <div class="row pt-4" *ngIf="transferenceNumber === 120">
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('trialType')"
@@ -333,10 +355,7 @@
       </div>
       <div
         class="row pt-4"
-        *ngIf="
-          requestForm.get('typeOfTransfer').value === 'FGR' ||
-          requestForm.get('typeOfTransfer').value === 'CE'
-        ">
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"

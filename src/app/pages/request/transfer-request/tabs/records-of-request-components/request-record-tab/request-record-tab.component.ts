@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -32,14 +31,18 @@ export class RequestRecordTabComponent
   implements OnInit, OnChanges
 {
   @Input() requestForm: ModelForm<IRequest>;
+
   bsReceptionValue = new Date();
   bsPaperValue: any;
   bsPriorityDate: any;
+  bsligDate: any;
+  bsverifiyDate: any;
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
   selectMinPub = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
+  transf: boolean = false;
   priority: boolean = false;
   priorityString: string = 'N';
   transferenceNumber: number = 0;
@@ -50,8 +53,7 @@ export class RequestRecordTabComponent
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
-    private minPub: MinPubService,
-    private datePipe: DatePipe
+    private minPub: MinPubService
   ) {
     super();
   }
@@ -71,6 +73,10 @@ export class RequestRecordTabComponent
       const paperDate = this.requestForm.controls['paperDate'].value;
       this.bsPaperValue = new Date(paperDate);
     }
+
+    // if (this.requestForm.controls['receptionDate'].value != null) {
+    //    this.bsPaperValue = new Date();
+    // }
 
     //establecer el asunto
     if (this.requestForm.controls['affair'].value != null) {
@@ -94,11 +100,21 @@ export class RequestRecordTabComponent
       this.transferenceNumber = Number(
         this.requestForm.controls['transferenceId'].value
       );
+      console.log(this.transferenceNumber);
     }
 
     if (this.requestForm.controls['urgentPriority'].value === 'Y') {
       const priDate = this.requestForm.controls['priorityDate'].value;
       this.bsPriorityDate = new Date(priDate);
+    }
+
+    if (this.requestForm.controls['fileLeagueDate'].value != null) {
+      const ligDate = this.requestForm.controls['fileLeagueDate'].value;
+      this.bsligDate = new Date(ligDate);
+    }
+    if (this.requestForm.controls['verificationDateCump'].value != null) {
+      const priDate = this.requestForm.controls['verificationDateCump'].value;
+      this.bsverifiyDate = new Date(priDate);
     }
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
     // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
@@ -197,6 +213,8 @@ export class RequestRecordTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      fileLeagueDate: [null],
+      verificationDateCump: [null],
     });
     this.requestForm.get('receptionDate').disable();
     this.requestForm.updateValueAndValidity();
@@ -250,7 +268,29 @@ export class RequestRecordTabComponent
       this.requestForm.controls['paperDate'].setValue(d1);
     }
   }
+  changeVerEvent(event: Date) {
+    this.bsverifiyDate = event ? event : this.bsverifiyDate;
 
+    if (this.bsverifiyDate) {
+      //TODO: VERIFICAR LA FECHA
+      let date = new Date(this.bsverifiyDate);
+      var dateIso = date.toISOString();
+      const ver = this.bsverifiyDate.toISOString();
+      this.requestForm.controls['verificationDateCump'].setValue(ver);
+    }
+  }
+
+  changeLigEvent(event: Date) {
+    this.bsligDate = event ? event : this.bsligDate;
+
+    if (this.bsligDate) {
+      //TODO: VERIFICAR LA FECHA
+      let date = new Date(this.bsligDate);
+      var dateIso = date.toISOString();
+      const lig = this.bsligDate.toISOString();
+      this.requestForm.controls['fileLeagueDate'].setValue(lig);
+    }
+  }
   changePriorityDateEvent(event: Date) {
     this.bsPriorityDate = event ? event : this.bsPriorityDate;
 
