@@ -1,3 +1,6 @@
+<div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+  <form-loader *ngIf="formLoading"></form-loader>
+</div>
 <div
   *ngIf="
     process == 'registration-request' ||
@@ -5,7 +8,8 @@
     process == 'validate-document' ||
     process == 'process-approval' ||
     process == 'notify-clarification-inadmissibility' ||
-    process == 'classify-assets'
+    process == 'classify-assets' ||
+    formLoading === false
   ">
   <div class="row">
     <div class="d-flex bd-highlight">
@@ -33,7 +37,7 @@
             prioridadLabel
           }}</span>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3" id="checkbox">
           <input
             id="urgentPriority"
             type="checkbox"
@@ -58,15 +62,13 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="row pt-4">
-          <div class="col-md-4">
-            <label class="label">{{ tipoExpedienteLabel }}</label>
-            {{ infoRequest?.typeRecord }}
-          </div>
-          <div class="col-md-4">
-            <label class="label">{{ misterioPublicLabel }}</label>
-            {{ infoRequest?.publicMinistry }}
-          </div>
+        <div class="col-md-4">
+          <label class="label">{{ tipoExpedienteLabel }}</label>
+          {{ infoRequest?.typeRecord }}
+        </div>
+        <div class="col-md-4">
+          <label class="label">{{ misterioPublicLabel }}</label>
+          {{ infoRequest?.publicMinistry }}
         </div>
       </div>
       <div class="row pt-4">
@@ -93,7 +95,7 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ telefonoLabel }};</label>
+          <label class="label">{{ telefonoLabel }}</label>
           {{ infoRequest?.phoneOfOwner }}
         </div>
         <div class="col-md-4">

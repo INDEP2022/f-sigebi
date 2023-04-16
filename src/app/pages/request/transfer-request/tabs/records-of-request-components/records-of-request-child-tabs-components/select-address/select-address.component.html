@@ -15,7 +15,7 @@
     </div>
     <div class="row">
       <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
+        <search-bar [filterParams]="params"></search-bar>
       </div>
     </div>
     <div class="row pt-4">
@@ -31,7 +31,7 @@
       </div>
     </div>
     <app-pagination
-      [params]="params"
+      [filterParams]="params"
       [totalItems]="totalItems"></app-pagination>
   </div>
   <div footer>
