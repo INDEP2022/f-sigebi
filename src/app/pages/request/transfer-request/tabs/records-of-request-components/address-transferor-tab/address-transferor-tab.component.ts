@@ -121,6 +121,7 @@ export class AddressTransferorTabComponent
 
   initForm() {
     this.domicileForm = this.fb.group({
+      id: [null],
       warehouseAlias: [
         'DOMICILIO TRANSFERENTE',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
@@ -454,7 +455,14 @@ export class AddressTransferorTabComponent
       domicile.requestId = this.requestObject.id;
       domicile.regionalDelegationId = this.requestObject.regionalDelegationId;
     }
+    if (!domicile.id) {
+      this.createAddress(domicile);
+    } else {
+      this.updateAddress(domicile);
+    }
+  }
 
+  createAddress(domicile: any) {
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {
         if (data.id != null) {
@@ -473,6 +481,36 @@ export class AddressTransferorTabComponent
             'error',
             'Error al guardar',
             'no se puedo guardar el domicilio'
+          );
+          return;
+        }
+      },
+      error => {
+        this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
+        this.message('error', 'Error', error.getMessage());
+      }
+    );
+  }
+
+  updateAddress(domicile: any) {
+    this.goodDomicileService.update(domicile.id, domicile).subscribe(
+      (data: any) => {
+        if (data.id != null) {
+          this.message(
+            'success',
+            'Guadado',
+            'El domicio se actualizó correctamente'
+          );
+
+          if (this.isNewAddress === true) {
+            this.modelRef.content.callback(true);
+            this.close();
+          }
+        } else {
+          this.message(
+            'error',
+            'Error al actualizár',
+            'no se puedo actualizár el domicilio'
           );
           return;
         }

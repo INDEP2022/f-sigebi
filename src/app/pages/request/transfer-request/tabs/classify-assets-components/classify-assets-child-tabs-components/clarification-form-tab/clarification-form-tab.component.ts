@@ -49,14 +49,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.initForm();
     this.clarificationForm.get('clarificationType').valueChanges.subscribe({
       next: val => {
-        let type = this.clarificationTypes.find(type => type.value == val);
+        //let type = this.clarificationTypes.find(type => type.value == val);
         let params = new BehaviorSubject<FilterParams>(new FilterParams());
-        params.value.addFilter('type', type.id);
+        //params.value.addFilter('type', type.id);
+        params.value.addFilter('type', Number(val));
         const filter = params.getValue().getParams();
         this.getClarification(filter);
       },
     });
-    this.getClarification(new ListParams());
+    //this.getClarification(new ListParams());
   }
 
   initForm(): void {
@@ -65,7 +66,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       goodId: [null, [Validators.required]],
       clarificationType: [null, [Validators.required]],
       clarificationId: [null, [Validators.required]],
-      reason: [null, [Validators.pattern(STRING_PATTERN)]],
+      reason: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
       creationUser: [null],
       rejectionDate: [null],
     });
@@ -74,6 +78,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     }
     if (this.docClarification != undefined) {
       this.edit = true;
+      this.getClarification(new ListParams());
 
       //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
@@ -128,6 +133,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         this.modalRef.hide();
         this.modalRef.content.callback(true);
       },
+      error: error => {
+        this.loader.load = false;
+        console.log(error);
+        this.onLoadToast(
+          'error',
+          'Error',
+          `Error al guardar la aclaracion ${error.error.message}`
+        );
+      },
     });
   }
 
@@ -146,6 +160,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         complete: () => {
           this.modalRef.hide();
           this.modalRef.content.callback(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Error al guardar la aclaracion ${error.error.message}`
+          );
         },
       });
   }
