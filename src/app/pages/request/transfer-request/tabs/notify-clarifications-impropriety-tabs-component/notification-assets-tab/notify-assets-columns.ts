@@ -56,7 +56,7 @@ export const NOTIFY_ASSETS_COLUMNS = {
     },
   },
   clarifiNewsRejectId1: {
-    title: 'observation',
+    title: 'Observaciones',
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
