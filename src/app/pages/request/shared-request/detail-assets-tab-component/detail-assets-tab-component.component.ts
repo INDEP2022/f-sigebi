@@ -264,6 +264,13 @@ export class DetailAssetsTabComponentComponent
       const brand = this.detailAssets.controls['brand'].value;
       this.getSubBrand(new ListParams(), brand);
     }
+
+    if (this.detailAssets.controls['destiny'].value) {
+      var destiny = this.detailAssets.controls['destiny'].value;
+      if (destiny) {
+        this.getDestiny(destiny);
+      }
+    }
   }
 
   goodType(goodTypeId: number) {
@@ -620,6 +627,16 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
+  getDestiny(id: number | string) {
+    let params = new ListParams();
+    params['filter.name'] = '$eq:Destino';
+    params['filter.keyId'] = `$eq:${id}`;
+    this.genericService.getAll(params).subscribe({
+      next: ({ data }: any) => {
+        this.destinyLigie = data[0].description;
+      },
+    });
+  }
   getTansferUnitMeasure(event: any) {}
 
   getDestintSae(event: any) {}
@@ -643,7 +660,6 @@ export class DetailAssetsTabComponentComponent
               .getAllMunipalitiesByFilter(newParams)
               .subscribe({
                 next: response => {
-                  console.log(response);
                   const newData = resp.data.filter(
                     (item: any) =>
                       item.municipalityKey + '' !== this.municipalityId + ''
@@ -692,8 +708,6 @@ export class DetailAssetsTabComponentComponent
     // debugger;
     if (municipalityId === null || stateKey === null) {
       console.log(this.domicileForm.value);
-      this.selectLocality = new DefaultSelect([]);
-      this.domicileForm.get('localityKey').setValue(null);
       return;
     }
     params['sortBy'] = 'township:ASC';
@@ -709,7 +723,6 @@ export class DetailAssetsTabComponentComponent
             };
             this.goodsInvService.getAllTownshipByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 const newData = resp.data.filter(
                   (item: any) => item.townshipKey + '' !== this.localityKey + ''
                 );
@@ -749,8 +762,6 @@ export class DetailAssetsTabComponentComponent
       this.municipalityId === null ||
       this.stateOfRepId === null
     ) {
-      this.selectCP = new DefaultSelect([]);
-      this.domicileForm.get('code').setValue(null);
       return;
     }
     params['filter.townshipKey'] = `$eq:${this.localityKey}`; //localidad
@@ -766,7 +777,6 @@ export class DetailAssetsTabComponentComponent
             };
             this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 const newData = resp.data.filter(
                   (item: any) => item.postalCode + '' !== this.code + ''
                 );
@@ -1237,7 +1247,7 @@ export class DetailAssetsTabComponentComponent
       }
     });
 
-    this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
+    /*this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
           let value = this.selectDestinyTransfer.data.filter(
@@ -1247,7 +1257,7 @@ export class DetailAssetsTabComponentComponent
           this.detailAssets.controls['destiny'].setValue(data);
         }
       }
-    );
+    );*/
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
@@ -1265,6 +1275,8 @@ export class DetailAssetsTabComponentComponent
           this.combineMunicipalityId = true;
         }
         this.municipalityId = data;
+        this.selectLocality = new DefaultSelect([]);
+        this.domicileForm.get('localityKey').setValue(null);
         this.getLocality(new ListParams(), data, this.stateOfRepId);
         // if (data) {
         //   /*var stateKey =
@@ -1283,6 +1295,8 @@ export class DetailAssetsTabComponentComponent
           this.combineLocalityId = true;
         }
         this.localityKey = data;
+        this.selectCP = new DefaultSelect([]);
+        this.domicileForm.get('code').setValue(null);
         this.getCP(new ListParams());
         if (data) {
           /*  this.getCP(

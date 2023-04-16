@@ -30,6 +30,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   idRequest: number = 0;
   @Input() typeDoc = '';
+  @Input() screen = 'doc-goods';
   goodSelect: IGood[] = [];
   allGooods: IGood[] = [];
   showSearchForm: boolean = false;
@@ -60,10 +61,16 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
 
   initForm() {
     this.searchForm = this.fb.group({
-      goodId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      goodId: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       goodTypeId: [null],
       requestId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
-      goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
   }
   getGoodsRequest() {
