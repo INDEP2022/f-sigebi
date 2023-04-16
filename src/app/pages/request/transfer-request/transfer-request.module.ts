@@ -22,6 +22,7 @@ import { ClassifyAssetsTabComponent } from './tabs/classify-assets-components/cl
 import { ClassificationAssetsTabComponent } from './tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
 import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
+import { FulfillmentComponent } from './tabs/compliance-verification-components/verify-compliance-tab/fulfillment/fulfillment.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
@@ -82,6 +83,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     OpenDescriptionComponent,
     CheckboxComponent,
     CopyAddressComponent,
+    FulfillmentComponent,
   ],
   imports: [
     CommonModule,
