@@ -39,6 +39,35 @@ export class RequestDetailTabComponent
   ofiginName: string = '';
   selectOriginInfo = new DefaultSelect();
 
+  transferenceId: number = 0;
+
+  prioridadLabel: string = 'Prioridad';
+  procedenciaLabel: string = 'Procedencia Información';
+  fechaRecepcionLabel: string = 'Fecha de Recepción';
+  fechaOficioLabel: string = 'Fecha de Oficio';
+  tipoExpedienteLabel: string = 'Tipo Expediente';
+  misterioPublicLabel: string = 'Ministerio Público';
+  nombreLabel: string = 'Nombre del Remitente';
+  jusgadoLabel: string = 'Juzgado';
+  cargoLabel: string = 'Cargo del Remitente';
+  delitoLabel: string = 'Delito';
+  telefonoLabel: string = 'Teléfono del Remitente';
+  viaRecepcionLabel: string = 'Vía de Recepcion';
+  correoLable: string = 'Correo del Remitente';
+  gestionDestino: string = 'Gestion de Destino';
+  contribuyenteLabel: string = 'Contribuyente y/o Indiciado';
+  asuntoLabel: string = 'Asunto';
+  expedienteTransLabel: string = 'Expediente Transferente/PAMA';
+  tipoTransferenteLabel: string = 'Tipo Transferente';
+  notasLabel: string = 'Notas Entidad Transferente';
+  observaciones: string = 'Observaciones';
+  causaPenal: string = 'Causa Penal';
+  noAmparoLabel: string = 'No. Amparo';
+  tocaPenal: string = 'Toca Penal';
+  gestionDestinoLabel: string = 'Gestión de Destino';
+  actaCircunstacial: string = 'Acta Circunstanciada';
+  averiguacionPreviaLabel: string = 'Averiguación Previa';
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -92,12 +121,15 @@ export class RequestDetailTabComponent
       typeTransfer: [null],
       transferEntityNotes: [null],
       observations: [null],
+      lawsuit: [null],
     });
   }
 
   showDataProg() {
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
       this.infoRequest = data;
+      this.transferenceId = data.transferenceId;
+      this.setLabelNames(this.transferenceId);
     });
   }
 
@@ -131,25 +163,21 @@ export class RequestDetailTabComponent
     });
   }
 
+  setLabelNames(transference: number) {
+    if (transference === 1 || transference === 3) {
+      this.nombreLabel = 'Nombre MP';
+      this.cargoLabel = 'Cargo y/o Adscripción';
+      this.telefonoLabel = 'Teléfono MP';
+      this.correoLable = 'Correo MP';
+    }
+  }
+
   reactiveFormCalls() {
-    this.requestForm.valueChanges.subscribe((val: any) => {
-      var v = this.requestForm.getRawValue();
-      if (this.requestForm.controls['urgentPriority'].value) {
-        this.priority =
-          this.requestForm.controls['urgentPriority'].value === '0'
-            ? false
-            : true;
-      }
-
-      if (this.requestForm.controls['affair'].value) {
-        const affair = Number(this.requestForm.controls['affair'].value);
-        this.getAffair(affair);
-      }
-
-      if (this.requestForm.controls['originInfo'].value) {
-        const originId = Number(this.requestForm.controls['originInfo'].value);
-        this.getOriginInfo(new ListParams(), originId);
-      }
-    });
+    if (this.requestForm.controls['urgentPriority'].value) {
+      this.priority =
+        this.requestForm.controls['urgentPriority'].value === '0'
+          ? false
+          : true;
+    }
   }
 }

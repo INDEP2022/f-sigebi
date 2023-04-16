@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -44,12 +45,15 @@ export class RequestRecordTabComponent
   transferenceNumber: number = 0;
   formLoading: boolean = false;
 
+  paperDateLabel: any = '';
+
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
-    private minPub: MinPubService
+    private minPub: MinPubService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -64,7 +68,6 @@ export class RequestRecordTabComponent
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
     //this.prepareForm();
-
     if (this.requestForm.controls['paperDate'].value != null) {
       const paperDate = this.requestForm.controls['paperDate'].value;
       this.bsPaperValue = new Date(paperDate);
@@ -94,13 +97,17 @@ export class RequestRecordTabComponent
       );
     }
 
+    if (this.requestForm.controls['urgentPriority'].value === 'Y') {
+      const priDate = this.requestForm.controls['priorityDate'].value;
+      this.bsPriorityDate = new Date(priDate);
+    }
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
-    this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['priorityDate'].value !== null) {
-        const date = new Date(this.requestForm.controls['priorityDate'].value);
-        this.bsPriorityDate = date;
-      }
-    });
+    // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
+    //   if (this.requestForm.controls['priorityDate'].value !== null) {
+    //     const date = new Date(this.requestForm.controls['priorityDate'].value);
+    //     this.bsPriorityDate = date;
+    //   }
+    // });
   }
   prepareForm() {
     //formulario de solicitudes
@@ -120,7 +127,7 @@ export class RequestRecordTabComponent
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [null],
-      paperDate: [null, [Validators.required]],
+      paperDate: [null], //requerido
       typeRecord: [null],
       publicMinistry: [
         null,
@@ -249,8 +256,10 @@ export class RequestRecordTabComponent
     this.bsPriorityDate = event ? event : this.bsPriorityDate;
 
     if (this.bsPriorityDate) {
-      let date = this.bsPriorityDate.toISOString();
-      this.requestForm.controls['priorityDate'].setValue(date);
+      let date = new Date(this.bsPriorityDate);
+      var dateIso = date.toISOString();
+      const f3 = this.bsPriorityDate.toISOString();
+      this.requestForm.controls['priorityDate'].setValue(f3);
     }
   }
 
@@ -265,10 +274,9 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
+    const request = this.requestForm.getRawValue() as IRequest;
     this.loading = true;
     this.formLoading = true;
-    const request = this.requestForm.getRawValue() as IRequest;
-
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
       this.message(
