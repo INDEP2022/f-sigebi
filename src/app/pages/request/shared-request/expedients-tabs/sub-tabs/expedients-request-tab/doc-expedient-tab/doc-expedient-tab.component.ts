@@ -204,6 +204,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
           Promise.all(info).then(x => {
             this.paragraphs = x;
+            console.log('document', this.paragraphs);
             this.allDocumentExpedient = this.paragraphs;
             this.totalItems = this.paragraphs.length;
             this.loading = false;
@@ -577,7 +578,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         this.title = 'Solicitudes';
         break;
       case 'doc-expedient':
-        this.title = 'Expedientes';
+        this.title = 'Expediente';
         break;
       case 'request-expedient':
         this.title = '';

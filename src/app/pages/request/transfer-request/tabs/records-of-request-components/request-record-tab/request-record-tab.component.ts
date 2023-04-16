@@ -212,6 +212,7 @@ export class RequestRecordTabComponent
   }
 
   getTypeExpedient(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
     params['filter.name'] = '$eq:Tipo Expediente';
     params.limit = 20;
     this.genericsService.getAll(params).subscribe((data: any) => {
@@ -220,6 +221,7 @@ export class RequestRecordTabComponent
   }
 
   getOriginInfo(params?: ListParams) {
+    params['sortBy'] = 'description:ASC';
     params['filter.name'] = '$eq:Procedencia';
     params.limit = 20;
     this.genericsService.getAll(params).subscribe((data: any) => {

@@ -150,6 +150,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   getTypeRelevant(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
     this.typeRelevantService.getAll(params).subscribe({
       next: data => {
         this.typeGoods = new DefaultSelect(data.data, data.count);

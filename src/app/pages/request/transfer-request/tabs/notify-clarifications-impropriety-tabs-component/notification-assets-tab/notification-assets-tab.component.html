@@ -87,7 +87,8 @@
             [attr.class]="'table-bordered'"
             [settings]="settings2"
             [source]="notificationsList"
-            (userRowSelect)="notifyAssetRowSelected($event)">
+            (userRowSelect)="notifyAssetRowSelected($event)"
+            (rowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>
       </div>
