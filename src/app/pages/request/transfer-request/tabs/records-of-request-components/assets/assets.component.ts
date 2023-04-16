@@ -159,6 +159,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           Promise.all(result).then(x => {
             this.totalItems = data.count;
             this.paragraphs = data.data;
+            console.log(this.paragraphs);
+
             this.loading = false;
           });
         } else {

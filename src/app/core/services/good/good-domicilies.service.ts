@@ -15,7 +15,7 @@ export class GoodDomiciliesService extends HttpService {
     this.microservice = GoodEndpoints.Good;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IDomicilies>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<IDomicilies>> {
     return this.get<IListResponse<IDomicilies>>('domicilies', params);
   }
 

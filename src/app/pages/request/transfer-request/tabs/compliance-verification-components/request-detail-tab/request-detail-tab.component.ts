@@ -38,6 +38,7 @@ export class RequestDetailTabComponent
   affairName: string = '';
   ofiginName: string = '';
   selectOriginInfo = new DefaultSelect();
+  formLoading: boolean = false;
 
   transferenceId: number = 0;
 
@@ -80,6 +81,7 @@ export class RequestDetailTabComponent
   }
 
   ngOnInit(): void {
+    this.formLoading = true;
     this.reactiveFormCalls();
     this.showDataProg();
   }
@@ -94,6 +96,10 @@ export class RequestDetailTabComponent
       const affair = Number(this.requestForm.controls['affair'].value);
       this.getAffair(affair);
     }
+  }
+
+  ngAfterViewInit() {
+    this.formLoading = false;
   }
 
   prepareForm(): void {
