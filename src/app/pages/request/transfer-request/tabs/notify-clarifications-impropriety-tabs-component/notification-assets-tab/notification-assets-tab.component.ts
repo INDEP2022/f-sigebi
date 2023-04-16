@@ -44,6 +44,18 @@ var data2 = [
     clarificationSAT: '',
     typeOfClarification: 'ACLARACIÓN',
     clarification: 'ACLARACIÓN EN ESTADO FISICO',
+    typeClarification: '1',
+    dateClarification: '12/10/2022',
+    reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
+    observation: '',
+  },
+
+  {
+    status: 'NUEVA',
+    clarificationStatus: '',
+    clarificationSAT: '',
+    typeOfClarification: 'ACLARACIÓN',
+    clarification: 'ERROR EN LA DOCUMENTACIÓN ANEXA',
     typeClarification: '2',
     dateClarification: '12/10/2022',
     reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
@@ -182,7 +194,6 @@ export class NotificationAssetsTabComponent
 
   acceptClariImpro() {
     console.log(this.notifyAssetsSelected.length);
-
     if (this.notifyAssetsSelected.length < 1) {
       this.message('Error', 'Seleccione almenos un registro!');
       return;
