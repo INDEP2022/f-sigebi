@@ -21,6 +21,8 @@ export class NotifyAssetsImproprietyFormComponent
 {
   title: string = 'Aclaración';
   clarificationForm: ModelForm<any>;
+  procedenceForm: ModelForm<any>;
+
   clarification: any;
 
   //en el caso de que una aclaracion llege sin documentacion
@@ -39,46 +41,125 @@ export class NotifyAssetsImproprietyFormComponent
 
   ngOnInit(): void {
     this.withDocumentation =
-      this.clarification[0].typeClarification === '1' ? true : false;
-
+      this.clarification[0].typeClarification === '2' ? true : false;
+    console.log('doc', this.withDocumentation);
     this.initForm1();
   }
 
-  initForm2(): void {
+  initForm1(): void {
     this.clarificationForm = this.fb.group({
+      observations: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      ],
+      nameSender: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      keyClarification: [
+        ' ',
+        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
+      ],
+      senderCharge: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      captureUserArea: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+
+      emailNotifiSat: [
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+      ],
+      /*
+      receiver: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      receiverCharge: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      idTransmitter: [null, [Validators.maxLength(15)]],
+      clarification: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+      consistent: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+      initialParagraph: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      finalParagraph: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], */
+    });
+  }
+
+  /*initForm2(): void {
+    this.clarificationForm = this.fb.group({
+      observations: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      ],
+      nameSender: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      keyClarification: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
       receiver: [null, [Validators.pattern(STRING_PATTERN)]],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       receiverCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      //keyClarification: [null],
       //idTransmitter: [null],
       clarification: [null, [Validators.pattern(STRING_PATTERN)]],
       consistent: [null, [Validators.pattern(STRING_PATTERN)]],
       //finalParagraph: [null],
       //initialParagraph: [null],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
       captureUserArea: [null, [Validators.pattern(STRING_PATTERN)]],
       emailNotifiSat: [null, [Validators.pattern(EMAIL_PATTERN)]],
-      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
     });
-  }
-
-  initForm1(): void {
-    this.clarificationForm = this.fb.group({
-      receiver: [null, [Validators.pattern(STRING_PATTERN)]],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      receiverCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      keyClarification: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      idTransmitter: [null],
-      clarification: [null, [Validators.pattern(STRING_PATTERN)]],
-      consistent: [null, [Validators.pattern(STRING_PATTERN)]],
-      finalParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
-      initialParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
-      captureUserArea: [null, [Validators.pattern(STRING_PATTERN)]],
-      emailNotifiSat: [null, [Validators.pattern(EMAIL_PATTERN)]],
-      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
-  }
+  } */
 
   confirm() {
     console.log(this.clarificationForm.value);
