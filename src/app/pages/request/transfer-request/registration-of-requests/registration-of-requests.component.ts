@@ -96,6 +96,9 @@ export class RegistrationOfRequestsComponent
 
   formLoading: boolean = true;
 
+  question: boolean = false;
+  verifyResp: boolean = false;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -593,6 +596,11 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin guardar captura de solicitud */
 
+  getResponse(event: any) {
+    console.log('respuesta: ', event);
+    this.verifyResp = event;
+  }
+
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
     const oldTask: any = await this.getOldTask();
@@ -931,7 +939,19 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'verificar-cumplimiento') {
-          this.verifyComplianceMethod();
+          this.question = true;
+          setTimeout(() => {
+            if (this.verifyResp === true) {
+              this.verifyComplianceMethod();
+            } else {
+              this.onLoadToast(
+                'error',
+                'Error',
+                'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
+              );
+            }
+            this.question = false;
+          }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
           this.classifyGoodMethod();

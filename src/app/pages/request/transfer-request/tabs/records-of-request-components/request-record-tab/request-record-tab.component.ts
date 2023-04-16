@@ -48,6 +48,8 @@ export class RequestRecordTabComponent
   transferenceNumber: number = 0;
   formLoading: boolean = false;
 
+  paperDateLabel: any = '';
+
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
@@ -68,7 +70,6 @@ export class RequestRecordTabComponent
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
     //this.prepareForm();
-
     if (this.requestForm.controls['paperDate'].value != null) {
       const paperDate = this.requestForm.controls['paperDate'].value;
       this.bsPaperValue = new Date(paperDate);
@@ -142,7 +143,7 @@ export class RequestRecordTabComponent
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [null],
-      paperDate: [null, [Validators.required]],
+      paperDate: [null], //requerido
       typeRecord: [null],
       publicMinistry: [
         null,
@@ -313,9 +314,9 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
+    const request = this.requestForm.getRawValue() as IRequest;
     this.loading = true;
     this.formLoading = true;
-    const request = this.requestForm.getRawValue() as IRequest;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
       this.message(

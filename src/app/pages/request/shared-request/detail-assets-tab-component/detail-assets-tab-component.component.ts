@@ -1177,6 +1177,7 @@ export class DetailAssetsTabComponentComponent
   //guardar el bien inmueble
   saveGoodRealState() {
     return new Promise((resolve, reject) => {
+      debugger;
       let domicilio = this.goodDomicilieForm.getRawValue();
       domicilio.addressId = this.domicileForm.controls['id'].value;
       domicilio.creationDate = new Date().toISOString();
