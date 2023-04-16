@@ -707,7 +707,6 @@ export class DetailAssetsTabComponentComponent
   ) {
     // debugger;
     if (municipalityId === null || stateKey === null) {
-      console.log(this.domicileForm.value);
       return;
     }
     params['sortBy'] = 'township:ASC';
@@ -769,13 +768,17 @@ export class DetailAssetsTabComponentComponent
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`; //estado de la republica
     this.goodsInvService.getAllCodePostalByFilter(params).subscribe({
       next: resp => {
-        if (this.code !== '0' && this.code !== null) {
+        if (this.code !== '' && this.code !== null) {
           if (this.combineCode) {
             const newParams = {
               ...params,
               'filter.postalCode': `$eq:${this.code}`,
             };
-            this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
+            this.selectCP = new DefaultSelect(resp.data, resp.count);
+            this.domicileForm
+              .get('code')
+              .setValue(this.selectCP.data[0]['postalCode']);
+            /* this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
               next: response => {
                 const newData = resp.data.filter(
                   (item: any) => item.postalCode + '' !== this.code + ''
@@ -784,12 +787,13 @@ export class DetailAssetsTabComponentComponent
                   newData.unshift(response.data[0]);
                 }
                 this.selectCP = new DefaultSelect(newData, resp.count);
+                this.domicileForm.get('code').setValue(newData);
                 this.combineCode = false;
               },
               error: err => {
                 this.selectCP = new DefaultSelect(resp.data, resp.count);
               },
-            });
+            }); */
           } else {
             this.selectCP = new DefaultSelect(
               resp.data.filter(
@@ -1293,10 +1297,11 @@ export class DetailAssetsTabComponentComponent
       (data: any) => {
         if (data === null) {
           this.combineLocalityId = true;
+          this.domicileForm.get('code').setValue(null);
         }
         this.localityKey = data;
-        this.selectCP = new DefaultSelect([]);
-        this.domicileForm.get('code').setValue(null);
+        /* this.selectCP = new DefaultSelect([]); */
+        /* this.domicileForm.get('code').setValue(null); */
         this.getCP(new ListParams());
         if (data) {
           /*  this.getCP(
