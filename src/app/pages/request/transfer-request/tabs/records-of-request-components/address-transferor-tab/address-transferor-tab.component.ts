@@ -233,7 +233,7 @@ export class AddressTransferorTabComponent
     }
     // debugger;
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
-    params['filter.nameMunicipality'] = `$ilike:${params.text}`;
+    params['filter.municipality'] = `$ilike:${params.text}`;
     // params.limit = 9;
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
