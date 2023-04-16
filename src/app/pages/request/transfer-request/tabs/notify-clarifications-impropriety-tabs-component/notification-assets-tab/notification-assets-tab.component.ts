@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
@@ -107,6 +108,9 @@ export class NotificationAssetsTabComponent
 
   //verificar por el estado del campo transferente si es SAT O otro
   byInterconnection: boolean = false;
+
+  rowSelected: boolean = false;
+  selectedRow: any = null;
 
   constructor(
     private modalService: BsModalService,
@@ -250,29 +254,28 @@ export class NotificationAssetsTabComponent
     const idRefuse = refuseObj.clarifiNewsRejectId as IClarificationGoodsReject;
     const idRechazo = idRefuse.rejectNotificationId;
     console.log('ID del rechazo', idRefuse.rejectNotificationId);
-    let config: ModalOptions = {
-      initialState: {
-        idRechazo,
-        clarification: this.notifyAssetsSelected,
-        callback: (next: boolean) => {
-          if (next) {
-            this.getClarificationsByGood(idNotify.goodId);
-          }
-        },
+
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      idRechazo,
+      clarification: this.notifyAssetsSelected,
+      callback: (next: boolean) => {
+        this.getClarificationsByGood(idNotify.goodId);
       },
-      class: 'modal-sm modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(
-      RefuseClarificationModalComponent,
-      config
-    );
+    this.modalService.show(RefuseClarificationModalComponent, modalConfig);
+
     //ver si los datos se devolveran por el mismo modal o se guardan
 
     /*  this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
       console.log(res);
       this.requestForm.get('receiUser').patchValue(res.user);
     }); */
+  }
+
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 
   verifyClarification() {}
@@ -300,8 +303,12 @@ export class NotificationAssetsTabComponent
   }
 
   acceptClariImpro() {
-    console.log(this.notifyAssetsSelected.length);
-    if (this.notifyAssetsSelected.length < 1) {
+    console.log(
+      'id tipo aclaración seleccionado',
+      this.selectedRow.clarifiNewsRejectId.clarificationId
+    );
+
+    if (this.selectedRow.clarifiNewsRejectId.clarificationId < 1) {
       this.message('Error', 'Seleccione almenos un registro!');
       return;
     }
@@ -326,8 +333,10 @@ export class NotificationAssetsTabComponent
   }
 
   openModal(): void {
+    const idAclara = this.selectedRow.clarifiNewsRejectId.clarificationId;
     let config: ModalOptions = {
       initialState: {
+        idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         callback: (next: boolean) => {
