@@ -14,11 +14,18 @@ export class FulfillmentComponent implements OnInit {
 
   inputText: String = '';
   hidde: boolean = false;
+  isLong: boolean = false;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.inputText = this.value.toString().substring(0, 100).concat('...');
+    if (this.value.toString().length > 150) {
+      this.isLong = true;
+      this.inputText = this.value.toString().substring(0, 150).concat('...');
+    } else {
+      this.isLong = false;
+      this.inputText = this.value.toString();
+    }
   }
 
   seemore() {
