@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -49,7 +50,8 @@ export class RequestRecordTabComponent
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
-    private minPub: MinPubService
+    private minPub: MinPubService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -94,13 +96,17 @@ export class RequestRecordTabComponent
       );
     }
 
+    if (this.requestForm.controls['urgentPriority'].value === 'Y') {
+      const priDate = this.requestForm.controls['priorityDate'].value;
+      this.bsPriorityDate = new Date(priDate);
+    }
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
-    this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['priorityDate'].value !== null) {
-        const date = new Date(this.requestForm.controls['priorityDate'].value);
-        this.bsPriorityDate = date;
-      }
-    });
+    // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
+    //   if (this.requestForm.controls['priorityDate'].value !== null) {
+    //     const date = new Date(this.requestForm.controls['priorityDate'].value);
+    //     this.bsPriorityDate = date;
+    //   }
+    // });
   }
   prepareForm() {
     //formulario de solicitudes
@@ -249,8 +255,10 @@ export class RequestRecordTabComponent
     this.bsPriorityDate = event ? event : this.bsPriorityDate;
 
     if (this.bsPriorityDate) {
-      let date = this.bsPriorityDate.toISOString();
-      this.requestForm.controls['priorityDate'].setValue(date);
+      let date = new Date(this.bsPriorityDate);
+      var dateIso = date.toISOString();
+      const f3 = this.bsPriorityDate.toISOString();
+      this.requestForm.controls['priorityDate'].setValue(f3);
     }
   }
 
@@ -268,7 +276,6 @@ export class RequestRecordTabComponent
     this.loading = true;
     this.formLoading = true;
     const request = this.requestForm.getRawValue() as IRequest;
-
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
       this.message(
