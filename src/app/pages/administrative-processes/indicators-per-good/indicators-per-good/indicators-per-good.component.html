@@ -10,7 +10,7 @@
           <div class="row pt-4">
             <search-bar-simple
               id="clean"
-              (eventEmit)="loadIndicator($event)"
+              (eventEmit)="searchGoods($event)"
               [label]="''"
               [placeholder]="'N&uacute;mero de Bien'">
             </search-bar-simple>
@@ -20,18 +20,17 @@
         <div class="col-md-3">
           <div class="row pt-3">
             <form-field [control]="form.get('date')" label="Fecha de cierre">
-              <input
-                class="form-control"
-                formControlName="date"
-                bsDatepicker
-                readonly />
+              <input class="form-control" formControlName="date" bsDatepicker />
             </form-field>
           </div>
         </div>
 
         <div class="col-md-2">
           <div class="row pt-2">
-            <button type="button" class="btn btn-primary btn-sm active mx-2">
+            <button
+              type="button"
+              (click)="calculate()"
+              class="btn btn-primary btn-sm active mx-2">
               CALCULAR
             </button>
           </div>
@@ -39,6 +38,14 @@
       </div>
 
       <div class="row mt-4">
+        <div
+          *ngIf="table"
+          class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+          <span>
+            SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA IZQUIEDA PARA
+            COPIAR&#46;</span
+          >
+        </div>
         <div class="col-md-6">
           <div class="row pt-4">
             <div class="col-md-12">
@@ -49,7 +56,7 @@
                   class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings1"
-                  [source]="data1"
+                  [source]="indicatorsTotal"
                   (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
               </div>
             </div>

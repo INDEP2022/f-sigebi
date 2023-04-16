@@ -32,23 +32,24 @@ export const WORK_MAILBOX_COLUMNS = {
 };
 
 export const WORK_BIENES_COLUMNS = {
-  goodNumber: {
-    title: 'No. Bienes',
+  id: {
+    title: 'No. Bien',
     sort: false,
   },
   quantity: {
     title: 'Cantidad',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
+  //TODO:VALIDATE ENTITY
   parentGoodMenajeNumber: {
     title: 'No. Bien Padre Menaje',
     sort: false,
   },
-  goodStatus: {
+  status: {
     title: 'Estatus',
     sort: false,
   },
@@ -242,21 +243,19 @@ export const WORK_MAILBOX_COLUMNS2 = {
   },
   observation: {
     title: 'Observaciones',
+    type: 'custom',
     sort: false,
     editable: false,
     renderComponent: SeeMoreComponent,
-    valuePrepareFunction: (value: string) => {
-      value !== null ? (value = value) : (value = '');
-    },
+    valuePrepareFunction: (value: string) => value ?? '',
   },
   observationAdd: {
     title: 'Observaciones Add.',
+    type: 'custom',
     sort: false,
     editable: false,
     renderComponent: SeeMoreComponent,
-    valuePrepareFunction: (value: string) => {
-      value !== null ? (value = value) : (value = '');
-    },
+    valuePrepareFunction: (value: string) => value ?? '',
   },
   priority: {
     title: 'Prioridad',
@@ -352,4 +351,18 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     editable: false,
   },*/
+};
+
+export const array_column_table = (objColumnsTable: any) => {
+  let response = [];
+  for (const key in objColumnsTable) {
+    if (Object.prototype.hasOwnProperty.call(objColumnsTable, key)) {
+      const element = objColumnsTable[key];
+      if (element) {
+        element['key'] = key;
+        response.push(element);
+      }
+    }
+  }
+  return response;
 };

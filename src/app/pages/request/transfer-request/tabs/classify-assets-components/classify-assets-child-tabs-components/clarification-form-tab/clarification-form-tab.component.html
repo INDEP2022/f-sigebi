@@ -7,7 +7,7 @@
       <div class="">
         <div class="row pt-5">
           <div class="col-md-12">
-            <form-field
+            <!--  <form-field
               [control]="clarificationForm.get('clarificationType')"
               label="Tipo Aclaraci&oacute;n">
               <select class="form-control" formControlName="clarificationType">
@@ -17,7 +17,28 @@
                   {{ item.description }}
                 </option>
               </select>
-            </form-field>
+            </form-field> -->
+            <div
+              [formGroup]="clarificationForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="clarificationType"
+                [clearable]="false"
+                [items]="clarificationTypes"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="description"
+                bindValue="id">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.description">
+                    {{ item.description }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label">Tipo Aclaraci&oacute;n</label>
+            </div>
           </div>
         </div>
         <div class="row pt-4">
@@ -41,7 +62,8 @@
                 class="form-control"
                 formControlName="reason"
                 cols="10"
-                rows="3"></textarea>
+                rows="3"
+                maxlength="200"></textarea>
             </form-field>
           </div>
         </div>
@@ -52,7 +74,10 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <!--  [disabled]="clarificationForm.invalid" -->
-        <button class="btn btn-primary btn-sm active" (click)="confirm()">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()"
+          [disabled]="clarificationForm.invalid">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>

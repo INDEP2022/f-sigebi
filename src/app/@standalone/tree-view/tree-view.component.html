@@ -1,0 +1,18 @@
+<ul
+  *ngIf="items && items.length > 0"
+  class="metismenu list-unstyled"
+  id="side-menu"
+  #sideMenu>
+  <li *ngFor="let item of items">
+    <a
+      *ngIf="hasItems(item)"
+      href="javascript:void(0);"
+      class="is-parent has-arrow">
+      <span> {{ item[label] }}</span>
+    </a>
+    <app-tree-node
+      [hasChild]="hasItems(item)"
+      [menuChild]="item.subItems"
+      [label]="label"></app-tree-node>
+  </li>
+</ul>

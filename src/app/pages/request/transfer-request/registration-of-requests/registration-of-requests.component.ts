@@ -21,6 +21,8 @@ import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  SPECIAL_STRING_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -88,8 +90,14 @@ export class RegistrationOfRequestsComponent
   stationName: string = '';
   delegationName: string = '';
   authorityName: string = '';
+  haveDictamen: boolean = false;
 
   requestList: IRequest;
+
+  formLoading: boolean = true;
+
+  question: boolean = false;
+  verifyResp: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -127,8 +135,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
-    this.dinamyCallFrom();
-    console.log('ID tipo de documento', this.idTypeDoc);
+    //this.dinamyCallFrom();
   }
 
   //Obtenemos el tipo de proceso//
@@ -190,7 +197,7 @@ export class RegistrationOfRequestsComponent
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(SPECIAL_STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
@@ -259,7 +266,15 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(15)],
+      ],
+      typeOfTransfer: [
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      domainExtinction: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
     });
     this.registRequestForm.get('receptionDate').disable();
@@ -281,17 +296,23 @@ export class RegistrationOfRequestsComponent
         );
         if (data.urgentPriority === null) data.urgentPriority = 'N';
 
+        /* verifica si existe un dictamen en la solicitud */
+        if (this.typeDocument === 'proceso-aprovacion') {
+          await this.getDictamen(data.id);
+        }
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
-
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
+        this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
       this.getData(request); */
       },
       error: error => {
+        this.formLoading = false;
         /*if (error.error.message === 'No se encontraron registros.') {
           this.router.navigate(['pages/request/list']);
         }*/
@@ -549,7 +570,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
+      'Asegúrese de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -575,6 +596,11 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin guardar captura de solicitud */
 
+  getResponse(event: any) {
+    console.log('respuesta: ', event);
+    this.verifyResp = event;
+  }
+
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
     const oldTask: any = await this.getOldTask();
@@ -596,7 +622,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -623,7 +649,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -650,7 +676,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
@@ -709,12 +735,19 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    console.log(this.requestData);
-
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'Error',
+        'Es requerido tener dictamen previamente generado'
+      );
+      return;
+    }
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/process-approval';
+      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+      const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
       const taskResult = await this.createTaskOrderService(
@@ -729,12 +762,49 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
-          `Se guardo la solicitud con el folio: ${this.requestData.id}`
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
         );
       }
     }
   }
   /** fin de proceso */
+
+  /* Inicio de rechazar aprovacion */
+  refuseRequest() {
+    this.msgSaveModal(
+      'Rechazar',
+      'Deseas rechazar la solicitud con folio: ' + this.requestData.id + '?',
+      'Confirmación',
+      undefined,
+      'refuse'
+    );
+  }
+
+  async refuseMethod() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/verify-compliance';
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'VERIFICAR_CUMPLIMIENTO';
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        oldTask
+      );
+      if (taskResult === true) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+    }
+  }
+  /* Fin rechazo de aprovacion */
 
   updateRequest(request: any) {
     return new Promise((resolve, reject) => {
@@ -784,14 +854,11 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
-      console.log(body);
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
-          console.log(error.error.message);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
@@ -820,7 +887,28 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getDictamen() {}
+  getDictamen(id: number) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      body['xTipoDocumento'] = 50;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: resp => {
+          if (resp.data.length > 0) {
+            this.haveDictamen = true;
+            resolve(true);
+          } else {
+            this.haveDictamen = false;
+            resolve(false);
+          }
+        },
+        error: error => {
+          this.haveDictamen = false;
+          resolve(false);
+        },
+      });
+    });
+  }
 
   msgSaveModal(
     btnTitle: string,
@@ -851,7 +939,26 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'verificar-cumplimiento') {
-          this.verifyComplianceMethod();
+          this.question = true;
+          setTimeout(() => {
+            if (this.verifyResp === true) {
+              this.verifyComplianceMethod();
+            } else {
+              Swal.fire({
+                title: 'Error',
+                text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#AD4766',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                if (result.isConfirmed) {
+                }
+              });
+            }
+            this.question = false;
+          }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
           this.classifyGoodMethod();
@@ -861,7 +968,11 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'proceso-aprovacion') {
-          this.approveRequest();
+          this.approveRequestMethod();
+        }
+
+        if (typeCommit === 'refuse') {
+          this.refuseMethod();
         }
       }
     });
@@ -886,12 +997,12 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  dinamyCallFrom() {
+  /* dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
     });
   }
-
+ */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,

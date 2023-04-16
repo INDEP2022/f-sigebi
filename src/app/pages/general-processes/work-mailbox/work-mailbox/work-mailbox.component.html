@@ -73,13 +73,26 @@
                     <ngx-select
                       [form]="filterForm"
                       [data]="users$"
+                      (change)="userChange($event)"
                       (fetchItems)="getUsers($event)"
                       bindLabel="userAndName"
                       control="user"
                       label="Usuario"
                       [searchOnInit]="true"
-                      termMaxLength="30">
+                      [showTooltip]="true"
+                      termMaxLength="30"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
                     </ngx-select>
+
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id }} - {{ item.name }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.name">
+                        {{ item.id }} - {{ item.name }}
+                      </div>
+                    </ng-template>
                   </form-field>
                   <form-field
                     class="mb-3 mt-3"
@@ -88,12 +101,25 @@
                       [form]="filterForm"
                       [data]="areas$"
                       (fetchItems)="getGroupWork($event)"
+                      (change)="areaChange($event)"
                       bindLabel="description"
                       control="managementArea"
                       [searchOnInit]="true"
+                      [showTooltip]="true"
                       termMaxLength="30"
-                      label="Buz&oacute;n de &Aacute;rea">
+                      label="Buz&oacute;n de &Aacute;rea"
+                      [labelTemplate]="areaLabel"
+                      [optionTemplate]="areaOption">
                     </ngx-select>
+
+                    <ng-template #areaLabel let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
+                    <ng-template #areaOption let-item="item">
+                      <div [title]="item.id + '-' + item.description">
+                        {{ item.id }} - {{ item.description }}
+                      </div>
+                    </ng-template>
                   </form-field>
                 </div>
                 <div class="col-12 col-md-12 col-lg-12 col-xl-7">
@@ -218,7 +244,12 @@
             *dropdownMenu
             class="dropdown-menu"
             role="menu"
-            aria-labelledby="button-basic">
+            aria-labelledby="button-basic"
+            [attr.class]="
+              dataTable.count() < 9
+                ? 'dropdown-menu drop-scroll'
+                : 'dropdown-menu'
+            ">
             <li role="menuitem">
               <a class="dropdown-item" (click)="workFunction('work')"
                 >Trabajar</a
@@ -242,12 +273,14 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
+              <a
+                class="dropdown-item"
+                (click)="workFunction('updateObservations')"
                 >Observaciones</a
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item disabled" (click)="notAvailable()"
+              <a class="dropdown-item" (click)="workFunction('getIdentifier')"
                 >Volante</a
               >
             </li>
@@ -296,16 +329,30 @@
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item" (click)="onSavePaperwork()">Enviar</a>
+              <a class="dropdown-item" (click)="workFunction('onSavePaperwork')"
+                >Enviar</a
+              >
             </li>
-            <li role="menuitem">
-              <a class="dropdown-item" (click)="validDoc()"
+            <li role="menuitem" *ngIf="showValDoc">
+              <a class="dropdown-item" (click)="workFunction('validDoc')"
                 >Validar documentación</a
               >
             </li>
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="showPGRDocs">
+              <a class="dropdown-item" (click)="workFunction('viewDoc')"
+                >Ver documentación</a
+              >
+            </li>
+            <li role="menuitem" *ngIf="showScan">
               <a class="dropdown-item" (click)="workFunction('scanDocuments')"
                 >Escaneo</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('getNotificationsReport')"
+                >Reporte de notificaciones</a
               >
             </li>
           </ul>
@@ -316,6 +363,16 @@
       </div>
     </div>
     <div class="row pt-4 mb-3 mt-3">
+      <!-- <div class="col-md-12">
+        Validación de Filtros:
+        <ng-container *ngFor="let field of fields_WORK_MAILBOX_COLUMNS2">
+          <div class="{{ field.key }}-validation">
+            <div class="title-validation">
+              <strong>{{ field.title }}</strong>
+            </div>
+          </div>
+        </ng-container>
+      </div> -->
       <div class="col-md-12 table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
@@ -328,9 +385,9 @@
         </div>
       </div>
     </div>
-    <!-- <app-pagination
+    <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>-->
+      [totalItems]="totalItems"></app-pagination>
 
     <form [formGroup]="form" class="form-material">
       <div class="row justify-content-end">
@@ -357,9 +414,9 @@
           </div>
         </div>-->
         <div class="col-md-6">
-          <button class="btn btn-info btn-sm active mx-1" disabled>
+          <!--<button class="btn btn-info btn-sm active mx-1" disabled>
             Reporte de notificaciones
-          </button>
+          </button>-->
           <!--<button class="btn btn-info btn-sm active mx-1" disabled>
             Im&aacute;genes SIJ
           </button>-->

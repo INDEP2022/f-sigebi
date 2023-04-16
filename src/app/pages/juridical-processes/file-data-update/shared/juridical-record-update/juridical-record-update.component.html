@@ -1,4 +1,9 @@
-<form [formGroup]="fileDataUpdateForm" class="container-fluid form-material">
+<form-loader *ngIf="formLoading"></form-loader>
+<form
+  [formGroup]="fileDataUpdateForm"
+  class="container-fluid form-material"
+  *ngIf="!formLoading"
+  @OnShow>
   <div class="row">
     <div class="col-md-5">
       <div class="row">
@@ -498,7 +503,7 @@
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="openModalAreas()">
-            <i class="bx bx-list-plus bx-sm float-icon"></i>
+            <i class="bx bx-list-ul bx-sm float-icon"></i>
           </button>
         </div> -->
       </div>

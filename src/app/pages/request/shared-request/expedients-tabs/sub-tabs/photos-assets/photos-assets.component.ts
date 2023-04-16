@@ -3,10 +3,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
-import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -28,7 +29,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
   filterForm: ModelForm<any>;
-  warehouses = new DefaultSelect<IWarehouse>();
+  typeGoods = new DefaultSelect<IWarehouse>();
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -38,14 +39,14 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   idGood: number = 0;
   idWarehouse: number = 0;
   columns = LIST_ASSETS_COLUMNS;
-
+  formLoading: boolean = false;
+  allDataGood: IGood[] = [];
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
     private typeRelevantService: TypeRelevantService,
-    private warehouseService: WarehouseService,
     private requestservice: RequestService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
@@ -67,10 +68,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-eye text-primary"></i>',
+        editButtonContent: '<i class="fa fa-eye text-primary mx-2" > Ver</i>',
       },
       delete: {
-        deleteButtonContent: '<i class="fa fa-image text-info"></i>',
+        deleteButtonContent: '<i class="fa fa-image text-info mx-2"> Subir</i>',
       },
 
       selectMode: '',
@@ -78,8 +79,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     };
     this.getInfoRequest();
     this.initFilterForm();
+    this.getTypeRelevant(new ListParams());
     this.getGoodsRequest();
-    this.getWarehouseSelect(new ListParams());
   }
 
   getInfoRequest() {
@@ -92,9 +93,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   getGoodsRequest() {
     if (this.idRequest) {
-      this.loading = true;
-      this.paramsGoods.getValue()['filter.requestId'] = this.idRequest;
-      this.goodService.getAll(this.paramsGoods.getValue()).subscribe({
+      this.params.getValue()['filter.requestId'] = this.idRequest;
+      this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
@@ -110,19 +110,18 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction.description;
+            item['fractionId'] = fraction?.description;
           });
 
           Promise.all(filterGoodType).then(x => {
             this.paragraphs = data.data;
+            this.allDataGood = this.paragraphs;
             this.totalItems = data.count;
-            this.loading = false;
           });
         },
-        error: error => {
-          this.loading = false;
-        },
+        error: error => {},
       });
+    } else {
     }
   }
 
@@ -146,63 +145,63 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      warehouse: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
-  getWarehouseSelect(params: ListParams) {
-    if (params.text) {
-      alert('busca');
-    } else {
-      this.warehouseService.getAll(params).subscribe({
-        next: response => {
-          this.warehouses = new DefaultSelect(response.data, response.count);
-        },
-      });
-    }
+  getTypeRelevant(params: ListParams) {
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.typeGoods = new DefaultSelect(data.data, data.count);
+      },
+    });
   }
 
   filter() {
     const goodNumber = this.filterForm.get('management').value;
-    const warehouse = this.filterForm.get('warehouse').value;
+    const typeGood = this.filterForm.get('typeGood').value;
+
+    if (!goodNumber && !typeGood) {
+      this.getGoodsRequest();
+    }
+
     if (goodNumber) {
-      const filter = this.paragraphs.filter(good => {
+      const filter = this.allDataGood.filter(good => {
         return good.id == goodNumber;
       });
       if (filter.length > 0) {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningun bien', '');
+        this.paragraphs = filter;
+        this.onLoadToast('warning', 'No se encontro ningún bien', '');
       }
     }
 
-    if (warehouse) {
-      const filter = this.paragraphs.filter(good => {
-        return good.storeId == warehouse;
+    if (typeGood) {
+      const filter = this.allDataGood.filter(good => {
+        return good.goodTypeId == typeGood;
       });
 
       if (filter.length > 0) {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningun bien', '');
+        this.paragraphs = filter;
+        this.onLoadToast('warning', 'No se encontro ningún bien', '');
       }
     }
 
-    if (warehouse && goodNumber) {
-      const filter = this.paragraphs.filter(good => {
-        return good.storeId == warehouse && good.id == goodNumber;
+    if (typeGood && goodNumber) {
+      const filter = this.allDataGood.filter(good => {
+        return good.goodTypeId == typeGood && good.id == goodNumber;
       });
 
       if (filter.length > 0) {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningun bien', '');
+        this.onLoadToast('warning', 'No se encontro ningún bien', '');
       }
     }
   }
@@ -213,7 +212,27 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   uploadFiles(data: any) {
-    this.openModal(UploadFileComponent, data);
+    let loadingPhotos = 0;
+    const idRequest = this.idRequest;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      data,
+      idRequest,
+      callBack: (next: boolean) => {
+        if (next) {
+          this.formLoading = true;
+          loadingPhotos = loadingPhotos + 1;
+          setTimeout(() => {
+            this.getGoodsRequest();
+            this.formLoading = false;
+          }, 7000);
+          if (loadingPhotos == 1) {
+            this.onLoadToast('success', 'Imagen cargada correctamente', '');
+          }
+        }
+      },
+    };
+    this.modalService.show(UploadFileComponent, config);
   }
 
   openPhotos(data: any) {

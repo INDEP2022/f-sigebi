@@ -15,7 +15,10 @@
         </button>
       </div>
     </div>
-    <form [formGroup]="requestForm" class="form-material">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+    <form [formGroup]="requestForm" class="form-material" *ngIf="!formLoading">
       <div class="row pt-4">
         <div class="col-md-2">
           <form-check label="Prioridad" for="urgentPriority">
@@ -96,13 +99,13 @@
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"
-            control="publicMinistry"
-            (fetchItems)="getPublicMinister($event)"
-            [data]="selectMinPub"
-            [searchable]="true"
-            label="Ministerio P&uacute;blico"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
             bindLabel="description"
-            value="description">
+            value="keyId">
           </ngx-select>
         </div>
       </div>
@@ -114,13 +117,18 @@
             label="Nombre del Remitente">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="nameOfOwner" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="requestForm.get('court')" label="Juzgado">
-            <input type="text" class="form-control" formControlName="court" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="court" />
           </form-field>
         </div>
       </div>
@@ -132,13 +140,18 @@
             label="Cargo del Remitente">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="holderCharge" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="requestForm.get('crime')" label="Delito">
-            <input type="text" class="form-control" formControlName="crime" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="crime" />
           </form-field>
         </div>
       </div>
@@ -150,6 +163,7 @@
             label="Tel&eacute;fono del Remitente">
             <input
               type="text"
+              maxlength="13"
               class="form-control"
               formControlName="phoneOfOwner" />
           </form-field>
@@ -165,17 +179,6 @@
               [readOnly]="true" />
           </form-field>
         </div>
-
-        <!-- <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('trialType')"
-            label="Tipo Juicio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="trialType" />
-          </form-field>
-        </div> -->
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
@@ -184,6 +187,7 @@
             label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
+              maxlength="200"
               class="form-control"
               formControlName="indicatedTaxpayer" />
           </form-field>
@@ -203,23 +207,25 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Email del Remitente">
-            <input
-              type="email"
-              class="form-control"
-              formControlName="emailOfOwner" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('destinationManagement')"
-            label="Gesti&oacute;n de Destino">
+            [control]="requestForm.get('transferenceFile')"
+            label="Expediente Transferente/PAMA">
             <input
               type="text"
+              maxlength="1000"
               class="form-control"
-              formControlName="destinationManagement" />
+              formControlName="transferenceFile" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('protectNumber')"
+            label="N&uacute;mero Amparo">
+            <input
+              type="number"
+              maxlength="30"
+              class="form-control"
+              formControlName="protectNumber"
+              min="0" />
           </form-field>
         </div>
       </div>
@@ -229,10 +235,13 @@
           <form-field
             [control]="requestForm.get('transferEntNotes')"
             label="Notas Entidad Transferente">
-            <input
-              type="text"
+            <textarea
               class="form-control"
-              formControlName="transferEntNotes" />
+              maxlength="1500"
+              id="transferEntNotes"
+              rows="5"
+              formControlName="transferEntNotes">
+            </textarea>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -241,37 +250,15 @@
             label="Observaciones">
             <textarea
               class="form-control"
+              maxlength="1500"
               id="observations"
+              rows="5"
               formControlName="observations">
             </textarea>
           </form-field>
         </div>
       </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="originInfo"
-            (fetchItems)="getOriginInfo($event)"
-            [data]="selectOriginInfo"
-            [searchable]="false"
-            label="Procedencia Informaci&oacute;n"
-            bindLabel="description"
-            value="keyId">
-          </ngx-select>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('protectNumber')"
-            label="N&uacute;mero Amparo">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="protectNumber" />
-          </form-field>
-        </div>
-      </div>
+      <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
       <div class="row pt-4">
         <div class="col-md-4" *ngIf="transferenceNumber === 1">
           <form-field
@@ -315,6 +302,52 @@
             label="Causa Penal">
             <input type="text" class="form-control" formControlName="lawsuit" />
           </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+          <form-field
+            [control]="requestForm.get('domainExtinction')"
+            label="Extinci&oacute;n Dominio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domainExtinction" />
+          </form-field>
+        </div>
+      </div>
+      <!-- FIN TRANSFERENTES 1 Y 3 -->
+      <div class="row pt-4" *ngIf="transferenceNumber === 120">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('trialType')"
+            label="Tipo de Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="trialType" />
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="
+          requestForm.get('typeOfTransfer').value === 'FGR' ||
+          requestForm.get('typeOfTransfer').value === 'CE'
+        ">
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="publicMinistry"
+            (fetchItems)="getPublicMinister($event)"
+            [data]="selectMinPub"
+            [searchable]="true"
+            label="Ministerio P&uacute;blico"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
         </div>
       </div>
     </form>

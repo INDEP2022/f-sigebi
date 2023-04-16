@@ -147,10 +147,16 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getCoordinador(params: ListParams) {
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.pgrSubjectsRegisterService
       .getCoordinadorBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -160,7 +166,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.cordinators = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -168,10 +175,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -180,12 +184,19 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getStatusProcess(params: ListParams) {
-    params.take = 20;
+    params.take = 10;
+    params['orderColumn'] = 'id';
     params['order'] = 'DESC';
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.pgrSubjectsRegisterService
       .getStatusBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.processStatus = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -195,7 +206,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.processStatus = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -203,10 +215,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**

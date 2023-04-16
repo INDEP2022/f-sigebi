@@ -1,5 +1,5 @@
 export const NOTIFY_ASSETS_COLUMNS = {
-  status: {
+  statusId: {
     title: 'Estatus',
     type: 'string',
     sort: false,
@@ -9,39 +9,58 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  clarificationSAT: {
+  satClarify: {
     title: 'Aclaración SAT',
     type: 'string',
     sort: false,
   },
-  typeOfClarification: {
+  clarificationTypeId: {
     title: 'Tipo de Aclaración',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.clarifiNewsRejectId.clarificationId == 17)
+        return 'FALTA DOCUMENTACIÓN ANEXA';
+      if (row.clarifiNewsRejectId.clarificationId == 18)
+        return 'ERORR EN DOCUMENTACIÓN ANEXA';
+      if (row.clarifiNewsRejectId.clarificationId == null) return 'ERORR';
+      if ((row.clarifiNewsRejectId.clarificationId != 18, 17))
+        return 'ACLARACIÓN';
+      return row.clarifiNewsRejectId.clarificationId;
+    },
   },
-  clarification: {
+  id: {
     title: 'Aclaración',
     type: 'string',
     sort: false,
   },
-  typeClarification: {
+  clarificationInvoice: {
     title: 'Tipo Aclaración',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarifiNewsRejectId.clarificationId;
+    },
   },
-  dateClarification: {
+  clarifyDate: {
     title: 'Fecha Aclaración',
     type: 'string',
     sort: false,
   },
-  reason: {
+  clarifiNewsRejectId: {
     title: 'Motivo',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarifiNewsRejectId.reason;
+    },
   },
-  observation: {
-    title: 'observation',
+  clarifiNewsRejectId1: {
+    title: 'Observaciones',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarifiNewsRejectId.observations;
+    },
   },
 };

@@ -39,6 +39,10 @@ export class DelegationService
     return self.getAll(params);
   }
 
+  getAllFilterSelf(self?: DelegationService, params?: _Params) {
+    return self.get<IListResponse<IDelegation>>('delegation', params);
+  }
+
   getById(id: string | number): Observable<IDelegation> {
     return this.delegationRepository.getById(this.route, id);
   }

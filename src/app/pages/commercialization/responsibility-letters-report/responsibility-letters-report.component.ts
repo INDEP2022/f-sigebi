@@ -1,10 +1,29 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IFederative } from 'src/app/core/models/administrative-processes/siab-sami-interaction/federative.model';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IGood } from 'src/app/core/models/good/good.model';
+import { IComerLotsEG } from 'src/app/core/models/ms-parametercomer/parameter';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-responsibility-letters-report',
   templateUrl: './responsibility-letters-report.component.html',
@@ -14,36 +33,55 @@ export class ResponsibilityLettersReportComponent
   extends BasePage
   implements OnInit
 {
-  goodList: any;
+  goodList: IGood;
   dataGood: any;
+  totalItems: number = 0;
+  idEvent: number = 0;
+  idGood: number = null;
+  valid: boolean = false;
+  idDelegation: number = null;
+  description: string;
+  idEntidad: number = null;
+  selectedDelegation = new DefaultSelect<IDelegation>();
+  selectEvent = new DefaultSelect<IComerLotsEG>();
+  selectLot = new DefaultSelect<IComerLotsEG>();
+  entidad = new DefaultSelect<IFederative>();
+  idLot: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
     columns: {
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-        sort: false,
-      },
+      ...RELEASE_REPORT_COLUMNS,
     },
     noDataMessage: 'No se encontrarón registros',
   };
   setting2 = {
     ...this.settings,
     actions: false,
-    columns: { ...PAY_RECEIPT_REPORT_COLUMNS },
+    columns: { ...RELEASE_REPORT_COLUMNS },
   };
 
-  data = EXAMPLE_DATA;
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private reportService: ReportService) {
+  constructor(
+    private fb: FormBuilder,
+    private reportService: ReportService,
+    private comerLotService: ComerLotService,
+    private datePipe: DatePipe,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private delegationService: DelegationService,
+    private entFedService: EntFedService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGood();
+    this.getEvent(this.params.getValue());
+    this.getLot(this.params.getValue());
   }
 
   prepareForm() {
@@ -73,14 +111,95 @@ export class ResponsibilityLettersReportComponent
     });
   }
 
-  confirm(): void {
-    // console.log(this.reportForm.value);
-    // let params = { ...this.form.value };
-    // for (const key in params) {
-    //   if (params[key] === null) delete params[key];
-    // }
+  cleanForm(): void {
+    this.form.reset();
+  }
+
+  getDelegation(params?: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          this.idDelegation = data.id;
+          data.description = `${data.id}- ${data.description}`;
+          return data;
+        });
+
+        this.selectedDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectedDelegation = new DefaultSelect();
+      },
+    });
+  }
+
+  getEvent(params?: ListParams) {
+    params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
+    params['filter.event.id'] = `$eq:${this.idEvent}`;
+    this.comerLotService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.description = `${data.event.id}- ${data.event.statusvtaId}`;
+          this.valid = true;
+          return data;
+        });
+        this.selectEvent = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectEvent = new DefaultSelect();
+      },
+    });
+  }
+  getLot(params?: ListParams) {
+    params['filter.event.id'] = `$eq:${this.idEvent}`;
+    this.comerLotService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          this.idGood = data.goodNumber;
+          this.valid = true;
+          data.description = `${data.lotId}- ${data.description}`;
+          return data;
+        });
+        this.selectLot = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectLot = new DefaultSelect();
+      },
+    });
+  }
+  getEntidad(params?: ListParams) {
+    params['filter.id'] = `$eq:${this.idEntidad}`;
+    this.entFedService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          this.description = `${data.id} - ${data.otWorth}`;
+          console.log(data);
+          return data;
+        });
+        this.entidad = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.entidad = new DefaultSelect();
+      },
+    });
+  }
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
+    });
+    this.form.updateValueAndValidity();
+  }
+  getGood(search: any) {
+    this.comerLotService.findGood(search).subscribe({
+      next: data => {
+        this.goodList = data.data;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  Generar() {
     let params = {
-      DESTYPE: this.form.controls['evento'].value,
+      DESTYPE: this.idEvent,
       DOMICILIO: this.form.controls['domicilio'].value,
       ID_LOTE: this.form.controls['lote'].value,
       COLONIA: this.form.controls['colonia'].value,
@@ -92,75 +211,50 @@ export class ResponsibilityLettersReportComponent
       PARRAFO2: this.form.controls['parrafo2'].value,
       PARRAFO3: this.form.controls['parrafo3'].value,
     };
-    console.log(params);
-    // open the window
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
 
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERCARTARESP.pdf?DESTYPE=${params.DESTYPE}&DOMICILIO=${params.DOMICILIO}&ID_LOTE=${params.ID_LOTE}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&PARRAFO2=${params.PARRAFO2}&PARRAFO3=${params.PARRAFO3}`;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-    setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
-    }, 2000);
-
-    window.open(pdfurl, 'FCOMERCARTARESP.pdf');
-    this.loading = false;
-    this.cleanForm();
-  }
-  cleanForm(): void {
-    this.form.reset();
-  }
-  getGood() {
-    this.loading = true;
-    this.reportService.getGood().subscribe({
-      next: data => {
-        this.goodList = data;
-        this.dataGood = this.goodList.data;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+    this.siabService
+      .fetchReport('FCOMERCARTARESP', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {
+                if (data) {
+                  data.map((item: any) => {
+                    return item;
+                  });
+                }
+              },
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 }
 
-const EXAMPLE_DATA = [
-  {
-    description: 'Comercialización',
-  },
-  {
-    description: 'Siap',
-  },
-  {
-    description: 'Entrega de bienes',
-  },
-  {
-    description: 'Inmuebles',
-  },
-  {
-    description: 'Muebles',
-  },
-  {
-    description: 'Importaciones',
-  },
-  {
-    description: 'Enajenación',
-  },
-  {
-    description: 'Lícito de bienes',
-  },
-];
-export const PAY_RECEIPT_REPORT_COLUMNS = {
-  id: {
-    title: 'No. Bien',
-    sort: false,
+export const RELEASE_REPORT_COLUMNS = {
+  goodNumber: {
+    title: 'Bien',
+    type: 'text',
+    sort: true,
   },
   description: {
-    title: 'Descripción del Bien',
-    sort: false,
+    title: 'Descripcion',
+    type: 'text',
+    sort: true,
   },
-  numRegister: {
-    title: 'Numero de registro',
-    sort: false,
+  amount: {
+    title: 'Valor',
+    type: 'text',
+    sort: true,
   },
 };

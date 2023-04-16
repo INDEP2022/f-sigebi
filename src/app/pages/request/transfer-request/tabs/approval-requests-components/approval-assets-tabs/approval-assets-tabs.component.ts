@@ -58,7 +58,6 @@ export class ApprovalAssetsTabsComponent extends BasePage implements OnInit {
       selectMode: '',
       columns: LIST_ASSETS_COLUMNS,
     };
-    console.log(this.dataObject);
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -197,7 +196,5 @@ export class ApprovalAssetsTabsComponent extends BasePage implements OnInit {
       });
     });
   }
-  selectRow(event: any): void {
-    console.log(event);
-  }
+  selectRow(event: any): void {}
 }

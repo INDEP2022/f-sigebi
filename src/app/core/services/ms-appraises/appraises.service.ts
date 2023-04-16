@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { environment } from 'src/environments/environment';
+import { IGood } from '../../models/good/good.model';
 import { IAppraisalMonitor } from '../../models/ms-appraise/appraise-model';
 
 @Injectable({
@@ -13,6 +14,7 @@ import { IAppraisalMonitor } from '../../models/ms-appraise/appraise-model';
 })
 export class AppraisesService extends HttpService {
   private readonly endpoint: string = AppraiseEndpoints.BasePath;
+  public id_request: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(private http: HttpClient) {
@@ -44,5 +46,10 @@ export class AppraisesService extends HttpService {
       `/request-x-appraisal`,
       params
     );
+  }
+
+  getGoodsByAppraises(id: string | number): Observable<IListResponse<IGood>> {
+    const route = `appraisal-x-good?filter.noRequest=$eq:${id}`;
+    return this.get(route);
   }
 }

@@ -44,7 +44,7 @@ export const COLUMNS = {
   },
 
   numberSae: {
-    title: 'Número SAE',
+    title: 'Número INDEP',
     type: 'number',
     sort: false,
     editable: false,

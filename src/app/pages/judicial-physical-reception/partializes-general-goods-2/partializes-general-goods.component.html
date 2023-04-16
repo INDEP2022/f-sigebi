@@ -3,30 +3,21 @@
     <h5 class="title">Paricializaci&oacute;n de Bienes Generales 2</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <app-good-form></app-good-form>
+    <hr />
+    <form class="form-material mt-5" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+          <form-field
+            [control]="form.get('cantPar')"
+            label="Veces a Parcializar">
             <input
               type="number"
               class="form-control"
-              formControlName="noBien" />
+              formControlName="cantPar" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('descripcion')"
-            label="Descripci&oacute;n">
-            <textarea
-              rows="5"
-              class="form-control"
-              formControlName="descripcion"></textarea>
-          </form-field>
-        </div>
-      </div>
-      <div class="row">
+
         <div class="col-md-4">
           <form-field [control]="form.get('cantidad')" label="Cantidad">
             <input
@@ -37,100 +28,12 @@
         </div>
 
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('avaluo')"
-            label="Valor Aval&uacute;o">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="avaluo" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
-          <!-- <form-field [control]="form.get('estatus')" label="Estatus">
-            <ngx-select
-              control="estatus"
-              [form]="form"
-              [data]="itemsSelect"></ngx-select>
-          </form-field> -->
-          <app-select-form
-            [form]="form"
-            formField="estatus"
-            label="Estatus"
-            value="status"
-            [getListObservable]="goodStatusData"
-            [(params)]="paramsStatus"></app-select-form>
-          <!-- <app-goods-status-shared
-            [form]="form"
-            labelStatus="Estatus"
-            goodStatusField="estatus"></app-goods-status-shared> -->
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('expediente')"
-            label="No&#46; Expediente">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="expediente" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <app-goods-classification-shared
-            label="Clasificador"
-            goodClassificationField="clasificador"
-            [form]="form">
-          </app-goods-classification-shared>
-          <!-- <form-field [control]="form.get('clasificador')" label="Clasificador">
-            <ngx-select
-              control="clasificador"
-              [form]="form"
-              [data]="itemsSelect"></ngx-select>
-          </form-field> -->
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('moneda')" label="Moneda">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="moneda" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="form.get('importe')" label="Importe">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="importe" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field [control]="form.get('veces')" label="Veces a Parcializar">
-            <input type="number" class="form-control" formControlName="veces" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field [control]="form.get('cantidad2')" label="Cantidad">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="cantidad2" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
           <form-field [control]="form.get('saldo')" label="Saldo">
-            <input type="number" class="form-control" formControlName="saldo" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="saldo"
+              [readonly]="!isFirstCase" />
           </form-field>
         </div>
       </div>
@@ -139,26 +42,36 @@
           <div class="col-md-6">
             <div class="row">
               <div class="form-group">
-                <button class="mx-1" size="small" (click)="partialize()">
+                <button
+                  class="mx-1"
+                  size="small"
+                  (click)="partialize()"
+                  [disabled]="form.invalid || formGood.invalid">
                   Parcializa
                 </button>
                 <button class="mx-1" size="small" (click)="cleanBlock()">
                   Limpia Bloque
                 </button>
-                <button class="mx-1 my-1" size="small">Verifica Suma</button>
-                <button class="mx-1 my-1" size="small">Aplica</button>
+                <button class="mx-1" size="small" (click)="checkSum('V')">
+                  Verifica Suma
+                </button>
+                <button
+                  class="mx-1 my-1"
+                  size="small"
+                  [disabled]="form.invalid || formGood.invalid">
+                  Aplica
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="row pt-2 scroll-table">
-        <ng2-smart-table
-          class="col-md-12"
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
-      </div>
     </form>
+    <div class="row pt-2 scroll-table">
+      <ng2-smart-table
+        class="col-md-12"
+        [settings]="settingsGoods"
+        [source]="bienesPar"></ng2-smart-table>
+    </div>
   </div>
 </app-card>

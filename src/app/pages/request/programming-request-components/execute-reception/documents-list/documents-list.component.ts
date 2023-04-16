@@ -14,7 +14,10 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
@@ -35,7 +38,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   documentForm: FormGroup = new FormGroup({});
-  typeDocuments = new DefaultSelect();
+  typeDocuments: any = []; // = new DefaultSelect();
   tranferences = new DefaultSelect();
   regDelegations = new DefaultSelect();
   states = new DefaultSelect();
@@ -71,7 +74,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('lista documentos');
     this.prepareForm();
     this.request = this.parameter as IRequest;
     this.getTypeDocumentSelect(new ListParams());
@@ -99,8 +101,14 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       xidTransferente: [null],
       xtipoTransferencia: [null, [Validators.pattern(STRING_PATTERN)]],
       xidExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
-      xidSolicitud: [null],
-      xidBien: [null],
+      xidSolicitud: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(13)],
+      ],
+      xidBien: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(13)],
+      ],
       xnoOficio: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
@@ -109,7 +117,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
 
-      xidSIAB: [null],
+      xidSIAB: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
     });
   }
 
@@ -162,7 +170,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log(error);
         this.loading = false;
       },
     });
@@ -186,7 +193,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log(error);
         this.loading = false;
       },
     });
@@ -194,7 +200,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   //añadir documentos
   uploadFiles() {
-    this.openModal(DocumentFormComponent, this.typeDoc, this.parameter);
+    this.openModal(DocumentFormComponent, this.typeDoc, '', this.parameter);
   }
 
   getTypeDocument(id: string) {
@@ -220,7 +226,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     params['filter.ddescription'] = `$ilike:${params.text}`;
     this.wcontetService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typeDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typeDocuments = resp.data; //new DefaultSelect(resp.data, resp.length);
       },
     });
   }
@@ -253,8 +259,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   viewDocument(event: any) {
     const docName = event.data.dDocName;
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
-
-    console.log('documento nombre', docName);
 
     this.wcontetService.obtainFile(docName).subscribe(data => {
       let blob = this.dataURItoBlob(data);

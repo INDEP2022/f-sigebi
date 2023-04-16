@@ -10,6 +10,15 @@ export interface IMenuItem {
   isLayout?: boolean;
 }
 
+export interface ITreeItem {
+  id?: number;
+  label?: string;
+  description?: string;
+  parentId?: number;
+  subItems: ITreeItem[];
+  [others: string]: any;
+}
+
 /*export interface ISubItems {
   id?: number;
   label?: string;

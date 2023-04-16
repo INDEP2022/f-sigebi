@@ -269,6 +269,21 @@ export class GoodsCaptureComponent
   }
 
   async askMoreGoods() {
+    console.log({ tipoTramite: this.paperworkType });
+    if (
+      this.params.origin === FLYERS_REGISTRATION_CODE &&
+      (this.paperworkType == 2 || this.paperworkType == 3)
+    ) {
+      this.onLoadToast(
+        'success',
+        'Se agrego el bien al expediente correctamente',
+        ''
+      );
+      const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
+      this.globalVarService.updateGlobalVars(_global);
+      this.router.navigate(['/pages/documents-reception/flyers-registration']);
+      return;
+    }
     const response = await this.alertQuestion(
       'success',
       'Se agregó el bien al expediente',
@@ -361,8 +376,9 @@ export class GoodsCaptureComponent
 
   createWithTmpExp() {
     this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
-      next: (expedient: any) => {
-        this._expedienService.create(expedient).subscribe({
+      next: expedient => {
+        this.paperworkType = expedient.procedureType;
+        this._expedienService.create(expedient as any).subscribe({
           next: expedient => {
             this.goodToSave.fileNumber = `${expedient.id}`;
             this.updateNotifications(expedient).subscribe({
@@ -416,7 +432,16 @@ export class GoodsCaptureComponent
       departament,
       institutionNumber,
       subDelegation,
+      minpubNumber,
     } = tmpNotification;
+    console.log({
+      affair,
+      delegation,
+      departament,
+      institutionNumber,
+      subDelegation,
+      minpubNumber,
+    });
     const _notification = {
       ...tmpNotification,
       affair: affair?.id ?? null,
@@ -424,6 +449,7 @@ export class GoodsCaptureComponent
       departament: departament?.id ?? null,
       institutionNumber: institutionNumber?.id ?? null,
       subDelegation: subDelegation?.id ?? null,
+      minpubNumber: minpubNumber?.id ?? null,
     };
     return this.goodsCaptureService.createNotification(_notification).pipe(
       tap(notification => {

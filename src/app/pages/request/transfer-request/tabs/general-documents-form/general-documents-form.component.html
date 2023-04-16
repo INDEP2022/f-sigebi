@@ -25,7 +25,11 @@
     <div class="row pt-3">
       <div class="col-md-4">
         <form-field [control]="searchForm.get('id')" label="No&#46; solicitud">
-          <input type="text" class="form-control" formControlName="id" />
+          <input
+            type="number"
+            class="form-control"
+            formControlName="id"
+            min="0" />
         </form-field>
       </div>
 
@@ -60,7 +64,8 @@
           <input
             type="number"
             class="form-control"
-            formControlName="recordId" />
+            formControlName="recordId"
+            min="0" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -150,7 +155,6 @@
         </form-field>
       </div>
     </div>
-
     <div class="row pt-4">
       <div class="col-md-4">
         <form-field [control]="searchForm.get('transferenceId')">
@@ -165,12 +169,6 @@
           </ngx-select>
         </form-field>
       </div>
-
-      <div class="col-md-4">
-        <form-field [control]="searchForm.get('lawsuit')" label="Causa penal">
-          <input type="text" class="form-control" formControlName="lawsuit" />
-        </form-field>
-      </div>
       <div class="col-md-4">
         <form-field [control]="searchForm.get('stationId')">
           <ngx-select
@@ -182,6 +180,11 @@
             label="Emisora"
             (fetchItems)="getStationSelect($event)">
           </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('lawsuit')" label="Causa penal">
+          <input type="text" class="form-control" formControlName="lawsuit" />
         </form-field>
       </div>
     </div>

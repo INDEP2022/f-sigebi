@@ -34,6 +34,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
   isDocument: boolean = false;
   loadingGif = LOADING_GIF;
   error: boolean = false;
+  documentLength: number = 0;
   private mimeType: string = null;
   constructor(
     private fileBrowserService: FileBrowserService,
@@ -43,7 +44,9 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.isDocument);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['filename']) {
@@ -78,17 +81,19 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     if (!base64) {
       return;
     }
+    const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
+    this.documentLength = bytesSize / 1000;
     const ext =
       this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
     // TODO: Checar cuando vengan pdf, img etc
     this.imgSrc = ext.toLowerCase().includes('tif')
       ? this.getUrlTiff(base64)
       : this.getUrlDocument(base64);
-    this.imgSrc = this.getUrlTiff(base64);
     this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
   }
 
   getUrlTiff(base64: string) {
+    this.isDocument = false;
     const buffer = Buffer.from(base64, 'base64');
     const tiff = new Tiff({ buffer });
     const canvas: HTMLCanvasElement = tiff.toCanvas();
@@ -107,14 +112,24 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
       this.isDocument = true;
       this.imgDocument =
         'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/27_Pdf_File_Type_Adobe_logo_logos-512.png';
+    } else {
+      this.isDocument = false;
     }
+    console.log(this.isDocument);
     return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `data:${mimeType};base64,${base64}`
+      `data:${mimeType};base64, ${base64}`
     );
   }
 
   openDocumentsViewer() {
     if (this.loading || this.error) {
+      return;
+    }
+    if (this.documentLength > 1500) {
+      window.open(
+        (this.imgSrc as any).changingThisBreaksApplicationSecurity,
+        '_blank'
+      );
       return;
     }
     let config: ModalOptions = {

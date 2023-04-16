@@ -3,9 +3,13 @@
     <h5 class="modal-title">Fotograf&iacute;as de los bienes</h5>
   </div>
   <div body>
-    <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
+    <div class="row pt-3">
+      <div class="justify-content-end btn-toolbar">
+        <button
+          class="btn btn-primary active btn-sm"
+          (click)="updateInfoPhotos()">
+          Actualizar
+        </button>
       </div>
     </div>
     <div class="row pt-4">

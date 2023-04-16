@@ -1,58 +1,41 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { DatePipe } from '@angular/common';
 
 export const FINANCIAL_INFORMATION_COLUMNS1 = {
   idGoodNumber: {
-    title: 'Bien',
-    type: 'number',
+    title: 'Nombre',
+    type: 'text',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idGoodNumber.goodId;
-    },
-  },
-  description: {
-    title: 'Descripción',
-    type: 'string',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idGoodNumber.description;
-    },
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
   },
   value: {
     title: 'Valor',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idGoodNumber.quantity;
-    },
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.quantity;
+    // },
   },
 };
 
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
   idGoodNumber: {
-    title: 'Bien',
-    type: 'number',
-    sort: true,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.idGoodNumber.goodId;
+    title: 'Nombre',
+    type: 'text',
+    sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
     // },
   },
-  description: {
+  idInfoDate: {
     title: 'Descripción',
-    type: 'string',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idGoodNumber.description;
-    },
-  },
-  value: {
-    title: '',
-    sort: true,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
     },
   },
 };

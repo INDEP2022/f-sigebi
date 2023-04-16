@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -21,11 +21,13 @@ import {
 })
 export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
   form: FormGroup;
-  data1: any[] = [];
+  goodList: IGood[] = [];
   id: number = 0;
   good: IGood;
   description: string;
+  indicator: IFinancialIndicatorsW;
   valid: boolean = false;
+  table: boolean = false;
   indicatorsTotal: IFinancialIndicatorsW[] = [];
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
@@ -35,10 +37,11 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
   proficientOpinion: string;
   valuerOpinion: string;
   observations: string;
-  quantity: string;
+  quantity: number;
   date: string;
   settings1;
   settings2;
+  @Output() onConfirm = new EventEmitter<any>();
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
@@ -52,9 +55,11 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...INDICATORS_GOOD_COLUMNS1 },
     };
+
     this.settings2 = {
       ...TABLE_SETTINGS,
       ...this.settings,
+      // selectMode: 'multi',
       actions: false,
       columns: { ...INDICATORS_COLUMNS2 },
     };
@@ -78,22 +83,9 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
     this.goodService.getByIdNew(idGood, idGood).subscribe({
       next: response => {
         this.good = response;
-
-        // this.proficientOpinion = response.proficientOpinion;
-        // this.valuerOpinion = response.valuerOpinion;
-        // this.observations = response.observations;
-        // this.quantity = response.quantity;
-        this.description = response.description;
-        this.date = this.datePipe.transform(
-          response.dateOut,
-          'dd-MM-yyyy h:mm a'
-        );
-        this.form.controls['date'].setValue(this.date);
-        this.data1.push(this.good);
-        this.data1 = response;
-        console.log(this.data1);
-        console.log(this.description);
-        this.loadIndicator(response.goodId);
+        this.goodList.push(this.good);
+        console.log(this.goodList);
+        this.loadIndicator(idGood);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
@@ -106,8 +98,7 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
     this.indicatorPeerGoodService.findGood(search).subscribe({
       next: response => {
         this.indicatorsTotal = response.data;
-        // console.log(this.date);
-        // this.searchGoods(response.idGoodNumber);
+        this.table = true;
         this.totalItems2 = response.count;
       },
       error: err => {
@@ -121,20 +112,57 @@ export class IndicatorsPerGoodComponent extends BasePage implements OnInit {
     });
   }
 
-  onUserRowSelect(goodId: number) {
+  onUserRowSelect(good: any) {
     this.valid = true;
-    console.log(goodId);
+    this.id = good.data.idGoodNumber;
+    console.log(this.id);
+    // var formatted = new DatePipe('en-EN').transform(
+    //   good.data.idIndicatorDate,
+    //   'dd/MM/yyyy'
+    // );
+    let params: IFinancialIndicatorsW = {
+      idGoodNumber: good.data.idGoodNumber,
+      idIndicatorDate: good.data.idIndicatorDate,
+      idIndicatorNumber: this.getRandomInt(4),
+      registryNumber: good.data.registryNumber,
+      value: good.data.value,
+    };
+    this.indicator = params;
   }
 
   cleanForm() {
     this.form.reset();
-    this.form.value.noBien = '';
-    this.data1 = [];
+    this.goodList = [];
     this.indicatorsTotal = [];
-    this.form.value.noBien.reset();
+    this.form.value.noBien = 0;
   }
   confirm() {
     this.loading = false;
-    this.onLoadToast('success', '', 'Indicador copiado');
+    this.indicatorPeerGoodService.create(this.indicator).subscribe({
+      next: response => {
+        this.onLoadToast('success', '', 'Indicador copiado');
+        this.loadIndicator(this.indicator.idGoodNumber);
+        this.onConfirm.emit(true);
+        console.log(response);
+      },
+      error: err => {
+        this.onLoadToast('info', 'Opss..', 'Número de indicador ya existe');
+        return;
+      },
+    });
+  }
+  calculate() {
+    this.valid = true;
+    this.loading = false;
+    this.onLoadToast('success', '', 'calculo realizado satisfatoriamente');
+  }
+  getRandomInt(long: number) {
+    const cadena = '0123456789';
+    let alea = '';
+    for (let i = 0; i < long; i++) {
+      alea += cadena.charAt(Math.floor(Math.random() * cadena.length));
+    }
+    console.log(alea);
+    return alea;
   }
 }

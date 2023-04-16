@@ -1,10 +1,10 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Paricializaci&oacute;n de Bienes</h5>
+    <h5 class="title">Bienes Parcializados</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row justify-content-center">
+      <!-- <div class="row justify-content-center">
         <div class="col-md-4">
           <form-field [control]="form.get('noBien')" label="No&#46; Bien">
             <input
@@ -20,36 +20,64 @@
             <button class="mx-1" size="small">Exportar Excel</button>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <hr class="row" />
-      <h5 class="row justify-content-center">Bienes Parcializados</h5>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="scroll-table">
-            <ng2-smart-table
-              [settings]="settings"
-              [source]="data"></ng2-smart-table>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <h5>&Aacute;rbol Bienes Parcializados</h5>
-          <div class="dropdown">
-            <button
-              class="btn btn-info btn-sm active dropdown-toggle"
-              type="button"
-              id="dropdownMenuButton"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false">
-              HT PARCIALIZADOS
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="#">Node 1</a>
-              <a class="dropdown-item" href="#">Node 2</a>
+      <!-- <hr class="row" /> -->
+      <!-- <h5 class="row justify-content-center">Bienes Parcializados</h5> -->
+
+      <div class="col-md-7">
+        <div class="row pt-4">
+          <div class="col-md-12 p-0">
+            <div [class]="loading ? 'table-loading' : 'scroll-table'">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="data"
+                (userRowSelect)="select($event.data.goodNumber)">
+              </ng2-smart-table>
             </div>
           </div>
         </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+      <div class="col-md-5">
+        <h6>&Aacute;rbol Bienes Parcializados</h6>
+        <div [class]="loadingTree ? 'tree-loading' : 'scroll-tree'">
+          <app-tree-view [items]="items" label="noBien"></app-tree-view>
+        </div>
+        <div class="tree-description">
+          {{ descriptionSelectedTree }}
+        </div>
+
+        <!-- <ul
+            *ngIf="item"
+            class="metismenu list-unstyled"
+            id="side-menu"
+            #sideMenu>
+            <li>
+              <a
+                *ngIf="hasItems(item)"
+                href="javascript:void(0);"
+                class="is-parent has-arrow">
+                <span> {{ item.label }}</span>
+              </a>
+              <app-partializeds-tree
+                [hasChild]="hasItems(item)"
+                [menuChild]="item.subItems"></app-partializeds-tree>
+            </li>
+          </ul> -->
+
+        <!-- <div class="dropdown">
+            <button class="btn btn-info btn-sm active dropdown-toggle" type="button" id="dropdownMenuButton"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              HT PARCIALIZADOS
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item">Node 1</a>
+              <a class="dropdown-item">Node 2</a>
+            </div>
+          </div> -->
       </div>
     </form>
   </div>

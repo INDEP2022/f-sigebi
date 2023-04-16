@@ -20,7 +20,7 @@ export class SamplingDetailComponent implements OnInit {
     this.detailForm = this.fb.group({
       noSampling: ['10025'],
       nameWarehouse: [
-        'ALMACEN DE CONTRATO SAE/001425 (DELEGACION REGIONAL METROPOLITANA)',
+        'ALMACÉN DE CONTRATO SAE/001425 (DELEGACIÓN REGIONAL METROPOLITANA)',
       ],
       warehouseAddress: [null],
       delegaRegional: [null],
