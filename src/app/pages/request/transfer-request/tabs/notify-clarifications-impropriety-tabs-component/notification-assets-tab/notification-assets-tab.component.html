@@ -32,8 +32,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="paragraphs"
-            (userRowSelect)="listAssetsRowSelected($event)">
+            [source]="data"
+            (userRowSelect)="rowsSelected($event)">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
@@ -80,7 +80,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="paragraphs2"
+            [source]="notificationsList"
             (userRowSelect)="notifyAssetRowSelected($event)">
           </ng2-smart-table>
         </div>
