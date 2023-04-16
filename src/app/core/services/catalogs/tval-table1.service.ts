@@ -18,6 +18,7 @@ export class TvalTable1Service implements ICrudMethods<ITvaltable1> {
   private readonly route: string = ENDPOINT_LINKS.DinamicTablesName;
   private readonly route1: string = ENDPOINT_LINKS.DinamicTables;
   private readonly route2: string = ENDPOINT_LINKS.DinamicTable1;
+  private readonly route3: string = ENDPOINT_LINKS.DinamicTablesFind;
   constructor(
     private Tvaltablas1Repository: Repository<ITvaltable1>,
     private tavaltable1: Repository<TvalTable1Data>,
@@ -39,6 +40,9 @@ export class TvalTable1Service implements ICrudMethods<ITvaltable1> {
   }
   getById6(id: string | number): Observable<TvalTable1Data> {
     return this.tavaltable1.getById2(`${this.route2}/tableKey/423/otKey`, id);
+  }
+  getByIdFind(id: string | number): Observable<any> {
+    return this.tavaltable1.getById2(`${this.route3}`, id);
   }
   getById4(
     id: string | number,
