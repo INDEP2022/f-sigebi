@@ -1,9 +1,19 @@
 <p *ngIf="hidde === false">
   {{ inputText }}
-  <a (click)="seemore()" style="color: blue; cursor: pointer"> Ver mas</a>
+  <a
+    (click)="seemore()"
+    *ngIf="isLong === true"
+    style="color: blue; cursor: pointer">
+    Ver mas</a
+  >
 </p>
 
 <p *ngIf="hidde === true">
   {{ value }}
-  <a (click)="seemore()" style="color: blue; cursor: pointer"> Ver menos</a>
+  <a
+    (click)="seemore()"
+    *ngIf="isLong === true"
+    style="color: blue; cursor: pointer">
+    Ver menos</a
+  >
 </p>

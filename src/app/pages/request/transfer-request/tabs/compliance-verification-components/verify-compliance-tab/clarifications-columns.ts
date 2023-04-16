@@ -25,7 +25,7 @@ export const CLARIFICATIONS_COLUMNS = {
     sort: false,
   },
   observations: {
-    title: 'Observacion',
+    title: 'Observación',
     type: 'string',
     sort: false,
   },

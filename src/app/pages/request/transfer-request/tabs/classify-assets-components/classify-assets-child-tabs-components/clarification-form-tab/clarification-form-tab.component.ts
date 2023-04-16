@@ -49,14 +49,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.initForm();
     this.clarificationForm.get('clarificationType').valueChanges.subscribe({
       next: val => {
-        let type = this.clarificationTypes.find(type => type.value == val);
+        //let type = this.clarificationTypes.find(type => type.value == val);
         let params = new BehaviorSubject<FilterParams>(new FilterParams());
-        params.value.addFilter('type', type.id);
+        //params.value.addFilter('type', type.id);
+        params.value.addFilter('type', Number(val));
         const filter = params.getValue().getParams();
         this.getClarification(filter);
       },
     });
-    this.getClarification(new ListParams());
+    //this.getClarification(new ListParams());
   }
 
   initForm(): void {
@@ -77,6 +78,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     }
     if (this.docClarification != undefined) {
       this.edit = true;
+      this.getClarification(new ListParams());
 
       //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
