@@ -336,6 +336,7 @@ export class DocumentsReceptionRegisterComponent
         // this.formControls.expedientNumber.setValue(null);
         this.documentsReceptionForm.reset();
         this.flyerCopyRecipientForm.reset();
+        this.flyerCopyCppForm.reset();
         this.documentsReceptionForm.patchValue(
           DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
         );
@@ -359,6 +360,7 @@ export class DocumentsReceptionRegisterComponent
       this.docDataService.documentsReceptionRegisterForm = null;
       this.documentsReceptionForm.reset();
       this.flyerCopyRecipientForm.reset();
+      this.flyerCopyCppForm.reset();
       // this.documentsReceptionForm = this.fb.group(
       //   DOCUMENTS_RECEPTION_REGISTER_FORM
       // );
@@ -1304,6 +1306,8 @@ export class DocumentsReceptionRegisterComponent
   fillForm(notif: INotification) {
     this.docDataService.flyerEditMode = true;
     this.documentsReceptionForm.reset();
+    this.userRecipient.setValue(null);
+    this.userCpp.setValue(null);
     this.pgrGoodsProcessed = true;
     this.populatingForm = true;
     this.formLoading = true;

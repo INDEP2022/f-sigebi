@@ -49,7 +49,7 @@ export const WORK_BIENES_COLUMNS = {
     title: 'No. Bien Padre Menaje',
     sort: false,
   },
-  goodStatus: {
+  status: {
     title: 'Estatus',
     sort: false,
   },

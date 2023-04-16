@@ -62,6 +62,7 @@
             <ngx-select
               [form]="domicileForm"
               control="municipalityKey"
+              (change)="nullMunicipaly()"
               (fetchItems)="getMunicipaly($event)"
               [data]="selectMunicipe"
               label="Municipio"
