@@ -219,6 +219,7 @@ export class NotificationAssetsTabComponent
     };
     this.chatClarificationsService.getAllFilter(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.notificationsList = response.data;
         this.totalItems2 = response.count;
         this.loading2 = false;

@@ -21,6 +21,8 @@ export class NotifyAssetsImproprietyFormComponent
 {
   title: string = 'Aclaración';
   clarificationForm: ModelForm<any>;
+  procedenceForm: ModelForm<any>;
+
   clarification: any;
 
   //en el caso de que una aclaracion llege sin documentacion
@@ -59,10 +61,10 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       keyClarification: [
-        null,
+        ' ',
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
       ],
-      receiver: [
+      senderCharge: [
         null,
         [
           Validators.pattern(STRING_PATTERN),
@@ -70,7 +72,17 @@ export class NotifyAssetsImproprietyFormComponent
           Validators.maxLength(50),
         ],
       ],
-      senderCharge: [
+      captureUserArea: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+
+      emailNotifiSat: [
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+      ],
+      /*
+      receiver: [
         null,
         [
           Validators.pattern(STRING_PATTERN),
@@ -110,15 +122,7 @@ export class NotifyAssetsImproprietyFormComponent
       finalParagraph: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
-      captureUserArea: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
-      emailNotifiSat: [
-        null,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
-      ],
+      ], */
     });
   }
 
