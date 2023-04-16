@@ -5,10 +5,19 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
+import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
@@ -74,10 +83,14 @@ export class NotificationAssetsTabComponent
 {
   @Input() isSaving: boolean;
   @Input() process: string = '';
+  idRequest: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  columns: IGoodsResDev[] = [];
+  columnFilters: any = [];
   totalItems: number = 0;
-  listAssetsSelected: any[];
+  notifications: IGoodsResDev;
+  notificationsList: IChatClarifications[] = [];
 
   settings2: any;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -86,11 +99,20 @@ export class NotificationAssetsTabComponent
   notifyAssetsSelected: any[] = [];
   bsModalRef: BsModalRef;
 
+  loading1 = this.loading;
+  loading2 = this.loading;
+
   //verificar por el estado del campo transferente si es SAT O otro
   byInterconnection: boolean = false;
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private activatedRoute: ActivatedRoute,
+    private rejectedGoodService: RejectedGoodService,
+    private chatClarificationsService: ChatClarificationsService
+  ) {
     super();
+    this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -100,38 +122,109 @@ export class NotificationAssetsTabComponent
   }
 
   ngOnInit(): void {
+    console.log('ID de solicitud: ', this.idRequest);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: 'multi',
-      columns: LIST_ASSETS_COLUMN,
+      columns: { ...LIST_ASSETS_COLUMN },
     };
     this.settings2 = {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: 'multi',
-      columns: NOTIFY_ASSETS_COLUMNS,
+      columns: { ...NOTIFY_ASSETS_COLUMNS },
     };
 
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'enterExit':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getGoodsByRequest();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+      .subscribe(() => this.getGoodsByRequest());
   }
 
-  getData(): void {
-    this.paragraphs = data1;
+  getGoodsByRequest() {
+    this.loading1 = true;
+    const params1 = new ListParams();
+    params1['filter.applicationId'] = `$eq:${this.idRequest}`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+      ...params1,
+    };
+
+    this.rejectedGoodService.getAll(params).subscribe({
+      next: response => {
+        this.columns = response.data;
+        this.totalItems = response.count || 0;
+
+        this.data.load(this.columns);
+        this.data.refresh();
+        this.loading1 = false;
+      },
+      error: error => (this.loading1 = false),
+    });
   }
 
-  listAssetsRowSelected(event?: any): void {
-    this.listAssetsSelected = event.selected;
+  rowsSelected(event: any) {
+    const idNotify = { ...this.notifications };
+    this.notificationsList = [];
+    this.notifications = event.data;
+    console.log(idNotify.goodId);
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getClarificationsByGood(idNotify.goodId));
+  }
 
-    if (this.listAssetsSelected.length == 1) {
-      if (event.data.id === 1) {
-        this.paragraphs2 = data2;
-      } else {
-        this.paragraphs2 = [];
-      }
-    }
+  getClarificationsByGood(id: number) {
+    this.loading2 = true;
+    const params1 = new ListParams();
+    params1['filter.goodId'] = `$eq:${id}`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+      ...params1,
+    };
+    this.chatClarificationsService.getAllFilter(params).subscribe({
+      next: response => {
+        this.notificationsList = response.data;
+        this.totalItems2 = response.count;
+        this.loading2 = false;
+      },
+      error: error => (this.loading2 = false),
+    });
   }
 
   notifyAssetRowSelected(event: any) {
@@ -139,36 +232,7 @@ export class NotificationAssetsTabComponent
     this.notifyAssetsSelected = event.selected;
   }
 
-  verifyClarification() {
-    console.log(this.listAssetsSelected);
-
-    const valor = this.listAssetsSelected.filter(
-      x => x.statusAssets != 'ACLARADO'
-    );
-    console.log(valor);
-
-    if (valor.length === 0) {
-      this.alertQuestion(
-        undefined,
-        'Confirmación',
-        'Los bienes seleccionados regresaran al proceso de Verificar Cumplimiento',
-        'Aceptar'
-      ).then(question => {
-        if (question.isConfirmed) {
-        }
-      });
-    } else {
-      this.alertQuestion(
-        undefined,
-        'Error',
-        'Aun existe Bines por aclarar',
-        'Aceptar'
-      ).then(question => {
-        if (question.isConfirmed) {
-        }
-      });
-    }
-  }
+  verifyClarification() {}
 
   finishClarifiImpro() {
     let message =

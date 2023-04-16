@@ -9,12 +9,12 @@ const routes: Routes = [
     component: ScanRequestComponent,
   },
   {
-    path: ':P_NO_VOLANTE',
-    component: ScanRequestComponent,
-  },
-  {
     path: 'scan',
     component: ScanDocumentsComponent,
+  },
+  {
+    path: ':P_NO_VOLANTE',
+    component: ScanRequestComponent,
   },
 ];
 
