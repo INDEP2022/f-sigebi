@@ -24,7 +24,7 @@ export const VERIRY_COMPLIANCE_COLUMNS = {
     sort: false,
   },
   article: {
-    title: 'Acticulo',
+    title: 'Artículo',
     type: 'string',
     sort: false,
   },

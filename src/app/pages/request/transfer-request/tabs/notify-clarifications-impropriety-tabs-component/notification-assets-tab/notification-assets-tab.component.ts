@@ -15,6 +15,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
+import { IClarificationGoodsReject } from 'src/app/core/models/ms-chat-clarifications/clarification-goods-reject-notifi-model';
 import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -89,8 +90,10 @@ export class NotificationAssetsTabComponent
   columns: IGoodsResDev[] = [];
   columnFilters: any = [];
   totalItems: number = 0;
-  notifications: IGoodsResDev;
+  notificationsGoods: IGoodsResDev;
   notificationsList: IChatClarifications[] = [];
+  valuesNotifications: IChatClarifications;
+  prueba: IChatClarifications;
 
   settings2: any;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -199,9 +202,9 @@ export class NotificationAssetsTabComponent
   }
 
   rowsSelected(event: any) {
-    const idNotify = { ...this.notifications };
+    const idNotify = { ...this.notificationsGoods };
     this.notificationsList = [];
-    this.notifications = event.data;
+    this.notificationsGoods = event.data;
     console.log(idNotify.goodId);
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
@@ -229,8 +232,47 @@ export class NotificationAssetsTabComponent
   }
 
   notifyAssetRowSelected(event: any) {
+    this.valuesNotifications = event.data;
+    const refuseObj = { ...this.valuesNotifications };
+    console.log(
+      'Información de la notificación seleccionada ',
+      this.valuesNotifications
+    );
+    //let idRefuse = refuseObj.rejectNotificationId;
+    //console.log("ID del rechazo", idRefuse)
     //verificar cuantas aclaraciones se pueden seleccionar para aceptarlas
     this.notifyAssetsSelected = event.selected;
+  }
+
+  refuseClarification() {
+    const idNotify = { ...this.notificationsGoods };
+    const refuseObj = { ...this.valuesNotifications };
+    const idRefuse = refuseObj.clarifiNewsRejectId as IClarificationGoodsReject;
+    const idRechazo = idRefuse.rejectNotificationId;
+    console.log('ID del rechazo', idRefuse.rejectNotificationId);
+    let config: ModalOptions = {
+      initialState: {
+        idRechazo,
+        clarification: this.notifyAssetsSelected,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getClarificationsByGood(idNotify.goodId);
+          }
+        },
+      },
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalService.show(
+      RefuseClarificationModalComponent,
+      config
+    );
+    //ver si los datos se devolveran por el mismo modal o se guardan
+
+    /*  this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
+      console.log(res);
+      this.requestForm.get('receiUser').patchValue(res.user);
+    }); */
   }
 
   verifyClarification() {}
@@ -264,29 +306,6 @@ export class NotificationAssetsTabComponent
       return;
     }
     this.openModal();
-  }
-
-  refuseClarification() {
-    let config: ModalOptions = {
-      initialState: {
-        clarification: this.notifyAssetsSelected,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
-        },
-      },
-      class: 'modal-sm modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.bsModalRef = this.modalService.show(
-      RefuseClarificationModalComponent,
-      config
-    );
-    //ver si los datos se devolveran por el mismo modal o se guardan
-
-    /*  this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
-      console.log(res);
-      this.requestForm.get('receiUser').patchValue(res.user);
-    }); */
   }
 
   message(title: string, text: string) {

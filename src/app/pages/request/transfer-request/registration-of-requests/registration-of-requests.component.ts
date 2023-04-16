@@ -570,7 +570,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
+      'Asegúrese de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -944,11 +944,18 @@ export class RegistrationOfRequestsComponent
             if (this.verifyResp === true) {
               this.verifyComplianceMethod();
             } else {
-              this.onLoadToast(
-                'error',
-                'Error',
-                'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
-              );
+              Swal.fire({
+                title: 'Error',
+                text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#AD4766',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                if (result.isConfirmed) {
+                }
+              });
             }
             this.question = false;
           }, 400);

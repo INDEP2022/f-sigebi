@@ -641,7 +641,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
         if (next) {
           this.formLoading = true;
           setTimeout(() => {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.getDocuemntByGood();
             this.formLoading = false;
           }, 8000);
