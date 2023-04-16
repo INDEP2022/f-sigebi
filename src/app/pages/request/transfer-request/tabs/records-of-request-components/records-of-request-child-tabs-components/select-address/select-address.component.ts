@@ -3,7 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -21,7 +24,7 @@ import { SELECT_ADDRESS_COLUMN } from './select-address-columns';
 })
 export class SelectAddressComponent extends BasePage implements OnInit {
   paragraphs: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   title: string = 'Domicilios de la Solicitud';
   totalItems: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
@@ -51,20 +54,21 @@ export class SelectAddressComponent extends BasePage implements OnInit {
     };
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      var params = new ListParams();
-      params.page = data.inicio;
-      params.limit = data.pageSize;
-      this.getData(params);
+      //var params = new ListParams();
+      //params.page = data.inicio;
+      //params.limit = data.pageSize;
+      this.getData();
     });
   }
 
   //obtengo los nombres de los campos
-  getData(params: ListParams) {
+  getData() {
     if (this.request.id) {
       var array: any = [];
       this.loading = true;
-      params['filter.requestId'] = `$eq:${this.request.id}`;
-      this.goodDomiciliesService.getAll(params).subscribe({
+      this.params.value.addFilter('requestId', this.request.id);
+      const filter = this.params.getValue().getParams();
+      this.goodDomiciliesService.getAll(filter).subscribe({
         next: resp => {
           const result = resp.data.map(async (item: any) => {
             if (item.warehouseAlias) {
@@ -92,6 +96,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
 
           Promise.all(result).then(x => {
             this.paragraphs = resp.data;
+            this.totalItems = resp.count;
             this.loading = false;
           });
         },
@@ -158,7 +163,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
         regDelegationId: this.request.regionalDelegationId,
         callback: (next: boolean) => {
           if (next) {
-            this.getData(new ListParams());
+            this.getData();
           }
         },
       },
