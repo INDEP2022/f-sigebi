@@ -108,14 +108,14 @@ export class RequestRecordTabComponent
       this.bsPriorityDate = new Date(priDate);
     }
 
-    if (this.requestForm.controls['fileLeagueDate'].value != null) {
-      const ligDate = this.requestForm.controls['fileLeagueDate'].value;
-      this.bsligDate = new Date(ligDate);
-    }
-    if (this.requestForm.controls['verificationDateCump'].value != null) {
-      const priDate = this.requestForm.controls['verificationDateCump'].value;
-      this.bsverifiyDate = new Date(priDate);
-    }
+    // if (this.requestForm.controls['fileLeagueDate'].value != null) {
+    //   const ligDate = this.requestForm.controls['fileLeagueDate'].value;
+    //   this.bsligDate = new Date(ligDate);
+    // }
+    // if (this.requestForm.controls['verificationDateCump'].value != null) {
+    //   const priDate = this.requestForm.controls['verificationDateCump'].value;
+    //   this.bsverifiyDate = new Date(priDate);
+    // }
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
     // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
     //   if (this.requestForm.controls['priorityDate'].value !== null) {
@@ -213,8 +213,6 @@ export class RequestRecordTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
-      fileLeagueDate: [null],
-      verificationDateCump: [null],
     });
     this.requestForm.get('receptionDate').disable();
     this.requestForm.updateValueAndValidity();
