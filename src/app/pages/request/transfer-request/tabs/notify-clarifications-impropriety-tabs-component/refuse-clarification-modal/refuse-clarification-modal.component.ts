@@ -44,7 +44,7 @@ export class RefuseClarificationModalComponent
       answered: [' ', []],
       observations: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
       ],
     });
   }
