@@ -76,7 +76,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
   },
 
   delegationName: {
-    title: 'Delegación regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },

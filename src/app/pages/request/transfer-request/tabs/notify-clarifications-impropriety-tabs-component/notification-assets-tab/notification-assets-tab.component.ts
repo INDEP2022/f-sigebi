@@ -26,6 +26,53 @@ import { RefuseClarificationModalComponent } from '../refuse-clarification-modal
 import { LIST_ASSETS_COLUMN } from './list-assets-columns';
 import { NOTIFY_ASSETS_COLUMNS } from './notify-assets-columns';
 
+var data1 = [
+  {
+    id: 1,
+    statusAssets: 'ACLARADO',
+    management: '8901547',
+    assetDescription: 'RESEPTOR DE SEÑAL CON NUMERO DE SERIE: 123456',
+    unitMeasure: 'PIEZA',
+    physicalState: 'BUENO',
+    stateConsercation: 'BUENO',
+  },
+  {
+    id: 2,
+    statusAssets: 'SOLICITUD DE ACLARACIÓN',
+    management: '890122',
+    assetDescription: 'RESEPTOR DE SEÑAL CON NUMERO DE SERIE: 323211',
+    unitMeasure: 'PIEZA',
+    physicalState: 'BUENO',
+    stateConsercation: 'BUENO',
+  },
+];
+
+var data2 = [
+  {
+    status: 'NUEVO',
+    clarificationStatus: '',
+    clarificationSAT: '',
+    typeOfClarification: 'ACLARACIÓN',
+    clarification: 'ACLARACIÓN EN ESTADO FISICO',
+    typeClarification: '1',
+    dateClarification: '12/10/2022',
+    reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
+    observation: '',
+  },
+
+  {
+    status: 'NUEVA',
+    clarificationStatus: '',
+    clarificationSAT: '',
+    typeOfClarification: 'ACLARACIÓN',
+    clarification: 'ERROR EN LA DOCUMENTACIÓN ANEXA',
+    typeClarification: '2',
+    dateClarification: '12/10/2022',
+    reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
+    observation: '',
+  },
+];
+
 @Component({
   selector: 'app-notification-assets-tab',
   templateUrl: './notification-assets-tab.component.html',
@@ -175,6 +222,7 @@ export class NotificationAssetsTabComponent
     };
     this.chatClarificationsService.getAllFilter(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.notificationsList = response.data;
         this.totalItems2 = response.count;
         this.loading2 = false;
@@ -253,7 +301,6 @@ export class NotificationAssetsTabComponent
 
   acceptClariImpro() {
     console.log(this.notifyAssetsSelected.length);
-
     if (this.notifyAssetsSelected.length < 1) {
       this.message('Error', 'Seleccione almenos un registro!');
       return;
