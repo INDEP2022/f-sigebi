@@ -98,6 +98,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       },
       error => {
         this.loading = false;
+        this.onLoadToast('error', '', `${error.error.message}`);
         console.log(error);
       }
     );

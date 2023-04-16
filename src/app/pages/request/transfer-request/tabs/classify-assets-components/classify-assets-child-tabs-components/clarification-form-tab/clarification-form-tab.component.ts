@@ -65,7 +65,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       goodId: [null, [Validators.required]],
       clarificationType: [null, [Validators.required]],
       clarificationId: [null, [Validators.required]],
-      reason: [null, [Validators.pattern(STRING_PATTERN)]],
+      reason: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
       creationUser: [null],
       rejectionDate: [null],
     });
@@ -128,6 +131,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         this.modalRef.hide();
         this.modalRef.content.callback(true);
       },
+      error: error => {
+        this.loader.load = false;
+        console.log(error);
+        this.onLoadToast(
+          'error',
+          'Error',
+          `Error al guardar la aclaracion ${error.error.message}`
+        );
+      },
     });
   }
 
@@ -146,6 +158,15 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         complete: () => {
           this.modalRef.hide();
           this.modalRef.content.callback(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Error al guardar la aclaracion ${error.error.message}`
+          );
         },
       });
   }
