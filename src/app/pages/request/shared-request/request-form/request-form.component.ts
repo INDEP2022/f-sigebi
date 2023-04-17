@@ -96,8 +96,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
+          console.log('tranference');
           this.idTransferer = data;
           this.getStation(data);
+        } else {
+          this.requestForm.controls['stationId'].setValue(null);
+          this.requestForm.controls['authorityId'].setValue(null);
         }
       }
     );
@@ -105,6 +109,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
+          console.log('emisora');
           this.idStation = data;
           this.getAuthority(new ListParams());
         }
@@ -187,8 +192,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
-    delete params.limit;
-    delete params.page;
+    //delete params.limit;
+    //delete params.page;
     delete params['search'];
     delete params.text;
     this.stationService.getAll(params).subscribe({
@@ -209,8 +214,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
-    delete params.limit;
-    delete params.page;
+    //delete params.limit;
+    //delete params.page;
     delete params['search'];
     delete params.text;
     this.authorityService.getAll(params).subscribe({
@@ -230,8 +235,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    delete params.limit;
-    delete params.page;
+    // delete params.limit;
+    //delete params.page;
     delete params['search'];
     delete params.text;
     this.transferentService.getAll(params).subscribe({

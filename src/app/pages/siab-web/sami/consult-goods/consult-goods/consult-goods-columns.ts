@@ -148,7 +148,7 @@ export const CONSULTGOODS_COLUMNS = {
     sort: false,
   },
   viaReception: {
-    title: 'Via Recepción',
+    title: 'Vía Recepción',
     sort: false,
   },
   warehouseCode: {

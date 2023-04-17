@@ -420,6 +420,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getUserSelect(params: ListParams) {
+    params['sortBy'] = 'Nombre:ASC';
     this.externalExpedientService.getUsers(params).subscribe({
       next: (resp: any) => {
         const data = resp.ObtenUsuarioResult.Usuario;

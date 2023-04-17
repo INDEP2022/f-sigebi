@@ -41,7 +41,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   physicstateName: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },

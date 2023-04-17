@@ -1,0 +1,47 @@
+import { IClarificationGoodsReject } from './clarification-goods-reject-notifi-model';
+
+export interface IChatClarifications {
+  requestId?: number;
+  statusId?: number | null;
+  userCaptures?: string | null;
+  userAreaCaptures?: string | null;
+  satJobKey?: string | null;
+  registryNumber?: number | null;
+  clarificationTypeId?: number | null;
+  requestSae?: string | null;
+  requestDate?: Date | null;
+  webMail?: string | null;
+  satClarify?: string | null;
+  clarifyDate?: Date | null;
+  satUniqueKey?: string | null;
+  satTranferentEntity?: number | null;
+  flyerNumber?: number | null;
+  xmlJobClarification?: string | null;
+  jobClarificationKey?: string | null;
+  id?: number;
+  process?: string | null;
+  goodId?: number;
+  jobType?: string | null;
+  clarificationOrigin?: string | null;
+  senderUser?: string | null;
+  senderName?: string | null;
+  addresseeName?: string | null;
+  ciudad?: string | null;
+  userCreation?: string | null;
+  creationDate?: Date | null;
+  userModification?: string | null;
+  modificationDate?: Date | null;
+  version?: number | null;
+  interRequestId?: number | null;
+  errorMessage?: string | null;
+  clarificationStatus?: string | null;
+  uniqueKey?: string | null;
+  xmlClarificationJobResp?: string | null;
+  interconnectionMessage?: string | null;
+  clarifiNewsRejectId?: number | IClarificationGoodsReject;
+  respDocId?: string | null;
+  jobDate?: Date | null;
+  clarificationInvoice?: string | null;
+  flowId?: number | null;
+  nbOrigin?: string | null;
+}

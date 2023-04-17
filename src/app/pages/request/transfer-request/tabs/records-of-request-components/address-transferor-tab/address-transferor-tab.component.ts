@@ -112,10 +112,16 @@ export class AddressTransferorTabComponent
         this.requestObject.keyStateOfRepublic
       );
     }
+
+    this.domicileForm.get('municipalityKey').valueChanges.subscribe(res => {
+      if (res === null) {
+      }
+    });
   }
 
   initForm() {
     this.domicileForm = this.fb.group({
+      id: [null],
       warehouseAlias: [
         'DOMICILIO TRANSFERENTE',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
@@ -232,12 +238,15 @@ export class AddressTransferorTabComponent
       return;
     }
     // debugger;
+    params['sortBy'] = 'municipality:ASC';
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
-    params['filter.nameMunicipality'] = `$ilike:${params.text}`;
+    params['filter.municipality'] = `$ilike:${params.text}`;
     // params.limit = 9;
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        if (this.municipalityId !== 0 && this.municipalityId !== null) {
+        this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
+
+        /*    if (this.municipalityId !== 0 && this.municipalityId !== null) {
           if (this.combineMunicipalityId) {
             const newParams = {
               ...params,
@@ -281,9 +290,18 @@ export class AddressTransferorTabComponent
           this.domicileForm.controls['municipalityKey'].setValue(
             this.municipalityId
           );
-        }
+        } */
       },
     });
+  }
+
+  nullMunicipaly() {
+    if (this.domicileForm.get('municipalityKey').value === null) {
+      this.getMunicipaly(
+        new ListParams(),
+        this.domicileForm.get('statusKey').value
+      );
+    }
   }
 
   //obtener la colonia
@@ -361,13 +379,17 @@ export class AddressTransferorTabComponent
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`; //estado de la republica
     this.goodsinvService.getAllCodePostalByFilter(params).subscribe({
       next: resp => {
-        if (this.code !== '0' && this.code !== null) {
+        if (this.code !== '' && this.code !== null) {
           if (this.combineCode) {
             const newParams = {
               ...params,
               'filter.postalCode': `$eq:${this.code}`,
             };
-            this.goodsinvService.getAllCodePostalByFilter(newParams).subscribe({
+            this.selectCP = new DefaultSelect(resp.data, resp.count);
+            this.domicileForm
+              .get('code')
+              .setValue(this.selectCP.data[0]['postalCode']);
+            /* this.goodsinvService.getAllCodePostalByFilter(newParams).subscribe({
               next: response => {
                 const newData = resp.data.filter(
                   (item: any) => item.postalCode + '' !== this.code + ''
@@ -381,7 +403,7 @@ export class AddressTransferorTabComponent
               error: err => {
                 this.selectCP = new DefaultSelect(resp.data, resp.count);
               },
-            });
+            }); */
           } else {
             this.selectCP = new DefaultSelect(
               resp.data.filter(
@@ -433,7 +455,14 @@ export class AddressTransferorTabComponent
       domicile.requestId = this.requestObject.id;
       domicile.regionalDelegationId = this.requestObject.regionalDelegationId;
     }
+    if (!domicile.id) {
+      this.createAddress(domicile);
+    } else {
+      this.updateAddress(domicile);
+    }
+  }
 
+  createAddress(domicile: any) {
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {
         if (data.id != null) {
@@ -452,6 +481,36 @@ export class AddressTransferorTabComponent
             'error',
             'Error al guardar',
             'no se puedo guardar el domicilio'
+          );
+          return;
+        }
+      },
+      error => {
+        this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
+        this.message('error', 'Error', error.getMessage());
+      }
+    );
+  }
+
+  updateAddress(domicile: any) {
+    this.goodDomicileService.update(domicile.id, domicile).subscribe(
+      (data: any) => {
+        if (data.id != null) {
+          this.message(
+            'success',
+            'Guadado',
+            'El domicio se actualizó correctamente'
+          );
+
+          if (this.isNewAddress === true) {
+            this.modelRef.content.callback(true);
+            this.close();
+          }
+        } else {
+          this.message(
+            'error',
+            'Error al actualizár',
+            'no se puedo actualizár el domicilio'
           );
           return;
         }
@@ -492,10 +551,11 @@ export class AddressTransferorTabComponent
       (data: any) => {
         if (data === null) {
           this.combineLocalityId = true;
+          this.domicileForm.get('code').setValue(null);
         }
         this.localityId = data;
-        this.selectCP = new DefaultSelect([]);
-        this.domicileForm.get('code').setValue(null);
+        /* this.selectCP = new DefaultSelect([]); */
+        /* this.domicileForm.get('code').setValue(null); */
         // console.log(this.localityId);
         this.getCP(new ListParams());
       }
