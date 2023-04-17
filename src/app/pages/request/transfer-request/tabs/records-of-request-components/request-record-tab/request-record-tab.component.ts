@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -6,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -15,6 +14,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -32,14 +32,19 @@ export class RequestRecordTabComponent
   implements OnInit, OnChanges
 {
   @Input() requestForm: ModelForm<IRequest>;
+  requiredFieldText: 'Campo requerido';
+  submitted = false;
   bsReceptionValue = new Date();
   bsPaperValue: any;
   bsPriorityDate: any;
+  bsligDate: any;
+  bsverifiyDate: any;
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
   selectMinPub = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
+  transf: boolean = false;
   priority: boolean = false;
   priorityString: string = 'N';
   transferenceNumber: number = 0;
@@ -52,8 +57,7 @@ export class RequestRecordTabComponent
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
-    private minPub: MinPubService,
-    private datePipe: DatePipe
+    private minPub: MinPubService
   ) {
     super();
   }
@@ -72,6 +76,10 @@ export class RequestRecordTabComponent
       const paperDate = this.requestForm.controls['paperDate'].value;
       this.bsPaperValue = new Date(paperDate);
     }
+
+    // if (this.requestForm.controls['receptionDate'].value != null) {
+    //    this.bsPaperValue = new Date();
+    // }
 
     //establecer el asunto
     if (this.requestForm.controls['affair'].value != null) {
@@ -95,12 +103,22 @@ export class RequestRecordTabComponent
       this.transferenceNumber = Number(
         this.requestForm.controls['transferenceId'].value
       );
+      console.log(this.transferenceNumber);
     }
 
     if (this.requestForm.controls['urgentPriority'].value === 'Y') {
       const priDate = this.requestForm.controls['priorityDate'].value;
       this.bsPriorityDate = new Date(priDate);
     }
+
+    // if (this.requestForm.controls['fileLeagueDate'].value != null) {
+    //   const ligDate = this.requestForm.controls['fileLeagueDate'].value;
+    //   this.bsligDate = new Date(ligDate);
+    // }
+    // if (this.requestForm.controls['verificationDateCump'].value != null) {
+    //   const priDate = this.requestForm.controls['verificationDateCump'].value;
+    //   this.bsverifiyDate = new Date(priDate);
+    // }
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
     // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
     //   if (this.requestForm.controls['priorityDate'].value !== null) {
@@ -127,7 +145,7 @@ export class RequestRecordTabComponent
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [null],
-      paperDate: [null], //requerido
+      paperDate: [null, [Validators.required]], //requerido
       typeRecord: [null],
       publicMinistry: [
         null,
@@ -176,14 +194,21 @@ export class RequestRecordTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
       transferenceFile: [null, [Validators.pattern(STRING_PATTERN)]],
-      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       circumstantialRecord: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       lawsuit: [
         null,
@@ -195,12 +220,12 @@ export class RequestRecordTabComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(30)],
       ],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
-    this.requestForm.updateValueAndValidity();
+    // this.requestForm.updateValueAndValidity();
   }
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
@@ -253,7 +278,29 @@ export class RequestRecordTabComponent
       this.requestForm.controls['paperDate'].setValue(d1);
     }
   }
+  changeVerEvent(event: Date) {
+    this.bsverifiyDate = event ? event : this.bsverifiyDate;
 
+    if (this.bsverifiyDate) {
+      //TODO: VERIFICAR LA FECHA
+      let date = new Date(this.bsverifiyDate);
+      var dateIso = date.toISOString();
+      const ver = this.bsverifiyDate.toISOString();
+      this.requestForm.controls['verificationDateCump'].setValue(ver);
+    }
+  }
+
+  changeLigEvent(event: Date) {
+    this.bsligDate = event ? event : this.bsligDate;
+
+    if (this.bsligDate) {
+      //TODO: VERIFICAR LA FECHA
+      let date = new Date(this.bsligDate);
+      var dateIso = date.toISOString();
+      const lig = this.bsligDate.toISOString();
+      this.requestForm.controls['fileLeagueDate'].setValue(lig);
+    }
+  }
   changePriorityDateEvent(event: Date) {
     this.bsPriorityDate = event ? event : this.bsPriorityDate;
 
@@ -276,8 +323,10 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
-    const request = this.requestForm.getRawValue() as IRequest;
     this.loading = true;
+    this.submitted = true;
+    // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
+    const request = this.requestForm.getRawValue() as IRequest;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
@@ -321,5 +370,11 @@ export class RequestRecordTabComponent
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
+    });
+    this.requestForm.updateValueAndValidity();
   }
 }
