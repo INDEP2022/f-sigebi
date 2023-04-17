@@ -1,0 +1,27 @@
+<ul class="sub-menu" aria-expanded="false" *ngIf="hasChild">
+  <li *ngFor="let subitem of menuChild">
+    <a
+      *ngIf="!hasItems(subitem)"
+      href="javascript:void(0);"
+      class="side-nav-link-ref"
+      [attr.data-parent]="subitem.parentId"
+      (click)="selectItem(subitem)"
+      routerLinkActive="active">
+      {{ subitem[label] }}
+    </a>
+    <ng-container *ngIf="hasItems(subitem)">
+      <a
+        href="javascript:void(0);"
+        class="side-nav-link-a-ref has-arrow"
+        [attr.data-parent]="subitem.parentId">
+        <span> {{ subitem[label] }}</span>
+      </a>
+      <i (click)="selectItem(subitem)" class="bx bx-detail"></i>
+    </ng-container>
+
+    <app-tree-node
+      [hasChild]="hasItems(subitem)"
+      [menuChild]="subitem.subItems"
+      [label]="label"></app-tree-node>
+  </li>
+</ul>

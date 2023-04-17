@@ -24,6 +24,10 @@ export class GoodSssubtypeService
     return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
   }
 
+  getAll2(params: string) {
+    return this.get<IListResponse<IGoodSssubtype>>('good-sssubtype', params);
+  }
+
   getById(id: string | number): Observable<IGoodSssubtype> {
     return this.goodSssubtypeRepository.getById(this.route, id);
   }
@@ -53,5 +57,11 @@ export class GoodSssubtypeService
     console.log(body);
     const route = 'good-sssubtype/search-by-type';
     return this.post<IListResponse<IGoodSssubtype>>(route, body, params);
+  }
+
+  getClasification(
+    id: string | number
+  ): Observable<IListResponse<IGoodSssubtype>> {
+    return this.goodSssubtypeRepository.getClassif(id);
   }
 }

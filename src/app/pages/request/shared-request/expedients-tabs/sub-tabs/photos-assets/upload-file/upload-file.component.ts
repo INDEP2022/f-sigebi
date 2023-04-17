@@ -13,7 +13,7 @@ import { IUploadEvent } from 'src/app/utils/file-upload/components/file-upload.c
 })
 export class UploadFileComponent extends BasePage implements OnInit {
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef = null;
-  information: any;
+  data: any;
   fileToUpload: File | null = null;
   typeReport: string = '';
   sizeMessage: boolean = false;
@@ -32,7 +32,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idGood = this.information.id;
+    this.idGood = this.data.id;
     this.infoRequest();
     this.obtainDate();
   }
@@ -75,10 +75,11 @@ export class UploadFileComponent extends BasePage implements OnInit {
           fileEvent.file
         )
         .subscribe({
-          next: () => {
+          next: data => {
+            this.bsModalRef.content.callBack(true);
             this.close();
-            this.onLoadToast('success', 'Imagen guardada correctamente', '');
           },
+          error: error => {},
         });
     });
   }

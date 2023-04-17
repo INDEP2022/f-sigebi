@@ -22,6 +22,7 @@ import {
   IGoodProgrammingSelect,
 } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -185,7 +186,6 @@ export class PerformProgrammingFormComponent
   //Información de el usuario logeado//
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe(data => {
-      console.log('usuario logeado', data);
       this.userInfo = data;
     });
   }
@@ -304,7 +304,7 @@ export class PerformProgrammingFormComponent
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Para crear un almacén necesitas seleccionar una delegación regional'
+        'Para crear un almacén necesitas seleccionar una Delegación Regional'
       );
     }
   }
@@ -336,14 +336,17 @@ export class PerformProgrammingFormComponent
     this.paramsUsers.getValue()['filter.programmingId'] = this.idProgramming;
     this.programmingService
       .getUsersProgramming(this.paramsUsers.getValue())
-      .subscribe(data => {
-        const userData = data.data.map(items => {
-          console.log('items', items.charge.description);
-          items.userCharge = items.charge?.description;
-          console.log('userData', items);
-        });
-        //this.usersToProgramming.load(data.data);
-        this.totalItemsUsers = data.count;
+      .subscribe({
+        next: response => {
+          const userData = response.data.map(items => {
+            items.userCharge = items.charge?.description;
+            return items;
+          });
+
+          this.usersToProgramming.load(userData);
+          this.totalItemsUsers = response.count;
+        },
+        error: error => {},
       });
   }
 
@@ -863,21 +866,18 @@ export class PerformProgrammingFormComponent
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
 
-  removeGoodTrans(item: IGoodProgrammingSelect) {
+  removeGoodTrans(item: IGood) {
     this.alertQuestion(
       'warning',
       'Confirmación',
       '¿Desea eliminar el bien de transportable?'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('item', item);
-
+        this.removeStatusGood(item);
         const formData: Object = {
           programmingId: this.idProgramming,
           goodId: item.id,
         };
-
-        console.log('mee', formData);
         this.programmingGoodService
           .deleteGoodProgramming(formData)
           .subscribe(() => {
@@ -888,6 +888,20 @@ export class PerformProgrammingFormComponent
             );
           });
       }
+    });
+  }
+
+  removeStatusGood(good: IGood) {
+    const _good: Object = {
+      id: good.id,
+      programmationStatus: null,
+    };
+    this.goodService.updateByBody(_good).subscribe({
+      next: res => {
+        this.goodsInfoTrans = [];
+        this.getGoodsProgTrans();
+      },
+      error: error => {},
     });
   }
 
@@ -950,17 +964,18 @@ export class PerformProgrammingFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         console.log('user', user);
-        const userObject: Object = {
+        let userObject: Object = {
           programmingId: Number(user.programmingId),
           email: user.email,
         };
-
-        this.programmingService
-          .deleteUserProgramming(userObject)
-          .subscribe(() => {
+        console.log(userObject);
+        this.programmingService.deleteUserProgramming(userObject).subscribe({
+          next: () => {
             this.onLoadToast('success', 'Usuario eliminado correctamente', '');
             this.showUsersProgramming();
-          });
+          },
+          error: error => {},
+        });
       }
     });
   }

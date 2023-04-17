@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   SearchFilter,
@@ -12,6 +14,11 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
+import {
+  IReport,
+  SiabService,
+} from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -34,27 +41,48 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   idFolio: number;
   docs: IListResponse<IDocuments>;
   notify: IListResponse<INotification>;
+  delegation: number;
+  subDelegation: number;
+  departament: number;
 
   constructor(
     private fb: FormBuilder,
     private notificationServ: NotificationService,
     private documentServ: DocumentsService,
-    private token: AuthService,
+    private jasperService: SiabService,
     private modalService: BsModalService,
     private datePipe: DatePipe,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private receptionService: DocReceptionRegisterService
   ) {
     super();
+    const params = new FilterParams();
+    const token = this.authService.decodeToken();
+    params.addFilter('user', token.preferred_username);
+    this.receptionService.getUsersSegAreas(params.getParams()).subscribe({
+      next: response => {
+        if (response.data.length > 0) {
+          this.subDelegation = response.data[0].subdelegationNumber;
+          this.delegation = response.data[0].delegationNumber;
+          this.departament = response.data[0].departamentNumber;
+        }
+      },
+      error: () => {},
+    });
   }
 
   ngOnInit(): void {
     this.createForm();
     const param = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
-    if (param) {
+    if (param && param != 'null') {
       this.filterParams
         .getValue()
         .addFilter('wheelNumber', param, SearchFilter.EQ);
       this.getNotfications();
+    } else if (param === 'null') {
+      this.onLoadToast('error', `Parámetro no_volante no es válido`, '');
     }
   }
 
@@ -71,6 +99,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } = this.formNotification.value;
 
     this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = 1;
 
     if (typeof receiptDate == 'object' && receiptDate) {
       const convertDate = this.datePipe.transform(receiptDate, 'yyyy-MM-dd');
@@ -214,10 +243,19 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.get('id').disable();
         },
         error: err => {
-          this.loading = false;
+          if (err.status === 500) {
+            this.onLoadToast(
+              'warning',
+              'Error del Servidor',
+              'No se pudo obtener todos los datos relacionados'
+            );
+          }
+
           if (err.status === 400) {
             this.countDoc = 0;
           }
+
+          this.loading = false;
         },
       });
   }
@@ -226,8 +264,20 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     const valid = await this.validations();
     if (valid) {
       const { expedientNumber, wheelNumber } = this.formNotification.value;
+
+      const token = this.authService.decodeToken();
+      let userId = token.preferred_username;
+
       this.form.get('numberProceedings').patchValue(expedientNumber);
       this.form.get('flyerNumber').patchValue(wheelNumber);
+      this.form.get('userRequestsScan').patchValue(userId.toUpperCase());
+      this.form.get('scanRequestDate').patchValue(new Date());
+      this.form.get('numberDelegationRequested').patchValue(this.delegation);
+      this.form
+        .get('numberSubdelegationRequests')
+        .patchValue(this.subDelegation);
+      this.form.get('numberDepartmentRequest').patchValue(this.departament);
+
       this.documentServ.create(this.form.value).subscribe({
         next: resp => {
           this.onLoadToast(
@@ -279,7 +329,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.onLoadToast('error', 'Ya ha sido solicitado ese doumento', '');
+      this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
       return false;
     }
 
@@ -308,6 +358,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       keySeparator: [null],
       flyerNumber: [null, Validators.required],
       numberProceedings: [null, Validators.required],
+      scanRequestDate: [null],
+      userRequestsScan: [null],
+      numberDelegationRequested: [null],
+      numberSubdelegationRequests: [null],
+      numberDepartmentRequest: [null],
     });
   }
 
@@ -348,12 +403,31 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
-      //en espera del reporte TODO:
-      const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERGENSOLICDIGIT.pdf?PARAMFORM=NO&PN_FOLIO=${this.idFolio}`;
-
-      window.open(
-        'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf'
-      );
+      this.onLoadToast('success', 'Generando reporte...', '');
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.idFolio })
+          .pipe(
+            tap(response => {
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
     } else {
       this.onLoadToast(
         'error',
@@ -361,6 +435,29 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         ''
       );
     }
+  }
+
+  readFile(file: IReport) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.data);
+    reader.onload = _event => {
+      this.openPrevPdf(reader.result as string);
+    };
+  }
+
+  openPrevPdf(pdfurl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   callScan() {

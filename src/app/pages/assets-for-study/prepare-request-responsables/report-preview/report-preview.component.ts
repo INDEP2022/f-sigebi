@@ -46,7 +46,7 @@ export class ReportPreviewComponent implements OnInit {
     Swal.fire({
       icon: undefined,
       title: 'Confimación',
-      text: '¿Está seguro a enviar la información a firmar?',
+      text: '¿Está seguro de enviar la información a firmar?',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',

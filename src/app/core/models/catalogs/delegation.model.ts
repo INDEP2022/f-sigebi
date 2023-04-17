@@ -2,6 +2,7 @@ import { IZoneGeographic } from './zone-geographic.model';
 
 export interface IDelegation {
   id?: number;
+  stateKey?: number;
   etapaEdo?: number;
   cveState?: string;
   description?: string;

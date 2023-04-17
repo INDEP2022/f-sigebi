@@ -285,7 +285,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log('Response: ', response);
-
           this.loading = false;
           this.tasks = response.data;
           this.totalItems = response.count;

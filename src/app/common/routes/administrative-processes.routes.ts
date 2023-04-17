@@ -256,6 +256,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Regularización jurídica',
         link: '/pages/administrative-processes/legal-regularization',
       },
+      {
+        label: 'Cambio de Clasificación del Bien',
+        link: '/pages/administrative-processes/change-of-good-classification',
+      },
       /**
        * END ALEXANDER
        **/

@@ -62,8 +62,14 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.searchForm = this.fb.group({
-      code: [null],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      code: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       typeRelevant: [null],
     });
   }
@@ -110,6 +116,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       params['filter.relevantTypeId'] = `$eq:${typeRelevant}`;
     }
 
+    this.paragraphs = [];
     this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log(data);
@@ -124,6 +131,8 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   clean(): void {
     this.searchForm.reset();
+    this.paragraphs = [];
+    this.totalItems = 0;
   }
 
   complianceSelected(): void {

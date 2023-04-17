@@ -24,9 +24,21 @@ export class AffairService
     return this.affairRepository.getAllPaginated(this.route, params);
   }
 
+  /**
+   * @deprecated
+   **/
   getById(id: string | number): Observable<IAffair> {
     let partials = this.route.split('/');
     const route = `${partials[1]}/id/${id}`;
+    return this.get(route);
+  }
+
+  getByIdAndOrigin(
+    id: string | number,
+    origin: 'SIAB' | 'SAMI'
+  ): Observable<IAffair> {
+    let partials = this.route.split('/');
+    const route = `${partials[1]}/id/${id}/nbOrigen/${origin}`;
     return this.get(route);
   }
 

@@ -1,12 +1,30 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
-import { ExampleService } from 'src/app/core/services/catalogs/example.service';
+import { format } from 'date-fns';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS,
+  JURIDICAL_FILE_UPDATE_SEARCH_FIELDS,
+} from '../../file-data-update/interfaces/columns';
+import { IJuridicalFileDataUpdateForm } from '../../file-data-update/interfaces/file-data-update-form';
+import { JuridicalFileUpdateService } from '../../file-data-update/services/juridical-file-update.service';
+import { JURIDICAL_FILE_DATA_UPDATE_FORM } from '../constants/form-declarations';
+import { AbandonmentsDeclarationTradesService } from '../service/abandonments-declaration-trades.service';
 
 /** ROUTING MODULE */
 
@@ -33,6 +51,17 @@ export class AbandonmentsDeclarationTradesComponent
   public formDeclaratoriaTabla: FormGroup;
   public formOficiopageFin: FormGroup;
   public formDeclaratoriapageFin: FormGroup;
+  declarationForm = this.fb.group(JURIDICAL_FILE_DATA_UPDATE_FORM);
+  searchMode: boolean = false;
+  confirmSearch: boolean = false;
+  formData: Partial<IJuridicalFileDataUpdateForm> = null;
+  selectedRow: INotification;
+  columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
+  fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
+  showTabs: boolean = true;
+  senders = new DefaultSelect<IUserAccessAreaRelational>();
+  recipients = new DefaultSelect<IUserAccessAreaRelational>();
+  cities = new DefaultSelect<ICity>();
 
   /** Tabla bienes */
   data1 = [
@@ -125,8 +154,23 @@ export class AbandonmentsDeclarationTradesComponent
   };
   /** Tabla bienes */
 
-  constructor(private fb: FormBuilder, private exampleService: ExampleService) {
+  constructor(
+    private fb: FormBuilder,
+    private abandonmentsService: AbandonmentsDeclarationTradesService,
+    public fileUpdateService: JuridicalFileUpdateService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private docDataService: DocumentsReceptionDataService
+  ) {
     super();
+  }
+
+  get formControls() {
+    return this.declarationForm.controls;
+  }
+
+  get dictDate() {
+    return format(new Date(), 'dd-MM-yyyy');
+    return this.declarationForm.controls['dictDate'].value;
   }
 
   ngOnInit(): void {
@@ -243,5 +287,80 @@ export class AbandonmentsDeclarationTradesComponent
 
   capturaCopias(event: any) {
     console.log('Captura copias', event);
+  }
+
+  checkSearchMode(searchMode: boolean) {
+    this.searchMode = searchMode;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  confirm(confirm: boolean) {
+    this.confirmSearch = confirm;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  search(formData: Partial<IJuridicalFileDataUpdateForm>) {
+    this.formData = formData;
+    this.changeDetectorRef.detectChanges();
+    console.log(formData);
+  }
+
+  selectData(data: INotification) {
+    this.selectedRow = data;
+    this.changeDetectorRef.detectChanges();
+    console.log(data);
+  }
+
+  getSenders(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    params.addFilter('assigned', 'S');
+    if (lparams?.text.length > 0)
+      params.addFilter('user', lparams.text, SearchFilter.LIKE);
+    this.hideError();
+    this.abandonmentsService.getUsers(params.getParams()).subscribe({
+      next: data => {
+        this.senders = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.senders = new DefaultSelect();
+      },
+    });
+  }
+
+  getRecipients(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    params.addFilter('assigned', 'S');
+    if (lparams?.text.length > 0)
+      params.addFilter('user', lparams.text, SearchFilter.LIKE);
+    this.hideError();
+    this.abandonmentsService.getUsers(params.getParams()).subscribe({
+      next: data => {
+        this.recipients = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.recipients = new DefaultSelect();
+      },
+    });
+  }
+
+  getCities(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('nameCity', lparams.text, SearchFilter.LIKE);
+    this.hideError();
+    this.abandonmentsService.getCities(params.getParams()).subscribe({
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.cities = new DefaultSelect();
+      },
+    });
   }
 }

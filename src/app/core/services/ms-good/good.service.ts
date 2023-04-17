@@ -1,18 +1,28 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import {
   IDescriptionByNoGoodBody,
   IDescriptionByNoGoodResponse,
   IFromGoodsAndExpedientsBody,
   IFromGoodsAndExpedientsResponse,
+  IGoodSearchGoodByClasification,
+  IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
-import { IGood } from '../../models/ms-good/good';
+import { GoodGetData, IGood } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
+import {
+  IGoodScreenACtionStatusProcess,
+  IGoodStatusFinalProcess,
+  IGoodStatusProcess,
+} from '../../models/ms-good/status-and-process.model';
+import { GoodEndpoints } from './../../../common/constants/endpoints/ms-good-endpoints';
 
 @Injectable({
   providedIn: 'root',
@@ -29,8 +39,78 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
+  getActAccount(model: IGoodStatusProcess) {
+    return this.post<IResponse>(GoodEndpoints.GoodGetActAccount, model).pipe(
+      map(x => x.count)
+    );
+  }
+
+  getStatusAndProcess(model: IGoodScreenACtionStatusProcess) {
+    return this.post<IResponse<IGoodStatusFinalProcess>>(
+      GoodEndpoints.GoodGetStatusAndProcess,
+      model
+    ).pipe(
+      map(x => {
+        return { status: x.data.statusFinal, process: x.data.process };
+      })
+    );
+  }
+
+  getValidMassiveDownload(goodId: number) {
+    return this.get<IResponse>(
+      GoodEndpoints.GoodValidMassiveDownload + '/' + goodId
+    ).pipe(map(x => x.count));
+  }
+
+  getValigFlag(goodId: number) {
+    return this.get<IResponse>(GoodEndpoints.GoodValidFlag + '/' + goodId).pipe(
+      map(x => x.message[0])
+    );
+  }
+
+  getValigSat(goodId: number) {
+    return this.get<IResponse>(GoodEndpoints.GoodValidSat + '/' + goodId).pipe(
+      map(x => x.message[0])
+    );
+  }
+
+  getValidSeq() {
+    return this.get<IResponse<{ max: string }>>(
+      GoodEndpoints.GoodValidSeq
+    ).pipe(map(x => x.data.max));
+  }
+
+  getForParcBien(params?: string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      GoodEndpoints.Good + '/searchGoods',
+      params
+    );
+  }
+
+  getData(goodData: GoodGetData): Observable<IListResponse<IGood>> {
+    return this.post(GoodEndpoints.GoodGetDat, goodData);
+  }
+
   getAllFilter(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
+  }
+
+  getMeasurementUnits(unit: string) {
+    return this.get<
+      IResponse<{
+        decimales: string;
+      }>
+    >(`${GoodEndpoints.Good}/searchUnit/${unit}`);
+  }
+
+  getGoodWidthMeasure(id: string | number) {
+    return this.get<
+      IListResponse<{
+        cantidad: string;
+        descripcion: string;
+        cve_moneda_avaluo: string;
+      }>
+    >(`${GoodEndpoints.GoodWidthMeasure}/${id}`);
   }
 
   getById(id: string | number) {
@@ -41,6 +121,7 @@ export class GoodService extends HttpService {
   create(good: IGood) {
     return this.post(GoodEndpoints.Good, good);
   }
+
   //
   update(good: IGood) {
     const route = `${GoodEndpoints.Good}`;
@@ -96,7 +177,6 @@ export class GoodService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-    console.log(route);
 
     return this.post<IListResponse<IGood>>(route, body);
   }
@@ -117,7 +197,6 @@ export class GoodService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.vaultNumber=$eq:${id}`;
-    console.log(route);
     return this.get<IListResponse<IGood>>(route, params);
   }
 
@@ -167,6 +246,18 @@ export class GoodService extends HttpService {
   getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
     return this.post<IListResponse<IFromGoodsAndExpedientsResponse>>(
       GoodEndpoints.DiStatusGood,
+      body
+    );
+  }
+  getSearchGoodByFile(body: IGoodSearchGoodByFile) {
+    return this.post<IListResponse<IGood>>(
+      GoodEndpoints.SearchGoodByFile,
+      body
+    );
+  }
+  getSearchGoodByClasif(body: IGoodSearchGoodByClasification) {
+    return this.post<IListResponse<IGood>>(
+      GoodEndpoints.SearchGoodByClasif,
       body
     );
   }

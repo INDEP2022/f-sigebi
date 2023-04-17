@@ -20,7 +20,10 @@
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
                 (click)="getGoodsByExpedient()"
-                [disabled]="form.get('expediente').value == null">
+                [disabled]="
+                  form.get('expediente').value == null ||
+                  form.get('expediente').value < 0
+                ">
                 Buscar
               </button>
             </div>
@@ -45,7 +48,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('acta')" label="Acta 1">
                 <select
                   id="acta"
@@ -58,13 +61,15 @@
                 </select>
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
                   id="transfer"
                   control="transfer"
                   label="Transfer"
                   bindLabel="transferentkey"
+                  (change)="verifyTransferenteAndAct()"
+                  [readonly]="form.get('acta').value == null"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
                 <!--  <input
@@ -78,29 +83,35 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="ident"
                   (ngModelChange)="changeAct()" />
               </form-field>
             </div>
             <div class="col">
-              <div class="col">
-                <form-field [control]="form.get('recibe')" label="Recibe">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="recibe"
-                    (change)="fillActTwo()" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col">
-              <form-field [control]="form.get('admin')" label="Admin">
+              <form-field [control]="form.get('entrego')" label="Entrego">
                 <input
                   type="text"
-                  class="form-control"
-                  formControlName="admin"
+                  class="form-control disabled"
+                  formControlName="entrego"
                   (change)="fillActTwo()" />
+              </form-field>
+            </div>
+            <div class="col-2">
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  (change)="fillActTwo()"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
+                <!-- <input
+                  type="text"
+                  class="form-control"
+                  formControlName="recibe"
+                  (change)="fillActTwo()" /> -->
               </form-field>
             </div>
             <div class="col">
@@ -131,7 +142,7 @@
                   (change)="fillActTwo()" />
               </form-field>
             </div>
-            <div class="col">
+            <!-- <div class="col">
               <form-field [control]="form.get('status')" label="Status">
                 <input
                   type="number"
@@ -146,7 +157,7 @@
                   class="form-control"
                   formControlName="nombre" />
               </form-field>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -154,50 +165,50 @@
       <hr class="row" />
 
       <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-3">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="acta2" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('fecElab')"
-                label="Fecha Elaboraci&oacute;n">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fecElab" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('fecRecepFisica')"
-                label="Fecha Recepci&oacute;n F&iacute;sica">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fecRecepFisica" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('fecCaptura')"
-                label="Fecha  Captura">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fecCaptura" />
-              </form-field>
-            </div>
-          </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('acta2')" label="Acta 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="acta2"
+              [readOnly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('fecElab')"
+            label="Fecha Elaboraci&oacute;n">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fecElab"
+              [maxDate]="maxDatefecElab" />
+          </form-field>
+        </div>
+        <div *ngIf="form.get('fecElab').value != null" class="col-md-2">
+          <form-field
+            [control]="form.get('fecRecepFisica')"
+            label="Fec. Recep. F&iacute;sica">
+            <input
+              bsDatepicker
+              [readOnly]="true"
+              class="form-control"
+              formControlName="fecRecepFisica" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('fecCaptura')" label="Fecha Captura">
+            <input
+              bsDatepicker
+              class="form-control"
+              [readOnly]="true"
+              formControlName="fecCaptura" />
+          </form-field>
         </div>
       </div>
+
       <hr class="row" />
+
       <div class="row">
         <div class="col-md-6">
           <form-field

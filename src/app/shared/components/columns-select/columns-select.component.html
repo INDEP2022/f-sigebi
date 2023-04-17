@@ -15,7 +15,7 @@
     aria-labelledby="button-basic">
     <li
       role="menuitem"
-      *ngFor="let column of columns"
+      *ngFor="let column of getColumns()"
       [class]="
         (selectVal().length < 3 && column.show) || column.showAlways
           ? 'dropdown-item disabled '

@@ -25,12 +25,12 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
     sort: false,
   },
   noRegionalDelegation: {
-    title: 'No.Delegacion regional',
+    title: 'No. Delegación Regional',
     width: '10%',
     sort: false,
   },
   regionalDelegation: {
-    title: 'Delegacion regional',
+    title: 'Delegación Regional',
     width: '10%',
     sort: false,
   },

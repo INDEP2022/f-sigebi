@@ -1,8 +1,10 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS1 } from './columns1';
@@ -23,7 +25,9 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private datePipe: DatePipe,
+    private goodService: GoodService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -87,6 +91,31 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       response => {
         if (response !== null) {
           this.response = !this.response;
+          this.actForm.controls['act'].setValue(response.registerNumber);
+          this.actForm.controls['preliminaryAscertainment'].setValue(
+            response.preliminaryInquiry
+          );
+          this.actForm.controls['statusAct'].setValue(response.expedientStatus);
+          this.actForm.controls['deliveryName'].setValue(
+            response.nameInstitution
+          );
+          this.actForm.controls['receiverName'].setValue(
+            response.indicatedName
+          );
+          this.actForm.controls['observations'].setValue(response.insertMethod);
+          this.actForm.controls['causePenal'].setValue(response.criminalCase);
+          this.actForm.controls['destinationDelivDate'].setValue(
+            this.datePipe.transform(response.receptionDate, 'dd/MM/yyyy')
+          );
+          this.actForm.controls['captureDate'].setValue(
+            this.datePipe.transform(response.insertDate, 'dd/MM/yyyy')
+          );
+          this.actForm.controls['elabDate'].setValue(
+            this.datePipe.transform(
+              response.dictaminationReturnDate,
+              'dd/MM/yyyy'
+            )
+          );
         } else {
           this.alert('info', 'No se encontrarón registros', '');
         }
@@ -96,6 +125,21 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       error => (this.loading = false)
     );
   }
+
+  // getGoodsByExpedient(id: string | number): void {
+  //   this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
+  //     response => {
+  //       //console.log(response);
+  //       let data = response.data.map((item: IGood) => {
+  //         //console.log(item);
+  //       });
+  //       // this.data.load(data);
+  //       this.totalItems = response.count;
+  //       this.loading = false;
+  //     },
+  //     error => (this.loading = false)
+  //   );
+  // }
 
   onSubmit() {}
 

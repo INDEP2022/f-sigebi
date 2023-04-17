@@ -6,10 +6,19 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import {
+  IStrategyProcess,
+  IStrategyService,
+  IStrategyServicetype,
+  IStrategyShift,
+  IStrategyVariableCost,
+} from 'src/app/core/models/administrative-processes/unit-cost.model';
 import { IWarehouseTypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IWarehouseClassifyCosts } from 'src/app/core/models/catalogs/warehouse-classify-costs';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { WarehouseClassifyCostsService } from 'src/app/core/services/catalogs/warehouse-classify-costs.service';
+import { UnitCostService } from 'src/app/core/services/unit-cost/unit-cost.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { WarehouseTypeModalComponent } from '../warehouse-type-modal/warehouse-type-modal.component';
 import { WarehouseTypeModalsComponent } from '../warehouse-type-modals/warehouse-type-modals.component';
@@ -40,7 +49,9 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     private typeWarehouseService: TypeWarehouseService,
-    private warehouseClassifyCostsService: WarehouseClassifyCostsService
+    private warehouseClassifyCostsService: WarehouseClassifyCostsService,
+    private goodSssubtypeService: GoodSssubtypeService,
+    private unitCostService: UnitCostService
   ) {
     super();
     this.settings = {
@@ -123,7 +134,6 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
     };
     this.typeWarehouseService.getAllType(params).subscribe({
       next: response => {
-        console.log(response);
         this.typeWarehouse = response.data;
         this.data2.load(this.typeWarehouse);
         this.data2.refresh();
@@ -142,14 +152,15 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters1,
     };
+
     this.warehouseClassifyCostsService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
-        this.classifyCosts = response.data;
-        this.data1.load(this.classifyCosts);
-        this.data1.refresh();
+        let classif: IWarehouseClassifyCosts[];
+        this.classifyCosts = [];
+        classif = response.data;
+        this.getList(classif);
         this.totalItems = response.count;
-        this.loading = false;
+        // this.loading = false;
       },
       error: error => {
         this.loading = false;
@@ -157,8 +168,67 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
       },
     });
   }
+  getList(classif: any) {
+    if (classif != null) {
+      this.loading = true;
+      for (let i = 0; i < classif.length; i++) {
+        var params1 = new ListParams();
+        params1[
+          'filter.numClasifGoods'
+        ] = `$eq:${classif[i].classifGoodNumber}`;
+        this.goodSssubtypeService.getAll(params1).subscribe({
+          next: response1 => {
+            classif[i].descClassif = response1.data[0].description;
+          },
+          error: error => {
+            this.loading = false;
+            console.log(error);
+          },
+        });
+      }
+      this.loading = true;
+      for (let i = 0; i < classif.length; i++) {
+        var params2 = new ListParams();
+        params2['filter.costId'] = `$eq:${classif[i].costId}`;
+        this.unitCostService.getAll(params2).subscribe({
+          next: response2 => {
+            let descProcess: IStrategyProcess = response2.data[0]
+              .strategyProcess as IStrategyProcess;
+            let descService: IStrategyService = response2.data[0]
+              .strategyService as IStrategyService;
+            let descServiceType: IStrategyServicetype = response2.data[0]
+              .strategyServicetype as IStrategyServicetype;
+            let descShift: IStrategyShift = response2.data[0]
+              .strategyShift as IStrategyShift;
+            let descVariableCost: IStrategyVariableCost = response2.data[0]
+              .strategyVariableCost as IStrategyVariableCost;
+            let desc =
+              (descProcess != null ? descProcess.description : '') +
+              ' / ' +
+              (descService != null ? descService.description : '') +
+              ' / ' +
+              (descServiceType != null ? descServiceType.description : '') +
+              ' / ' +
+              (descShift != null ? descShift.description : '') +
+              ' / ' +
+              (descVariableCost != null ? descVariableCost.description : '');
+            classif[i].descCost = desc;
+            if (i == classif.length - 1) {
+              this.classifyCosts = classif;
+              this.data1.load(this.classifyCosts);
+              this.data1.refresh();
+              this.loading = false;
+            }
+          },
+          error: error => {
+            this.loading = false;
+            console.log(error);
+          },
+        });
+      }
+    }
+  }
   rowsSelected(event: any) {
-    console.log(event.data.warehouseTypeId);
     this.values = event.data;
   }
   openType(data?: IWarehouseTypeWarehouse) {

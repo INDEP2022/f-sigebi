@@ -1,11 +1,13 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -26,6 +28,12 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
 import { VerificationComplianceService } from 'src/app/core/services/requests/verification-compliance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
+import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../../classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATIONS_COLUMNS } from './clarifications-columns';
@@ -44,10 +52,14 @@ export class VerifyComplianceTabComponent
   @Input() requestObject: any;
   @Input() typeDoc: string = '';
   @Input() process: string = '';
+  @Input() question: boolean = false;
+  @Output() response = new EventEmitter<boolean>();
+
   verifComplianceForm: ModelForm<any>;
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
   existArt: number = 0;
+  isGoodSelected: boolean = false;
 
   goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -66,6 +78,9 @@ export class VerifyComplianceTabComponent
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
   goodsSelected: any = [];
+  checkboxReadOnly: boolean = false;
+  formLoading: boolean = false;
+  loadingClarification: boolean = false;
 
   /* aclaraciones */
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -83,12 +98,16 @@ export class VerifyComplianceTabComponent
     private requestDocumentService: RequestDocumentationService,
     private authService: AuthService,
     private clarificationService: ClarificationService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private requestHelperService: RequestHelperService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    /* aclaraciones */
+    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
+
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.goodSettings.columns = DETAIL_ESTATE_COLUMNS;
@@ -101,30 +120,56 @@ export class VerifyComplianceTabComponent
         });
       },
     };
+    this.initForm();
 
     this.articleColumns.cumple = {
       ...this.articleColumns.cumple,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
+          console.log('data', data);
+
           this.articlesSelected(data);
         });
       },
     };
-    this.initForm();
 
-    /* aclaraciones */
-    this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
+    this.articleColumns.fulfill = {
+      ...this.articleColumns.fulfill,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          console.log('data', data);
+        });
+      },
+    };
+
+    /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
+    if (this.typeDoc === 'approval-process') {
+      this.checkboxReadOnly = true;
+      this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      this.transferenceId = this.requestObject.transferenceId;
-      this.getArticle3();
-      this.getArticle1213();
+      const id = this.requestObject.id;
+      const transference = this.requestObject.transferenceId;
+      this.getArticle3(id, transference);
+      this.getArticle1213(id, transference);
 
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData());
+    }
+
+    if (changes['question'].currentValue === true) {
+      const article3 = this.article3array.length;
+      const article12 = this.article12and13array.length;
+      console.log(article3, article12);
+      if (article3 >= 3 && article12 >= 3) {
+        this.response.emit(true);
+      } else {
+        this.response.emit(false);
+      }
     }
   }
 
@@ -140,55 +185,259 @@ export class VerifyComplianceTabComponent
       ligieLevel4: [null],
       requestId: [null],
       goodTypeId: [null],
-      color: [null],
-      goodDescription: [null],
-      quantity: [1],
-      duplicity: ['N'],
-      capacity: [null],
-      volume: [null],
-      fileeNumber: [null],
-      useType: [null],
-      physicalStatus: [null],
-      stateConservation: [null],
-      origin: [null],
-      goodClassNumber: [null],
-      ligieUnit: [null],
-      appraisal: [null],
-      destiny: [null], //preguntar Destino ligie
-      transferentDestiny: [null],
-      compliesNorm: [null],
-      notesTransferringEntity: [null],
-      unitMeasure: [null], // preguntar Unidad Medida Transferente
-      saeDestiny: [null],
-      brand: [null],
-      subBrand: [null],
-      armor: [null],
-      model: [null],
-      doorsNumber: [null],
-      axesNumber: [null],
-      engineNumber: [null], //numero motor
-      tuition: [null],
-      serie: [null],
-      chassis: [null],
-      cabin: [null],
-      fitCircular: [null],
-      theftReport: [null],
-      addressId: [null],
-      operationalState: [null],
-      manufacturingYear: [null],
-      enginesNumber: [null], // numero de motores
-      flag: [null],
-      openwork: [null],
-      sleeve: [null],
-      length: [null],
-      shipName: [null],
-      publicRegistry: [null], //registro public
-      ships: [null],
-      dgacRegistry: [null], //registro direccion gral de aereonautica civil
-      airplaneType: [null],
-      caratage: [null], //kilatage
-      material: [null],
-      weight: [null],
+      color: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodDescription: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      quantity: [
+        1,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(13),
+        ],
+      ],
+      duplicity: [
+        'N',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      capacity: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      volume: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      fileeNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
+      useType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      physicalStatus: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      stateConservation: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
+      origin: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      ligieUnit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      appraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+      ],
+      destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
+      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      compliesNorm: [
+        null,
+        [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
+      ],
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
+      unitMeasure: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ], // preguntar Unidad Medida Transferente
+      saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      brand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      subBrand: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(350),
+        ],
+      ],
+      armor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      model: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      doorsNumber: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
+      axesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
+      engineNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //numero motor
+      tuition: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      serie: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      chassis: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      cabin: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
+      fitCircular: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      theftReport: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      addressId: [null, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      operationalState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      manufacturingYear: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
+      enginesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ], // numero de motores
+      flag: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
+      openwork: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      sleeve: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      length: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      shipName: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      publicRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro public
+      ships: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      dgacRegistry: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ], //registro direccion gral de aereonautica civil
+      airplaneType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      caratage: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+      ], //kilatage
+      material: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+      ],
+      weight: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
       descriptionGoodSae: [null],
     });
   }
@@ -211,7 +460,7 @@ export class VerifyComplianceTabComponent
       delete clarify[0].clarificationName;
       this.openForm(clarify[0]);
     } else {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', 'Seleccione solo una aclaración!');
     }
   }
 
@@ -223,7 +472,10 @@ export class VerifyComplianceTabComponent
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
           this.clarificationData = [];
-          if (next) this.getClarifications(this.goodsSelected[0].id);
+          if (next) {
+            this.loadingClarification = true;
+            this.getClarifications(this.goodsSelected[0].id);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -323,139 +575,106 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  getArticle3() {
+  getArticle3(id: number, transferent: number) {
     const params = new ListParams();
-    params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
-    params['filter.article'] = `$eq:Articulo 3 Ley`;
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.cumpliance.article'] = `$eq:Articulo 3 Ley`;
+    if (this.transferenceId === 1 || this.transferenceId === 120) {
+      params['filter.cumpliance.transfereeId'] = `$eq:${transferent}`;
+    } else {
+      params['filter.cumpliance.transfereeId'] = `$null`;
+    }
 
-    this.verifiCompliance.getAll(params).subscribe({
-      next: async resp => {
-        await this.getArticlesById(resp, 'article3');
+    this.requestDocumentService.getAll(params).subscribe({
+      next: resp => {
+        console.table(resp.data);
+        let cumpliance = resp.data.map((item: any) => {
+          item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article3array.push(item.cumpliance);
+          }
+          return item.cumpliance;
+        });
+        this.paragraphsTable1 = cumpliance;
+        this.article3array = this.paragraphsTable1;
       },
     });
   }
 
-  getArticle1213() {
+  getArticle1213(id: number, tranferent: number) {
     const params = new ListParams();
-    params['filter.idTransferee'] = `$eq:${this.transferenceId}`;
-    params['filter.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    params['filter.requestId'] = `$eq:${id}`;
+    params['filter.cumpliance.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    if (this.transferenceId === 1 || this.transferenceId === 120) {
+      params['filter.cumpliance.transfereeId'] = `$eq:${tranferent}`;
+    } else {
+      params['filter.cumpliance.transfereeId'] = `$null`;
+    }
 
-    this.verifiCompliance.getAll(params).subscribe({
-      next: async resp => {
-        await this.getArticlesById(resp, 'article12');
+    this.requestDocumentService.getAll(params).subscribe({
+      next: resp => {
+        let cumpliance = resp.data.map((item: any) => {
+          item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
+          if (item.cumpliance['cumple'] === true) {
+            this.article12and13array.push(item.cumpliance);
+          }
+          return item.cumpliance;
+        });
+        this.paragraphsTable2 = cumpliance;
+        this.article12and13array = this.paragraphsTable2;
       },
     });
   }
 
-  article3Selected(event: any): void {
-    const elemento = event.data;
+  article3Selected(event: any): void {}
 
-    const index = this.article3array.indexOf(elemento);
-    console.log(index, this.article3array);
-    if (index !== -1) {
-      delete this.article3array[index];
-    } else {
-      this.article3array.push(elemento);
+  article12y13Selected(event: any): void {}
+
+  articlesSelected(element: any) {
+    if (element.article === 'Articulo 12 y 13 Reglamento') {
+      const index = this.article12and13array.indexOf(element);
+      if (this.article12and13array[index].cumple === false) {
+        this.article12and13array[index].cumple = true;
+      } else {
+        this.article12and13array[index].cumple = false;
+      }
+    } else if (element.article === 'Articulo 3 Ley') {
+      const index = this.article3array.indexOf(element);
+      if (this.article3array[index].cumple === false) {
+        this.article3array[index].cumple = true;
+      } else {
+        this.article3array[index].cumple = false;
+      }
     }
-    console.log(this.article3array);
-  }
-
-  article12y13Selected(event: any): void {
-    const elemento = event.data;
-    const index = this.article12and13array.indexOf(elemento);
-
-    const index2 = this.paragraphsTable2.indexOf(elemento);
-    if (index !== -1) {
-      delete this.article12and13array[index];
-    } else {
-      this.article12and13array.push(elemento);
-    }
-
-    if (
-      this.paragraphsTable2[index2].cumple &&
-      this.paragraphsTable2[index2].cumple === true
-    ) {
-      this.paragraphsTable2[index2].cumple = false;
-    } else if (
-      this.paragraphsTable2[index2].cumple &&
-      this.paragraphsTable2[index2].cumple === false
-    ) {
-      this.paragraphsTable2[index2].cumple = true;
-    } else {
-      this.paragraphsTable2[index2].cumple = true;
-    }
-  }
-
-  articlesSelected(data: any) {
-    //console.log(data);
   }
 
   selectGood(event: any) {
+    //if (event.isSelected === true) {
+    this.formLoading = true;
+    this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
+
     if (this.goodsSelected.length === 1) {
+      this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
+        this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
-      }, 3000);
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+        }
+        this.formLoading = false;
+      }, 1000);
+    } else {
+      this.formLoading = false;
     }
-  }
-
-  getArticlesById(article: any, typeArt: string) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.requestId'] = `$eq:${this.requestObject.id}`;
-      this.requestDocumentService.getAll(params).subscribe({
-        next: resp => {
-          this.existArt = resp.count;
-          resp.data.map((item: any) => {
-            for (let i = 0; i < article.data.length; i++) {
-              const art = article.data[i];
-              if (item.cumplimiento.id === art.complianceId) {
-                if (item.fulfill === 'S') {
-                  art['cumple'] = true;
-                  if (typeArt === 'article3') {
-                    this.article3array.push(art);
-                  } else {
-                    this.article12and13array.push(art);
-                  }
-                } else {
-                  art['cumple'] = false;
-                }
-                break;
-              }
-            }
-          });
-
-          console.log(article);
-          if (typeArt === 'article3') {
-            this.paragraphsTable1 = article.data;
-          } else {
-            this.paragraphsTable2 = article.data;
-          }
-        },
-        error: error => {
-          console.log(error.error.message);
-          this.existArt = 0;
-          if (error.error.message === 'No se encontrarón registros.') {
-            for (let i = 0; i < article.data.length; i++) {
-              const art = article.data[i];
-              art['cumple'] = false;
-            }
-            if (typeArt === 'article3') {
-              this.paragraphsTable1 = article.data;
-            } else {
-              this.paragraphsTable2 = article.data;
-            }
-          }
-        },
-      });
-    });
   }
 
   /*  Metodo para traer las solicitudes de un bien  */
   getClarifications(id: number | string) {
+    this.clarificationData = [];
     let params = new ListParams();
     params['filter.goodId'] = `$eq:${id}`;
     this.rejectedGoodService.getAllFilter(params).subscribe({
@@ -467,9 +686,17 @@ export class VerifyComplianceTabComponent
 
         Promise.all(clarification).then(data => {
           this.clarificationData = resp.data;
+          this.loadingClarification = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loadingClarification = false;
+        this.onLoadToast(
+          'error',
+          'error',
+          'No se pudo cargar la clarificación'
+        );
+      },
     });
   }
 
@@ -492,13 +719,13 @@ export class VerifyComplianceTabComponent
 
   deleteClarification() {
     if (this.clarifyRowSelected.length !== 1) {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaracion!');
+      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
     }
 
     Swal.fire({
       title: 'Eliminar Aclaración?',
-      text: 'Desea eliminar la aclaracion?',
+      text: '¿Desea eliminar la aclaración?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -506,12 +733,23 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(result => {
       if (result.isConfirmed) {
+        this.loader.load = true;
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
           next: resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
             this.clarificationData = [];
             this.getClarifications(this.goodsSelected[0].id);
+            this.loader.load = false;
+          },
+          error: error => {
+            this.loader.load = false;
+            console.log(error);
+            this.alert(
+              'error',
+              'Error',
+              `Error al eliminar ${error.error.message}`
+            );
           },
         });
       }
@@ -519,84 +757,84 @@ export class VerifyComplianceTabComponent
   }
 
   async confirm() {
-    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
+    this.loader.load = false;
+    console.log(this.article3array);
+    console.log(this.article12and13array);
+    const article3 = this.article3array.filter(x => x.cumple === true);
+    const article12Y13 = this.article12and13array.filter(
+      x => x.cumple === true
+    );
+
+    if (article3.length < 3 || article12Y13.length < 3) {
       this.alert(
         'error',
         'Error',
-        'Para que la solicitud sea procedente se deben seleccionar al menos los prmeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
+        'Es requerido seleccionar 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
       );
       return;
     }
 
-    if (this.existArt > 0) {
-      const allArt = this.paragraphsTable1.concat(this.paragraphsTable2);
-      console.log(allArt);
+    const articles = this.article12and13array.concat(this.article3array);
+    //console.table(articles);
 
-      allArt.map(async (item: any) => {
-        await this.deleteDocumentRequest(item);
-      });
-    }
-
-    /* insertar articulo 3 */
-    this.article3array.map(async (item: any) => {
-      await this.createDocRequest(item, 'S');
+    const id = this.requestObject.id;
+    articles.map(async (item: any) => {
+      await this.updateDocRequest(id, item);
     });
 
-    /* ingresar articulo 12 , 13 */
-    this.paragraphsTable2.map(async (list: any, i: number) => {
-      if (list.cumple === true) {
-        await this.createDocRequest(list, 'S');
-      } else if (list.cumple === false) {
-        await this.createDocRequest(list, 'N');
-      } else {
-        await this.createDocRequest(list, 'N');
-      }
-    });
+    setTimeout(() => {
+      this.goodData.map(async (item: any, i: number) => {
+        let index = i + 1;
+        const result = await this.updateGoods(item);
 
-    const result = await this.updateGoods();
-  }
-
-  updateGoods() {
-    return new Promise((resolve, reject) => {
-      const goods = this.goodData;
-      goods.map((item: any) => {
-        let body: any = {};
-        body['id'] = item.id;
-        body['goodId'] = item.goodId;
-        body['descriptionGoodSae'] = item.descriptionGoodSae;
-        this.goodServices.update(body).subscribe({
-          next: resp => {
-            resolve(true);
-            console.log(resp);
-            this.alert(
+        if (result === true) {
+          if (this.goodData.length === index) {
+            this.onLoadToast(
               'success',
-              'Verificación Guardad',
+              'Verificación Guardada',
               'Los datos se guardaron correctamente'
             );
-          },
-          error: error => {
-            console.log(error.error.message);
-            this.alert(
-              'error',
-              'Error al guardar',
-              'No se pudieron guardar los datos'
-            );
-          },
-        });
+          }
+        }
+      });
+    }, 400);
+  }
+
+  updateGoods(item: any) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['id'] = item.id;
+      body['goodId'] = item.goodId;
+      body['descriptionGoodSae'] = item.descriptionGoodSae;
+
+      this.goodServices.update(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.alert(
+            'error',
+            'Error al guardar',
+            'No se pudieron guardar los datos'
+          );
+          reject(false);
+        },
       });
     });
   }
 
-  createDocRequest(article: any, fullfill: string) {
+  updateDocRequest(requestId: number, article: any) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['requestId'] = this.requestObject.id;
-      body['fulfillmentId'] = article.complianceId;
-      body['fulfill'] = fullfill;
-      body['creationUser'] = user.username;
-      this.requestDocumentService.create(body).subscribe({
+      body['requestId'] = requestId;
+      body['fulfillmentId'] = article.id;
+      body['fulfill'] = article.cumple === true ? 'S' : 'N';
+      console.log(body, article);
+      this.requestDocumentService.update(body).subscribe({
         next: resp => {
+          console.log('actualizado', resp);
           resolve(true);
         },
         error: error => {
@@ -607,24 +845,6 @@ export class VerifyComplianceTabComponent
             'Error al guardar',
             'No se pudieron guardar los datos'
           );
-        },
-      });
-    });
-  }
-
-  deleteDocumentRequest(item: any) {
-    return new Promise((resolve, reject) => {
-      const body = {
-        requestId: this.requestObject.id,
-        fulfillmentId: item.complianceId,
-      };
-      this.requestDocumentService.remove(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-          resolve(true);
         },
       });
     });
