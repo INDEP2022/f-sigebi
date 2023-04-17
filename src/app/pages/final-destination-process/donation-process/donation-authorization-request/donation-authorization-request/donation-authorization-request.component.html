@@ -47,18 +47,21 @@
     </form>
 
     <div class="row mt-5">
-      <div class="col-12 col-md-4 text-center">
+      <div class="col-12 col-md-3 text-center">
         <button class="btn btn-secondary btn-sm active" (click)="openModal(1)">
           Incorporar
         </button>
       </div>
-      <div class="col-12 col-md-4 text-center">
+      <div class="col-12 col-md-3 text-center">
         <button class="btn btn-secondary btn-sm active" (click)="openModal(2)">
           Asociar
         </button>
       </div>
-      <div class="col-12 col-md-4 text-center">
+      <div class="col-12 col-md-3 text-center">
         <button class="btn btn-secondary btn-sm active">Actualizar</button>
+      </div>
+      <div class="col-12 col-md-3 text-center">
+        <button class="btn btn-secondary btn-sm active">Propuesta</button>
       </div>
     </div>
 
@@ -77,14 +80,12 @@
 
     <h5 class="mt-5">Solicitudes y Donatarios</h5>
 
-    <div class="row justify-content-end mt-3">
+    <!-- <div class="row justify-content-end mt-3">
       <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings">
+        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings">
         </app-columns-select>
       </div>
-    </div>
+    </div> -->
 
     <div class="row mt-5">
       <ng2-smart-table
@@ -114,14 +115,12 @@
     </app-pagination>
 
     <h5 class="mt-5">Distribuci&oacute;n de Solicitudes con Bienes</h5>
-    <div class="row justify-content-end mt-3">
+    <!-- <div class="row justify-content-end mt-3">
       <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings2">
+        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings2">
         </app-columns-select>
       </div>
-    </div>
+    </div> -->
     <div class="row mt-5">
       <ng2-smart-table
         [attr.class]="'table-bordered'"
@@ -153,14 +152,12 @@
 
     <h5 class="mt-5">Bienes del Inventario de Donaciones</h5>
 
-    <div class="row justify-content-end mt-3">
+    <!-- <div class="row justify-content-end mt-3">
       <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings3">
+        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings3">
         </app-columns-select>
       </div>
-    </div>
+    </div> -->
 
     <div class="row mt-5">
       <ng2-smart-table

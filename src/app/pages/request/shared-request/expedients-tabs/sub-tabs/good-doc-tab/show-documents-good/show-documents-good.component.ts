@@ -194,7 +194,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
         if (info.length == 0) {
           this.onLoadToast(
             'warning',
-            'No se encontraron documentos al bien',
+            'No se le encontraron documentos al bien.',
             ''
           );
           this.loading = false;
@@ -641,7 +641,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
         if (next) {
           this.formLoading = true;
           setTimeout(() => {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.getDocuemntByGood();
             this.formLoading = false;
           }, 8000);

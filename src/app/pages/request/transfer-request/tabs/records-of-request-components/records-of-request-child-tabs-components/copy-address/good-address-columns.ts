@@ -24,7 +24,7 @@ export const GOOD_ADDRESS_COLUMNS = {
   },
 
   localityName: {
-    title: 'colonia',
+    title: 'Colonia',
     type: 'string',
     sort: false,
   },

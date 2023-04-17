@@ -12,7 +12,7 @@ import {
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
 import { GoodGetData } from 'src/app/core/models/ms-good/good';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
-import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -131,6 +131,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   statusProceeding = '';
   labelActa = 'Abrir acta';
   btnCSSAct = 'btn-info';
+  scanStatus = false;
 
   constructor(
     private fb: FormBuilder,
@@ -138,7 +139,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private render: Renderer2,
     private serviceWarehouse: WarehouseFilterService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
-    private serviceTransferente: TransferenteService,
+    private serviceDocuments: DocumentsService,
     private serviceNoty: NotificationService,
     private serviceExpedient: ExpedientService,
     private serviceRNomencla: ParametersService
@@ -210,12 +211,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  //Function butons
-  pgrAct() {
-    if (this.statusProceeding === 'CERRADO') {
-    }
-  }
-
   //Enable and disabled buttons
 
   toggleByLength(idBtn: string, data: string) {
@@ -244,11 +239,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.statusProceeding = 'ABIERTA';
       this.labelActa = 'Cerrar acta';
       this.btnCSSAct = 'btn-primary';
+      console.log(this.dataGoodApraiser);
       this.form.get('fecCaptura').setValue(new Date());
-    } else {
-      this.statusProceeding = 'CERRADO';
-      this.labelActa = 'Abrir acta';
-      this.btnCSSAct = 'btn-info';
+      this.validateFolio();
+    } else if (this.labelActa === 'Cerrar acta') {
+      if (this.scanStatus) {
+        this.statusProceeding = 'CERRADO';
+        this.labelActa = 'Abrir acta';
+        this.btnCSSAct = 'btn-info';
+      } else {
+        this.alert(
+          'warning',
+          'FALTA ESCANEAR FOLIO',
+          'El número de folio debe ser escaneado para poder cerrar el acta.'
+        );
+      }
     }
   }
 
@@ -293,6 +298,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         .setValidators([transferenteAndAct(actaValue), Validators.required]);
       this.fillActTwo();
     }
+  }
+
+  //Validations
+
+  validateFolio() {
+    this.serviceDocuments.getByFolio(-73378).subscribe(
+      res => {
+        if (res.scanStatus === 'ESCANEADO') {
+          this.scanStatus = false;
+        } else {
+          this.scanStatus = false;
+        }
+      },
+      err => {
+        this.scanStatus = false;
+      }
+    );
   }
 
   //Catalogs
@@ -343,12 +365,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .subscribe({
         next: async (res: any) => {
           const dataTry = res.data.filter((item: any) => {
-            item.status != 'ADM';
+            return item.status === 'VXP';
           });
+          console.log(dataTry);
           if (res.data.length > 0) {
             this.form.get('ident').setValue('ADM');
             this.dataGoods.load(res.data);
-            console.log(res.data);
 
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
@@ -375,10 +397,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   disponible = true;
                 }
 
-                return { ...e, avalaible: disponible };
+                return { ...e, avalaible: true };
               })
             );
-            console.log(newData);
             this.dataGoods.load(newData);
 
             this.serviceExpedient

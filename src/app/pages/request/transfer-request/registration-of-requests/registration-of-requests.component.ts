@@ -96,6 +96,9 @@ export class RegistrationOfRequestsComponent
 
   formLoading: boolean = true;
 
+  question: boolean = false;
+  verifyResp: boolean = false;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -567,7 +570,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
+      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -593,8 +596,14 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin guardar captura de solicitud */
 
+  getResponse(event: any) {
+    console.log('respuesta: ', event);
+    this.verifyResp = event;
+  }
+
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
@@ -611,6 +620,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -623,6 +633,7 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo para guardar la clasificacion de bienes */
   async classifyGoodMethod() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
@@ -638,6 +649,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -650,6 +662,7 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo de destino documental */
   async destinyDocumental() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
@@ -665,6 +678,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -727,6 +741,7 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
+    this.loader.load = true;
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
@@ -751,6 +766,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskResult === true) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -931,7 +947,26 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'verificar-cumplimiento') {
-          this.verifyComplianceMethod();
+          this.question = true;
+          setTimeout(() => {
+            if (this.verifyResp === true) {
+              this.verifyComplianceMethod();
+            } else {
+              Swal.fire({
+                title: 'Error',
+                text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#AD4766',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                if (result.isConfirmed) {
+                }
+              });
+            }
+            this.question = false;
+          }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
           this.classifyGoodMethod();
