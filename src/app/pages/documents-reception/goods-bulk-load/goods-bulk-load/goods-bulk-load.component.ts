@@ -53,7 +53,6 @@ import {
   ERROR_CANTIDAD,
   ERROR_CITY_ASUNTO_SAT,
   ERROR_CLASS_GOOD,
-  ERROR_CREATE_EXPEDIENT,
   ERROR_ESTATUS,
   ERROR_ESTATUS_GENERAL,
   ERROR_EXPEDIENTE,
@@ -3105,36 +3104,41 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       stationNumber: infoData.objInsertResponse['no_emisora'], // NUMERO EMISORA
     };
     console.log('Data del expediente', expedienteData);
+    if (this.proceso == 4 && opcionValid == 'general') {
+      this.getInstitucionesEmisoras(infoData, opcionValid);
+    } else {
+      this.getTagXClassif(infoData, opcionValid); // Obtener la etiqueta de acuerdo a la clasificacion
+    }
     // Crear un expediente
-    await this.goodsBulkService.createExpedient(expedienteData).subscribe({
-      next: res => {
-        console.log(res);
-        infoData.objInsertResponse['idExpediente'] = res.id; // Setear id del expediente
-        infoData = this.createdGoodsWheelsExpedients(
-          res.id.toString(),
-          'expedientes',
-          infoData
-        ); // Guardar expediente insertado
-        if (this.proceso == 4 && opcionValid == 'general') {
-          this.getInstitucionesEmisoras(infoData, opcionValid);
-        } else {
-          this.getTagXClassif(infoData, opcionValid); // Obtener la etiqueta de acuerdo a la clasificacion
-        }
-      },
-      error: err => {
-        infoData.error = this.agregarErrorUploadValidation(
-          infoData.error,
-          ERROR_CREATE_EXPEDIENT
-        );
-        this.infoDataValidation.error = infoData.error; // Setear error
-        infoData.validLastRequest = false; // Respuesta incorrecta
-        if (this.proceso == 4 && opcionValid == 'general') {
-          this.getInstitucionesEmisoras(infoData, opcionValid);
-        } else {
-          this.getTagXClassif(infoData, opcionValid); // Obtener la etiqueta de acuerdo a la clasificacion
-        }
-      },
-    });
+    // await this.goodsBulkService.createExpedient(expedienteData).subscribe({
+    //   next: res => {
+    //     console.log(res);
+    //     infoData.objInsertResponse['idExpediente'] = res.id; // Setear id del expediente
+    //     infoData = this.createdGoodsWheelsExpedients(
+    //       res.id.toString(),
+    //       'expedientes',
+    //       infoData
+    //     ); // Guardar expediente insertado
+    //     if (this.proceso == 4 && opcionValid == 'general') {
+    //       this.getInstitucionesEmisoras(infoData, opcionValid);
+    //     } else {
+    //       this.getTagXClassif(infoData, opcionValid); // Obtener la etiqueta de acuerdo a la clasificacion
+    //     }
+    //   },
+    //   error: err => {
+    //     infoData.error = this.agregarErrorUploadValidation(
+    //       infoData.error,
+    //       ERROR_CREATE_EXPEDIENT
+    //     );
+    //     this.infoDataValidation.error = infoData.error; // Setear error
+    //     infoData.validLastRequest = false; // Respuesta incorrecta
+    //     if (this.proceso == 4 && opcionValid == 'general') {
+    //       this.getInstitucionesEmisoras(infoData, opcionValid);
+    //     } else {
+    //       this.getTagXClassif(infoData, opcionValid); // Obtener la etiqueta de acuerdo a la clasificacion
+    //     }
+    //   },
+    // });
   }
 
   async getTagXClassif(infoData: IValidInfoData, opcionValid: string = 'sat') {
@@ -3364,37 +3368,38 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     console.log(dataGood);
     this.pgrGoodNumber = '';
+    this.processUploadEndPgr(infoData); // Termina proceso
     // Crear el bien
-    await this.goodsBulkService.createGood(dataGood).subscribe({
-      next: res => {
-        console.log(res);
-        infoData.objInsertResponse['LNU_NO_BIEN'] = res.id;
-        this.pgrGoodNumber = res.id;
-        infoData.validLastRequest = true; // Respuesta correcta
-        infoData = this.createdGoodsWheelsExpedients(
-          res.idGood,
-          'bienes',
-          infoData
-        ); // Guardar bien insertado
-        this.createMassiveChargeGood(infoData, opcionValid); // Crear registro carga masiva
-      },
-      error: err => {
-        console.log(err);
-        infoData.error = this.agregarErrorUploadValidation(
-          infoData.error,
-          'Error al crear el bien'
-        );
-        this.infoDataValidation.error = infoData.error; // Setear error
-        infoData.validLastRequest = false; // Respuesta incorrecta
-        if (opcionValid == 'pgr') {
-          this.processUploadEndPgr(infoData); // Termina proceso
-        } else if (opcionValid == 'general') {
-          this.processUploadEndGeneral(infoData); // Terminar proceso
-        } else {
-          this.processUploadEndSat(infoData); // Termina proceso
-        }
-      },
-    });
+    // await this.goodsBulkService.createGood(dataGood).subscribe({
+    //   next: res => {
+    //     console.log(res);
+    //     infoData.objInsertResponse['LNU_NO_BIEN'] = res.id;
+    //     this.pgrGoodNumber = res.id;
+    //     infoData.validLastRequest = true; // Respuesta correcta
+    //     infoData = this.createdGoodsWheelsExpedients(
+    //       res.idGood,
+    //       'bienes',
+    //       infoData
+    //     ); // Guardar bien insertado
+    //     this.createMassiveChargeGood(infoData, opcionValid); // Crear registro carga masiva
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     infoData.error = this.agregarErrorUploadValidation(
+    //       infoData.error,
+    //       'Error al crear el bien'
+    //     );
+    //     this.infoDataValidation.error = infoData.error; // Setear error
+    //     infoData.validLastRequest = false; // Respuesta incorrecta
+    //     if (opcionValid == 'pgr') {
+    //       this.processUploadEndPgr(infoData); // Termina proceso
+    //     } else if (opcionValid == 'general') {
+    //       this.processUploadEndGeneral(infoData); // Terminar proceso
+    //     } else {
+    //       this.processUploadEndSat(infoData); // Termina proceso
+    //     }
+    //   },
+    // });
   }
 
   async setGoodDataUpload(
@@ -4078,7 +4083,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       }
 
       // this.getDataVolanteTemp();
-      this.validarPGRMenaje();
+      // this.validarPGRMenaje(); // SE DESCOMENTA createGood
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
