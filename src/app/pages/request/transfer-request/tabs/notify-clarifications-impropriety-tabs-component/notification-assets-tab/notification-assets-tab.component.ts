@@ -116,6 +116,7 @@ export class NotificationAssetsTabComponent
     if (this.listAssetsSelected.length == 1) {
       if (event.data.id === 1) {
         this.paragraphs2 = data2;
+        console.log(this.paragraphs2);
       } else {
         this.paragraphs2 = [];
       }
