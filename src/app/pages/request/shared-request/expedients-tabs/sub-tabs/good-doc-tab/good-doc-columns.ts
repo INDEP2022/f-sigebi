@@ -27,6 +27,9 @@ export const GOOD_DOCUMENTES_COLUMNS = {
     title: 'Fracción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      return value ? (value.includes('undefined') ? '' : value) : '';
+    },
   },
 
   requestFolio: {

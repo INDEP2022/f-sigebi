@@ -50,7 +50,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   ngOnInit(): void {
-    this.withDocumentation = this.idAclara === '18' ? true : false;
+    this.withDocumentation = this.idAclara === '2' ? true : false;
     this.initForm1();
     this.initForm2();
     console.log('clar', this.dataClarifications);

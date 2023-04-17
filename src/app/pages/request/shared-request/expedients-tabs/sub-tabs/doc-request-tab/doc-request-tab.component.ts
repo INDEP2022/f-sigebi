@@ -54,6 +54,7 @@ export class DocRequestTabComponent
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
   @Input() typeDoc = '';
+  @Input() updateInfo: boolean = true;
   @Input() displayName: string = '';
   title: string = '';
   showSearchForm: boolean = false;
@@ -129,12 +130,11 @@ export class DocRequestTabComponent
         instance.btnclick1.subscribe((data: any) => {
           this.openDetail(data);
         }),
-          instance.btnclick2.subscribe((data: any) => {
-            this.openDoc(data.dDocName);
-          });
+        instance.btnclick2.subscribe((data: any) => {
+          this.openDoc(data.dDocName);
+        });
       },
     }; */
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
@@ -142,6 +142,7 @@ export class DocRequestTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
+    let updateInfo = changes['updateInfo']?.currentValue;
     this.typeDoc = onChangeCurrentValue;
     this.setTitle(onChangeCurrentValue);
   }
@@ -217,18 +218,20 @@ export class DocRequestTabComponent
         });
         const info = filterDoc.map(async (items: any) => {
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          const regionalDelegation = items?.xdelegacionRegional
-            ? await this.getRegionalDelegation(items.xdelegacionRegional)
-            : null;
-          const state = items?.xestado
-            ? await this.getStateDoc(items?.xestado)
-            : null;
-          const transferent = items?.xidTransferente
-            ? await this.getTransferent(items?.xidTransferente)
-            : null;
-          items['delegationName'] = regionalDelegation;
+          if (items?.xdelegacionRegional) {
+            const regionalDelegation = await this.getRegionalDelegation(
+              items?.xdelegacionRegional
+            );
+            items['delegationName'] = regionalDelegation;
+          }
+          if (items?.xidTransferente) {
+            const transferent = await this.getTransferent(
+              items?.xidTransferente
+            );
+            items['transferentName'] = transferent;
+          }
+          const state = await this.getStateDoc(items?.xestado);
           items['stateName'] = state;
-          items['transferentName'] = transferent;
           items.xtipoDocumento = filter[0]?.ddescription;
           return items;
         });
@@ -240,7 +243,9 @@ export class DocRequestTabComponent
           this.loading = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
