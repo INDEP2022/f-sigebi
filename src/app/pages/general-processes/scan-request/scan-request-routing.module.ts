@@ -16,6 +16,10 @@ const routes: Routes = [
     path: ':P_NO_VOLANTE',
     component: ScanRequestComponent,
   },
+  {
+    path: ':P_NO_VOLANTE/:P_FOLIO',
+    component: ScanRequestComponent,
+  },
 ];
 
 @NgModule({

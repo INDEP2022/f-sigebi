@@ -8,7 +8,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   KEYGENERATION_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -193,7 +193,7 @@ export class PenaltyBillingMainComponent implements OnInit {
       ],
       description: [null, Validators.pattern(STRING_PATTERN)],
       client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
       street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       neighborhood: [
         null,
