@@ -93,6 +93,7 @@ export class DocRequestTabComponent
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
+    console.log(this.idRequest);
   }
 
   ngOnInit(): void {
@@ -217,6 +218,8 @@ export class DocRequestTabComponent
           }
         });
         const info = filterDoc.map(async (items: any) => {
+          console.log(items);
+
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
           if (items?.xdelegacionRegional) {
             const regionalDelegation = await this.getRegionalDelegation(
@@ -665,7 +668,7 @@ export class DocRequestTabComponent
   setTitle(value: string) {
     switch (value) {
       case 'doc-request':
-        this.title = 'Solicitudes';
+        this.title = 'Solicitud';
         break;
       case 'doc-expedient':
         this.title = 'Expedientes';

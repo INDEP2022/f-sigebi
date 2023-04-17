@@ -138,6 +138,7 @@ export enum ENDPOINT_LINKS {
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',
+  DinamicTablesFind = 'dynamiccatalog/api/v1/dinamic-tables/find-tvaltable1-by-tableKey',
   DinamicTable = 'dinamic-tables/get-tvaltable5-by-table',
   DinamicTable1 = 'dinamic-tables/tavaltable1',
 
