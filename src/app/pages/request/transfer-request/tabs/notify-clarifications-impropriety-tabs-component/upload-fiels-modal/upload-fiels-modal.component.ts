@@ -8,7 +8,7 @@ import { IExternalFirm } from 'src/app/core/models/ms-externalfirm/external-firm
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { ExternalFirmService } from 'src/app/core/services/ms-externalfirm/externalfirm.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { RFC_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-upload-fiels-modal',
@@ -73,7 +73,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(RFCCURP_PATTERN),
+          Validators.pattern(RFC_PATTERN),
           Validators.maxLength(13),
         ],
       ],
