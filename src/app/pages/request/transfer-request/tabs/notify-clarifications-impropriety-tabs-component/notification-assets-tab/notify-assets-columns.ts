@@ -1,5 +1,5 @@
 export const NOTIFY_ASSETS_COLUMNS = {
-  statusId: {
+  answered: {
     title: 'Estatus',
     type: 'string',
     sort: false,
@@ -14,11 +14,11 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  clarificationTypeId: {
+  clarificationType: {
     title: 'Tipo de Aclaración',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
+    /*valuePrepareFunction: (cell: any, row: any) => {
       if (row.clarifiNewsRejectId.clarificationId == null) return 'ERORR';
       if (row.clarifiNewsRejectId.clarificationId == 17)
         return 'FALTA DOCUMENTACIÓN ANEXA';
@@ -30,44 +30,44 @@ export const NOTIFY_ASSETS_COLUMNS = {
         return 'ACLARACIÓN';
 
       return row.clarifiNewsRejectId.clarificationId;
-    },
+    },*/
   },
-  id: {
+  clarification: {
     title: 'Aclaración',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.clarification;
+    },
   },
-  clarificationInvoice: {
+  clarification2: {
     title: 'Tipo Aclaración',
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarification.type;
+    },
+    /*valuePrepareFunction: (cell: any, row: any) => {
       //return row.clarifiNewsRejectId.clarificationId;
       if (row.clarifiNewsRejectId.clarificationId == 17) return '2';
       if (row.clarifiNewsRejectId.clarificationId == 18) return '2';
       if (row.clarifiNewsRejectId.clarificationId == 19) return '3';
       return '1';
-    },
+    },*/
   },
-  clarifyDate: {
+  rejectionDate: {
     title: 'Fecha Aclaración',
     type: 'string',
     sort: false,
   },
-  clarifiNewsRejectId: {
+  reason: {
     title: 'Motivo',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.clarifiNewsRejectId.reason;
-    },
   },
-  clarifiNewsRejectId1: {
+  observations: {
     title: 'Observaciones',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.clarifiNewsRejectId.observations;
-    },
   },
 };
