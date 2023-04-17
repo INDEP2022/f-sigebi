@@ -31,6 +31,9 @@ export class NotifyAssetsImproprietyFormComponent
   //parametro si es inteconexion por el tipo de transferente pasado desde el padre
   isInterconnection: boolean = false;
 
+  //Parámetro con el id del tipo de la aclaración
+  idAclara: any;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -40,8 +43,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   ngOnInit(): void {
-    this.withDocumentation =
-      this.clarification[0].typeClarification === '2' ? true : false;
+    this.withDocumentation = this.idAclara === '18' ? true : false;
     console.log('doc', this.withDocumentation);
     this.initForm1();
   }

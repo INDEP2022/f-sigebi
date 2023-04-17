@@ -31,6 +31,7 @@ import { InputFieldComponent } from './tabs/notify-clarifications-impropriety-ta
 import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
 import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintReportModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+import { PrintSatAnswerComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/refuse-clarification-modal/refuse-clarification-modal.component';
 import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
@@ -84,6 +85,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     CheckboxComponent,
     CopyAddressComponent,
     FulfillmentComponent,
+    PrintSatAnswerComponent,
   ],
   imports: [
     CommonModule,
