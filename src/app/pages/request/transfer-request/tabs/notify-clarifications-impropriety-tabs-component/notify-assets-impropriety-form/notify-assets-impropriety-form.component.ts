@@ -53,6 +53,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.withDocumentation = this.idAclara === '18' ? true : false;
     this.initForm1();
     this.initForm2();
+    console.log('clar', this.dataClarifications);
   }
 
   initForm1(): void {
@@ -133,11 +134,12 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ], */
     });
+
+    this.clarificationForm.patchValue(this.dataClarifications);
   }
 
   initForm2(): void {
     this.inappropriatenessForm = this.fb.group({
-      id: ['14254'],
       managedTo: [
         null,
         [
@@ -221,27 +223,60 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       applicationId: [this.clarification[0]?.requestId],
       documentTypeId: [111],
+      clarificationStatus: 'EN_ACLARACION',
     });
   }
 
   confirm() {
-    this.loading = true;
-    console.log(this.inappropriatenessForm.value);
-    this.documentService
-      .createClarDocImp(this.inappropriatenessForm.value)
-      .subscribe({
+    if (this.withDocumentation) {
+      this.loading = true;
+      console.log(this.inappropriatenessForm.value);
+      this.documentService
+        .createClarDocImp(this.inappropriatenessForm.value)
+        .subscribe({
+          next: data => {
+            this.onLoadToast(
+              'success',
+              'Aclaración guardada correctamente',
+              ''
+            );
+            this.openReport();
+            console.log('Data guardada', data);
+            this.loading = false;
+            //this.modalRef.hide()
+          },
+          error: error => {
+            this.loading = false;
+            this.onLoadToast('error', 'No se pudo guardar', '');
+          },
+        });
+    } else {
+      this.loading = true;
+      const info: IChatClarifications = {
+        senderName: this.clarificationForm.get('senderName').value,
+        jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
+          .value,
+        userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
+        webMail: this.clarificationForm.get('webMail').value,
+      };
+
+      console.log('dsfd', info);
+      this.chatService.update(this.dataClarifications.id, info).subscribe({
         next: data => {
-          this.onLoadToast('success', 'Aclaración guardada correctamente', '');
-          this.openReport();
-          console.log('Data guardada', data);
+          console.log('info act', data);
           this.loading = false;
-          //this.modalRef.hide()
+          this.onLoadToast(
+            'success',
+            'Aclaración actualizada correctamente',
+            ''
+          );
         },
         error: error => {
           this.loading = false;
-          this.onLoadToast('error', 'No se pudo guardar', '');
+          console.log(error);
         },
       });
+    }
   }
 
   openReport() {
