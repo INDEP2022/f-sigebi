@@ -80,6 +80,7 @@ export class VerifyComplianceTabComponent
   goodsSelected: any = [];
   checkboxReadOnly: boolean = false;
   formLoading: boolean = false;
+  loadingClarification: boolean = false;
 
   /* aclaraciones */
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -471,7 +472,10 @@ export class VerifyComplianceTabComponent
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
           this.clarificationData = [];
-          if (next) this.getClarifications(this.goodsSelected[0].id);
+          if (next) {
+            this.loadingClarification = true;
+            this.getClarifications(this.goodsSelected[0].id);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -592,6 +596,7 @@ export class VerifyComplianceTabComponent
           return item.cumpliance;
         });
         this.paragraphsTable1 = cumpliance;
+        this.article3array = this.paragraphsTable1;
       },
     });
   }
@@ -616,53 +621,31 @@ export class VerifyComplianceTabComponent
           return item.cumpliance;
         });
         this.paragraphsTable2 = cumpliance;
+        this.article12and13array = this.paragraphsTable2;
       },
     });
   }
 
-  article3Selected(event: any): void {
-    let element2 = event.data;
-    const index2 = this.article3array.indexOf(element2);
-    //console.log(this.article3array);
-    let eliminado: any;
-    if (index2 === -1) {
-      element2.cumple = true;
-      this.article3array.push(element2);
-    } else {
-      eliminado = this.article3array.splice(index2, 1);
+  article3Selected(event: any): void {}
+
+  article12y13Selected(event: any): void {}
+
+  articlesSelected(element: any) {
+    if (element.article === 'Articulo 12 y 13 Reglamento') {
+      const index = this.article12and13array.indexOf(element);
+      if (this.article12and13array[index].cumple === false) {
+        this.article12and13array[index].cumple = true;
+      } else {
+        this.article12and13array[index].cumple = false;
+      }
+    } else if (element.article === 'Articulo 3 Ley') {
+      const index = this.article3array.indexOf(element);
+      if (this.article3array[index].cumple === false) {
+        this.article3array[index].cumple = true;
+      } else {
+        this.article3array[index].cumple = false;
+      }
     }
-
-    /*  let element = event.data;
-    const index = this.paragraphsTable1.indexOf(element); */
-    /*  if (this.paragraphsTable1[index].cumple === false) {
-      this.paragraphsTable1[index].cumple = true;
-    } else {
-      this.paragraphsTable1[index].cumple = false;
-    } */
-    console.log(this.paragraphsTable1);
-  }
-
-  article12y13Selected(event: any): void {
-    let element = event.data;
-    const index = this.paragraphsTable2.indexOf(element);
-    let eliminado: any = null;
-    if (this.paragraphsTable2[index].cumple === false) {
-      this.paragraphsTable2[index].cumple = true;
-    } else {
-      this.paragraphsTable2[index].cumple = false;
-    }
-
-    const index2 = this.article12and13array.indexOf(element);
-    if (index2 === -1) {
-      element.cumple = true;
-      this.article12and13array.push(element);
-    } else {
-      eliminado = this.article12and13array.splice(index2, 1);
-    }
-  }
-
-  articlesSelected(data: any) {
-    //console.log(data);
   }
 
   selectGood(event: any) {
@@ -673,6 +656,7 @@ export class VerifyComplianceTabComponent
     this.goodsSelected = event.selected;
 
     if (this.goodsSelected.length === 1) {
+      this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
         this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
@@ -682,7 +666,7 @@ export class VerifyComplianceTabComponent
           this.isGoodSelected = true;
         }
         this.formLoading = false;
-      }, 2000);
+      }, 1000);
     } else {
       this.formLoading = false;
     }
@@ -702,9 +686,17 @@ export class VerifyComplianceTabComponent
 
         Promise.all(clarification).then(data => {
           this.clarificationData = resp.data;
+          this.loadingClarification = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loadingClarification = false;
+        this.onLoadToast(
+          'error',
+          'error',
+          'No se pudo cargar la clarificación'
+        );
+      },
     });
   }
 
@@ -766,7 +758,14 @@ export class VerifyComplianceTabComponent
 
   async confirm() {
     this.loader.load = false;
-    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
+    console.log(this.article3array);
+    console.log(this.article12and13array);
+    const article3 = this.article3array.filter(x => x.cumple === true);
+    const article12Y13 = this.article12and13array.filter(
+      x => x.cumple === true
+    );
+
+    if (article3.length < 3 || article12Y13.length < 3) {
       this.alert(
         'error',
         'Error',
@@ -775,7 +774,7 @@ export class VerifyComplianceTabComponent
       return;
     }
 
-    const articles = this.paragraphsTable2.concat(this.article3array);
+    const articles = this.article12and13array.concat(this.article3array);
     //console.table(articles);
 
     const id = this.requestObject.id;

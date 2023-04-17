@@ -21,25 +21,25 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('nameSender')"
+              [control]="clarificationForm.get('senderName')"
               label="Nombre Remitente">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="nameSender" />
+                formControlName="senderName" />
             </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('keyClarification')"
+              [control]="clarificationForm.get('jobClarificationKey')"
               label="Clave Oficio Aclaraci&oacute;n">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="keyClarification" />
+                formControlName="jobClarificationKey" />
             </form-field>
           </div>
         </div>
@@ -58,52 +58,52 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('captureUserArea')"
+              [control]="clarificationForm.get('userAreaCaptures')"
               label="&Aacute;rea del Usuario Captura">
               <input
                 type="text"
                 class="form-control"
                 maxlength="60"
-                formControlName="captureUserArea" />
+                formControlName="userAreaCaptures" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('emailNotifiSat')"
+              [control]="clarificationForm.get('webMail')"
               label="Correo Notificaci&oacute;n SAT">
               <input
                 type="text"
                 class="form-control"
                 maxlength="30"
-                formControlName="emailNotifiSat" />
+                formControlName="webMail" />
             </form-field>
           </div>
         </div>
       </div>
     </form>
-
-    <!--<div *ngIf="withDocumentation">
+    <form [formGroup]="inappropriatenessForm" class="form-material">
+      <div *ngIf="withDocumentation">
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('receiver')"
+              [control]="inappropriatenessForm.get('managedTo')"
               label="Destinatario">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="receiver" />
+                formControlName="managedTo" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('senderCharge')"
+              [control]="inappropriatenessForm.get('positionSender')"
               label="Cargo Remitente">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="senderCharge" />
+                formControlName="positionSender" />
             </form-field>
           </div>
         </div>
@@ -111,24 +111,24 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('receiverCharge')"
+              [control]="inappropriatenessForm.get('positionAddressee')"
               label="Cargo Destinatario">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="receiverCharge" />
+                formControlName="positionAddressee" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('keyClarification')"
+              [control]="inappropriatenessForm.get('jobClarificationKey')"
               label="Clave Oficio Aclaraci&oacute;n">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="keyClarification" />
+                formControlName="jobClarificationKey" />
             </form-field>
           </div>
         </div>
@@ -136,19 +136,19 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('nameSender')"
+              [control]="inappropriatenessForm.get('sender')"
               label="Nombre Remitente">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="nameSender" />
+                formControlName="sender" />
             </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('clarification')"
+              [control]="inappropriatenessForm.get('clarification')"
               label="Aclaraci&oacute;n">
               <textarea
                 class="form-control"
@@ -161,12 +161,12 @@
         <div class="row pt-3">
           <div class="col-md-12">
             <form-field
-              [control]="clarificationForm.get('consistent')"
+              [control]="inappropriatenessForm.get('consistentIn')"
               label="Consistente en">
               <textarea
                 class="form-control"
                 maxlength="100"
-                formControlName="consistent"></textarea>
+                formControlName="consistentIn"></textarea>
             </form-field>
           </div>
         </div>
@@ -174,22 +174,22 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('initialParagraph')"
+              [control]="inappropriatenessForm.get('paragraphInitial')"
               label="P&aacute;rrafo Inicial">
               <textarea
                 class="form-control"
                 maxlength="100"
-                formControlName="initialParagraph"></textarea>
+                formControlName="paragraphInitial"></textarea>
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('finalParagraph')"
+              [control]="inappropriatenessForm.get('paragraphFinal')"
               label="P&aacute;rrafo Final">
               <textarea
                 class="form-control"
                 maxlength="100"
-                formControlName="finalParagraph"></textarea>
+                formControlName="paragraphFinal"></textarea>
             </form-field>
           </div>
         </div>
@@ -197,7 +197,7 @@
         <div class="row pt-3">
           <div class="col-md-12">
             <form-field
-              [control]="clarificationForm.get('observations')"
+              [control]="inappropriatenessForm.get('observations')"
               label="Observaciones">
               <textarea
                 class="form-control"
@@ -210,47 +210,48 @@
         <div class="row pt-3">
           <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('captureUserArea')"
+              [control]="inappropriatenessForm.get('areaUserCapture')"
               label="&Aacute;rea del Usuario Captura">
               <input
                 type="text"
                 class="form-control"
                 maxlength="60"
-                formControlName="captureUserArea" />
+                formControlName="areaUserCapture" />
             </form-field>
           </div>
 
           <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('idTransmitter')"
+              [control]="inappropriatenessForm.get('transmitterId')"
               label="ID Emisor">
               <input
                 type="text"
                 class="form-control"
                 maxlength="15"
-                formControlName="idTransmitter" />
+                formControlName="transmitterId" />
             </form-field>
           </div>
 
           <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('emailNotifiSat')"
+              [control]="inappropriatenessForm.get('mailNotification')"
               label="Correo Notificaci&oacute;n SAT">
               <input
                 type="text"
                 class="form-control"
                 maxlength="30"
-                formControlName="emailNotifiSat" />
+                formControlName="mailNotification" />
             </form-field>
           </div>
         </div>
-      </div> -->
+      </div>
+    </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="clarificationForm.invalid"
+          [disabled]="inappropriatenessForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>

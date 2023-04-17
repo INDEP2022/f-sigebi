@@ -603,6 +603,7 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
@@ -619,6 +620,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -631,6 +633,7 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo para guardar la clasificacion de bienes */
   async classifyGoodMethod() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
@@ -646,6 +649,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -658,6 +662,7 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo de destino documental */
   async destinyDocumental() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
@@ -673,6 +678,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -735,6 +741,7 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
+    this.loader.load = true;
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
@@ -759,6 +766,7 @@ export class RegistrationOfRequestsComponent
         oldTask
       );
       if (taskResult === true) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
