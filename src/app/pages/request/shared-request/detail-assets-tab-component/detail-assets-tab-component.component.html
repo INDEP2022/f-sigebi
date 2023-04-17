@@ -528,7 +528,9 @@
     </ng-template>
     <form [formGroup]="domicileForm" class="form-material">
       <div class="addressGood">
-        <div class="row pt-4" *ngIf="typeDoc === 'assets'">
+        <div
+          class="row pt-4"
+          *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
               *ngIf="process != 'classify-assets'"
