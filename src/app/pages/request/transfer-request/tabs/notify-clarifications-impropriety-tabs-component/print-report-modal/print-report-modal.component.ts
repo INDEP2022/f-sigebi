@@ -5,9 +5,11 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -23,12 +25,13 @@ import { LIST_REPORTS_COLUMN } from './list-reports-column';
 export class PrintReportModalComponent extends BasePage implements OnInit {
   idDoc: any;
   idTypeDoc: any;
-  nameTypeDoc: string = 'DictamenProcendecia';
+  idReportAclara: any; //ID del reporte de Oficio_Aclaracion
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
   valuesSign: ISignatories;
   requestInfo: IRequest;
+  dataClarifications: IChatClarifications;
 
   src = '';
   isPdfLoaded = false;
@@ -67,7 +70,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private wContentService: WContentService,
     private requestService: RequestService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private chatClarificationsService: ChatClarificationsService
   ) {
     super();
     this.settings = {
@@ -95,10 +99,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
-    this.src = linkDoc1;
-    console.log('URL de reporte', this.src);
-
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -121,6 +121,17 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       });
 
     this.signParams();
+
+    if (this.idReportAclara != null) {
+      let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
+      this.src = linkDoc2;
+      console.log('ID del reporte Oficio_Aclaracion', this.idReportAclara);
+      console.log('url del reporte', linkDoc2);
+      return;
+    } else {
+      let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+      this.src = linkDoc1;
+    }
   }
 
   registerSign() {
@@ -423,32 +434,88 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   firm() {
     const id = this.idDoc; //ID solicitud
-    const nameTypeReport = this.nameTypeDoc; //Id tipo de documento que es 50
 
-    const formData: Object = {
-      id: this.idDoc,
-      firma: true,
-      tipoDocumento: this.nameTypeDoc,
-    };
-    console.log(formData);
+    //Firmar reporte Dictamen Procedencia
+    if (this.idTypeDoc == 50) {
+      const nameTypeReport = 'DictamenProcendecia';
+      const formData: Object = {
+        id: this.idDoc,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
 
-    this.gelectronicFirmService
-      .firmDocument(id, nameTypeReport, formData)
-      .subscribe({
-        next: data => (console.log('correcto', data), this.handleSuccess()),
-        error: error => {
-          if (error.status == 200) {
-            this.msjCheck = true;
-            console.log('correcto'),
+      this.gelectronicFirmService
+        .firmDocument(id, nameTypeReport, formData)
+        .subscribe({
+          next: data => (console.log('correcto', data), this.handleSuccess()),
+          error: error => {
+            if (error.status == 200) {
+              this.msjCheck = true;
+              console.log('correcto');
               this.alert('success', 'Firmado correctamente', '');
-          } else {
-            this.alert(
-              'info',
-              'Error al generar firma electrónic',
-              error.error + '. Verificar datos del firmante'
-            );
-            this.updateStatusSigned();
-          }
+            } else {
+              this.alert(
+                'info',
+                'Error al generar firma electrónic',
+                error.error + '. Verificar datos del firmante'
+              );
+              this.updateStatusSigned();
+            }
+          },
+        });
+    }
+    //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
+    if (this.idTypeDoc == 111) {
+      const nameTypeReport = 'OficioImprocedencia';
+      const formData: Object = {
+        id: this.idDoc,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
+
+      this.gelectronicFirmService
+        .firmDocument(id, nameTypeReport, formData)
+        .subscribe({
+          next: data => (console.log('correcto', data), this.handleSuccess()),
+          error: error => {
+            if (error.status == 200) {
+              this.msjCheck = true;
+              console.log('correcto');
+              this.alert('success', 'Firmado correctamente', '');
+              this.updateStatusclarifications();
+            } else {
+              this.alert(
+                'info',
+                'Error al generar firma electrónic',
+                error.error + '. Verificar datos del firmante'
+              );
+              this.updateStatusSigned();
+            }
+          },
+        });
+    }
+  }
+
+  updateStatusclarifications() {
+    console.log('Información de la notificacion: ', this.dataClarifications);
+    const formData: Object = {
+      id: this.dataClarifications.id,
+      clarificationStatus: 'A_ACLARACION',
+    };
+
+    this.chatClarificationsService
+      .update(this.dataClarifications.id, formData)
+      .subscribe({
+        next: data => {
+          //this.onLoadToast('success', 'Aclaración guardada correctamente', '');
+          console.log('Data guardada', data);
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
   }
