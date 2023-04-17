@@ -1930,15 +1930,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   goToScanDocuments(document: IDocuments) {
     const { id } = document;
-    const url = this.router.createUrlTree(
-      ['/pages/general-processes/scan-documents'],
-      {
-        queryParams: {
-          folio: id,
-        },
-      }
-    );
-    window.open(url.toString(), '_blank');
+    this.router.navigate(['/pages/general-processes/scan-documents'], {
+      queryParams: {
+        folio: id,
+        origin: 'FGESTBUZONTRAMITE',
+      },
+    });
   }
 
   replicate() {

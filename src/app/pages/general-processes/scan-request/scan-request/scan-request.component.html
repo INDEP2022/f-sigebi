@@ -1,6 +1,14 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
+    <div class="buttons">
+      <button
+        class="btn btn-secondary btn-sm active mr-2"
+        (click)="back()"
+        *ngIf="isParams">
+        Regresar
+      </button>
+    </div>
   </div>
 
   <div body>

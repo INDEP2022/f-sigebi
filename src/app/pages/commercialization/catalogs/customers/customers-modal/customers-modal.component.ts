@@ -3,10 +3,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
+  CURP_PATTERN,
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 //Models
@@ -67,7 +68,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.maxLength(20),
-          Validators.pattern(RFCCURP_PATTERN),
+          Validators.pattern(RFC_PATTERN),
         ],
       ],
       sellerId: [null, [Validators.pattern(NUMBERS_PATTERN)]], //LLave
@@ -136,7 +137,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.maxLength(20),
-          Validators.pattern(RFCCURP_PATTERN),
+          Validators.pattern(CURP_PATTERN),
         ],
       ],
       blackList: [null, [Validators.pattern(STRING_PATTERN)]],

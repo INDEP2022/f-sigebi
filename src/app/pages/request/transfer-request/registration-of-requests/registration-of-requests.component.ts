@@ -572,7 +572,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegúrese de tener guardado los formularios antes de turnar la solicitud!',
+      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -902,7 +902,7 @@ export class RegistrationOfRequestsComponent
       let body: any = {};
       body['xidSolicitud'] = id;
       body['xTipoDocumento'] = 50;
-      this.wcontentService.getDocumentos(body).subscribe({
+      this.wcontentService.getDocumentos(body, new ListParams()).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = true;

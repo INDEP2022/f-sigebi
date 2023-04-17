@@ -94,6 +94,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    this.filterParams
+      .getValue()
+      .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       this.filterParams

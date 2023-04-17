@@ -465,10 +465,12 @@ export class ClassifyAssetsTabComponent
   }
 
   getChapter(params: ListParams, id?: number) {
-    if (this.advSearch === false) {
-      params['filter.parentId'] = '$eq:' + id.toString();
-    } else {
-      params['filter.id'] = '$eq:' + id.toString();
+    if (id) {
+      if (this.advSearch === false) {
+        params['filter.parentId'] = '$eq:' + id.toString();
+      } else {
+        params['filter.id'] = '$eq:' + id.toString();
+      }
     }
     params.limit = 50;
     this.fractionService
