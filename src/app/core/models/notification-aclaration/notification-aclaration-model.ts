@@ -1,4 +1,5 @@
 export interface Inappropriateness {
+  id: string;
   managedTo: string;
   positionSender: string;
   positionAddressee: string;

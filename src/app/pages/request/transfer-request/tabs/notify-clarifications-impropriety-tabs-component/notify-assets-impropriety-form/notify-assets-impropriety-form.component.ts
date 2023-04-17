@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -10,6 +11,7 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
 @Component({
   selector: 'app-notify-assets-impropriety-form',
@@ -25,6 +27,7 @@ export class NotifyAssetsImproprietyFormComponent
   procedenceForm: ModelForm<any>;
   inappropriatenessForm: ModelForm<Inappropriateness>;
   clarification: any;
+  dataClarifications: IChatClarifications;
 
   //en el caso de que una aclaracion llege sin documentacion
   withDocumentation: boolean = false;
@@ -132,7 +135,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   initForm2(): void {
     this.inappropriatenessForm = this.fb.group({
-      id: ['14253'],
+      id: ['14254'],
       managedTo: [
         null,
         [
@@ -227,32 +230,37 @@ export class NotifyAssetsImproprietyFormComponent
       .subscribe({
         next: data => {
           this.onLoadToast('success', 'Aclaración guardada correctamente', '');
+          this.openReport();
+          console.log('Data guardada', data);
           this.loading = false;
           //this.modalRef.hide()
         },
         error: error => {
           this.loading = false;
-          console.log(error);
+          this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
-    //
-    /*if (this.clarification[0].typeClarification === '1') {
-      // cambiar el estado de la aclaracion en "EN_ACLARACION"
-    } else {
-      let config: ModalOptions = {
-        initialState: {
-          data: '',
-          typeReport: 'noncompliance',
-          callback: (next: boolean) => {
-            //if (next){ this.getData();}
-          },
-        },
-        class: 'modalSizeXL modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(PrintReportModalComponent, config);
-    }
-    this.close(); */
+  }
+
+  openReport() {
+    const idReportAclara = this.inappropriatenessForm.controls['id'].value; //ID del reporte de Oficio_Aclaracion
+    const idDoc = this.inappropriatenessForm.controls['id'].value;
+    const idTypeDoc = 111;
+    const dataClarifications = this.dataClarifications;
+
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        dataClarifications,
+        idTypeDoc,
+        idDoc,
+        idReportAclara,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
   }
 
   close() {
