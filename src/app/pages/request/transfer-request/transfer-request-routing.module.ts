@@ -18,28 +18,28 @@ const routes: Routes = [
     },
   },
   {
-    path: 'classify-assets/:id',
+    path: 'classify-assets/:id/:task',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'classify-assets',
     },
   },
   {
-    path: 'validate-document/:id',
+    path: 'validate-document/:id/:task',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'validate-document',
     },
   },
   {
-    path: 'notify-clarification-inadmissibility/:id',
+    path: 'notify-clarification-inadmissibility/:id/:task',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'notify-clarification-inadmissibility',
     },
   },
   {
-    path: 'process-approval/:id',
+    path: 'process-approval/:id/:task',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'process-approval',
