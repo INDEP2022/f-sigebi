@@ -68,7 +68,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       clarificationId: [null, [Validators.required]],
       reason: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
       ],
       creationUser: [null],
       rejectionDate: [null],

@@ -47,7 +47,8 @@
                   type="text"
                   class="form-control"
                   formControlName="color"
-                  [readOnly]="isGoodInfReadOnly" />
+                  [readOnly]="isGoodInfReadOnly"
+                  maxlength="50" />
               </form-field>
             </div>
           </div>
@@ -55,11 +56,12 @@
             <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('goodDescription')"
-                label="Descripci&oacute;n de bien Transferente">
+                label="Descripci&oacute;n de Bien Transferente">
                 <textarea
                   class="form-control"
                   formControlName="goodDescription"
-                  [readOnly]="isGoodInfReadOnly"></textarea>
+                  [readOnly]="isGoodInfReadOnly"
+                  maxlength="4000"></textarea>
               </form-field>
             </div>
             <div class="col-md-4">
@@ -70,8 +72,9 @@
                   type="number"
                   class="form-control"
                   formControlName="quantity"
-                  [readOnly]="isGoodInfReadOnly"
-                  min="0" />
+                  min="0"
+                  oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);"
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -94,7 +97,7 @@
                 label="Capacidad &#40;lts&#46;&#41;">
                 <input
                   type="text"
-                  maxlength="30"
+                  maxlength="5"
                   minlength="0"
                   class="form-control"
                   formControlName="capacity"
@@ -106,14 +109,13 @@
             <div class="col-md-4">
               <form-field
                 [control]="detailAssets.get('fileeNumber')"
-                label="No&#46; Exp&#46; de la transferente">
+                label="No&#46; Exp&#46; de la Transferente">
                 <input
                   type="text"
                   maxlength="1250"
                   class="form-control"
                   formControlName="fileeNumber"
-                  [readOnly]="isGoodInfReadOnly"
-                  maxlength="30" />
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -124,7 +126,8 @@
                   type="text"
                   class="form-control"
                   formControlName="volume"
-                  [readOnly]="isGoodInfReadOnly" />
+                  [readOnly]="isGoodInfReadOnly"
+                  maxlength="5" />
               </form-field>
             </div>
           </div>
@@ -149,7 +152,8 @@
                   type="text"
                   class="form-control"
                   formControlName="useType"
-                  [readOnly]="isGoodInfReadOnly" />
+                  [readOnly]="isGoodInfReadOnly"
+                  maxlength="40" />
               </form-field>
             </div>
           </div>
@@ -174,7 +178,8 @@
                   type="text"
                   class="form-control"
                   formControlName="origin"
-                  [readOnly]="isGoodInfReadOnly" />
+                  [readOnly]="isGoodInfReadOnly"
+                  maxlength="40" />
               </form-field>
             </div>
           </div>
@@ -264,6 +269,7 @@
                   class="form-control"
                   formControlName="notesTransferringEntity"
                   [readOnly]="isGoodInfReadOnly"
+                  maxlength="1500"
                   rows="4"></textarea>
               </form-field>
             </div>
