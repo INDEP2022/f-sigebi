@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -31,7 +31,8 @@ export class RequestRecordTabComponent
   implements OnInit, OnChanges
 {
   @Input() requestForm: ModelForm<IRequest>;
-
+  requiredFieldText: 'Campo requerido';
+  submitted = false;
   bsReceptionValue = new Date();
   bsPaperValue: any;
   bsPriorityDate: any;
@@ -143,7 +144,7 @@ export class RequestRecordTabComponent
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [null],
-      paperDate: [null], //requerido
+      paperDate: [null, [Validators.required]], //requerido
       typeRecord: [null],
       publicMinistry: [
         null,
@@ -192,14 +193,21 @@ export class RequestRecordTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
       transferenceFile: [null, [Validators.pattern(STRING_PATTERN)]],
-      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       circumstantialRecord: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       lawsuit: [
         null,
@@ -312,8 +320,10 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
-    const request = this.requestForm.getRawValue() as IRequest;
     this.loading = true;
+    this.submitted = true;
+    // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
+    const request = this.requestForm.getRawValue() as IRequest;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
@@ -357,5 +367,11 @@ export class RequestRecordTabComponent
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
+    });
+    this.requestForm.updateValueAndValidity();
   }
 }

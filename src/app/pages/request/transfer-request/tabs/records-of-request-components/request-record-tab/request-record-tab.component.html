@@ -69,6 +69,14 @@
               #dp="bsDatepicker"
               bsDatepicker
               (bsValueChange)="changeDateEvent($event)" />
+            <!-- <span class="text-danger bg-white border-0 ui-inputgroup-addon">*</span>
+            <div *ngIf="submitted && requestForm.value.paperDate.length == 0" class="invalid-feedback">
+              <div>{{requiredFieldText}}</div>
+            </div> -->
+            <!-- <span class="text-danger bg-white border-0 ui-inputgroup-addon">*</span>
+            <div class="invalid-feedback">
+              <div>{{requiredFieldText}}</div>
+            </div> -->
           </form-field>
         </div>
 
@@ -111,10 +119,12 @@
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
           <form-field
             [control]="requestForm.get('nameOfOwner')"
-            label="Nombre del Remitente">
+            label="Nombre MP">
             <input
               type="text"
               maxlength="100"
@@ -132,12 +142,41 @@
           </form-field>
         </div>
       </div>
-
       <div class="row pt-4">
-        <div class="col-md-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <form-field
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono MP">
+            <input
+              type="text"
+              maxlength="13"
+              class="form-control"
+              formControlName="phoneOfOwner" />
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <form-field
+            [control]="requestForm.get('emailOfOwner')"
+            label="Correo MP">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="emailOfOwner" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo del Remitente">
+            label="Cargo y/o Adscripción">
             <input
               type="text"
               maxlength="100"
@@ -159,17 +198,6 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono del Remitente">
-            <input
-              type="text"
-              maxlength="13"
-              class="form-control"
-              formControlName="phoneOfOwner" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
             [control]="requestForm.get('receiptRoute')"
             label="V&iacute;a de Recepci&oacute;n">
             <input
@@ -179,8 +207,7 @@
               [readOnly]="true" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
+
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('indicatedTaxpayer')"
@@ -190,16 +217,6 @@
               maxlength="200"
               class="form-control"
               formControlName="indicatedTaxpayer" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="requestForm.get('affair')" label="Asunto">
-            <input
-              type="text"
-              class="form-control"
-              [ngModelOptions]="{ standalone: true }"
-              [ngModel]="affairName"
-              [readOnly]="true" />
           </form-field>
         </div>
       </div>
@@ -230,21 +247,86 @@
         </div>
       </div>
 
-      <!-- <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field [control]="requestForm.get('fileLeagueDate')" label="Fecha de archivo de liga">
-            <input type="text" class="form-control" #dp="bsDatepicker" (bsValueChange)="changeLigEvent($event)"
-              bsDatepicker [bsValue]="bsligDate" />
+      <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
+      <div class="row pt-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <!-- <div class="col-md-4" *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
+          <form-field
+            [control]="requestForm.get('previousInquiry')"
+            label="Averiguacion Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="previousInquiry" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="requestForm.get('verificationDateCump')" label="Fecha de verificación">
-            <input type="text" class="form-control" #dp="bsDatepicker" (bsValueChange)="changeVerEvent($event)"
-              bsDatepicker [bsValue]="bsverifiyDate" />
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <!-- *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
+          <form-field
+            [control]="requestForm.get('circumstantialRecord')"
+            label="Acta Circunstancial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="circumstantialRecord" />
           </form-field>
         </div>
-      </div> -->
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('tocaPenal')"
+            label="Toca Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tocaPenal" />
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <form-field
+            [control]="requestForm.get('lawsuit')"
+            label="Causa Penal">
+            <input type="text" class="form-control" formControlName="lawsuit" />
+          </form-field>
+        </div>
+      </div>
 
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <!-- FIN TRANSFERENTES 1 Y 3 -->
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('trialType')"
+            label="Tipo de Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="trialType" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="publicMinistry"
+            (fetchItems)="getPublicMinister($event)"
+            [data]="selectMinPub"
+            [searchable]="true"
+            label="Ministerio P&uacute;blico"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
+        </div>
+      </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
@@ -273,60 +355,10 @@
           </form-field>
         </div>
       </div>
-      <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
       <div class="row pt-4">
         <div
           class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
-          <form-field
-            [control]="requestForm.get('previousInquiry')"
-            label="Averiguacion Previa">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="previousInquiry" />
-          </form-field>
-        </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
-          <form-field
-            [control]="requestForm.get('circumstantialRecord')"
-            label="Acta Circunstancial">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="circumstantialRecord" />
-          </form-field>
-        </div>
-      </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('tocaPenal')"
-            label="Toca Penal">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="tocaPenal" />
-          </form-field>
-        </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
-          <form-field
-            [control]="requestForm.get('lawsuit')"
-            label="Causa Penal">
-            <input type="text" class="form-control" formControlName="lawsuit" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
           <form-field
             [control]="requestForm.get('domainExtinction')"
             label="Extinci&oacute;n Dominio">
@@ -335,38 +367,6 @@
               class="form-control"
               formControlName="domainExtinction" />
           </form-field>
-        </div>
-      </div>
-
-      <!-- FIN TRANSFERENTES 1 Y 3 -->
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('trialType')"
-            label="Tipo de Juicio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="trialType" />
-          </form-field>
-        </div>
-      </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 3">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="publicMinistry"
-            (fetchItems)="getPublicMinister($event)"
-            [data]="selectMinPub"
-            [searchable]="true"
-            label="Ministerio P&uacute;blico"
-            bindLabel="description"
-            value="description">
-          </ngx-select>
         </div>
       </div>
     </form>
