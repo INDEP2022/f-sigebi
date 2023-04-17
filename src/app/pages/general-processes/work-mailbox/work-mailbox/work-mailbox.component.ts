@@ -1609,7 +1609,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un error al cancelar el trámite'
+          'Ocurrio un error al enviar el trámite'
         );
         return throwError(() => error);
       }),
