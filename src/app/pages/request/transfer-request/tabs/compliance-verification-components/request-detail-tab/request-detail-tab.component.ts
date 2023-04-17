@@ -53,9 +53,9 @@ export class RequestDetailTabComponent
   cargoLabel: string = 'Cargo del Remitente';
   delitoLabel: string = 'Delito';
   telefonoLabel: string = 'Teléfono del Remitente';
-  viaRecepcionLabel: string = 'Vía de Recepcion';
+  viaRecepcionLabel: string = 'Vía Recepción';
   correoLable: string = 'Correo del Remitente';
-  gestionDestino: string = 'Gestion de Destino';
+  gestionDestino: string = 'Gestión Destino';
   contribuyenteLabel: string = 'Contribuyente y/o Indiciado';
   asuntoLabel: string = 'Asunto';
   expedienteTransLabel: string = 'Expediente Transferente/PAMA';
@@ -65,7 +65,7 @@ export class RequestDetailTabComponent
   causaPenal: string = 'Causa Penal';
   noAmparoLabel: string = 'No. Amparo';
   tocaPenal: string = 'Toca Penal';
-  gestionDestinoLabel: string = 'Gestión de Destino';
+  gestionDestinoLabel: string = 'Gestión Destino';
   actaCircunstacial: string = 'Acta Circunstanciada';
   averiguacionPreviaLabel: string = 'Averiguación Previa';
 

@@ -70,6 +70,7 @@ export class AddressTransferorTabComponent
   isreadOnly: boolean = true;
   stateKey: string = '';
   isAddress: boolean = false;
+  haveData: boolean = false;
 
   stateOfRepublicService = inject(StateOfRepublicService);
   municipalySeraService = inject(MunicipalityService);
@@ -104,8 +105,10 @@ export class AddressTransferorTabComponent
     if (this.process === 'process-approval') {
       this.domicileForm.disable();
     }
+
     this.formReactiveCalls();
     if (this.requestObject != undefined) {
+      this.haveData = true;
       this.getDomicileTransferent(this.requestObject.id);
       this.getStateOfRepublic(
         new ListParams(),
@@ -241,7 +244,9 @@ export class AddressTransferorTabComponent
     params['sortBy'] = 'municipality:ASC';
     params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
     params['filter.municipality'] = `$ilike:${params.text}`;
-    // params.limit = 9;
+    if (this.haveData === true) {
+      params.limit = 50;
+    }
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
@@ -316,7 +321,6 @@ export class AddressTransferorTabComponent
     params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
-    // params.limit = 100;
 
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
