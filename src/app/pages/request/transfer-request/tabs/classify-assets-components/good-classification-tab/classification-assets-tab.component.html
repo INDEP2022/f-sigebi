@@ -37,7 +37,7 @@
     <form-loader *ngIf="formLoading"></form-loader>
   </div>
   <!-- componentes para registro de solicitud y otras vistas -->
-  <div class="pt-4" [hidden]="formLoading">
+  <div class="pt-4" [hidden]="formLoading || !goodObject">
     <tabset class="md-tabs">
       <tab heading="Clasificación del Bien" id="tab1">
         <app-classify-assets-tab
