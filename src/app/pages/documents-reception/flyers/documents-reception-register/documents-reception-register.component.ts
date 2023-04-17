@@ -4249,7 +4249,7 @@ export class DocumentsReceptionRegisterComponent
           this.alert(
             'error',
             'Error al verificar los registros agregados',
-            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. No se crearon correctamente debido a un error en la captura de bienes.`
           );
         }
       },
@@ -4259,23 +4259,10 @@ export class DocumentsReceptionRegisterComponent
         this.alert(
           'error',
           'Error al verificar los registros agregados',
-          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. No se crearon correctamente debido a un error en la captura de bienes.`
         );
       },
     });
-    // this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
-    //   next: data => {
-    //     if (data.affairSijNumber) {
-
-    //     } else {
-    //       console.log('No affairSijNumber');
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //   },
-    // });
-    // this.sendFlyerCopies();
   }
 
   updateProcedureManagement() {
