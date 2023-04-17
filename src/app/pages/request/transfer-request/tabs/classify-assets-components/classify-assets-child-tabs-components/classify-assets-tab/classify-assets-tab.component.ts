@@ -132,7 +132,7 @@ export class ClassifyAssetsTabComponent
       ],
       goodDescription: [null, [Validators.maxLength(4000)]],
       quantity: [
-        1,
+        null,
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),

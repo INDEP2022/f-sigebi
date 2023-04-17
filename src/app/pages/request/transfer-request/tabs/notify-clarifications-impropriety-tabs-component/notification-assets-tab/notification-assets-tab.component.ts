@@ -334,14 +334,19 @@ export class NotificationAssetsTabComponent
   }
 
   openModal(): void {
+    const idNotify = { ...this.notificationsGoods };
+    const dataClarifications = { ...this.valuesNotifications };
     const idAclara = this.selectedRow.clarifiNewsRejectId.clarificationId; //Id del tipo de aclaración
     let config: ModalOptions = {
       initialState: {
+        dataClarifications,
         idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         callback: (next: boolean) => {
-          //if (next){ this.getData();}
+          if (next) {
+            this.getClarificationsByGood(idNotify.goodId);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -360,17 +365,19 @@ export class NotificationAssetsTabComponent
 
   //Respuesta del SAT
   satAnswer() {
+    const idNotify = { ...this.notificationsGoods };
     const idAclaracion = this.selectedRow.id; //ID de la aclaración para mandar al reporte del sat
     if (this.selectedRow.satClarify == null) {
       this.message('Aviso', 'Aún no hay una respuesta del SAT');
       return;
     }
-    console.log('Pasé');
 
     let config: ModalOptions = {
       initialState: {
         idAclaracion,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          this.getClarificationsByGood(idNotify.goodId);
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
