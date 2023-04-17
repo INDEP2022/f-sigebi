@@ -4,14 +4,14 @@ import { RegistrationOfRequestsComponent } from './registration-of-requests/regi
 
 const routes: Routes = [
   {
-    path: 'registration-request/:id',
+    path: 'registration-request/:id/:task',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'registration-request',
     },
   },
   {
-    path: 'verify-compliance/:id',
+    path: 'verify-compliance/:id/:task',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'verify-compliance',

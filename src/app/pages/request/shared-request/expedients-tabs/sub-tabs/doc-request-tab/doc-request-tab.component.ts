@@ -92,7 +92,7 @@ export class DocRequestTabComponent
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
-    console.log(this.idRequest);
+    //console.log(this.idRequest);
   }
 
   ngOnInit(): void {
@@ -217,7 +217,7 @@ export class DocRequestTabComponent
           }
         });
         const info = filterDoc.map(async (items: any) => {
-          console.log(items);
+          //console.log(items);
 
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
           const regionalDelegation = items?.xdelegacionRegional
