@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -44,7 +44,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   delegation: number;
   subDelegation: number;
   departament: number;
-
+  isParamFolio: boolean = false;
+  noVolante: number;
+  isParams: boolean = false;
   constructor(
     private fb: FormBuilder,
     private notificationServ: NotificationService,
@@ -55,7 +57,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private authService: AuthService,
-    private receptionService: DocReceptionRegisterService
+    private receptionService: DocReceptionRegisterService,
+    private router: Router
   ) {
     super();
     const params = new FilterParams();
@@ -75,15 +78,28 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    const param = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
-    if (param && param != 'null') {
+    const param1: any = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
+    const param2: any = this.route.snapshot.paramMap.get('P_FOLIO');
+
+    if (param1 && param1 != 'null') {
+      this.isParams = true;
       this.filterParams
         .getValue()
-        .addFilter('wheelNumber', param, SearchFilter.EQ);
+        .addFilter('wheelNumber', param1, SearchFilter.EQ);
       this.getNotfications();
-    } else if (param === 'null') {
+    } else if (param1 === 'null') {
       this.onLoadToast('error', `Parámetro no_volante no es válido`, '');
     }
+
+    if (param2) {
+      this.isParams = true;
+      this.isParamFolio = true;
+      this.getDocumentByFolio(param2);
+    }
+  }
+
+  back() {
+    window.history.back();
   }
 
   createFilter() {
@@ -167,6 +183,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.notify = resp;
+          this.noVolante = resp.data[0].wheelNumber;
           this.formNotification.patchValue(resp.data[0]);
           this.count = resp.count;
           this.searchDocuments(
@@ -191,6 +208,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           if (next) {
             this.form.reset();
             this.formNotification.patchValue(data);
+            this.noVolante = data.wheelNumber;
             this.searchDocuments(data.expedientNumber, data.wheelNumber);
           }
         },
@@ -234,13 +252,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.loading = false;
           this.docs = resp;
-          resp.data[0].keyTypeDocument = (
-            resp.data[0] as any
-          ).typeDocument.documentTypeKey;
-          this.form.patchValue(resp.data[0]);
           this.countDoc = resp.count;
-          this.idFolio = this.form.get('id').value;
-          this.form.get('id').disable();
+          if (!this.isParamFolio) {
+            resp.data[0].keyTypeDocument = (
+              resp.data[0] as any
+            ).typeDocument.documentTypeKey;
+            this.form.patchValue(resp.data[0]);
+            this.idFolio = this.form.get('id').value;
+            this.form.get('id').disable();
+          }
+
+          this.isParamFolio = false;
         },
         error: err => {
           if (err.status === 500) {
@@ -462,12 +484,33 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   callScan() {
     if (this.idFolio) {
-      window.open(
-        `./pages/general-processes/scan-documents?folio=${this.idFolio}`,
-        '_blank'
-      );
+      this.router.navigate(['pages/general-processes/scan-documents'], {
+        queryParams: {
+          folio: this.idFolio,
+          volante: this.noVolante,
+          origin: 'FACTGENSOLICDIGIT',
+        },
+      });
     } else {
       this.onLoadToast('error', 'No existe un folio para escanear.', '');
     }
+  }
+
+  getDocumentByFolio(folio: number) {
+    this.loading = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('id', folio, SearchFilter.EQ);
+    this.documentServ.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loading = false;
+        resp.data[0].keyTypeDocument = (
+          resp.data[0] as any
+        ).typeDocument.documentTypeKey;
+        this.form.patchValue(resp.data[0]);
+        this.idFolio = this.form.get('id').value;
+        this.form.get('id').disable();
+      },
+    });
   }
 }

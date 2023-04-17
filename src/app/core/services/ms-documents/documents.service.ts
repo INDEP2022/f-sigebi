@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDocuments } from '../../models/ms-documents/documents';
+import { Inappropriateness } from '../../models/notification-aclaration/notification-aclaration-model';
 
 @Injectable({
   providedIn: 'root',
@@ -77,4 +78,14 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.Documents}/update-by-folio`;
     return this.put(route, body);
   }
+
+  createClarDocImp(data: Object) {
+    const route = `clarification-documents-impro`;
+    return this.post<Inappropriateness>(route, data);
+  }
+
+  // updateClarDocImp(id: string | number, data: Object) {
+  //   const route = `clarification-documents-impro/${id}`;
+  //   return this.post<Inappropriateness>(route, data);
+  // }
 }

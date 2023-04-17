@@ -227,12 +227,14 @@ export class RequestInTurnFormComponent implements OnInit {
   search(): void {
     this.filters = [];
     const params = this.getFormChanges();
+
     params.page = 1;
     params.limit = 10;
     delete params.inicio;
     delete params.pageSize;
     delete params.take;
     delete params.text;
+    console.log(params);
     this.sendSearchForm.emit(params);
   }
 
@@ -251,6 +253,9 @@ export class RequestInTurnFormComponent implements OnInit {
 
     //filtro estado solicitudes por tunar
     params['filter.requestStatus'] = '$eq:POR_TURNAR';
+
+    //filtro ordenar desc
+    params['sortBy'] = 'applicationDate:DESC';
 
     if (this.searchForm.controls['dateRequest'].value != null) {
       let date = this.searchForm.controls['dateRequest'].value;
@@ -318,9 +323,33 @@ export class RequestInTurnFormComponent implements OnInit {
   getDateFormat(date: string): string {
     const newDate = new Date(date);
     let year = newDate.getFullYear();
-    let month = newDate.getMonth() + 1;
-    let day = newDate.getDate();
+    let month = this.formarSingleNumber(newDate.getMonth() + 1);
+    let day = this.formarSingleNumber(newDate.getDate());
 
     return year + '-' + month + '-' + day;
+  }
+
+  formarSingleNumber(value: number | string) {
+    let result = value;
+    if (value === 1) {
+      result = `0${value}`;
+    } else if (value === 2) {
+      result = `0${value}`;
+    } else if (value === 3) {
+      result = `0${value}`;
+    } else if (value === 4) {
+      result = `0${value}`;
+    } else if (value === 5) {
+      result = `0${value}`;
+    } else if (value === 6) {
+      result = `0${value}`;
+    } else if (value === 7) {
+      result = `0${value}`;
+    } else if (value === 8) {
+      result = `0${value}`;
+    } else if (value === 9) {
+      result = `0${value}`;
+    }
+    return result.toString();
   }
 }

@@ -352,6 +352,9 @@ export class DocumentsReceptionRegisterComponent
         );
         this.setDefaultValues();
         this.selectFlyer();
+      } else if (Object.keys(this.pageParams).length == 0) {
+        console.log('params empty');
+        this.canViewDocuments = true;
       }
     } else if (
       this.pageParams.pNoTramite != null &&
@@ -385,6 +388,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.wheelType.setValue(
         this.docDataService.documentsReceptionRegisterForm.wheelType
       );
+      this.canViewDocuments = true;
       const param = new FilterParams();
       param.addFilter('flierNumber', this.formControls.wheelNumber.value);
       this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
@@ -397,6 +401,10 @@ export class DocumentsReceptionRegisterComponent
       });
     }
     console.log(this.docDataService.documentsReceptionRegisterForm);
+    console.log(
+      Object.keys(this.pageParams).length == 0,
+      this.wheelNumber.value != null
+    );
   }
 
   checkParams() {

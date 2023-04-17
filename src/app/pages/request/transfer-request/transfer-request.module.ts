@@ -22,6 +22,7 @@ import { ClassifyAssetsTabComponent } from './tabs/classify-assets-components/cl
 import { ClassificationAssetsTabComponent } from './tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
 import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
+import { FulfillmentComponent } from './tabs/compliance-verification-components/verify-compliance-tab/fulfillment/fulfillment.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
@@ -30,6 +31,7 @@ import { InputFieldComponent } from './tabs/notify-clarifications-impropriety-ta
 import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
 import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintReportModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+import { PrintSatAnswerComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/refuse-clarification-modal/refuse-clarification-modal.component';
 import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
@@ -82,6 +84,8 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     OpenDescriptionComponent,
     CheckboxComponent,
     CopyAddressComponent,
+    FulfillmentComponent,
+    PrintSatAnswerComponent,
   ],
   imports: [
     CommonModule,

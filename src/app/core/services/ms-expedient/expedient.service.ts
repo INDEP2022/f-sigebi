@@ -32,8 +32,8 @@ export class ExpedientService extends HttpService {
     return this.get(route);
   }
 
-  getAllFilter(params: _Params) {
-    return this.get<IListResponse<IExpedient>>('expedient', params);
+  getAllFilter(search: any) {
+    return this.get<IListResponse<IExpedient>>('expedient', search);
   }
 
   getNextVal(): Observable<{ nextval: string }> {

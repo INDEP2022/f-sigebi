@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -45,7 +45,7 @@ export class UploadElectronicSignatureComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
       certificate: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
