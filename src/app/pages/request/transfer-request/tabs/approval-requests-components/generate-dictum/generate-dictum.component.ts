@@ -151,6 +151,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     const idDoc = this.idDoc;
     const typeAnnex = 'approval-request';
     const idTypeDoc = this.idTypeDoc;
+    const nameTypeDoc = 'DictamenProcendecia';
 
     let config: ModalOptions = {
       initialState: {
@@ -158,6 +159,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         idTypeDoc,
         typeAnnex,
         requestInfo,
+        nameTypeDoc,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',

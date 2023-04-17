@@ -23,6 +23,7 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
+import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from '../refuse-clarification-modal/refuse-clarification-modal.component';
 import { LIST_ASSETS_COLUMN } from './list-assets-columns';
 import { NOTIFY_ASSETS_COLUMNS } from './notify-assets-columns';
@@ -333,7 +334,7 @@ export class NotificationAssetsTabComponent
   }
 
   openModal(): void {
-    const idAclara = this.selectedRow.clarifiNewsRejectId.clarificationId;
+    const idAclara = this.selectedRow.clarifiNewsRejectId.clarificationId; //Id del tipo de aclaración
     let config: ModalOptions = {
       initialState: {
         idAclara,
@@ -355,5 +356,25 @@ export class NotificationAssetsTabComponent
       console.log(res);
       this.requestForm.get('receiUser').patchValue(res.user);
     }); */
+  }
+
+  //Respuesta del SAT
+  satAnswer() {
+    const idAclaracion = this.selectedRow.id; //ID de la aclaración para mandar al reporte del sat
+    if (this.selectedRow.satClarify == null) {
+      this.message('Aviso', 'Aún no hay una respuesta del SAT');
+      return;
+    }
+    console.log('Pasé');
+
+    let config: ModalOptions = {
+      initialState: {
+        idAclaracion,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintSatAnswerComponent, config);
   }
 }
