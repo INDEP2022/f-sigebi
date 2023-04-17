@@ -19,13 +19,16 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
+      if (row.clarifiNewsRejectId.clarificationId == null) return 'ERORR';
       if (row.clarifiNewsRejectId.clarificationId == 17)
         return 'FALTA DOCUMENTACIÓN ANEXA';
       if (row.clarifiNewsRejectId.clarificationId == 18)
         return 'ERORR EN DOCUMENTACIÓN ANEXA';
-      if (row.clarifiNewsRejectId.clarificationId == null) return 'ERORR';
-      if ((row.clarifiNewsRejectId.clarificationId != 18, 17))
+      if (row.clarifiNewsRejectId.clarificationId == 19)
+        return 'INDIVIDUALIZACIÓN DE BIENES';
+      if ((row.clarifiNewsRejectId.clarificationId != 17, 18, 19))
         return 'ACLARACIÓN';
+
       return row.clarifiNewsRejectId.clarificationId;
     },
   },
@@ -39,7 +42,11 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.clarifiNewsRejectId.clarificationId;
+      //return row.clarifiNewsRejectId.clarificationId;
+      if (row.clarifiNewsRejectId.clarificationId == 17) return '2';
+      if (row.clarifiNewsRejectId.clarificationId == 18) return '2';
+      if (row.clarifiNewsRejectId.clarificationId == 19) return '3';
+      return '1';
     },
   },
   clarifyDate: {
@@ -56,7 +63,7 @@ export const NOTIFY_ASSETS_COLUMNS = {
     },
   },
   clarifiNewsRejectId1: {
-    title: 'observation',
+    title: 'Observaciones',
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {

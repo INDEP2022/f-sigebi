@@ -22,7 +22,7 @@ export class RegionalDelegationFormComponent
 {
   regionalDelegationForm: ModelForm<IRegionalDelegation>;
   regionalDelegation: IRegionalDelegation;
-  title: string = 'Delegación regional';
+  title: string = 'Delegación Regional';
   edit: boolean = false;
   selectGeoZone = new DefaultSelect();
   selectCity = new DefaultSelect();

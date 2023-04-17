@@ -11,7 +11,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i>
-            <strong>B&uacute;squeda de Documento de {{ title }}</strong></a
+            <strong>B&uacute;squeda de Documentos de {{ title }}</strong></a
           >
         </p>
 
@@ -90,7 +90,7 @@
                   [data]="selectRegDelegation"
                   value="id"
                   bindLabel="description"
-                  label="Delegaci&oacute;n regional"
+                  label="Delegaci&oacute;n Regional"
                   (fetchItems)="getRegDelegation($event)"></ngx-select>
               </form-field>
             </div>

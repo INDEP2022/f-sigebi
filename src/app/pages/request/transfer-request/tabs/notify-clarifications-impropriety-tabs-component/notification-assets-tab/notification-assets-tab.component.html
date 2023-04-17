@@ -23,11 +23,14 @@
           <i class="bx bx-check-circle"></i> Aceptar Improcedencias
         </button>
       </div>
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
     </div>
   </div>
   <div class="row pt-1">
     <div class="col-md-12">
-      <ng-scrollbar track="all" style="min-height: 150px; border: none">
+      <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
@@ -36,7 +39,7 @@
             (userRowSelect)="rowsSelected($event)">
           </ng2-smart-table>
         </div>
-      </ng-scrollbar>
+      </div>
     </div>
   </div>
   <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
@@ -54,13 +57,7 @@
         </button>
       </div>
       <div class="p-2">
-        <button
-          *ngIf="!byInterconnection"
-          class="btn btn-success btn-sm active"
-          (click)="finishClarifiImpro()">
-          Finalizar Aclaración Improcedencia
-        </button>
-        <button *ngIf="byInterconnection" class="btn btn-info btn-sm active">
+        <button class="btn btn-info btn-sm active" (click)="satAnswer()">
           Ver Respuesta Aclaraci&oacute;n
         </button>
       </div>
@@ -71,20 +68,24 @@
           Rechazar
         </button>
       </div>
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings2"></app-columns-select>
+      </div>
     </div>
   </div>
   <div class="row pt-1">
     <div class="col-md-12">
-      <ng-scrollbar track="all" style="min-height: 150px; border: none">
+      <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
             [source]="notificationsList"
-            (userRowSelect)="notifyAssetRowSelected($event)">
+            (userRowSelect)="notifyAssetRowSelected($event)"
+            (rowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>
-      </ng-scrollbar>
+      </div>
     </div>
   </div>
 </div>

@@ -234,6 +234,7 @@ export class RequestInTurnFormComponent implements OnInit {
     delete params.pageSize;
     delete params.take;
     delete params.text;
+    console.log(params);
     this.sendSearchForm.emit(params);
   }
 
