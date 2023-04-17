@@ -25,6 +25,7 @@
             [showTooltip]="true"
             [data]="selectLot"
             bindLabel="description"
+            (change)="getGood($event)"
             [searchable]="true"
             label="Lote"
             value="lotId"></ngx-select>
@@ -88,14 +89,7 @@
       <div class="row">
         <label for="">Bienes</label>
       </div>
-      <div
-        *ngIf="goodList"
-        class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
-        <span>
-          SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA PARA PROCEDER A LA
-          IMPRESIÓN&#46;</span
-        >
-      </div>
+
       <div class="row pt-2 scroll-table">
         <!-- <ng2-smart-table
           class="col-md-12"

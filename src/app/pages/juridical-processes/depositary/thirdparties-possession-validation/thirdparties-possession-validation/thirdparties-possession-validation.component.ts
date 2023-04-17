@@ -43,6 +43,7 @@ export class ThirdpartiesPossessionValidationComponent
   // Table settings
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   selectedRows: IGood = {};
+  selectedRows2: IGood = {};
   wheelNotifications: any[] = [];
 
   tableSettingsNotificaciones = {
@@ -83,6 +84,7 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
+    selectMode: 'multi',
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
@@ -112,14 +114,14 @@ export class ThirdpartiesPossessionValidationComponent
       .get('noExpediente')
       .valueChanges.pipe(debounceTime(500))
       .subscribe(x => {
-        if (x) this.getNotifications(new ListParams(), x);
+        this.getNotifications(new ListParams(), x);
       });
 
     this.form
       .get('wheelNumber')
       .valueChanges.pipe(debounceTime(500))
       .subscribe(x => {
-        if (x) this.getNotifications(new ListParams(), x);
+        this.getNotifications(new ListParams(), x);
       });
   }
 
@@ -168,6 +170,9 @@ export class ThirdpartiesPossessionValidationComponent
     this.expedientNumber = numberExpedient;
     if (!numberExpedient) {
       this.dataTableNotifications = [];
+      this.dataTableBienesOficio = [];
+      this.dataTableBienes = [];
+      return;
     }
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -179,6 +184,8 @@ export class ThirdpartiesPossessionValidationComponent
       data.addFilter('expedientNumber', numberExpedient);
     }
 
+    this.dataTableNotifications = [];
+
     this.notificationService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableNotifications = data.data;
@@ -187,14 +194,12 @@ export class ThirdpartiesPossessionValidationComponent
         this.loading = false;
       },
     });
-    if (numberExpedient) this.getGoods(new ListParams(), numberExpedient);
+    this.dataTableBienes = [];
+    this.dataTableBienesOficio = [];
+    this.getGoods(new ListParams(), numberExpedient);
   }
 
   getGoods(params: ListParams, numberExpedient?: number) {
-    if (!numberExpedient) {
-      this.dataTableBienes = [];
-    }
-
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
     data.page = params.page;
@@ -216,10 +221,22 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   rowSelected(rows: any) {
-    this.selectedRows = rows.data;
+    this.selectedRows = rows.isSelected ? rows.data : {};
+  }
+
+  rowSelected2(rows: any) {
+    this.selectedRows2 = rows.isSelected ? rows.data : {};
   }
 
   addGoodOffice() {
+    if (Object.keys(this.selectedRows).length < 1) {
+      this.onLoadToast(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien para poder realizar esta acción.'
+      );
+      return;
+    }
     const request: IGood = {
       ...this.selectedRows,
       delegationNumber: null,
@@ -233,7 +250,7 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   handleSuccess() {
-    this.getNotifications(new ListParams(), this.expedientNumber);
+    this.getGoods(new ListParams(), this.expedientNumber);
     this.onLoadToast(
       'success',
       'Excelente',
@@ -242,7 +259,21 @@ export class ThirdpartiesPossessionValidationComponent
     this.loading = false;
   }
 
-  deleteGoodOffice() {}
+  deleteGoodOffice() {
+    if (Object.keys(this.selectedRows2).length < 1) {
+      this.onLoadToast(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien para poder realizar esta acción.'
+      );
+      return;
+    }
+
+    this.goodService.remove(this.selectedRows2.id).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
 
   mostrarInfo(form: any): any {
     console.log(form.value);

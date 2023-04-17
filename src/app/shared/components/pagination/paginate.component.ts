@@ -46,7 +46,7 @@ import {
         </ng-container>
         <li
           class="page-item"
-          [ngClass]="currentPage == pages.length ? 'disabled' : ''"
+          [ngClass]="currentPage >= pages.length ? 'disabled' : ''"
           [ngStyle]="{ cursor: currentPage == pages.length ? '' : 'pointer' }">
           <a class="page-link" aria-label="Next" (click)="nextPage()">
             <i class="bx bx-chevron-right"></i>
@@ -54,7 +54,7 @@ import {
         </li>
         <li
           class="page-item"
-          [ngClass]="currentPage == pages.length ? 'disabled' : ''"
+          [ngClass]="currentPage >= pages.length ? 'disabled' : ''"
           [ngStyle]="{ cursor: currentPage == pages.length ? '' : 'pointer' }">
           <a class="page-link" aria-label="Next" (click)="endingPage()">
             <i class="bx bx-chevrons-right"></i>

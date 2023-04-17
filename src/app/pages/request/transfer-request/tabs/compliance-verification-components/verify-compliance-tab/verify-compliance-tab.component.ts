@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -50,6 +52,9 @@ export class VerifyComplianceTabComponent
   @Input() requestObject: any;
   @Input() typeDoc: string = '';
   @Input() process: string = '';
+  @Input() question: boolean = false;
+  @Output() response = new EventEmitter<boolean>();
+
   verifComplianceForm: ModelForm<any>;
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
@@ -75,6 +80,7 @@ export class VerifyComplianceTabComponent
   goodsSelected: any = [];
   checkboxReadOnly: boolean = false;
   formLoading: boolean = false;
+  loadingClarification: boolean = false;
 
   /* aclaraciones */
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -127,6 +133,15 @@ export class VerifyComplianceTabComponent
       },
     };
 
+    this.articleColumns.fulfill = {
+      ...this.articleColumns.fulfill,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          console.log('data', data);
+        });
+      },
+    };
+
     /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
     if (this.typeDoc === 'approval-process') {
       this.checkboxReadOnly = true;
@@ -144,6 +159,17 @@ export class VerifyComplianceTabComponent
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData());
+    }
+
+    if (changes['question'].currentValue === true) {
+      const article3 = this.article3array.length;
+      const article12 = this.article12and13array.length;
+      console.log(article3, article12);
+      if (article3 >= 3 && article12 >= 3) {
+        this.response.emit(true);
+      } else {
+        this.response.emit(false);
+      }
     }
   }
 
@@ -446,7 +472,10 @@ export class VerifyComplianceTabComponent
         goodTransfer: this.goodsSelected[0],
         callback: (next: boolean) => {
           this.clarificationData = [];
-          if (next) this.getClarifications(this.goodsSelected[0].id);
+          if (next) {
+            this.loadingClarification = true;
+            this.getClarifications(this.goodsSelected[0].id);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -558,6 +587,7 @@ export class VerifyComplianceTabComponent
 
     this.requestDocumentService.getAll(params).subscribe({
       next: resp => {
+        console.table(resp.data);
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
           if (item.cumpliance['cumple'] === true) {
@@ -566,6 +596,7 @@ export class VerifyComplianceTabComponent
           return item.cumpliance;
         });
         this.paragraphsTable1 = cumpliance;
+        this.article3array = this.paragraphsTable1;
       },
     });
   }
@@ -590,42 +621,31 @@ export class VerifyComplianceTabComponent
           return item.cumpliance;
         });
         this.paragraphsTable2 = cumpliance;
+        this.article12and13array = this.paragraphsTable2;
       },
     });
   }
 
-  article3Selected(event: any): void {
-    let element = event.data;
-    const index = this.article3array.indexOf(element);
-    if (index === -1) {
-      element.cumple = true;
-      this.article3array.push(element);
-    } else {
-      delete this.article3array[index];
+  article3Selected(event: any): void {}
+
+  article12y13Selected(event: any): void {}
+
+  articlesSelected(element: any) {
+    if (element.article === 'Articulo 12 y 13 Reglamento') {
+      const index = this.article12and13array.indexOf(element);
+      if (this.article12and13array[index].cumple === false) {
+        this.article12and13array[index].cumple = true;
+      } else {
+        this.article12and13array[index].cumple = false;
+      }
+    } else if (element.article === 'Articulo 3 Ley') {
+      const index = this.article3array.indexOf(element);
+      if (this.article3array[index].cumple === false) {
+        this.article3array[index].cumple = true;
+      } else {
+        this.article3array[index].cumple = false;
+      }
     }
-  }
-
-  article12y13Selected(event: any): void {
-    let element = event.data;
-    const index = this.paragraphsTable2.indexOf(element);
-
-    if (this.paragraphsTable2[index].cumple === false) {
-      this.paragraphsTable2[index].cumple = true;
-    } else {
-      this.paragraphsTable2[index].cumple = false;
-    }
-
-    const index2 = this.article12and13array.indexOf(element);
-    if (index2 === -1) {
-      element.cumple = true;
-      this.article12and13array.push(element);
-    } else {
-      delete this.article12and13array[index];
-    }
-  }
-
-  articlesSelected(data: any) {
-    //console.log(data);
   }
 
   selectGood(event: any) {
@@ -636,6 +656,7 @@ export class VerifyComplianceTabComponent
     this.goodsSelected = event.selected;
 
     if (this.goodsSelected.length === 1) {
+      this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
         this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
@@ -645,7 +666,7 @@ export class VerifyComplianceTabComponent
           this.isGoodSelected = true;
         }
         this.formLoading = false;
-      }, 2000);
+      }, 1000);
     } else {
       this.formLoading = false;
     }
@@ -665,9 +686,17 @@ export class VerifyComplianceTabComponent
 
         Promise.all(clarification).then(data => {
           this.clarificationData = resp.data;
+          this.loadingClarification = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loadingClarification = false;
+        this.onLoadToast(
+          'error',
+          'error',
+          'No se pudo cargar la clarificación'
+        );
+      },
     });
   }
 
@@ -693,7 +722,7 @@ export class VerifyComplianceTabComponent
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
     }
-    this.loader.load = true;
+
     Swal.fire({
       title: 'Eliminar Aclaración?',
       text: '¿Desea eliminar la aclaración?',
@@ -704,12 +733,23 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(result => {
       if (result.isConfirmed) {
+        this.loader.load = true;
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
           next: resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
             this.clarificationData = [];
             this.getClarifications(this.goodsSelected[0].id);
+            this.loader.load = false;
+          },
+          error: error => {
+            this.loader.load = false;
+            console.log(error);
+            this.alert(
+              'error',
+              'Error',
+              `Error al eliminar ${error.error.message}`
+            );
           },
         });
       }
@@ -717,35 +757,47 @@ export class VerifyComplianceTabComponent
   }
 
   async confirm() {
-    if (this.article3array.length < 3 || this.article12and13array.length < 3) {
+    this.loader.load = false;
+    console.log(this.article3array);
+    console.log(this.article12and13array);
+    const article3 = this.article3array.filter(x => x.cumple === true);
+    const article12Y13 = this.article12and13array.filter(
+      x => x.cumple === true
+    );
+
+    if (article3.length < 3 || article12Y13.length < 3) {
       this.alert(
         'error',
         'Error',
-        'Para que la solicitud sea procedente se deben seleccionar al menos los prmeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
+        'Es requerido seleccionar 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
       );
       return;
     }
 
-    console.log(this.paragraphsTable2);
+    const articles = this.article12and13array.concat(this.article3array);
+    //console.table(articles);
 
-    const articles = this.paragraphsTable2.concat(this.article3array);
     const id = this.requestObject.id;
     articles.map(async (item: any) => {
       await this.updateDocRequest(id, item);
     });
 
-    this.goodData.map(async (item: any, i: number) => {
-      let index = i + 1;
-      const result = await this.updateGoods(item);
+    setTimeout(() => {
+      this.goodData.map(async (item: any, i: number) => {
+        let index = i + 1;
+        const result = await this.updateGoods(item);
 
-      if (this.goodData.length === index) {
-        this.onLoadToast(
-          'success',
-          'Verificación Guardada',
-          'Los datos se guardaron correctamente'
-        );
-      }
-    });
+        if (result === true) {
+          if (this.goodData.length === index) {
+            this.onLoadToast(
+              'success',
+              'Verificación Guardada',
+              'Los datos se guardaron correctamente'
+            );
+          }
+        }
+      });
+    }, 400);
   }
 
   updateGoods(item: any) {
@@ -779,8 +831,10 @@ export class VerifyComplianceTabComponent
       body['requestId'] = requestId;
       body['fulfillmentId'] = article.id;
       body['fulfill'] = article.cumple === true ? 'S' : 'N';
+      console.log(body, article);
       this.requestDocumentService.update(body).subscribe({
         next: resp => {
+          console.log('actualizado', resp);
           resolve(true);
         },
         error: error => {

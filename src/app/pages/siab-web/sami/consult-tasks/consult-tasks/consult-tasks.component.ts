@@ -94,6 +94,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    this.filterParams
+      .getValue()
+      .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       this.filterParams
@@ -282,7 +285,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log('Response: ', response);
-
           this.loading = false;
           this.tasks = response.data;
           this.totalItems = response.count;
@@ -305,7 +307,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   openTask(selected: any): void {
     if (selected.requestId !== null || selected.urlNb !== null) {
-      let url = `${selected.urlNb}/${selected.requestId}`;
+      let url = `${selected.urlNb}/${selected.requestId}/${selected.id}`;
       this.router.navigateByUrl(url);
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');

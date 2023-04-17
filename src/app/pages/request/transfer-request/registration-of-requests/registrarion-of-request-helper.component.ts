@@ -295,8 +295,8 @@ export class RegistrationHelper extends BasePage {
               good.fractionId
             ); */
             if (
-              good.fractionId.fractionCode == null ||
-              good.fractionId.fractionCode.length != 8
+              good.fraccion.fractionCode === null ||
+              good.fraccion.fractionCode.length != 8
             ) {
               faltaClasificacion = true;
               this.message(
@@ -676,7 +676,13 @@ export class RegistrationHelper extends BasePage {
           tipoRelVehiculo === false &&
           tipoRelEmbarca === false &&
           tipoRelAeronave === false &&
-          tipoRelJoya === false
+          tipoRelJoya === false &&
+          faltaClasificacion === false &&
+          sinDireccion === false &&
+          sinTipoRelevante === false &&
+          sinCantidad === false &&
+          sinDestinoT === false &&
+          sinUnidadM === false
         ) {
           allOk = true;
         }

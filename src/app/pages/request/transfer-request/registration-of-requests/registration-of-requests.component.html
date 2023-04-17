@@ -193,7 +193,9 @@
                   *ngIf="complianceVerifi && requestData"
                   [typeDoc]="'verify-compliance'"
                   [requestObject]="requestData"
-                  [process]="process"></app-verify-compliance-tab>
+                  [process]="process"
+                  [question]="question"
+                  (response)="getResponse($event)"></app-verify-compliance-tab>
                 <!-- fin -->
                 <!-- clasificacion de bienes -->
                 <app-classification-assets-tab

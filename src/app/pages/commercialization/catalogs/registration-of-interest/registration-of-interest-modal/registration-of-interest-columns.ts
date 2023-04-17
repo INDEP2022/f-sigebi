@@ -26,6 +26,11 @@ export const COUNT_TIIE_COLUMNS = {
     type: 'number',
     sort: true,
   },
+  user: {
+    title: 'Usuario',
+    type: 'text',
+    sort: true,
+  },
   registryDate: {
     title: 'Fecha de registro',
     type: 'string',
@@ -39,10 +44,5 @@ export const COUNT_TIIE_COLUMNS = {
       );
       return formatted;
     },
-  },
-  user: {
-    title: 'Usuario',
-    type: 'string',
-    sort: true,
   },
 };

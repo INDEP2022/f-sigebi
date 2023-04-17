@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -13,6 +13,8 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import {
   IReport,
   SiabService,
@@ -39,7 +41,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   idFolio: number;
   docs: IListResponse<IDocuments>;
   notify: IListResponse<INotification>;
-
+  delegation: number;
+  subDelegation: number;
+  departament: number;
+  isParamFolio: boolean = false;
+  noVolante: number;
+  isParams: boolean = false;
   constructor(
     private fb: FormBuilder,
     private notificationServ: NotificationService,
@@ -48,20 +55,51 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private receptionService: DocReceptionRegisterService,
+    private router: Router
   ) {
     super();
+    const params = new FilterParams();
+    const token = this.authService.decodeToken();
+    params.addFilter('user', token.preferred_username);
+    this.receptionService.getUsersSegAreas(params.getParams()).subscribe({
+      next: response => {
+        if (response.data.length > 0) {
+          this.subDelegation = response.data[0].subdelegationNumber;
+          this.delegation = response.data[0].delegationNumber;
+          this.departament = response.data[0].departamentNumber;
+        }
+      },
+      error: () => {},
+    });
   }
 
   ngOnInit(): void {
     this.createForm();
-    const param = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
-    if (param) {
+    const param1: any = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
+    const param2: any = this.route.snapshot.paramMap.get('P_FOLIO');
+
+    if (param1 && param1 != 'null') {
+      this.isParams = true;
       this.filterParams
         .getValue()
-        .addFilter('wheelNumber', param, SearchFilter.EQ);
+        .addFilter('wheelNumber', param1, SearchFilter.EQ);
       this.getNotfications();
+    } else if (param1 === 'null') {
+      this.onLoadToast('error', `Parámetro no_volante no es válido`, '');
     }
+
+    if (param2) {
+      this.isParams = true;
+      this.isParamFolio = true;
+      this.getDocumentByFolio(param2);
+    }
+  }
+
+  back() {
+    window.history.back();
   }
 
   createFilter() {
@@ -145,6 +183,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.notify = resp;
+          this.noVolante = resp.data[0].wheelNumber;
           this.formNotification.patchValue(resp.data[0]);
           this.count = resp.count;
           this.searchDocuments(
@@ -153,7 +192,6 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
-          console.log(err);
           this.loading = false;
           this.form.reset();
           this.onLoadToast('error', err.error.message, '');
@@ -170,6 +208,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           if (next) {
             this.form.reset();
             this.formNotification.patchValue(data);
+            this.noVolante = data.wheelNumber;
             this.searchDocuments(data.expedientNumber, data.wheelNumber);
           }
         },
@@ -213,13 +252,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.loading = false;
           this.docs = resp;
-          resp.data[0].keyTypeDocument = (
-            resp.data[0] as any
-          ).typeDocument.documentTypeKey;
-          this.form.patchValue(resp.data[0]);
           this.countDoc = resp.count;
-          this.idFolio = this.form.get('id').value;
-          this.form.get('id').disable();
+          if (!this.isParamFolio) {
+            resp.data[0].keyTypeDocument = (
+              resp.data[0] as any
+            ).typeDocument.documentTypeKey;
+            this.form.patchValue(resp.data[0]);
+            this.idFolio = this.form.get('id').value;
+            this.form.get('id').disable();
+          }
+
+          this.isParamFolio = false;
         },
         error: err => {
           if (err.status === 500) {
@@ -243,8 +286,20 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     const valid = await this.validations();
     if (valid) {
       const { expedientNumber, wheelNumber } = this.formNotification.value;
+
+      const token = this.authService.decodeToken();
+      let userId = token.preferred_username;
+
       this.form.get('numberProceedings').patchValue(expedientNumber);
       this.form.get('flyerNumber').patchValue(wheelNumber);
+      this.form.get('userRequestsScan').patchValue(userId.toUpperCase());
+      this.form.get('scanRequestDate').patchValue(new Date());
+      this.form.get('numberDelegationRequested').patchValue(this.delegation);
+      this.form
+        .get('numberSubdelegationRequests')
+        .patchValue(this.subDelegation);
+      this.form.get('numberDepartmentRequest').patchValue(this.departament);
+
       this.documentServ.create(this.form.value).subscribe({
         next: resp => {
           this.onLoadToast(
@@ -296,7 +351,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.onLoadToast('error', 'Ya ha sido solicitado ese doumento', '');
+      this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
       return false;
     }
 
@@ -325,6 +380,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       keySeparator: [null],
       flyerNumber: [null, Validators.required],
       numberProceedings: [null, Validators.required],
+      scanRequestDate: [null],
+      userRequestsScan: [null],
+      numberDelegationRequested: [null],
+      numberSubdelegationRequests: [null],
+      numberDepartmentRequest: [null],
     });
   }
 
@@ -424,12 +484,33 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   callScan() {
     if (this.idFolio) {
-      window.open(
-        `./pages/general-processes/scan-documents?folio=${this.idFolio}`,
-        '_blank'
-      );
+      this.router.navigate(['pages/general-processes/scan-documents'], {
+        queryParams: {
+          folio: this.idFolio,
+          volante: this.noVolante,
+          origin: 'FACTGENSOLICDIGIT',
+        },
+      });
     } else {
       this.onLoadToast('error', 'No existe un folio para escanear.', '');
     }
+  }
+
+  getDocumentByFolio(folio: number) {
+    this.loading = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('id', folio, SearchFilter.EQ);
+    this.documentServ.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loading = false;
+        resp.data[0].keyTypeDocument = (
+          resp.data[0] as any
+        ).typeDocument.documentTypeKey;
+        this.form.patchValue(resp.data[0]);
+        this.idFolio = this.form.get('id').value;
+        this.form.get('id').disable();
+      },
+    });
   }
 }
