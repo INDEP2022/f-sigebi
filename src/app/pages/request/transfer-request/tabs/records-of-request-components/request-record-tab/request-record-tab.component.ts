@@ -14,6 +14,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -219,12 +220,12 @@ export class RequestRecordTabComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(30)],
       ],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
-    this.requestForm.updateValueAndValidity();
+    // this.requestForm.updateValueAndValidity();
   }
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
