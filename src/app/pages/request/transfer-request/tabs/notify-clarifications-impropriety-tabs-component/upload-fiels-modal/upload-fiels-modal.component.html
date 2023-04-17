@@ -32,10 +32,12 @@
             <input
               [type]="hide ? 'password' : 'text'"
               class="form-control"
-              formControlName="pass" />
+              formControlName="pass"
+              maxlength="10" />
             <button
               class="btn btn-secondary btn-sm active"
-              (click)="hide = !hide">
+              (click)="hide = !hide"
+              style="margin-top: 7px">
               <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
             </button>
           </form-field>

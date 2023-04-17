@@ -269,7 +269,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'success',
             'Documento Guardado',
-            'El documento guardó correctamente'
+            'El documento se guardó correctamente'
           );
 
           this.close();
