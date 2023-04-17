@@ -616,7 +616,7 @@ export class ClarificationsComponent
           if (next) this.getClarifications();
         },
       },
-      class: 'modal-sm modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ClarificationFormTabComponent, config);
