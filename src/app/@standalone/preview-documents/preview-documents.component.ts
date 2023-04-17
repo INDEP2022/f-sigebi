@@ -95,15 +95,18 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
   }
 
   overSizeFiles() {
+    if (!this.documento.type?.includes('pdf')) {
+      return;
+    }
     const base64Length =
       this.documento.urlDoc.changingThisBreaksApplicationSecurity.length;
     const bytesSize = 4 * Math.ceil(base64Length / 3) * 0.5624896334383812;
     const KbSize = bytesSize / 1000;
-    if (KbSize > 1500) {
+    if (KbSize > 2000) {
       const alert = this.alertQuestion(
         'info',
         'Aviso',
-        'Debido al tamaño del archivo no se puede visualizar ¿Desea descargarlo?'
+        'Debido al tamaño del archivo es posible que no se pueda visualizar, de ser así de clic en Aceptar para descargarlo.'
       );
       alert.then(resp => {
         if (resp.isConfirmed) {

@@ -485,7 +485,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   callScan() {
     if (this.idFolio) {
       this.router.navigate(['pages/general-processes/scan-documents'], {
-        queryParams: { folio: this.idFolio, volante: this.noVolante },
+        queryParams: {
+          folio: this.idFolio,
+          volante: this.noVolante,
+          origin: 'FACTGENSOLICDIGIT',
+        },
       });
     } else {
       this.onLoadToast('error', 'No existe un folio para escanear.', '');
