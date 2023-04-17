@@ -3,6 +3,9 @@ export const NOTIFY_ASSETS_COLUMNS = {
     title: 'Estatus',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarifiNewsRejectId.answered;
+    },
   },
   clarificationStatus: {
     title: 'Estatus Aclaración ',
