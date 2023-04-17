@@ -398,6 +398,12 @@ export class ClassifyAssetsTabComponent
       this.classiGoodsForm.controls['quantity'].setValue(
         Number(this.good.quantity)
       );
+      if (this.classiGoodsForm.controls['theftReport'].value === null) {
+        this.classiGoodsForm.controls['theftReport'].setValue('N');
+      }
+      if (this.classiGoodsForm.controls['fitCircular'].value === null) {
+        this.classiGoodsForm.controls['fitCircular'].setValue('N');
+      }
     }
   }
 
@@ -459,10 +465,12 @@ export class ClassifyAssetsTabComponent
   }
 
   getChapter(params: ListParams, id?: number) {
-    if (this.advSearch === false) {
-      params['filter.parentId'] = '$eq:' + id.toString();
-    } else {
-      params['filter.id'] = '$eq:' + id.toString();
+    if (id) {
+      if (this.advSearch === false) {
+        params['filter.parentId'] = '$eq:' + id.toString();
+      } else {
+        params['filter.id'] = '$eq:' + id.toString();
+      }
     }
     params.limit = 50;
     this.fractionService

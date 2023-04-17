@@ -43,6 +43,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   origin: string = null;
   originFolio: string = '';
   originFlyer: string = '';
+  requestOrigin: string = '';
   get controls() {
     return this.form.controls;
   }
@@ -62,6 +63,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFolio = params['folio'] ?? '';
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
+        this.requestOrigin = params['requestOrigin'] ?? null;
+        console.log(params);
       });
     this.settings = {
       ...this.settings,
@@ -326,11 +329,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
-
+    console.log(this.requestOrigin);
     if (this.origin == 'FACTGENSOLICDIGIT') {
-      this.router.navigate([
-        `pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
-      ]);
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
+        ],
+        { queryParams: { origin: this.requestOrigin } }
+      );
     }
   }
 }
