@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
@@ -22,9 +23,57 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
+import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from '../refuse-clarification-modal/refuse-clarification-modal.component';
 import { LIST_ASSETS_COLUMN } from './list-assets-columns';
 import { NOTIFY_ASSETS_COLUMNS } from './notify-assets-columns';
+
+var data1 = [
+  {
+    id: 1,
+    statusAssets: 'ACLARADO',
+    management: '8901547',
+    assetDescription: 'RESEPTOR DE SEÑAL CON NUMERO DE SERIE: 123456',
+    unitMeasure: 'PIEZA',
+    physicalState: 'BUENO',
+    stateConsercation: 'BUENO',
+  },
+  {
+    id: 2,
+    statusAssets: 'SOLICITUD DE ACLARACIÓN',
+    management: '890122',
+    assetDescription: 'RESEPTOR DE SEÑAL CON NUMERO DE SERIE: 323211',
+    unitMeasure: 'PIEZA',
+    physicalState: 'BUENO',
+    stateConsercation: 'BUENO',
+  },
+];
+
+var data2 = [
+  {
+    status: 'NUEVO',
+    clarificationStatus: '',
+    clarificationSAT: '',
+    typeOfClarification: 'ACLARACIÓN',
+    clarification: 'ACLARACIÓN EN ESTADO FISICO',
+    typeClarification: '1',
+    dateClarification: '12/10/2022',
+    reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
+    observation: '',
+  },
+
+  {
+    status: 'NUEVA',
+    clarificationStatus: '',
+    clarificationSAT: '',
+    typeOfClarification: 'ACLARACIÓN',
+    clarification: 'ERROR EN LA DOCUMENTACIÓN ANEXA',
+    typeClarification: '2',
+    dateClarification: '12/10/2022',
+    reason: 'ACLARACIÓN DEL ESTADO FISICO DEL BIEN',
+    observation: '',
+  },
+];
 
 @Component({
   selector: 'app-notification-assets-tab',
@@ -60,6 +109,9 @@ export class NotificationAssetsTabComponent
 
   //verificar por el estado del campo transferente si es SAT O otro
   byInterconnection: boolean = false;
+
+  rowSelected: boolean = false;
+  selectedRow: any = null;
 
   constructor(
     private modalService: BsModalService,
@@ -175,6 +227,7 @@ export class NotificationAssetsTabComponent
     };
     this.chatClarificationsService.getAllFilter(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.notificationsList = response.data;
         this.totalItems2 = response.count;
         this.loading2 = false;
@@ -202,29 +255,28 @@ export class NotificationAssetsTabComponent
     const idRefuse = refuseObj.clarifiNewsRejectId as IClarificationGoodsReject;
     const idRechazo = idRefuse.rejectNotificationId;
     console.log('ID del rechazo', idRefuse.rejectNotificationId);
-    let config: ModalOptions = {
-      initialState: {
-        idRechazo,
-        clarification: this.notifyAssetsSelected,
-        callback: (next: boolean) => {
-          if (next) {
-            this.getClarificationsByGood(idNotify.goodId);
-          }
-        },
+
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      idRechazo,
+      clarification: this.notifyAssetsSelected,
+      callback: (next: boolean) => {
+        this.getClarificationsByGood(idNotify.goodId);
       },
-      class: 'modal-sm modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(
-      RefuseClarificationModalComponent,
-      config
-    );
+    this.modalService.show(RefuseClarificationModalComponent, modalConfig);
+
     //ver si los datos se devolveran por el mismo modal o se guardan
 
     /*  this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
       console.log(res);
       this.requestForm.get('receiUser').patchValue(res.user);
     }); */
+  }
+
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 
   verifyClarification() {}
@@ -252,9 +304,12 @@ export class NotificationAssetsTabComponent
   }
 
   acceptClariImpro() {
-    console.log(this.notifyAssetsSelected.length);
+    console.log(
+      'id tipo aclaración seleccionado',
+      this.selectedRow.clarifiNewsRejectId.clarificationId
+    );
 
-    if (this.notifyAssetsSelected.length < 1) {
+    if (this.selectedRow.clarifiNewsRejectId.clarificationId < 1) {
       this.message('Error', 'Seleccione almenos un registro!');
       return;
     }
@@ -279,8 +334,10 @@ export class NotificationAssetsTabComponent
   }
 
   openModal(): void {
+    const idAclara = this.selectedRow.clarifiNewsRejectId.clarificationId; //Id del tipo de aclaración
     let config: ModalOptions = {
       initialState: {
+        idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         callback: (next: boolean) => {
@@ -299,5 +356,25 @@ export class NotificationAssetsTabComponent
       console.log(res);
       this.requestForm.get('receiUser').patchValue(res.user);
     }); */
+  }
+
+  //Respuesta del SAT
+  satAnswer() {
+    const idAclaracion = this.selectedRow.id; //ID de la aclaración para mandar al reporte del sat
+    if (this.selectedRow.satClarify == null) {
+      this.message('Aviso', 'Aún no hay una respuesta del SAT');
+      return;
+    }
+    console.log('Pasé');
+
+    let config: ModalOptions = {
+      initialState: {
+        idAclaracion,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintSatAnswerComponent, config);
   }
 }

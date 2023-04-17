@@ -656,7 +656,7 @@ export class DocRequestTabComponent
   setTitle(value: string) {
     switch (value) {
       case 'doc-request':
-        this.title = 'Solicitudes';
+        this.title = 'Solicitud';
         break;
       case 'doc-expedient':
         this.title = 'Expedientes';
