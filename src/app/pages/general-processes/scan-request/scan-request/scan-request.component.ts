@@ -48,6 +48,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   noVolante: number;
   isParams: boolean = false;
   origin: string = null;
+
   constructor(
     private fb: FormBuilder,
     private notificationServ: NotificationService,
@@ -103,16 +104,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.getDocumentByFolio(param2);
     }
   }
-
   back() {
-    if (!this.origin) {
-      window.history.back();
-      return;
-    }
-
-    if (this.origin == 'FGESTBUZONTRAMITE') {
-      this.router.navigate(['/pages/general-processes/work-mailbox']);
-    }
+    const location: any = {
+      FGESTBUZONTRAMITE: () =>
+        this.router.navigate(['/pages/general-processes/work-mailbox']),
+    };
+    location[this.origin]();
   }
 
   createFilter() {
