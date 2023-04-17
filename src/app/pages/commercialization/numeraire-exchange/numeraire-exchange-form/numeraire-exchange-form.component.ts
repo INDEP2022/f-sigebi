@@ -5,6 +5,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 // import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
+  getUser,
   readFile,
   showQuestion,
   showToast,
@@ -16,9 +17,43 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
+import { NUMERAIRE_COLUMNS } from './numeraire-exchange-columns';
 
+interface IFormNumeraire {
+  screenKey: FormControl<string>;
+  // clasifGoodNumber: FormControl<string>;
+  spentPlus: FormControl<string>;
+  // amounten: FormControl<string>;
+  // concil: FormControl<string>;
+  description: FormControl<string>;
+  amountevta: FormControl<string>;
+  typeConv: FormControl<string>;
+  spentId: FormControl<string>;
+  totalAmount: FormControl<number>;
+  status: FormControl<string>;
+  identificator: FormControl<string>;
+  processExt: FormControl<string>;
+  ivavta: FormControl<string>;
+  commission: FormControl<string>;
+  ivacom: FormControl<string>;
+  goodId: FormControl<string>;
+  delegationNumber: FormControl<string>;
+  subDelegationNumber: FormControl<string>;
+  flier: FormControl<string>;
+  fileNumber: FormControl<string>;
+  user: FormControl<string>;
+  bankNew: FormControl<string>;
+  moneyNew: FormControl<string>;
+  accountNew: FormControl<string>;
+  comment: FormControl<string>;
+  expAssociated: FormControl<string>;
+  dateNew: FormControl<string>;
+
+  invoiceFile: FormControl<string>;
+  deposit: FormControl<string>;
+  // commissionTaxPercent: FormControl<number>;
+}
 @Component({
   selector: 'app-numeraire-exchange-form',
   templateUrl: './numeraire-exchange-form.component.html',
@@ -36,27 +71,55 @@ import { TableExpensesComponent } from '../components/table-expenses/table-expen
 })
 export class NumeraireExchangeFormComponent extends BasePage {
   @ViewChild(TableExpensesComponent) tableExpense: TableExpensesComponent;
-  form: FormGroup = new FormGroup({
-    goodId: new FormControl(null, [Validators.required]),
-    salePrice: new FormControl(null, [Validators.required]),
-    saleTaxPercent: new FormControl(16, [Validators.required]),
-    saleTax: new FormControl(null, [Validators.required]),
-    commissionPercent: new FormControl(null, [Validators.required]),
+  form: FormGroup = new FormGroup<IFormNumeraire>({
+    screenKey: new FormControl('FACTADBCAMBIONUME', [Validators.required]),
+    amountevta: new FormControl(null, [Validators.required]),
+    typeConv: new FormControl(null, [Validators.required]),
+    status: new FormControl(null, [Validators.required]),
+    identificator: new FormControl(null, [Validators.required]),
+    ivavta: new FormControl(null, [Validators.required]),
     commission: new FormControl(null, [Validators.required]),
-    commissionTaxPercent: new FormControl(null, [Validators.required]),
-    commissionTax: new FormControl(null, [Validators.required]),
-    bank: new FormControl(null, [Validators.required]),
-    depositDate: new FormControl(null, [Validators.required]),
-    depositReference: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    depositAmount: new FormControl(null, [Validators.required]),
-    conversionType: new FormControl(null, [Validators.required]),
-    expenses: new FormControl(null, [Validators.required]),
-    ckk_movban: new FormControl(null),
-    current: new FormControl(null),
+    ivacom: new FormControl(null, [Validators.required]),
+    goodId: new FormControl(null, [Validators.required]),
+    user: new FormControl(getUser(), [Validators.required]),
+    bankNew: new FormControl(null, [Validators.required]),
+    moneyNew: new FormControl(null, [Validators.required]),
+    accountNew: new FormControl(null, [Validators.required]),
+    dateNew: new FormControl(null, [Validators.required]),
+    spentId: new FormControl(null, [Validators.required]),
+    spentPlus: new FormControl(null, [Validators.required]),
+    description: new FormControl(null, [Validators.required]),
+    totalAmount: new FormControl(0, [Validators.required]),
+    processExt: new FormControl(null, [Validators.required]),
+    delegationNumber: new FormControl(null, [Validators.required]),
+    subDelegationNumber: new FormControl(null, [Validators.required]),
+    flier: new FormControl(null, [Validators.required]),
+    fileNumber: new FormControl(null, [Validators.required]),
+    comment: new FormControl(null, [Validators.required]),
+    expAssociated: new FormControl(null, [Validators.required]),
+
+    invoiceFile: new FormControl(null, [Validators.required]),
+    deposit: new FormControl(null, [Validators.required]),
+    // goodId: new FormControl(null, [Validators.required]),
+    // saleTaxPercent: new FormControl(16, [Validators.required]),
+    // saleTax: new FormControl(null, [Validators.required]),
+    // commissionPercent: new FormControl(null, [Validators.required]),
+    // commission: new FormControl(null, [Validators.required]),
+    // commissionTaxPercent: new FormControl(null, [Validators.required]),
+    // commissionTax: new FormControl(null, [Validators.required]),
+    // bank: new FormControl(null, [Validators.required]),
+    // depositDate: new FormControl(null, [Validators.required]),
+    // depositReference: new FormControl(null, [
+    //   Validators.required,
+    //   Validators.pattern(STRING_PATTERN),
+    // ]),
+    // depositAmount: new FormControl(null, [Validators.required]),
+    // conversionType: new FormControl(null, [Validators.required]),
+    // expenses: new FormControl(null, [Validators.required]),
+    // ckk_movban: new FormControl(null),
+    // current: new FormControl(null),
   });
+
   fileForm: FormGroup = new FormGroup({
     file: new FormArray([], [Validators.required]),
   });
@@ -66,28 +129,18 @@ export class NumeraireExchangeFormComponent extends BasePage {
   selectedGood: IGood = null;
   selectedBank: any = null;
   numeraireSettings = {
-    columns: {
-      id: { title: 'N° Bien' },
-      description: { title: 'Descripción' },
-      salePrice: { title: 'Precio de venta' },
-      saleTax: { title: 'Iva Venta' },
-      commission: { title: 'Comisión' },
-      commissionTax: { title: 'Iva Comisión' },
-      totalExpenses: { title: 'Gasto Total' },
-      appraisalAmount: { title: 'Importe Avaluó' },
-      status: { title: 'Estatus' },
-      identifier: { title: 'Ident.' },
-      domain: { title: 'Ext. Dominio' },
-      commentary: { title: 'Comentario nuevo bien' },
-    },
+    columns: NUMERAIRE_COLUMNS,
     selectedRowIndex: -1,
     actions: false,
     editable: false,
   };
 
-  readonly VC_PANTALLA = 'FACTADBCAMBIONUME';
-  numeraireMassiveColumns = new LocalDataSource();
+  sourcesMassive = new LocalDataSource();
   fileName: string = 'Seleccionar archivo';
+
+  formHelpivavtaPercent = new FormControl(null);
+  formHelpcommissionPercent = new FormControl(null);
+  formHelpcommissionTaxPercent = new FormControl(null);
 
   conversionTypes = [
     {
@@ -121,79 +174,19 @@ export class NumeraireExchangeFormComponent extends BasePage {
 
   selectGood(event: any) {
     this.selectedGood = event;
-  }
-
-  multiCalculate(event: any): void {
-    this.formatCurrency2(event);
-    const { saleTaxPercent, commissionPercent, commissionTaxPercent } =
-      this.form.value;
-    if (!event.target.value) {
-      return;
-    }
-    const value = this.convertCurrencyToNumber(event.target.value);
-    if (saleTaxPercent) {
-      this.calculeTax(value, saleTaxPercent, 'saleTax');
-    } else {
-      this.form.controls['saleTax'].setValue(null);
-    }
-    if (commissionPercent) {
-      this.calculeTax(value, commissionPercent, 'commission');
-    } else {
-      this.form.controls['commission'].setValue(null);
-    }
-    const commission = this.form.controls['commission'].value;
-    if (commissionTaxPercent && commission) {
-      this.calculeTax(
-        this.convertCurrencyToNumber(commission),
-        commissionTaxPercent,
-        'commissionTax'
-      );
-    } else {
-      this.form.controls['commissionTax'].setValue(null);
-    }
-  }
-
-  convertCurrencyToNumber(currency: string): number {
-    return Number(currency.replace(/[^0-9.-]+/g, ''));
-  }
-
-  validateCurrency(event: any): boolean {
-    return true;
-  }
-
-  calculateSaleTax(event: any): void {
-    if (!event.target.value || this.form.controls['salePrice'].invalid) {
-      return;
-    }
-    const { salePrice } = this.form.value;
-    const value = this.convertCurrencyToNumber(salePrice);
-    this.calculeTax(value, event.target.value, 'saleTax');
-  }
-
-  calculateCommission() {
-    const { salePrice, commissionPercent } = this.form.value;
-    if (!commissionPercent || this.form.controls['salePrice'].invalid) {
-      return;
-    }
-    const value = this.convertCurrencyToNumber(salePrice);
-    this.calculeTax(value, commissionPercent, 'commission');
-  }
-
-  calculateCommissionTax() {
-    const { commission, commissionTaxPercent } = this.form.value;
-    if (!commissionTaxPercent || this.form.controls['commission'].invalid) {
-      return;
-    }
-    const value = this.convertCurrencyToNumber(commission);
-    this.calculeTax(value, commissionTaxPercent, 'commissionTax');
-  }
-
-  calculeTax(price: number, percent: number, formControlName: string): void {
-    let tax = price * (percent / 100);
-    let taxFormat = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-    }).format(tax);
-    this.form.controls[formControlName].setValue(taxFormat);
+    // this.form.controls['goodId'].setValue(event.id);
+    this.form.controls['status'].setValue(event.status);
+    this.form.controls['identificator'].setValue(event.identificator);
+    this.form.controls['processExt'].setValue(event.extDomProcess);
+    this.form.controls['delegationNumber'].setValue(
+      event?.delegationNumber?.id
+    );
+    this.form.controls['subDelegationNumber'].setValue(
+      event?.subDelegationNumber?.dekegationNumber
+    );
+    this.form.controls['flier'].setValue(event?.flyerNumber);
+    this.form.controls['fileNumber'].setValue(event?.expediente?.id);
+    this.form.controls['expAssociated'].setValue(event?.associatedFileNumber);
   }
 
   getFile(event: Event) {
@@ -214,7 +207,7 @@ export class NumeraireExchangeFormComponent extends BasePage {
     try {
       this.loading = true;
       const dataCvs = this.excelService.getData(binaryExcel);
-      this.numeraireMassiveColumns.load(dataCvs);
+      this.sourcesMassive.load(dataCvs);
       console.log(dataCvs);
       this.totalItems = dataCvs.length;
       this.loading = false;
@@ -229,7 +222,10 @@ export class NumeraireExchangeFormComponent extends BasePage {
     const goodIds = data.map((item: any) => item[goodKey]);
     return new Promise((resolve, reject) => {
       this.numeraryService
-        .validateCvs({ goodIds, vcScreen: this.VC_PANTALLA })
+        .validateCvs({
+          goodIds,
+          vcScreen: this.form.get('FACTADBCAMBIONUME').value,
+        })
         .subscribe({
           next: (res: any) => {
             return resolve('error');
@@ -243,68 +239,45 @@ export class NumeraireExchangeFormComponent extends BasePage {
 
   selectAccount(account: any) {
     this.selectedBank = account;
-  }
-
-  formatNumber(n: string) {
-    return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-
-  formatCurrency2(event: any, blur: boolean = false) {
-    // get input value
-    var input_val = event.target.value;
-
-    if (input_val === '') {
-      return;
-    }
-
-    // original length
-    // var original_len = input_val.length;
-
-    // check for decimal
-    if (input_val.indexOf('.') >= 0) {
-      var decimal_pos = input_val.indexOf('.');
-
-      var left_side = input_val.substring(0, decimal_pos);
-      var right_side = input_val.substring(decimal_pos);
-
-      left_side = this.formatNumber(left_side);
-
-      right_side = this.formatNumber(right_side);
-
-      if (blur) {
-        right_side += '00';
-      }
-
-      right_side = right_side.substring(0, 2);
-
-      input_val = '$' + left_side + '.' + right_side;
-    } else {
-      input_val = this.formatNumber(input_val);
-      input_val = '$' + input_val;
-
-      if (blur) {
-        input_val += '.00';
-      }
-    }
-    event.target.value = input_val;
-    this.form.get('salePrice').markAllAsTouched();
+    this.form.get('moneyNew').setValue(account?.cveCurrency || null);
+    this.form.get('accountNew').setValue(account?.cveAccount || null);
   }
 
   saveInServer(): void {
+    if (this.sourcesMassive.count() > 0) {
+      showQuestion({
+        text: '¿Desea guardar los registros de manera masiva?',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.saveInSerServerMassive();
+          return;
+        }
+      });
+      return;
+    }
+
+    const { goodId, saleTax, commission, commissionTax } = this.form.value;
+    if (!goodId) {
+    }
     this.validateForm().then(isValid => {
       if (!isValid) {
         return;
       }
-
       this.saveNumeraireExchange();
     });
   }
 
+  showWarning(text: string): void {
+    showToast({ icon: 'warning', text });
+  }
+
+  saveInSerServerMassive(): void {}
+
   saveNumeraireExchange(): void {
     const sumExpense = this.getExpensesSum();
   }
-
-  validateNumeraire() {}
 
   getExpensesSum() {
     const expense = this.tableExpense.getExpense();
@@ -315,9 +288,9 @@ export class NumeraireExchangeFormComponent extends BasePage {
   }
 
   getImport() {
-    const { salePrice, saleTax, commission, commissionTax } = this.form.value;
+    const { amountevta, saleTax, commission, commissionTax } = this.form.value;
     const sumExpense = this.getExpensesSum();
-    const totalImport = salePrice || 0 + saleTax || 0;
+    const totalImport = amountevta || 0 + saleTax || 0;
     const totalExpense =
       sumExpense + commission || 0 + commissionTax || 0 + saleTax || 0;
     const subTotalImport =
@@ -337,16 +310,7 @@ export class NumeraireExchangeFormComponent extends BasePage {
   }
 
   validateForm(): Promise<boolean> {
-    const {
-      conversionType,
-      goodId,
-      bank,
-      ckk_movban,
-      salePrice,
-      saleTax,
-      commission,
-      commissionTax,
-    } = this.form.value;
+    const { typeConv, goodId, bank, ckk_movban, amountevta } = this.form.value;
     const message: string[] = [];
     if (goodId) {
       message.push(
@@ -358,7 +322,7 @@ export class NumeraireExchangeFormComponent extends BasePage {
       message.push('Debe especificar el banco');
     }
 
-    if (!conversionType) {
+    if (!typeConv) {
       message.push('No ha seleccionado el tipo de conversión');
     }
 
@@ -372,13 +336,13 @@ export class NumeraireExchangeFormComponent extends BasePage {
       return Promise.resolve(false);
     }
 
-    if (!salePrice) {
+    if (!amountevta) {
       return showQuestion({
         title: 'Confirmación',
         text: 'El nuevo bien se generara con un precio de venta de 1.\n ¿Seguro que desea cambiar el bien a numerario?',
       }).then(result => {
         if (result.isConfirmed) {
-          this.form.controls['salePrice'].setValue(1);
+          this.form.controls['amountevta'].setValue(1);
           return Promise.resolve(true);
         }
         return Promise.resolve(false);
@@ -395,54 +359,16 @@ export class NumeraireExchangeFormComponent extends BasePage {
       return Promise.resolve(false);
     });
   }
+
+  changeDeposit(event: any): void {
+    this.form.controls['invoiceFile'].setValue(event.InvoiceFile);
+    this.form.controls['deposit'].setValue(event.deposit);
+  }
 }
 
-`
-selector de cuentas bancarias
-
-SELECT ban.cve_banco, ban.nombre, 
-       cue.no_cuenta, cue.cve_cuenta, cve_moneda
-FROM   cuentas_bancarias cue, cat_bancos ban
-WHERE  cue.cve_banco = ban.cve_banco
-AND    cue.tipo_cuenta = 'CONCENTRADORA'
-ORDER BY ban.nombre
-
-
--------------------------------------------------------------------------------------------
-
-
-path = /accountmvmnt/api/v1/account-movements
-
-SELECT 
-  FEC_MOVIMIENTO = dateMotion,
-  DEPOSITO = deposit, 
-  FOLIO_FICHA = InvoiceFile, 
-  NO_MOVIMIENTO = numberMotion, 
-  NO_CUENTA = numberAccount, 
-  CATEGORIA = category
-FROM MOVIMIENTOS_CUENTAS
-WHERE (ES_FICHA_DEPOSITO = isFileDeposit) = 'S'
-AND (NO_BIEN = numberGood) IS NULL
-AND (NO_CUENTA = numberAccount) = :BLK_CONTROL.DI_NO_CUENTA_DEPOSITO as una variable que no existe en el layout
-asignar valor a una variable
-FEC_MOVIMIENTO = BLK_CONTROL.TI_FECHA_NEW  -> fecha
-DEPOSITO = BLK_CONTROL.DI_DEPOSITO -> importe
-FOLIO_FICHA = BLK_CONTROL.TI_FICHA_NEW -> referencia
-NO_MOVIMIENTO = BLK_CONTROL.DI_NO_MOVIMIENTO -> #campo fuera del layout
-CATEGORIA = BLK_CONTROL.DI_CATEGORIA -> #campo fuera del layout
-
--------------------------------------------------------------------------------------------
-para tabla de gastos
-
-path = /spent/api/v1/expense-concept
-
-select 
-  no_concepto_gasto = id ,
-  descripcion = descripiton
-from concepto_gasto
-
--- item de la tabla de gastos
-NO_CONCEPTO_GASTO = BLK_CTR.ID_GASTO
-DESCRIPCION = BLK_CTR.DESCGASTO
-
-`;
+// SELECT ban.cve_banco, ban.nombre,
+//        cue.no_cuenta, cue.cve_cuenta, cve_moneda
+// FROM   cuentas_bancarias cue, cat_bancos ban
+// WHERE  cue.cve_banco = ban.cve_banco
+// AND    cue.tipo_cuenta = 'CONCENTRADORA'
+// ORDER BY ban.nombre

@@ -80,82 +80,103 @@
               <div class="row mt-2">
                 <div class="col-sm-12 col-md-4">
                   <form-field
-                    [control]="form.get('salePrice')"
+                    [control]="form.get('amountevta')"
                     label="Precio de Venta">
                     <input
+                      type="number"
+                      #amountevta
                       class="form-control px-3"
-                      formControlName="salePrice"
-                      (blur)="formatCurrency2($event, true)"
-                      (keyup)="multiCalculate($event)" />
+                      formControlName="amountevta" />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-4">
-                  <form-field
-                    [control]="form.get('saleTaxPercent')"
-                    label="% IVA">
+                  <div class="form-group form-static-label">
                     <input
+                      #ivavtaPercent
+                      [formControl]="formHelpivavtaPercent"
+                      id="ivavtaPercent"
                       type="number"
                       class="form-control px-3"
-                      formControlName="saleTaxPercent"
-                      max="100"
-                      (keyup)="calculateSaleTax($event)" />
-                  </form-field>
+                      max="100" />
+                    <span class="form-bar"></span>
+                    <label class="float-label" for="ivavtaPercent">% IVA</label>
+                  </div>
                 </div>
                 <div class="col-sm-6 col-md-4">
-                  <form-field [control]="form.get('saleTax')" label="Iva Venta">
+                  <form-field [control]="form.get('ivavta')" label="Iva Venta">
                     <input
-                      type="text"
+                      [value]="
+                        (+amountevta?.value || 0) *
+                        ((+ivavtaPercent?.value || 0) / 100)
+                      "
+                      type="number"
                       class="form-control px-3"
-                      formControlName="saleTax"
+                      formControlName="ivavta"
                       readonly />
                   </form-field>
                 </div>
               </div>
               <div class="row mt-5">
                 <div class="col-sm-6 col-md-3">
-                  <form-field
-                    [control]="form.get('commissionPercent')"
-                    label="% Comisión">
+                  <div class="form-group form-static-label">
                     <input
+                      [formControl]="formHelpcommissionPercent"
+                      id="commissionPercent"
+                      #commissionPercent
                       type="number"
                       class="form-control px-3"
-                      formControlName="commissionPercent"
-                      max="100"
-                      (input)="calculateCommission()" />
-                  </form-field>
+                      max="100" />
+                    <span class="form-bar"></span>
+                    <label class="float-label" for="commissionPercent"
+                      >% Comisión</label
+                    >
+                  </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
                   <form-field
                     [control]="form.get('commission')"
                     label="Comisión">
                     <input
-                      type="text"
+                      [value]="
+                        (+amountevta?.value || 0) *
+                        ((+commissionPercent?.value || 0) / 100)
+                      "
+                      #commission
+                      type="number"
                       class="form-control px-3"
                       formControlName="commission"
                       readonly />
                   </form-field>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                  <form-field
-                    [control]="form.get('commissionTaxPercent')"
-                    label="% IVA Comisión">
+                  <div class="form-group form-static-label">
                     <input
+                      [formControl]="formHelpcommissionTaxPercent"
+                      id="commissionTaxPercent"
+                      #commissionTaxPercent
                       type="number"
                       class="form-control px-3"
-                      formControlName="commissionTaxPercent"
-                      max="100"
-                      (input)="calculateCommissionTax()" />
-                  </form-field>
+                      max="100" />
+                    <span class="form-bar"></span>
+                    <label class="float-label" for="commissionTaxPercent"
+                      >% IVA Comisión</label
+                    >
+                  </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
                   <form-field
-                    [control]="form.get('commissionTax')"
+                    [control]="form.get('ivacom')"
                     label="IVA Comisión">
                     <input
+                      [value]="
+                        ((+commission?.value || 0) *
+                          (+commissionTaxPercent?.value || 0)) /
+                        100
+                      "
+                      readonly
                       type="text"
                       class="form-control px-3"
-                      formControlName="commissionTax"
-                      readonly />
+                      formControlName="ivacom" />
                   </form-field>
                 </div>
               </div>
@@ -217,7 +238,7 @@
                           'filter.accountType': '$eq:CONCENTRADORA'
                         }"
                         value="accountNumber"
-                        formControlName="bank"
+                        formControlName="bankNew"
                         path="accountmvmnt/api/v1/bank-account"
                         (valueChange)="selectAccount($event)">
                         <ng-template let-item> {{ item.cveBank }} </ng-template>
@@ -232,7 +253,7 @@
                         Descripci&oacute;n
                       </h5>
                       <p class="text-muted">
-                        {{ selectedBank?.square }}
+                        {{ selectedBank?.banco?.name }}
                       </p>
                     </div>
                     <div class="col-sm-6 col-md-6">
@@ -240,7 +261,7 @@
                         class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                       <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
                       <p class="text-muted">
-                        {{ selectedBank.cveAccount }}
+                        {{ this.form.get('accountNew')?.value }}
                       </p>
                     </div>
                     <div class="col-sm-6 col-md-6">
@@ -248,7 +269,7 @@
                         class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                       <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
                       <p class="text-muted">
-                        {{ selectedBank.cveCurrency }}
+                        {{ form.get('moneyNew')?.value }}
                       </p>
                     </div>
                   </ng-container>
@@ -266,35 +287,36 @@
               <hr class="mw-98" />
               <div class="row">
                 <div class="col-sm-12 col-md-3">
-                  <form-field [control]="form.get('depositDate')" label="Fecha">
-                    <input
-                      type="text"
-                      formControlName="depositDate"
+                  <form-field [control]="form.get('dateNew')" label="Fecha">
+                    <ng-custom-select
+                      (valueChange)="changeDeposit($event)"
                       class="form-control"
-                      bsDatepicker />
+                      path="/accountmvmnt/api/v1/account-movements"
+                      formControlName="dateNew">
+                      <ng-template let-item>
+                        {{ item.dateMotion }}
+                      </ng-template>
+                    </ng-custom-select>
                   </form-field>
                 </div>
                 <div class="col-md-4">
                   <form-field
                     class="form-group"
-                    [control]="form.get('depositReference')"
+                    [control]="form.get('invoiceFile')"
                     label="Referencia">
-                    <ng-custom-select
-                      class="form-control"
-                      path="/accountmvmnt/api/v1/account-movements"
-                      formControlName="depositReference">
-                      <ng-template let-item> {{ item.cveBank }} </ng-template>
-                    </ng-custom-select>
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="form.get('depositAmount')"
-                    label="Importe">
                     <input
                       type="number"
                       class="form-control"
-                      formControlName="depositAmount"
+                      formControlName="invoiceFile"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-3">
+                  <form-field [control]="form.get('deposit')" label="Importe">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="deposit"
                       readonly />
                   </form-field>
                 </div>
@@ -315,10 +337,8 @@
                     <form-field
                       class="form-group"
                       label="Tipo de conversión"
-                      [control]="form.get('conversionType')">
-                      <select
-                        class="form-control"
-                        formControlName="conversionType">
+                      [control]="form.get('typeConv')">
+                      <select class="form-control" formControlName="typeConv">
                         <option
                           [value]="type.value"
                           *ngFor="let type of conversionTypes">
@@ -383,7 +403,7 @@
                   id="massive-table"
                   [attr.class]="'table-bordered'"
                   [settings]="numeraireSettings"
-                  [source]="numeraireMassiveColumns">
+                  [source]="sourcesMassive">
                 </ng2-smart-table>
               </div>
             </div>
