@@ -59,6 +59,7 @@ export class ClassifyAssetsTabComponent
 
   good: any = null;
   formLoading: boolean = false;
+  noItemsFoundMessage = 'No se encontraron elementos';
 
   constructor(
     private fb: FormBuilder,
