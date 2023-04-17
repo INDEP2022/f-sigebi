@@ -57,13 +57,7 @@
         </button>
       </div>
       <div class="p-2">
-        <button
-          *ngIf="!byInterconnection"
-          class="btn btn-success btn-sm active"
-          (click)="finishClarifiImpro()">
-          Finalizar Aclaración Improcedencia
-        </button>
-        <button *ngIf="byInterconnection" class="btn btn-info btn-sm active">
+        <button class="btn btn-info btn-sm active" (click)="satAnswer()">
           Ver Respuesta Aclaraci&oacute;n
         </button>
       </div>
