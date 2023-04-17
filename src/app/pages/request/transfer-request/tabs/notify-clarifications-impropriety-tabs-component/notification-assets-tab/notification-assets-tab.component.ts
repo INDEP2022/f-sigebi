@@ -365,7 +365,6 @@ export class NotificationAssetsTabComponent
       this.message('Aviso', 'Aún no hay una respuesta del SAT');
       return;
     }
-    console.log('Pasé');
 
     let config: ModalOptions = {
       initialState: {

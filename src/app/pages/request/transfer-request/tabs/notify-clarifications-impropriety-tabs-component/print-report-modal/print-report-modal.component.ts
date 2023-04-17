@@ -96,8 +96,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+    let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=14115`;
     this.src = linkDoc1;
-    console.log('URL de reporte', this.src);
 
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
