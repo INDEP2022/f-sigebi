@@ -12,6 +12,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
@@ -71,6 +72,7 @@ export class RequestRecordTabComponent
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
+
     //this.prepareForm();
     if (this.requestForm.controls['paperDate'].value != null) {
       const paperDate = this.requestForm.controls['paperDate'].value;
@@ -218,10 +220,7 @@ export class RequestRecordTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      protectNumber: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(30)],
-      ],
+      protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
@@ -371,7 +370,7 @@ export class RequestRecordTabComponent
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
   }
-  resetFields(fields: AbstractControl[]) {
+  requiredFields(fields: AbstractControl[]) {
     fields.forEach(field => {
       field = null;
     });
