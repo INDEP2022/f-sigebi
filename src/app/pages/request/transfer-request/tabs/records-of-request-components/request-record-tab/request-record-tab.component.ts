@@ -370,7 +370,7 @@ export class RequestRecordTabComponent
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
   }
-  verFields(fields: AbstractControl[]) {
+  requiredFields(fields: AbstractControl[]) {
     fields.forEach(field => {
       field = null;
     });
