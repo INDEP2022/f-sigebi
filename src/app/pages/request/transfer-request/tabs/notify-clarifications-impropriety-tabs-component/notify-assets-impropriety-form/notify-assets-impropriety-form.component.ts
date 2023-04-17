@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -21,7 +23,7 @@ export class NotifyAssetsImproprietyFormComponent
   implements OnInit
 {
   title: string = 'Aclaración';
-  clarificationForm: ModelForm<any>;
+  clarificationForm: FormGroup = new FormGroup({});
   procedenceForm: ModelForm<any>;
   inappropriatenessForm: ModelForm<Inappropriateness>;
   clarification: any;
@@ -39,7 +41,8 @@ export class NotifyAssetsImproprietyFormComponent
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private modalService: BsModalService,
-    private documentService: DocumentsService
+    private documentService: DocumentsService,
+    private chatService: ChatClarificationsService
   ) {
     super();
   }
@@ -132,7 +135,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   initForm2(): void {
     this.inappropriatenessForm = this.fb.group({
-      id: ['14253'],
       managedTo: [
         null,
         [
@@ -220,21 +222,38 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   confirm() {
-    this.loading = true;
-    console.log(this.inappropriatenessForm.value);
-    this.documentService
-      .createClarDocImp(this.inappropriatenessForm.value)
-      .subscribe({
-        next: data => {
-          this.onLoadToast('success', 'Aclaración guardada correctamente', '');
-          this.loading = false;
-          //this.modalRef.hide()
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+    if (this.withDocumentation) {
+      this.loading = true;
+      this.documentService
+        .createClarDocImp(this.inappropriatenessForm.value)
+        .subscribe({
+          next: data => {
+            this.onLoadToast(
+              'success',
+              'Aclaración guardada correctamente',
+              ''
+            );
+            this.loading = false;
+            //this.modalRef.hide()
+          },
+          error: error => {
+            this.loading = false;
+            console.log(error);
+          },
+        });
+    } else {
+      const info: IChatClarifications = {
+        requestId: this.clarification[0]?.requestId,
+        senderName: this.clarificationForm.get('senderName').value,
+        jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
+          .value,
+        //senderCharge: //Verificar cargo remitente y observacion
+        userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
+        webMail: this.clarificationForm.get('webMail').value,
+      };
+
+      console.log(info);
+    }
     //
     /*if (this.clarification[0].typeClarification === '1') {
       // cambiar el estado de la aclaracion en "EN_ACLARACION"
