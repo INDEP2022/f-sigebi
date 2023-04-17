@@ -81,7 +81,11 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   }
 
   searchForm(params: any) {
+    console.log(params);
+    this.params.value.page = params.page;
+    this.params.value.limit = params.limit;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      console.log(data);
       params.page = data.page;
       params.limit = data.limit;
       this.getRequest(params);
@@ -98,6 +102,9 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       },
       error => {
         this.loading = false;
+        this.totalItems = 0;
+        this.paragraphs.load([]);
+        this.onLoadToast('error', '', `${error.error.message}`);
         console.log(error);
       }
     );
@@ -159,6 +166,9 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   }
 
   resetForm(event: any) {
-    if (event === true) this.paragraphs = new LocalDataSource();
+    if (event === true) {
+      this.paragraphs = new LocalDataSource();
+      this.totalItems = 0;
+    }
   }
 }

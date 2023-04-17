@@ -111,18 +111,48 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       id: [null],
       text: [null, [Validators.pattern(STRING_PATTERN)]],
       docType: [null],
-      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
-      dDocName: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      noOfice: [null],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      comment: [null, [Validators.pattern(STRING_PATTERN)]],
+      docTitle: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      dDocName: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      typeTrasf: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      noOfice: [null, [Validators.maxLength(60)]],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      comment: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
       noRequest: [null],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
-      noSiab: [null, [Validators.pattern(STRING_PATTERN)]],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      noSiab: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
 
       /* Solicitud Transferencia */
       regDelega: [null],
@@ -170,7 +200,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
           this.loading = false;
         } else {
           this.paragraphs = info;
-          console.log('chinito', this.paragraphs);
           this.allDocumentos = this.paragraphs;
           this.totalItems = this.paragraphs.length;
           this.loading = false;
@@ -612,7 +641,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
         if (next) {
           this.formLoading = true;
           setTimeout(() => {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.getDocuemntByGood();
             this.formLoading = false;
           }, 8000);

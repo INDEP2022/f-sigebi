@@ -11,7 +11,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i>
-            <strong>B&uacute;squeda de Documento de {{ title }}</strong></a
+            <strong>B&uacute;squeda de Documentos de {{ title }}</strong></a
           >
         </p>
 
@@ -37,6 +37,7 @@
                   type="text"
                   row
                   pt-5s="2"
+                  maxlength="30"
                   formControlName="text"></textarea>
               </form-field>
             </div>
@@ -89,7 +90,7 @@
                   [data]="selectRegDelegation"
                   value="id"
                   bindLabel="description"
-                  label="Delegaci&oacute;n regional"
+                  label="Delegaci&oacute;n Regional"
                   (fetchItems)="getRegDelegation($event)"></ngx-select>
               </form-field>
             </div>
@@ -125,6 +126,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="40"
                   formControlName="docTitle" />
               </form-field>
             </div>
@@ -135,6 +137,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="100"
                   formControlName="dDocName" />
               </form-field>
             </div>
@@ -145,6 +148,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="typeTrasf" />
               </form-field>
             </div>
@@ -155,6 +159,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="contributor" />
               </form-field>
             </div>
@@ -168,6 +173,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="author" />
               </form-field>
             </div>
@@ -178,6 +184,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="sender" />
               </form-field>
             </div>
@@ -188,6 +195,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="noOfice" />
               </form-field>
             </div>
@@ -198,6 +206,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="senderCharge" />
               </form-field>
             </div>
@@ -252,6 +261,7 @@
                   type="text"
                   row
                   pt-5s="2"
+                  maxlength="100"
                   formControlName="comment"></textarea>
               </form-field>
             </div>
@@ -262,6 +272,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="40"
                   formControlName="responsible" />
               </form-field>
             </div>

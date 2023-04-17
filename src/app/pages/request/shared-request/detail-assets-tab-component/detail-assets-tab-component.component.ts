@@ -9,6 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -49,7 +50,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
-
 @Component({
   selector: 'app-detail-assets-tab-component',
   templateUrl: './detail-assets-tab-component.component.html',
@@ -59,10 +59,23 @@ export class DetailAssetsTabComponentComponent
   extends BasePage
   implements OnInit, OnChanges
 {
+  // private _detailAssets: ModelForm<any>;
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
   @Input() assetsId: any; //id del bien
-  @Input() detailAssets: ModelForm<any>; // bienes ModelForm
+  @Input() detailAssets: ModelForm<any>;
+
+  // set detailAssets(value: ModelForm<any>) {
+  //   this.initForm();
+  //   this.getBrand(new ListParams(), () => {
+  //     this._detailAssets = value;
+  //     return {};
+  //   });
+  // }
+  // get detailAssets() {
+  //   return this._detailAssets;
+  // }
+  // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   @Input() process: string = '';
@@ -169,12 +182,21 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-
+    console.log(this.detailAssets.value, this.process);
+    console.log(this.selectBrand.data);
     if (this.process == 'classify-assets') {
+      console.log(this.domicilieObject.warehouseAlias);
+      console.log({ alias: this.domicilieObject.warehouseAlias });
+      this.setGoodDomicilieSelected(this.domicilieObject);
+      /*  this.domicileForm
+        .get('warehouseAlias')
+        .setValue(this.domicilieObject.warehouseAlias);
+      this.getStateOfRepublic(new ListParams(), this.domicilieObject.statusKey); */
       this.goodData = this.detailAssets.value;
       if (this.goodData.fractionId) {
         this.relevantTypeService
           .getById(this.goodData.fractionId?.relevantTypeId)
+          .pipe(takeUntil(this.$unSubscribe))
           .subscribe({
             next: data => {
               this.relevantTypeName = data.description;
@@ -182,7 +204,6 @@ export class DetailAssetsTabComponentComponent
             error: error => {},
           });
       }
-
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.getSubBrand(new ListParams(), brand);
@@ -233,6 +254,13 @@ export class DetailAssetsTabComponentComponent
         this.getSubBrand(new ListParams(), brand);
       }
     }
+    if (this.detailAssets.controls['brand'].value) {
+      this.getBrand(
+        new ListParams(),
+        this.detailAssets.controls['brand'].value
+      );
+    }
+
     //verifica si la vista es verificacion de cumplimiento o bien
     if (this.typeDoc === 'verify-compliance' || this.typeDoc === 'assets') {
       if (this.detailAssets.controls['addressId'].value) {
@@ -264,24 +292,37 @@ export class DetailAssetsTabComponentComponent
       const brand = this.detailAssets.controls['brand'].value;
       this.getSubBrand(new ListParams(), brand);
     }
+
+    if (this.detailAssets.controls['destiny'].value) {
+      var destiny = this.detailAssets.controls['destiny'].value;
+      if (destiny) {
+        this.getDestiny(destiny);
+      }
+    }
   }
 
   goodType(goodTypeId: number) {
-    this.typeRelevantSevice.getById(goodTypeId).subscribe({
-      next: response => {
-        this.nameGoodType = response.description;
-      },
-      error: error => {},
-    });
+    this.typeRelevantSevice
+      .getById(goodTypeId)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.nameGoodType = response.description;
+        },
+        error: error => {},
+      });
   }
 
   typeRelevant(typeRelevantId: number) {
-    this.typeRelevantSevice.getById(typeRelevantId).subscribe({
-      next: data => {
-        this.nameTypeRelevant = data.description;
-      },
-      error: error => {},
-    });
+    this.typeRelevantSevice
+      .getById(typeRelevantId)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: data => {
+          this.nameTypeRelevant = data.description;
+        },
+        error: error => {},
+      });
   }
 
   ngOnInit(): void {
@@ -293,7 +334,6 @@ export class DetailAssetsTabComponentComponent
     this.getReactiveFormCall();
     this.isSavingData();
     this.getBrand(new ListParams());
-
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
@@ -585,41 +625,66 @@ export class DetailAssetsTabComponentComponent
 
   getPhysicalState(params: ListParams) {
     params['filter.name'] = '$eq:Estado Fisico';
-    this.genericService.getAll(params).subscribe({
-      next: (data: any) => {
-        this.selectPhysicalState = new DefaultSelect(data.data, data.count);
-      },
-    });
+    this.genericService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          this.selectPhysicalState = new DefaultSelect(data.data, data.count);
+        },
+      });
   }
 
   getConcervationState(params: ListParams) {
     params['filter.name'] = '$eq:Estado Conservacion';
-    this.genericService.getAll(params).subscribe({
-      next: (data: any) => {
-        this.selectConcervationState = new DefaultSelect(data.data, data.count);
-      },
-    });
+    this.genericService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          this.selectConcervationState = new DefaultSelect(
+            data.data,
+            data.count
+          );
+        },
+      });
   }
 
   getDestinyTransfer(params: ListParams) {
     params['filter.name'] = '$eq:Destino';
-    this.genericService.getAll(params).subscribe({
-      next: (data: any) => {
-        this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
+    this.genericService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
 
-        if (this.detailAssets.controls['transferentDestiny'].value === null) {
-          this.detailAssets.controls['transferentDestiny'].setValue('1');
-        } else {
-          const destinyTransf =
-            this.detailAssets.controls['transferentDestiny'].value;
-          this.detailAssets.controls['transferentDestiny'].setValue(
-            destinyTransf
-          );
-        }
-      },
-    });
+          if (this.detailAssets.controls['transferentDestiny'].value === null) {
+            this.detailAssets.controls['transferentDestiny'].setValue('1');
+          } else {
+            const destinyTransf =
+              this.detailAssets.controls['transferentDestiny'].value;
+            this.detailAssets.controls['transferentDestiny'].setValue(
+              destinyTransf
+            );
+          }
+        },
+      });
   }
 
+  getDestiny(id: number | string) {
+    let params = new ListParams();
+    params['filter.name'] = '$eq:Destino';
+    params['filter.keyId'] = `$eq:${id}`;
+    this.genericService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: ({ data }: any) => {
+          this.destinyLigie = data[0].description;
+        },
+      });
+  }
   getTansferUnitMeasure(event: any) {}
 
   getDestintSae(event: any) {}
@@ -631,51 +696,56 @@ export class DetailAssetsTabComponentComponent
     /*if (municipalyId) {
       params['filter.municipalityKey'] = `$eq:${municipalyId}`;
     }*/
-    this.goodsInvService.getAllMunipalitiesByFilter(params).subscribe({
-      next: resp => {
-        if (this.municipalityId !== 0 && this.municipalityId !== null) {
-          if (this.combineMunicipalityId) {
-            const newParams = {
-              ...params,
-              'filter.municipalityKey': `$eq:${this.municipalityId}`,
-            };
-            this.goodsInvService
-              .getAllMunipalitiesByFilter(newParams)
-              .subscribe({
-                next: response => {
-                  console.log(response);
-                  const newData = resp.data.filter(
-                    (item: any) =>
-                      item.municipalityKey + '' !== this.municipalityId + ''
-                  );
-                  if (response.data && response.data[0]) {
-                    newData.unshift(response.data[0]);
-                  }
-                  this.selectMunicipe = new DefaultSelect(newData, resp.count);
-                  this.combineMunicipalityId = false;
-                },
-                error: err => {
-                  this.selectMunicipe = new DefaultSelect(
-                    resp.data,
-                    resp.count
-                  );
-                },
-              });
+    this.goodsInvService
+      .getAllMunipalitiesByFilter(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          if (this.municipalityId !== 0 && this.municipalityId !== null) {
+            if (this.combineMunicipalityId) {
+              const newParams = {
+                ...params,
+                'filter.municipalityKey': `$eq:${this.municipalityId}`,
+              };
+              this.goodsInvService
+                .getAllMunipalitiesByFilter(newParams)
+                .subscribe({
+                  next: response => {
+                    const newData = resp.data.filter(
+                      (item: any) =>
+                        item.municipalityKey + '' !== this.municipalityId + ''
+                    );
+                    if (response.data && response.data[0]) {
+                      newData.unshift(response.data[0]);
+                    }
+                    this.selectMunicipe = new DefaultSelect(
+                      newData,
+                      resp.count
+                    );
+                    this.combineMunicipalityId = false;
+                  },
+                  error: err => {
+                    this.selectMunicipe = new DefaultSelect(
+                      resp.data,
+                      resp.count
+                    );
+                  },
+                });
+            } else {
+              this.selectMunicipe = new DefaultSelect(
+                resp.data.filter(
+                  (item: any) =>
+                    item.municipalityKey + '' !== this.municipalityId + ''
+                ),
+                resp.count
+              );
+            }
           } else {
-            this.selectMunicipe = new DefaultSelect(
-              resp.data.filter(
-                (item: any) =>
-                  item.municipalityKey + '' !== this.municipalityId + ''
-              ),
-              resp.count
-            );
+            this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
           }
-        } else {
-          this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
-        }
-      },
-      error: error => {},
-    });
+        },
+        error: error => {},
+      });
     /* this.municipeSeraService.getAll(params).subscribe({
       next: data => {
         this.selectMunicipe = new DefaultSelect(data.data, data.count);
@@ -691,51 +761,57 @@ export class DetailAssetsTabComponentComponent
   ) {
     // debugger;
     if (municipalityId === null || stateKey === null) {
-      console.log(this.domicileForm.value);
-      this.selectLocality = new DefaultSelect([]);
-      this.domicileForm.get('localityKey').setValue(null);
       return;
     }
     params['sortBy'] = 'township:ASC';
     params['filter.municipalityKey'] = `$eq:${municipalityId}`;
     params['filter.stateKey'] = `$eq:${stateKey}`;
-    this.goodsInvService.getAllTownshipByFilter(params).subscribe({
-      next: resp => {
-        if (this.localityKey !== 0 && this.localityKey !== null) {
-          if (this.combineLocalityId) {
-            const newParams = {
-              ...params,
-              'filter.townshipKey': `$eq:${this.localityKey}`,
-            };
-            this.goodsInvService.getAllTownshipByFilter(newParams).subscribe({
-              next: response => {
-                console.log(response);
-                const newData = resp.data.filter(
-                  (item: any) => item.townshipKey + '' !== this.localityKey + ''
-                );
-                if (response.data && response.data[0]) {
-                  newData.unshift(response.data[0]);
-                }
-                this.selectLocality = new DefaultSelect(newData, resp.count);
-                this.combineLocalityId = false;
-              },
-              error: err => {
-                this.selectLocality = new DefaultSelect(resp.data);
-              },
-            });
+    this.goodsInvService
+      .getAllTownshipByFilter(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          if (this.localityKey !== 0 && this.localityKey !== null) {
+            if (this.combineLocalityId) {
+              const newParams = {
+                ...params,
+                'filter.townshipKey': `$eq:${this.localityKey}`,
+              };
+              this.goodsInvService
+                .getAllTownshipByFilter(newParams)
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe({
+                  next: response => {
+                    const newData = resp.data.filter(
+                      (item: any) =>
+                        item.townshipKey + '' !== this.localityKey + ''
+                    );
+                    if (response.data && response.data[0]) {
+                      newData.unshift(response.data[0]);
+                    }
+                    this.selectLocality = new DefaultSelect(
+                      newData,
+                      resp.count
+                    );
+                    this.combineLocalityId = false;
+                  },
+                  error: err => {
+                    this.selectLocality = new DefaultSelect(resp.data);
+                  },
+                });
+            } else {
+              this.selectLocality = new DefaultSelect(
+                resp.data.filter(
+                  (item: any) => item.townshipKey !== this.localityKey
+                )
+              );
+            }
           } else {
-            this.selectLocality = new DefaultSelect(
-              resp.data.filter(
-                (item: any) => item.townshipKey !== this.localityKey
-              )
-            );
+            this.selectLocality = new DefaultSelect(resp.data);
           }
-        } else {
-          this.selectLocality = new DefaultSelect(resp.data);
-        }
-      },
-      error: error => {},
-    });
+        },
+        error: error => {},
+      });
   }
 
   getCP(params: ListParams, localityId?: number, municipalityId?: number) {
@@ -749,24 +825,28 @@ export class DetailAssetsTabComponentComponent
       this.municipalityId === null ||
       this.stateOfRepId === null
     ) {
-      this.selectCP = new DefaultSelect([]);
-      this.domicileForm.get('code').setValue(null);
       return;
     }
     params['filter.townshipKey'] = `$eq:${this.localityKey}`; //localidad
     params['filter.municipalityKey'] = `$eq:${this.municipalityId}`; //municipio
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`; //estado de la republica
-    this.goodsInvService.getAllCodePostalByFilter(params).subscribe({
-      next: resp => {
-        if (this.code !== '0' && this.code !== null) {
-          if (this.combineCode) {
-            const newParams = {
-              ...params,
-              'filter.postalCode': `$eq:${this.code}`,
-            };
-            this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
+    this.goodsInvService
+      .getAllCodePostalByFilter(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          if (this.code !== '' && this.code !== null) {
+            if (this.combineCode) {
+              const newParams = {
+                ...params,
+                'filter.postalCode': `$eq:${this.code}`,
+              };
+              this.selectCP = new DefaultSelect(resp.data, resp.count);
+              this.domicileForm
+                .get('code')
+                .setValue(this.selectCP.data[0]['postalCode']);
+              /* this.goodsInvService.getAllCodePostalByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 const newData = resp.data.filter(
                   (item: any) => item.postalCode + '' !== this.code + ''
                 );
@@ -774,27 +854,28 @@ export class DetailAssetsTabComponentComponent
                   newData.unshift(response.data[0]);
                 }
                 this.selectCP = new DefaultSelect(newData, resp.count);
+                this.domicileForm.get('code').setValue(newData);
                 this.combineCode = false;
               },
               error: err => {
                 this.selectCP = new DefaultSelect(resp.data, resp.count);
               },
-            });
+            }); */
+            } else {
+              this.selectCP = new DefaultSelect(
+                resp.data.filter(
+                  (item: any) => item.postalCode + '' !== this.code + ''
+                )
+              );
+            }
           } else {
-            this.selectCP = new DefaultSelect(
-              resp.data.filter(
-                (item: any) => item.postalCode + '' !== this.code + ''
-              )
-            );
+            this.selectCP = new DefaultSelect(resp.data, resp.count);
           }
-        } else {
-          this.selectCP = new DefaultSelect(resp.data, resp.count);
-        }
-      },
-      error: err => {
-        this.selectCP = new DefaultSelect([], 0);
-      },
-    });
+        },
+        error: err => {
+          this.selectCP = new DefaultSelect([], 0);
+        },
+      });
   }
 
   // getCP(
@@ -832,15 +913,18 @@ export class DetailAssetsTabComponentComponent
 
   getTransferentUnit(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
-    this.goodsInvService.getCatUnitMeasureView(params).subscribe({
-      next: resp => {
-        //console.log('medida transferente', resp.data);
-        this.selectTansferUnitMeasure = new DefaultSelect(
-          resp.data,
-          resp.count
-        );
-      },
-    });
+    this.goodsInvService
+      .getCatUnitMeasureView(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          //console.log('medida transferente', resp.data);
+          this.selectTansferUnitMeasure = new DefaultSelect(
+            resp.data,
+            resp.count
+          );
+        },
+      });
   }
 
   getBrand(params: ListParams, brandId?: string) {
@@ -850,11 +934,14 @@ export class DetailAssetsTabComponentComponent
       filter.addFilter('flexValue', brandId);
     }
 
-    this.goodsInvService.getAllBrandWithFilter(filter.getParams()).subscribe({
-      next: resp => {
-        this.selectBrand = new DefaultSelect(resp.data, resp.count);
-      },
-    });
+    this.goodsInvService
+      .getAllBrandWithFilter(filter.getParams())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          this.selectBrand = new DefaultSelect(resp.data, resp.count);
+        },
+      });
   }
 
   getSubBrand(params: ListParams, brandId?: string) {
@@ -864,11 +951,14 @@ export class DetailAssetsTabComponentComponent
     filter['filter.carBrand'] = `$eq:${idBrand}`;
     filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
-    this.goodsInvService.getAllSubBrandWithFilter(filter).subscribe({
-      next: resp => {
-        this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
-      },
-    });
+    this.goodsInvService
+      .getAllSubBrandWithFilter(filter)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
+        },
+      });
   }
 
   modifyResponse(event: any) {
@@ -931,15 +1021,18 @@ export class DetailAssetsTabComponentComponent
   //obtener el estado de la republic por defecto
   getStateOfRepublic(params: ListParams, keyState?: number) {
     if (keyState != null) {
-      this.stateOfRepublicService.getById(keyState).subscribe({
-        next: data => {
-          this.selectState = new DefaultSelect([data]);
-          //this.domicileForm.controls['statusKey'].setValue(data.id);
-        },
-        /*error: error => {
+      this.stateOfRepublicService
+        .getById(keyState)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            this.selectState = new DefaultSelect([data]);
+            //this.domicileForm.controls['statusKey'].setValue(data.id);
+          },
+          /*error: error => {
           console.log(error);
         },*/
-      });
+        });
     }
   }
 
@@ -990,11 +1083,14 @@ export class DetailAssetsTabComponentComponent
 
   getTypeGood(id: number) {
     //debugger;
-    this.typeRelevantSevice.getById(id).subscribe({
-      next: (data: any) => {
-        this.goodTypeName = data.description;
-      },
-    });
+    this.typeRelevantSevice
+      .getById(id)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          this.goodTypeName = data.description;
+        },
+      });
   }
 
   changeDateEvaluoEvent(event: any) {
@@ -1102,28 +1198,31 @@ export class DetailAssetsTabComponentComponent
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
 
-        this.menageService.create(element).subscribe({
-          next: data => {
-            if (data.statusCode != null) {
-              this.message(
-                'error',
-                'Error',
-                `¡El menaje no se pudo guardar!\n. ${data.message}`
-              );
-              reject('¡El registro del bien del domicilio no se guardó!');
-            }
+        this.menageService
+          .create(element)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: data => {
+              if (data.statusCode != null) {
+                this.message(
+                  'error',
+                  'Error',
+                  `¡El menaje no se pudo guardar!\n. ${data.message}`
+                );
+                reject('¡El registro del bien del domicilio no se guardó!');
+              }
 
-            if (data.id != null) {
-              this.message(
-                'success',
-                'Menaje guardado',
-                `Se guardaron los menajes exitosamente`
-              );
-              this.isSaveMenaje = false;
-              resolve('¡Se guardó correctamente el menaje!');
-            }
-          },
-        });
+              if (data.id != null) {
+                this.message(
+                  'success',
+                  'Menaje guardado',
+                  `Se guardaron los menajes exitosamente`
+                );
+                this.isSaveMenaje = false;
+                resolve('¡Se guardó correctamente el menaje!');
+              }
+            },
+          });
       }
     });
   }
@@ -1133,36 +1232,42 @@ export class DetailAssetsTabComponentComponent
     return new Promise((resolve, reject) => {
       domicilie.regionalDelegationId = domicilie.regionalDelegationId.id;
       domicilie.requestId = domicilie.requestId.id;
-      this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
-        next: (data: any) => {
-          if (data.statusCode != null) {
+      this.goodDomicilie
+        .update(domicilie.id, domicilie)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: (data: any) => {
+            if (data.statusCode != null) {
+              this.message(
+                'error',
+                'Error',
+                `El registro de domicilio del bien no se pudo actualizar!\n. ${data.message}`
+              );
+              reject(
+                'No se puedo actualizar el registro del domicilio del bien'
+              );
+            }
+
+            if (data.id != null) {
+              this.domicileForm.controls['id'].setValue(data.id);
+              resolve('Se actualizo el registro del domicilio del bien');
+            }
+          },
+          error: error => {
             this.message(
               'error',
               'Error',
-              `El registro de domicilio del bien no se pudo actualizar!\n. ${data.message}`
+              `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
             );
-            reject('No se puedo actualizar el registro del domicilio del bien');
-          }
-
-          if (data.id != null) {
-            this.domicileForm.controls['id'].setValue(data.id);
-            resolve('Se actualizo el registro del domicilio del bien');
-          }
-        },
-        error: error => {
-          this.message(
-            'error',
-            'Error',
-            `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
-          );
-        },
-      });
+          },
+        });
     });
   }
 
   //guardar el bien inmueble
   saveGoodRealState() {
     return new Promise((resolve, reject) => {
+      debugger;
       let domicilio = this.goodDomicilieForm.getRawValue();
       domicilio.addressId = this.domicileForm.controls['id'].value;
       domicilio.creationDate = new Date().toISOString();
@@ -1180,7 +1285,7 @@ export class DetailAssetsTabComponentComponent
         action = this.goodEstateService.update(domicilio.id, domicilio);
       }
 
-      action.subscribe({
+      action.pipe(takeUntil(this.$unSubscribe)).subscribe({
         next: data => {
           if (data.statusCode != null) {
             this.message(
@@ -1210,11 +1315,14 @@ export class DetailAssetsTabComponentComponent
       address = addressId;
     }
 
-    this.goodDomicilie.getById(address).subscribe({
-      next: (resp: any) => {
-        this.setGoodDomicilieSelected(resp);
-      },
-    });
+    this.goodDomicilie
+      .getById(address)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (resp: any) => {
+          this.setGoodDomicilieSelected(resp);
+        },
+      });
   }
 
   getReactiveFormCall() {
@@ -1237,7 +1345,7 @@ export class DetailAssetsTabComponentComponent
       }
     });
 
-    this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
+    /*this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
           let value = this.selectDestinyTransfer.data.filter(
@@ -1247,7 +1355,7 @@ export class DetailAssetsTabComponentComponent
           this.detailAssets.controls['destiny'].setValue(data);
         }
       }
-    );
+    );*/
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
@@ -1265,6 +1373,8 @@ export class DetailAssetsTabComponentComponent
           this.combineMunicipalityId = true;
         }
         this.municipalityId = data;
+        this.selectLocality = new DefaultSelect([]);
+        this.domicileForm.get('localityKey').setValue(null);
         this.getLocality(new ListParams(), data, this.stateOfRepId);
         // if (data) {
         //   /*var stateKey =
@@ -1281,8 +1391,11 @@ export class DetailAssetsTabComponentComponent
       (data: any) => {
         if (data === null) {
           this.combineLocalityId = true;
+          this.domicileForm.get('code').setValue(null);
         }
         this.localityKey = data;
+        /* this.selectCP = new DefaultSelect([]); */
+        /* this.domicileForm.get('code').setValue(null); */
         this.getCP(new ListParams());
         if (data) {
           /*  this.getCP(
@@ -1335,11 +1448,14 @@ export class DetailAssetsTabComponentComponent
   getGoodEstate() {
     if (this.detailAssets.controls['id'].value !== null) {
       const id = this.detailAssets.controls['id'].value;
-      this.goodEstateService.getById(id).subscribe({
-        next: resp => {
-          this.goodDomicilieForm.patchValue(resp);
-        },
-      });
+      this.goodEstateService
+        .getById(id)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: resp => {
+            this.goodDomicilieForm.patchValue(resp);
+          },
+        });
     }
   }
 
@@ -1350,13 +1466,15 @@ export class DetailAssetsTabComponentComponent
   }
 
   isSavingData() {
-    this.requestHelperService.currentRefresh.subscribe({
-      next: data => {
-        if (data) {
-          this.save();
-        }
-      },
-    });
+    this.requestHelperService.currentRefresh
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: data => {
+          if (data) {
+            this.save();
+          }
+        },
+      });
   }
 
   setGoodDomicilieSelected(domicilie: any) {

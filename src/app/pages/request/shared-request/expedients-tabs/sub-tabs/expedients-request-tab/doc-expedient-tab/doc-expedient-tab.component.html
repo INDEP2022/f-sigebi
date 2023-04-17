@@ -11,7 +11,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i>
-            <strong>B&uacute;squeda de Documento de {{ title }}</strong></a
+            <strong>B&uacute;squeda de Documentos de {{ title }}</strong></a
           >
         </p>
 
@@ -82,6 +82,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="docTitle" />
               </form-field>
             </div>
@@ -92,6 +93,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="dDocName" />
               </form-field>
             </div>
@@ -102,6 +104,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="typeTrasf" />
               </form-field>
             </div>
@@ -112,6 +115,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="contributor" />
               </form-field>
             </div>
@@ -124,6 +128,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="60"
                   formControlName="author" />
               </form-field>
             </div>
@@ -134,6 +139,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="60"
                   formControlName="sender" />
               </form-field>
             </div>
@@ -144,6 +150,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="60"
                   formControlName="noOfice" />
               </form-field>
             </div>
@@ -154,6 +161,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="60"
                   formControlName="senderCharge" />
               </form-field>
             </div>
@@ -206,6 +214,7 @@
                   type="text"
                   row
                   pt-5s="2"
+                  maxlength="100"
                   formControlName="comment"></textarea>
               </form-field>
             </div>
@@ -216,6 +225,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="70"
                   formControlName="responsible" />
               </form-field>
             </div>

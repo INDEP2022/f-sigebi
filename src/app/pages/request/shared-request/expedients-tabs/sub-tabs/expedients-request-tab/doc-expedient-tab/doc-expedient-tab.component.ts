@@ -124,20 +124,44 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       id: [null],
       text: [null, [Validators.pattern(STRING_PATTERN)]],
       docType: [null],
-      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
-      dDocName: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      noOfice: [null],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      docTitle: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      dDocName: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      typeTrasf: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      noOfice: [null, [Validators.maxLength(60)]],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
       comment: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       noRequest: [null],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
 
       /* Solicitud Transferencia */
       regDelega: [null],
@@ -180,6 +204,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
           Promise.all(info).then(x => {
             this.paragraphs = x;
+            console.log('document', this.paragraphs);
             this.allDocumentExpedient = this.paragraphs;
             this.totalItems = this.paragraphs.length;
             this.loading = false;
@@ -553,7 +578,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
         this.title = 'Solicitudes';
         break;
       case 'doc-expedient':
-        this.title = 'Expedientes';
+        this.title = 'Expediente';
         break;
       case 'request-expedient':
         this.title = '';

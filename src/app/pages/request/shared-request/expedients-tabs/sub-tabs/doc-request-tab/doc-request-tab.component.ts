@@ -92,6 +92,7 @@ export class DocRequestTabComponent
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
+    console.log(this.idRequest);
   }
 
   ngOnInit(): void {
@@ -149,22 +150,49 @@ export class DocRequestTabComponent
   prepareForm(): void {
     this.docRequestForm = this.fb.group({
       id: [null],
-      text: [null, [Validators.pattern(STRING_PATTERN)]],
+      text: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       docType: [null],
-      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
-      dDocName: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      noOfice: [null],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      docTitle: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      dDocName: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      typeTrasf: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      noOfice: [null, Validators.maxLength(70)],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
       comment: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       noRequest: [null],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
 
       /* Solicitud Transferencia */
       regDelega: [null],
@@ -189,13 +217,18 @@ export class DocRequestTabComponent
           }
         });
         const info = filterDoc.map(async (items: any) => {
-          console.log('delegación', items?.xdelegacionRegional);
+          console.log(items);
+
           const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          const regionalDelegation = await this.getRegionalDelegation(
-            items?.xdelegacionRegional
-          );
-          const state = await this.getStateDoc(items?.xestado);
-          const transferent = await this.getTransferent(items?.xidTransferente);
+          const regionalDelegation = items?.xdelegacionRegional
+            ? await this.getRegionalDelegation(items.xdelegacionRegional)
+            : null;
+          const state = items?.xestado
+            ? await this.getStateDoc(items?.xestado)
+            : null;
+          const transferent = items?.xidTransferente
+            ? await this.getTransferent(items?.xidTransferente)
+            : null;
           items['delegationName'] = regionalDelegation;
           items['stateName'] = state;
           items['transferentName'] = transferent;
@@ -630,7 +663,7 @@ export class DocRequestTabComponent
   setTitle(value: string) {
     switch (value) {
       case 'doc-request':
-        this.title = 'Solicitudes';
+        this.title = 'Solicitud';
         break;
       case 'doc-expedient':
         this.title = 'Expedientes';

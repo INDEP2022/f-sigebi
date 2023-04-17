@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { format } from 'date-fns';
 import { firstValueFrom, map } from 'rxjs';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -32,6 +34,7 @@ export class PartializesGeneralGoodsComponent
     private goodSSSubtypeService: GoodSssubtypeService,
     private goodService: GoodService,
     private detailReceptionService: ProceedingsDetailDeliveryReceptionService,
+    private partializeGoodService: PartializeGoodService,
     private historyGoodService: HistoryGoodService,
     private statusXScreenService: ScreenStatusService
   ) {
@@ -571,8 +574,9 @@ export class PartializesGeneralGoodsComponent
       vobserv_padre = descriptions.vobserv_padre;
       vdesc_padre = descriptions.vdesc_padre;
       vobservaciones = 'Parcializado del bien: ' + this.good.id;
-      this.insertaBien(
+      await this.insertaBien(
         item,
+        this.good,
         v_estatus,
         vproextdom,
         vval2,
@@ -681,6 +685,7 @@ export class PartializesGeneralGoodsComponent
 
       const fail: boolean = await this.insertaBien(
         item,
+        this.good,
         v_estatus,
         vproextdom,
         vval2,
@@ -725,7 +730,8 @@ export class PartializesGeneralGoodsComponent
 
   async insertaBien(
     item: IBienesPar,
-    pestatus: string,
+    good: IGood,
+    status: string,
     pproextdom: string,
     pval2: number,
     pobservaciones: string,
@@ -734,37 +740,181 @@ export class PartializesGeneralGoodsComponent
     pdesalojo: number,
     pno_acta: number
   ) {
-    const PVAL14 = pval2;
-    const v_est_proced = await this.estatusProceed(pestatus, pproextdom);
-    if (!v_est_proced) return false;
-    [
-      this.goodService.create({
-        ...this.good,
-        id: item.noBien,
-        description: v_est_proced + ', ' + this.good.description,
-        status: pestatus,
-        val2: pval2 + '',
-        val10: item.val10 + '',
-        val11: item.val11 + '',
-        val12: item.val12 + '',
-        val13: item.val13 + '',
-        val14: PVAL14 + '',
-        appraisedValue: item.avaluo,
-        goodReferenceNumber: item.noBien,
-        observations: pobservaciones,
-        goodsPartializationFatherNumber: item.noBien,
-        extDomProcess: pproextdom,
-      }),
-      this.historyGoodService.create({
-        propertyNum: item.noBien,
-        status: pestatus,
-        changeDate: new Date(),
-        userChange: localStorage.getItem('username'),
-        reasonForChange: 'Parcialización',
-        statusChangeProgram: 'FACTGENPARCBIEN',
-        extDomProcess: pproextdom,
-      }),
-    ];
     return true;
+
+    //     let request: GoodDTO = null;
+    //     request = {
+
+    //       description: status + ', ' + item.descripcion,
+    //       amount: item.cantidad + '',
+    //       entranceDate: format(good.dateIn, 'yyyy-MM-dd'),
+    //       exitDate: format(good.dateOut, 'yyyy-MM-dd'),
+    //       beatDate: format(good.expireDate, 'yyyy-MM-dd'),
+    //       locationType: good.locationId + '',
+    //       status,
+    //       val1: good.val1,
+    //       val2: pval2 + '',
+    //       val3: good.val3,
+    //       val4: good.val4,
+    //       val5: good.val5,
+    //       val6: good.val6,
+    //       val7: good.val7,
+    //       val8: good.val8,
+    //       val9: good.val9,
+    //       val10: good.val10,
+    //       val11: item.val11 + '',
+    //       val12: item.val12 + '',
+    //       val13: item.val13 + '',
+    //       val14: good.val14 + '',
+    //       val15: good.val15,
+    //       val16: good.val16,
+    //       val17: good.val17,
+    //       val18: good.val18,
+    //       val19: good.val19,
+    //       val20: good.val20,
+    //       val21: good.val21,
+    //       val22: good.val22,
+    //       val23: good.val23, val24: good.val24, val25: good.val25,
+    //       val26: good.val26,
+    //       val27: good.val27,
+    //       val28: good.val28,
+    //       val29: good.val29, val30: good.val30,
+    //       val31: good.val31,
+    //       val32: good.val32, val33: good.val33,
+    //       val34: good.val34, val35: good.val35,
+    //       val36: good.val36, val37: good.val37,
+    //       val38: good.val38,
+    //       val39: good.val39,
+    //       val40: good.val40,
+    //       val41: good.val41,
+    //       val42: good.val42,
+    //       val43: good.val43,
+    //       val44: good.val44,
+    //       val45: good.val45,
+    //       val46: good.val46,
+    //       val47: good.val47,
+    //       val48: good.val48,
+    //       val49: good.val49,
+    //       val50: good.val50,
+    //       classificationGood:good.goodCategory,
+    //       markingsOrigin:good.originSignals,
+    //       applicationenrollRecord:good.registerInscrSol,
+    //       opinionDate: format(good.dateOpinion, 'yyyy-MM-dd'),
+    //       proficientopinion:good.proficientOpinion,
+    //       appraiseropinion:good.valuerOpinion,
+    //       opinion:good.opinion,
+    //       worthappraisal:item.avaluo+'',
+    //       drawerNumber:good.drawerNumber+'',
+    //       vaultNumber:good.vaultNumber+'',
+    //       goodReferenceNumber: item.noBien + '',
+    //       currencyappraisalKey:good.appraisalCurrencyKey,
+    //       appraisalVigDate: format(good.appraisalVigDate, 'yyyy-MM-dd'),
+    //       approvedDestLegal:good.legalDestApprove,
+    //       usrIapproveDestLegal:good.legalDestApproveUsr,
+    //       iApproveDestLegalDate: good.legalDestApproveDate,
+    //       complianceAbandonmentDate: format(good.complianceLeaveDate, 'yyyy-MM-dd'),
+    //       notificationAbandonmentDate: format(good.complianceNotifyDate, 'yyyy-MM-dd'),
+    //       observationsAbandonment: good.leaveObservations,
+    //       confAbandonmentJudicialDate: format(good.judicialLeaveDate, 'yyyy-MM-dd'),
+    //       notificationDate: format(good.notifyDate, 'yyyy-MM-dd'),
+    //       notifiedTO: good.notifyA,
+    //       placeNotification:good.placeNotify,
+    //       beefdiscarddiscardrecRevDate: format(good.discardRevRecDate, 'yyyy-MM-dd'),
+    //       issueResolutionrecRevDate: format(good.resolutionEmissionRecRevDate, 'yyyy-MM-dd'),
+    //       agreementAdmissoryrecRevDate: format(good.discardRevRecDate, 'yyyy-MM-dd'),
+    //       audiencerecRevDate: format(good.audienceRevRecDate, 'yyyy-MM-dd'),
+    //       observationsrecRev: good.revRecObservations,
+    //       reasonAbandonment: good.leaveCause,
+    // resolution: good.resolution,
+    //       unaffordabilityDate: good.fecUnaffordability,
+    //       criterionunaffordability: good.unaffordabilityJudgment,
+    //       usrIapproveUtilization: good.userApproveUse,
+    //       IapproveUtilizationDate: format(good.useApproveDate, 'yyyy-MM-dd'),
+    //       observationsUtilization: good.useObservations,
+    //       requestedChangeCashDate: good.dateRequestChangeNumerary,
+    //       userRequestChangeCash: good.numberChangeRequestUser+'',
+    //       reasonChangeCash: good.causeNumberChange+'',
+    //       solicitousChangeCash: good.changeRequestNumber+'',
+    //       authorizeChangeCashDate: format(good.authNumberChangeDate, 'yyyy-MM-dd'),
+    //       userauthorizeChangenumber: good.authChangeNumberUser+'',
+    //       authorizeChangeCash: good.authChangeNumber+'',
+    //       ratifiesChangeCashDate: format(good.numberChangeRatifiesDate, 'yyyy-MM-dd'),
+    //       userRatifiesChangenumber: good.numberChangeRatifiesUser+'',
+    //       notificationrecRevDate: format(good.notifyRevRecDate, 'yyyy-MM-dd'),
+    //       reasonrecRev: good.revRecCause,
+    //       agreementInitial: good.initialAgreement,
+    //       observations: pobservaciones,
+    //       proceedingsNumber: good.fileNumber+'',
+    //       expAssociatedNumber: good.associatedFileNumber+'',
+    //       rackNumber: good.rackNumber+'',
+    //       storeNumber: good.storeNumber+'',
+    //       batchNumber: good.lotNumber+'',
+    //       classifyGoodNumber: good.goodClassNumber+'',
+    //       subdelegationNumber: good.subDelegationNumber+'',
+    //       delegationNumber: good.delegationNumber+'',
+    //       receptionPhysicalDate: format(good.physicalReceptionDate, 'yyyy-MM-dd'),
+    //       statusResourceRevision: good.statusResourceReview,
+    //       certificateNumber: pno_acta+'',
+    //       judicialDate: format(good.judicialDate, 'yyyy-MM-dd'),
+    //       expirationAbandonmentDate: format(good.abandonmentDueDate, 'yyyy-MM-dd'),
+    //       iApproveDestructionDate: format(good.destructionApproveDate, 'yyyy-MM-dd'),
+    //       usrIapproveDestruction: good.destructionApproveUser,
+    //       observationsDestruction: good.observationDestruction,
+    //       destinationNumber: good.destinyNumber + '',
+    //       agreementsecureDate: format(good.agreementDate, 'yyyy-MM-dd'),
+    // state:good.state,
+    //       opinionType: good.opinionType,
+    //       presentationDate: format(good.presentationDate, 'yyyy-MM-dd'),
+    //       rectifyrecRevDate: format(good.revRecRemedyDate, 'yyyy-MM-dd'),
+    //       statusReception: good.receptionStatus,
+    //       userpromoterdecorationDevo: good.promoterUserDecoDevo,
+    //       scheduledxdecorationDevoDate:good.scheduledDateDecoDev,
+    //       goodFatherpartializationNumber: good.goodsPartializationFatherNumber+'',
+    //       statementAbnBe: good.seraAbnDeclaration,
+    //       identifier: good.identifier,
+    // inventorysiabiId:
+    // propertyCisiId:
+    // invacualsiabiId:
+    // tesofeDate:
+    // invoiceTesofe:
+    // situation:
+    // labelNumber:
+    // unit:
+    // processExtSun:
+    // pEviction:
+    //     }
+    //     return this.partializeGoodService.insertGood(request);
+    // const PVAL14 = pval2;
+    // const v_est_proced = await this.estatusProceed(pestatus, pproextdom);
+    // if (!v_est_proced) return false;
+    // [
+    //   this.goodService.create({
+    //     ...this.good,
+    //     id: item.noBien,
+    //     description: v_est_proced + ', ' + this.good.description,
+    //     status: pestatus,
+    //     val2: pval2 + '',
+    //     val10: item.val10 + '',
+    //     val11: item.val11 + '',
+    //     val12: item.val12 + '',
+    //     val13: item.val13 + '',
+    //     val14: PVAL14 + '',
+    //     appraisedValue: item.avaluo,
+    //     goodReferenceNumber: item.noBien,
+    //     observations: pobservaciones,
+    //     goodsPartializationFatherNumber: item.noBien,
+    //     extDomProcess: pproextdom,
+    //   }),
+    //   this.historyGoodService.create({
+    //     propertyNum: item.noBien,
+    //     status: pestatus,
+    //     changeDate: new Date(),
+    //     userChange: localStorage.getItem('username'),
+    //     reasonForChange: 'Parcialización',
+    //     statusChangeProgram: 'FACTGENPARCBIEN',
+    //     extDomProcess: pproextdom,
+    //   }),
+    // ];
+    // return true;
   }
 }
