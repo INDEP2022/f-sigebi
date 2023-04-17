@@ -7,7 +7,7 @@ import { OfficeService } from 'src/app/core/services/catalogs/office.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 
@@ -65,7 +65,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.maxLength(20),
-          Validators.pattern(RFCCURP_PATTERN),
+          Validators.pattern(RFC_PATTERN),
         ],
       ],
       phone: [

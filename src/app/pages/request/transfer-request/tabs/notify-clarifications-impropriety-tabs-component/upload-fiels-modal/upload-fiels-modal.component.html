@@ -45,7 +45,11 @@
         <!-- *ngIf="!isRFCHided" -->
         <div class="col-md-6">
           <form-field [control]="fileForm.get('rfcUser')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfcUser" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfcUser"
+              maxlength="13" />
           </form-field>
         </div>
       </div>
