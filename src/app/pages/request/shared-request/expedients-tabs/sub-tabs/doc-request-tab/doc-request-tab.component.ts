@@ -93,7 +93,7 @@ export class DocRequestTabComponent
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
-    console.log(this.idRequest);
+    //console.log(this.idRequest);
   }
 
   ngOnInit(): void {
