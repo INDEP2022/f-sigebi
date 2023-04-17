@@ -4,10 +4,11 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  CURP_PATTERN,
   KEYGENERATION_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../core/interfaces/model-form';
@@ -50,8 +51,8 @@ export class PersonFormComponent extends BasePage implements OnInit {
       suburb: [null, [, Validators.pattern(STRING_PATTERN)]],
       delegation: [null, [, Validators.pattern(STRING_PATTERN)]],
       zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      rfc: [null, [Validators.pattern(RFCCURP_PATTERN)]],
-      curp: [null, [Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [null, [Validators.pattern(RFC_PATTERN)]],
+      curp: [null, [Validators.pattern(CURP_PATTERN)]],
       phone: [null, [Validators.pattern(STRING_PATTERN)]],
       typePerson: [
         null,

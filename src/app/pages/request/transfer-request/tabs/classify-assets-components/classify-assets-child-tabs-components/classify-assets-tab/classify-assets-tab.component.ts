@@ -132,7 +132,7 @@ export class ClassifyAssetsTabComponent
       ],
       goodDescription: [null, [Validators.maxLength(4000)]],
       quantity: [
-        1,
+        null,
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
@@ -459,10 +459,12 @@ export class ClassifyAssetsTabComponent
   }
 
   getChapter(params: ListParams, id?: number) {
-    if (this.advSearch === false) {
-      params['filter.parentId'] = '$eq:' + id.toString();
-    } else {
-      params['filter.id'] = '$eq:' + id.toString();
+    if (id) {
+      if (this.advSearch === false) {
+        params['filter.parentId'] = '$eq:' + id.toString();
+      } else {
+        params['filter.id'] = '$eq:' + id.toString();
+      }
     }
     params.limit = 50;
     this.fractionService

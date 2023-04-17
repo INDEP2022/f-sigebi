@@ -22,9 +22,10 @@ import {
 } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
+  CURP_PATTERN,
   KEYGENERATION_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -97,8 +98,8 @@ export class AppointmentsComponent
       codigoPostal: '', //*
       entidadFederativa: '', //*
       telefono: ['', [Validators.pattern(PHONE_PATTERN)]], //*
-      rfc: ['', [Validators.pattern(RFCCURP_PATTERN)]], //*
-      curp: ['', [Validators.pattern(RFCCURP_PATTERN)]], //*
+      rfc: ['', [Validators.pattern(RFC_PATTERN)]], //*
+      curp: ['', [Validators.pattern(CURP_PATTERN)]], //*
       tipoPersona: ['', [Validators.pattern(STRING_PATTERN)]], //*
       tipoPersona2: ['', [Validators.pattern(STRING_PATTERN)]], //*
       giro: ['', [Validators.pattern(STRING_PATTERN)]],

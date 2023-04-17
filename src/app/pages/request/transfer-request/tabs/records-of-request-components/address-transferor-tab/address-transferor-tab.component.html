@@ -2,9 +2,7 @@
   <div class="row">
     <div class="d-flex">
       <div class="mr-auto p-2">
-        <h5 class="title" style="font-weight: bold">
-          Domicilio de la transferencia
-        </h5>
+        <h5 class="title" style="font-weight: bold">Domicilio del Bien</h5>
       </div>
       <div *ngIf="process != 'process-approval'">
         <div *ngIf="isNewAddress === false">
@@ -154,7 +152,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('wayref2Key')"
-              label="Referencia Via 2">
+              label="Referencia V&iacute;a 2">
               <input
                 type="text"
                 maxlength="30"
@@ -165,7 +163,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('wayref3Key')"
-              label="Referencia Via 3">
+              label="Referencia V&iacute;a 3">
               <input
                 type="text"
                 maxlength="30"

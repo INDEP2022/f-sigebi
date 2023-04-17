@@ -32,18 +32,18 @@
   <div class="row">
     <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-4">
-        <div class="col-sm-1">
-          <span class="label" style="line-height: 3; padding-left: 6px">{{
-            prioridadLabel
-          }}</span>
+        <div class="col-md-1">
+          <label class="label">{{ prioridadLabel }}</label>
         </div>
-        <div class="col-sm-3" id="checkbox">
-          <input
-            id="urgentPriority"
-            type="checkbox"
-            [ngModelOptions]="{ standalone: true }"
-            [(ngModel)]="priority"
-            [disabled]="true" />
+        <div class="col-md-3" style="padding-left: 30px">
+          <div id="checkbox">
+            <input
+              id="urgentPriority"
+              type="checkbox"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="priority"
+              [disabled]="true" />
+          </div>
         </div>
 
         <div class="col-md-4">

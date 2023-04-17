@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
+import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -22,8 +25,9 @@ export class NotifyAssetsImproprietyFormComponent
   title: string = 'Aclaración';
   clarificationForm: ModelForm<any>;
   procedenceForm: ModelForm<any>;
-
+  inappropriatenessForm: ModelForm<Inappropriateness>;
   clarification: any;
+  dataClarifications: IChatClarifications;
 
   //en el caso de que una aclaracion llege sin documentacion
   withDocumentation: boolean = false;
@@ -37,15 +41,16 @@ export class NotifyAssetsImproprietyFormComponent
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private documentService: DocumentsService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.withDocumentation = this.idAclara === '18' ? true : false;
-    console.log('doc', this.withDocumentation);
     this.initForm1();
+    this.initForm2();
   }
 
   initForm1(): void {
@@ -54,7 +59,7 @@ export class NotifyAssetsImproprietyFormComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
-      nameSender: [
+      senderName: [
         null,
         [
           Validators.pattern(STRING_PATTERN),
@@ -62,8 +67,8 @@ export class NotifyAssetsImproprietyFormComponent
           Validators.maxLength(50),
         ],
       ],
-      keyClarification: [
-        ' ',
+      jobClarificationKey: [
+        null,
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
       ],
       senderCharge: [
@@ -74,12 +79,12 @@ export class NotifyAssetsImproprietyFormComponent
           Validators.maxLength(50),
         ],
       ],
-      captureUserArea: [
+      userAreaCaptures: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
 
-      emailNotifiSat: [
+      webMail: [
         null,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
@@ -128,60 +133,134 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  /*initForm2(): void {
-    this.clarificationForm = this.fb.group({
+  initForm2(): void {
+    this.inappropriatenessForm = this.fb.group({
+      id: ['14254'],
+      managedTo: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      positionSender: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      positionAddressee: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      //Aclaración
+      jobClarificationKey: [
+        null,
+        [
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      sender: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      clarification: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+
+      consistentIn: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+      paragraphInitial: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      paragraphFinal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      //Aclaración
       observations: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
-      nameSender: [
+
+      areaUserCapture: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
-      keyClarification: [
+      transmitterId: [null, [Validators.maxLength(15)]], // request emisora?
+      mailNotification: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
-      receiver: [null, [Validators.pattern(STRING_PATTERN)]],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      receiverCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      //idTransmitter: [null],
-      clarification: [null, [Validators.pattern(STRING_PATTERN)]],
-      consistent: [null, [Validators.pattern(STRING_PATTERN)]],
-      //finalParagraph: [null],
-      //initialParagraph: [null],
-      captureUserArea: [null, [Validators.pattern(STRING_PATTERN)]],
-      emailNotifiSat: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      applicationId: [this.clarification[0]?.requestId],
+      documentTypeId: [111],
     });
-  } */
+  }
 
   confirm() {
-    console.log(this.clarificationForm.value);
-    if (this.clarification[0].typeClarification === '1') {
-      // cambiar el estado de la aclaracion en "EN_ACLARACION"
-    } else {
-      let config: ModalOptions = {
-        initialState: {
-          data: '',
-          typeReport: 'noncompliance',
-          callback: (next: boolean) => {
-            //if (next){ this.getData();}
-          },
+    this.loading = true;
+    console.log(this.inappropriatenessForm.value);
+    this.documentService
+      .createClarDocImp(this.inappropriatenessForm.value)
+      .subscribe({
+        next: data => {
+          this.onLoadToast('success', 'Aclaración guardada correctamente', '');
+          this.openReport();
+          console.log('Data guardada', data);
+          this.loading = false;
+          //this.modalRef.hide()
         },
-        class: 'modalSizeXL modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(PrintReportModalComponent, config);
-    }
-    this.close();
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se pudo guardar', '');
+        },
+      });
+  }
+
+  openReport() {
+    const idReportAclara = this.inappropriatenessForm.controls['id'].value; //ID del reporte de Oficio_Aclaracion
+    const idDoc = this.inappropriatenessForm.controls['id'].value;
+    const idTypeDoc = 111;
+    const dataClarifications = this.dataClarifications;
+
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        dataClarifications,
+        idTypeDoc,
+        idDoc,
+        idReportAclara,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
   }
 
   close() {
