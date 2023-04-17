@@ -171,9 +171,7 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
             label="Cargo y/o Adscripción">
@@ -221,7 +219,9 @@
         </div>
       </div>
 
-      <div class="row pt-4">
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('transferenceFile')"
@@ -238,7 +238,7 @@
             [control]="requestForm.get('protectNumber')"
             label="N&uacute;mero Amparo">
             <input
-              type="number"
+              type="text"
               maxlength="30"
               class="form-control"
               formControlName="protectNumber"
@@ -248,10 +248,10 @@
       </div>
 
       <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <!-- <div class="col-md-4" *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('previousInquiry')"
@@ -262,9 +262,7 @@
               formControlName="previousInquiry" />
           </form-field>
         </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <!-- *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('circumstantialRecord')"
@@ -289,9 +287,7 @@
               formControlName="tocaPenal" />
           </form-field>
         </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('lawsuit')"
             label="Causa Penal">
@@ -355,10 +351,10 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('domainExtinction')"
             label="Extinci&oacute;n Dominio">
