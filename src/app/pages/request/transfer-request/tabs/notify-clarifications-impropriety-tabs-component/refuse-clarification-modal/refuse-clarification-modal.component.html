@@ -4,14 +4,16 @@
       {{ edit ? 'Modificar' : 'Agregar' }} {{ title }}
     </h5>
   </div>
-  <div body class="body">
+  <div body>
     <form [formGroup]="observationForm" class="form-material">
-      <div class="row pt-4">
+      <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="observationForm.get('observations')"
             label="Observaciones">
             <textarea
+              rows="3"
+              maxlength="255"
               class="form-control"
               formControlName="observations"></textarea>
           </form-field>

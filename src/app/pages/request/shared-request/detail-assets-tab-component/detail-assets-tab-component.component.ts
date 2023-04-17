@@ -185,6 +185,13 @@ export class DetailAssetsTabComponentComponent
     console.log(this.detailAssets.value, this.process);
     console.log(this.selectBrand.data);
     if (this.process == 'classify-assets') {
+      console.log(this.domicilieObject.warehouseAlias);
+      console.log({ alias: this.domicilieObject.warehouseAlias });
+      this.setGoodDomicilieSelected(this.domicilieObject);
+      /*  this.domicileForm
+        .get('warehouseAlias')
+        .setValue(this.domicilieObject.warehouseAlias);
+      this.getStateOfRepublic(new ListParams(), this.domicilieObject.statusKey); */
       this.goodData = this.detailAssets.value;
       if (this.goodData.fractionId) {
         this.relevantTypeService
