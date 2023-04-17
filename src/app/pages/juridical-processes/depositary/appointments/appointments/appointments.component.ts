@@ -25,7 +25,7 @@ import {
   CURP_PATTERN,
   KEYGENERATION_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -124,10 +124,7 @@ export class AppointmentsComponent
         { value: '', disabled: false },
         [Validators.pattern(PHONE_PATTERN)],
       ], //*
-      rfc: [
-        { value: '', disabled: false },
-        [Validators.pattern(RFCCURP_PATTERN)],
-      ], //*
+      rfc: [{ value: '', disabled: false }, [Validators.pattern(RFC_PATTERN)]], //*
       curp: [
         { value: '', disabled: false },
         [Validators.pattern(CURP_PATTERN)],

@@ -6,10 +6,11 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  CURP_PATTERN,
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -54,7 +55,7 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(RFCCURP_PATTERN),
+          Validators.pattern(RFC_PATTERN),
           Validators.maxLength(20),
         ],
       ],
@@ -62,7 +63,7 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(RFCCURP_PATTERN),
+          Validators.pattern(CURP_PATTERN),
           Validators.maxLength(20),
         ],
       ],
