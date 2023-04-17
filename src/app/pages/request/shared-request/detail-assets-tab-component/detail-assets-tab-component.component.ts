@@ -175,15 +175,30 @@ export class DetailAssetsTabComponentComponent
     private modalServise: BsModalService,
     private goodService: GoodService,
     private goodTypeService: GoodTypeService,
-    private relevantTypeService: TypeRelevantService
+    private relevantTypeService: TypeRelevantService,
+    private goodDomicilieService: GoodDomiciliesService
   ) {
     super();
   }
 
+  getDomicilieGood(id: number) {
+    this.goodDomicilieService.getById(id).subscribe({
+      next: resp => {
+        this.domicilieObject = resp as IDomicilies;
+        this.setGoodDomicilieSelected(this.domicilieObject);
+      },
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    console.log(this.detailAssets.value, this.process);
-    console.log(this.selectBrand.data);
+    console.log({ process: this.process });
+    if (this.process == 'validate-document') {
+      console.log(address);
+      this.getDomicilieGood(
+        parseInt(this.detailAssets.controls['addressId'].value)
+      );
+    }
     if (this.process == 'classify-assets') {
       console.log(this.domicilieObject.warehouseAlias);
       console.log({ alias: this.domicilieObject.warehouseAlias });

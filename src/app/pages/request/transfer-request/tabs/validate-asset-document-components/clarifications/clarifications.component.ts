@@ -56,6 +56,8 @@ export class ClarificationsComponent
   good: any;
   totalItems: number = 0;
 
+  domicilieObject: any;
+
   constructor(
     private modalService: BsModalService,
     private readonly fb: FormBuilder,
@@ -559,6 +561,7 @@ export class ClarificationsComponent
 
   clarifiRowSelected(event: any) {
     this.clariArraySelected = event.selected;
+    console.log(event.target.value);
   }
 
   newClarification() {
