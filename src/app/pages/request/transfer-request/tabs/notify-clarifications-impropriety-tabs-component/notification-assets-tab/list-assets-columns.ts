@@ -1,5 +1,5 @@
 export const LIST_ASSETS_COLUMN = {
-  statusClarification: {
+  clarification: {
     title: 'Estatus Aclaración',
     type: 'string',
     sort: false,
@@ -9,24 +9,36 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  descriptionGood: {
+  description: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
-  unitExtent: {
+  unit: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
-  statePhysical: {
+  physicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+
+      return value;
+    },
   },
   stateConservation: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+
+      return value;
+    },
   },
 };

@@ -93,8 +93,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
             if (item['stateConservation'] == 2)
               item['stateConservation'] = 'MALO';
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-
-            const fraction = item['fractionId'];
+            const fraction = item['fraccion'];
             item['fractionId'] = fraction?.code + ' ' + fraction?.description;
           });
 

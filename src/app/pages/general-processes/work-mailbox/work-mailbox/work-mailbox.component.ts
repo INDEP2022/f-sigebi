@@ -1919,8 +1919,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
           );
           if (result.isConfirmed) {
-            this.router.navigateByUrl(
-              `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+            this.router.navigate(
+              [
+                `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+              ],
+              { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
             );
           }
         }
@@ -1930,15 +1933,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   goToScanDocuments(document: IDocuments) {
     const { id } = document;
-    const url = this.router.createUrlTree(
-      ['/pages/general-processes/scan-documents'],
-      {
-        queryParams: {
-          folio: id,
-        },
-      }
-    );
-    window.open(url.toString(), '_blank');
+    this.router.navigate(['/pages/general-processes/scan-documents'], {
+      queryParams: {
+        folio: id,
+        origin: 'FGESTBUZONTRAMITE',
+      },
+    });
   }
 
   replicate() {
@@ -2313,8 +2313,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   getSolicitud() {
     if (this.selectedRow.flierNumber) {
-      this.router.navigateByUrl(
-        `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+        ],
+        { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
       );
     } else {
       this.alert(

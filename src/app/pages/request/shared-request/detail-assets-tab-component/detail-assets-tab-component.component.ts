@@ -200,9 +200,12 @@ export class DetailAssetsTabComponentComponent
       );
     }
     if (this.process == 'classify-assets') {
-      console.log(this.domicilieObject.warehouseAlias);
-      console.log({ alias: this.domicilieObject.warehouseAlias });
-      this.setGoodDomicilieSelected(this.domicilieObject);
+      if (this.domicilieObject) {
+        console.log(this.domicilieObject.warehouseAlias);
+        console.log({ alias: this.domicilieObject.warehouseAlias });
+        this.setGoodDomicilieSelected(this.domicilieObject);
+      }
+
       /*  this.domicileForm
         .get('warehouseAlias')
         .setValue(this.domicilieObject.warehouseAlias);
@@ -1109,34 +1112,28 @@ export class DetailAssetsTabComponentComponent
   }
 
   changeDateEvaluoEvent(event: any) {
-    this.bsEvaluoDate =
-      this.bsEvaluoDate !== undefined ? this.bsEvaluoDate : event;
+    this.bsEvaluoDate = event;
 
     if (this.bsEvaluoDate) {
-      let date = new Date(this.bsEvaluoDate);
-      this.goodDomicilieForm.controls['appraisalDate'].setValue(
-        date.toISOString()
-      );
+      let date = this.bsEvaluoDate.toISOString(); //new Date(this.bsEvaluoDate);
+      this.goodDomicilieForm.controls['appraisalDate'].setValue(date);
     }
   }
   changeCertiviDateEvent(event: any) {
-    this.bsCertifiDate =
-      this.bsCertifiDate !== undefined ? this.bsCertifiDate : event;
+    this.bsCertifiDate = event;
 
     if (this.bsCertifiDate) {
-      let date = new Date(this.bsCertifiDate);
-      this.goodDomicilieForm.controls['certLibLienDate'].setValue(
-        date.toISOString()
-      );
+      let date = this.bsCertifiDate.toISOString(); //new Date(this.bsCertifiDate);
+      this.goodDomicilieForm.controls['certLibLienDate'].setValue(date);
     }
   }
 
   changeCertiviffDateEvent(event: any) {
-    this.bsPffDate = this.bsPffDate !== undefined ? this.bsPffDate : event;
+    this.bsPffDate = event;
 
     if (this.bsPffDate) {
-      let date = new Date(this.bsPffDate);
-      this.goodDomicilieForm.controls['pffDate'].setValue(date.toISOString());
+      let date = this.bsPffDate.toISOString(); //new Date(this.bsPffDate);
+      this.goodDomicilieForm.controls['pffDate'].setValue(date);
     }
   }
   displayTypeTapInformation(typeRelevantId: number) {
@@ -1282,7 +1279,6 @@ export class DetailAssetsTabComponentComponent
   //guardar el bien inmueble
   saveGoodRealState() {
     return new Promise((resolve, reject) => {
-      debugger;
       let domicilio = this.goodDomicilieForm.getRawValue();
       domicilio.addressId = this.domicileForm.controls['id'].value;
       domicilio.creationDate = new Date().toISOString();
@@ -1292,33 +1288,44 @@ export class DetailAssetsTabComponentComponent
       domicilio.userCreation = username;
       domicilio.userModification = username;
 
-      var action = null;
       if (domicilio.id === null) {
         domicilio.id = this.detailAssets.controls['id'].value;
-        action = this.goodEstateService.create(domicilio);
+        this.goodEstateService
+          .create(domicilio)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: resp => {
+              resolve(true);
+            },
+            error: error => {
+              reject(false);
+              console.log('inmueble ', error);
+              this.message(
+                'error',
+                'Error',
+                `El registro del inmueble no se guardo!\n. ${error.error.message}`
+              );
+            },
+          });
       } else {
-        action = this.goodEstateService.update(domicilio.id, domicilio);
+        this.goodEstateService
+          .update(domicilio.id, domicilio)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: resp => {
+              resolve(true);
+            },
+            error: error => {
+              reject(false);
+              console.log('inmueble ', error);
+              this.message(
+                'error',
+                'Error',
+                `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+              );
+            },
+          });
       }
-
-      action.pipe(takeUntil(this.$unSubscribe)).subscribe({
-        next: data => {
-          if (data.statusCode != null) {
-            this.message(
-              'error',
-              'Error',
-              `¡No se guardó el registro del bien inmueble!\n. ${data.message}`
-            );
-            reject('¡El registro del bien del inmueble no se guardó!');
-          }
-        },
-        error: error => {
-          this.message(
-            'success',
-            'Guardado',
-            `¡Se guardó correctamente el bien inmueble!`
-          );
-        },
-      });
     });
   }
 
@@ -1469,6 +1476,15 @@ export class DetailAssetsTabComponentComponent
         .subscribe({
           next: resp => {
             this.goodDomicilieForm.patchValue(resp);
+            /* establece las fechas  */
+            const dateEvaluo =
+              this.goodDomicilieForm.controls['appraisalDate'].value;
+            this.bsEvaluoDate = new Date(dateEvaluo);
+            const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
+            this.bsPffDate = new Date(datePFF);
+            const dateCerti =
+              this.goodDomicilieForm.controls['certLibLienDate'].value;
+            this.bsCertifiDate = new Date(dateCerti);
           },
         });
     }

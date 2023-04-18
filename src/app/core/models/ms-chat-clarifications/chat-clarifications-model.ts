@@ -1,7 +1,7 @@
 import { IClarificationGoodsReject } from './clarification-goods-reject-notifi-model';
 
 export interface IChatClarifications {
-  requestId?: number;
+  requestId?: number | string;
   statusId?: number | null;
   userCaptures?: string | null;
   userAreaCaptures?: string | null;
@@ -44,4 +44,5 @@ export interface IChatClarifications {
   clarificationInvoice?: string | null;
   flowId?: number | null;
   nbOrigin?: string | null;
+  rejectNotificationId?: number | IClarificationGoodsReject;
 }

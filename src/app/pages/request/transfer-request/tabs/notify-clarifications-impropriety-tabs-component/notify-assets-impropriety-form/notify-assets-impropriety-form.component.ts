@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
+import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -23,7 +26,7 @@ export class NotifyAssetsImproprietyFormComponent
   implements OnInit
 {
   title: string = 'Aclaración';
-  clarificationForm: ModelForm<any>;
+  clarificationForm: FormGroup = new FormGroup({});
   procedenceForm: ModelForm<any>;
   inappropriatenessForm: ModelForm<Inappropriateness>;
   clarification: any;
@@ -38,17 +41,21 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro con el id del tipo de la aclaración
   idAclara: any;
 
+  idRequest: string = '';
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private modalService: BsModalService,
-    private documentService: DocumentsService
+    private documentService: DocumentsService,
+    private chatService: ChatClarificationsService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.withDocumentation = this.idAclara === '18' ? true : false;
+    this.withDocumentation = this.idAclara === '2' ? true : false;
     this.initForm1();
     this.initForm2();
   }
@@ -135,7 +142,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   initForm2(): void {
     this.inappropriatenessForm = this.fb.group({
-      id: ['14254'],
       managedTo: [
         null,
         [
@@ -217,34 +223,112 @@ export class NotifyAssetsImproprietyFormComponent
         null,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
-      applicationId: [this.clarification[0]?.requestId],
+      applicationId: [this.idRequest],
       documentTypeId: [111],
+      clarificationStatus: 'EN_ACLARACION',
     });
   }
 
   confirm() {
-    this.loading = true;
-    console.log(this.inappropriatenessForm.value);
-    this.documentService
-      .createClarDocImp(this.inappropriatenessForm.value)
-      .subscribe({
-        next: data => {
-          this.onLoadToast('success', 'Aclaración guardada correctamente', '');
-          this.openReport();
-          console.log('Data guardada', data);
+    if (this.withDocumentation) {
+      this.loading = true;
+      this.documentService
+        .createClarDocImp(this.inappropriatenessForm.value)
+        .subscribe({
+          next: data => {
+            this.onLoadToast(
+              'success',
+              'Aclaración guardada correctamente',
+              ''
+            );
+            this.openReport(data);
+            this.updateNotificationImp(data);
+            this.loading = false;
+            //this.modalRef.hide()
+          },
+          error: error => {
+            this.loading = false;
+            this.onLoadToast('error', 'No se pudo guardar', '');
+          },
+        });
+    } else {
+      this.loading = true;
+      const info: IChatClarifications = {
+        id: 1285447,
+        requestId: this.idRequest,
+        goodId: this.dataClarifications.goodId,
+        senderName: this.clarificationForm.get('senderName').value,
+        jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
+          .value,
+        userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
+        webMail: this.clarificationForm.get('webMail').value,
+        clarifiNewsRejectId: Number(
+          this.dataClarifications.rejectNotificationId
+        ),
+        clarificationStatus: 'EN_ACLARACION',
+      };
+
+      this.chatService.create(info).subscribe({
+        next: async data => {
+          this.updateNotificationAclaration(data.id);
           this.loading = false;
-          //this.modalRef.hide()
         },
         error: error => {
           this.loading = false;
-          this.onLoadToast('error', 'No se pudo guardar', '');
+          console.log(error);
         },
       });
+    }
   }
 
-  openReport() {
-    const idReportAclara = this.inappropriatenessForm.controls['id'].value; //ID del reporte de Oficio_Aclaracion
-    const idDoc = this.inappropriatenessForm.controls['id'].value;
+  updateNotificationAclaration(id: number) {
+    const idReject: any = this.dataClarifications.rejectNotificationId;
+
+    const data: ClarificationGoodRejectNotification = {
+      rejectNotificationId: idReject,
+      answered: 'EN ACLARACIÓN',
+      chatClarification: id,
+      rejectionDate: new Date(),
+    };
+
+    this.rejectedGoodService.update(idReject, data).subscribe({
+      next: response => {
+        console.log('modificado', response);
+        this.onLoadToast('success', 'Notificación aceptada correctamente', '');
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
+    });
+  }
+
+  updateNotificationImp(data: Inappropriateness) {
+    const idReject: any = this.dataClarifications.rejectNotificationId;
+
+    const _data: ClarificationGoodRejectNotification = {
+      rejectNotificationId: idReject,
+      answered: 'EN ACLARACIÓN',
+      rejectionDate: new Date(),
+      documentClarificationId: data.id,
+    };
+
+    this.rejectedGoodService.update(idReject, _data).subscribe({
+      next: response => {
+        this.onLoadToast('success', 'Notificación aceptada correctamente', '');
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
+    });
+  }
+
+  openReport(data: Inappropriateness) {
+    const idReportAclara = data.id;
+    const idDoc = data.id;
     const idTypeDoc = 111;
     const dataClarifications = this.dataClarifications;
 
@@ -264,8 +348,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   close() {
-    console.log('cerrar');
-
     this.modalRef.hide();
   }
 }
