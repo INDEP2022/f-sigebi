@@ -1352,6 +1352,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const title = FLYER_HISTORY_TITLE;
     const params = new FilterParams();
     params.addFilter('procedureNumber', this.selectedRow.processNumber);
+    params.sortBy = 'consecutive:DESC';
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
@@ -1621,7 +1622,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un error al cancelar el trámite'
+          'Ocurrio un error al enviar el trámite'
         );
         return throwError(() => error);
       }),
