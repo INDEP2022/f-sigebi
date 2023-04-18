@@ -164,7 +164,9 @@
             type="text"
             formControlName="significantDate"
             class="form-control"
-            (ngModelChange)="limit2(7, 'significantDate', $event)" />
+            (ngModelChange)="
+              limit2(7, 'significantDate', $event); validateDate($event)
+            " />
         </form-field>
       </div>
       <div class="row">
