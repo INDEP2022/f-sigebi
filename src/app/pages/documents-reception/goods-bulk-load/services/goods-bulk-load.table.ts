@@ -203,8 +203,12 @@ export class GoodsBulkLoadService {
   getExpedientById(idExpedient: string) {
     return this.expedientService.getById(idExpedient);
   }
-  createExpedient(expedient: any) {
-    return this.expedientService.create(expedient);
+  createExpedient(expedient: any, update: boolean = false) {
+    if (update) {
+      return this.expedientService.update(expedient.id, expedient);
+    } else {
+      return this.expedientService.create(expedient);
+    }
   }
   getIndicatorById(idIndicator: string) {
     return this.indicatorDeadlineService.getById(idIndicator);
@@ -259,6 +263,9 @@ export class GoodsBulkLoadService {
 
   createPgrNotification(body: INotification) {
     return this.msNotificationService.create(body);
+  }
+  updatePgrNotification(body: INotification) {
+    return this.msNotificationService.update(body.wheelNumber, body);
   }
 
   getFaValAtributo1(body: IFaValAtributo1) {

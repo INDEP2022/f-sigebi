@@ -104,7 +104,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
 
   getUrlDocument(base64: string) {
     let mimeType;
-    mimeType = getMimeTypeFromBase64('', this.filename);
+    mimeType = getMimeTypeFromBase64(base64, this.filename);
     const ext =
       this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
     if (ext == 'pdf') {
