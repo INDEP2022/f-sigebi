@@ -26,7 +26,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   ) {
     super();
     // this.paramsGoods['filters.goodCategory'] ='$not:$null';
-    this.paramsGoods.addFilter2('filters.goodCategory=$not:$null');
+    this.paramsGoods.addFilter2('filter.goodCategory=$not:$null');
   }
 
   ngOnInit(): void {
@@ -42,6 +42,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   get goodsList() {
+    this.paramsGoods.addFilter2('filter.goodCategory=$not:$null');
     return this.goodService.getAll(this.paramsGoods.getParams());
   }
 
