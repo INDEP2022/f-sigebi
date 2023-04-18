@@ -1,4 +1,5 @@
 export interface ClarificationGoodRejectNotification {
+  id?: number;
   goodId?: number;
   rejectionDate?: any;
   observations?: string;

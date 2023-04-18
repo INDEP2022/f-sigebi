@@ -58,7 +58,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.withDocumentation = this.idAclara === '2' ? true : false;
     this.initForm1();
     this.initForm2();
-    console.log('clar', this.dataClarifications);
   }
 
   initForm1(): void {
@@ -244,8 +243,7 @@ export class NotifyAssetsImproprietyFormComponent
             );
             this.openReport(data);
             this.updateNotificationImp(data);
-            //console.log('Data guardada', data);
-            //this.loading = false;
+            this.loading = false;
             //this.modalRef.hide()
           },
           error: error => {
@@ -256,7 +254,7 @@ export class NotifyAssetsImproprietyFormComponent
     } else {
       this.loading = true;
       const info: IChatClarifications = {
-        id: 128544,
+        id: 1285447,
         requestId: this.idRequest,
         goodId: this.dataClarifications.goodId,
         senderName: this.clarificationForm.get('senderName').value,
@@ -307,7 +305,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   updateNotificationImp(data: Inappropriateness) {
-    console.log('document', data);
     const idReject: any = this.dataClarifications.rejectNotificationId;
 
     const _data: ClarificationGoodRejectNotification = {
@@ -319,7 +316,6 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.rejectedGoodService.update(idReject, _data).subscribe({
       next: response => {
-        console.log('modificado', response);
         this.onLoadToast('success', 'Notificación aceptada correctamente', '');
         this.close();
       },
@@ -352,8 +348,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   close() {
-    console.log('cerrar');
-
     this.modalRef.hide();
   }
 }
