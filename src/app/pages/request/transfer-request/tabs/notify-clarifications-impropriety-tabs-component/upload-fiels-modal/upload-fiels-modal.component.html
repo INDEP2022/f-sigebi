@@ -7,12 +7,20 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="fileForm.get('post')" label="Cargo">
-            <input type="text" class="form-control" formControlName="post" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="post"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -24,10 +32,12 @@
             <input
               [type]="hide ? 'password' : 'text'"
               class="form-control"
-              formControlName="pass" />
+              formControlName="pass"
+              maxlength="10" />
             <button
               class="btn btn-secondary btn-sm active"
-              (click)="hide = !hide">
+              (click)="hide = !hide"
+              style="margin-top: 7px">
               <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
             </button>
           </form-field>
@@ -35,7 +45,11 @@
         <!-- *ngIf="!isRFCHided" -->
         <div class="col-md-6">
           <form-field [control]="fileForm.get('rfcUser')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfcUser" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfcUser"
+              maxlength="13" />
           </form-field>
         </div>
       </div>
@@ -49,7 +63,7 @@
               type="file"
               accept=".cer"
               class="form-control"
-              #FileInput
+              #FileInputCert
               formControlName="certificate"
               (change)="chargeCertifications($event)" />
           </form-field>
@@ -65,7 +79,7 @@
               type="file"
               accept=".key"
               class="form-control"
-              #FileInput
+              #FileInputKey
               formControlName="keycertificate"
               (change)="chargeKeyCertifications($event)" />
           </form-field>

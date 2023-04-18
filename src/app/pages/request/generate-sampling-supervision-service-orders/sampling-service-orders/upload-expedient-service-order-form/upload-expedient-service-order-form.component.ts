@@ -18,7 +18,7 @@ var data = [
     noDoc: '34343',
     noRequest: '145',
     titleDocument: 'DOCUMENTO DE TRASPASO DE DATOS',
-    typeDocument: 'ACLARACION DE DOCUMENTO',
+    typeDocument: 'ACLARACIÓN DE DOCUMENTO',
     author: 'ENRIQUE SEGOBIANO',
     date: '12/12/2022',
     version: '1',

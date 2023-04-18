@@ -62,4 +62,8 @@ export class SatTransferService extends HttpService {
       })
     );
   }
+
+  getCountRegisters(body: {}) {
+    return this.post(this.route.CountRegisters, body);
+  }
 }

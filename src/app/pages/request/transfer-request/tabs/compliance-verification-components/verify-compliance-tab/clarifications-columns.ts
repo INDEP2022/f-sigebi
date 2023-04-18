@@ -1,11 +1,11 @@
 export const CLARIFICATIONS_COLUMNS = {
   rejectionDate: {
-    title: 'Fecha de aclaración',
+    title: 'Fecha de Aclaración',
     type: 'string',
     sort: false,
   },
   clarificationType: {
-    title: 'Tipo de Aclaracion',
+    title: 'Tipo de Aclaración',
     type: 'string',
     sort: false,
   },
@@ -25,7 +25,7 @@ export const CLARIFICATIONS_COLUMNS = {
     sort: false,
   },
   observations: {
-    title: 'Observacion',
+    title: 'Observación',
     type: 'string',
     sort: false,
   },

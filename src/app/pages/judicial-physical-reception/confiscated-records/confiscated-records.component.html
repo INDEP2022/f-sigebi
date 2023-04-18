@@ -42,20 +42,6 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-9">
-              <!--  <form-field
-                [control]="form.get('causaPenal')"
-                label="Causa Penal">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="causaPenal" />
-              </form-field> -->
-            </div>
-          </div>
-        </div>
       </div>
       <div class="row">
         <div class="col-md-12">
@@ -322,10 +308,12 @@
             <div class="col-md-12">
               <button
                 type="button"
+                [class]="btnCSSAct"
                 [disabled]="!form.valid"
-                class="my-1 mx-2 btn btn-info active btn-sm"
-                (click)="openProceeding()">
-                Abrir Carta
+                class="btn btn-sm active mr-2 ml-2"
+                (click)="toggleActaBtn()"
+                size="small">
+                {{ labelActa }}
               </button>
               <a
                 [routerLink]="['partialization']"

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +9,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,8 +18,8 @@ import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-proc
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
 import {
-  RELATED_DOCUMENTS_COLUMNS,
-  RELATED_DOCUMENTS_EXAMPLE_DATA,
+  IDataGoodsTable,
+  RELATED_DOCUMENTS_COLUMNS_GOODS,
 } from './related-documents-columns';
 import {
   MANAGEMENTOFFICESTATUSSEND,
@@ -48,9 +50,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
   select = new DefaultSelect();
   justificacion = new DefaultSelect();
+  goodTypes = new DefaultSelect();
   cities = new DefaultSelect();
   senders = new DefaultSelect();
-  data = RELATED_DOCUMENTS_EXAMPLE_DATA;
+  ClasifSubTypeGoods = new DefaultSelect();
+  dataGoodFilter: IGood[] = [];
+  dataGood: IDataGoodsTable[] = [];
+  dataGoodTable: LocalDataSource = new LocalDataSource();
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -102,6 +108,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   screenKeyRelated: string = '';
   screenKey: string = '';
   notificationData: INotification;
+  loadingGoods: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -111,11 +118,34 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private serviceRelatedDocumentsService: RelatedDocumentsService
   ) {
     super();
+    RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
+      ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
+      onComponentInitFunction: this.onClickSelect,
+    };
+    RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente = {
+      ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
+      onComponentInitFunction: this.onClickImprocedente,
+    };
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...RELATED_DOCUMENTS_COLUMNS },
+      columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
     };
+  }
+
+  onClickSelect(event: any) {
+    event.toggle.subscribe((data: any) => {
+      console.log(data);
+      data.row.seleccion = data.toggle;
+    });
+  }
+
+  onClickImprocedente(event: any) {
+    console.log(event);
+    event.toggle.subscribe((data: any) => {
+      console.log(data);
+      data.row.improcedente = data.toggle;
+    });
   }
 
   ngOnInit(): void {
@@ -219,15 +249,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.managementForm
       .get('noExpediente')
       .setValue(this.paramsGestionDictamen.expediente);
+    this.managementForm
+      .get('tipoOficio')
+      .setValue(this.paramsGestionDictamen.tipoOf);
+    this.managementForm.updateValueAndValidity();
   }
 
   prepareForm() {
     this.managementForm = this.fb.group({
       noVolante: [null, [Validators.required, Validators.maxLength(11)]],
       noExpediente: [null, [Validators.required, Validators.maxLength(11)]],
-      tipoOficio: [null],
-      relacionado: [null, Validators.pattern(STRING_PATTERN)],
-      numero: [],
+      tipoOficio: [null, [Validators.required, Validators.maxLength(20)]],
+      relacionado: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
+      ],
+      numero: [{ value: '', disabled: true }, [Validators.maxLength(40)]],
       cveGestion: [null],
       noRemitente: [null],
       remitente: [null],
@@ -242,6 +279,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       justificacionDetalle: [null],
       noOficio: [null],
       subtipo: [null],
+      goodTypes: [null],
+      improcedente: [false],
       // indPDoctos: [null],
       noBienes: [null],
       // bienes: [null],
@@ -401,41 +440,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }
   }
 
-  /**
-   * INCIDENCIA 581 --- CORRECTO
-   * @returns
-   */
-  getJustification(paramsData: ListParams) {
-    const params = new FilterParams();
-    params.removeAllFilters();
-    params.addFilter('type', 3, SearchFilter.NOT);
-    params.addFilter('clarifications', paramsData['search'], SearchFilter.LIKE);
-    let subscription = this.flyerService
-      .getJustificacion(params.getFilterParams())
-      .subscribe({
-        next: data => {
-          console.log(data);
-          this.justificacion = new DefaultSelect(
-            data.data.map(i => {
-              i.clarifications = '#' + i.id + ' -- ' + i.clarifications;
-              return i;
-            }),
-            data.count
-          );
-          subscription.unsubscribe();
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al consultar las Justificaciones'
-          );
-          subscription.unsubscribe();
-        },
-      });
-  }
-
   changeSender() {
     if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
       this.managementForm.get('destinatario').disable();
@@ -519,38 +523,205 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   async getDocumentsJobManagement() {
-    if (this.oficioGestion.managementNumber) {
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+    // if (this.oficioGestion.managementNumber) {
+    //   const params = new FilterParams();
+    //   params.removeAllFilters();
+    //   params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+    //   await this.flyerService
+    //     .getGoodsJobManagement(params.getParams())
+    //     .subscribe({
+    //       next: res => {
+    //         console.log(res);
+    //         if (res.count != 0) {
+    //           this.variables.d = 'S';
+    //         }
+    //         this.getGoods();
+    //       },
+    //       error: err => {
+    //         this.getGoods();
+    //         console.log(err);
+    //       },
+    //     });
+    // } else {
+    //   this.alertInfo(
+    //     'warning',
+    //     'No existe el Número de Gestión: ' +
+    //       this.oficioGestion.managementNumber,
+    //     ''
+    //   );
+    // }
+  }
+
+  // INCIDENCIAS 675 Y 681 --- INTEGRADO
+  async getGoods() {
+    this.loadingGoods = true;
+    this.dataGood = [];
+    let objBody: any = {
+      screenKey: this.screenKey,
+    };
+    // Validar con tipos de notificaciones
+    if (
+      this.managementForm.get('goodTypes').value == '' ||
+      this.managementForm.get('goodTypes').value == 'null' ||
+      this.managementForm.get('goodTypes').value == null
+    ) {
+      // Por expediente
+      objBody['fileNumber'] = this.notificationData.expedientNumber;
+    } else {
+      // Por número de clasificación
+      objBody['clasifGoodNumber'] = this.managementForm.get('goodTypes').value;
+    }
+    await this.flyerService
+      .getGoodSearchGoodByFileAndClasif(
+        objBody,
+        objBody,
+        objBody['fileNumber'] ? 'file' : ''
+      )
+      .subscribe({
+        next: res => {
+          console.log(res);
+          // this.dataGood = res.data;
+          for (let index = 0; index < res.data.length; index++) {
+            const element = res.data[index];
+            if (element) {
+              this.dataGood.push({
+                goodId: element.goodId,
+                description: element.description,
+                quantity: element.quantity,
+                identifier: element.identifier,
+                status: element.status,
+                desEstatus: '',
+                seleccion: false,
+                improcedente: false,
+                disponible: true,
+              });
+            }
+          }
+          this.reviewGoodData(this.dataGood[0], 0, res.count);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+
+  reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
+    this.getGoodStatusDescription(dataGoodRes, count, total);
+  }
+
+  // AGREGAR UN FOR PARA LOS BIENES
+  async getGoodStatusDescription(
+    dataGoodRes: IDataGoodsTable,
+    count: number,
+    total: number
+  ) {
+    const params = new ListParams();
+    params['filter.status'] = '$eq:' + dataGoodRes.status;
+    console.log(params, this.dataGood);
+    await this.flyerService.getGoodStatusDescription(params).subscribe({
+      next: res => {
+        console.log(res);
+        console.log('params, ', this.dataGood);
+        this.dataGood[count].desEstatus = res.data[0].description;
+        this.getAvailableGood(this.dataGood[count], count, total);
+      },
+      error: err => {
+        console.log(err);
+        console.log('params, ', this.dataGood);
+        this.dataGood[count].desEstatus = 'Error al cargar la descripción.';
+        this.getAvailableGood(this.dataGood[count], count, total);
+      },
+    });
+  }
+
+  changeImprocedente(event: any) {
+    this.dataGood.forEach(element => {
+      if (element.disponible) {
+        element.improcedente = event.checked;
+        element.seleccion = false;
+      }
+    });
+    this.dataGoodTable.load(this.dataGood);
+    this.dataGoodTable.refresh();
+  }
+
+  async getAvailableGood(
+    dataGoodRes: IDataGoodsTable,
+    count: number,
+    total: number
+  ) {
+    if (this.oficioGestion) {
       await this.flyerService
-        .getDocumentOficioGestion(params.getParams())
+        .getGoodsJobManagementByIds({
+          goodNumber: dataGoodRes.goodId,
+          managementNumber: this.oficioGestion.managementNumber,
+        })
         .subscribe({
           next: res => {
             console.log(res);
-            if (res.count != 0) {
-              this.variables.d = 'S';
+            if (res.count > 0) {
+              this.dataGood[count].disponible = false;
             }
-            this.getGoods();
+            this.validStatusGood(this.dataGood[count], count, total);
           },
           error: err => {
-            this.getGoods();
             console.log(err);
+            this.dataGood[count].disponible = true;
+            this.validStatusGood(this.dataGood[count], count, total);
           },
         });
     } else {
-      this.alertInfo(
-        'warning',
-        'No existe el Número de Gestión: ' +
-          this.oficioGestion.managementNumber,
-        ''
-      );
+      this.dataGood[count].disponible = true;
+      this.validStatusGood(this.dataGood[count], count, total);
     }
   }
 
-  // INCIDENCIAS 675 Y 681 --- ESPERA
-  getGoods() {
-    // getGoodSearchGoodByFileAndClasif
+  async validStatusGood(
+    dataGoodRes: IDataGoodsTable,
+    count: number,
+    total: number
+  ) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('goodNumber', dataGoodRes.goodId);
+    await this.flyerService
+      .getGoodExtensionsFields(params.getFilterParams())
+      .subscribe({
+        next: res => {
+          console.log(res);
+          if (res.data[0].managementJob == '1') {
+            this.dataGood[count].seleccion = true;
+            this.dataGood[count].improcedente = false;
+          } else if (res.data[0].managementJob == '2') {
+            this.dataGood[count].seleccion = false;
+            this.dataGood[count].improcedente = true;
+          } else {
+            this.dataGood[count].seleccion = false;
+            this.dataGood[count].improcedente = false;
+          }
+          count++;
+          if (total > count) {
+            this.reviewGoodData(this.dataGood[count], count, total);
+          } else if (total == count) {
+            this.dataGoodTable.load(this.dataGood);
+            this.dataGoodTable.refresh();
+            this.loadingGoods = false;
+          }
+        },
+        error: err => {
+          console.log(err);
+          this.dataGood[count].seleccion = false;
+          this.dataGood[count].improcedente = false;
+          count++;
+          if (total > count) {
+            this.reviewGoodData(this.dataGood[count], count, total);
+          } else if (total == count) {
+            this.dataGoodTable.load(this.dataGood);
+            this.dataGoodTable.refresh();
+            this.loadingGoods = false;
+          }
+        },
+      });
   }
 
   async getNotificationData() {
@@ -599,49 +770,127 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.managementForm
       .get('fechaAcuse')
       .setValue(this.notificationData.desKnowingDate);
+    this.getGoods();
   }
 
   /**
    * Data Selects
    */
 
+  // INCIDENCIA 726 ---   ### CARGAR SUBTIPOS
   /**
-   * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
+   * Obtener el listado de Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
-  getCityByDetail(params: ListParams) {
-    console.log(params);
-    params.take = 20;
-    params['order'] = 'DESC';
-    console.log(params);
-    let subscription = this.flyerService.getCityBySearch(params).subscribe({
-      next: data => {
-        this.cities = new DefaultSelect(
-          data.data.map(i => {
-            i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
-            return i;
-          }),
-          data.count
-        );
-        subscription.unsubscribe();
-      },
-      error: error => {
-        this.onLoadToast('error', 'Error', error.error.message);
-        subscription.unsubscribe();
-      },
-    });
+  async getClasifSubTypeGoods(paramss: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('clasifGood', paramss['search'], SearchFilter.LIKE);
+    await this.flyerService
+      .getClasifSubTypeGoods(this.notificationData.expedientNumber)
+      .subscribe({
+        next: res => {
+          this.goodTypes = new DefaultSelect(
+            res.data.map(i => {
+              i.clasifGood =
+                i.clasifGoodNumber +
+                ' -- ' +
+                i.subtypeDesc +
+                ' -- ' +
+                i.ssubtypeDesc +
+                ' -- ' +
+                i.sssubtypeDesc;
+              return i;
+            })
+          );
+        },
+        error: err => {
+          console.log(err);
+          this.goodTypes = new DefaultSelect();
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al consultar los subtipos'
+          );
+        },
+      });
+  }
+
+  /**
+   * INCIDENCIA 581 --- CORRECTO
+   * @returns
+   */
+  getJustification(paramsData: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('type', 3, SearchFilter.NOT);
+    params.addFilter('clarifications', paramsData['search'], SearchFilter.LIKE);
+    let subscription = this.flyerService
+      .getJustificacion(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data);
+          this.justificacion = new DefaultSelect(
+            data.data.map(i => {
+              i.clarifications = '#' + i.id + ' -- ' + i.clarifications;
+              return i;
+            }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: err => {
+          this.justificacion = new DefaultSelect();
+          console.log(err);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al consultar las Justificaciones'
+          );
+          subscription.unsubscribe();
+        },
+      });
   }
 
   /**
    * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
+   * @param paramsData Parametos de busqueda de tipo @ListParams
+   * @returns
+   */
+  getCityByDetail(paramsData: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('nameCity', paramsData['search'], SearchFilter.LIKE);
+    let subscription = this.flyerService
+      .getCityBySearch(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          this.cities = new DefaultSelect(
+            data.data.map(i => {
+              i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
+              return i;
+            }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.cities = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  /**
+   * Obtener el listado de Remitente
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
   getSenderByDetail(params: ListParams) {
     params.take = 20;
     params['order'] = 'DESC';
-    console.log(params);
     let subscription = this.flyerService.getSenderUser(params).subscribe({
       next: data => {
         console.log(data);
@@ -656,9 +905,38 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         subscription.unsubscribe();
       },
       error: error => {
+        this.senders = new DefaultSelect();
         this.onLoadToast('error', 'Error', error.error.message);
         subscription.unsubscribe();
       },
     });
+  }
+
+  public send(): void {
+    this.loading = true;
+    // const pdfurl =
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGENADBNUMEFISICO.pdf?PARAMFORM=NO&DESTYPE=` +
+    //   this.managementForm.controls['screenKey'].value +
+    //   `&NO_OF_GES=` +
+    //   this.managementForm.controls['numero'].value +
+    //   `&TIPO_OF=` +
+    //   this.managementForm.controls['tipoOficio'].value +
+    //   `&VOLANTE=` +
+    //   this.managementForm.controls['noVolante'].value +
+    //   `&EXP=` +
+    //   this.managementForm.controls['noExpediente'].value +
+    //   `&ESTAT_DIC=` +
+    //   this.oficioGestion.statusOf;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    let params = { ...this.managementForm.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }

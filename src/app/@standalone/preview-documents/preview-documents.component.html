@@ -5,6 +5,7 @@
   (wheel)="scrollZoom($event)"
   (dragover)="onDragOver($event)">
   <object
+    *ngIf="documento.type != 'img'"
     [data]="documento.urlDoc"
     [ngStyle]="style"
     (dragstart)="onDragStart($event)"
@@ -12,6 +13,14 @@
     style="min-height: 500px !important; width: 100%">
     <p>Document not found...</p>
   </object>
+  <img
+    *ngIf="documento.type == 'img'"
+    [src]="documento.urlDoc"
+    [ngStyle]="style"
+    alt="Document not found..."
+    (dragstart)="onDragStart($event)"
+    (load)="onLoad()"
+    style="min-height: 500px !important; width: 100%" />
   <div class="spinner-container" *ngIf="loading">
     <div class="spinner"></div>
   </div>

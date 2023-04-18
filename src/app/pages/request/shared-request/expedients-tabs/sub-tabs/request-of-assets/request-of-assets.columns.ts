@@ -5,7 +5,7 @@ export const REQUEST_OF_ASSETS = {
     sort: false,
   },
   noManagement: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

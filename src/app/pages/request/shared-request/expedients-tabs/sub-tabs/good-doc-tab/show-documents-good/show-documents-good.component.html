@@ -17,7 +17,29 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <ngx-select
+            <div
+              [formGroup]="docRequestForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="docType"
+                [clearable]="false"
+                [items]="typesDocuments"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="ddescription"
+                bindValue="ddescription">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.ddescription">
+                    {{ item.ddescription }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label">Tipo de documento</label>
+            </div>
+
+            <!--<ngx-select
               [form]="docRequestForm"
               control="docType"
               (fetchItems)="getDocType($event)"
@@ -25,7 +47,7 @@
               label="Tipo de Documento"
               bindLabel="ddescription"
               value="ddescription">
-            </ngx-select>
+            </ngx-select> -->
           </div>
         </div>
         <div
@@ -36,14 +58,16 @@
             typeDoc === 'request-assets'
           ">
           <div class="col-md-4">
-            <ngx-select
-              [form]="docRequestForm"
-              control="regDelega"
-              (fetchItems)="getRegDelegation($event)"
-              [data]="selectRegDelegation"
-              label="Delegaci&oacute;n Regional"
-              value="regDelega">
-            </ngx-select>
+            <form-field [control]="docRequestForm.get('regDelega')">
+              <ngx-select
+                [form]="docRequestForm"
+                control="regDelega"
+                [data]="selectRegDelegation"
+                value="id"
+                bindLabel="description"
+                label="Delegaci&oacute;n Regional"
+                (fetchItems)="getRegDelegation($event)"></ngx-select>
+            </form-field>
           </div>
           <div class="col-md-4">
             <ngx-select
@@ -52,7 +76,8 @@
               (fetchItems)="getState($event)"
               [data]="selectState"
               label="Estado"
-              value="state">
+              value="id"
+              bindLabel="descCondition">
             </ngx-select>
           </div>
           <div class="col-md-4">
@@ -62,7 +87,8 @@
               (fetchItems)="getTransfe($event)"
               [data]="selectTransfe"
               label="Transferente"
-              value="tranfe">
+              value="id"
+              bindLabel="nameTransferent">
             </ngx-select>
           </div>
         </div>
@@ -74,16 +100,29 @@
               <input
                 type="text"
                 class="form-control"
+                maxlength="70"
                 formControlName="docTitle" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
-              [control]="docRequestForm.get('typeTrasf')"
-              label="T&iacute;tulo de Transferencia">
+              [control]="docRequestForm.get('dDocName')"
+              label="Nombre del Documento">
               <input
                 type="text"
                 class="form-control"
+                maxlength="100"
+                formControlName="dDocName" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="docRequestForm.get('typeTrasf')"
+              label="Tipo de Transferencia">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="70"
                 formControlName="typeTrasf" />
             </form-field>
           </div>
@@ -94,19 +133,21 @@
               <input
                 type="text"
                 class="form-control"
+                maxlength="70"
                 formControlName="contributor" />
             </form-field>
           </div>
+        </div>
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field [control]="docRequestForm.get('author')" label="Autor">
               <input
                 type="text"
                 class="form-control"
+                maxlength="70"
                 formControlName="author" />
             </form-field>
           </div>
-        </div>
-        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="docRequestForm.get('sender')"
@@ -114,39 +155,30 @@
               <input
                 type="text"
                 class="form-control"
+                maxlength="70"
                 formControlName="sender" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="docRequestForm.get('noOfice')"
-              label="No&#46; Oficina">
+              label="No&#46; Oficio">
               <input
                 type="text"
                 class="form-control"
+                maxlength="60"
                 formControlName="noOfice" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="docRequestForm.get('senderCharge')"
-              label="Cargo Remitento">
+              label="Cargo Remitente">
               <input
                 type="text"
                 class="form-control"
+                maxlength="60"
                 formControlName="senderCharge" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="docRequestForm.get('comment')"
-              label="Descripci&oacute;n">
-              <textarea
-                class="form-control"
-                type="text"
-                row
-                pt-5s="2"
-                formControlName="comment"></textarea>
             </form-field>
           </div>
         </div>
@@ -160,6 +192,7 @@
               <input
                 type="text"
                 class="form-control"
+                [readOnly]="true"
                 formControlName="noRequest" />
             </form-field>
           </div>
@@ -178,6 +211,7 @@
                 formControlName="noRequest" />
             </form-field>
           </div>
+
           <div class="col-md-3" *ngIf="typeDoc === 'doc-expedient'">
             <form-field
               [control]="docRequestForm.get('noRequest')"
@@ -188,6 +222,19 @@
                 formControlName="noRequest" />
             </form-field>
           </div>
+
+          <div class="col-md-3">
+            <form-field
+              [control]="docRequestForm.get('noSiab')"
+              label="No. SiAB">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="60"
+                formControlName="noSiab" />
+            </form-field>
+          </div>
+
           <div class="col-md-3">
             <form-field
               [control]="docRequestForm.get('responsible')"
@@ -195,7 +242,22 @@
               <input
                 type="text"
                 class="form-control"
+                maxlength="60"
                 formControlName="responsible" />
+            </form-field>
+          </div>
+
+          <div class="col-md-3">
+            <form-field
+              [control]="docRequestForm.get('comment')"
+              label="Comentarios">
+              <textarea
+                class="form-control"
+                type="text"
+                row
+                pt-5s="2"
+                maxlength="70"
+                formControlName="comment"></textarea>
             </form-field>
           </div>
         </div>
@@ -219,8 +281,9 @@
     <div class="row pt-4">
       <div class="d-flex">
         <div class="ml-auto p-2">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-primary btn-sm active ml-2"
             (click)="openNewDocument()">
             Nuevo
           </button>
@@ -228,12 +291,17 @@
       </div>
     </div>
     <div class="row pt-2">
-      <div class="col-md-12">
+      <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+        <form-loader *ngIf="formLoading"></form-loader>
+      </div>
+      <div class="col-md-12" *ngIf="!formLoading">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="paragraphs">
+            [source]="paragraphs"
+            (edit)="openDetail($event.data)"
+            (delete)="openDoc($event.data)">
           </ng2-smart-table>
 
           <!--<ng2-smart-table

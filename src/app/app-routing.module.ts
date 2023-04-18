@@ -16,7 +16,7 @@ const routes: Routes = [
     component: FullComponent,
     loadChildren: async () =>
       (await import('./pages/pages.module')).PagesModule,
-    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
   },
   {
     path: '',
@@ -35,7 +35,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      scrollOffset: [0, 0],
+      scrollPositionRestoration: 'top',
+    }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

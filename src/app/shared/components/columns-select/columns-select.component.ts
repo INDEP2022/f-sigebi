@@ -73,4 +73,15 @@ export class ColumnsSelectComponent implements OnInit {
     event.stopPropagation();
     this.change(field, value);
   }
+
+  getColumns() {
+    const selectedColumns = this.columns.filter(column => column.show);
+    const notSelectedColumns = this.columns.filter(column => !column.show);
+    const sortedArray = notSelectedColumns.sort((a, b) => {
+      const aName = a?.name ?? '';
+      const bName = b?.name ?? '';
+      return aName > bName ? 1 : bName > aName ? -1 : 0;
+    });
+    return [...selectedColumns, ...sortedArray];
+  }
 }

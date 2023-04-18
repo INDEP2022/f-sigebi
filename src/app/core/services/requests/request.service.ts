@@ -36,4 +36,9 @@ export class RequestService extends HttpService {
     const route = `${ENDPOINT_LINKS.request}/${id}`;
     return this.delete(route);
   }
+
+  update2(id: string | number, obj: Object) {
+    const route = `${ENDPOINT_LINKS.request}/${id}`;
+    return this.put(route, obj);
+  }
 }

@@ -117,7 +117,7 @@ export class DocumentsReceptionFlyerSelectComponent
           this.onLoadToast(
             'warning',
             'Volante no encontrado',
-            `No se encontró el volante ${flyerNumber}.`
+            `No se encontró el volante.`
           );
         }
       },
@@ -129,7 +129,7 @@ export class DocumentsReceptionFlyerSelectComponent
         this.onLoadToast(
           'warning',
           'Volante no encontrado',
-          `No se encontró el volante ${flyerNumber}.`
+          `No se encontró el volante.`
         );
       },
     });

@@ -5,7 +5,7 @@
   <div body>
     <form [formGroup]="documentForm" class="form-material">
       <div class="row">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field [control]="documentForm.get('xtipoDocumento')">
             <ngx-select
               [form]="documentForm"
@@ -17,18 +17,57 @@
               (fetchItems)="getDocType($event)">
             </ngx-select>
           </form-field>
-        </div>
-
+        </div> -->
         <div class="col-md-6">
+          <div
+            [formGroup]="documentForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="xtipoDocumento"
+              [clearable]="false"
+              [items]="typesDocuments"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="ddescription"
+              bindValue="ddocType">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div [title]="item.ddescription">
+                  {{ item.ddescription }}
+                </div>
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label"
+              >Tipo de documento <span style="color: #ad4766">*</span></label
+            >
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- documentos tipo solicitud -->
           <form-field
             [control]="documentForm.get('document')"
-            label="Documento">
+            label="Documento"
+            *ngIf="typeDoc !== 'doc-bien'">
             <input
               type="file"
               class="form-control"
               formControlName="document"
               (change)="uploadFile($event)" />
           </form-field>
+          <!-- documentos typo bien -->
+          <form-field
+            [control]="documentForm.get('document')"
+            label="Documento"
+            *ngIf="typeDoc === 'doc-bien'">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="document"
+              (change)="uploadFile($event)"
+              accept="image/*" />
+          </form-field>
+          <p style="color: blue">Seleccione un archivo no mayor a 10 Mb.</p>
         </div>
       </div>
 

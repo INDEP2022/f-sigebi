@@ -1,6 +1,6 @@
 export const REQUEST_LIST_COLUMNS = {
   title: {
-    title: 'Titulo',
+    title: 'Título',
     type: 'string',
     sort: false,
   },

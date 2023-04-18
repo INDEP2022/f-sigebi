@@ -1,4 +1,5 @@
 import {
+  HttpContextToken,
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
@@ -7,7 +8,8 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
 
 import { HttpHeaders } from '@angular/common/http';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -21,6 +23,12 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
    *
    * @param {AuthService} _authService
    */
+
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
+  private timeOut: number = 10;
   constructor(
     private router: Router,
     private readonly authService: AuthService
@@ -40,6 +48,11 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     // Clone the request object
     let newReq = request.clone();
 
+    //ignore interceptor when is refresh token
+    if (request.context.get(BYPASS_JW_TOKEN) === true) {
+      return next.handle(request);
+    }
+
     if (this.authService.useReportToken) {
       //Set Bearer Token
       const authHeaders: HttpHeaders = new HttpHeaders({
@@ -54,6 +67,14 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       this.authService.existToken() &&
       !this.authService.isTokenExpired()
     ) {
+      const timeNow = new Date(
+        this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
+      ).getMinutes();
+
+      if (timeNow <= this.timeOut && timeNow > 0) {
+        this.refreshToken(newReq, next).subscribe();
+      }
+
       //Set Bearer Token
       newReq = request.clone({
         headers: request.headers.set(
@@ -112,4 +133,45 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
 
     //this.onLoadToast('error', 'Error' + status, message);
   }
+
+  refreshToken(request: HttpRequest<unknown>, next: HttpHandler) {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      const token = this.authService.accessRefreshToken();
+
+      if (token)
+        return this.authService.refreshToken(token).pipe(
+          switchMap((token: any) => {
+            this.isRefreshing = false;
+            localStorage.setItem('token', token.access_token);
+            localStorage.setItem('r_token', token.refresh_token);
+            this.refreshTokenSubject.next(token.accessToken);
+            return next.handle(this.addTokenHeader(request, token.accessToken));
+          }),
+          catchError(err => {
+            this.isRefreshing = false;
+            return throwError(err);
+          })
+        );
+    }
+
+    return this.refreshTokenSubject.pipe(
+      filter(token => token !== null),
+      take(1),
+      switchMap(token => next.handle(this.addTokenHeader(request, token)))
+    );
+  }
+
+  private addTokenHeader(request: HttpRequest<any>, token: string) {
+    return request.clone({
+      headers: request.headers.set(
+        'Authorization',
+        'Bearer ' + this.authService.accessToken()
+      ),
+    });
+  }
 }
+
+export const BYPASS_JW_TOKEN = new HttpContextToken(() => false);

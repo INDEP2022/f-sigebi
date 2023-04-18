@@ -9,8 +9,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -20,7 +22,6 @@ import {
   FilterParams,
   ListParams,
 } from '../../../../common/repository/interfaces/list-params';
-import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
@@ -51,13 +52,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
   nickName: string = '';
   idTransferer: number = null;
   idStation: number = null;
-
+  transferents$ = new DefaultSelect<ITransferente>();
   selectRegionalDeleg = new DefaultSelect<any>();
   selectEntity = new DefaultSelect<any>();
-  selectStation = new DefaultSelect<any>();
+  selectStation = new DefaultSelect<IStation>();
 
-  selectAuthority = new DefaultSelect<any>();
-  selectTransfe = new DefaultSelect<any>();
+  selectAuthority = new DefaultSelect<IAuthority>();
+  selectTransfe: any; //= new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectIssue = new DefaultSelect<any>();
 
@@ -80,7 +81,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
-    public location: Location
+    public location: Location,
+    private router: Router
   ) {
     super();
   }
@@ -94,8 +96,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
+          console.log('tranference');
           this.idTransferer = data;
           this.getStation(data);
+        } else {
+          this.requestForm.controls['stationId'].setValue(null);
+          this.requestForm.controls['authorityId'].setValue(null);
         }
       }
     );
@@ -103,6 +109,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
+          console.log('emisora');
           this.idStation = data;
           this.getAuthority(new ListParams());
         }
@@ -185,31 +192,65 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
-    params.limit = 30;
-    this.stationService.getAll(params).subscribe((data: IListResponse<any>) => {
-      this.selectStation = new DefaultSelect(data.data, data.count);
+    //delete params.limit;
+    //delete params.page;
+    delete params['search'];
+    delete params.text;
+    this.stationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.stationName}`;
+          return data;
+        });
+        this.selectStation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectStation = new DefaultSelect();
+      },
     });
   }
 
-  getAuthority(params: ListParams) {
+  getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
-    this.authorityService
-      .getAll(params)
-      .subscribe((data: IListResponse<IAuthority>) => {
+    //delete params.limit;
+    //delete params.page;
+    delete params['search'];
+    delete params.text;
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
+          return data;
+        });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error: () => {
+        this.selectAuthority = new DefaultSelect();
+      },
+    });
   }
 
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    this.transferentService
-      .getAll(params)
-      .subscribe((data: IListResponse<ITransferente>) => {
-        this.selectTransfe = new DefaultSelect(data.data, data.count);
-      });
+    // delete params.limit;
+    //delete params.page;
+    delete params['search'];
+    delete params.text;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
   }
 
   getState(event: any): void {}
@@ -294,7 +335,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 next: resp => {
                   this.loadingTurn = false;
                   this.msgModal(
-                    'Se guardo la solicitud con el Folio Nº '.concat(
+                    'Se guardó la solicitud con el Folio Nº '.concat(
                       `<strong>${data.id}</strong>`
                     ),
                     'Solicitud Guardada',
@@ -326,6 +367,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         'Información',
         `Seleccione un usuario para poder turnar la solicitud!`
       );
+
       return;
     }
 
@@ -346,7 +388,18 @@ export class RequestFormComponent extends BasePage implements OnInit {
           const form = requestResult;
           const from = 'REGISTRO_SOLICITUD';
           const to = 'REGISTRO_SOLICITUD';
-          const taskResult = await this.createTaskOrderService(form, from, to);
+          const actualUser: any = this.authService.decodeToken();
+          const taskResult = await this.createTaskOrderService(
+            form,
+            from,
+            to,
+            false,
+            0,
+            actualUser.username,
+            'SOLICITUD_TRANSFERENCIA',
+            'Nueva_Solicitud',
+            'TURNAR'
+          );
           if (taskResult === true) {
             this.loadingTurn = false;
             this.msgModal(
@@ -356,6 +409,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
 
@@ -391,11 +445,29 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(request: any, from: string, to: string) {
+  createTaskOrderService(
+    request: any,
+    from: string,
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
+  ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['type'] = 'SOLICITUD TRANSFERENCIA';
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
 
       let task: any = {};
       task['id'] = 0;
@@ -433,64 +505,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  /* createTask(request: any) {
-    return new Promise((resolve, reject) => {
-      let body: any = {};
-
-      const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = this.nickName;
-      body['assigneesDisplayname'] = this.userName;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(request.id);
-      body['title'] =
-        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      body['programmingId'] = 0;
-      body['requestId'] = request.id;
-      body['expedientId'] = 0;
-      body['urlNb'] = 'pages/request/transfer-request/registration-request';
-      this.taskService.createTask(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal('error', 'Error', 'Error al crear la tarea');
-          reject(error.error.message);
-        },
-      });
-    });
-  }*/
-
-  /*createOrderService(request: any, from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = request.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
-          reject(error.error.message);
-        },
-      });
-    });
-  }*/
-
   getTaskByTaskNumer(taskNumber: number) {
     return new Promise((resolve, reject) => {
       let params = new ListParams();
@@ -510,7 +524,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.taskService.update(body.id, body).subscribe({
         next: resp => {
           this.msgModal(
-            'Se guardo la solicitud con el Folio Nº '.concat(
+            'Se guardó la solicitud con el Folio Nº '.concat(
               `<strong>${idRequest}</strong>`
             ),
             'Solicitud Guardada',

@@ -1,7 +1,7 @@
 <app-modal *ngIf="typeAnnex === 'commit-request'">
   <div header>
     <h5 class="modal-title">
-      Desea Turnar la Solicitud con el con el Folio:
+      Desea Turnar la Solicitud con el Folio:
       <strong>{{ data.id }}</strong>
     </h5>
   </div>
@@ -25,12 +25,12 @@
           </form-radio>
         </div>
         <div class="col-md-2">
-          <form-radio label="SAE">
+          <form-radio label="INDEP">
             <input
               type="radio"
               formControlName="typeUser"
               value="SAE"
-              id="sae" />
+              id="indep" />
           </form-radio>
         </div>
       </div>

@@ -61,6 +61,7 @@ import {
 })
 export class GoodsCaptureMain extends BasePage {
   @ViewChild('form') form: ElementRef;
+  paperworkType: number = 0;
   globalNgrx: any = {};
   goodToSave = new GOOD_TO_SAVE();
   satTransfer: any = {};
@@ -562,6 +563,7 @@ export class GoodsCaptureMain extends BasePage {
 
   fillWithTempExpedient(tmpExpedient: ITempExpedient) {
     const { procedureType, jobNumber, affair } = tmpExpedient;
+    this.paperworkType = procedureType;
     if (procedureType == 3) {
       this.getDataPgr(tmpExpedient);
     } else {

@@ -15,7 +15,10 @@
         </button>
       </div>
     </div>
-    <form [formGroup]="requestForm" class="form-material">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+    <form [formGroup]="requestForm" class="form-material" *ngIf="!formLoading">
       <div class="row pt-4">
         <div class="col-md-2">
           <form-check label="Prioridad" for="urgentPriority">
@@ -52,7 +55,8 @@
               #dp="bsDatepicker"
               bsDatepicker
               [bsValue]="bsReceptionValue"
-              [disabled]="true" />
+              [disabled]="true"
+              required />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -66,6 +70,14 @@
               #dp="bsDatepicker"
               bsDatepicker
               (bsValueChange)="changeDateEvent($event)" />
+            <!-- <span class="text-danger bg-white border-0 ui-inputgroup-addon">*</span>
+            <div *ngIf="submitted && requestForm.value.paperDate.length == 0" class="invalid-feedback">
+              <div>{{requiredFieldText}}</div>
+            </div> -->
+            <!-- <span class="text-danger bg-white border-0 ui-inputgroup-addon">*</span>
+            <div class="invalid-feedback">
+              <div>{{requiredFieldText}}</div>
+            </div> -->
           </form-field>
         </div>
 
@@ -96,64 +108,93 @@
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"
-            control="publicMinistry"
-            (fetchItems)="getPublicMinister($event)"
-            [data]="selectMinPub"
-            [searchable]="true"
-            label="Ministerio P&uacute;blico"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
             bindLabel="description"
-            value="description">
+            value="keyId">
           </ngx-select>
         </div>
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
           <form-field
             [control]="requestForm.get('nameOfOwner')"
-            label="Nombre del Remitente">
+            label="Nombre MP">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="nameOfOwner" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="requestForm.get('court')" label="Juzgado">
-            <input type="text" class="form-control" formControlName="court" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="court" />
           </form-field>
         </div>
       </div>
-
+      <div class="row pt-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <form-field
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono MP">
+            <input
+              type="text"
+              maxlength="13"
+              class="form-control"
+              formControlName="phoneOfOwner" />
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+          <form-field
+            [control]="requestForm.get('emailOfOwner')"
+            label="Correo MP">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="emailOfOwner" />
+          </form-field>
+        </div>
+      </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo del Remitente">
+            label="Cargo y/o Adscripción">
             <input
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="holderCharge" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="requestForm.get('crime')" label="Delito">
-            <input type="text" class="form-control" formControlName="crime" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="crime" />
           </form-field>
         </div>
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono del Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="phoneOfOwner" />
-          </form-field>
-        </div>
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('receiptRoute')"
@@ -166,137 +207,79 @@
           </form-field>
         </div>
 
-        <!-- <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('trialType')"
-            label="Tipo Juicio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="trialType" />
-          </form-field>
-        </div> -->
-      </div>
-      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('indicatedTaxpayer')"
             label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
+              maxlength="200"
               class="form-control"
               formControlName="indicatedTaxpayer" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="requestForm.get('affair')" label="Asunto">
-            <input
-              type="text"
-              class="form-control"
-              [ngModelOptions]="{ standalone: true }"
-              [ngModel]="affairName"
-              [readOnly]="true" />
-          </form-field>
-        </div>
       </div>
 
-      <div class="row pt-4">
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Email del Remitente">
-            <input
-              type="email"
-              class="form-control"
-              formControlName="emailOfOwner" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('destinationManagement')"
-            label="Gesti&oacute;n de Destino">
+            [control]="requestForm.get('transferenceFile')"
+            label="Expediente Transferente/PAMA">
             <input
               type="text"
+              maxlength="1000"
               class="form-control"
-              formControlName="destinationManagement" />
+              formControlName="transferenceFile" />
           </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('transferEntNotes')"
-            label="Notas Entidad Transferente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="transferEntNotes" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('observations')"
-            label="Observaciones">
-            <textarea
-              class="form-control"
-              id="observations"
-              formControlName="observations">
-            </textarea>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="requestForm"
-            control="originInfo"
-            (fetchItems)="getOriginInfo($event)"
-            [data]="selectOriginInfo"
-            [searchable]="false"
-            label="Procedencia Informaci&oacute;n"
-            bindLabel="description"
-            value="keyId">
-          </ngx-select>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('protectNumber')"
             label="N&uacute;mero Amparo">
             <input
-              type="number"
+              type="text"
+              maxlength="30"
               class="form-control"
-              formControlName="protectNumber" />
+              formControlName="protectNumber"
+              min="0" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-4" *ngIf="transferenceNumber === 1">
+
+      <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
+          <!-- <div class="col-md-4" *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('previousInquiry')"
             label="Averiguacion Previa">
             <input
               type="text"
               class="form-control"
-              formControlName="previousInquiry" />
+              formControlName="previousInquiry"
+              required />
           </form-field>
         </div>
-        <div class="col-md-4" *ngIf="transferenceNumber === 1">
+        <div class="col-md-4">
+          <!-- *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('circumstantialRecord')"
             label="Acta Circunstancial">
             <input
               type="text"
               class="form-control"
-              formControlName="circumstantialRecord" />
+              formControlName="circumstantialRecord"
+              required />
           </form-field>
         </div>
       </div>
       <div
         class="row pt-4"
-        *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('tocaPenal')"
@@ -307,13 +290,81 @@
               formControlName="tocaPenal" />
           </form-field>
         </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 3 || transferenceNumber === 1">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('lawsuit')"
             label="Causa Penal">
             <input type="text" class="form-control" formControlName="lawsuit" />
+          </form-field>
+        </div>
+      </div>
+
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <!-- FIN TRANSFERENTES 1 Y 3 -->
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('trialType')"
+            label="Tipo de Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="trialType" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="requestForm"
+            control="publicMinistry"
+            (fetchItems)="getPublicMinister($event)"
+            [data]="selectMinPub"
+            [searchable]="true"
+            label="Ministerio P&uacute;blico"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('transferEntNotes')"
+            label="Notas Entidad Transferente">
+            <textarea
+              class="form-control"
+              maxlength="1500"
+              id="transferEntNotes"
+              rows="5"
+              formControlName="transferEntNotes">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              maxlength="1500"
+              id="observations"
+              rows="5"
+              formControlName="observations">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('domainExtinction')"
+            label="Extinci&oacute;n Dominio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domainExtinction" />
           </form-field>
         </div>
       </div>

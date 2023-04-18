@@ -60,11 +60,17 @@ export class WContentService extends HttpWContentService {
     return this.get<IListResponse<IDocTypes>>(WContentEndpoint.DocumentTypes);
   }
 
-  getDocumentos(body: Object): Observable<IListResponse<IWContent>> {
-    return this.post<IListResponse<IWContent>>(
-      WContentEndpoint.GetDocSol,
-      body
-    );
+  getDocumentos(
+    body: Object,
+    params?: ListParams
+  ): Observable<IListResponse<IWContent>> {
+    return params
+      ? this.post<IListResponse<IWContent>>(
+          WContentEndpoint.GetDocSol,
+          body,
+          params
+        )
+      : this.post<IListResponse<IWContent>>(WContentEndpoint.GetDocSol, body);
   }
   findDocumentBySolicitud(idRequest: number) {
     return this.get(

@@ -96,14 +96,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
-      // console.log(this.requestObject);
       this.typeRecord = this.requestObject.typeRecord;
       this.transferente = this.requestObject.transfer;
     }
   }
 
   ngOnInit(): void {
-    console.log('process', this.process);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -161,6 +159,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           Promise.all(result).then(x => {
             this.totalItems = data.count;
             this.paragraphs = data.data;
+            console.log(this.paragraphs);
+
             this.loading = false;
           });
         } else {
@@ -258,7 +258,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
-    console.log(event.target.files[0]);
+    this.loader.load = true;
     const file = event.target.files[0];
     const user = this.authService.decodeToken().preferred_username;
     this.uploadFile(file, this.requestObject.id, user);
@@ -269,11 +269,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       .uploadExcelMassiveChargeGoods(file, request, user)
       .subscribe({
         next: resp => {
-          if (resp.statusCode === 200) {
-            this.message('success', 'Archivos cargados', `${resp.message}`);
-          } else {
-            this.message('error', 'Error al guardar', `${resp.message}`);
-          }
+          this.message(
+            'success',
+            'Archivos cargados',
+            `Se importaron los archivos`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.message('error', 'Error al guardar', `${error.error.message}`);
         },
       });
   }
@@ -296,6 +301,11 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         this.goodObject = this.listgoodObjects[0];
         this.createNewAsset = true;
         this.btnCreate = 'Cerrar Bien';
+        const load = true;
+        this.loadLoading(load);
+        setTimeout(() => {
+          this.loadLoading(false);
+        }, 400);
       } else {
         this.goodObject = null;
         this.createNewAsset = false;
@@ -308,6 +318,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
+  loadLoading(loading: boolean) {
+    this.requestHelperService.loadingForm(loading);
+  }
   openSelectAddressModal() {
     if (this.listgoodObjects.length === 0) {
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
@@ -393,6 +406,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
         delete element.goodMenaje;
+
+        if (element.requestId.id) {
+          element.requestId = Number(element.requestId.id);
+        }
+        if (element.fractionId.id) {
+          element.fractionId = Number(element.fractionId.id);
+        }
         this.goodService.update(element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -408,11 +428,18 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'success',
                 'Actualizado',
-                `Se guardo correctamente el bien del domicilio!`
+                `¡Se guardó correctamente el bien del domicilio!`
               );
               this.isSaveDomicilie = false;
-              resolve('Se guardo correctamente el bien del domicilio!');
+              resolve('¡Se guardó correctamente el bien del domicilio!');
             }
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'No se guardo el domicilio',
+              `${error.error.message}`
+            );
           },
         });
       }
@@ -423,7 +450,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
-        console.log(element);
 
         this.menageService.create(element).subscribe({
           next: data => {
@@ -431,19 +457,19 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               this.message(
                 'error',
                 'Error',
-                `El menaje no se pudo guardar!\n. ${data.message}`
+                `¡El menaje no se pudo guardar!\n. ${data.message}`
               );
-              reject('El registro del bien del domicilio no se guardo!');
+              reject('¡El registro del bien del domicilio no se guardó!');
             }
 
             if (data.noGoodMenaje != null) {
               this.message(
                 'success',
                 'Menaje guardado',
-                `Se guardaron los menajes existosamente`
+                `Se guardaron los menajes exitosamente`
               );
               this.isSaveMenaje = false;
-              resolve('Se guardo correctamente el menaje!');
+              resolve('¡Se guardó correctamente el menaje!');
             }
           },
         });
@@ -452,25 +478,41 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   saveFractions() {
-    return new Promise((resolve, reject) => {
-      for (let i = 0; i < this.listGoodsFractions.length; i++) {
-        const element = this.listGoodsFractions[i];
-
-        this.goodService.update(element).subscribe({
-          next: resp => {
-            this.message(
-              'success',
-              'Fraccion guardada',
-              `Se guardo la fraccion exitosamente`
-            );
-            this.refreshTable();
-          },
-          error: error => {
-            console.log(error);
-          },
-        });
+    this.listGoodsFractions.map(async (item: any, i: number) => {
+      let index = i + 1;
+      const fractionResult = await this.updateGoods(item);
+      if (fractionResult) {
+        if (this.listGoodsFractions.length === index) {
+          this.message(
+            'success',
+            'Fracción guardada',
+            `Se guardó la fracción exitosamente`
+          );
+          this.refreshTable();
+          this.isSaveFraction = false;
+        }
       }
-      this.isSaveFraction = false;
+    });
+  }
+
+  updateGoods(item: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.update(item).subscribe({
+        next: resp => {
+          if (resp.id) {
+            resolve(true);
+          }
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            `Error al actualizar los bienes ${error.error.message}`
+          );
+          console.log(error.error.message);
+          reject(false);
+        },
+      });
     });
   }
 
@@ -478,7 +520,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        text: '¿Esta seguro de querer eliminar el bien seleccionado?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',
@@ -486,7 +528,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         confirmButtonText: 'Aceptar',
       }).then(result => {
         if (result.isConfirmed) {
-          this.deleteGood();
+          this.deleteMethod();
         }
       });
     } else {
@@ -494,24 +536,45 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
-  deleteGood() {
-    for (let i = 0; i < this.listGoodsFractions.length; i++) {
-      const element = this.listGoodsFractions[i];
+  deleteMethod() {
+    this.loader.load = true;
+    this.listgoodObjects.map(async (item, i) => {
+      let index = i + 1;
+      const deleteResult = await this.deleteGood(item);
+
+      if (deleteResult === true) {
+        if (this.listgoodObjects.length === index) {
+          this.message(
+            'success',
+            'Bienes Eliminados',
+            `Los bienes se eliminaron correctamente`
+          );
+          this.loader.load = false;
+          this.closeCreateGoodWIndows();
+        }
+      }
+    });
+  }
+
+  deleteGood(element: any) {
+    return new Promise((resolve, reject) => {
       let goodRemove = { id: element.id, goodId: element.goodId };
       this.goodService.removeGood(goodRemove).subscribe({
         next: (resp: any) => {
           if (resp.statusCode === 200) {
-            this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
-            this.closeCreateGoodWIndows();
+            resolve(true);
           } else {
+            this.loader.load = false;
+            reject(false);
             this.message('error', 'Eliminar', `${resp.message[0]}`);
           }
         },
         error: error => {
-          console.log(error);
+          this.loader.load = false;
+          this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
         },
       });
-    }
+    });
   }
 
   refreshTable() {
@@ -558,26 +621,40 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
-      //console.log(res);
       this.isSaveFraction = true;
-
-      if (this.listgoodObjects.length === 1) {
-        // verifica el nivel actual de la fraccion
-        this.matchLevelFraction(res);
-      } else {
-        // asignar el id de fraccion a los biene
-        this.listGoodsFractions = [];
-        this.listgoodObjects.map((item: any) => {
-          let good: any = {};
-          good.id = Number(item.id);
-          good.addressId = Number(item.addressId.id);
-          good.requestId = Number(item.requestId.id);
-          good.fractionId = Number(res.id);
-
-          this.listGoodsFractions.push(good);
-        });
-      }
+      this.cleanForm();
+      this.matchLevelFraction(res);
     });
+  }
+
+  cleanForm() {
+    for (let i = 0; i < this.listgoodObjects.length; i++) {
+      const good = this.listgoodObjects[i];
+      delete this.listgoodObjects[i].goodTypeName;
+      delete this.listgoodObjects[i].physicalStatusName;
+      delete this.listgoodObjects[i].stateConservationName;
+      delete this.listgoodObjects[i].transferentDestinyName;
+      delete this.listgoodObjects[i].destinyLigieName;
+      delete this.listgoodObjects[i].goodMenaje;
+      for (const key in good) {
+        // console.log(good[key], key);
+        if (
+          key !== 'goodId' &&
+          key !== 'id' &&
+          key !== 'requestId' &&
+          key !== 'addressId' &&
+          key !== 'dateIn' &&
+          key !== 'goodDescription' &&
+          key !== 'userCreation' &&
+          key !== 'creationDate' &&
+          key !== 'userModification' &&
+          key !== 'modificationDate' &&
+          key !== 'processStatus'
+        ) {
+          good[key] = null;
+        }
+      }
+    }
   }
 
   setFractions(listReverse: any) {
@@ -591,28 +668,34 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
 
     //this.listGoodsFractions = this.listgoodObjects;
-    this.listGoodsFractions = [];
-    console.log('antes', this.listGoodsFractions);
+    //this.listGoodsFractions = [];
+
+    console.log('antes ', this.listgoodObjects);
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
-      good.id = Number(item.id);
-      good.addressId = Number(item.addressId.id);
-      good.requestId = Number(item.requestId.id);
-      good.goodClassNumber = Number(this.fractionProperties['goodClassNumber']);
-      good.unitMeasure = this.fractionProperties['unitMeasure'];
-      good.ligieUnit = this.fractionProperties['ligieUnit'];
-      good.fractionId = Number(this.fractionProperties['fractionId']);
+      this.listgoodObjects[j].id = Number(item.id);
+      this.listgoodObjects[j].addressId = Number(item.addressId.id);
+      this.listgoodObjects[j].requestId = Number(item.requestId.id);
+      this.listgoodObjects[j].goodClassNumber = Number(
+        this.fractionProperties['goodClassNumber']
+      );
+      this.listgoodObjects[j].unitMeasure =
+        this.fractionProperties['unitMeasure'];
+      this.listgoodObjects[j].ligieUnit = this.fractionProperties['ligieUnit'];
+      this.listgoodObjects[j].fractionId = Number(
+        this.fractionProperties['fractionId']
+      );
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
-        good[fractions[i]] = Number(fractionsId);
+        this.listgoodObjects[j][fractions[i]] = Number(fractionsId);
+        //good[fractions[i]] = Number(fractionsId);
       }
 
-      this.listGoodsFractions.push(good);
+      this.listGoodsFractions = this.listgoodObjects;
+      console.log('despues ', this.listGoodsFractions);
     }
-
-    console.log(this.listGoodsFractions);
   }
 
   getNoClasifyGood(value: string) {
@@ -643,7 +726,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   getUnit(data: any) {
-    //data.ligieUnit
     return new Promise((resolve, reject) => {
       this.goodsQueryService
         .getLigieUnitDescription(data.ligieUnit)
@@ -732,9 +814,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getSection(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Capitulo: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -765,9 +845,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getChapter(new ListParams(), fraction.parentId);
       },
-      error: error => {
-        console.log('Nivel 1: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -795,9 +873,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel1(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Nivel 2: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -824,9 +900,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel2(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Nivel 3: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 
@@ -853,9 +927,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel3(new ListParams(), data.data[0].parentId);
       },
-      error: error => {
-        console.log('Nivel 4: ', error.error.message[0]);
-      },
+      error: error => {},
     });
   }
 }

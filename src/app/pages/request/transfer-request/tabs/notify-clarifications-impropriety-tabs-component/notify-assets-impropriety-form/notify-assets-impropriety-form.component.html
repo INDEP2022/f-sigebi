@@ -4,195 +4,243 @@
   </div>
   <div body class="body">
     <form [formGroup]="clarificationForm" class="form-material">
-      <div>
-        <div class="row pt-4" *ngIf="!withDocumentation">
-          <div class="col-md-4">
+      <div *ngIf="!withDocumentation">
+        <div class="row">
+          <div class="col-md-12">
             <form-field
-              [control]="clarificationForm.get('receiver')"
-              label="&#42;Destinatario">
+              [control]="clarificationForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                maxlength="400"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="clarificationForm.get('senderName')"
+              label="Nombre Remitente">
               <input
                 type="text"
                 class="form-control"
-                formControlName="receiver" />
+                maxlength="50"
+                formControlName="senderName" />
             </form-field>
           </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="clarificationForm.get('jobClarificationKey')"
+              label="Clave Oficio Aclaraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="jobClarificationKey" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
           <div class="col-md-4">
             <form-field
               [control]="clarificationForm.get('senderCharge')"
-              label="&#42;Cargo Remitente">
+              label="Cargo Remitente">
               <input
                 type="text"
                 class="form-control"
+                maxlength="50"
                 formControlName="senderCharge" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('receiverCharge')"
-              label="&#42;Cargo Destinatario">
+              [control]="clarificationForm.get('userAreaCaptures')"
+              label="&Aacute;rea del Usuario Captura">
               <input
                 type="text"
                 class="form-control"
-                formControlName="receiverCharge" />
+                maxlength="60"
+                formControlName="userAreaCaptures" />
             </form-field>
           </div>
-          <div class="col-md-4" *ngIf="isInterconnection">
+          <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('keyClarification')"
-              label="&#42;Clave Oficio Aclaraci&oacute;n">
+              [control]="clarificationForm.get('webMail')"
+              label="Correo Notificaci&oacute;n SAT">
               <input
                 type="text"
                 class="form-control"
-                formControlName="keyClarification" />
+                maxlength="30"
+                formControlName="webMail" />
             </form-field>
           </div>
-          <div class="col-md-4" *ngIf="isInterconnection">
+        </div>
+      </div>
+    </form>
+    <form [formGroup]="inappropriatenessForm" class="form-material">
+      <div *ngIf="withDocumentation">
+        <div class="row pt-3">
+          <div class="col-md-6">
             <form-field
-              [control]="clarificationForm.get('idTransmitter')"
+              [control]="inappropriatenessForm.get('managedTo')"
+              label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="managedTo" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('positionSender')"
+              label="Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="positionSender" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('positionAddressee')"
+              label="Cargo Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="positionAddressee" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('jobClarificationKey')"
+              label="Clave Oficio Aclaraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="jobClarificationKey" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('sender')"
+              label="Nombre Remitente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="sender" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('clarification')"
+              label="Aclaraci&oacute;n">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="clarification"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <form-field
+              [control]="inappropriatenessForm.get('consistentIn')"
+              label="Consistente en">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="consistentIn"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('paragraphInitial')"
+              label="P&aacute;rrafo Inicial">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="paragraphInitial"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('paragraphFinal')"
+              label="P&aacute;rrafo Final">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="paragraphFinal"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <form-field
+              [control]="inappropriatenessForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="inappropriatenessForm.get('areaUserCapture')"
+              label="&Aacute;rea del Usuario Captura">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="60"
+                formControlName="areaUserCapture" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="inappropriatenessForm.get('transmitterId')"
               label="ID Emisor">
               <input
                 type="text"
                 class="form-control"
-                formControlName="idTransmitter" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('clarification')"
-              label="Aclaraci&oacute;n">
-              <textarea
-                class="form-control"
-                formControlName="clarification"></textarea>
+                maxlength="15"
+                formControlName="transmitterId" />
             </form-field>
           </div>
 
           <div class="col-md-4">
             <form-field
-              [control]="clarificationForm.get('consistent')"
-              label="Consistente en">
-              <textarea
-                class="form-control"
-                formControlName="consistent"></textarea>
-            </form-field>
-          </div>
-          <div class="col-md-4" *ngIf="isInterconnection">
-            <form-field
-              [control]="clarificationForm.get('finalParagraph')"
-              label="P&aacute;rrafo Final">
-              <textarea
-                class="form-control"
-                formControlName="finalParagraph"></textarea>
-            </form-field>
-          </div>
-          <div class="col-md-4" *ngIf="isInterconnection">
-            <form-field
-              [control]="clarificationForm.get('initialParagraph')"
-              label="P&aacute;rrafo Inicial">
-              <textarea
-                class="form-control"
-                formControlName="initialParagraph"></textarea>
-            </form-field>
-          </div>
-
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('observations')"
-              label="Observaciones">
-              <textarea
-                class="form-control"
-                formControlName="observations"></textarea>
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('captureUserArea')"
-              label="&Aacute;rea del Usuario Captura">
+              [control]="inappropriatenessForm.get('mailNotification')"
+              label="Correo Notificaci&oacute;n SAT">
               <input
                 type="text"
                 class="form-control"
-                formControlName="captureUserArea" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('emailNotifiSat')"
-              label="Email Notificaci&oacute;n SAT">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="emailNotifiSat" />
-            </form-field>
-          </div>
-
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('nameSender')"
-              label="&#42;Nombre Remitente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="nameSender" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row pt-4" *ngIf="withDocumentation">
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('observations')"
-              label="Observaciones">
-              <textarea
-                class="form-control"
-                formControlName="observations"></textarea>
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('keyClarification')"
-              label="&#42;Clave Oficio Aclaraci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="keyClarification" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('nameSender')"
-              label="&#42;Nombre Remitente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="nameSender" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('captureUserArea')"
-              label="&Aacute;rea del Usuario Captura">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="captureUserArea" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('emailNotifiSat')"
-              label="Email Notificaci&oacute;n SAT">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="emailNotifiSat" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="clarificationForm.get('senderCharge')"
-              label="&#42;Cargo Remitente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="senderCharge" />
+                maxlength="30"
+                formControlName="mailNotification" />
             </form-field>
           </div>
         </div>
@@ -201,7 +249,14 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <div class="m-3" *ngIf="withDocumentation">
+        <confirm-button
+          [disabled]="inappropriatenessForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3" *ngIf="!withDocumentation">
         <confirm-button
           [disabled]="clarificationForm.invalid"
           [loading]="loading"

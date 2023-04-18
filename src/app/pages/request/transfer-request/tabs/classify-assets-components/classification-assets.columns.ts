@@ -1,6 +1,6 @@
 export const REQUEST_OF_ASSETS_COLUMNS = {
   id: {
-    title: 'Gestion',
+    title: 'Gestión',
     type: 'string',
     sort: false,
   },
@@ -10,7 +10,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     sort: false,
   },
   descriptionGoodSae: {
-    title: 'Descripción Bien SAE',
+    title: 'Descripción Bien INDEP',
     type: 'string',
     sort: false,
   },
@@ -40,7 +40,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     sort: false,
   },
   stateConservationName: {
-    title: 'Estado de Concervación',
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },

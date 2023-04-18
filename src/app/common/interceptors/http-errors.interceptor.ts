@@ -25,6 +25,8 @@ interface Data {
   error: string;
 }
 
+export const InterceptorSkipHeader = 'X-Skip-Interceptor';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -45,17 +47,39 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(
-      map(response => {
-        this.getValue();
-        return this.handleSuccess(response);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
-        this.resetValue();
-        return throwError(() => error);
-      })
-    );
+    if (!window.navigator.onLine) {
+      // if there is no internet, throw a HttpErrorResponse error.
+      const error = {
+        status: 0,
+        error: {
+          description: 'Error de Conexión!',
+        },
+        statusText: 'Se perdío la conexión de red. Intentar nuevament!',
+      };
+      this.alert(
+        'warning',
+        'Error de Conexión!',
+        'Se perdío la conexión de red. Intentar nuevamente!'
+      );
+      return throwError(() => new HttpErrorResponse(error));
+    } else {
+      if (req.headers.has(InterceptorSkipHeader)) {
+        const headers = req.headers.delete(InterceptorSkipHeader);
+        return next.handle(req.clone({ headers }));
+      }
+      // else return the normal request
+      return next.handle(req).pipe(
+        map(response => {
+          this.getValue();
+          return this.handleSuccess(response);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.handleError(error);
+          this.resetValue();
+          return throwError(() => error);
+        })
+      );
+    }
   }
 
   getValue() {

@@ -13,20 +13,20 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DOC_REQUEST_TAB_COLUMNS } from '../../doc-request-tab/doc-request-tab-columns';
+import {
+  DOC_EXPEDIENT_COLUMNS,
+  DOC_REQUEST_TAB_COLUMNS,
+} from '../../doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from '../../doc-request-tab/see-information/see-information.component';
 import { NewDocumentComponent } from '../../new-document/new-document.component';
 
@@ -60,6 +60,9 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   delegationId: number = 0;
   stateId: string = '';
+  formLoading: boolean = false;
+  allDocumentExpedient: any[] = [];
+  typesDocuments: any = [];
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -76,6 +79,26 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
+
+    this.settings = {
+      ...this.settings,
+      actions: {
+        edit: true,
+        delete: true,
+        columnTitle: 'Acciones',
+        position: 'right',
+      },
+
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-file text-primary mx-2"> Detalle</i>',
+      },
+
+      delete: {
+        deleteButtonContent: '<i class="fa fa-eye text-info mx-2"> Ver</i>',
+      },
+      columns: DOC_EXPEDIENT_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
@@ -87,20 +110,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getRegDelegation(new ListParams());
     this.getDocType(new ListParams());
-    this.settings = { ...TABLE_SETTINGS, actions: false };
-    this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
-
-    this.columns.button = {
-      ...this.columns.button,
-      onComponentInitFunction: (instance?: any) => {
-        instance.btnclick1.subscribe((data: any) => {
-          this.openDetail(data);
-        }),
-          instance.btnclick2.subscribe((data: any) => {
-            this.openDoc(data.dDocName);
-          });
-      },
-    };
     this.getRequestData();
   }
 
@@ -115,19 +124,44 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       id: [null],
       text: [null, [Validators.pattern(STRING_PATTERN)]],
       docType: [null],
-      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      noOfice: [null],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      docTitle: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      dDocName: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      typeTrasf: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      author: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      noOfice: [null, [Validators.maxLength(60)]],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
       comment: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      noRequest: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      noRequest: [null],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
 
       /* Solicitud Transferencia */
       regDelega: [null],
@@ -147,28 +181,36 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    const body = {
-      xidSolicitud: this.idRequest,
-      xidExpediente: this.idExpedient,
-    };
+    if (this.idRequest && this.idExpedient) {
+      this.loading = true;
+      const body = {
+        xidSolicitud: this.idRequest,
+        xidExpediente: this.idExpedient,
+      };
 
-    this.wContentService.getDocumentos(body).subscribe({
-      next: async (data: any) => {
-        const filterTypeDoc = data.data.filter((items: any) => {
-          return items.xtipoDocumento;
-        });
+      this.wContentService.getDocumentos(body).subscribe({
+        next: async (data: any) => {
+          const filterTypeDoc = data.data.filter((items: any) => {
+            if (items.dDocType == 'Document') return items;
+          });
 
-        const info = filterTypeDoc.map(async (items: any) => {
-          const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-          items.xtipoDocumento = filter[0].ddescription;
-        });
+          const info = filterTypeDoc.map(async (items: any) => {
+            const filter: any = await this.filterGoodDoc([
+              items.xtipoDocumento,
+            ]);
+            items.xtipoDocumento = filter[0]?.ddescription;
+            return items;
+          });
 
-        Promise.all(info).then(x => {
-          this.paragraphs = data.data;
-          this.totalItems = this.paragraphs.length;
-        });
-      },
-    });
+          Promise.all(info).then(x => {
+            this.paragraphs = x;
+            this.allDocumentExpedient = this.paragraphs;
+            this.totalItems = this.paragraphs.length;
+            this.loading = false;
+          });
+        },
+      });
+    }
   }
 
   filterGoodDoc(typeDocument: any[]) {
@@ -197,97 +239,96 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   getDocType(params: ListParams) {
-    this.wContentService.getDocumentTypes(params).subscribe(data => {
-      this.selectDocType = new DefaultSelect(data.data, data.count);
+    this.wContentService.getDocumentTypes(params).subscribe({
+      next: (resp: any) => {
+        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+      },
     });
   }
 
   search(): void {
     const typeDoc = this.docRequestForm.get('docType').value;
-    const delegation = this.docRequestForm.get('regDelega').value;
-    const state = this.docRequestForm.get('state').value;
-    const transf = this.docRequestForm.get('tranfe').value;
+    const typeTrasf = this.docRequestForm.get('typeTrasf').value;
     const titleDoc = this.docRequestForm.get('docTitle').value;
+    const dDocName = this.docRequestForm.get('dDocName').value;
     const sender = this.docRequestForm.get('sender').value;
-    const author = this.docRequestForm.get('dDocAuthor').value;
+    const author = this.docRequestForm.get('author').value;
     const contributor = this.docRequestForm.get('contributor').value;
     const noOfice = this.docRequestForm.get('noOfice').value;
     const senderCharge = this.docRequestForm.get('senderCharge').value;
     const comment = this.docRequestForm.get('comment').value;
     const responsible = this.docRequestForm.get('responsible').value;
+    const noRequest = this.docRequestForm.get('noRequest').value;
 
+    if (!noRequest) {
+      this.onLoadToast(
+        'warning',
+        'Debes asociar un expediente a la solicitud',
+        ''
+      );
+    }
+    if (
+      noRequest &&
+      !typeDoc &&
+      !titleDoc &&
+      !typeTrasf &&
+      !dDocName &&
+      !sender &&
+      !author &&
+      !contributor &&
+      !noOfice &&
+      !senderCharge &&
+      !comment &&
+      !responsible
+    ) {
+      this.getRequestData();
+    }
     //filtrando por el tipo de documento//
     if (typeDoc) {
       this.loading = true;
-      const filter = this.paragraphs.filter(item => {
+      const filter = this.allDocumentExpedient.filter(item => {
         if (item.xtipoDocumento == typeDoc) return item;
       });
 
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.paragraphs = filter;
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
       }
     }
 
-    //Filtrando por la delegación regional//
-    if (delegation && state == null) {
+    if (dDocName) {
       this.loading = true;
-      const filter = this.paragraphs.filter(item => {
-        if (item.xdelegacionRegional == delegation) return item;
+      const filter = this.allDocumentExpedient.filter(item => {
+        if (item.dDocName == dDocName) return item;
       });
 
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.paragraphs = filter;
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
       }
     }
 
-    //Filtrando por estado
-    if (state && delegation && transf == null) {
+    if (typeTrasf) {
       this.loading = true;
       const filter = this.paragraphs.filter(item => {
-        if (item.xestado == state && item.xdelegacionRegional == delegation)
-          return item;
+        if (item.xtipoTransferencia == typeTrasf) return item;
       });
 
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
-      } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
-        this.totalItems = this.paragraphs.length;
-        this.loading = false;
-      }
-    }
-
-    //Filtrando por transferente//
-    if (transf && state && delegation) {
-      this.loading = true;
-      const filter = this.paragraphs.filter(item => {
-        if (
-          item.xestado == state &&
-          item.xdelegacionRegional == delegation &&
-          item.xidTransferente == transf
-        )
-          return item;
-      });
-
-      if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
-        this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -303,8 +344,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -320,8 +361,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -331,14 +372,14 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     if (author) {
       this.loading = true;
       const filter = this.paragraphs.filter(item => {
-        if (item.ddocTitle == author) return item;
+        if (item.dDocAuthor == author) return item;
       });
 
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -354,8 +395,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -371,8 +412,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -388,8 +429,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -405,8 +446,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -422,8 +463,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       if (filter.length == 0) {
         this.onLoadToast('warning', 'No se encontraron registros', '');
         this.loading = false;
+        this.paragraphs = filter;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -440,8 +481,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     this.openModalInformation(data, 'detail');
   }
 
-  openDoc(docName: string): void {
-    this.wContentService.obtainFile(docName).subscribe(data => {
+  openDoc(data: any): void {
+    this.wContentService.obtainFile(data.dDocName).subscribe(data => {
       let blob = this.dataURItoBlob(data);
       let file = new Blob([blob], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
@@ -480,18 +521,23 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   openNewDocument() {
-    const idrequest = this.idRequest;
+    const idRequest = this.idRequest;
     let typeDoc = 'doc-expedient';
     const idExpedient = this.idExpedient;
-    //console.log(this.typeDoc);
 
     let config: ModalOptions = {
       initialState: {
-        idrequest,
+        idRequest,
         idExpedient,
         typeDoc,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) {
+            this.formLoading = true;
+            setTimeout(() => {
+              this.getData();
+              this.formLoading = false;
+            }, 7000);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -525,47 +571,13 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     });
   }
 
-  delegationSelect(delegation: IDelegation) {
-    this.delegationId = delegation.id;
-    this.getState(new ListParams());
-  }
-
-  getState(params: ListParams) {
-    params['filter.regionalDelegation'] = this.delegationId;
-    this.stateService.getAll(params).subscribe(data => {
-      const filterStates = data.data.filter(_states => {
-        return _states.stateCode;
-      });
-
-      const states = filterStates.map(items => {
-        return items.stateCode;
-      });
-      this.selectState = new DefaultSelect(states, data.count);
-    });
-  }
-
-  stateSelect(state: IStateOfRepublic) {
-    this.stateId = state.id;
-    this.getTransfe(new ListParams());
-  }
-
-  getTransfe(params: ListParams) {
-    this.transferentService.getByIdState(this.stateId).subscribe({
-      next: data => {
-        console.log('d', data);
-        this.selectTransfe = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {},
-    });
-  }
-
   setTitle(value: string) {
     switch (value) {
       case 'doc-request':
         this.title = 'Solicitudes';
         break;
       case 'doc-expedient':
-        this.title = 'Expedientes';
+        this.title = 'Expediente';
         break;
       case 'request-expedient':
         this.title = '';

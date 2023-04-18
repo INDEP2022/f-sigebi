@@ -1,13 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 import {
   EMAIL_PATTERN,
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -20,19 +28,30 @@ import { AffairService } from '../../../../../../core/services/catalogs/affair.s
   templateUrl: './request-record-tab.component.html',
   styles: [],
 })
-export class RequestRecordTabComponent extends BasePage implements OnInit {
+export class RequestRecordTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() requestForm: ModelForm<IRequest>;
+  requiredFieldText: 'Campo requerido';
+  submitted = false;
   bsReceptionValue = new Date();
   bsPaperValue: any;
   bsPriorityDate: any;
+  bsligDate: any;
+  bsverifiyDate: any;
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
   selectMinPub = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
+  transf: boolean = false;
   priority: boolean = false;
   priorityString: string = 'N';
   transferenceNumber: number = 0;
+  formLoading: boolean = false;
+
+  paperDateLabel: any = '';
 
   constructor(
     public fb: FormBuilder,
@@ -43,50 +62,72 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   ) {
     super();
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe({
+      next: resp => {},
+    });
+  }
 
   ngOnInit(): void {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
+
     //this.prepareForm();
-    this.requestForm.controls['affair'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['affair'].value != null) {
-        this.getAffair(this.requestForm.controls['affair'].value);
-      }
+    if (this.requestForm.controls['paperDate'].value != null) {
+      const paperDate = this.requestForm.controls['paperDate'].value;
+      this.bsPaperValue = new Date(paperDate);
+    }
 
-      if (this.requestForm.controls['urgentPriority'].value) {
-        //establece el campo urgente
-        this.priorityString = this.requestForm.controls['urgentPriority'].value;
+    // if (this.requestForm.controls['receptionDate'].value != null) {
+    //    this.bsPaperValue = new Date();
+    // }
 
-        this.priority =
-          this.requestForm.controls['urgentPriority'].value === 'Y'
-            ? true
-            : false;
-        //this.requestForm.controls['urgentPriority'].setValue(this.priority);
-      }
+    //establecer el asunto
+    if (this.requestForm.controls['affair'].value != null) {
+      this.getAffair(this.requestForm.controls['affair'].value);
+    }
 
-      //establece el campo fecha de oficio
-      if (this.requestForm.controls['paperDate'].value != null) {
-        let date = new Date(this.requestForm.controls['paperDate'].value);
-        this.bsPaperValue = date;
-        //this.requestForm.controls['paperDate'].setValue(date.toISOString());
-      }
+    //establece el campo fecha de oficio
+    if (this.requestForm.controls['urgentPriority'].value) {
+      //establece el campo urgente
+      this.priorityString = this.requestForm.controls['urgentPriority'].value;
 
-      //estable el campo para preguntar en la vista si es del tipo 1 o 3
-      if (this.requestForm.controls['transferenceId'].value != null) {
-        this.transferenceNumber = Number(
-          this.requestForm.controls['transferenceId'].value
-        );
-      }
-    });
+      this.priority =
+        this.requestForm.controls['urgentPriority'].value === 'Y'
+          ? true
+          : false;
+      //this.requestForm.controls['urgentPriority'].setValue(this.priority);
+    }
 
+    //estable el campo para preguntar en la vista si es del tipo 1 o 3
+    if (this.requestForm.controls['transferenceId'].value != null) {
+      this.transferenceNumber = Number(
+        this.requestForm.controls['transferenceId'].value
+      );
+      console.log(this.transferenceNumber);
+    }
+
+    if (this.requestForm.controls['urgentPriority'].value === 'Y') {
+      const priDate = this.requestForm.controls['priorityDate'].value;
+      this.bsPriorityDate = new Date(priDate);
+    }
+
+    // if (this.requestForm.controls['fileLeagueDate'].value != null) {
+    //   const ligDate = this.requestForm.controls['fileLeagueDate'].value;
+    //   this.bsligDate = new Date(ligDate);
+    // }
+    // if (this.requestForm.controls['verificationDateCump'].value != null) {
+    //   const priDate = this.requestForm.controls['verificationDateCump'].value;
+    //   this.bsverifiyDate = new Date(priDate);
+    // }
     //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
-    this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
-      if (this.requestForm.controls['priorityDate'].value !== null) {
-        const date = new Date(this.requestForm.controls['priorityDate'].value);
-        this.bsPriorityDate = date;
-      }
-    });
+    // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
+    //   if (this.requestForm.controls['priorityDate'].value !== null) {
+    //     const date = new Date(this.requestForm.controls['priorityDate'].value);
+    //     this.bsPriorityDate = date;
+    //   }
+    // });
   }
   prepareForm() {
     //formulario de solicitudes
@@ -106,7 +147,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       priorityDate: [null],
       originInfo: [null],
       receptionDate: [null],
-      paperDate: [null, [Validators.required]],
+      paperDate: [null, [Validators.required]], //requerido
       typeRecord: [null],
       publicMinistry: [
         null,
@@ -154,15 +195,22 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      transferenceFile: [null],
-      previousInquiry: [null],
+      transferenceFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       circumstantialRecord: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       lawsuit: [
         null,
@@ -172,14 +220,11 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
-      protectNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
+      protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
-    this.requestForm.updateValueAndValidity();
+    // this.requestForm.updateValueAndValidity();
   }
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
@@ -191,6 +236,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   }
 
   getTypeExpedient(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
     params['filter.name'] = '$eq:Tipo Expediente';
     params.limit = 20;
     this.genericsService.getAll(params).subscribe((data: any) => {
@@ -199,6 +245,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   }
 
   getOriginInfo(params?: ListParams) {
+    params['sortBy'] = 'description:ASC';
     params['filter.name'] = '$eq:Procedencia';
     params.limit = 20;
     this.genericsService.getAll(params).subscribe((data: any) => {
@@ -207,13 +254,14 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   }
 
   getAffair(id: number) {
-    this.affairService.getById(id).subscribe({
-      next: data => {
-        this.affairName = data.description;
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.affairService.getAll(params).subscribe({
+      next: ({ data }) => {
+        this.affairName = data[0].description;
       },
       error: error => {
         this.affairName = '';
-        console.log(error.error.massage);
       },
     });
   }
@@ -229,13 +277,37 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       this.requestForm.controls['paperDate'].setValue(d1);
     }
   }
+  changeVerEvent(event: Date) {
+    this.bsverifiyDate = event ? event : this.bsverifiyDate;
 
+    if (this.bsverifiyDate) {
+      //TODO: VERIFICAR LA FECHA
+      let date = new Date(this.bsverifiyDate);
+      var dateIso = date.toISOString();
+      const ver = this.bsverifiyDate.toISOString();
+      this.requestForm.controls['verificationDateCump'].setValue(ver);
+    }
+  }
+
+  changeLigEvent(event: Date) {
+    this.bsligDate = event ? event : this.bsligDate;
+
+    if (this.bsligDate) {
+      //TODO: VERIFICAR LA FECHA
+      let date = new Date(this.bsligDate);
+      var dateIso = date.toISOString();
+      const lig = this.bsligDate.toISOString();
+      this.requestForm.controls['fileLeagueDate'].setValue(lig);
+    }
+  }
   changePriorityDateEvent(event: Date) {
     this.bsPriorityDate = event ? event : this.bsPriorityDate;
 
     if (this.bsPriorityDate) {
-      let date = this.bsPriorityDate.toISOString();
-      this.requestForm.controls['priorityDate'].setValue(date);
+      let date = new Date(this.bsPriorityDate);
+      var dateIso = date.toISOString();
+      const f3 = this.bsPriorityDate.toISOString();
+      this.requestForm.controls['priorityDate'].setValue(f3);
     }
   }
 
@@ -251,17 +323,19 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
 
   async confirm() {
     this.loading = true;
+    this.submitted = true;
+    // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
     const request = this.requestForm.getRawValue() as IRequest;
-
+    this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
       this.message(
         'success',
         'Guardado',
-        'Se guardo la solicitud correctamente'
+        'Se guardó la solicitud correctamente'
       );
     } else {
-      this.message('error', 'Error', 'No se guardo la solicitud!');
+      this.message('error', 'Error', '¡No se guardó la solicitud!');
     }
   }
 
@@ -274,18 +348,19 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
           }
           if (resp.statusCode != null) {
             resolve(false);
+            this.message('error', 'Error', `¡No se guardó la solicitud!.`);
           }
-
+          this.formLoading = false;
           this.loading = false;
         },
         error: error => {
           this.loading = false;
+          this.formLoading = false;
           this.message(
             'error',
             'Error',
-            `No se guardo la solicitud!. ${error.error.message}`
+            `¡No se guardó la solicitud!. ${error.error.message}`
           );
-          console.log(error);
           reject(false);
         },
       });
@@ -294,5 +369,11 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+  requiredFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
+    });
+    this.requestForm.updateValueAndValidity();
   }
 }

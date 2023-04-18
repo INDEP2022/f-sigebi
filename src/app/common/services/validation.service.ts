@@ -17,7 +17,7 @@ export class ValidationService {
   handleError(control: AbstractControl | null): string {
     let errorCode: string;
     let meta: any;
-    let msg: string = 'El campo es invalido';
+    let msg: string = 'El campo es inválido';
     if (control) {
       if (control.errors) {
         errorCode = Object.keys(control.errors)[0];

@@ -1,4 +1,4 @@
-<app-modal>
+<<app-modal>
   <div header>
     <h5 class="modal-title">{{ title }}</h5>
   </div>
@@ -6,7 +6,7 @@
     <form class="form-material" [formGroup]="newDocForm">
       <div class="row">
         <div class="col-md-12">
-          <ngx-select
+          <!--<ngx-select
             [form]="newDocForm"
             (change)="typeDocumentSelect($event)"
             control="docType"
@@ -14,7 +14,30 @@
             [data]="selectTypeDoc"
             label="Tipo de Documento"
             value="ddocType"
-            bindLabel="ddescription"></ngx-select>
+            bindLabel="ddescription"></ngx-select> -->
+          <div
+            [formGroup]="newDocForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="docType"
+              [clearable]="false"
+              [items]="typesDocuments"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="ddescription"
+              bindValue="ddocType">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div [title]="item.ddescription">
+                  {{ item.ddescription }}
+                </div>
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label"
+              >Tipo de documento <span style="color: #ad4766">*</span></label
+            >
+          </div>
         </div>
       </div>
       <div class="row pt-4">
@@ -32,7 +55,7 @@
         <div class="col-md-12">
           <form-field
             [control]="newDocForm.get('docTit')"
-            label="&#42;T&iacute;tulo del Documento">
+            label="T&iacute;tulo del Documento">
             <input type="text" class="form-control" formControlName="docTit" />
           </form-field>
         </div>
@@ -71,7 +94,7 @@
         <div class="col-md-6">
           <form-field
             [control]="newDocForm.get('noOfi')"
-            label="No&#46; Oficina">
+            label="No&#46; Oficio">
             <input type="text" class="form-control" formControlName="noOfi" />
           </form-field>
         </div>

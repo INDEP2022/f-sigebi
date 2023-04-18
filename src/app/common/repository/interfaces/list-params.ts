@@ -26,6 +26,10 @@ export class FilterParams {
     }
   }
 
+  addFilter2(filter: string) {
+    this.filters.push(filter);
+  }
+
   addFilter(field: string, value: string | number, operator?: SearchFilter) {
     const filter = new DynamicFilter(field, value, operator).getParams();
     this.filters.push(filter);
@@ -76,6 +80,7 @@ export enum SearchFilter {
   IN = '$in',
   LIKE = '$ilike',
   NOT = '$not',
+  NEQ = '$neq',
   NULL = '$null',
   ILIKE = '$ilike',
   GT = '$gt',
