@@ -546,4 +546,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.form.get(field).patchValue(String(value).slice(0, limit));
     }
   }
+
+  validateDate(value: string) {
+    if (value) {
+      if (value.length >= 2) {
+        const month = Number(value.slice(0, 2));
+        if (month > 12 || month < 1) {
+          this.form.get('significantDate').setErrors({ incorrect: true });
+        }
+      }
+    }
+  }
 }
