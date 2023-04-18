@@ -19,6 +19,7 @@
           class="col-md-2">
           <input
             type="number"
+            [max-length]="11"
             (change)="expedientChange()"
             formControlName="expedient"
             class="form-control" />
@@ -30,6 +31,7 @@
           class="col-md-2">
           <input
             type="number"
+            [max-length]="15"
             (change)="folioChange()"
             formControlName="folio"
             class="form-control" />
@@ -77,7 +79,12 @@
           >
           <div class="row docs-scroll">
             <div class="col-md-12">
-              <div class="col-md-4" *ngFor="let image of files; let i = index">
+              <h6 *ngIf="noDocumentsFound || noFoliosFound">
+                No hay documentos escaneados
+              </h6>
+              <div
+                class="col-md-4 grid-square"
+                *ngFor="let image of files; let i = index">
                 <div class="w-100 m-1 img-container">
                   <div class="row">
                     <div class="col-md-12">
