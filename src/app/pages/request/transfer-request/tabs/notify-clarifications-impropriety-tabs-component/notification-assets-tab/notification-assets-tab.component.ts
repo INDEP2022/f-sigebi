@@ -17,6 +17,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodresdev } from 'src/app/core/models/ms-rejected-good/rejected-good.model';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -57,7 +58,7 @@ export class NotificationAssetsTabComponent
   notifyAssetsSelected: any[] = [];
   bsModalRef: BsModalRef;
   formLoading: boolean = false;
-  loading1 = this.loading;
+  loadingGoods = this.loading;
   loading2 = this.loading;
 
   //verificar por el estado del campo transferente si es SAT O otro
@@ -65,7 +66,7 @@ export class NotificationAssetsTabComponent
 
   rowSelected: boolean = false;
   selectedRow: any = null;
-
+  goodsReject: IGoodresdev[] = [];
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -136,7 +137,7 @@ export class NotificationAssetsTabComponent
   }
 
   getGoodsByRequest() {
-    this.loading1 = true;
+    this.loadingGoods = true;
     const params1 = new ListParams();
     params1['filter.requestId'] = `$eq:${this.idRequest}`;
     let params = {
@@ -152,9 +153,9 @@ export class NotificationAssetsTabComponent
 
         this.data.load(this.columns);
         this.data.refresh();
-        this.loading1 = false;
+        this.loadingGoods = false;
       },
-      error: error => (this.loading1 = false),
+      error: error => (this.loadingGoods = false),
     });
 
     // this.rejectedGoodService.getAll(params).subscribe({
@@ -170,12 +171,13 @@ export class NotificationAssetsTabComponent
     // });
   }
 
-  goodSelect(good: ClarificationGoodRejectNotification) {
-    console.log(good);
-    this.notificationsList = [];
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getClarificationsByGood(good.id));
+  goodSelect(data: any) {
+    this.goodsReject = data;
+    if (this.goodsReject.length == 1) {
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getClarificationsByGood(data[0].id));
+    }
   }
 
   getClarificationsByGood(id: number) {
@@ -232,12 +234,52 @@ export class NotificationAssetsTabComponent
   }
 
   selectRow(row?: any) {
-    console.log('e', row);
     this.selectedRow = row;
     this.rowSelected = true;
   }
 
-  verifyClarification() {}
+  verifyClarification() {
+    if (this.goodsReject.length < this.columns.length) {
+      this.onLoadToast(
+        'warning',
+        'Para verificar el cumplimiento se necesita tener todos los bienes seleccionados',
+        ''
+      );
+    } else {
+      const goodStatus = this.goodsReject.filter(good => {
+        return good.clarificationstatus == 'ACLARADO';
+      });
+      if (goodStatus) {
+        this.alertQuestion(
+          'warning',
+          'Confirmación',
+          'Los bines seleccionados regresaran al proceso de Verificar Cumplimiento'
+        ).then(question => {
+          console.log(question);
+          //this.redirectGoodTracker(question);
+        });
+      } else {
+        this.onLoadToast(
+          'info',
+          'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
+          ''
+        );
+        console.log(goodStatus);
+      }
+      this.goodsReject.forEach(good => {
+        console.log(good);
+        if (good.clarificationstatus == 'ACLARADO') {
+          console.log(good);
+        } else {
+          this.onLoadToast(
+            'info',
+            'De los bienes seleccionados no hay bienes aclarados para enviar a Verificar Cumplimiento',
+            ''
+          );
+        }
+      });
+    }
+  }
 
   finishClarifiImpro() {
     let message =
@@ -343,4 +385,15 @@ export class NotificationAssetsTabComponent
     };
     this.modalService.show(PrintSatAnswerComponent, config);
   }
+
+  reloadData() {
+    if (this.columns) {
+      console.log(this.columns);
+    }
+    /*this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByRequest()); */
+  }
+
+  aceptClarification() {}
 }
