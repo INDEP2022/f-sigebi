@@ -107,3 +107,16 @@ export function readFile(
 export function getUser() {
   return localStorage.getItem('username');
 }
+
+export function generateUrlOrPath(
+  microservice: string,
+  route: string,
+  isPath = false
+) {
+  const url = environment.API_URL;
+  const prefix = environment.URL_PREFIX;
+  if (isPath) {
+    return `${microservice}/${prefix}${route}`;
+  }
+  return `${url}${microservice}/${prefix}${route}`;
+}

@@ -14,8 +14,22 @@
                 <i
                   class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">N° Bien</h5>
-                <app-goods-shared (good)="selectGood($event)" [form]="form">
-                </app-goods-shared>
+                <!-- <app-goods-shared (good)="selectGood($event)" [form]="form">
+                </app-goods-shared> -->
+                <div>
+                  <ng-custom-select
+                    [limit]="4"
+                    formControlName="goodId"
+                    paramSearch="filter.description"
+                    prefixSearch="$ilike"
+                    (valueChange)="changeGood($event)"
+                    value="goodId"
+                    [path]="pathGoods">
+                    <ng-template let-item>
+                      {{ item?.description }}
+                    </ng-template>
+                  </ng-custom-select>
+                </div>
               </div>
               <ng-container *ngIf="selectedGood">
                 <div class="col-sm-12 col-md-4">
@@ -290,6 +304,7 @@
                   <form-field [control]="form.get('dateNew')" label="Fecha">
                     <ng-custom-select
                       (valueChange)="changeDeposit($event)"
+                      value="dateMotion"
                       class="form-control"
                       path="/accountmvmnt/api/v1/account-movements"
                       formControlName="dateNew">
@@ -348,10 +363,25 @@
                     </form-field>
                   </div>
                 </div>
+                <div>
+                  <div class="col-12">
+                    <form-field
+                      class="form-group"
+                      label="Descripción"
+                      [control]="form.get('description')">
+                      <textarea
+                        class="form-control"
+                        formControlName="description"></textarea>
+                    </form-field>
+                  </div>
+                </div>
                 <div class="col-sm-6 col-md-4 d-flex justify-content-center">
                   <div>
                     <div class="col-12">
-                      <input formControlName="" type="checkbox" />
+                      <input
+                        [checked]="checkedMovBan"
+                        (change)="changeGenerateMvBan($event)"
+                        type="checkbox" />
                       Genera Mov. Bancarios
                     </div>
                     <div class="col-12">

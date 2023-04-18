@@ -58,7 +58,9 @@ export class CustomSelectComponent
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
+  @Input() limit: number = 10;
   @Input() initOption: any = null;
+  @Input() delay: number = 300;
   @Input() moreParams: { [key: string]: any } = {};
   @Output() valueChange = new EventEmitter<any>();
   input$ = new Subject<string>();
@@ -120,7 +122,7 @@ export class CustomSelectComponent
     }
     const params = {
       [this.paramPageName]: this.page,
-      [this.paramLimitName]: 10,
+      [this.paramLimitName]: this.limit || 10,
       [this.paramSearch]: text,
       ...this.moreParams,
     };
@@ -162,7 +164,7 @@ export class CustomSelectComponent
     this.input$
       .pipe(
         takeUntil(this.destroy$),
-        debounceTime(200),
+        debounceTime(this.delay),
         distinctUntilChanged(),
         switchMap((text: string) => {
           if (text === null) {

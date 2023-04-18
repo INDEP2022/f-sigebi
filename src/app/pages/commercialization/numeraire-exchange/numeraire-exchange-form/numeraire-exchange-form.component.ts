@@ -2,35 +2,33 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CurrencyPipe } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-// import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, catchError, forkJoin, map, of } from 'rxjs';
+import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import {
+  generateUrlOrPath,
   getUser,
   readFile,
   showQuestion,
   showToast,
 } from 'src/app/common/helpers/helpers';
-// import { showToast } from 'src/app/common/helpers/helpers';
-import { LocalDataSource } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
 import { NUMERAIRE_COLUMNS } from './numeraire-exchange-columns';
 
 interface IFormNumeraire {
   screenKey: FormControl<string>;
-  // clasifGoodNumber: FormControl<string>;
   spentPlus: FormControl<string>;
-  // amounten: FormControl<string>;
-  // concil: FormControl<string>;
   description: FormControl<string>;
   amountevta: FormControl<string>;
   typeConv: FormControl<string>;
   spentId: FormControl<string>;
-  totalAmount: FormControl<number>;
+  // totalAmount: FormControl<number>;
   status: FormControl<string>;
   identificator: FormControl<string>;
   processExt: FormControl<string>;
@@ -52,7 +50,6 @@ interface IFormNumeraire {
 
   invoiceFile: FormControl<string>;
   deposit: FormControl<string>;
-  // commissionTaxPercent: FormControl<number>;
 }
 @Component({
   selector: 'app-numeraire-exchange-form',
@@ -86,10 +83,10 @@ export class NumeraireExchangeFormComponent extends BasePage {
     moneyNew: new FormControl(null, [Validators.required]),
     accountNew: new FormControl(null, [Validators.required]),
     dateNew: new FormControl(null, [Validators.required]),
-    spentId: new FormControl(null, [Validators.required]),
+    spentId: new FormControl(null, [Validators.required]), //TODO: por asignar
     spentPlus: new FormControl(null, [Validators.required]),
     description: new FormControl(null, [Validators.required]),
-    totalAmount: new FormControl(0, [Validators.required]),
+    // totalAmount: new FormControl(0, [Validators.required]),
     processExt: new FormControl(null, [Validators.required]),
     delegationNumber: new FormControl(null, [Validators.required]),
     subDelegationNumber: new FormControl(null, [Validators.required]),
@@ -100,24 +97,6 @@ export class NumeraireExchangeFormComponent extends BasePage {
 
     invoiceFile: new FormControl(null, [Validators.required]),
     deposit: new FormControl(null, [Validators.required]),
-    // goodId: new FormControl(null, [Validators.required]),
-    // saleTaxPercent: new FormControl(16, [Validators.required]),
-    // saleTax: new FormControl(null, [Validators.required]),
-    // commissionPercent: new FormControl(null, [Validators.required]),
-    // commission: new FormControl(null, [Validators.required]),
-    // commissionTaxPercent: new FormControl(null, [Validators.required]),
-    // commissionTax: new FormControl(null, [Validators.required]),
-    // bank: new FormControl(null, [Validators.required]),
-    // depositDate: new FormControl(null, [Validators.required]),
-    // depositReference: new FormControl(null, [
-    //   Validators.required,
-    //   Validators.pattern(STRING_PATTERN),
-    // ]),
-    // depositAmount: new FormControl(null, [Validators.required]),
-    // conversionType: new FormControl(null, [Validators.required]),
-    // expenses: new FormControl(null, [Validators.required]),
-    // ckk_movban: new FormControl(null),
-    // current: new FormControl(null),
   });
 
   fileForm: FormGroup = new FormGroup({
@@ -142,6 +121,8 @@ export class NumeraireExchangeFormComponent extends BasePage {
   formHelpcommissionPercent = new FormControl(null);
   formHelpcommissionTaxPercent = new FormControl(null);
 
+  pathGoods = generateUrlOrPath(GoodEndpoints.Good, GoodEndpoints.Good, true);
+
   conversionTypes = [
     {
       value: 'CBD',
@@ -165,28 +146,119 @@ export class NumeraireExchangeFormComponent extends BasePage {
     },
   ];
 
+  readonly NAME_CURRENT_FORM = 'FACTADBCAMBIONUME';
+
   constructor(
     private excelService: ExcelService,
-    private numeraryService: NumeraryService
+    private numeraryService: NumeraryService,
+    private statusScreenService: ScreenStatusService
   ) {
     super();
   }
 
-  selectGood(event: any) {
+  getDataForTableExpenses(): { spentId: any[]; spentImport: any[] } {
+    const expense = this.tableExpense.getExpense();
+    let convertExpense: { spentId: any[]; spentImport: any[] } = {
+      spentId: [],
+      spentImport: [],
+    };
+    expense.forEach(element => {
+      convertExpense.spentId.push({
+        element: element.id,
+      });
+      convertExpense.spentImport.push({
+        element: element.import,
+      });
+    });
+    return convertExpense;
+  }
+
+  changeGood(event: any) {
     this.selectedGood = event;
-    // this.form.controls['goodId'].setValue(event.id);
-    this.form.controls['status'].setValue(event.status);
-    this.form.controls['identificator'].setValue(event.identificator);
-    this.form.controls['processExt'].setValue(event.extDomProcess);
+    this.form.controls['status'].setValue(event?.status || null);
+    this.form.controls['identificator'].setValue(event?.identificator || null);
+    this.form.controls['processExt'].setValue(event?.extDomProcess || null);
     this.form.controls['delegationNumber'].setValue(
       event?.delegationNumber?.id
     );
     this.form.controls['subDelegationNumber'].setValue(
-      event?.subDelegationNumber?.dekegationNumber
+      event?.subDelegationNumber?.id
     );
-    this.form.controls['flier'].setValue(event?.flyerNumber);
-    this.form.controls['fileNumber'].setValue(event?.expediente?.id);
-    this.form.controls['expAssociated'].setValue(event?.associatedFileNumber);
+    this.form.controls['flier'].setValue(event?.flyerNumber || null);
+    this.form.controls['fileNumber'].setValue(event?.expediente?.id || null);
+    this.form.controls['expAssociated'].setValue(
+      event?.associatedFileNumber || null
+    );
+    if (event?.goodId) {
+      this.validateGood(event.goodId);
+    }
+  }
+
+  validateGood(good: number) {
+    const validate1 = this.statusScreenService
+      .getStatus({
+        whereIn: true,
+        screen: this.NAME_CURRENT_FORM,
+        count: true,
+        good,
+      })
+      .pipe(
+        map((res: any) => {
+          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            try {
+              return { isAvailable: Boolean(parseInt(res.data[0].count)) };
+            } catch (error) {
+              return { isAvailable: false };
+            }
+          }
+          return { isAvailable: false };
+        }),
+        catchError(() => {
+          return of({ isAvailable: false });
+        })
+      );
+    const validate2 = this.statusScreenService
+      .getStatus({
+        whereIn: true,
+        good,
+        count: false,
+        screen: this.NAME_CURRENT_FORM,
+      })
+      .pipe(
+        map((res: any) => {
+          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            return { isValidNumerary: true };
+          }
+          return { isValidNumerary: false };
+        }),
+        catchError(() => {
+          return of({ isValidNumerary: false });
+        })
+      );
+    forkJoin([validate1, validate2]).subscribe({
+      next: (res: any[]) => {
+        const isAvailable = res[0].isAvailable;
+        const isValidNumerary = res[1].isValidNumerary;
+        console.log({ isAvailable, isValidNumerary });
+        if (
+          (isValidNumerary && isAvailable) ||
+          (isValidNumerary && !isAvailable)
+        ) {
+          showToast({
+            text: 'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso',
+          });
+        }
+        if (!isValidNumerary && !isAvailable) {
+          showToast({
+            text: 'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas',
+            icon: 'warning',
+          });
+        }
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   getFile(event: Event) {
@@ -244,33 +316,13 @@ export class NumeraireExchangeFormComponent extends BasePage {
   }
 
   saveInServer(): void {
-    if (this.sourcesMassive.count() > 0) {
-      showQuestion({
-        text: '¿Desea guardar los registros de manera masiva?',
-        confirmButtonText: 'Si',
-        cancelButtonText: 'No',
-      }).then(result => {
-        if (result.isConfirmed) {
-          this.saveInSerServerMassive();
-          return;
-        }
-      });
-      return;
-    }
-
-    const { goodId, saleTax, commission, commissionTax } = this.form.value;
-    if (!goodId) {
-    }
     this.validateForm().then(isValid => {
+      console.log(isValid);
+      console.log(this.form.value);
       if (!isValid) {
         return;
       }
-      this.saveNumeraireExchange();
     });
-  }
-
-  showWarning(text: string): void {
-    showToast({ icon: 'warning', text });
   }
 
   saveInSerServerMassive(): void {}
@@ -287,38 +339,17 @@ export class NumeraireExchangeFormComponent extends BasePage {
     return expense.reduce((a, b) => a + b.import, 0);
   }
 
-  getImport() {
-    const { amountevta, saleTax, commission, commissionTax } = this.form.value;
-    const sumExpense = this.getExpensesSum();
-    const totalImport = amountevta || 0 + saleTax || 0;
-    const totalExpense =
-      sumExpense + commission || 0 + commissionTax || 0 + saleTax || 0;
-    const subTotalImport =
-      totalImport - (commission || 0) - (commissionTax || 0) - sumExpense;
-
-    let importec;
-    if (Math.trunc(totalImport) !== totalImport) {
-      importec = totalImport.toFixed(2).replace(/\.?0+$/, '');
-    } else {
-      importec = totalImport.toString();
-    }
-    if (Math.trunc(subTotalImport) !== subTotalImport) {
-      importec = subTotalImport.toFixed(2).replace(/\.?0+$/, '');
-    } else {
-      importec = subTotalImport.toString();
-    }
-  }
-
+  checkedMovBan = false;
   validateForm(): Promise<boolean> {
-    const { typeConv, goodId, bank, ckk_movban, amountevta } = this.form.value;
+    const { typeConv, goodId, bankNew, amountevta } = this.form.value;
     const message: string[] = [];
-    if (goodId) {
+    if (!goodId) {
       message.push(
         'Debe especificar el bien que se quiere cambiar a numerario'
       );
     }
 
-    if (ckk_movban && !bank) {
+    if (this.checkedMovBan && !bankNew) {
       message.push('Debe especificar el banco');
     }
 
@@ -340,6 +371,8 @@ export class NumeraireExchangeFormComponent extends BasePage {
       return showQuestion({
         title: 'Confirmación',
         text: 'El nuevo bien se generara con un precio de venta de 1.\n ¿Seguro que desea cambiar el bien a numerario?',
+        confirmButtonText: 'Si, continuar',
+        cancelButtonText: 'No, cancelar',
       }).then(result => {
         if (result.isConfirmed) {
           this.form.controls['amountevta'].setValue(1);
@@ -352,6 +385,8 @@ export class NumeraireExchangeFormComponent extends BasePage {
     return showQuestion({
       title: 'Confirmación',
       text: '¿Seguro que desea cambiar el bien a numerario?',
+      confirmButtonText: 'Si, continuar',
+      cancelButtonText: 'No, cancelar',
     }).then(result => {
       if (result.isConfirmed) {
         return Promise.resolve(true);
@@ -361,14 +396,12 @@ export class NumeraireExchangeFormComponent extends BasePage {
   }
 
   changeDeposit(event: any): void {
-    this.form.controls['invoiceFile'].setValue(event.InvoiceFile);
-    this.form.controls['deposit'].setValue(event.deposit);
+    this.form.controls['invoiceFile'].setValue(event?.InvoiceFile || null);
+    this.form.controls['deposit'].setValue(event?.deposit || null);
+  }
+
+  changeGenerateMvBan(event: any): void {
+    console.log(event);
+    this.checkedMovBan = event.target.checked;
   }
 }
-
-// SELECT ban.cve_banco, ban.nombre,
-//        cue.no_cuenta, cue.cve_cuenta, cve_moneda
-// FROM   cuentas_bancarias cue, cat_bancos ban
-// WHERE  cue.cve_banco = ban.cve_banco
-// AND    cue.tipo_cuenta = 'CONCENTRADORA'
-// ORDER BY ban.nombre
