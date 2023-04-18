@@ -333,7 +333,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
-    let message = '¿Está seguro a enviar la información a firmar?';
+    let message = '¿Está seguro de enviar la información a firmar?';
     this.openMessage(message);
   }
 
@@ -409,7 +409,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'success',
               'Documento Guardado',
-              'El documento guardó correctamente'
+              'El documento se guardó correctamente'
             );
 
             this.close();

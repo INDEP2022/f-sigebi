@@ -6,6 +6,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { Example } from 'src/app/core/models/catalogs/example';
 
@@ -15,16 +16,16 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import { DatePipe } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
-import {
-  IDescriptionByNoGoodBody,
-  IFromGoodsAndExpedientsBody,
-} from 'src/app/core/models/good/good.model';
+import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
+import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
+  CURP_PATTERN,
   KEYGENERATION_PATTERN,
   PHONE_PATTERN,
-  RFCCURP_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -54,9 +55,23 @@ export class AppointmentsComponent
   };
   public good: IGood;
   noBien: number = null;
+  depositaryAppointment: IAppointmentDepositary;
+  // Loadings
+  loadingGood: boolean = false;
+  loadingAppointment: boolean = false;
+  // Selects
+  delegations = new DefaultSelect();
+  delegationSelectValue: string = '';
+  locality = new DefaultSelect();
+  localitySelectValue: string = '';
+  state = new DefaultSelect();
+  stateSelectValue: string = '';
+  postalCode = new DefaultSelect();
+  postalCodeSelectValue: string = '';
 
   constructor(
     private fb: FormBuilder,
+    private datePipe: DatePipe,
     private exampleService: ExampleService,
     private appointmentsService: AppointmentsService
   ) {
@@ -89,20 +104,47 @@ export class AppointmentsComponent
 
       depositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
       representante: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      calle: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      noExterno: '', //*
-      noInterno: '', //*
-      colonia: '', //*
-      delegacionMunicipio: '', //*
-      codigoPostal: '', //*
-      entidadFederativa: '', //*
-      telefono: ['', [Validators.pattern(PHONE_PATTERN)]], //*
-      rfc: ['', [Validators.pattern(RFCCURP_PATTERN)]], //*
-      curp: ['', [Validators.pattern(RFCCURP_PATTERN)]], //*
-      tipoPersona: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      tipoPersona2: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      giro: ['', [Validators.pattern(STRING_PATTERN)]],
-      referencia: ['', [Validators.pattern(STRING_PATTERN)]],
+      calle: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      noExterno: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      noInterno: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      colonia: { value: null, disabled: false }, //*
+      delegacionMunicipio: { value: null, disabled: false }, //*
+      codigoPostal: { value: null, disabled: false }, //*
+      entidadFederativa: { value: null, disabled: false }, //*
+      telefono: [
+        { value: '', disabled: false },
+        [Validators.pattern(PHONE_PATTERN)],
+      ], //*
+      rfc: [{ value: '', disabled: false }, [Validators.pattern(RFC_PATTERN)]], //*
+      curp: [
+        { value: '', disabled: false },
+        [Validators.pattern(CURP_PATTERN)],
+      ], //*
+      tipoPersona: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      tipoPersona2: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      giro: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      referencia: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
 
       remocion: '',
       fecha: '',
@@ -289,6 +331,7 @@ export class AppointmentsComponent
    */
   async validGoodNumberInDepositaryAppointment() {
     if (this.form.get('noBien').valid) {
+      this.loadingAppointment = true;
       this.noBien = this.form.get('noBien').value;
       const params: ListParams = {
         page: this.params.getValue().page,
@@ -303,13 +346,19 @@ export class AppointmentsComponent
         .getGoodAppointmentDepositaryByNoGood(params)
         .subscribe({
           next: res => {
+            this.loadingAppointment = false;
             console.log(res);
-            if (res.count == 0) {
-              this.globalVars.noExiste = 0;
-              this.getFromGoodsAndExpedients();
+            this.depositaryAppointment = res.data[0];
+            this.setDataDepositary(); // Set data depositary
+            if (this.depositaryAppointment.personNumber) {
+              if (this.depositaryAppointment.personNumber.id) {
+                this.setDataPerson(); // Set data Person
+              }
             }
+            this.getFromGoodsAndExpedients(true); // Get data good
           },
           error: err => {
+            this.loadingAppointment = false;
             console.log(err);
             if (err.status == 400) {
               this.globalVars.noExiste = 0;
@@ -328,24 +377,136 @@ export class AppointmentsComponent
     }
   }
 
+  validPostGetDepositary() {}
+
+  setDataDepositary() {
+    this.form
+      .get('depositaria')
+      .setValue(this.depositaryAppointment.responsible);
+    this.form
+      .get('representanteSAE')
+      .setValue(this.depositaryAppointment.seraRepresentative);
+    this.form.get('referencia').setValue(this.depositaryAppointment.reference);
+    this.form
+      .get('tipoNombramiento')
+      .setValue(this.depositaryAppointment.typeNameKey);
+    this.form
+      .get('tipoDepositaria')
+      .setValue(this.depositaryAppointment.depositaryType);
+  }
+
+  setDataPerson() {
+    this.form
+      .get('calle')
+      .setValue(this.depositaryAppointment.personNumber.calle);
+    this.form
+      .get('noExterno')
+      .setValue(this.depositaryAppointment.personNumber.no_exterior);
+    this.form
+      .get('noInterno')
+      .setValue(this.depositaryAppointment.personNumber.no_interior);
+    // this.form
+    //   .get('colonia')
+    //   .setValue(this.depositaryAppointment.personNumber.colonia);
+    // this.form
+    //   .get('delegacion_municipio')
+    //   .setValue(this.depositaryAppointment.personNumber.deleg_munic);
+    this.form
+      .get('codigoPostal')
+      .setValue(this.depositaryAppointment.personNumber.codigo_postal);
+    // this.form
+    //   .get('entidadFederativa')
+    //   .setValue(this.depositaryAppointment.personNumber.cve_entfed);
+    this.form
+      .get('telefono')
+      .setValue(this.depositaryAppointment.personNumber.telefono);
+    this.form.get('rfc').setValue(this.depositaryAppointment.personNumber.rfc);
+    this.form
+      .get('curp')
+      .setValue(this.depositaryAppointment.personNumber.curp);
+    this.form
+      .get('giro')
+      .setValue(this.depositaryAppointment.personNumber.cve_giro);
+    this.form
+      .get('tipoPersona')
+      .setValue(
+        this.appointmentsService.getPersonType(
+          this.depositaryAppointment.personNumber.tipo_persona
+        )
+      );
+    this.form
+      .get('tipoPersona2')
+      .setValue(
+        this.appointmentsService.getResponsibleType(
+          this.depositaryAppointment.personNumber.tipo_responsable
+        )
+      );
+  }
+
+  setGoodData() {
+    this.form.get('descriptionGood').setValue(this.good.description);
+    if (this.good.expediente) {
+      if (this.good.expediente.id) {
+        this.form.get('causaPenal').setValue(this.good.expediente.criminalCase);
+        this.form.get('noExpedient').setValue(this.good.expediente.id);
+        this.form
+          .get('averiguacionPrevia')
+          .setValue(this.good.expediente.preliminaryInquiry);
+        let dateAgree: any;
+        if (this.good.expediente.dateAgreementAssurance) {
+          dateAgree = this.datePipe.transform(
+            this.good.expediente.dateAgreementAssurance,
+            'dd-MM-yyyy'
+          );
+        }
+        let dateReception: any;
+        if (this.good.expediente.receptionDate) {
+          dateReception = this.datePipe.transform(
+            this.good.expediente.receptionDate,
+            'dd-MM-yyyy'
+          );
+        }
+        this.form.get('fechaRecepcion').setValue(dateReception);
+        let dateConfiscate: any;
+        if (this.good.expediente.confiscateDictamineDate) {
+          dateConfiscate = this.datePipe.transform(
+            this.good.expediente.confiscateDictamineDate,
+            'dd-MM-yyyy'
+          );
+        }
+        this.form.get('fechaDecomiso').setValue(dateConfiscate);
+      }
+    }
+  }
+
   /**
-   * INCIDENCIA 538 -- PENDIENTE -- 03/16/2023
+   * INCIDENCIA 538 -- CERRADA --- SE CAMBIA OBTENIENDO EL BIEN Y VALIDAR CON EL EXPEDIENTE QUE RETORNA
    * Obtener los datos del bien de acuerdo al status DEP
    */
-  async getFromGoodsAndExpedients() {
-    let paramsGoodExpedient: IFromGoodsAndExpedientsBody = {
-      goodNumber: this.noBien,
-      page: 1,
-      limit: 10,
-    };
+  async getFromGoodsAndExpedients(onlyGood: boolean = false) {
+    // let paramsGoodExpedient: IFromGoodsAndExpedientsBody = {
+    //   goodNumber: this.noBien,
+    //   page: 1,
+    //   limit: 10,
+    // };
+    this.loadingGood = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('goodId', this.noBien);
+    if (onlyGood == false) {
+      params.addFilter('status', 'DEP');
+    }
     await this.appointmentsService
-      .getFromGoodsAndExpedients(paramsGoodExpedient)
+      .getFromGoodsAndExpedients(params.getFilterParams())
       .subscribe({
         next: res => {
           console.log(res);
+          this.good = res.data[0]; // Set data good
+          this.setGoodData();
           this.getStatusGoodByNoGood();
         },
         error: err => {
+          this.loadingGood = false;
           console.log(err);
           this.alert(
             'warning',
@@ -368,19 +529,133 @@ export class AppointmentsComponent
       .getDescriptionGoodByNoGood(bodyRequest)
       .subscribe({
         next: res => {
+          this.loadingGood = false;
           console.log(res);
           if (res.data.length > 0) {
+            this.form.get('estatusBien').setValue(res.data[0].description);
           }
-          this.validFielddGoodNumber();
         },
         error: err => {
+          this.loadingGood = false;
           console.log(err);
           this.alertQuestion(
             'warning',
             'Descripción del Bien',
             'Error al consultar la descripción del Bien.'
           );
-          this.validFielddGoodNumber();
+          // this.validFielddGoodNumber();
+        },
+      });
+  }
+
+  /**
+   * DATA SELECT DEL COMPONENTE
+   */
+
+  getDelegationByDetail(paramsData: ListParams) {
+    console.log(this.stateSelectValue, paramsData);
+    if (!this.stateSelectValue && this.stateSelectValue != '0') {
+      return;
+    }
+    const params: any = new FilterParams();
+    params.removeAllFilters();
+    params['sortBy'] = 'municipality:ASC';
+    params.addFilter('stateKey', this.stateSelectValue);
+    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
+    console.log(params, paramsData);
+    let subscription = this.appointmentsService
+      .getDelegationsByFilter(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data.data);
+          this.delegations = new DefaultSelect(
+            data.data,
+            // data.data.map(i => {
+            //   i.description = '#' + i.id + ' -- ' + i.description;
+            //   return i;
+            // }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.delegations = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  getLocalityByDetail(paramsData: ListParams) {
+    console.log(this.stateSelectValue, paramsData, this.delegationSelectValue);
+    if (
+      !this.stateSelectValue &&
+      this.stateSelectValue != '0' &&
+      !this.delegationSelectValue &&
+      this.delegationSelectValue != '0'
+    ) {
+      return;
+    }
+    const params: any = new FilterParams();
+    params.removeAllFilters();
+    params['sortBy'] = 'township:ASC';
+    params.addFilter('municipalityKey', this.delegationSelectValue);
+    params.addFilter('stateKey', this.stateSelectValue);
+    params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
+    console.log(params, paramsData);
+    let subscription = this.appointmentsService
+      .getLocalityByFilter(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data.data);
+          this.delegations = new DefaultSelect(
+            data.data,
+            // data.data.map(i => {
+            //   i.description = '#' + i.id + ' -- ' + i.description;
+            //   return i;
+            // }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.delegations = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  getStateByDetail(paramsData: ListParams) {
+    console.log(this.stateSelectValue, paramsData);
+    if (!this.stateSelectValue && this.stateSelectValue != '0') {
+      return;
+    }
+    const params: any = new FilterParams();
+    params.removeAllFilters();
+    params['sortBy'] = 'municipality:ASC';
+    params.addFilter('stateKey', this.stateSelectValue);
+    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
+    console.log(params, paramsData);
+    let subscription = this.appointmentsService
+      .getDelegationsByFilter(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data.data);
+          this.delegations = new DefaultSelect(
+            data.data,
+            // data.data.map(i => {
+            //   i.description = '#' + i.id + ' -- ' + i.description;
+            //   return i;
+            // }),
+            data.count
+          );
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.delegations = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
         },
       });
   }

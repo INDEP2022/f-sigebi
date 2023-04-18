@@ -1,5 +1,6 @@
 import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
+import { IExpedient } from '../ms-expedient/expedient';
 
 export interface IGood {
   id?: number;
@@ -334,7 +335,7 @@ export interface IGood {
   val118?: string;
   val119?: string;
   val120?: string;
-
+  expediente?: IExpedient;
   no_almacen?: IWarehouse;
   no_boveda?: any;
   no_etiqueta?: ILabelOKey;

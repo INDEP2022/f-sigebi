@@ -18,4 +18,5 @@ export enum GoodEndpoints {
   SearchGoodByFile = 'good/searchGoodByFile',
   SearchGoodByClasif = 'good/searchGoodByClasif',
   GoodsExtensionFields = 'goods-extension-fields',
+  GoodByDepositaryGood = 'good/searchByDepositaryGood',
 }
