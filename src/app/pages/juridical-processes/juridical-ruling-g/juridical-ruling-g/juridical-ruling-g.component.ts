@@ -1,34 +1,42 @@
+// FIXME: 2
+
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
   baseMenu,
   baseMenuDepositaria,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
-import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
+import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
-import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
-import { IJuridicalRulingParams } from '../../file-data-update/interfaces/file-data-update-parameters';
-import { FileUpdateCommunicationService } from '../../file-data-update/services/file-update-communication.service';
+import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker-element';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { TempGood } from './dataTemp';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -37,23 +45,6 @@ import { FileUpdateCommunicationService } from '../../file-data-update/services/
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-interface Variables {
-  paso: string;
-  dictamen: string;
-  del_destino: string;
-  lb_tipos_divtaminacion: string;
-  tipo_dicta: string;
-  tipo_vol: string;
-  clasif2: string;
-  oficio: string;
-  tipos2: string;
-  clasif: string;
-  etiqueta: string;
-  dato: string;
-  consultas: string;
-  estatus_tramite: string;
-  desc_status_tramite: string;
-}
 
 @Component({
   selector: 'app-juridical-ruling-g',
@@ -64,23 +55,40 @@ export class JuridicalRulingGComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  params = new BehaviorSubject<ListParams>(new ListParams());
   selectedGooods: IGood[] = [];
   selectedGooodsValid: IGood[] = [];
-  goods: IGood[] = [];
-  goodsFilter: IGood[] = [];
+  goods: IGood[] = TempGood;
   goodsValid: IGood[] = [];
   documents: IDocuments[] = [];
-  variable: Variables;
-  userAccesoXArea: ISegUsers;
-  objComponent: Object = null;
+  selectedDocuments: IDocuments[] = [];
+
+  idGoodSelected = 0;
+
+  //tipos
+  types = new DefaultSelect<Partial<IGoodType>>();
+  subtypes = new DefaultSelect();
+  ssubtypes = new DefaultSelect();
+  sssubtypes = new DefaultSelect();
+
+  typeField: string = 'type';
+  subtypeField: string = 'subtype';
+  ssubtypeField: string = 'ssubtype';
+  sssubtypeField: string = 'sssubtype';
+
+  goodTypeChange = new EventEmitter<IGoodType>();
+  goodSubtypeChange = new EventEmitter<IGoodSubType>();
+  goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
+  goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
+
   data3 = [
     { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
     { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
   ];
 
-  data4 = [
-    { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
-    { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
+  data4: IDocuments[] = [
+    // { id: 'DEST', documento: 'PRIMER DOCUMENTO', fecha: '' },
+    // { id: 'DEST', documento: 'SEGUNDO DOCUMENTO', fecha: '' },
   ];
 
   settings1 = {
@@ -92,6 +100,17 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      name: {
+        title: '',
+        sort: false,
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+          this.isGoodSelected(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelect(instance),
+      },
       id: {
         title: 'No. Bien',
         type: 'number',
@@ -116,17 +135,6 @@ export class JuridicalRulingGComponent
         title: 'Proceso',
         type: 'string',
       },
-      name: {
-        title: 'Check',
-        sort: false,
-        type: 'custom',
-        showAlways: true,
-        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-          this.isGoodSelected(row),
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onGoodSelect(instance),
-      },
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -140,6 +148,17 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      name: {
+        title: '',
+        sort: false,
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+          this.isGoodSelectedValid(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelectValid(instance),
+      },
       id: {
         title: 'No. Bien',
         type: 'number',
@@ -160,24 +179,13 @@ export class JuridicalRulingGComponent
         title: 'Est',
         type: 'string',
       },
-      proceso: {
+      processStatus: {
         title: 'Proceso',
         type: 'string',
       },
       idDestino: {
         title: 'ID Destino',
         type: 'string',
-      },
-      name: {
-        title: 'Check',
-        sort: false,
-        type: 'custom',
-        showAlways: true,
-        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-          this.isGoodSelectedValid(row),
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onGoodSelectValid(instance),
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -196,7 +204,7 @@ export class JuridicalRulingGComponent
         title: '#',
         type: 'number',
       },
-      documento: {
+      descriptionDocument: {
         title: 'Documentos',
         type: 'string',
       },
@@ -217,142 +225,68 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      // checked: {
+      //   title: '',
+      //   sort: false,
+      //   type: 'custom',
+      //   showAlways: true,
+      //   valuePrepareFunction: (isSelected: boolean, row: IDocuments) =>
+      //     this.isDocumentSelectedValid(row),
+      //   renderComponent: CheckboxElementComponent,
+      //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
+      //     this.onDocsSelectValid(instance),
+      // },
       id: {
         title: '#',
         type: 'number',
       },
-      documento: {
+      descriptionDocument: {
         title: 'Documentos',
         type: 'string',
       },
-      dateRenderDecoDev: {
-        title: 'Fecha Recibido',
-        editor: {
-          type: 'custom',
-          component: DatePickerComponent,
-        },
+      // fecha: {
+      //   title: 'Fec. Recibido',
+      //   type: 'string',
+      // },
+      fecha: {
+        title: 'Fecha',
         sort: false,
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (bsValue: Date, row: IDocuments) =>
+          this.isDocumentSelectedValid(row),
+        renderComponent: DatePickerElementComponent,
+        onComponentInitFunction: (instance: DatePickerElementComponent) =>
+          this.onDocsSelectValid(instance),
       },
     },
     noDataMessage: 'No se encontrarón registros',
   };
-
-  /*   {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      id: {
-        title: '#',
-        type: 'number',
-      },
-      documento: {
-        title: 'Documentos',
-        type: 'string',
-      },
-      dateRenderDecoDev: {
-        title: 'Fecha Recibido',
-        editor: {
-          type: 'custom',
-          component: DatePickerComponent,
-        },
-        sort: false,
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  }; */
   expedientesForm: FormGroup;
   dictaminacionesForm: FormGroup;
   subtipoForm: FormGroup;
   gestionDestinoForm: FormGroup;
   public listadoDocumentos: boolean = false;
-  params = new BehaviorSubject<ListParams>(new ListParams());
   public rutaAprobado: string =
     baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
-  juridicalRulingParams: IJuridicalRulingParams;
-  origin: boolean = true;
-  aprobar: boolean = true;
   constructor(
     private fb: FormBuilder,
+    private service: GoodTypeService,
+    private goodSubtypesService: GoodSubtypeService,
+    private goodSsubtypeService: GoodSsubtypeService,
+    private goodSssubtypeService: GoodSssubtypeService,
     private readonly goodServices: GoodService,
-    private readonly fileUpdateComunicationsServices: FileUpdateCommunicationService,
-    private readonly accesoXAreaServices: UsersService,
-    private departmentService: DepartamentService,
-    private readonly dictationServices: DictationService
+    private readonly documentService: DocumentsService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: false,
-        edit: true,
-        delete: false,
-      },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      mode: '',
-      columns: {
-        id: {
-          title: '#',
-          type: 'number',
-        },
-        documento: {
-          title: 'Documentos',
-          type: 'string',
-        },
-        dateRenderDecoDev: {
-          title: 'Fecha Recibido',
-          editor: {
-            type: 'custom',
-            component: DatePickerComponent,
-          },
-          sort: false,
-        },
-      },
-    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
-    const params = {
-      expediente: 14,
-      volante: 1558180,
-      tipoVo: 'P',
-      tipoDic: 'PROCEDENCIA',
-      consulta: 'N',
-      pGestOk: 1,
-      pNoTramite: 1044141,
-    };
-    this.juridicalRulingParams = params;
-    /*  this.fileUpdateComunicationsServices.juridicalRulingParams; */
-    this.expedientesForm
-      .get('noExpediente')
-      .setValue(this.juridicalRulingParams.expediente);
-    this.expedientesForm
-      .get('tipoDictaminacion')
-      .setValue(this.juridicalRulingParams.tipoDic);
-    this.listGood(this.juridicalRulingParams.expediente);
-    this.dictaminacionesForm
-      .get('volante')
-      .setValue(this.juridicalRulingParams.volante);
-    this.dictaminacionesForm.get('fechaDictamen').setValue(new Date());
-    this.objComponent = {
-      screen: 'FACTJURDICTAMASG',
-      typeDictation: this.juridicalRulingParams.tipoDic,
-      expedientNumber: this.juridicalRulingParams.expediente,
-    };
+    this.onLoadGoodList();
+    this.onLoadDocumentsByGood();
   }
 
   prepareForm() {
@@ -367,19 +301,22 @@ export class JuridicalRulingGComponent
 
     this.dictaminacionesForm = this.fb.group({
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
-      volante: [null, [Validators.pattern(STRING_PATTERN)]],
       fechaResolucion: [null],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
-      fechaDictamen: [null],
-      fechaPPFF: [null],
       cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
-      issuingUser: [null],
     });
     this.subtipoForm = this.fb.group({
       tipoDictaminacion: [null],
-      ClassificationTypeSsubtypeOfGoods: [null],
+      type: [null, [Validators.required]],
+      subtype: [null, [Validators.required]],
+      ssubtype: [null, [Validators.required]],
+      sssubtype: [null, [Validators.required]],
+      attrib: [
+        { value: null, disabled: true },
+        Validators.pattern(NUMBERS_PATTERN),
+      ],
     });
     this.gestionDestinoForm = this.fb.group({
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -391,95 +328,6 @@ export class JuridicalRulingGComponent
   }
   btnAprobar() {
     console.log('btnAprobar');
-    const ETAPA: Date = new Date();
-    const lst_id: string = `E: ${this.juridicalRulingParams.expediente} N: ${this.juridicalRulingParams.volante}`;
-    let departament: IDepartment = null;
-    if (this.juridicalRulingParams.pGestOk === 1) {
-      if (this.gestionDestinoForm.get('estatus').value === '') {
-        this.onLoadToast(
-          'error',
-          'ERROR',
-          'No se ha definido el área de gestión.'
-        );
-      }
-    }
-    if (this.expedientesForm.get('tipoDictaminacion').value === '') {
-      this.onLoadToast('error', 'ERROR', 'No se definió el tipo_dicta.');
-    }
-    if (this.dictaminacionesForm.get('etiqueta').value !== '') {
-      let params = new FilterParams();
-      params.addFilter(
-        'id',
-        this.dictaminacionesForm.get('issuingUser').value,
-        SearchFilter.EQ
-      );
-      params.addFilter('assigned', 'S', SearchFilter.EQ);
-      this.accesoXAreaServices.getAllSegUsers(params.getParams()).subscribe({
-        next: response => {
-          this.userAccesoXArea = response.data[0];
-          departament = this.getDepartment(
-            this.userAccesoXArea.usuario.delegation1Number,
-            this.userAccesoXArea.usuario.subdelegationNumber
-          );
-          console.log('Aqui esta el departamento', departament);
-          if (departament !== null) {
-            if (departament.level === 4) {
-              /* craeteKeyOffice(); */
-            }
-          }
-        },
-        error: err => {
-          this.onLoadToast(
-            'error',
-            'ERROR',
-            'No se localizaron datos de la persona que autoriza.'
-          );
-        },
-      });
-    } else {
-      this.onLoadToast('error', 'ERROR', 'FECHA INSTRUCTORA NULA');
-    }
-
-    /////////////Armar clave oficio
-    /* craeteKeyOffice(); */
-  }
-  getDepartment(
-    delegation: string | number,
-    subdelagation: string | number,
-    departament?: string | number,
-    phaseEdo?: string | number
-  ): IDepartment {
-    let depart: IDepartment = null;
-    this.departmentService
-      .getByDelegationsSubdelegation(delegation, subdelagation)
-      .subscribe({
-        next: response => {
-          depart = response.data[0];
-        },
-        error: err => {
-          this.onLoadToast(
-            'error',
-            'ERROR',
-            'No se localizó la dependencia de la persona que autoriza.'
-          );
-          depart = null;
-        },
-      });
-    return depart;
-  }
-  craeteKeyOffice(
-    vniveld2: string | number,
-    vniveld3: string | number,
-    vniveld4: string | number,
-    v_tip_dicta: string
-  ) {
-    if (v_tip_dicta === 'RES') {
-      const keyOfi = `${vniveld2}/${vniveld3}/${vniveld4}/${v_tip_dicta}`;
-      this.dictaminacionesForm.get('cveOficio').setValue(keyOfi);
-    } else {
-      const keyOfi = `${vniveld2}/${vniveld3}/${vniveld4}`;
-      this.dictaminacionesForm.get('cveOficio').setValue(keyOfi);
-    }
   }
   btnRechazar() {
     console.log('btnRechazar');
@@ -503,7 +351,14 @@ export class JuridicalRulingGComponent
   btnSalir() {
     console.log('Salir');
     this.listadoDocumentos = false;
-    this.aprobar = false;
+    // --
+    // Sube documentos seleccionados
+    if (this.selectedDocuments.length > 0) {
+      this.documents = this.documents.concat(this.selectedDocuments);
+      this.selectedDocuments.forEach(doc => {
+        this.goods = this.goods.filter(_doc => _doc.id != doc.id);
+      });
+    }
   }
   onGoodSelect(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -545,6 +400,36 @@ export class JuridicalRulingGComponent
       );
     }
   }
+
+  /**
+   * Selected document methods
+   */
+  // onDocsSelectValid(instance: CheckboxElementComponent) {
+  //   instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+  //     next: data => this.documentSelectedChangeValid(data.row, data.toggle),
+  //   });
+  // }
+  onDocsSelectValid(instance: DatePickerElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: (data: any) =>
+        this.documentSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isDocumentSelectedValid(_doc: any) {
+    const exists = this.selectedDocuments.find(doc => doc.id == _doc.id);
+    return !exists ? false : true;
+  }
+  documentSelectedChangeValid(doc: any, selected?: string) {
+    console.log('fecha ', selected);
+    if (selected) {
+      this.selectedDocuments.push(doc);
+    } else {
+      this.selectedDocuments = this.selectedDocuments.filter(
+        _doc => _doc.id != doc.id
+      );
+    }
+  }
+
   addAll() {
     if (this.goods.length > 0) {
       this.goodsValid = this.goodsValid.concat(this.goods);
@@ -576,81 +461,190 @@ export class JuridicalRulingGComponent
     }
   }
 
-  listGood(numberFile: number | string) {
+  onSelectedRow(event: any) {
+    let obj: IGood = this.goods.find(element => element.id === event.data.id);
+    let index: number = this.goods.findIndex(elm => elm === obj);
+    console.log(index);
+  }
+
+  get type() {
+    return this.subtipoForm.get(this.typeField);
+  }
+  get subtype() {
+    return this.subtipoForm.get(this.subtypeField);
+  }
+  get ssubtype() {
+    return this.subtipoForm.get(this.ssubtypeField);
+  }
+  get sssubtype() {
+    return this.subtipoForm.get(this.sssubtypeField);
+  }
+
+  onTypesChange(type: any) {
+    this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
+    this.subtypes = new DefaultSelect();
+    this.ssubtypes = new DefaultSelect();
+    this.sssubtypes = new DefaultSelect();
+    this.subtipoForm.updateValueAndValidity();
+    this.goodTypeChange.emit(type);
+  }
+
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field.setValue(null);
+    });
+    this.subtipoForm.updateValueAndValidity();
+  }
+
+  //Métodos para autocompletar los tipos
+  getTypes(params: ListParams) {
+    this.service.getAll(params).subscribe(
+      res => {
+        this.types = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      }
+    );
+    /* this.service.search(params).subscribe(
+      data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          //error = err.message;
+        }
+
+        //this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    ); */
+  }
+
+  getSubtypes(params: ListParams) {
+    this.goodSubtypesService
+      .getAll({ type: this.type.value, ...params })
+      .subscribe(data => {
+        console.log(data);
+        this.subtypes = new DefaultSelect(data.data, data.count);
+      });
+  }
+
+  onSubtypesChange(subtype: any) {
+    if (!this.type.value) {
+      this.types = new DefaultSelect([subtype.idTypeGood], 1);
+      this.type.setValue(subtype.idTypeGood.id);
+    }
+    this.resetFields([this.ssubtype, this.sssubtype]);
+    this.ssubtypes = new DefaultSelect();
+    this.sssubtypes = new DefaultSelect();
+    this.goodSubtypeChange.emit(subtype);
+  }
+
+  getSsubtypes(params: ListParams) {
+    this.goodSsubtypeService
+      .getAll({
+        type: this.type.value,
+        subtype: this.subtype.value,
+        ...params,
+      })
+      .subscribe(data => {
+        this.ssubtypes = new DefaultSelect(data.data, data.count);
+      });
+  }
+
+  onSsubtypesChange(ssubtype: any) {
+    if (!this.type.value || !this.subtype.value) {
+      this.types = new DefaultSelect([ssubtype.noType], 1);
+      this.subtypes = new DefaultSelect([ssubtype.noSubType], 1);
+      this.type.setValue(ssubtype.noType.id);
+      this.subtype.setValue(ssubtype.noSubType.id);
+    }
+    this.resetFields([this.sssubtype]);
+    this.goodSsubtypeChange.emit(ssubtype);
+  }
+  goodSssubType: IGoodSssubtype;
+  onValuesChange(goodSssubtypeChange: IGoodSssubtype): void {
+    console.log(goodSssubtypeChange);
+    this.goodSssubType = goodSssubtypeChange;
+    this.subtipoForm.controls['attrib'].setValue(
+      goodSssubtypeChange.numClasifGoods
+    );
+    this.subtipoForm.controls['id'].setValue(goodSssubtypeChange.id);
+    this.sssubtypes = new DefaultSelect();
+  }
+  getSssubtypes(params: ListParams) {
+    this.goodSssubtypeService
+      .getAll({
+        type: this.type.value,
+        subtype: this.subtype.value,
+        ssubtype: this.ssubtype.value,
+        ...params,
+      })
+      .subscribe(data => {
+        this.sssubtypes = new DefaultSelect(data.data, data.count);
+      });
+  }
+  onSssubtypesChange(sssubtype: any) {
+    if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
+      console.log(sssubtype);
+      this.types = new DefaultSelect([sssubtype.numType], 1);
+      this.subtypes = new DefaultSelect([sssubtype.numSubType], 1);
+      this.ssubtypes = new DefaultSelect([sssubtype.numSsubType], 1);
+      this.type.setValue(sssubtype.numType.id);
+      this.subtype.setValue(sssubtype.numSubType.id);
+      this.ssubtype.setValue(sssubtype.numSsubType.id);
+    }
+
+    this.goodSssubtypeChange.emit(sssubtype);
+  }
+
+  /**
+   * Listado de bienes según No. de expediente
+   */
+  onLoadGoodList() {
     this.goodServices
-      .getByExpedient(numberFile, this.params.getValue())
+      .getByExpedient(
+        this.expedientesForm.get('noExpediente').value,
+        this.params.getValue()
+      )
       .subscribe({
         next: response => {
-          console.log(response);
           this.goods = response.data;
-          this.goodsFilter = this.goods;
-          //this.validGoods(response.data);
         },
         error: err => {
           console.log(err);
-          this.onLoadToast('error', 'ERROR', err.error.message);
+          this.goods = [];
         },
       });
   }
 
-  validGoods(goods: IGood[]) {
-    goods.forEach(good => {
-      let model = {
-        screen: 'FACTJURDICTAMASG',
-        good: good.id,
-        clasifGood: good.goodClassNumber,
-        label: good.labelNumber,
-        status: good.status,
-        typeDictum: good.opinionType,
-        typeDictum2: good.opinion,
-        identificador: good.identifier,
-        processDom: good.extDomProcess,
-        type: good.type,
-        subtype: good.subTypeId,
-        val5: good.val5,
-        expedient: good.fileNumber,
-        val1: good.val1,
-        val2: good.val2,
-        val4: good.val4,
-        val6: good.val6,
-      };
-      this.dictationServices.postValidationGoodAvailable(model).subscribe({
-        next: response => {
-          console.log(response);
-          this.goods.push(good);
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast('error', 'ERROR', err.error.message);
-        },
-      });
-    });
-  }
-
-  getTypesGoods() {}
-  onSaveConfirm(event: any) {
-    console.log(event);
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
-  }
-  filterGood(event: string) {
-    console.log('Entro', event);
-    if (event === '0') {
-      if (this.goodsValid.length === 0) {
-        let newArray: IGood[] = [];
-        this.goodsFilter.forEach(elemt => {
-          if (!this.goodsValid.includes(elemt)) {
-            newArray.push(elemt);
-          }
-        });
-        this.goods = newArray;
-      }
-      console.log('No entro a Valid length');
-      this.goods = this.goodsFilter;
-    } else {
-      this.goods = this.goodsFilter.filter(
-        good => good.goodClassNumber === event
-      );
+  rowSelected(e: any) {
+    if (e) {
+      this.idGoodSelected = e.data?.id;
+      this.onLoadDocumentsByGood();
     }
+  }
+
+  onLoadDocumentsByGood() {
+    this.documentService.getByGood(this.idGoodSelected).subscribe({
+      next: response => {
+        this.data4 = response.data;
+      },
+      error: err => {
+        console.log(err);
+        this.goods = [];
+      },
+    });
   }
 }
