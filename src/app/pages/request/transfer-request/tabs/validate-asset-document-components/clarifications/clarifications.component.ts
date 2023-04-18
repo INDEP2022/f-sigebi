@@ -580,7 +580,7 @@ export class ClarificationsComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar el registro?'
+      '¿Desea eliminar el registro?'
     ).then(val => {
       if (val.isConfirmed) {
         this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
