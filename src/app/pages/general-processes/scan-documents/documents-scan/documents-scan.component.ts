@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
@@ -40,6 +40,10 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   folio: number = null;
   files: string[] = [];
   filesToDelete: string[] = [];
+  origin: string = null;
+  originFolio: string = '';
+  originFlyer: string = '';
+  requestOrigin: string = '';
   get controls() {
     return this.form.controls;
   }
@@ -48,13 +52,19 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private documentsService: DocumentsService,
     private fileBrowserService: FileBrowserService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.folio = params['folio'] ? Number(params['folio']) : null;
+        this.originFolio = params['folio'] ?? '';
+        this.originFlyer = params['volante'] ?? '';
+        this.origin = params['origin'] ?? null;
+        this.requestOrigin = params['requestOrigin'] ?? null;
+        console.log(params);
       });
     this.settings = {
       ...this.settings,
@@ -237,7 +247,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estas seguro que deceas eliminar las imagenes seleccionadas?'
+      '¿Estás seguro que deseas eliminar las imágenes seleccionadas?'
     );
 
     if (result.isConfirmed) {
@@ -313,5 +323,20 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const _params = new FilterParams();
     _params.addFilter('numberProceedings', expedient);
     this.documentsParams.next(_params);
+  }
+
+  goBack() {
+    if (this.origin == 'FGESTBUZONTRAMITE') {
+      this.router.navigate(['/pages/general-processes/work-mailbox']);
+    }
+    console.log(this.requestOrigin);
+    if (this.origin == 'FACTGENSOLICDIGIT') {
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
+        ],
+        { queryParams: { origin: this.requestOrigin } }
+      );
+    }
   }
 }
