@@ -1919,8 +1919,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
           );
           if (result.isConfirmed) {
-            this.router.navigateByUrl(
-              `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+            this.router.navigate(
+              [
+                `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+              ],
+              { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
             );
           }
         }
@@ -2310,8 +2313,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   getSolicitud() {
     if (this.selectedRow.flierNumber) {
-      this.router.navigateByUrl(
-        `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+        ],
+        { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
       );
     } else {
       this.alert(
