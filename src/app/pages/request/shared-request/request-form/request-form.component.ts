@@ -388,7 +388,18 @@ export class RequestFormComponent extends BasePage implements OnInit {
           const form = requestResult;
           const from = 'REGISTRO_SOLICITUD';
           const to = 'REGISTRO_SOLICITUD';
-          const taskResult = await this.createTaskOrderService(form, from, to);
+          const actualUser: any = this.authService.decodeToken();
+          const taskResult = await this.createTaskOrderService(
+            form,
+            from,
+            to,
+            false,
+            0,
+            actualUser.username,
+            'SOLICITUD_TRANSFERENCIA',
+            'Nueva_Solicitud',
+            'TURNAR'
+          );
           if (taskResult === true) {
             this.loadingTurn = false;
             this.msgModal(
@@ -434,11 +445,29 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(request: any, from: string, to: string) {
+  createTaskOrderService(
+    request: any,
+    from: string,
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
+  ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['type'] = 'SOLICITUD TRANSFERENCIA';
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
 
       let task: any = {};
       task['id'] = 0;
