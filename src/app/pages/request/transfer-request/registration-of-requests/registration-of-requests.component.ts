@@ -98,7 +98,7 @@ export class RegistrationOfRequestsComponent
 
   question: boolean = false;
   verifyResp: boolean = false;
-  task: number = 0;
+  task: any = null;
 
   constructor(
     public fb: FormBuilder,
@@ -128,10 +128,8 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.task = Number(this.route.snapshot.paramMap.get('task'));
-    console.log(this.task);
-    const username = localStorage.getItem('username');
-    console.log(username);
+    this.task = localStorage.getItem('Task');
+    console.log('task', JSON.parse(this.task));
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
