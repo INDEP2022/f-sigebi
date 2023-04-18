@@ -49,3 +49,48 @@ export interface IChatClarifications {
   nbOrigin?: string | null;
   rejectNotificationId?: number | IClarificationGoodsReject;
 }
+
+export interface IChatClarifications2 {
+  id: string | null;
+  idEstatus: string | null;
+  userCapture: string | null;
+  areaUserCapture: string | null;
+  satKeyPaper: string | null;
+  registryNumber: string | null;
+  idClarificationType: string | null;
+  saeRequest: string | null;
+  requestDate: string | null;
+  emailWeb: string | null;
+  satClarification: string | null;
+  clarificationDate: string | null;
+  satUniqueKey: string | null;
+  satTransfererEntity: string | null;
+  referralNoteNumber: string | null;
+  xmlPaper: string | null;
+  keyClarificationPaper: string | null;
+  idClarification: string | null;
+  process: string | null;
+  idProperty: string | null;
+  paperType: string | null;
+  clarificationOrigin: string | null;
+  senderUser: string | null;
+  senderName: string | null;
+  recipientName: string | null;
+  city: string | null;
+  creationUser: string | null;
+  creationDate: string | null;
+  editionUser: string | null;
+  editionDate: string | null;
+  version: string | null;
+  idRequestIner: string | null;
+  errorMessage: string | null;
+  clarificationStatus: string | null;
+  keyUnique: string | null;
+  xmlPaperReponse: string | null;
+  messageInterconnection: string | null;
+  idClarificationNotification: string | null;
+  idPaperResponse: string | null;
+  paperDate: string | null;
+  folioClarification: string | null;
+  flowId: string | null;
+}

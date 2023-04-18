@@ -8,11 +8,17 @@ export const NOTIFY_ASSETS_COLUMNS = {
     title: 'Estatus Aclaración ',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.chatClarification.satClarification;
+    },
   },
-  satClarify: {
+  chatClarification2: {
     title: 'Aclaración SAT',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.chatClarification.satClarification;
+    },
   },
   clarificationType: {
     title: 'Tipo de Aclaración',
