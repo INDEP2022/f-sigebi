@@ -34,10 +34,15 @@ import {
   INotificationTransferentIndiciadoCityGetData,
 } from 'src/app/core/models/ms-notification/notification.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import {
+  IDocReceptionFlyersRegistrationParams,
+  IDocumentsReceptionRegisterForm,
+} from '../../flyers/documents-reception-register/interfaces/documents-reception-register-form';
 import {
   GOODS_BULK_LOAD_ACTIONS,
   GOODS_BULK_LOAD_TARGETS,
@@ -164,6 +169,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   userSubdelegation: number = null;
   wheelCount: number = 0;
   fileNumberCount: number = 0;
+  flyersRegistrationParams: IDocReceptionFlyersRegistrationParams = null;
+  documentsReceptionRegisterForm: Partial<IDocumentsReceptionRegisterForm> =
+    null;
 
   constructor(
     private fb: FormBuilder,
@@ -174,7 +182,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
-    private LoasFileGoodsBulkService: LoasFileGoodsBulkService
+    private LoasFileGoodsBulkService: LoasFileGoodsBulkService,
+    private msDocumentsReceptionDataService: DocumentsReceptionDataService
   ) {
     super();
     const _settings = { columns: GOODS_BULK_LOAD_COLUMNS, actions: false };
@@ -301,6 +310,42 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             'Algunos parametros necesarios no se recibieron en la pantalla.'
           );
         } else {
+          // let paramsData = localStorage.getItem('_flyersRegistrationParams');
+          // if (paramsData) {
+          //   let objParams: any = JSON.parse(paramsData);
+          //   this.flyersRegistrationParams = objParams;
+          // } else {
+          //   this.flyersRegistrationParams =
+          //     this.msDocumentsReceptionDataService.flyersRegistrationParams;
+          //   if (this.flyersRegistrationParams.pNoTramite) {
+          //     let strParams = JSON.stringify(this.flyersRegistrationParams);
+          //     if (strParams) {
+          //       localStorage.setItem('_flyersRegistrationParams', strParams);
+          //     }
+          //   }
+          // }
+          // let paramsDataForm = localStorage.getItem(
+          //   '_documentsReceptionRegisterForm'
+          // );
+          // if (paramsDataForm) {
+          //   let objParams: any = JSON.parse(paramsDataForm);
+          //   this.documentsReceptionRegisterForm = objParams;
+          // } else {
+          //   this.documentsReceptionRegisterForm =
+          //     this.msDocumentsReceptionDataService.documentsReceptionRegisterForm;
+          //   if (this.documentsReceptionRegisterForm.identifier) {
+          //     let strParams = JSON.stringify(
+          //       this.documentsReceptionRegisterForm
+          //     );
+          //     if (strParams) {
+          //       localStorage.setItem(
+          //         '_documentsReceptionRegisterForm',
+          //         strParams
+          //       );
+          //     }
+          //   }
+          // }
+
           this.target.setValue(this.tipoCarga);
           this.target.updateValueAndValidity();
           this.targetChange();
@@ -1103,7 +1148,16 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   goPageVolante() {
-    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
+    // this.msDocumentsReceptionDataService.flyersRegistrationParams =
+    //   this.flyersRegistrationParams;
+    // this.msDocumentsReceptionDataService.documentsReceptionRegisterForm =
+    //   this.documentsReceptionRegisterForm;
+    this.router
+      .navigateByUrl('/pages/documents-reception/flyers-registration')
+      .then(() => {
+        // localStorage.removeItem('_flyersRegistrationParams');
+        // localStorage.removeItem('_documentsReceptionRegisterForm');
+      });
   }
 
   /**
@@ -4673,6 +4727,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     let institution: any = numberInstitucion.id
       ? numberInstitucion.id
       : numberInstitucion;
+    let minpubNumber =
+      typeof body.minpubNumber == 'number'
+        ? body.minpubNumber
+        : body.minpubNumber
+        ? body.minpubNumber.id
+        : body.minpubNumber;
     let bodyData = {
       wheelNumber: body.wheelNumber,
       receiptDate: body.receiptDate,
@@ -4701,7 +4761,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       subDelDestinyNumber: body.subDelDestinyNumber,
       departamentDestinyNumber: body.departamentDestinyNumber,
       officeNumber: body.officeNumber,
-      minpubNumber: body.minpubNumber,
+      minpubNumber: minpubNumber,
       cityNumber: body.cityNumber,
       courtNumber: body.courtNumber,
       registerNumber: body.registerNumber,
@@ -4928,6 +4988,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         // this.DeclarationsUploadValidationMassive.common_general.expedientes++;
         if (update == false) {
           this.fileNumberCount++;
+          this.alertInfo(
+            'info',
+            'Datos del Expediente',
+            'Se creo correctamente el Expediente: ' +
+              this.paramsGeneral.p_no_expediente
+          ).then(() => {
+            this.getDataVolanteTemp(onlyCreate); // Get Temp expedient
+          });
         } else {
           this.alertInfo(
             'info',
