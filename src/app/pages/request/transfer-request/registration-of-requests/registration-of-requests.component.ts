@@ -21,6 +21,8 @@ import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  SPECIAL_STRING_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -94,6 +96,10 @@ export class RegistrationOfRequestsComponent
 
   formLoading: boolean = true;
 
+  question: boolean = false;
+  verifyResp: boolean = false;
+  task: any = null;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -122,6 +128,9 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    this.task = localStorage.getItem('Task');
+    console.log('task', JSON.parse(this.task));
+
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
     this.processView();
@@ -130,8 +139,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
-    this.dinamyCallFrom();
-    console.log('ID tipo de documento', this.idTypeDoc);
+    //this.dinamyCallFrom();
   }
 
   //Obtenemos el tipo de proceso//
@@ -193,7 +201,7 @@ export class RegistrationOfRequestsComponent
       ],
       nameOfOwner: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(SPECIAL_STRING_PATTERN), Validators.maxLength(100)],
       ], //nombre remitente
       holderCharge: [
         null,
@@ -262,7 +270,7 @@ export class RegistrationOfRequestsComponent
       ],
       protectNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(15)],
       ],
       typeOfTransfer: [
         null,
@@ -534,28 +542,34 @@ export class RegistrationOfRequestsComponent
     request.requestStatus = 'FINALIZADA';
     const updateReq = await this.updateRequest(this.requestData);
     if (updateReq) {
-      const oldTask: any = await this.getOldTask();
-      if (oldTask.assignees != '') {
-        const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-        const url = 'pages/request/transfer-request/process-approval';
-        const from = 'DESTINO_DOCUMENTAL';
-        const to = 'SOLICITAR_APROBACION';
-        const taskRes = await this.createTaskOrderService(
-          this.requestData,
-          title,
-          url,
-          from,
-          to,
-          oldTask
+      //const oldTask: any = await this.getOldTask();
+      //if (oldTask.assignees != '') {
+      const user: any = this.authService.decodeToken();
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const from = 'DESTINO_DOCUMENTAL';
+      const to = 'SOLICITAR_APROBACION';
+      const taskRes = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Registro_Solicitud',
+        'FINALIZAR'
+      );
+      if (taskRes) {
+        this.msgGuardado(
+          'success',
+          'Solicitud Finalizada',
+          `Se finalizo la solicitud con el folio: ${this.requestData.id}`
         );
-        if (taskRes) {
-          this.msgGuardado(
-            'success',
-            'Solicitud Finalizada',
-            `Se finalizo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
       }
+      // }
     }
   }
 
@@ -566,7 +580,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
+      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -588,28 +602,45 @@ export class RegistrationOfRequestsComponent
   }
 
   cambiarTipoUsuario(request: any) {
-    this.openModal(SelectTypeUserComponent, request, 'commit-request');
+    this.openModal(
+      SelectTypeUserComponent,
+      request,
+      'commit-request',
+      this.task
+    );
   }
   /* Fin guardar captura de solicitud */
 
+  getResponse(event: any) {
+    console.log('respuesta: ', event);
+    this.verifyResp = event;
+  }
+
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/classify-assets';
       const from = 'VERIFICAR_CUMPLIMIENTO';
       const to = 'CLASIFICAR_BIEN';
-
+      const user: any = this.authService.decodeToken();
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Verificar_Cumplimiento',
+        'APPROVE'
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -622,21 +653,29 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo para guardar la clasificacion de bienes */
   async classifyGoodMethod() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/validate-document';
       const from = 'CLASIFICAR_BIEN';
       const to = 'DESTINO_DOCUMENTAL';
+      const user: any = this.authService.decodeToken();
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Clasificar_Bien',
+        'VALIDAR_DOCUMENTACION'
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -649,21 +688,29 @@ export class RegistrationOfRequestsComponent
 
   /* Metodo de destino documental */
   async destinyDocumental() {
+    this.loader.load = true;
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/process-approval';
       const from = 'DESTINO_DOCUMENTAL';
       const to = 'SOLICITAR_APROBACION';
+      const user: any = this.authService.decodeToken();
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Destino_Documental',
+        'APROBAR_SOLICITUD'
       );
       if (taskRes) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -710,8 +757,6 @@ export class RegistrationOfRequestsComponent
       },
       error: error => (this.loading = false),
     });
-
-    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
   }
 
   /** Proceso de aprobacion */
@@ -726,7 +771,9 @@ export class RegistrationOfRequestsComponent
   }
 
   async approveRequestMethod() {
-    if (this.haveDictamen === false) {
+    this.loader.load = true;
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
       this.onLoadToast(
         'info',
         'Error',
@@ -740,15 +787,22 @@ export class RegistrationOfRequestsComponent
       const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
+      const user: any = this.authService.decodeToken();
       const taskResult = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Aprobar_Solicitud',
+        'TURNAR'
       );
       if (taskResult === true) {
+        this.loader.load = false;
         this.msgGuardado(
           'success',
           'Turnado Exitoso',
@@ -771,21 +825,25 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    console.log(this.requestData);
-
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/verify-compliance';
       const from = 'SOLICITAR_APROBACION';
       const to = 'VERIFICAR_CUMPLIMIENTO';
+      const user: any = this.authService.decodeToken();
       const taskResult = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        false,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Aprobar_Solicitud',
+        'RECHAZAR'
       );
       if (taskResult === true) {
         this.msgGuardado(
@@ -819,16 +877,31 @@ export class RegistrationOfRequestsComponent
     url: string,
     from: string,
     to: string,
-    oldTask: any
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
   ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
+
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
+
       body['type'] = 'SOLICITUD TRANSFERENCIA'; //
       let task: any = {};
       task['id'] = 0;
-      task['assignees'] = oldTask.assignees;
-      task['assigneesDisplayname'] = oldTask.assigneesDisplayname;
+      task['assignees'] = this.task.assignees;
+      task['assigneesDisplayname'] = this.task.displayName;
       task['creator'] = user.username;
       task['taskNumber'] = Number(request.id);
       task['title'] = title;
@@ -846,14 +919,11 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
-      console.log(body);
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
-          console.log(error.error.message);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
@@ -887,18 +957,19 @@ export class RegistrationOfRequestsComponent
       let body: any = {};
       body['xidSolicitud'] = id;
       body['xTipoDocumento'] = 50;
-      this.wcontentService.getDocumentos(body).subscribe({
+      this.wcontentService.getDocumentos(body, new ListParams()).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = true;
+            resolve(true);
           } else {
             this.haveDictamen = false;
+            resolve(false);
           }
-          resolve(true);
         },
         error: error => {
           this.haveDictamen = false;
-          resolve(true);
+          resolve(false);
         },
       });
     });
@@ -933,7 +1004,26 @@ export class RegistrationOfRequestsComponent
         }
 
         if (typeCommit === 'verificar-cumplimiento') {
-          this.verifyComplianceMethod();
+          this.question = true;
+          setTimeout(() => {
+            if (this.verifyResp === true) {
+              this.verifyComplianceMethod();
+            } else {
+              Swal.fire({
+                title: 'Error',
+                text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#AD4766',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                if (result.isConfirmed) {
+                }
+              });
+            }
+            this.question = false;
+          }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
           this.classifyGoodMethod();
@@ -957,11 +1047,17 @@ export class RegistrationOfRequestsComponent
     this.onLoadToast(header, title, body);
   }
 
-  openModal(component: any, data?: any, typeAnnex?: String): void {
+  openModal(
+    component: any,
+    data?: any,
+    typeAnnex?: String,
+    task?: number
+  ): void {
     let config: ModalOptions = {
       initialState: {
         data: data,
         typeAnnex: typeAnnex,
+        task: task,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
@@ -972,12 +1068,12 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  dinamyCallFrom() {
+  /* dinamyCallFrom() {
     this.registRequestForm.valueChanges.subscribe(data => {
       this.requestData = data;
     });
   }
-
+ */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,

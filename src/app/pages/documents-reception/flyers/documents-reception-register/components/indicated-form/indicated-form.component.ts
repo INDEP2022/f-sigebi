@@ -45,7 +45,7 @@ export class IDocReceptionndicatedFormComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1000),
+          Validators.maxLength(250),
         ],
       ],
       noRegistration: [null],
@@ -63,7 +63,8 @@ export class IDocReceptionndicatedFormComponent
 
   create() {
     this.loading = true;
-    this.curp.setValue(this.curp.value.toLocaleUpperCase());
+    if (this.curp.value != null)
+      this.curp.setValue(this.curp.value.toLocaleUpperCase());
     this.indicatedService.create(this.indicatedForm.value).subscribe({
       next: data => this.handleSuccess(data),
       error: error => (this.loading = false),

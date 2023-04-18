@@ -5,10 +5,12 @@
     </tab> -->
     <tab
       *ngIf="docRequest"
-      heading="Documentos Solicitud"
+      heading="Búsqueda de Documentos Solicitud"
       id="tab1"
       (selectTab)="requestSelected(1)">
-      <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+      <app-doc-request-tab
+        [typeDoc]="typeDoc"
+        [updateInfo]="updateInfo"></app-doc-request-tab>
     </tab>
     <tab heading="Documentos Bienes" *ngIf="goodsDocs">
       <app-good-doc-tab></app-good-doc-tab>
@@ -21,6 +23,7 @@
         *ngIf="generalDocs">
         <app-doc-request-tab
           [typeDoc]="typeDoc"
+          [updateInfo]="updateInfo"
           [displayName]="'validateEyeVisitResult'"></app-doc-request-tab>
       </tab>
     </ng-container>
@@ -45,7 +48,7 @@
         </tabset>
       </tab>
     </ng-template>
-    <tab heading="Fotos Bienes">
+    <tab heading="Fotos Bienes" (selectTab)="selectTabData()">
       <app-photos-assets></app-photos-assets>
     </tab>
   </tabset>

@@ -47,11 +47,21 @@ export class SiabService {
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
     this.authService.setReportFlag(true);
     const route = `${this.url}${SiabReportEndpoints.SIAB}/${reportName}${SiabReportEndpoints.EXTENSION}`;
-    return this.http.get<any>(`${route}`, {
-      params,
-      headers,
-      responseType: 'arraybuffer' as 'json',
-    });
+    return this.http
+      .get<any>(`${route}`, {
+        params,
+        headers,
+        responseType: 'arraybuffer' as 'json',
+      })
+      .pipe(
+        catchError(error => {
+          this.authService.setReportFlag(false);
+          return of(null);
+        }),
+        tap(() => {
+          this.authService.setReportFlag(false);
+        })
+      );
   }
 
   fetchReport(reportName: string, params?: any) {
@@ -74,6 +84,23 @@ export class SiabService {
         this.authService.setReportFlag(false);
         return of({ data: null });
       })
+    );
+  }
+
+  //Temporal para los reportes que aún estan en construcción
+  private _getReportBlank(reportName: string) {
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    this.authService.setReportFlag(true);
+    const route = `${this.url}/${reportName}${SiabReportEndpoints.EXTENSION}`;
+    return this.http.get<any>(`${route}`, {
+      headers,
+      responseType: 'arraybuffer' as 'json',
+    });
+  }
+
+  fetchReportBlank(reportName: string) {
+    return this.signIn().pipe(
+      switchMap(() => this._getReportBlank(reportName))
     );
   }
 }

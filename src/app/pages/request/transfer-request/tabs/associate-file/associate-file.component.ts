@@ -160,6 +160,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   generateCaratula() {
     let request = this.parameter.getRawValue();
+    console.log('nueva caratula ', request);
     let expedient = this.associateFileForm.getRawValue();
     this.loader.load = true;
     //guardar expediente
@@ -233,13 +234,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 dOutDate: '',
                                 dRevLabel: '',
                                 xIdcProfile: '',
-                                xDelegacionRegional:
+                                xdelegacionRegional:
                                   solicitud.regionalDelegationId,
                                 xidTransferente: solicitud.transferenceId ?? '',
                                 xidBien: '',
                                 xidExpediente: solicitud.recordId,
                                 xidSolicitud: solicitud.id,
-                                xNombreProceso: 'Captura Solicitud',
+                                //xNombreProceso: 'Captura Solicitud',
+                                xnombreProceso: 'Captura Solicitud',
                                 xestado: solicitud.stationId ?? '',
                                 xnoOficio: solicitud.paperNumber ?? '',
                                 xremitente: solicitud.nameOfOwner ?? '',
@@ -249,6 +251,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 xcontribuyente:
                                   solicitud.contribuyente_indiciado ?? '',
                               };
+                              debugger;
                               const form = JSON.stringify(body);
                               //se guarda el file y el documento
                               this.wcontetService
@@ -357,7 +360,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   setDate(date: Date) {
     const newDate =
-      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+      this.setMonthsAndDay(date.getDate()) +
+      '/' +
+      this.setMonthsAndDay(date.getMonth() + 1) +
+      '/' +
+      date.getFullYear();
     return newDate;
   }
 
@@ -417,6 +424,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getUserSelect(params: ListParams) {
+    params['sortBy'] = 'Nombre:ASC';
     this.externalExpedientService.getUsers(params).subscribe({
       next: (resp: any) => {
         const data = resp.ObtenUsuarioResult.Usuario;

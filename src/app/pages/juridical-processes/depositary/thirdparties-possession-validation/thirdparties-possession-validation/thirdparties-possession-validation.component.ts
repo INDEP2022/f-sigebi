@@ -1,18 +1,34 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject, debounceTime } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import {
+  GOODS_COLUMNS,
+  NOTIFICATIONS_COLUMNS,
+} from './thirdparties-possession-validation-columns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+
+const predifinedText =
+  'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: <B> <C> Con fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. El cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. No omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. Finalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. Quedo a sus órdenes para cualquier comentario.';
 
 @Component({
   selector: 'app-thirdparties-possession-validation',
@@ -23,7 +39,13 @@ export class ThirdpartiesPossessionValidationComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  dataTableNotifications: INotification[] = [];
   // Table settings
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  selectedRows: IGood = {};
+  selectedRows2: IGood = {};
+  wheelNotifications: any[] = [];
+
   tableSettingsNotificaciones = {
     actions: {
       columnTitle: '',
@@ -34,34 +56,8 @@ export class ThirdpartiesPossessionValidationComponent
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
-    columns: {
-      noVolante: { title: 'No. Volante' },
-      fecCaptura: { title: 'Fec. Captura' },
-      cveOficioExterno: { title: 'Cve. Oficio Externo' },
-      fecOficioExterno: { title: 'Fec. Oficio Externo' },
-      remitenteExterno: { title: 'Remitente externo' },
-      cveAmparo: { title: 'Cve. Amparo' },
-      cveTocaPenal: { title: 'Cve. Toca Penal' },
-      actaCircunstanciada: { title: 'Acta Circunstanciada' },
-      averiguacionPrevia: { title: 'Averiguación Previa' },
-      causaPenal: { title: 'Causa Penal' },
-    },
+    columns: NOTIFICATIONS_COLUMNS,
   };
-  // Data table
-  dataTableNotificaciones = [
-    {
-      noVolante: 'DATA',
-      fecCaptura: 'DATA',
-      cveOficioExterno: 'DATA',
-      fecOficioExterno: 'DATA',
-      remitenteExterno: 'DATA',
-      cveAmparo: 'DATA',
-      cveTocaPenal: 'DATA',
-      actaCircunstanciada: 'DATA',
-      averiguacionPrevia: 'DATA',
-      causaPenal: 'DATA',
-    },
-  ];
 
   // Table settings
   tableSettingsBienes = {
@@ -71,23 +67,14 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
+    selectMode: 'multi',
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
-    columns: {
-      noBien: { title: 'No. Bien' },
-      estatus: { title: 'Estatus' },
-      descripcion: { title: 'Descripción' },
-    },
+    columns: GOODS_COLUMNS,
   };
   // Data table
-  dataTableBienes = [
-    {
-      noBien: 'DATA',
-      estatus: 'DATA',
-      descripcion: 'DATA',
-    },
-  ];
+  dataTableBienes: IGood[] = [];
 
   // Table settings
   tableSettingsBienesOficio = {
@@ -97,42 +84,53 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
+    selectMode: 'multi',
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
-    columns: {
-      noBien: { title: 'No. Bien' },
-      estatus: { title: 'Estatus' },
-      descripcion: { title: 'Descripción' },
-    },
+    columns: GOODS_COLUMNS,
   };
   // Data table
-  dataTableBienesOficio = [
-    {
-      noBien: 'DATA',
-      estatus: 'DATA',
-      descripcion: 'DATA',
-    },
-  ];
+  dataTableBienesOficio: IGood[] = [];
 
+  expedientNumber: number = 0;
   public form: FormGroup;
   public formCcpOficio: FormGroup;
   public noExpediente: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private notificationService: NotificationService,
+    private goodService: GoodService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+
+    this.noExpediente
+      .get('noExpediente')
+      .valueChanges.pipe(debounceTime(500))
+      .subscribe(x => {
+        this.getNotifications(new ListParams(), x);
+      });
+
+    this.form
+      .get('wheelNumber')
+      .valueChanges.pipe(debounceTime(500))
+      .subscribe(x => {
+        this.getNotifications(new ListParams(), x);
+      });
   }
+
   private prepareForm() {
     this.form = this.fb.group({
-      noVolante: '',
-      claveOficio: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      destinatario: ['', [Validators.pattern(STRING_PATTERN)]], // Detalle destinatario
-      texto: ['', [Validators.pattern(STRING_PATTERN)]],
+      wheelNumber: '',
+      officeExternalKey: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      addressee: ['', [Validators.pattern(STRING_PATTERN)]], // Detalle destinatario
+      texto: '',
     });
     this.noExpediente = this.fb.group({
       noExpediente: '',
@@ -141,6 +139,139 @@ export class ThirdpartiesPossessionValidationComponent
       ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
       ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
       firma: ['', [Validators.pattern(STRING_PATTERN)]],
+    });
+  }
+
+  getNotificationByWheel(params: ListParams, wheelNumber?: number) {
+    if (!wheelNumber) {
+      this.wheelNotifications = [];
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (wheelNumber) {
+      data.addFilter('wheelNumber', wheelNumber);
+    }
+
+    this.notificationService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
+        this.wheelNotifications = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  getNotifications(params: ListParams, numberExpedient?: number) {
+    this.expedientNumber = numberExpedient;
+    if (!numberExpedient) {
+      this.dataTableNotifications = [];
+      this.dataTableBienesOficio = [];
+      this.dataTableBienes = [];
+      return;
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (numberExpedient) {
+      data.addFilter('expedientNumber', numberExpedient);
+    }
+
+    this.dataTableNotifications = [];
+
+    this.notificationService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
+        this.dataTableNotifications = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+    this.dataTableBienes = [];
+    this.dataTableBienesOficio = [];
+    this.getGoods(new ListParams(), numberExpedient);
+  }
+
+  getGoods(params: ListParams, numberExpedient?: number) {
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (numberExpedient) {
+      data.addFilter('fileNumber', numberExpedient);
+    }
+
+    this.goodService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
+        this.dataTableBienes = data.data;
+        this.dataTableBienesOficio = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  rowSelected(rows: any) {
+    this.selectedRows = rows.isSelected ? rows.data : {};
+  }
+
+  rowSelected2(rows: any) {
+    this.selectedRows2 = rows.isSelected ? rows.data : {};
+  }
+
+  addGoodOffice() {
+    if (Object.keys(this.selectedRows).length < 1) {
+      this.onLoadToast(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien para poder realizar esta acción.'
+      );
+      return;
+    }
+    const request: IGood = {
+      ...this.selectedRows,
+      delegationNumber: null,
+      subDelegationNumber: null,
+    };
+
+    this.goodService.create(request).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  handleSuccess() {
+    this.getGoods(new ListParams(), this.expedientNumber);
+    this.onLoadToast(
+      'success',
+      'Excelente',
+      'Se ha agregado el bien correctamente'
+    );
+    this.loading = false;
+  }
+
+  deleteGoodOffice() {
+    if (Object.keys(this.selectedRows2).length < 1) {
+      this.onLoadToast(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien para poder realizar esta acción.'
+      );
+      return;
+    }
+
+    this.goodService.remove(this.selectedRows2.id).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
@@ -155,12 +286,19 @@ export class ThirdpartiesPossessionValidationComponent
   sendForm() {
     console.log('Send form log');
   }
+
   btnInsertarTextoPredefinido() {
-    console.log('btnInsertarTextoPredefinido');
+    this.form.get('texto').setValue(predifinedText);
   }
+
   btnReemplazarMarcadores() {
-    console.log('btnReemplazarMarcadores');
+    let replaceText = predifinedText.replaceAll('<A>', 'LST_AMPARO');
+    replaceText = replaceText.replaceAll('<B>', 'BIEN DESCRIPCIÓN');
+    replaceText = replaceText.replaceAll('<C>', 'T_BIENES');
+
+    this.form.get('texto').setValue(replaceText);
   }
+
   btnImprimir() {
     console.log('btnImprimir');
   }

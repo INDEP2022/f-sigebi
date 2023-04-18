@@ -94,6 +94,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    this.filterParams
+      .getValue()
+      .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       this.filterParams
@@ -282,7 +285,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log('Response: ', response);
-
           this.loading = false;
           this.tasks = response.data;
           this.totalItems = response.count;
@@ -304,6 +306,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   openTask(selected: any): void {
+    let obj2Storage = {
+      assignees: selected.assignees,
+      displayName: this.userName,
+      taskId: selected.requestId,
+      id: selected.id,
+    };
+
+    localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+
     if (selected.requestId !== null || selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
       this.router.navigateByUrl(url);

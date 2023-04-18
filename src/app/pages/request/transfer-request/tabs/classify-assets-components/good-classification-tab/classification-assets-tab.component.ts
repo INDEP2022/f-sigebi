@@ -134,6 +134,7 @@ export class ClassificationAssetsTabComponent
     this.goodService.getAll(filter).subscribe({
       next: resp => {
         var result = resp.data.map(async (item: any) => {
+          item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
 
@@ -256,7 +257,7 @@ export class ClassificationAssetsTabComponent
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
-    this.assetsId = this.goodSelect[0].id;
+    this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
@@ -266,6 +267,11 @@ export class ClassificationAssetsTabComponent
       setTimeout(() => {
         this.formLoading = false;
       }, 4000);
+    } else {
+      // this.goodSelect[0].quantity = 0;
+      this.detailArray.patchValue(null);
+      this.domicilieObject = null;
+      this.formLoading = false;
     }
   }
 

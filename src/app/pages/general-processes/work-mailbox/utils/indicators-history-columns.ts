@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { DatePipe } from '@angular/common';
 
 export const INDICATORS_HISTORY_COLUMNS = {
   num: {
@@ -16,7 +16,7 @@ export const INDICATORS_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return format(new Date(value), 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
     },
   },
   workDate: {
@@ -26,7 +26,7 @@ export const INDICATORS_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return format(new Date(value), 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
     },
   },
   maxDate: {
@@ -36,7 +36,7 @@ export const INDICATORS_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return format(new Date(value), 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
     },
   },
   complied: {

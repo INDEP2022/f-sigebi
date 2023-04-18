@@ -30,12 +30,11 @@
           <i class="bx bxs-right-arrow-square"></i> Finalizar
         </button>
       </div>
-      <div
-        class="p-2"
-        *ngIf="
+      <!--  *ngIf="
           requestData?.typeOfTransfer === 'SAT_SAE' ||
           requestData?.typeOfTransfer === 'PGR_SAE'
-        ">
+        " -->
+      <div class="p-2">
         <button
           type="button"
           class="btn btn-secondary btn-sm active"
@@ -61,7 +60,10 @@
         </button>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="refuseRequest()">
           <i class="bx bx-minus"></i> Rechazar
         </button>
       </div>
@@ -190,7 +192,9 @@
                   *ngIf="complianceVerifi && requestData"
                   [typeDoc]="'verify-compliance'"
                   [requestObject]="requestData"
-                  [process]="process"></app-verify-compliance-tab>
+                  [process]="process"
+                  [question]="question"
+                  (response)="getResponse($event)"></app-verify-compliance-tab>
                 <!-- fin -->
                 <!-- clasificacion de bienes -->
                 <app-classification-assets-tab
@@ -222,7 +226,8 @@
                 <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
                 <app-address-transferor-tab
                   *ngIf="requestRegistration || approvalProcess"
-                  [requestObject]="requestData"></app-address-transferor-tab>
+                  [requestObject]="requestData"
+                  [process]="process"></app-address-transferor-tab>
                 <!-- fin -->
                 <!-- cumplimiento de verificacion y clasificacion de bienes -->
                 <app-expedients-tabs

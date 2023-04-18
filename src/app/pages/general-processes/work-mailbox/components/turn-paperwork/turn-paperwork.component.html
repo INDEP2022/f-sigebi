@@ -34,12 +34,12 @@
   <div footer>
     <div class="d-flex justify-content-end">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="confirm()">
-          Aceptar
-        </button>
+        <confirm-button
+          text="Aceptar"
+          [loadingText]="loadingText"
+          [btnSmall]="true"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button

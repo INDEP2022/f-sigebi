@@ -96,8 +96,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
+          console.log('tranference');
           this.idTransferer = data;
           this.getStation(data);
+        } else {
+          this.requestForm.controls['stationId'].setValue(null);
+          this.requestForm.controls['authorityId'].setValue(null);
         }
       }
     );
@@ -105,6 +109,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
+          console.log('emisora');
           this.idStation = data;
           this.getAuthority(new ListParams());
         }
@@ -187,11 +192,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
-    params.limit = 30;
+    //delete params.limit;
+    //delete params.page;
+    delete params['search'];
+    delete params.text;
     this.stationService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
-          data.nameAndId = `${data.id}- ${data.stationName}`;
+          data.nameAndId = `${data.id} - ${data.stationName}`;
           return data;
         });
         this.selectStation = new DefaultSelect(data.data, data.count);
@@ -205,11 +213,15 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getAuthority(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
-    // params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    //delete params.limit;
+    //delete params.page;
+    delete params['search'];
+    delete params.text;
     this.authorityService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
-          data.nameAndId = `${data.idAuthority}- ${data.authorityName}`;
+          data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
         });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
@@ -223,6 +235,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getTransferent(params?: ListParams) {
     params['filter.status'] = `$eq:${1}`;
     params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    // delete params.limit;
+    //delete params.page;
+    delete params['search'];
+    delete params.text;
     this.transferentService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
@@ -372,7 +388,18 @@ export class RequestFormComponent extends BasePage implements OnInit {
           const form = requestResult;
           const from = 'REGISTRO_SOLICITUD';
           const to = 'REGISTRO_SOLICITUD';
-          const taskResult = await this.createTaskOrderService(form, from, to);
+          const actualUser: any = this.authService.decodeToken();
+          const taskResult = await this.createTaskOrderService(
+            form,
+            from,
+            to,
+            false,
+            0,
+            actualUser.username,
+            'SOLICITUD_TRANSFERENCIA',
+            'Nueva_Solicitud',
+            'TURNAR'
+          );
           if (taskResult === true) {
             this.loadingTurn = false;
             this.msgModal(
@@ -418,11 +445,29 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(request: any, from: string, to: string) {
+  createTaskOrderService(
+    request: any,
+    from: string,
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
+  ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['type'] = 'SOLICITUD TRANSFERENCIA';
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
 
       let task: any = {};
       task['id'] = 0;

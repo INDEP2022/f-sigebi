@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -39,7 +40,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   idWarehouse: number = 0;
   columns = LIST_ASSETS_COLUMNS;
   formLoading: boolean = false;
-
+  allDataGood: IGood[] = [];
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -67,10 +68,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-eye text-primary" ></i> Ver',
+        editButtonContent: '<i class="fa fa-eye text-primary mx-2" > Ver</i>',
       },
       delete: {
-        deleteButtonContent: '<i class="fa fa-image text-info"></i> Subir',
+        deleteButtonContent: '<i class="fa fa-image text-info mx-2"> Subir</i>',
       },
 
       selectMode: '',
@@ -79,9 +80,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     this.getInfoRequest();
     this.initFilterForm();
     this.getTypeRelevant(new ListParams());
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsRequest());
+    this.getGoodsRequest();
   }
 
   getInfoRequest() {
@@ -94,11 +93,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   getGoodsRequest() {
     if (this.idRequest) {
-      this.loading = true;
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          console.log('img', data);
           const filterGoodType = data.data.map(async (item: any) => {
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeId'] = goodType;
@@ -118,16 +115,13 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
           Promise.all(filterGoodType).then(x => {
             this.paragraphs = data.data;
+            this.allDataGood = this.paragraphs;
             this.totalItems = data.count;
-            this.loading = false;
           });
         },
-        error: error => {
-          this.loading = false;
-        },
+        error: error => {},
       });
     } else {
-      this.loading = false;
     }
   }
 
@@ -156,6 +150,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   getTypeRelevant(params: ListParams) {
+    params['sortBy'] = 'description:ASC';
     this.typeRelevantService.getAll(params).subscribe({
       next: data => {
         this.typeGoods = new DefaultSelect(data.data, data.count);
@@ -172,19 +167,20 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     }
 
     if (goodNumber) {
-      const filter = this.paragraphs.filter(good => {
+      const filter = this.allDataGood.filter(good => {
         return good.id == goodNumber;
       });
       if (filter.length > 0) {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningun bien', '');
+        this.paragraphs = filter;
+        this.onLoadToast('warning', 'No se encontro ningún bien', '');
       }
     }
 
     if (typeGood) {
-      const filter = this.paragraphs.filter(good => {
+      const filter = this.allDataGood.filter(good => {
         return good.goodTypeId == typeGood;
       });
 
@@ -192,12 +188,13 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningun bien', '');
+        this.paragraphs = filter;
+        this.onLoadToast('warning', 'No se encontro ningún bien', '');
       }
     }
 
     if (typeGood && goodNumber) {
-      const filter = this.paragraphs.filter(good => {
+      const filter = this.allDataGood.filter(good => {
         return good.goodTypeId == typeGood && good.id == goodNumber;
       });
 
@@ -205,7 +202,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningun bien', '');
+        this.onLoadToast('warning', 'No se encontro ningún bien', '');
       }
     }
   }
@@ -217,7 +214,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   uploadFiles(data: any) {
     let loadingPhotos = 0;
-    console.log('photos update', loadingPhotos);
     const idRequest = this.idRequest;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
@@ -226,7 +222,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       callBack: (next: boolean) => {
         if (next) {
           this.formLoading = true;
-          console.log('photos', loadingPhotos);
           loadingPhotos = loadingPhotos + 1;
           setTimeout(() => {
             this.getGoodsRequest();

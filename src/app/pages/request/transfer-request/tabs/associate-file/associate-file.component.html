@@ -38,7 +38,9 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label">Usuario</label>
+            <label class="float-label"
+              >Usuario <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
 
@@ -71,7 +73,9 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label">Unidad</label>
+            <label class="float-label"
+              >Unidad <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
 
@@ -114,7 +118,9 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label">Archivo</label>
+            <label class="float-label"
+              >Archivo <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
 
@@ -157,7 +163,9 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label">Disposici&oacute;n</label>
+            <label class="float-label"
+              >Disposici&oacute;n <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
 
@@ -202,7 +210,9 @@
               </ng-template>
             </ng-select>
             <span class="form-bar"></span>
-            <label class="float-label">Funcionario</label>
+            <label class="float-label"
+              >Funcionario <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
 
@@ -268,9 +278,11 @@
             [control]="associateFileForm.get('sheetsInai')"
             label="Fojas">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="sheetsInai" />
+              formControlName="sheetsInai"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
 
@@ -290,9 +302,11 @@
             [control]="associateFileForm.get('filesInai')"
             label="Legajos">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="filesInai" />
+              formControlName="filesInai"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
 
@@ -337,6 +351,7 @@
           [loading]="loading"
           [btnSmall]="true"
           [text]="'Generar Car&aacute;tula'"
+          [disabled]="associateFileForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

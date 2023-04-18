@@ -42,6 +42,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   stateId: number = 0;
   userLogName: string = '';
   date: string = '';
+  typesDocuments: any = [];
   typeDocument: number = 0;
   constructor(
     public fb: FormBuilder,
@@ -80,9 +81,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   initForm(): void {
     this.newDocForm = this.fb.group({
       id: [null],
-      docType: [null],
-      docFile: [null],
-      docTit: [null, [Validators.pattern(STRING_PATTERN)]],
+      docType: [null, [Validators.required]],
+      docFile: [null, [Validators.required]],
+      docTit: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       noOfi: [null],
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -141,11 +142,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
-    this.wContentService
-      .getDocumentTypes(this.paramsDocTypes.getValue())
-      .subscribe(data => {
-        this.selectTypeDoc = new DefaultSelect(data.data, data.count);
-      });
+    this.wContentService.getDocumentTypes(params).subscribe({
+      next: (resp: any) => {
+        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+      },
+    });
   }
 
   getRegionalDelegation(id: number) {
@@ -170,8 +171,21 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.typeDocument = item.ddocType;
   }
 
-  selectFile(event: any) {
+  selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
+    if (this.selectedFile?.size > 10000000) {
+      this.onLoadToast(
+        'warning',
+        'Se debe cargar un documentos menor a 10MB',
+        ''
+      );
+      this.newDocForm.get('docFile').reset;
+    }
+    const extension = this.selectedFile?.name.split('.').pop();
+    if (extension != 'pdf') {
+      this.onLoadToast('warning', 'Se debe cargar un documentos PDF', '');
+      this.newDocForm.get('docFile').setValue(null);
+    }
   }
 
   confirm() {
@@ -234,7 +248,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = `DOC_${this.date}${extension}`;
+      const docName = this.newDocForm.get('docTit').value;
 
       this.wContentService
         .addDocumentToContent(
@@ -312,7 +326,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = `DOC_${this.date}${extension}`;
+      const docName = this.newDocForm.get('docTit').value;
 
       this.wContentService
         .addDocumentToContent(
@@ -326,11 +340,13 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             this.loading = false;
             this.loader.load = false;
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {},
+          error: error => {
+            console.log(error);
+          },
         });
     }
 
@@ -389,7 +405,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = `DOC_${this.date}${extension}`;
+      const docName = this.newDocForm.get('docTit').value;
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -400,7 +416,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.onLoadToast('success', 'Documento Guardado correctamente', '');
+            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.loading = false;
             this.modalRef.content.callback(true);
             this.close();

@@ -17,6 +17,7 @@ import {
   throwError,
 } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IPgrFile } from 'src/app/core/models/ms-ldocument/pgr-file.model';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -37,7 +38,7 @@ export class PgrFilesComponent extends BasePage implements OnInit {
   pgrOffice: string = null;
   isSingleClick: boolean = false;
   documentSelected: any;
-  files: any[] = FILES_EXAMPLE;
+  files: IPgrFile[] = [];
   params = new BehaviorSubject(new FilterParams());
   totalItems = 0;
 
@@ -64,7 +65,11 @@ export class PgrFilesComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.addFilter('id', id);
     this.fileBrowserService.findPgrFile(params.getParams()).subscribe({
-      next: pgrFile => this.openDocumentsViewer(pgrFile.pgrImages),
+      next: pgrFile =>
+        this.openDocumentsViewer(
+          pgrFile.pgrImages,
+          pgrFile.pgrDescriptionImage
+        ),
       error: error => {
         this.onLoadToast(
           'error',
@@ -75,7 +80,7 @@ export class PgrFilesComponent extends BasePage implements OnInit {
     });
   }
 
-  openDocumentsViewer(base64: string) {
+  openDocumentsViewer(base64: string, filename?: string) {
     const url = this.getUrlDocument(base64);
     let config = {
       initialState: {
@@ -83,6 +88,7 @@ export class PgrFilesComponent extends BasePage implements OnInit {
           urlDoc: url,
           type: 'pdf',
         },
+        filename: `${filename}.pdf`,
         callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
@@ -95,7 +101,7 @@ export class PgrFilesComponent extends BasePage implements OnInit {
     let mimeType;
     mimeType = getMimeTypeFromBase64(base64, '');
     return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `data:${mimeType};base64,${base64}`
+      `data:${mimeType};base64, ${base64}`
     );
   }
 
@@ -135,50 +141,3 @@ export class PgrFilesComponent extends BasePage implements OnInit {
     );
   }
 }
-
-const FILES_EXAMPLE = [
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-  {
-    id: 123456,
-    pages: 12,
-    description: `Lorem ipsum dolor sit amet consectetur adipisicing elit`,
-  },
-];

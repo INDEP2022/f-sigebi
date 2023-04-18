@@ -29,7 +29,7 @@ export class ExpedientsRequestTabComponent
   totalItems: number = 0;
   paragraphs: any[] = [];
   requestId: number = 0;
-
+  screen: 'expedient-tab';
   constructor(
     private activatedRoute: ActivatedRoute,
     private requestService: RequestService
@@ -66,14 +66,13 @@ export class ExpedientsRequestTabComponent
             items.regionalDelegationId = items.regionalDelegation.description;
             items.transferenceId = items.transferent.name;
             items.stationId = items.emisora.stationName;
+            items.state = items.state.descCondition;
             return items;
           });
           this.paragraphs = filterInfo;
           this.totalItems = data.count;
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
     }
   }

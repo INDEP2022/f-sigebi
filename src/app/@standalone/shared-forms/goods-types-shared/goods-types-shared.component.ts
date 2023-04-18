@@ -79,7 +79,11 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   }
 
   getTypes(params: ListParams) {
-    this.service.search(params).subscribe(
+    const _params: any = params;
+    _params['filter.nameGoodType'] = `$ilike:${params.text}`;
+    delete _params.search;
+    delete _params.text;
+    this.service.search(_params).subscribe(
       data => {
         this.types = new DefaultSelect(data.data, data.count);
       },
@@ -98,36 +102,51 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   }
 
   getSubtypes(params: ListParams) {
-    this.goodSubtypesService
-      .getAll({ type: this.type.value, ...params })
-      .subscribe(data => {
-        this.subtypes = new DefaultSelect(data.data, data.count);
-      });
+    const _params: any = params;
+    _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
+    delete _params.search;
+    delete _params.text;
+    if (this.type.value) {
+      _params['type'] = this.type.value;
+    }
+    this.goodSubtypesService.getAll(_params).subscribe(data => {
+      this.subtypes = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getSsubtypes(params: ListParams) {
-    this.goodSsubtypeService
-      .getAll({
-        type: this.type.value,
-        subtype: this.subtype.value,
-        ...params,
-      })
-      .subscribe(data => {
-        this.ssubtypes = new DefaultSelect(data.data, data.count);
-      });
+    const _params: any = params;
+    _params['filter.description'] = `$ilike:${params.text}`;
+    delete _params.search;
+    delete _params.text;
+    if (this.type.value) {
+      _params['type'] = this.type.value;
+    }
+    if (this.type.value) {
+      _params['subtype'] = this.subtype.value;
+    }
+    this.goodSsubtypeService.getAll(_params).subscribe(data => {
+      this.ssubtypes = new DefaultSelect(data.data, data.count);
+    });
   }
 
   getSssubtypes(params: ListParams) {
-    this.goodSssubtypeService
-      .getAll({
-        type: this.type.value,
-        subtype: this.subtype.value,
-        ssubtype: this.ssubtype.value,
-        ...params,
-      })
-      .subscribe(data => {
-        this.sssubtypes = new DefaultSelect(data.data, data.count);
-      });
+    const _params: any = params;
+    _params['filter.description'] = `$ilike:${params.text}`;
+    delete _params.search;
+    delete _params.text;
+    if (this.type.value) {
+      _params['type'] = this.type.value;
+    }
+    if (this.type.value) {
+      _params['subtype'] = this.subtype.value;
+    }
+    if (this.ssubtype.value) {
+      _params['ssubtype'] = this.ssubtype.value;
+    }
+    this.goodSssubtypeService.getAll(_params).subscribe(data => {
+      this.sssubtypes = new DefaultSelect(data.data, data.count);
+    });
   }
 
   onTypesChange(type: any) {

@@ -25,6 +25,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   });
   user: any = null;
   users = new DefaultSelect();
+  loadingText = 'Cargando ...';
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService,
@@ -105,14 +106,26 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
     const user = this.paperwork.turnadoiUser;
     const userTurn = this.form.controls.user.value;
     const body = {
-      user,
       userTurn,
+      user,
       response,
     };
+    this.loading = true;
+    this.loadingText = 'Cargando ...';
     this.turnPaperWork(body).subscribe(() => {
+      if (this.paperwork?.processStatus != 'OPI') {
+        this.loading = false;
+        this.alertQuestion(
+          'info',
+          'Aviso',
+          'El usuario se turno correctamente. El reporte para los trámites con estatus diferente a "OPI", no está disponible'
+        );
+        return;
+      }
+      this.loadingText = 'Generando reporte ...';
       this.downloadReport(userTurn).subscribe({
-        next: res => console.log(res),
-        error: error => console.log(error),
+        next: res => (this.loading = false),
+        error: error => (this.loading = false),
       });
     });
   }

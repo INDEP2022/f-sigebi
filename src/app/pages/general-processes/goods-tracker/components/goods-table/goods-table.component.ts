@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +14,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SetTrackedGoods } from '../../store/goods-tracker.actions';
 import { getTrackedGoods } from '../../store/goods-tracker.selector';
-import { GOOD_TRACKER_ORIGINS } from '../../utils/constants/origins';
+import {
+  GOOD_TRACKER_ORIGINS,
+  GOOD_TRACKER_ORIGINS_TITLES,
+} from '../../utils/constants/origins';
 import { ViewPhotosComponent } from '../view-photos/view-photos.component';
 import { GP_GOODS_COLUMNS } from './goods-columns';
 
@@ -37,7 +41,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private activatedRoute: ActivatedRoute,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     super();
     this.settings.actions = false;
@@ -54,7 +59,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   setColumnsFromOrigin() {
-    if (this.origin === GOOD_TRACKER_ORIGINS.GoodsLocation) {
+    if (this.isValidOrigin()) {
       this.settings = {
         ...this.settings,
         actions: false,
@@ -89,6 +94,15 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     return !exists ? false : true;
   }
 
+  private isValidOrigin() {
+    return (
+      this.origin !== null &&
+      Object.values(GOOD_TRACKER_ORIGINS).includes(
+        this.origin as unknown as GOOD_TRACKER_ORIGINS
+      )
+    );
+  }
+
   goodSelectedChange(good: ITrackedGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
@@ -97,7 +111,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         _good => _good.goodNumber != good.goodNumber
       );
     }
-    if (this.origin === GOOD_TRACKER_ORIGINS.GoodsLocation) {
+    if (this.isValidOrigin()) {
       this.store.dispatch(
         SetTrackedGoods({ trackedGoods: this.selectedGooods })
       );
@@ -137,8 +151,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   backToText() {
-    if (this.origin == GOOD_TRACKER_ORIGINS.GoodsLocation) {
-      return 'Ubicacion de bienes';
+    if (this.isValidOrigin()) {
+      return GOOD_TRACKER_ORIGINS_TITLES[this.origin as GOOD_TRACKER_ORIGINS];
     }
     return '';
   }
@@ -146,6 +160,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   backTo() {
     if (this.origin == GOOD_TRACKER_ORIGINS.GoodsLocation) {
       this.router.navigate(['/pages/administrative-processes/location-goods']);
+    } else {
+      this.location.back();
     }
   }
 }

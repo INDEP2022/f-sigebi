@@ -17,6 +17,9 @@ export class RequestHelperService {
   private formLoading = new BehaviorSubject<any>(undefined);
   currentFormLoading = this.formLoading.asObservable();
 
+  private turnarVerifiCumpli = new BehaviorSubject<any>(undefined);
+  currentTurnarVerificacion = this.turnarVerifiCumpli.asObservable();
+
   constructor() {}
 
   isComponentSaving(menaje: boolean) {
@@ -33,5 +36,9 @@ export class RequestHelperService {
 
   loadingForm(loading: boolean) {
     this.formLoading.next(loading);
+  }
+
+  consultarSiCumple(consultar: boolean) {
+    this.turnarVerifiCumpli.next(consultar);
   }
 }

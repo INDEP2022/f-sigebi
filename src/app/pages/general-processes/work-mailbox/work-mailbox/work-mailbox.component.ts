@@ -44,13 +44,14 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
 
-import { addDays, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { MailboxModalTableComponent } from '../components/mailbox-modal-table/mailbox-modal-table.component';
 import { FLYER_HISTORY_COLUMNS } from '../utils/flyer-history-columns';
@@ -82,11 +83,15 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
+import { ImageMediaService } from 'src/app/core/services/catalogs/image-media.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
+import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
+import { ObservationsComponent } from '../components/observations/observations.component';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -222,7 +227,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private interfaceFgrService: InterfacefgrService,
     private tmpManagementProcedureService: TmpManagementProcedureService,
     private datePipe: DatePipe,
-    private siabService: SiabService
+    private siabService: SiabService,
+    private documentsTypesService: DocumentsTypeService,
+    private imageMediaService: ImageMediaService,
+    private goodTrackerService: GoodTrackerService,
+    private satTransferService: SatTransferService
   ) {
     super();
     this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
@@ -1198,6 +1207,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   setDefaultValuesByArea(area: IManagementArea, user: any) {
     console.log({ area, user });
+    //this.filterForm.controls['managementArea'].setValue(area);
     const params = new FilterParams();
     params.addFilter('managementArea', area.id);
     params.addFilter('user', user.id);
@@ -1218,10 +1228,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     return this.procedureManagementService
       .getManagamentArea(params.getParams())
       .pipe(
+        catchError(error => {
+          this.areas$ = new DefaultSelect([], 0, true);
+          return throwError(() => error);
+        }),
         tap(resp => {
+          console.log(resp);
           this.areas$ = new DefaultSelect(resp.data, resp.count);
-          if (resp.data.length > 0)
-            this.filterForm.controls['managementArea'].setValue(resp.data[0]);
+          //if (resp.data.length > 0)
+          //this.filterForm.controls['managementArea'].setValue(resp.data[0]);
         })
       );
   }
@@ -1241,7 +1256,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     _params.limit = 100;
     params.page = $params.page;
     params.limit = $params.limit;
-    params.search = $params.text;
+    params.addFilter('description', $params.text, SearchFilter.LIKE);
+    //params.search = $params.text;
 
     const user = this.user.value;
     if (user) {
@@ -1253,6 +1269,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             if (areas.length > 0) {
               params.addFilter('id', areas.join(','), SearchFilter.IN);
             }
+            this.getData();
             return this.getAreas(params);
           })
         )
@@ -1264,6 +1281,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           },
         });
     } else {
+      this.getData();
       this.getAreas(params).subscribe();
     }
 
@@ -1334,6 +1352,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const title = FLYER_HISTORY_TITLE;
     const params = new FilterParams();
     params.addFilter('procedureNumber', this.selectedRow.processNumber);
+    params.sortBy = 'consecutive:DESC';
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
@@ -1442,11 +1461,31 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.type = 'PGR';
       this.pgrDocs().subscribe();
     } else if (typeManagement == 2) {
+      console.log('sat', typeManagement);
       this.type = 'SAT';
+      this.satDocs();
     } else {
       this.showScan = true;
       this.showPGRDocs, (this.showValDoc = false);
     }
+  }
+
+  satDocs() {
+    const { officeNumber } = this.selectedRow;
+    // http://sigebimsqa.indep.gob.mx/interfacesat/api/v1/sat-transferencia/get-count-registers
+    /**
+     * {
+        "officeNumber": 12,
+        "valid": 1
+      }
+     */
+    this.type = 'SAT';
+    let valid: number = 0;
+    this.satTransferService
+      .getCountRegisters({ officeNumber, valid })
+      .subscribe(res => {
+        console.log(res);
+      });
   }
 
   pgrDocs() {
@@ -1477,6 +1516,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
+
     const tmp = {
       id: this.selectedRow.processNumber,
       InvoiceRep: this.selectedRow.folioRep,
@@ -1536,14 +1576,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
 
     if (result.isConfirmed) {
-      if (!this.managementAreaF && !this.user) {
-        return this.onLoadToast(
-          'error',
-          'Error',
-          'No se ha asignado el usuario o el area en el trámite, favor de agregarla'
-        );
+      if (this.managementAreaF.value && this.user.value) {
+        this.savePaperwork('1').subscribe();
+      } else {
+        this.savePaperwork('2').subscribe();
       }
-      this.savePaperwork().subscribe();
     }
   }
 
@@ -1563,24 +1600,34 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  savePaperwork() {
-    const { processNumber } = this.selectedRow;
-    const body = {
-      status: this.managementAreaF.value.id + 'I',
-      userTurned: this.user.value.id,
-      situation: 1,
-    };
+  savePaperwork(option: string) {
+    const { processNumber, areaATurn, userATurn } = this.selectedRow;
+    let body;
+    if (option === '1') {
+      body = {
+        status: this.managementAreaF.value.id + 'I',
+        userTurned: this.user.value.id,
+        situation: 1,
+      };
+    } else {
+      body = {
+        status: areaATurn + 'I',
+        userTurned: userATurn,
+        situation: 1,
+      };
+    }
+
     return this.procedureManagementService.update(processNumber, body).pipe(
       catchError(error => {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un error al cancelar el trámite'
+          'Ocurrio un error al enviar el trámite'
         );
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se envio correctamente', '');
+        this.onLoadToast('success', 'El trámite se envío correctamente', '');
         this.getData();
       })
     );
@@ -1603,7 +1650,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se cancelo correctamente', '');
+        this.onLoadToast('success', 'El trámite se canceló correctamente', '');
         this.getData();
       })
     );
@@ -1641,16 +1688,192 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         'Aviso',
         'El Oficio no tiene volante relacionado, sólo se visualizaran los documentos'
       );
+      let config = {
+        class: 'modal-lg modal-dialog-centered',
+        initialState: {
+          pgrOffice: officeNumber,
+        },
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PgrFilesComponent, config);
+      return;
     }
 
-    let config = {
-      class: 'modal-lg modal-dialog-centered',
-      initialState: {
-        pgrOffice: officeNumber,
-      },
-      ignoreBackdropClick: true,
+    if (flierNumber && proceedingsNumber) {
+      this.getPgrDocuments();
+    }
+  }
+
+  getPgrDocuments() {
+    const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
+    const __params = new FilterParams();
+    __params.addFilter('flyerNumber', flierNumber);
+    const _params = `${__params.getParams()}&sortBy=id:DESC`;
+    this.documentsService
+      .getAllFilter(_params)
+      .pipe(
+        switchMap(response => this.getPgrTransferDocuments(response.data[0]))
+      )
+      .subscribe({
+        next: response => {
+          const { id, scanStatus } = response?.data[0];
+          const action =
+            scanStatus == 'ESCANEADO'
+              ? 'C'
+              : scanStatus == 'SOLICITADO'
+              ? 'S'
+              : 'I';
+          this.determinatePgr(id, action);
+        },
+        error: error => {
+          if (error.status < 500) {
+            this.determinatePgr(null, 'I');
+          } else {
+            this.onLoadToast('error', 'Error', 'Ocurrio un error inesperado');
+          }
+        },
+      });
+  }
+
+  getPgrTransferDocuments(document: IDocuments) {
+    const description = 'DOCUMENTACION ENVIADA POR TRANSFERENCIA ELECTRONICA.';
+    const _params = new FilterParams();
+    _params.addFilter('descriptionDocument', description, SearchFilter.ILIKE);
+    _params.addFilter('id', document.id);
+    _params.addFilter('flyerNumber', document.flyerNumber);
+    return this.documentsService.getAllFilter(_params.getParams());
+  }
+
+  determinatePgr(folio: string | number | null, action: string) {
+    console.log(folio);
+    if (!folio) {
+      const { flierNumber, proceedingsNumber } = this.selectedRow;
+      this.getPgrFolio(flierNumber, proceedingsNumber, action);
+    } else if (action == 'C' || action == 'I' || action == 'S') {
+      this.exportPgrDocs(folio, action);
+    } else {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Ocurrio un error al obtener el Folio Universal'
+      );
+    }
+  }
+
+  getPgrFolio(
+    flyer: string | number,
+    expedient: string | number,
+    action: string
+  ) {
+    this.getCveTypeDocument()
+      .pipe(
+        switchMap(cveDocumentType =>
+          this.getImageMedia().pipe(
+            map(media => {
+              return { cveDocumentType, media };
+            })
+          )
+        )
+      )
+      .subscribe({
+        next: value =>
+          this.createDocument(
+            value.media,
+            value.cveDocumentType,
+            expedient,
+            flyer,
+            action
+          ),
+        error: error =>
+          this.createDocument(null, null, expedient, flyer, action),
+      });
+  }
+
+  createDocument(
+    media: string | number,
+    cveDocument: string,
+    expedient: string | number,
+    flyer: string | number,
+    action: string
+  ) {
+    const today = new Date();
+    const decodedToken = this.authService.decodeToken();
+    const documentToInsert: any = {
+      numberProceedings: expedient,
+      keySeparator: 60,
+      keyTypeDocument: cveDocument,
+      natureDocument: 'ORIGINAL',
+      descriptionDocument:
+        'DOCUMENTACION ENVIADA POR TRANSFERENCIA ELECTRONICA.',
+      significantDate: format(today, 'MM/yyyy'),
+      scanStatus: 'ESCANEADO',
+      userRequestsScan: decodedToken.preferred_username,
+      scanRequestDate: format(today, 'yyyy-MM-dd'),
+      flyerNumber: flyer,
+      mediumId: media,
+      sheets: 1,
     };
-    this.modalService.show(PgrFilesComponent, config);
+    this.documentsService.create(documentToInsert).subscribe(document => {
+      this.exportPgrDocs(document.id, action);
+    });
+  }
+
+  getCveTypeDocument() {
+    const params = new FilterParams();
+    params.addFilter('description', 'REMITE DOCUMENTACION');
+    return this.documentsTypesService
+      .getAllWidthFilters(params.getParams())
+      .pipe(map(response => response.data[0].id));
+  }
+
+  getImageMedia() {
+    const params = new FilterParams();
+    params.addFilter('status', 'A');
+    return this.imageMediaService
+      .getAllFilter(params.getParams())
+      .pipe(map(response => response.data[0].id));
+  }
+
+  exportPgrDocs(folio: string | number, action: string) {
+    const { officeNumber } = this.selectedRow;
+    if (action == 'I' || action == 'S') {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio tiene No. Volante relacionado, se generarán los documentos.'
+      );
+      this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
+        next: () => {
+          let config = {
+            class: 'modal-lg modal-dialog-centered',
+            initialState: {
+              pgrOffice: officeNumber,
+            },
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PgrFilesComponent, config);
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al copiar los documentos'
+          );
+        },
+      });
+      // copy img
+      // view pgr docs
+    } else if (action == 'C') {
+      // view pgr docs
+      let config = {
+        class: 'modal-lg modal-dialog-centered',
+        initialState: {
+          pgrOffice: officeNumber,
+        },
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PgrFilesComponent, config);
+    }
   }
 
   validDoc() {
@@ -1676,27 +1899,47 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
       return;
     }
-    const title = RELATED_FOLIO_TITLE;
-    const modalRef = this.openDocumentsModal(
-      this.selectedRow?.flierNumber,
-      title
-    );
-    modalRef.content.selected
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(document => this.goToScanDocuments(document));
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.selectedRow?.flierNumber);
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: () => {
+        const title = RELATED_FOLIO_TITLE;
+        const modalRef = this.openDocumentsModal(
+          this.selectedRow?.flierNumber,
+          title
+        );
+        modalRef.content.selected
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(document => this.goToScanDocuments(document));
+      },
+      error: async error => {
+        if (error.status < 500) {
+          const result = await this.alertQuestion(
+            'warning',
+            'Advertencia',
+            'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
+          );
+          if (result.isConfirmed) {
+            this.router.navigate(
+              [
+                `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+              ],
+              { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
+            );
+          }
+        }
+      },
+    });
   }
 
   goToScanDocuments(document: IDocuments) {
     const { id } = document;
-    const url = this.router.createUrlTree(
-      ['/pages/general-processes/scan-documents'],
-      {
-        queryParams: {
-          folio: id,
-        },
-      }
-    );
-    window.open(url.toString(), '_blank');
+    this.router.navigate(['/pages/general-processes/scan-documents'], {
+      queryParams: {
+        folio: id,
+        origin: 'FGESTBUZONTRAMITE',
+      },
+    });
   }
 
   replicate() {
@@ -1865,7 +2108,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const columns = WORK_BIENES_COLUMNS;
     const title = BIENES_TITLE;
     const params = new FilterParams();
-    params.addFilter('file', this.selectedRow.proceedingsNumber);
+    params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
@@ -1943,8 +2186,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.getAllUsers(params).subscribe();
     }*/
-
-    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    params.search = $params.text;
+    //params.addFilter('name', $params.text, SearchFilter.LIKE);
     this.getAllUsers(params).subscribe();
   }
 
@@ -2046,6 +2289,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         case 'getNotificationsReport':
           this.getNotificationsReport();
           break;
+        case 'getIdentifier':
+          this.getIdentifier();
+          break;
+        case 'updateObservations':
+          this.updateObservations();
+          break;
         default:
           this.alertQuestion(
             'info',
@@ -2064,9 +2313,20 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getSolicitud() {
-    this.router.navigateByUrl(
-      `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
-    );
+    if (this.selectedRow.flierNumber) {
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+        ],
+        { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
+      );
+    } else {
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, no puede generarse una solicitud de digitalización'
+      );
+    }
   }
 
   fromDateChange(date: Date) {
@@ -2142,6 +2402,119 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         );
       }
     }
+  }
+
+  getIdentifier(): void {
+    this.loading = true;
+    //Get NextVal SEQ_RASTREADOR
+    console.log(this.selectedRow.flierNumber);
+    if (this.selectedRow?.flierNumber) {
+      const flierNumber = this.selectedRow?.flierNumber;
+      this.goodTrackerService.getIdentifier().subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          if (resp.nextval) {
+            const tmpTracker = {
+              identificator: resp.nextval,
+              goodNumber: flierNumber,
+            };
+            this.goodTrackerService.createTmpTracker(tmpTracker).subscribe({
+              next: (resp: any) => {
+                console.log('insert tmp_rastreador');
+                this.loading = false;
+                this.getFlyersReport(tmpTracker.identificator);
+              },
+              error: error => {
+                this.loading = false;
+                this.onLoadToast(
+                  'warning',
+                  'Ocurrió un error',
+                  'No se pudo guardar la información del identificador, solo se visualizará el primer volante'
+                );
+                this.getFlyersReport(null, flierNumber);
+              },
+            });
+          }
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error',
+            'No se pudo generar un identificador, solo se visualizará el primer volante'
+          );
+          this.getFlyersReport(null, flierNumber);
+        },
+      });
+    } else {
+      this.loading = false;
+      this.alert(
+        'info',
+        'Aviso',
+        'El Oficio no tiene volante relacionado, el reporte no puede generarse'
+      );
+    }
+  }
+
+  getFlyersReport(identificator?: number, flierNumber?: number): void {
+    this.loading = true;
+    let params = {};
+
+    if (identificator !== null) {
+      params = {
+        PN_VOLANTEINI: 0,
+        PN_VOLANTEFIN: 0,
+        P_IDENTIFICADOR: identificator,
+      };
+    } else if (flierNumber) {
+      params = {
+        PN_VOLANTEINI: flierNumber.toString(),
+        PN_VOLANTEFIN: flierNumber.toString(),
+      };
+    }
+
+    this.siabService.fetchReport('RCONCOGVOLANTESRE', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
+  }
+
+  openModal(context?: Partial<ObservationsComponent>) {
+    const modalRef = this.modalService.show(ObservationsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.onLoadToast('success', 'Elemento Actualizado', '');
+        this.getData();
+      }
+    });
+  }
+
+  updateObservations() {
+    const process = this.selectedRow;
+    this.openModal({ process });
   }
 
   onSaveConfirm(event: any) {
