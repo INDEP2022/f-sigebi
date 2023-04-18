@@ -650,6 +650,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   /*BUILD FILTERS*/
   buildFilters(): void {
     console.log(this.managementAreaF.value);
+    console.log(this.user.value);
     this.filterParams.getValue().removeAllFilters();
     this.filterForm.controls['priority'].setValue(this.priority$);
 
@@ -1352,6 +1353,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const title = FLYER_HISTORY_TITLE;
     const params = new FilterParams();
     params.addFilter('procedureNumber', this.selectedRow.processNumber);
+    params.sortBy = 'consecutive:DESC';
     const $params = new BehaviorSubject(params);
     const config = {
       ...MODAL_CONFIG,
@@ -1621,7 +1623,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un error al cancelar el trámite'
+          'Ocurrio un error al enviar el trámite'
         );
         return throwError(() => error);
       }),
@@ -1919,8 +1921,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
           );
           if (result.isConfirmed) {
-            this.router.navigateByUrl(
-              `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+            this.router.navigate(
+              [
+                `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+              ],
+              { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
             );
           }
         }
@@ -2146,10 +2151,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   userChange(user: any) {
+    console.log(user);
+    if (user == undefined) {
+      delete this.columnFilters['filter.turnadoiUser'];
+    }
     const params = new ListParams();
     this.areas$ = new DefaultSelect([], 0, true);
     this.getGroupWork(params, true);
     const _user = this.user.value;
+    console.log(_user);
     const _area = this.managementAreaF.value;
     if (_user && _area) {
       this.setDefaultValuesByArea(_area, _user);
@@ -2310,8 +2320,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   getSolicitud() {
     if (this.selectedRow.flierNumber) {
-      this.router.navigateByUrl(
-        `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.selectedRow.flierNumber}`,
+        ],
+        { queryParams: { origin: 'FGESTBUZONTRAMITE' } }
       );
     } else {
       this.alert(
