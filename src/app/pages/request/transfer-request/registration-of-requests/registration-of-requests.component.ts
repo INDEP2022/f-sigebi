@@ -98,6 +98,7 @@ export class RegistrationOfRequestsComponent
 
   question: boolean = false;
   verifyResp: boolean = false;
+  task: number = 0;
 
   constructor(
     public fb: FormBuilder,
@@ -127,8 +128,11 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    const task = this.route.snapshot.paramMap.get('task');
-    console.log(task);
+    this.task = Number(this.route.snapshot.paramMap.get('task'));
+    console.log(this.task);
+    const username = localStorage.getItem('username');
+    console.log(username);
+
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
     this.processView();
@@ -594,7 +598,12 @@ export class RegistrationOfRequestsComponent
   }
 
   cambiarTipoUsuario(request: any) {
-    this.openModal(SelectTypeUserComponent, request, 'commit-request');
+    this.openModal(
+      SelectTypeUserComponent,
+      request,
+      'commit-request',
+      this.task
+    );
   }
   /* Fin guardar captura de solicitud */
 
@@ -992,11 +1001,17 @@ export class RegistrationOfRequestsComponent
     this.onLoadToast(header, title, body);
   }
 
-  openModal(component: any, data?: any, typeAnnex?: String): void {
+  openModal(
+    component: any,
+    data?: any,
+    typeAnnex?: String,
+    task?: number
+  ): void {
     let config: ModalOptions = {
       initialState: {
         data: data,
         typeAnnex: typeAnnex,
+        task: task,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

@@ -31,6 +31,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
   data: any; // solicitud pasada por el modal
   typeAnnex: string;
+  task: number = 0;
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -220,7 +221,13 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               title,
               url,
               from,
-              to
+              to,
+              true,
+              this.task,
+              'usuario actual',
+              'SOLICITUD_TRANSFERENCIA',
+              'Registro_Solicitud',
+              'TURNAR'
             );
             if (taskResponse) {
               /* actualizar status del bien */
@@ -253,6 +260,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     }
   }
 
+  /* returnar la solicitud */
   async ReturnRequest() {
     this.loader.load = true;
     this.data.observations =
@@ -265,17 +273,40 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     const requestResult = await this.saveRequest(this.data);
     if (requestResult === true) {
       this.loader.load = false;
-      Swal.fire({
-        title: 'Solicitud Returnada',
-        text: 'La solicitud se returno correctamente',
-        icon: 'success',
-        showCancelButton: false,
-        confirmButtonColor: '#9D2449',
-        cancelButtonColor: '#B38E5D',
-        confirmButtonText: 'Aceptar',
-      }).then(result => {
-        this.closeAll();
-      });
+
+      const title =
+        'Registro de solicitud (Captura de Solicitud) con folio: ' +
+        this.data.id;
+      const url = 'pages/request/transfer-request/registration-request';
+      const from = 'REGISTRO_SOLICITUD';
+      const to = 'REGISTRO_SOLICITUD';
+      /* crea una nueva tarea */
+      const taskResponse = await this.createTaskOrderService(
+        this.data,
+        title,
+        url,
+        from,
+        to,
+        true,
+        this.task,
+        'usuario actual',
+        'SOLICITUD_TRANSFERENCIA',
+        'Registro_Solicitud',
+        'TURNAR'
+      );
+      if (taskResponse) {
+        Swal.fire({
+          title: 'Solicitud Returnada',
+          text: 'La solicitud se returno correctamente',
+          icon: 'success',
+          showCancelButton: false,
+          confirmButtonColor: '#9D2449',
+          cancelButtonColor: '#B38E5D',
+          confirmButtonText: 'Aceptar',
+        }).then(result => {
+          this.closeAll();
+        });
+      }
     }
   }
 
@@ -340,12 +371,25 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     title: string,
     url: string,
     from: string,
-    to: string
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
   ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['type'] = 'SOLICITUD TRANSFERENCIA';
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
 
       let task: any = {};
       task['id'] = 0;
