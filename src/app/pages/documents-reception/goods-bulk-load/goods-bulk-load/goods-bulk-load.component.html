@@ -452,6 +452,40 @@
                 </div>
               </div>
             </ul>
+            <div
+              class="row"
+              *ngIf="
+                tipoCarga == 'pgr' &&
+                ((DeclarationsUploadValidationMassive &&
+                  !procesandoUpload &&
+                  endProcess) ||
+                  (tableSource.length == 0 && !cargandoPgr))
+              ">
+              <div class="col-md-12">
+                <div class="card p-2">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      EXPEDIENTE:
+                      <div class="badge badge-pill bg-info text-wrap">
+                        {{ paramsGeneral.p_no_expediente }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      VOLANTE:
+                      <div class="badge badge-pill bg-info text-wrap">
+                        {{ paramsGeneral.p_no_volante }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      AVERIGUACIÓN PREVIA:
+                      <div class="badge badge-pill bg-info text-wrap">
+                        {{ paramsGeneral.p_av_previa }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
