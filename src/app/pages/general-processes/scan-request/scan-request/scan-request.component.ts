@@ -388,15 +388,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       significantDate: [
         null,
         [
-          Validators.maxLength(7),
+          Validators.minLength(7),
           Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
         ],
       ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
       scanStatus: ['SOLICITADO'],
       keySeparator: [null],
-      flyerNumber: [null, Validators.required],
-      numberProceedings: [null, Validators.required],
+      flyerNumber: [null],
+      numberProceedings: [null],
       scanRequestDate: [null],
       userRequestsScan: [null],
       numberDelegationRequested: [null],
