@@ -225,21 +225,22 @@ export class NotificationAssetsTabComponent
   }
 
   refuseClarification() {
-    const idNotify = { ...this.notificationsGoods };
-    const refuseObj = { ...this.valuesNotifications };
-    //const idRefuse = refuseObj.clarifiNewsRejectId as IClarificationGoodsReject;
-    //const idRechazo = idRefuse.rejectNotificationId;
-    //console.log('ID del rechazo', idRefuse.rejectNotificationId);
+    if (this.rowSelected == false) {
+      this.message('Error', 'Seleccione notificación a rechazar');
+    } else {
+      const idNotify = { ...this.notificationsGoods }; //Info de Good
+      const refuseObj = { ...this.valuesNotifications }; //Info de sus notificaciones
 
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      //idRechazo,
-      clarification: this.notifyAssetsSelected,
-      callback: (next: boolean) => {
-        this.getClarificationsByGood(idNotify.goodId);
-      },
-    };
-    this.modalService.show(RefuseClarificationModalComponent, modalConfig);
+      const modalConfig = MODAL_CONFIG;
+      modalConfig.initialState = {
+        refuseObj,
+        clarification: this.notifyAssetsSelected,
+        callback: (next: boolean) => {
+          this.getClarificationsByGood(idNotify.goodId);
+        },
+      };
+      this.modalService.show(RefuseClarificationModalComponent, modalConfig);
+    }
 
     //ver si los datos se devolveran por el mismo modal o se guardan
 
@@ -279,16 +280,20 @@ export class NotificationAssetsTabComponent
   }
 
   acceptClariImpro() {
-    console.log(
-      'id tipo aclaración seleccionado',
-      this.selectedRow.clarification.type
-    );
+    if (this.rowSelected == false) {
+      this.message('Error', 'Seleccione notificación a aceptar');
+    } else {
+      console.log(
+        'id tipo aclaración seleccionado',
+        this.selectedRow.clarification.type
+      );
 
-    if (this.selectedRow.clarification.type < 1) {
-      this.message('Error', 'Seleccione almenos un registro!');
-      return;
+      if (this.selectedRow.clarification.type < 1) {
+        this.message('Error', 'Seleccione almenos un registro!');
+        return;
+      }
+      this.openModal();
     }
-    this.openModal();
   }
 
   message(title: string, text: string) {
@@ -340,23 +345,27 @@ export class NotificationAssetsTabComponent
 
   //Respuesta del SAT
   satAnswer() {
-    const idNotify = { ...this.notificationsGoods };
-    const idAclaracion = this.selectedRow.id; //ID de la aclaración para mandar al reporte del sat
-    if (this.selectedRow.satClarify == null) {
-      this.message('Aviso', 'Aún no hay una respuesta del SAT');
-      return;
-    }
+    if (this.rowSelected == false) {
+      this.message('Error', 'Primero seleccione una notificación');
+    } else {
+      const idNotify = { ...this.notificationsGoods };
+      const idAclaracion = this.selectedRow.clarification.id; //ID de la aclaración para mandar al reporte del sat
+      if (this.selectedRow.satClarify == null) {
+        this.message('Aviso', 'Aún no hay una respuesta del SAT');
+        return;
+      }
 
-    let config: ModalOptions = {
-      initialState: {
-        idAclaracion,
-        callback: (next: boolean) => {
-          this.getClarificationsByGood(idNotify.goodId);
+      let config: ModalOptions = {
+        initialState: {
+          idAclaracion,
+          callback: (next: boolean) => {
+            this.getClarificationsByGood(idNotify.goodId);
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintSatAnswerComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PrintSatAnswerComponent, config);
+    }
   }
 }

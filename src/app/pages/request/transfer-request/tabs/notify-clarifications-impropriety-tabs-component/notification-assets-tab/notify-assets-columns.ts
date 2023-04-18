@@ -36,8 +36,8 @@ export const NOTIFY_ASSETS_COLUMNS = {
     title: 'Aclaración',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.clarification;
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarification.clarification;
     },
   },
   clarification2: {
@@ -69,5 +69,8 @@ export const NOTIFY_ASSETS_COLUMNS = {
     title: 'Observaciones',
     type: 'string',
     sort: false,
+    /*valuePrepareFunction: (cell: any, row: any) => {
+      return row.clarifiNewsRejectId.observations;
+    },*/
   },
 };

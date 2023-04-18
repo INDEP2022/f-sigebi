@@ -9,12 +9,12 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  description: {
+  goodDescription: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
-  unit: {
+  unitMeasure: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,

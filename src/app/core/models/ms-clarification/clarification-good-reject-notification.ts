@@ -1,3 +1,5 @@
+import { IChatClarifications } from '../ms-chat-clarifications/chat-clarifications-model';
+
 export interface ClarificationGoodRejectNotification {
   goodId?: number;
   rejectionDate?: any;
@@ -15,4 +17,5 @@ export interface ClarificationGoodRejectNotification {
   goodResDevId?: number;
   sysStsc4qbnbolbp3szu27tgt6lu?: number;
   documentClarificationId?: number;
+  chatClarification?: IChatClarifications;
 }
