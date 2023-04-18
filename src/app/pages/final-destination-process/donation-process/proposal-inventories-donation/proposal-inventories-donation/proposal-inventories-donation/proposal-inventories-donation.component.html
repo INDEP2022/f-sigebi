@@ -1,24 +1,21 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Propuestas de Inventarios para Donaci&oacute;n</h5>
+    <h5 class="title">{{ param }}</h5>
   </div>
 
   <div body>
     <div class="row">
       <div class="col-12">
-        <h5>
-          {{ param }}
+        <h5 class="around-tag">
+          Propuestas de Inventarios para Donaci&oacute;n
         </h5>
       </div>
     </div>
 
     <div class="">
-      <form
-        class="form-material form-horizontal"
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()">
+      <form class="form-material form-horizontal p-2" [formGroup]="form">
         <div class="row mt-5 justify-content-start justify-content-sm-end">
-          <div class="col-6 col-md-3">
+          <div class="col-md-3">
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('warehouseNumb')"
@@ -26,11 +23,12 @@
                 <input
                   type="text"
                   class="form-control"
+                  [maxlength]="10"
                   formControlName="warehouseNumb" />
               </form-field>
             </div>
           </div>
-          <div class="col-6 col-md-3 mt-md-0">
+          <div class="col-md-3">
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('coordination')"
@@ -38,32 +36,36 @@
                 <input
                   type="text"
                   class="form-control"
+                  [maxlength]="10"
                   formControlName="coordination" />
               </form-field>
             </div>
           </div>
-          <div class="col-6 col-md-3 text-center text-md-right">
-            <button class="btn btn-primary btn-sm active">Consultar</button>
-          </div>
-          <div class="col-6 col-md-3 mt-md-0 text-center text-md-right">
+          <div class="col text-left">
+            <button
+              class="btn btn-primary btn-sm active mr-2"
+              (click)="searchGoodDonac()">
+              Consultar
+            </button>
             <button class="btn btn-secondary btn-sm active">Seleccionar</button>
+          </div>
+          <div class="col-md-3 mt-md-0 text-center text-md-right">
+            <button
+              class="btn btn-success btn-sm active mr-2"
+              (click)="exportInventory()">
+              Exportar Inventario
+            </button>
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="callReport()">
+              Imprimir
+            </button>
           </div>
         </div>
       </form>
 
-      <div class="row justify-content-end mt-5 md-0">
-        <div class="col-6 col-md-4 text-center text-md-right">
-          <button class="btn btn-success btn-sm active">
-            Exportar Inventario
-          </button>
-        </div>
-        <div class="col-6 col-md-2 mt-3 mt-md-0 text-center text-md-right">
-          <button class="btn btn-primary btn-sm active">Imprimir</button>
-        </div>
-      </div>
-
       <div class="row justify-content-end mt-5">
-        <div class="col-md-5 buttons pt-3 text-right">
+        <div class="col-12 buttons pt-3 text-right">
           <app-columns-select
             (settingsChange)="settingsChange($event, 1)"
             [settings]="settings">
@@ -83,7 +85,7 @@
 
       <div class="row mt-5">
         <div class="col-12">
-          <h5>
+          <h5 class="around-tag">
             Inventario de Bienes Relacionados a la Propuesta de Inventarios para
             Donaci&oacute;n
           </h5>
