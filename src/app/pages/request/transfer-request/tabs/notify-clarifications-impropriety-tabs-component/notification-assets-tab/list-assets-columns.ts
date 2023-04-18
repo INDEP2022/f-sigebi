@@ -1,10 +1,10 @@
 export const LIST_ASSETS_COLUMN = {
-  clarification: {
+  clarificationstatus: {
     title: 'Estatus Aclaración',
     type: 'string',
     sort: false,
   },
-  goodId: {
+  goodid: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
@@ -14,31 +14,19 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  measureunit: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
-  physicalStatus: {
+  phisicalstate: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == '1') return 'BUENO';
-      if (value == '2') return 'MALO';
-
-      return value;
-    },
   },
-  stateConservation: {
+  conservationstate: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == '1') return 'BUENO';
-      if (value == '2') return 'MALO';
-
-      return value;
-    },
   },
 };

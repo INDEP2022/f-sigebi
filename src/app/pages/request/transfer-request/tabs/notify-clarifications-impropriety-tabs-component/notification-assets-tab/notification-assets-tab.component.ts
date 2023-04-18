@@ -17,8 +17,10 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGetGoodResVe } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
@@ -42,7 +44,7 @@ export class NotificationAssetsTabComponent
   idRequest: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
-  columns: IGood[] = [];
+  columns: IGetGoodResVe[] = [];
   columnFilters: any = [];
   totalItems: number = 0;
   notificationsGoods: IGood;
@@ -71,7 +73,8 @@ export class NotificationAssetsTabComponent
     private activatedRoute: ActivatedRoute,
     private rejectedGoodService: RejectedGoodService,
     private chatClarificationsService: ChatClarificationsService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private getGoodResVeService: GetGoodResVeService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -108,13 +111,13 @@ export class NotificationAssetsTabComponent
             /*SPECIFIC CASES*/
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'clarification':
+              case 'clarificationstatus':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'goodId':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'description':
+              case 'gooddescription':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -127,25 +130,25 @@ export class NotificationAssetsTabComponent
               delete this.columnFilters[field];
             }
           });
-          this.getGoodsByRequest();
+          this.getGoods();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsByRequest());
+      .subscribe(() => this.getGoods());
   }
 
-  getGoodsByRequest() {
+  getGoods() {
     this.loading1 = true;
     const params1 = new ListParams();
-    params1['filter.requestId'] = `$eq:${this.idRequest}`;
+    params1['filter.idrequest'] = `${this.idRequest}`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
       ...params1,
     };
 
-    this.goodService.getAll(params).subscribe({
+    this.getGoodResVeService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
@@ -156,36 +159,25 @@ export class NotificationAssetsTabComponent
       },
       error: error => (this.loading1 = false),
     });
-
-    // this.rejectedGoodService.getAll(params).subscribe({
-    //   next: response => {
-    //     this.columns = response.data;
-    //     this.totalItems = response.count || 0;
-
-    //     this.data.load(this.columns);
-    //     this.data.refresh();
-    //     this.loading1 = false;
-    //   },
-    //   error: error => (this.loading1 = false),
-    // });
+    console.log('Bienes mediante request', this.columns);
   }
 
-  goodSelect(good: ClarificationGoodRejectNotification) {
+  goodSelect(good: IGetGoodResVe) {
     console.log(good);
     this.notificationsList = [];
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getClarificationsByGood(good.id));
+      .subscribe(() => this.getClarificationsByGood(good.goodid));
   }
 
   getClarificationsByGood(id: number) {
     this.formLoading = true;
-    const params1 = new ListParams();
-    params1['filter.goodId'] = `$eq:${id}`;
+    const params2 = new ListParams();
+    params2['filter.goodId'] = `$eq:${id}`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
-      ...params1,
+      ...params2,
     };
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
@@ -233,7 +225,6 @@ export class NotificationAssetsTabComponent
   }
 
   selectRow(row?: any) {
-    console.log('e', row);
     this.selectedRow = row;
     this.rowSelected = true;
   }

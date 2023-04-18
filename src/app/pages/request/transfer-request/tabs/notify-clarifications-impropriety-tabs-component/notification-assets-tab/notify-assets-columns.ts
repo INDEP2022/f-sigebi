@@ -9,7 +9,9 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.chatClarification.satClarification;
+      if (row.chatClarification == null) return '';
+      if (row.chatClarification != null)
+        return row.chatClarification.clarificationStatus;
     },
   },
   chatClarification2: {
@@ -17,7 +19,9 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.chatClarification.satClarification;
+      if (row.chatClarification == null) return '';
+      if (row.chatClarification != null)
+        return row.chatClarification.satClarification;
     },
   },
   clarificationType: {
@@ -43,7 +47,8 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.clarification.clarification;
+      if (row.chatClarification == null) return '';
+      if (row.chatClarification != null) return row.clarification.clarification;
     },
   },
   clarification2: {
@@ -51,7 +56,8 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.clarification.type;
+      if (row.clarification == null) return '';
+      if (row.clarification != null) return row.clarification.type;
     },
     /*valuePrepareFunction: (cell: any, row: any) => {
       //return row.clarifiNewsRejectId.clarificationId;
