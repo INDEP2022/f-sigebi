@@ -92,6 +92,7 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
     // this.zoomInit(1.4);
     if (this.documento.type == 'pdf') this.loading = false;
     this.overSizeFiles();
+    console.log(this.documento.type);
   }
 
   overSizeFiles() {
