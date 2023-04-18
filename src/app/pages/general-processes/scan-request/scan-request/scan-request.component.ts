@@ -48,6 +48,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   noVolante: number;
   isParams: boolean = false;
   origin: string = null;
+  today: Date = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -336,7 +337,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!expedientNumber && !wheelNumber) {
       this.onLoadToast(
         'error',
-        'Falta el número de expediente ó volante, favor de verificar.',
+        'Falta el número de expediente o volante, favor de verificar.',
         ''
       );
       return false;
@@ -350,7 +351,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!keySeparator || !keyTypeDocument) {
       this.onLoadToast(
         'error',
-        'Falta el número de expediente ó separador ó tipo de documento, favor de verificar.',
+        'Falta el número de expediente o separador o tipo de documento, favor de verificar.',
         ''
       );
       return false;
@@ -384,7 +385,14 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       id: [{ value: null, disabled: true }],
       keyTypeDocument: [null, Validators.required],
       natureDocument: ['ORIGINAL', Validators.required],
-      significantDate: [null, Validators.maxLength(7)],
+      significantDate: [
+        null,
+        [
+          Validators.minLength(7),
+          Validators.maxLength(7),
+          Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
+        ],
+      ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
       scanStatus: ['SOLICITADO'],
       keySeparator: [null],
@@ -523,5 +531,30 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         this.form.get('id').disable();
       },
     });
+  }
+
+  limit(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.formNotification
+        .get(field)
+        .patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  limit2(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.form.get(field).patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  validateDate(value: string) {
+    if (value) {
+      if (value.length >= 2) {
+        const month = Number(value.slice(0, 2));
+        if (month > 12 || month < 1) {
+          this.form.get('significantDate').setErrors({ incorrect: true });
+        }
+      }
+    }
   }
 }

@@ -27,11 +27,11 @@ export const COLUMNS = {
     sort: false,
   },
   numberProceedings: {
-    title: 'No expediente',
+    title: 'No. Expediente',
     sort: false,
   },
   flyerNumber: {
-    title: 'No volante',
+    title: 'No. Volante',
     sort: false,
   },
 };
