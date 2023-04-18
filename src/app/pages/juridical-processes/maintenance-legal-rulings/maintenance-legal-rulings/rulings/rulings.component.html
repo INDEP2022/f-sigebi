@@ -2,47 +2,47 @@
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
-        [control]="form.get('noDictaminacion')"
+        [control]="form.get('id')"
         label="No&#46; Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="noDictaminacion" />
+        <input class="form-control" formControlName="id" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
-        <input class="form-control" formControlName="noVolante" />
+      <form-field [control]="form.get('wheelNumber')" label="No&#46; Volante">
+        <input class="form-control" formControlName="wheelNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
-        [control]="form.get('noExpediente')"
+        [control]="form.get('expedientNumber')"
         label="No&#46; Expediente">
-        <input class="form-control" formControlName="noExpediente" />
+        <input class="form-control" formControlName="expedientNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
-        [control]="form.get('noDelegacion')"
+        [control]="form.get('delegationDictNumber')"
         label="No&#46; Delegación">
-        <input class="form-control" formControlName="noDelegacion" />
+        <input class="form-control" formControlName="delegationDictNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('tipo')" label="Tipo">
-        <input class="form-control" formControlName="tipo" placeholder="Tipo" />
+      <form-field [control]="form.get('typeDict')" label="Tipo">
+        <input class="form-control" formControlName="typeDict" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
-        [control]="form.get('estatusDictaminacion')"
+        [control]="form.get('statusDict')"
         label="Estatus Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="estatusDictaminacion" />
+        <input class="form-control" formControlName="statusDict" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('claveDictaminacion')"
+        [control]="form.get('passOfficeArmy')"
         label="Clave Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="claveDictaminacion" />
+        <input class="form-control" formControlName="passOfficeArmy" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -51,29 +51,27 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field
-        [control]="form.get('usuarioDictamina')"
-        label="Usuario Dictamina">
-        <input class="form-control" formControlName="usuarioDictamina" />
+      <form-field [control]="form.get('userDict')" label="Usuario Dictamina">
+        <input class="form-control" formControlName="userDict" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
-        [control]="form.get('areaDictamina')"
+        [control]="form.get('areaDict')"
         label="&Aacute;rea Dictamina">
-        <input class="form-control" formControlName="areaDictamina" />
+        <input class="form-control" formControlName="areaDict" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('delito')" label="Delito">
-        <input class="form-control" formControlName="delito" />
+      <form-field [control]="form.get('esDelit')" label="Delito">
+        <input class="form-control" formControlName="esDelit" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-12 p-2">
-      <form-field [control]="form.get('observaciones')" label="Observaciones">
+      <form-field [control]="form.get('observations')" label="Observaciones">
         <textarea
           class="form-control"
-          formControlName="observaciones"></textarea>
+          formControlName="observations"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -81,79 +79,68 @@
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('fechaInstructora')"
+        [control]="form.get('instructorDate')"
         label="Fecha Instructora">
         <input
           class="form-control"
-          formControlName="fechaInstructora"
+          formControlName="instructorDate"
           bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('fechaDictaminacion')"
+        [control]="form.get('dictDate')"
         label="Fecha Dictaminaci&oacute;n">
-        <input
-          class="form-control"
-          formControlName="fechaDictaminacion"
-          bsDatepicker />
+        <input class="form-control" formControlName="dictDate" bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('fechaAseguramiento')"
+        [control]="form.get('notifyAssuranceDate')"
         label="Fecha Aseguramiento">
         <input
           class="form-control"
-          formControlName="fechaAseguramiento"
+          formControlName="notifyAssuranceDate"
           bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('fechaResolucion')"
+        [control]="form.get('resolutionDate')"
         label="Fecha Resoluci&oacute;n">
         <input
           class="form-control"
-          formControlName="fechaResolucion"
+          formControlName="resolutionDate"
           bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('fechaNotificaResolucion')"
+        [control]="form.get('notifyResolutionDate')"
         label="Fecha Notifica Resoluci&oacute;n">
         <input
           class="form-control"
-          formControlName="fechaNotificaResolucion"
+          formControlName="notifyResolutionDate"
           bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
-      <form-field [control]="form.get('fechaIngreso')" label="Fecha Ingreso">
-        <input
-          class="form-control"
-          formControlName="fechaIngreso"
-          bsDatepicker />
+      <form-field [control]="form.get('entryDate')" label="Fecha Ingreso">
+        <input class="form-control" formControlName="entryDate" bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('fechaDictaminacionHC')"
+        [control]="form.get('dictHcDAte')"
         label="Fecha Dictaminaci&oacute;n HC">
-        <input
-          class="form-control"
-          formControlName="fechaDictaminacionHC"
-          bsDatepicker />
+        <input class="form-control" formControlName="dictHcDAte" bsDatepicker />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
-      <form-field
-        [control]="form.get('fechaIngresoHC')"
-        label="Fecha Ingreso HC">
+      <form-field [control]="form.get('entryHcDate')" label="Fecha Ingreso HC">
         <input
           class="form-control"
-          formControlName="fechaIngresoHC"
+          formControlName="entryHcDate"
           bsDatepicker />
       </form-field>
     </div>
