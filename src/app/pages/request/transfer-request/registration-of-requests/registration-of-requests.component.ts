@@ -98,6 +98,7 @@ export class RegistrationOfRequestsComponent
 
   question: boolean = false;
   verifyResp: boolean = false;
+  task: any = null;
 
   constructor(
     public fb: FormBuilder,
@@ -127,8 +128,9 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    const task = this.route.snapshot.paramMap.get('task');
-    console.log(task);
+    this.task = localStorage.getItem('Task');
+    console.log('task', JSON.parse(this.task));
+
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
     this.processView();
@@ -540,28 +542,34 @@ export class RegistrationOfRequestsComponent
     request.requestStatus = 'FINALIZADA';
     const updateReq = await this.updateRequest(this.requestData);
     if (updateReq) {
-      const oldTask: any = await this.getOldTask();
-      if (oldTask.assignees != '') {
-        const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-        const url = 'pages/request/transfer-request/process-approval';
-        const from = 'DESTINO_DOCUMENTAL';
-        const to = 'SOLICITAR_APROBACION';
-        const taskRes = await this.createTaskOrderService(
-          this.requestData,
-          title,
-          url,
-          from,
-          to,
-          oldTask
+      //const oldTask: any = await this.getOldTask();
+      //if (oldTask.assignees != '') {
+      const user: any = this.authService.decodeToken();
+      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/process-approval';
+      const from = 'DESTINO_DOCUMENTAL';
+      const to = 'SOLICITAR_APROBACION';
+      const taskRes = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Registro_Solicitud',
+        'FINALIZAR'
+      );
+      if (taskRes) {
+        this.msgGuardado(
+          'success',
+          'Solicitud Finalizada',
+          `Se finalizo la solicitud con el folio: ${this.requestData.id}`
         );
-        if (taskRes) {
-          this.msgGuardado(
-            'success',
-            'Solicitud Finalizada',
-            `Se finalizo la solicitud con el folio: ${this.requestData.id}`
-          );
-        }
       }
+      // }
     }
   }
 
@@ -594,7 +602,12 @@ export class RegistrationOfRequestsComponent
   }
 
   cambiarTipoUsuario(request: any) {
-    this.openModal(SelectTypeUserComponent, request, 'commit-request');
+    this.openModal(
+      SelectTypeUserComponent,
+      request,
+      'commit-request',
+      this.task
+    );
   }
   /* Fin guardar captura de solicitud */
 
@@ -612,14 +625,19 @@ export class RegistrationOfRequestsComponent
       const url = 'pages/request/transfer-request/classify-assets';
       const from = 'VERIFICAR_CUMPLIMIENTO';
       const to = 'CLASIFICAR_BIEN';
-
+      const user: any = this.authService.decodeToken();
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Verificar_Cumplimiento',
+        'APPROVE'
       );
       if (taskRes) {
         this.loader.load = false;
@@ -642,13 +660,19 @@ export class RegistrationOfRequestsComponent
       const url = 'pages/request/transfer-request/validate-document';
       const from = 'CLASIFICAR_BIEN';
       const to = 'DESTINO_DOCUMENTAL';
+      const user: any = this.authService.decodeToken();
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Clasificar_Bien',
+        'VALIDAR_DOCUMENTACION'
       );
       if (taskRes) {
         this.loader.load = false;
@@ -671,13 +695,19 @@ export class RegistrationOfRequestsComponent
       const url = 'pages/request/transfer-request/process-approval';
       const from = 'DESTINO_DOCUMENTAL';
       const to = 'SOLICITAR_APROBACION';
+      const user: any = this.authService.decodeToken();
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Destino_Documental',
+        'APROBAR_SOLICITUD'
       );
       if (taskRes) {
         this.loader.load = false;
@@ -727,8 +757,6 @@ export class RegistrationOfRequestsComponent
       },
       error: error => (this.loading = false),
     });
-
-    //this.openModal(GenerateDictumComponent, idDoc, 'approval-request');
   }
 
   /** Proceso de aprobacion */
@@ -759,13 +787,19 @@ export class RegistrationOfRequestsComponent
       const url = 'pages/request/programming-request/schedule-reception';
       const from = 'SOLICITAR_APROBACION';
       const to = 'APROBADO';
+      const user: any = this.authService.decodeToken();
       const taskResult = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Aprobar_Solicitud',
+        'TURNAR'
       );
       if (taskResult === true) {
         this.loader.load = false;
@@ -797,13 +831,19 @@ export class RegistrationOfRequestsComponent
       const url = 'pages/request/transfer-request/verify-compliance';
       const from = 'SOLICITAR_APROBACION';
       const to = 'VERIFICAR_CUMPLIMIENTO';
+      const user: any = this.authService.decodeToken();
       const taskResult = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        oldTask
+        false,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Aprobar_Solicitud',
+        'RECHAZAR'
       );
       if (taskResult === true) {
         this.msgGuardado(
@@ -837,16 +877,31 @@ export class RegistrationOfRequestsComponent
     url: string,
     from: string,
     to: string,
-    oldTask: any
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
   ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
+
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
+
       body['type'] = 'SOLICITUD TRANSFERENCIA'; //
       let task: any = {};
       task['id'] = 0;
-      task['assignees'] = oldTask.assignees;
-      task['assigneesDisplayname'] = oldTask.assigneesDisplayname;
+      task['assignees'] = this.task.assignees;
+      task['assigneesDisplayname'] = this.task.displayName;
       task['creator'] = user.username;
       task['taskNumber'] = Number(request.id);
       task['title'] = title;
@@ -992,11 +1047,17 @@ export class RegistrationOfRequestsComponent
     this.onLoadToast(header, title, body);
   }
 
-  openModal(component: any, data?: any, typeAnnex?: String): void {
+  openModal(
+    component: any,
+    data?: any,
+    typeAnnex?: String,
+    task?: number
+  ): void {
     let config: ModalOptions = {
       initialState: {
         data: data,
         typeAnnex: typeAnnex,
+        task: task,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

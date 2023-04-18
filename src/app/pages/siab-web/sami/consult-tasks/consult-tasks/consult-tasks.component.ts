@@ -306,8 +306,17 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   openTask(selected: any): void {
+    let obj2Storage = {
+      assignees: selected.assignees,
+      displayName: this.userName,
+      taskId: selected.requestId,
+      id: selected.id,
+    };
+
+    localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+
     if (selected.requestId !== null || selected.urlNb !== null) {
-      let url = `${selected.urlNb}/${selected.requestId}/${selected.id}`;
+      let url = `${selected.urlNb}/${selected.requestId}`;
       this.router.navigateByUrl(url);
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');

@@ -1,7 +1,7 @@
 import { IClarificationGoodsReject } from './clarification-goods-reject-notifi-model';
 
 export interface IChatClarifications {
-  requestId?: number;
+  requestId?: number | string;
   statusId?: number | null;
   userCaptures?: string | null;
   userAreaCaptures?: string | null;
@@ -16,11 +16,14 @@ export interface IChatClarifications {
   satUniqueKey?: string | null;
   satTranferentEntity?: number | null;
   flyerNumber?: number | null;
+  idClarification?: number | null;
+  clarificationId?: number | null;
   xmlJobClarification?: string | null;
   jobClarificationKey?: string | null;
   id?: number;
   process?: string | null;
   goodId?: number;
+  clarification?: number;
   jobType?: string | null;
   clarificationOrigin?: string | null;
   senderUser?: string | null;
@@ -44,4 +47,5 @@ export interface IChatClarifications {
   clarificationInvoice?: string | null;
   flowId?: number | null;
   nbOrigin?: string | null;
+  rejectNotificationId?: number | IClarificationGoodsReject;
 }

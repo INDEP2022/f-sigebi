@@ -4,42 +4,42 @@ import { RegistrationOfRequestsComponent } from './registration-of-requests/regi
 
 const routes: Routes = [
   {
-    path: 'registration-request/:id/:task',
+    path: 'registration-request/:id',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'registration-request',
     },
   },
   {
-    path: 'verify-compliance/:id/:task',
+    path: 'verify-compliance/:id',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'verify-compliance',
     },
   },
   {
-    path: 'classify-assets/:id/:task',
+    path: 'classify-assets/:id',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'classify-assets',
     },
   },
   {
-    path: 'validate-document/:id/:task',
+    path: 'validate-document/:id',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'validate-document',
     },
   },
   {
-    path: 'notify-clarification-inadmissibility/:id/:task',
+    path: 'notify-clarification-inadmissibility/:id',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'notify-clarification-inadmissibility',
     },
   },
   {
-    path: 'process-approval/:id/:task',
+    path: 'process-approval/:id',
     component: RegistrationOfRequestsComponent,
     data: {
       process: 'process-approval',

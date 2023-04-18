@@ -360,7 +360,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   setDate(date: Date) {
     const newDate =
-      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+      this.setMonthsAndDay(date.getDate()) +
+      '/' +
+      this.setMonthsAndDay(date.getMonth() + 1) +
+      '/' +
+      date.getFullYear();
     return newDate;
   }
 
