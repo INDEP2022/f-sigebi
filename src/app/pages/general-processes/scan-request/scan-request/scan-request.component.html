@@ -21,9 +21,10 @@
           <input
             type="number"
             min="0"
-            [max-length]="10"
+            [maxlength]="10"
             formControlName="expedientNumber"
-            class="form-control" />
+            class="form-control"
+            (ngModelChange)="limit(10, 'expedientNumber', $event)" />
         </form-field>
 
         <form-field
@@ -33,7 +34,8 @@
           <input
             type="number"
             min="0"
-            [max-length]="10"
+            [maxlength]="10"
+            (ngModelChange)="limit(10, 'wheelNumber', $event)"
             formControlName="wheelNumber"
             class="form-control" />
         </form-field>
@@ -46,7 +48,8 @@
             formControlName="receiptDate"
             class="form-control"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" />
+            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+            [maxDate]="today" />
         </form-field>
 
         <form-field
@@ -54,7 +57,8 @@
           [control]="formNotification.get('preliminaryInquiry')"
           label="Averiguaci&oacute;n Previa">
           <input
-            [max-length]="200"
+            (ngModelChange)="limit(200, 'preliminaryInquiry', $event)"
+            [maxlength]="200"
             formControlName="preliminaryInquiry"
             class="form-control" />
         </form-field>
@@ -68,7 +72,8 @@
           <input
             formControlName="criminalCase"
             class="form-control"
-            [max-length]="40" />
+            [maxlength]="40"
+            (ngModelChange)="limit(40, 'criminalCase', $event)" />
         </form-field>
 
         <form-field
@@ -78,7 +83,8 @@
           <input
             formControlName="touchPenaltyKey"
             class="form-control"
-            [max-length]="30" />
+            [maxlength]="30"
+            (ngModelChange)="limit(30, 'touchPenaltyKey', $event)" />
         </form-field>
 
         <form-field
@@ -87,8 +93,9 @@
           label="Acta Circunstanciada">
           <input
             formControlName="circumstantialRecord"
-            [max-length]="30"
-            class="form-control" />
+            [maxlength]="30"
+            class="form-control"
+            (ngModelChange)="limit(30, 'circumstantialRecord', $event)" />
         </form-field>
 
         <form-field
@@ -98,7 +105,8 @@
           <input
             formControlName="protectionKey"
             class="form-control"
-            [max-length]="30" />
+            [maxlength]="30"
+            (ngModelChange)="limit(30, 'protectionKey', $event)" />
         </form-field>
       </div>
 
@@ -155,7 +163,8 @@
           <input
             type="text"
             formControlName="significantDate"
-            class="form-control" />
+            class="form-control"
+            (ngModelChange)="limit2(7, 'significantDate', $event)" />
         </form-field>
       </div>
       <div class="row">
@@ -165,6 +174,7 @@
           label="Descripci&oacute;n del Documento">
           <textarea
             formControlName="descriptionDocument"
+            (ngModelChange)="limit2(1000, 'descriptionDocument', $event)"
             class="form-control"></textarea>
         </form-field>
         <div class="col">
@@ -198,6 +208,7 @@
         <div class="col-auto">
           <button
             class="btn btn-secondary btn-sm active mt-3"
+            [disabled]="form.invalid"
             (click)="generateDoc()">
             Generar Solicitud
           </button>
