@@ -232,6 +232,7 @@ export class NotificationAssetsTabComponent
   }
 
   selectRow(row?: any) {
+    console.log('e', row);
     this.selectedRow = row;
     this.rowSelected = true;
   }

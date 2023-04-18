@@ -9,7 +9,7 @@ export interface ClarificationGoodRejectNotification {
   creationDate?: any;
   modificationDate?: any;
   rejectNotificationId?: number;
-  clarificationId?: number;
+  clarificationId?: any;
   clarificationType?: string;
   reason?: string;
   answered?: string;
