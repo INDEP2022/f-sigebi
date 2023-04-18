@@ -12,7 +12,8 @@ export interface ClarificationGoodRejectNotification {
   clarificationType?: string;
   reason?: string;
   answered?: string;
+  chatClarification?: number;
   goodResDevId?: number;
   sysStsc4qbnbolbp3szu27tgt6lu?: number;
-  documentClarificationId?: number;
+  documentClarificationId?: string;
 }

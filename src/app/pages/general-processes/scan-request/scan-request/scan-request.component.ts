@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -47,6 +47,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   isParamFolio: boolean = false;
   noVolante: number;
   isParams: boolean = false;
+  origin: string = null;
+
   constructor(
     private fb: FormBuilder,
     private notificationServ: NotificationService,
@@ -61,6 +63,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private router: Router
   ) {
     super();
+    this.route.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'] ?? null;
+      });
     const params = new FilterParams();
     const token = this.authService.decodeToken();
     params.addFilter('user', token.preferred_username);
@@ -97,9 +104,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.getDocumentByFolio(param2);
     }
   }
-
   back() {
-    window.history.back();
+    const location: any = {
+      FGESTBUZONTRAMITE: () =>
+        this.router.navigate(['/pages/general-processes/work-mailbox']),
+    };
+    location[this.origin]();
   }
 
   createFilter() {
@@ -489,6 +499,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           folio: this.idFolio,
           volante: this.noVolante,
           origin: 'FACTGENSOLICDIGIT',
+          requestOrigin: this.origin ?? '',
         },
       });
     } else {

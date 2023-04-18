@@ -127,6 +127,8 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    const task = this.route.snapshot.paramMap.get('task');
+    console.log(task);
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
     this.processView();
@@ -900,7 +902,7 @@ export class RegistrationOfRequestsComponent
       let body: any = {};
       body['xidSolicitud'] = id;
       body['xTipoDocumento'] = 50;
-      this.wcontentService.getDocumentos(body).subscribe({
+      this.wcontentService.getDocumentos(body, new ListParams()).subscribe({
         next: resp => {
           if (resp.data.length > 0) {
             this.haveDictamen = true;

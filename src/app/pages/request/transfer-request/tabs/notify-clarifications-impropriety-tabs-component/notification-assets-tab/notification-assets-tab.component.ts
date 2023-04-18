@@ -84,7 +84,6 @@ export class NotificationAssetsTabComponent
   }
 
   ngOnInit(): void {
-    console.log('ID de solicitud: ', this.idRequest);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -318,6 +317,7 @@ export class NotificationAssetsTabComponent
         idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
+        idRequest: this.idRequest,
         callback: (next: boolean) => {
           if (next) {
             this.getClarificationsByGood(idNotify.goodId);

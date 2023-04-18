@@ -118,9 +118,16 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     this.certiFile = certiToUpload;
 
     if (certiToUpload.name.includes('.cer')) {
+      this.loader.load = true;
       //Convierte archivo seleccionado a base 64 y lo guarda
-      this.convertFile(event.target.files[0]).subscribe(base64 => {
-        this.base64Key = base64;
+      this.convertFile(event.target.files[0]).subscribe({
+        next: base64 => {
+          this.base64Cer = base64;
+          this.loader.load = false;
+        },
+        error: () => {
+          this.loader.load = false;
+        },
       });
     } else {
       this.onLoadToast(
@@ -137,9 +144,16 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     let keyCertiToUpload = event.target.files[0];
     this.keyCertiFile = keyCertiToUpload;
     if (keyCertiToUpload.name.includes('.key')) {
+      this.loader.load = true;
       //Convierte archivo seleccionado a base 64 y lo guarda
-      this.convertFile(event.target.files[0]).subscribe(base64 => {
-        this.base64Cer = base64;
+      this.convertFile(event.target.files[0]).subscribe({
+        next: base64 => {
+          this.base64Key = base64;
+          this.loader.load = false;
+        },
+        error: () => {
+          this.loader.load = false;
+        },
       });
     } else {
       this.onLoadToast(
