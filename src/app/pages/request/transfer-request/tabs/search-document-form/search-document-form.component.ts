@@ -192,7 +192,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
     //siab 3785794
     this.loading = true;
     const form = this.searchForm.getRawValue();
-    this.wcontentService.getDocumentos(form).subscribe({
+    this.wcontentService.getDocumentos(form, new ListParams()).subscribe({
       next: (resp: any) => {
         const result = resp.data.map(async (item: any) => {
           const typeDocument = await this.getTypeDocument(item.xtipoDocumento);
