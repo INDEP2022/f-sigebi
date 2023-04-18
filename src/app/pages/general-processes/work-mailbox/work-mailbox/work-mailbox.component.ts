@@ -187,7 +187,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   get actualizarBuzon() {
     return this.filterForm.controls['actualizarBuzon'];
   }
-  get pendientes() {
+  get pendientesF() {
     return this.filterForm.controls['pendientes'];
   }
   get predeterminedF() {
@@ -355,6 +355,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       .subscribe(change => {
         // console.log(change);
         if (change.action === 'filter') {
+          this.resetDataFilter = false;
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             // console.log(filter);
@@ -831,7 +832,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     //TODO:VALIDAR CAMPO ESCANEADO
     field = `filter.count`;
-    if (this.pendientes.value) {
+    if (this.pendientesF.value) {
       this.columnFilters[field] = `$eq:0`;
     }
     //Filtros por columna
@@ -1199,6 +1200,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   areaChange(area: IManagementArea) {
+    console.log(area);
+    this.buildFilters();
     const user = this.user.value;
     const _area = this.managementAreaF.value;
     if (user && _area) {
@@ -1270,7 +1273,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             if (areas.length > 0) {
               params.addFilter('id', areas.join(','), SearchFilter.IN);
             }
-            this.getData();
+            this.buildFilters();
             return this.getAreas(params);
           })
         )
@@ -1282,7 +1285,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           },
         });
     } else {
-      this.getData();
+      this.buildFilters();
       this.getAreas(params).subscribe();
     }
 
@@ -2210,6 +2213,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   resetFilters(): void {
+    this.columnFilters = [];
     this.dataTable.reset();
     this.filterForm.reset();
     this.filterForm = this.fb.group({
@@ -2233,7 +2237,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     // this.getUser();
     // this.getData();
     // this.dataTable.refresh();
-    this.buildFilters();
+    //this.buildFilters();
   }
 
   notAvailable(): void {
