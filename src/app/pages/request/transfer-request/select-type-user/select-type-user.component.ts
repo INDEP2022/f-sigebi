@@ -180,16 +180,16 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           this.data.id,
           ''
         );
-
+        debugger;
         if (report) {
           let form: any = {};
           form['ddocTitle'] = `Solicitud_${this.data.id}`;
           form['xidExpediente'] = this.data.recordId;
-          form['ddocType'] = 'Document';
-          form['xNombreProceso'] = 'Captura Solicitud';
+          form['dDocType'] = 'Document';
+          form['xnombreProceso'] = 'Captura Solicitud';
           form['dSecurityGroup'] = 'Public';
-          form['xNivelRegistroNSBDB'] = 'Solicitud';
-          form['xTipoDocumento'] = '90';
+          form['xnivelRegistroNSBDB'] = 'Solicitud';
+          form['xtipoDocumento'] = '90';
           form['xnoOficio'] = this.data.paperNumber;
           form['xremitente'] = this.data.nameOfOwner;
           form['xcargoRemitente'] = this.data.holderCharge;
@@ -199,9 +199,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
           form['xidSolicitud'] = this.data.id;
           if (this.data.transferenceId) {
-            form['transferenceId'] = this.data.transferenceId;
+            form['xidTransferente'] = this.data.transferenceId;
           }
-
+          form['xdelegacionRegional'] = this.data.regionalDelegationId;
           const file: any = report;
           //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);

@@ -194,7 +194,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
         if (info.length == 0) {
           this.onLoadToast(
             'warning',
-            'No se encontraron documentos al bien',
+            'No se le encontraron documentos al bien.',
             ''
           );
           this.loading = false;

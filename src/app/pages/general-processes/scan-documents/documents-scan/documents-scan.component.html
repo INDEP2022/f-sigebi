@@ -5,11 +5,18 @@
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
+      <div class="row" *ngIf="origin">
+        <div class="col-md-12">
+          <button class="btn btn-primary active btn-sm" (click)="goBack()">
+            Regresar
+          </button>
+        </div>
+      </div>
+      <div class="row pt-5">
         <form-field
           label="Expediente"
           [control]="form.get('expedient')"
-          class="col-md-3">
+          class="col-md-2">
           <input
             type="number"
             (change)="expedientChange()"
@@ -20,7 +27,7 @@
         <form-field
           label="Folio"
           [control]="form.get('folio')"
-          class="col-md-3">
+          class="col-md-2">
           <input
             type="number"
             (change)="folioChange()"
@@ -38,6 +45,7 @@
         </div>
         <div class="col">
           <button
+            type="button"
             class="btn btn-danger btn-sm active"
             (click)="confirmDelete()">
             Borrar im&aacute;genes seleccionadas
