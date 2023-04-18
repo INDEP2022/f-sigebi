@@ -587,7 +587,6 @@ export class VerifyComplianceTabComponent
 
     this.requestDocumentService.getAll(params).subscribe({
       next: resp => {
-        console.table(resp.data);
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
           if (item.cumpliance['cumple'] === true) {
@@ -758,8 +757,6 @@ export class VerifyComplianceTabComponent
 
   async confirm() {
     this.loader.load = false;
-    console.log(this.article3array);
-    console.log(this.article12and13array);
     const article3 = this.article3array.filter(x => x.cumple === true);
     const article12Y13 = this.article12and13array.filter(
       x => x.cumple === true
@@ -775,7 +772,6 @@ export class VerifyComplianceTabComponent
     }
 
     const articles = this.article12and13array.concat(this.article3array);
-    //console.table(articles);
 
     const id = this.requestObject.id;
     articles.map(async (item: any) => {
