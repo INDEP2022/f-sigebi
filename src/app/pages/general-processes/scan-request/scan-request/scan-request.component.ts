@@ -388,7 +388,6 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       significantDate: [
         null,
         [
-          Validators.minLength(7),
           Validators.maxLength(7),
           Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
         ],
