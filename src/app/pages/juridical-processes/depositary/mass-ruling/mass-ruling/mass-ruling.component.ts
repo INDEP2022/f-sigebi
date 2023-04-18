@@ -160,7 +160,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
 
   private prepareForm() {
     this.form = this.fb.group({
-      noOficio: '', //*
+      id: '', //*
       typeDict: '',
       dictDate: '',
       statusDict: ['', [Validators.pattern(STRING_PATTERN)]],

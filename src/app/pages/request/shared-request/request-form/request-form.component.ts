@@ -145,6 +145,40 @@ export class RequestFormComponent extends BasePage implements OnInit {
     if (this.op == 2) this.complementaryDocumentationField(this.requestForm);
   }
 
+  async generateFirstTask() {
+    this.loadingTurn = true;
+    const form = this.requestForm.getRawValue();
+    const requestResult: any = await this.createRequest(form);
+    if (requestResult) {
+      const form = requestResult;
+      const from = 'REGISTRO_SOLICITUD';
+      const to = 'REGISTRO_SOLICITUD';
+      const actualUser: any = this.authService.decodeToken();
+      const taskResult = await this.createTaskOrderService(
+        form,
+        from,
+        to,
+        false,
+        0,
+        actualUser.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Nueva_Solicitud',
+        'TURNAR'
+      );
+    }
+    /*   const taskResult = await this.createTaskOrderService(
+            form,
+            from,
+            to,
+            false,
+            0,
+            actualUser.username,
+            'SOLICITUD_TRANSFERENCIA',
+            'Nueva_Solicitud',
+            'TURNAR'
+          ); */
+  }
+
   complementaryDocumentationField(form: ModelForm<IRequest>) {
     // agregar nuevos campos al formulario para solicitudes de documentacion complementaria
     form.addControl('keyStateOfRepublic', this.fb.control('', []));

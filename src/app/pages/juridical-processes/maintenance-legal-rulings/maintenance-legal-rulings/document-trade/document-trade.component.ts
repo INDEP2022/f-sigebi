@@ -43,22 +43,22 @@ export class DocumentTradeComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noDictaminacion: '',
-      remitente: ['', [Validators.pattern(STRING_PATTERN)]],
-      ciudad: ['', [Validators.pattern(STRING_PATTERN)]],
-      parrafoInicial: ['', [Validators.pattern(STRING_PATTERN)]],
-      parrafoFinal: ['', [Validators.pattern(STRING_PATTERN)]],
-      masInformacion1: ['', [Validators.pattern(STRING_PATTERN)]],
-      masInformacion3: ['', [Validators.pattern(STRING_PATTERN)]],
-      destinatario: ['', [Validators.pattern(STRING_PATTERN)]],
-      noDelegacionDestinatario: '',
-      noDepartamentoDestinatario: '',
-      estatus: ['', [Validators.pattern(STRING_PATTERN)]],
-      tipoDictaminacion: ['', [Validators.pattern(STRING_PATTERN)]],
-      destinatarioESXT: ['', [Validators.pattern(STRING_PATTERN)]],
-      destinatarioRemitente: ['', [Validators.pattern(STRING_PATTERN)]],
-      noNotario: '',
-      claveCargo: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      officialNumber: '',
+      sender: ['', [Validators.pattern(STRING_PATTERN)]],
+      city: ['', [Validators.pattern(STRING_PATTERN)]],
+      text1: ['', [Validators.pattern(STRING_PATTERN)]],
+      text2: ['', [Validators.pattern(STRING_PATTERN)]],
+      text2To: ['', [Validators.pattern(STRING_PATTERN)]],
+      text3: ['', [Validators.pattern(STRING_PATTERN)]],
+      recipient: ['', [Validators.pattern(STRING_PATTERN)]],
+      delegacionRecipientNumber: '',
+      recipientDepartmentNumber: '',
+      statusOf: ['', [Validators.pattern(STRING_PATTERN)]],
+      typeDict: ['', [Validators.pattern(STRING_PATTERN)]],
+      recipientEsxt: ['', [Validators.pattern(STRING_PATTERN)]],
+      desSenderPa: ['', [Validators.pattern(STRING_PATTERN)]],
+      notaryNumber: '',
+      cveChargeRem: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
   }
 
